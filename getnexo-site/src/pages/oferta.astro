@@ -1,0 +1,137 @@
+---
+import Layout from '../layouts/Layout.astro';
+const title = "Acesso Beta — Protocolo GetNexo Elite";
+const description = "Seja um dos 50 pioneiros a dominar a Máquina de Vendas Autônoma via WhatsApp. Acesso grátis limitado.";
+---
+
+<Layout title={title} description={description} isLanding={true}>
+  <div class="offer-convergence">
+    
+    <!-- Countdown / Urgency -->
+    <div class="urgency-bar">
+      <div class="bar-content">
+        <span class="pulse-dot"></span>
+        <span class="label">PROTOCOLO BETA EXPIRA EM:</span>
+        <span id="countdown">00:14:59</span>
+      </div>
+    </div>
+
+    <div class="offer-container">
+      <div class="offer-header">
+        <div class="offer-badge">Acesso Antecipado</div>
+        <h1 class="text-gradient">Protocolo GetNexo</h1>
+        <p class="subtitle">Triplique suas vendas com a nossa Máquina de Vendas Autônoma 100% Grátis.</p>
+      </div>
+      
+      <div class="offer-layout">
+        <div class="benefits-panel glass-panel">
+            <h3>Privilégios de Membro Beta:</h3>
+            <ul class="check-list">
+                <li><span>✅</span> Setup Master via Script <code>god_mode.sh</code></li>
+                <li><span>✅</span> Painel Admin Dark Protocol v2.5</li>
+                <li><span>✅</span> Integração de Elite: Evolution API + n8n</li>
+                <li><span>✅</span> Prompt Mestre da Ara (Copywriting de Alta Performance)</li>
+                <li><span>✅</span> Suporte Prioritário no Squad de Fundadores</li>
+            </ul>
+
+            <div class="pricing-convergence">
+                <span class="old-price">De R$ 997,00</span>
+                <span class="current-price">GRÁTIS</span>
+                <p class="meta-offer">Exclusivo para os primeiros 50 usuários</p>
+            </div>
+        </div>
+
+        <div class="form-panel glass-panel">
+          <h2 style="color: white; margin-bottom: 2rem; font-weight: 800;">Ativar Protocolo</h2>
+          <form class="beta-form" onsubmit="event.preventDefault(); alert('Acesso Liberado! Verifique seu e-mail.');">
+            <div class="input-field">
+                <label>NOME COMPLETO</label>
+                <input type="text" placeholder="Seu nome" required />
+            </div>
+            <div class="input-field">
+                <label>WHATSAPP (DDD)</label>
+                <input type="tel" placeholder="(00) 00000-0000" required />
+            </div>
+            <div class="input-field">
+                <label>E-MAIL CORPORATIVO</label>
+                <input type="email" placeholder="seu@email.com" required />
+            </div>
+            
+            <button type="submit" class="btn-activate">
+                LIBERAR ACESSO AGORA <span class="arr">→</span>
+            </button>
+          </form>
+          <p class="scarcity-text">⚠️ Restam apenas <strong>7 vagas</strong> para o lote atual.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script is:inline>
+    // Countdown Timer Logic
+    let time = 14 * 60 + 59; 
+    const display = document.getElementById('countdown');
+    
+    if (display) {
+        const interval = setInterval(() => {
+            const minutes = Math.floor(time / 60);
+            const seconds = time % 60;
+            
+            display.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (time <= 0) {
+                clearInterval(interval);
+                display.innerText = "EXPIRADO";
+                display.style.color = "#ff4d4d";
+            }
+            time--;
+        }, 1000);
+    }
+</script>
+
+<style>
+  .offer-convergence { min-height: 100vh; padding-top: 80px; }
+  
+  .urgency-bar { background: rgba(0, 212, 255, 0.1); border-bottom: 1px solid rgba(0, 212, 255, 0.2); backdrop-filter: blur(10px); padding: 0.8rem 5%; sticky: top 80px; z-index: 100; text-align: center; }
+  .bar-content { display: flex; align-items: center; justify-content: center; gap: 1rem; color: #00d4ff; font-weight: 900; letter-spacing: 1px; font-size: 0.85rem; }
+  .pulse-dot { width: 8px; height: 8px; background: #ff4d4d; border-radius: 50%; box-shadow: 0 0 10px #ff4d4d; animation: pulse 1s infinite alternate; }
+  @keyframes pulse { from { opacity: 0.5; } to { opacity: 1; transform: scale(1.2); } }
+
+  .offer-container { max-width: 1100px; margin: 0 auto; padding: 6rem 5% 10rem; }
+  .offer-header { text-align: center; margin-bottom: 5rem; }
+  .offer-badge { background: rgba(0, 255, 157, 0.1); color: #00ff9d; padding: 0.5rem 1.2rem; border-radius: 50px; font-size: 0.85rem; font-weight: 800; display: inline-block; margin-bottom: 1.5rem; border: 1px solid rgba(0,255,157,0.2); }
+  .offer-header h1 { font-size: clamp(2.5rem, 6vw, 4rem); margin-bottom: 1.5rem; font-weight: 900; }
+  .subtitle { color: #94a3b8; font-size: 1.4rem; max-width: 800px; margin: 0 auto; }
+
+  .offer-layout { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 3rem; align-items: start; }
+  
+  .benefits-panel { padding: 4rem; border-radius: 32px; flex: 1; }
+  .benefits-panel h3 { color: white; font-size: 1.8rem; margin-bottom: 2.5rem; font-weight: 800; }
+  .check-list { list-style: none; padding: 0; margin-bottom: 4rem; }
+  .check-list li { color: #cbd5e1; font-size: 1.2rem; margin-bottom: 1.2rem; display: flex; gap: 1rem; align-items: center; }
+  .check-list li span { font-size: 1rem; }
+
+  .pricing-convergence { border-top: 1px solid rgba(255,255,255,0.05); pt: 3rem; text-align: center; }
+  .old-price { display: block; text-decoration: line-through; color: #64748b; font-size: 1.2rem; margin-bottom: 0.5rem; }
+  .current-price { display: block; font-size: 4rem; font-weight: 900; color: #00ff9d; letter-spacing: -2px; text-shadow: 0 0 30px rgba(0,255,157,0.2); }
+  .meta-offer { color: #00d4ff; font-weight: 800; font-size: 0.9rem; margin-top: 1rem; text-transform: uppercase; }
+
+  .form-panel { padding: 4rem; border-radius: 32px; border-color: #00ff9d; }
+  .beta-form { display: flex; flex-direction: column; gap: 1.5rem; }
+  .input-field label { display: block; color: #64748b; font-size: 0.75rem; font-weight: 800; margin-bottom: 0.6rem; letter-spacing: 1px; }
+  .input-field input { width: 100%; padding: 1.2rem; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 12px; font-weight: 600; outline: none; transition: 0.3s; }
+  .input-field input:focus { border-color: #00ff9d; background: rgba(0,0,0,0.5); box-shadow: 0 0 20px rgba(0,255,157,0.1); }
+
+  .btn-activate { background: linear-gradient(135deg, #00ff9d, #00d4ff); color: black; padding: 1.3rem; border: none; border-radius: 14px; font-weight: 900; font-size: 1.1rem; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 30px rgba(0,255,157,0.2); }
+  .btn-activate:hover { transform: scale(1.02); box-shadow: 0 15px 40px rgba(0,255,157,0.4); }
+
+  .scarcity-text { text-align: center; margin-top: 2rem; color: #ff4d4d; font-weight: 800; font-size: 0.9rem; }
+
+  @media (max-width: 900px) {
+    .offer-layout { grid-template-columns: 1fr; }
+    .offer-header h1 { font-size: 2.5rem; }
+    .benefits-panel, .form-panel { padding: 2.5rem; }
+    .current-price { font-size: 3rem; }
+  }
+</style>

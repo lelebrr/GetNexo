@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: getnexo-core
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: getnexo
+  template:
+    metadata:
+      labels:
+        app: getnexo
+    spec:
+      containers:
+      - name: chatwoot
+        image: chatwoot/chatwoot:latest
+        ports:
+        - containerPort: 3000
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+      - name: n8n
+        image: n8nio/n8n:latest
+        ports:
+        - containerPort: 5678
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: getnexo-loadbalancer
+spec:
+  type: LoadBalancer
+  selector:
+    app: getnexo
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000

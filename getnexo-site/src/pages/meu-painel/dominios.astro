@@ -1,0 +1,105 @@
+---
+import PanelLayout from '../../layouts/PanelLayout.astro';
+---
+
+<PanelLayout title="Meus Domínios">
+    <div class="header-action">
+        <h2>Domínios Cadastrados</h2>
+        <button class="btn-primary" onclick="openDomainModal()">+ Novo Domínio</button>
+    </div>
+
+    <div class="domains-list" id="domains-container">
+        <!-- Loaded via JS -->
+        <p class="loading">Carregando domínios...</p>
+    </div>
+
+    <!-- Modal Novo Domínio -->
+    <div id="modal-domain" class="modal hidden">
+        <div class="modal-content">
+            <h3>Adicionar Nova Loja</h3>
+            <label>Domínio</label>
+            <input type="text" id="new-domain" placeholder="lojaexemplo.com.br">
+            <label>Plataforma</label>
+            <select id="new-platform">
+                <option value="woo">WooCommerce</option>
+                <option value="shopify">Shopify</option>
+                <option value="bling">Bling</option>
+                <option value="nuvem">Nuvemshop</option>
+                <option value="tray">Tray</option>
+            </select>
+            <div class="modal-actions">
+                <button onclick="closeDomainModal()">Cancelar</button>
+                <button class="btn-primary" onclick="addDomain()">Adicionar</button>
+            </div>
+        </div>
+    </div>
+</PanelLayout>
+
+<style>
+    .header-action { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    .btn-primary { background: #10b981; color: #fff; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    
+    .domains-list { display: grid; gap: 1rem; }
+    .domain-card { background: #1e293b; padding: 1.5rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
+    .domain-info h4 { margin: 0 0 0.3rem 0; color: #fff; }
+    .domain-info p { margin: 0; font-size: 0.9rem; color: #94a3b8; }
+    .status-active { color: #10b981; font-weight: 600; font-size: 0.8rem; background: rgba(16,185,129,0.1); padding: 0.2rem 0.6rem; border-radius: 12px; }
+
+    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 100; }
+    .modal.hidden { display: none; }
+    .modal-content { background: #1e293b; padding: 2rem; border-radius: 12px; width: 400px; text-align: left; }
+    .modal-content input, .modal-content select { width: 100%; padding: 0.8rem; margin: 0.5rem 0 1rem 0; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 4px; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem; }
+</style>
+
+<script is:inline>
+    const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '/api-proxy';
+
+    async function loadDomains() {
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`${API_URL}/api/panel/domains`, { headers: { 'Authorization': token } });
+            const data = await res.json();
+            
+            const container = document.getElementById('domains-container');
+            if (data.length === 0) {
+                container.innerHTML = '<p style="color: #64748b;">Nenhum domínio cadastrado.</p>';
+                return;
+            }
+
+            container.innerHTML = data.map(d => `
+                <div class="domain-card">
+                    <div class="domain-info">
+                        <h4>${d.domain}</h4>
+                        <p>${d.platform.toUpperCase()}</p>
+                    </div>
+                    <div>
+                        <span class="status-active">${d.status}</span>
+                        <a href="/meu-painel/plugin?id=${d.plugin_id}" style="margin-left:1rem; color:#3b82f6; text-decoration:none;">Baixar Plugin</a>
+                    </div>
+                </div>
+            `).join('');
+        } catch (e) { console.error(e); }
+    }
+
+    window.openDomainModal = () => document.getElementById('modal-domain').classList.remove('hidden');
+    window.closeDomainModal = () => document.getElementById('modal-domain').classList.add('hidden');
+
+    window.addDomain = async () => {
+        const domain = document.getElementById('new-domain').value;
+        const platform = document.getElementById('new-platform').value;
+        
+        try {
+            const token = localStorage.getItem('token');
+            await fetch(`${API_URL}/api/panel/domains`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': token },
+                body: JSON.stringify({ domain, platform })
+            });
+            closeDomainModal();
+            loadDomains();
+        } catch (e) { alert('Erro ao adicionar'); }
+    }
+
+    loadDomains();
+</script>

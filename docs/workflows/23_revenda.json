@@ -1,0 +1,119 @@
+{
+    "name": "23_Revenda_Commission",
+    "nodes": [
+        {
+            "parameters": {},
+            "name": "Start",
+            "type": "n8n-nodes-base.start",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "get",
+                "key": "revenda:{{$json[\"reseller_code\"]}}"
+            },
+            "name": "Check Reseller",
+            "type": "n8n-nodes-base.redis",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "boolean": [
+                        {
+                            "value1": "={{$json[\"data\"] != null}}",
+                            "value2": true
+                        }
+                    ]
+                }
+            },
+            "name": "Is Valid?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                650,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "incrbyfloat",
+                "key": "wallet:{{$json[\"reseller_code\"]}}",
+                "value": "={{$json[\"sale_amount\"] * 0.40}}"
+            },
+            "name": "Add 40% Commission",
+            "type": "n8n-nodes-base.redis",
+            "typeVersion": 1,
+            "position": [
+                850,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "content": "Comissão de R$ {{$json[\"sale_amount\"] * 0.40}} creditada! Saldo total: {{$json[\"value\"]}}"
+            },
+            "name": "Notify Reseller",
+            "type": "n8n-nodes-base.chatwoot",
+            "typeVersion": 1,
+            "position": [
+                1050,
+                200
+            ]
+        }
+    ],
+    "connections": {
+        "Start": {
+            "main": [
+                [
+                    {
+                        "node": "Check Reseller",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check Reseller": {
+            "main": [
+                [
+                    {
+                        "node": "Is Valid?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Is Valid?": {
+            "main": [
+                [
+                    {
+                        "node": "Add 40% Commission",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Add 40% Commission": {
+            "main": [
+                [
+                    {
+                        "node": "Notify Reseller",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

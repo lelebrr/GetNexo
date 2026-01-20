@@ -1,0 +1,28 @@
+# credentials-file removed - Using Tunnel Token via Environment Variable
+
+ingress:
+  # 1. Frontend (Landing Page)
+  - hostname: getnexo.com.br
+    service: http://frontend:4321
+
+  # 2. Chatwoot / Widget Host seems to rely on Frontend proxy or Direct?
+  # Prompt says "Widget: chat no canto da tela conecta" - usually via API
+  - hostname: chat.getnexo.com.br
+    service: http://frontend:4321
+
+  # 3. Evolution API / OmniNexo Backend
+  - hostname: api.getnexo.com.br
+    service: http://chat-api:3006
+
+  # 4. Admin Panel (Frontend Route)
+  - hostname: admin.getnexo.com.br
+    service: http://frontend:4321
+
+  # 5. N8N
+  - hostname: n8n.getnexo.com.br
+    service: http://n8n:5678
+
+  # Catch-all
+  - service: http_status:404
+
+loglevel: info

@@ -1,0 +1,81 @@
+{
+    "name": "19_Exit_Intent_Popup",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "exit-intent",
+                "options": {}
+            },
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "boolean": [
+                        {
+                            "value1": "={{$json[\"has_items\"]}}",
+                            "value2": true
+                        }
+                    ]
+                }
+            },
+            "name": "Cart not Empty?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "values": {
+                    "string": [
+                        {
+                            "name": "discount_code",
+                            "value": "SAVE10NOW"
+                        }
+                    ]
+                }
+            },
+            "name": "Generate Discount",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 1,
+            "position": [
+                650,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Cart not Empty?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Cart not Empty?": {
+            "main": [
+                [
+                    {
+                        "node": "Generate Discount",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

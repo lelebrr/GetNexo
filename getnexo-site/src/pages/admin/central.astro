@@ -1,0 +1,3313 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout title="Central de Controle | GetNexo Admin">
+
+<style is:global>
+  /* ADMIN PAGE: Hide ALL external elements */
+  .global-header, 
+  .global-footer,
+  .floating-whatsapp,
+  #live-pulse,
+  #command-palette,
+  nav.navbar,
+  footer,
+  /* Chat widgets */
+  .chatwoot-widget,
+  #cw-widget,
+  .chatwoot-bubble,
+  [class*="chatwoot"],
+  [id*="chatwoot"],
+  .woot-widget-holder,
+  .chat-widget,
+  .chat-bubble,
+  /* Accessibility button */
+  .accessibility-btn,
+  .accessibility-controls,
+  .accessibility-menu,
+  [class*="accessibility"],
+  #accessibility-controls,
+  /* Any fixed bottom elements */
+  .fixed-bottom-right,
+  .floating-widget,
+  .fab-button,
+  /* Tawk.to, Intercom, Drift, etc */
+  #tawk-container,
+  .intercom-launcher,
+  .drift-widget { 
+    display: none !important; 
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  
+  /* Override Layout main element */
+  body > main,
+  main:not(.main-content) { 
+    padding: 0 !important; 
+    margin: 0 !important;
+    min-height: 100vh !important; 
+    max-width: none !important;
+    width: 100% !important;
+  }
+  
+  /* Ensure admin-central fills viewport */
+  .admin-central {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: 9999 !important;
+    display: flex !important;
+    background: #030712 !important;
+  }
+</style>
+
+<script is:inline>
+  // Force hide chat widgets and accessibility buttons on admin page
+  document.addEventListener('DOMContentLoaded', function() {
+    const hideElements = [
+      '.chatwoot-widget', '#cw-widget', '.chatwoot-bubble', 
+      '.accessibility-btn', '.accessibility-controls', '#accessibility-controls',
+      '.floating-whatsapp', '.chat-widget', '.chat-bubble',
+      '[class*="chatwoot"]', '[class*="accessibility"]'
+    ];
+    
+    hideElements.forEach(selector => {
+      document.querySelectorAll(selector).forEach(el => {
+        el.style.display = 'none';
+        el.style.visibility = 'hidden';
+        el.remove();
+      });
+    });
+    
+    // Also observe for dynamically added widgets
+    const observer = new MutationObserver(mutations => {
+      hideElements.forEach(selector => {
+        document.querySelectorAll(selector).forEach(el => {
+          el.style.display = 'none';
+          el.remove();
+        });
+      });
+    });
+    
+    observer.observe(document.body, { childList: true, subtree: true });
+  });
+</script>
+
+<div class="admin-central">
+  
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <span class="logo-icon">N</span>
+        <span class="logo-text">Get<span class="accent">Nexo</span></span>
+      </div>
+      <button class="toggle-btn" id="toggle-sidebar">☰</button>
+    </div>
+
+    <div class="search-box">
+      <input type="text" id="global-search" placeholder="Buscar... (Ctrl+K)" />
+    </div>
+
+    <nav class="sidebar-nav">
+      
+      <!-- Dashboard -->
+      <div class="nav-section">
+        <a href="/admin" class="nav-item active">
+          <span class="nav-icon">📊</span>
+          <span class="nav-text">Dashboard</span>
+        </a>
+      </div>
+
+      <!-- E-commerce -->
+      <div class="nav-section">
+        <button class="nav-group-btn" data-target="ecommerce-menu">
+          <span class="nav-icon">🛍️</span>
+          <span class="nav-text">E-commerce</span>
+          <span class="nav-arrow">▾</span>
+        </button>
+        <div class="nav-submenu" id="ecommerce-menu">
+          <a href="#produtos" class="nav-subitem" data-section="produtos">Produtos</a>
+          <a href="#pedidos" class="nav-subitem" data-section="pedidos">Pedidos</a>
+          <a href="#cupons" class="nav-subitem" data-section="cupons">Cupons</a>
+          <a href="#categorias" class="nav-subitem" data-section="categorias">Categorias</a>
+          <a href="#estoque" class="nav-subitem" data-section="estoque">Estoque</a>
+        </div>
+      </div>
+
+      <!-- Atendimento -->
+      <div class="nav-section">
+        <button class="nav-group-btn" data-target="atendimento-menu">
+          <span class="nav-icon">💬</span>
+          <span class="nav-text">Atendimento</span>
+          <span class="nav-arrow">▾</span>
+        </button>
+        <div class="nav-submenu" id="atendimento-menu">
+          <a href="#campanhas" class="nav-subitem" data-section="campanhas">Campanhas</a>
+          <a href="#macros" class="nav-subitem" data-section="macros">Macros</a>
+          <a href="#bot-config" class="nav-subitem" data-section="bot-config">Config do Bot</a>
+          <a href="#horarios" class="nav-subitem" data-section="horarios">Horários</a>
+          <a href="#filas" class="nav-subitem" data-section="filas">Filas de Atendimento</a>
+        </div>
+      </div>
+
+      </div>
+
+      <!-- Marketing -->
+      <div class="nav-section">
+        <button class="nav-group-btn" data-target="marketing-menu">
+          <span class="nav-icon">🚀</span>
+          <span class="nav-text">Marketing</span>
+          <span class="nav-arrow">▾</span>
+        </button>
+        <div class="nav-submenu" id="marketing-menu">
+          <a href="#ab-tests" class="nav-subitem" data-section="ab-tests">Testes A/B</a>
+          <a href="#campanhas" class="nav-subitem" data-section="campanhas">Campanhas</a>
+        </div>
+      </div>
+
+      <!-- IA -->
+      <div class="nav-section">
+        <button class="nav-group-btn" data-target="ia-menu">
+          <span class="nav-icon">🤖</span>
+          <span class="nav-text">Inteligência Artificial</span>
+          <span class="nav-arrow">▾</span>
+        </button>
+        <div class="nav-submenu" id="ia-menu">
+          <a href="#ia-provedores" class="nav-subitem" data-section="ia-provedores">Provedores</a>
+          <a href="#ia-frases-nexusia" class="nav-subitem" data-section="ia-frases-nexusia">Frases Nexus IA</a>
+          <a href="#ia-frases-nexuswork" class="nav-subitem" data-section="ia-frases-nexuswork">Frases Nexus Work</a>
+          <a href="#ia-prompts" class="nav-subitem" data-section="ia-prompts">Prompts</a>
+          <a href="#ia-playground" class="nav-subitem" data-section="ia-playground">Playground</a>
+          <a href="#ia-estrategia" class="nav-subitem" data-section="ia-estrategia">Estratégia (Kira)</a>
+          <a href="#ia-queue" class="nav-subitem" data-section="ia-queue">Fila de Conteúdo</a>
+          <a href="#ia-historico" class="nav-subitem" data-section="ia-historico">Histórico</a>
+        </div>
+      </div>
+
+      <!-- Integrações -->
+      <div class="nav-section">
+        <button class="nav-group-btn" data-target="integracoes-menu">
+          <span class="nav-icon">🔗</span>
+          <span class="nav-text">Integrações</span>
+          <span class="nav-arrow">▾</span>
+        </button>
+        <div class="nav-submenu" id="integracoes-menu">
+          <a href="#int-whatsapp" class="nav-subitem" data-section="int-whatsapp">WhatsApp</a>
+          <a href="#int-crm" class="nav-subitem" data-section="int-crm">CRMs</a>
+          <a href="#int-mailchimp" class="nav-subitem" data-section="int-mailchimp">Mailchimp</a>
+          <a href="#int-pagamentos" class="nav-subitem" data-section="int-pagamentos">Pagamentos</a>
+          <a href="#int-ecommerce" class="nav-subitem" data-section="int-ecommerce">E-commerce</a>
+          <a href="#int-automacao" class="nav-subitem" data-section="int-automacao">Automação</a>
+          <a href="#int-webhooks" class="nav-subitem" data-section="int-webhooks">Webhooks</a>
+          <a href="#int-whatsapp-manage" class="nav-subitem" data-section="int-whatsapp-manage">Gerenciar WhatsApp</a>
+        </div>
+      </div>
+
+      <!-- Relatórios -->
+      <div class="nav-section">
+        <button class="nav-group-btn" data-target="relatorios-menu">
+          <span class="nav-icon">📈</span>
+          <span class="nav-text">Relatórios</span>
+          <span class="nav-arrow">▾</span>
+        </button>
+        <div class="nav-submenu" id="relatorios-menu">
+          <a href="#rel-vendas" class="nav-subitem" data-section="rel-vendas">Vendas</a>
+          <a href="#rel-leads" class="nav-subitem" data-section="rel-leads">Leads</a>
+          <a href="#rel-atendimento" class="nav-subitem" data-section="rel-atendimento">Atendimento</a>
+          <a href="#rel-performance" class="nav-subitem" data-section="rel-performance">Performance</a>
+          <a href="#rel-exportar" class="nav-subitem" data-section="rel-exportar">Exportar</a>
+        </div>
+      </div>
+
+      <!-- Segurança -->
+      <div class="nav-section">
+        <button class="nav-group-btn" data-target="seguranca-menu">
+          <span class="nav-icon">🛡️</span>
+          <span class="nav-text">Segurança</span>
+          <span class="nav-arrow">▾</span>
+        </button>
+        <div class="nav-submenu" id="seguranca-menu">
+          <a href="/admin/usuarios" class="nav-subitem">Usuários</a>
+          <a href="/admin/roles" class="nav-subitem">Roles</a>
+          <a href="/admin/auditoria" class="nav-subitem">Auditoria</a>
+          <a href="#seg-sessoes" class="nav-subitem" data-section="seg-sessoes">Sessões</a>
+          <a href="#seg-ips" class="nav-subitem" data-section="seg-ips">Bloqueio de IPs</a>
+        </div>
+      </div>
+
+      <!-- Configurações -->
+      <div class="nav-section">
+        <button class="nav-group-btn" data-target="config-menu">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-text">Configurações</span>
+          <span class="nav-arrow">▾</span>
+        </button>
+        <div class="nav-submenu" id="config-menu">
+          <a href="#cfg-empresa" class="nav-subitem" data-section="cfg-empresa">Empresa</a>
+          <a href="#cfg-email" class="nav-subitem" data-section="cfg-email">Email/SMTP</a>
+          <a href="#cfg-notificacoes" class="nav-subitem" data-section="cfg-notificacoes">Notificações</a>
+          <a href="#cfg-api" class="nav-subitem" data-section="cfg-api">API/Tokens</a>
+          <a href="#cfg-backup" class="nav-subitem" data-section="cfg-backup">Backup</a>
+        </div>
+      </div>
+
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="/" target="_blank" class="nav-item">
+        <span class="nav-icon">↗</span>
+        <span class="nav-text">Ver Site</span>
+      </a>
+      <button class="nav-item logout" onclick="logout()">
+        <span class="nav-icon">🚪</span>
+        <span class="nav-text">Sair</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    
+    <!-- Header -->
+    <header class="content-header">
+      <div class="header-left">
+        <h1 id="section-title">Dashboard</h1>
+        <span class="breadcrumb" id="breadcrumb">Central de Controle</span>
+      </div>
+      <div class="header-right">
+        <!-- Search Trigger -->
+        <button class="header-icon-btn" title="Buscar (Ctrl+K)" onclick="document.getElementById('global-search').focus()">
+             🔍
+        </button>
+
+        <!-- Notification Center -->
+        <div class="notification-wrapper" style="position:relative;">
+            <button class="header-icon-btn relative" onclick="toggleNotifications()">
+              🔔
+              <span class="notification-badge" id="notif-badge" style="display:none;">0</span>
+            </button>
+            <div id="notification-dropdown" class="notification-dropdown" style="display:none; position:absolute; top:40px; right:0; width:300px; background:#1f2937; border:1px solid #374151; border-radius:8px; z-index:50;">
+                <div class="dropdown-header" style="padding:10px; border-bottom:1px solid #374151; display:flex; justify-content:space-between;">
+                    <strong style="color:white;">Notificações</strong>
+                </div>
+                <div id="notif-list" class="dropdown-content" style="max-height:300px; overflow-y:auto; padding:10px;">
+                    <div class="text-center text-gray-500" style="padding:10px;">Carregando...</div>
+                </div>
+            </div>
+        </div>
+        <span class="time" id="clock">00:00</span>
+        <div class="user-avatar" id="user-avatar" onclick="openProfileModal()" style="cursor:pointer;" loading="lazy">A</div>
+
+        <div class="user-profile glow-on-hover" onclick="openModal('profile')" style="cursor:pointer; display:flex; align-items:center; gap:0.5rem;">
+          <div class="user-avatar" id="user-avatar" style="background: linear-gradient(135deg, #3b82f6, #8b5cf6);">A</div>
+          <span class="user-name">Admin</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Dynamic Content Area -->
+  <!-- Modal Profile -->
+<div class="modal-overlay" id="modal-profile" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>👤 Perfil do Administrador</h2>
+      <button class="close-modal" onclick="closeModal('profile')">&times;</button>
+    </div>
+    <div class="config-form">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="profile-email" value="admin@getnexo.com.br" readonly style="background:#334155; cursor:not-allowed;" />
+      </div>
+      <div class="form-group">
+        <label>Nova Senha</label>
+        <input type="password" id="profile-password" placeholder="Deixe em branco para manter" />
+      </div>
+      <div class="form-group">
+         <label>Confirmar Senha</label>
+         <input type="password" id="profile-password-confirm" />
+      </div>
+      
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModal('profile')">Cancelar</button>
+        <button class="btn-primary" onclick="saveProfile()">Salvar Alterações</button>
+      </div>
+        <!-- AI Insights Card (New) -->
+        <div class="glass-panel" style="margin-top:1.5rem; padding:1.5rem; border: 1px solid rgba(139, 92, 246, 0.3); background: rgba(139, 92, 246, 0.05);">
+            <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+                <h3 style="color:#a78bfa;">🧠 AI Insights & Oportunidades</h3>
+                <button class="btn-sm" onclick="loadInsights()">Atualizar</button>
+            </div>
+            <div id="ai-insights-list" style="display:grid; gap:0.5rem;">
+                <div class="loading">Analisando dados...</div>
+            </div>
+        </div> 
+
+    </div>
+  </div>
+</div>
+
+  <div class="content-area" id="content-area">
+      
+      <!-- Dashboard Section (Default) -->
+      <section class="section-panel" id="section-dashboard" style="display:block;">
+
+<!-- Modal Webhook -->
+<div class="modal-overlay" id="modal-webhook" style="display:none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Configurar Webhook</h2>
+            <button class="close-modal" onclick="closeModal('webhook')">&times;</button>
+        </div>
+        <form id="form-webhook" onsubmit="saveWebhook(event)">
+            <input type="hidden" id="webhook-id" />
+            <div class="form-group">
+                <label>Nome da Integração</label>
+                <input type="text" id="webhook-nome" required placeholder="Ex: N8N Pedidos" />
+            </div>
+            <div class="form-group">
+                <label>Endpoint URL (POST)</label>
+                <input type="url" id="webhook-url" required placeholder="https://..." />
+                <button type="button" class="btn-xs" style="margin-top:5px;" onclick="testWebhook()">Testar Disparo</button>
+            </div>
+            <div class="form-group">
+                <label>Eventos Gatilho</label>
+                <div class="checkbox-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:0.5rem;">
+                    <label class="checkbox-item"><input type="checkbox" value="order.created" checked> Novo Pedido</label>
+                    <label class="checkbox-item"><input type="checkbox" value="order.paid"> Pagamento Aprovado</label>
+                    <label class="checkbox-item"><input type="checkbox" value="chat.new"> Nova Mensagem</label>
+                    <label class="checkbox-item"><input type="checkbox" value="lead.created"> Novo Lead</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Headers Adicionais (JSON opcional)</label>
+                <input type="text" id="webhook-headers" placeholder='{"Authorization": "Bearer..."}' />
+            </div>
+            <div class="form-group" style="display:flex; align-items:center; gap:1rem;">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="webhook-ativo" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+                <span>Ativo</span>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="closeModal('webhook')">Cancelar</button>
+                <button type="submit" class="btn-primary">Salvar Webhook</button>
+            </div>
+        </form>
+    </div>
+</div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-icon">💰</span>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-vendas">R$ 0</span>
+              <span class="stat-label">Vendas Hoje</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">📦</span>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-pedidos">0</span>
+              <span class="stat-label">Pedidos</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">💬</span>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-conversas">0</span>
+              <span class="stat-label">Conversas</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">👥</span>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-leads">0</span>
+              <span class="stat-label">Leads</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="quick-actions">
+          <h3>⚡ Ações Rápidas</h3>
+          <div class="actions-grid">
+            <button class="action-btn" onclick="showSection('produtos')">🛍️ Novo Produto</button>
+            <button class="action-btn" onclick="showSection('cupons')">🎟️ Criar Cupom</button>
+            <button class="action-btn" onclick="showSection('campanhas')">📢 Nova Campanha</button>
+            <button class="action-btn" onclick="showSection('ia-prompts')">🤖 Config IA</button>
+          </div>
+        </div>
+
+        <div class="modules-overview">
+          <h3>📦 Módulos do Sistema</h3>
+          <div class="modules-grid" id="modules-grid">
+            <!-- Modules will be loaded here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Produtos Section -->
+      <section class="section-panel" id="section-produtos">
+        <div class="section-header">
+          <h2>🛍️ Gerenciar Produtos</h2>
+          <button class="btn-primary" onclick="openModal('produto')">+ Novo Produto</button>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr><th>Produto</th><th>Preço</th><th>Estoque</th><th>Status</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="produtos-tbody">
+              <tr><td colspan="5" class="loading">Carregando produtos...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Cupons Section -->
+      <section class="section-panel" id="section-cupons">
+        <div class="section-header">
+          <h2>🎟️ Cupons de Desconto</h2>
+          <button class="btn-primary" onclick="openModal('cupom')">+ Novo Cupom</button>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr><th>Código</th><th>Desconto</th><th>Validade</th><th>Usos</th><th>Status</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="cupons-tbody">
+              <tr><td colspan="6" class="loading">Carregando cupons...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Campanhas Section -->
+      <section class="section-panel" id="section-campanhas">
+        <div class="section-header">
+          <h2>📢 Campanhas de Broadcast</h2>
+          <button class="btn-primary" onclick="openModal('campanha')">+ Nova Campanha</button>
+        </div>
+        <div class="campaigns-grid" id="campaigns-grid">
+          <div class="loading">Carregando campanhas...</div>
+        </div>
+      </section>
+
+      <!-- IA Provedores Section -->
+      <section class="section-panel" id="section-ia-provedores">
+        <div class="section-header">
+          <h2>🤖 Provedores de IA</h2>
+        </div>
+        <div class="providers-grid" id="providers-grid">
+          <!-- Providers will be loaded here -->
+        </div>
+      </section>
+
+      <!-- IA Frases Nexus IA Section -->
+      <section class="section-panel" id="section-ia-frases-nexusia">
+        <div class="section-header">
+          <h2>💬 Frases Nexus IA</h2>
+          <button class="btn-primary" onclick="openModal('frase-nexusia')">+ Adicionar Frase</button>
+        </div>
+        <p style="color:#94a3b8; margin-bottom:1.5rem;">Gerencie frases aleatórias utilizadas pelo assistente de IA Nexus IA.</p>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr><th>Frase</th><th>Tipo</th><th>Status</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="nexusia-frases-tbody">
+              <tr><td colspan="4" class="loading">Carregando frases...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- IA Frases Nexus Work Section -->
+      <section class="section-panel" id="section-ia-frases-nexuswork">
+        <div class="section-header">
+          <h2>💼 Frases Nexus Work</h2>
+          <button class="btn-primary" onclick="openModal('frase-nexuswork')">+ Adicionar Frase</button>
+        </div>
+        <p style="color:#94a3b8; margin-bottom:1.5rem;">Gerencie frases aleatórias utilizadas pelo assistente de trabalho Nexus Work.</p>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr><th>Frase</th><th>Tipo</th><th>Status</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="nexuswork-frases-tbody">
+              <tr><td colspan="4" class="loading">Carregando frases...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Integrações WhatsApp Section -->
+      <section class="section-panel" id="section-int-whatsapp">
+        <div class="section-header">
+          <h2>📱 Integração WhatsApp</h2>
+        </div>
+        <div class="integration-card">
+          <div class="integration-header">
+            <span class="integration-icon" style="background:#25D366;">W</span>
+            <div>
+              <h3>Evolution API</h3>
+              <span class="integration-status" id="whatsapp-status">Verificando...</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="whatsapp-toggle" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="integration-config">
+            <div class="form-group">
+              <label>URL da API</label>
+              <input type="text" id="evolution-url" value="https://api.getnexo.com.br" />
+            </div>
+            <div class="form-group">
+              <label>API Key</label>
+              <input type="password" id="evolution-key" placeholder="Sua API Key" />
+            </div>
+            <div class="form-group">
+              <label>Nome da Instância</label>
+              <input type="text" id="evolution-instance" value="getnexo" />
+            </div>
+            <button class="btn-primary" onclick="saveIntegration('whatsapp')">Salvar Configuração</button>
+          </div>
+        </div>
+      </section>
+
+
+
+      <!-- Integrações CRM Section -->
+      <section class="section-panel" id="section-int-crm">
+        <div class="section-header">
+          <h2>🏢 Integrações CRM</h2>
+        </div>
+        <div class="integrations-list" id="crm-integrations">
+          <!-- CRM integrations will be loaded -->
+        </div>
+      </section>
+
+      <!-- Relatórios Export Section -->
+      <section class="section-panel" id="section-rel-exportar">
+        <div class="section-header">
+          <h2>📤 Exportar Dados</h2>
+        </div>
+        <div class="module-card">
+            <h3 style="margin-bottom:1rem;">Selecione os dados para download</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Período Inicial</label>
+                    <input type="date" id="export-start" />
+                </div>
+                <div class="form-group">
+                    <label>Período Final</label>
+                    <input type="date" id="export-end" />
+                </div>
+            </div>
+            
+            <div class="export-options" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; margin-top:2rem;">
+                <div class="export-card" style="padding:1.5rem; background:rgba(255,255,255,0.05); border-radius:10px; text-align:center;">
+                    <div style="font-size:2rem; margin-bottom:0.5rem;">💬</div>
+                    <h4>Conversas & Chats</h4>
+                    <p style="font-size:0.8rem; color:#94a3b8; margin-bottom:1rem;">Histórico completo de atendimentos</p>
+                    <button class="btn-primary" style="width:100%;" onclick="triggerExport('chats')">Baixar CSV</button>
+                </div>
+                 <div class="export-card" style="padding:1.5rem; background:rgba(255,255,255,0.05); border-radius:10px; text-align:center;">
+                    <div style="font-size:2rem; margin-bottom:0.5rem;">👥</div>
+                    <h4>Leads & Clientes</h4>
+                    <p style="font-size:0.8rem; color:#94a3b8; margin-bottom:1rem;">Base de contatos e CRM</p>
+                    <button class="btn-primary" style="width:100%;" onclick="triggerExport('leads')">Baixar CSV</button>
+                </div>
+                 <div class="export-card" style="padding:1.5rem; background:rgba(255,255,255,0.05); border-radius:10px; text-align:center;">
+                    <div style="font-size:2rem; margin-bottom:0.5rem;">💰</div>
+                    <h4>Vendas & Pedidos</h4>
+                    <p style="font-size:0.8rem; color:#94a3b8; margin-bottom:1rem;">Relatório financeiro detalhado</p>
+                    <button class="btn-primary" style="width:100%;" onclick="triggerExport('sales')">Baixar CSV</button>
+                </div>
+                <div class="export-card" style="padding:1.5rem; background:rgba(255,255,255,0.05); border-radius:10px; text-align:center;">
+                    <div style="font-size:2rem; margin-bottom:0.5rem;">📦</div>
+                    <h4>Produtos & Estoque</h4>
+                    <p style="font-size:0.8rem; color:#94a3b8; margin-bottom:1rem;">Catálogo e movimentações</p>
+                    <button class="btn-primary" style="width:100%;" onclick="triggerExport('products')">Baixar CSV</button>
+                </div>
+                <div class="export-card" style="padding:1.5rem; background:rgba(255,255,255,0.05); border-radius:10px; text-align:center;">
+                    <div style="font-size:2rem; margin-bottom:0.5rem;">📋</div>
+                    <h4>Logs de Auditoria</h4>
+                    <p style="font-size:0.8rem; color:#94a3b8; margin-bottom:1rem;">Registro de atividades</p>
+                    <button class="btn-primary" style="width:100%;" onclick="triggerExport('logs')">Baixar CSV</button>
+                </div>
+            </div>
+        </div>
+      </section>
+
+      <!-- Integrações Pagamentos Section -->
+      <section class="section-panel" id="section-int-pagamentos">
+        <div class="section-header">
+          <h2>💳 Integrações de Pagamento</h2>
+        </div>
+        <div class="integrations-list" id="payment-integrations">
+          <!-- Payment integrations will be loaded -->
+        </div>
+      </section>
+
+      <!-- Config Empresa Section -->
+      <section class="section-panel" id="section-cfg-empresa">
+        <div class="section-header">
+          <h2>🏛️ Dados da Empresa</h2>
+        </div>
+        <form id="company-form" class="config-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nome da Empresa</label>
+              <input type="text" id="company-name" placeholder="GetNexo" />
+            </div>
+            <div class="form-group">
+              <label>CNPJ</label>
+              <input type="text" id="company-cnpj" placeholder="00.000.000/0001-00" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Email de Contato</label>
+              <input type="email" id="company-email" placeholder="contato@empresa.com" />
+            </div>
+            <div class="form-group">
+              <label>Telefone</label>
+              <input type="tel" id="company-phone" placeholder="(11) 99999-9999" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Endereço</label>
+            <input type="text" id="company-address" placeholder="Rua, número, cidade - estado" />
+          </div>
+          <button type="submit" class="btn-primary">Salvar Alterações</button>
+
+          <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #ef4444;">
+             <h3 style="color: #ef4444; font-size: 1.1rem; margin-bottom: 0.5rem;">🚨 Zona de Perigo</h3>
+             <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 1rem;">
+               Cuidado: A ação abaixo é irreversível. Ela apagará todas as conversas, pedidos, produtos e logs do sistema, mantendo APENAS sua conta de administrador. Use para "começar do zero".
+             </p>
+             <button type="button" class="btn-danger" onclick="resetSystem()">⚠️ RESETAR SISTEMA COMPLETO</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Macros Section -->
+      <section class="section-panel" id="section-macros">
+        <div class="section-header">
+          <h2>⚡ Macros / Respostas Rápidas</h2>
+          <button class="btn-primary" onclick="openModal('macro')">+ Nova Macro</button>
+        </div>
+        <p style="color:#94a3b8; margin-bottom:1.5rem;">Crie respostas prontas para acelerar o atendimento</p>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr><th>Atalho</th><th>Título</th><th>Conteúdo</th><th>Status</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="macros-tbody">
+              <tr><td colspan="5" class="loading">Carregando macros...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Horários Section -->
+      <section class="section-panel" id="section-horarios">
+        <div class="section-header">
+          <h2>🕐 Horários de Atendimento</h2>
+        </div>
+        <div class="config-form">
+          <div class="schedule-grid">
+            <div class="schedule-day">
+              <span class="day-name">Segunda</span>
+              <label class="toggle-switch"><input type="checkbox" checked data-day="seg" /><span class="toggle-slider"></span></label>
+              <input type="time" value="09:00" class="time-input" data-day="seg" data-type="start" />
+              <span style="color:#64748b;">às</span>
+              <input type="time" value="18:00" class="time-input" data-day="seg" data-type="end" />
+            </div>
+            <div class="schedule-day">
+              <span class="day-name">Terça</span>
+              <label class="toggle-switch"><input type="checkbox" checked data-day="ter" /><span class="toggle-slider"></span></label>
+              <input type="time" value="09:00" class="time-input" />
+              <span style="color:#64748b;">às</span>
+              <input type="time" value="18:00" class="time-input" />
+            </div>
+            <div class="schedule-day">
+              <span class="day-name">Quarta</span>
+              <label class="toggle-switch"><input type="checkbox" checked data-day="qua" /><span class="toggle-slider"></span></label>
+              <input type="time" value="09:00" class="time-input" />
+              <span style="color:#64748b;">às</span>
+              <input type="time" value="18:00" class="time-input" />
+            </div>
+            <div class="schedule-day">
+              <span class="day-name">Quinta</span>
+              <label class="toggle-switch"><input type="checkbox" checked data-day="qui" /><span class="toggle-slider"></span></label>
+              <input type="time" value="09:00" class="time-input" />
+              <span style="color:#64748b;">às</span>
+              <input type="time" value="18:00" class="time-input" />
+            </div>
+            <div class="schedule-day">
+              <span class="day-name">Sexta</span>
+              <label class="toggle-switch"><input type="checkbox" checked data-day="sex" /><span class="toggle-slider"></span></label>
+              <input type="time" value="09:00" class="time-input" />
+              <span style="color:#64748b;">às</span>
+              <input type="time" value="18:00" class="time-input" />
+            </div>
+            <div class="schedule-day">
+              <span class="day-name">Sábado</span>
+              <label class="toggle-switch"><input type="checkbox" data-day="sab" /><span class="toggle-slider"></span></label>
+              <input type="time" value="09:00" class="time-input" />
+              <span style="color:#64748b;">às</span>
+              <input type="time" value="12:00" class="time-input" />
+            </div>
+            <div class="schedule-day">
+              <span class="day-name">Domingo</span>
+              <label class="toggle-switch"><input type="checkbox" data-day="dom" /><span class="toggle-slider"></span></label>
+              <input type="time" value="09:00" class="time-input" disabled />
+              <span style="color:#64748b;">às</span>
+              <input type="time" value="12:00" class="time-input" disabled />
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:1.5rem;">
+            <label>Mensagem fora do horário</label>
+            <textarea id="offline-message" rows="3" style="width:100%; padding:1rem; background:rgba(0,0,0,0.3); border:1px solid #334155; border-radius:10px; color:white;">Olá! 👋 Nosso atendimento funciona de segunda a sexta, das 09h às 18h. Deixe sua mensagem que retornaremos em breve!</textarea>
+          </div>
+          <button class="btn-primary" onclick="saveSchedule()">Salvar Horários</button>
+        </div>
+      </section>
+
+      <!-- Team Management Section (Ultimate) -->
+      <section class="section-panel" id="section-users">
+        <div class="section-header">
+            <h2>👥 Gerenciar Equipe</h2>
+            <button class="btn-primary" onclick="openModal('invite-team')">+ Convidar Membro</button>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead><tr><th>Avatar</th><th>Nome</th><th>Email</th><th>Função</th><th>Último Acesso</th><th>Ações</th></tr></thead>
+                <tbody id="team-tbody"></tbody>
+            </table>
+        </div>
+      </section>
+
+      <!-- IA Prompts Section -->
+      <section class="section-panel" id="section-ia-prompts">
+        <div class="section-header">
+          <h2>📝 Prompts e Contexto da IA</h2>
+        </div>
+        <div class="config-form">
+          <div class="form-group">
+            <label>Nome do Assistente</label>
+            <input type="text" id="ai-name" value="Nexo" placeholder="Nome do assistente" />
+          </div>
+          <div class="form-group">
+            <label>Personalidade / Tom de Voz</label>
+            <select id="ai-personality" style="width:100%; padding:0.75rem; background:rgba(0,0,0,0.3); border:1px solid #334155; border-radius:10px; color:white;">
+              <option value="friendly">😊 Amigável e Informal</option>
+              <option value="professional">👔 Profissional e Formal</option>
+              <option value="playful">🎉 Divertido e Descontraído</option>
+              <option value="direct">⚡ Direto e Objetivo</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Contexto do Negócio (System Prompt)</label>
+            <textarea id="ai-context" rows="6" style="width:100%; padding:1rem; background:rgba(0,0,0,0.3); border:1px solid #334155; border-radius:10px; color:white; font-family:monospace;">Você é um assistente de vendas do GetNexo, uma plataforma de automação para WhatsApp Business. Seu objetivo é ajudar clientes com dúvidas sobre produtos, preços e funcionalidades.</textarea>
+          </div>
+          <div class="form-group">
+            <label>Informações da Empresa (para a IA conhecer)</label>
+            <textarea id="ai-company-info" rows="4" style="width:100%; padding:1rem; background:rgba(0,0,0,0.3); border:1px solid #334155; border-radius:10px; color:white;">- GetNexo: Plataforma de automação WhatsApp
+- Planos: Starter (R$97/mês), Pro (R$197/mês), Enterprise (R$497/mês)
+- Suporte: Segunda a Sexta, 9h às 18h</textarea>
+          </div>
+          <button class="btn-primary" onclick="saveAIPrompts()">Salvar Configurações de IA</button>
+        </div>
+      </section>
+
+      <!-- IA Playground Section -->
+      <section class="section-panel" id="section-ia-playground">
+        <div class="section-header">
+          <h2>🧪 Playground de IA</h2>
+        </div>
+        <div class="playground-container">
+          <div class="playground-chat" id="playground-chat">
+            <div class="chat-message bot">
+              <span class="avatar">🤖</span>
+              <div class="message-content">Olá! Sou o assistente do GetNexo. Teste aqui suas configurações de IA.</div>
+            </div>
+          </div>
+          <div class="playground-input">
+            <input type="text" id="playground-input" placeholder="Digite uma mensagem para testar..." />
+            <button class="btn-primary" onclick="testAI()">Enviar</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Webhooks Section -->
+      <section class="section-panel" id="section-int-webhooks">
+        <div class="section-header">
+          <h2>🔗 Webhooks</h2>
+          <button class="btn-primary" onclick="openModal('webhook')">+ Novo Webhook</button>
+        </div>
+        <p style="color:#94a3b8; margin-bottom:1.5rem;">Envie dados automaticamente para sistemas externos quando eventos ocorrerem.</p>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr><th>Nome</th><th>URL</th><th>Eventos</th><th>Status</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="webhooks-tbody">
+              <tr><td colspan="5" class="loading">Carregando webhooks...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- E-commerce Integrations Section -->
+      <section class="section-panel" id="section-int-ecommerce">
+        <div class="section-header">
+          <h2>🛒 Integrações E-commerce</h2>
+        </div>
+        <div class="integrations-list" id="ecommerce-integrations"></div>
+      </section>
+
+      <!-- Automation Integrations Section -->
+      <section class="section-panel" id="section-int-automacao">
+        <div class="section-header">
+          <h2>⚙️ Integrações de Automação</h2>
+        </div>
+        <div class="integrations-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:1.5rem;">
+            <!-- Google Sheets -->
+            <div class="integration-card" style="border:1px solid rgba(255,255,255,0.1); padding:1.5rem; background:rgba(255,255,255,0.02); border-radius:10px;">
+                <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+                    <div style="font-size:2rem; color:#10b981;">📊</div>
+                    <div>
+                        <h3>Google Sheets</h3>
+                        <p style="font-size:0.8rem; color:#94a3b8;">Exportar Leads Automaticamente</p>
+                    </div>
+                </div>
+                <div class="config-form">
+                    <div class="form-group">
+                        <label>ID da Planilha (Spreadsheet ID)</label>
+                        <input type="text" id="sheets-id" placeholder="1BxiMVs0XRA5nFMdKwj43z..." style="background:rgba(0,0,0,0.3); width:100%; padding:0.5rem; border:1px solid #334155; border-radius:5px; color:white;" />
+                    </div>
+                    <div class="form-group" style="margin-top:0.5rem;">
+                        <label>Service Account JSON (Conteúdo)</label>
+                        <textarea id="sheets-json" rows="3" placeholder='{"type": "service_account", ...}' style="background:rgba(0,0,0,0.3); width:100%; padding:0.5rem; border:1px solid #334155; border-radius:5px; color:white; font-family:monospace; font-size:0.8rem;"></textarea>
+                    </div>
+                    <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+                        <button class="btn-primary" onclick="saveGoogleIntegration('sheets')">Salvar</button>
+                        <button class="btn-secondary" onclick="testGoogleIntegration('sheet')">Testar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Google Calendar -->
+            <div class="integration-card" style="border:1px solid rgba(255,255,255,0.1); padding:1.5rem; background:rgba(255,255,255,0.02); border-radius:10px;">
+                <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+                    <div style="font-size:2rem; color:#3b82f6;">📅</div>
+                    <div>
+                        <h3>Google Calendar</h3>
+                        <p style="font-size:0.8rem; color:#94a3b8;">Agendar Reuniões pelo Chat</p>
+                    </div>
+                </div>
+                <div class="config-form">
+                    <div class="form-group">
+                        <label>ID do Calendário (Email)</label>
+                        <input type="text" id="calendar-id" placeholder="agenda@empresa.com" style="background:rgba(0,0,0,0.3); width:100%; padding:0.5rem; border:1px solid #334155; border-radius:5px; color:white;" />
+                    </div>
+                    <div class="form-group" style="margin-top:0.5rem;">
+                        <label>Service Account JSON (Conteúdo)</label>
+                        <textarea id="calendar-json" rows="3" placeholder='{"type": "service_account", ...}' style="background:rgba(0,0,0,0.3); width:100%; padding:0.5rem; border:1px solid #334155; border-radius:5px; color:white; font-family:monospace; font-size:0.8rem;"></textarea>
+                    </div>
+                    <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+                        <button class="btn-primary" onclick="saveGoogleIntegration('calendar')">Salvar</button>
+                        <button class="btn-secondary" onclick="testGoogleIntegration('calendar')">Testar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </section>
+
+      </section>
+
+      <!-- Relatórios Section (Ultimate) -->
+      <section class="section-panel" id="section-rel-vendas">
+        <div class="section-header">
+          <h2>📈 Relatórios de Vendas & Performance</h2>
+          <div style="display:flex; gap:1rem;">
+            <button class="btn-secondary" onclick="loadRelatorios()">🔄 Atualizar</button>
+            <button class="btn-primary" onclick="exportData('sales')">⬇ Exportar CSV</button>
+          </div>
+        </div>
+        <div class="charts-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+          <div class="chart-card glass-panel" style="padding:1.5rem;">
+            <h3>Receita (Últimos 7 dias)</h3>
+            <canvas id="salesChart"></canvas>
+          </div>
+          <div class="chart-card glass-panel" style="padding:1.5rem;">
+            <h3>Volume de Mensagens</h3>
+            <canvas id="messagesChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card glass-panel" style="padding:1.5rem;">
+            <h3>Top 5 Produtos Vendidos</h3>
+            <canvas id="productsChart"></canvas>
+        </div>
+      </section>
+
+      <!-- Estoque/Inventory Section (Ultimate) -->
+      <section class="section-panel" id="section-estoque">
+        <div class="section-header">
+          <h2>📦 Controle de Estoque Avançado</h2>
+          <button class="btn-primary" onclick="openModal('estoque-ajuste')">📝 Ajuste Rápido</button>
+        </div>
+        <div class="inventory-dashboard" style="display:flex; gap:1rem; margin-bottom:2rem;">
+            <div class="stat-card warning">
+                <span class="stat-value" id="stock-low">0</span>
+                <span class="stat-label">Baixo Estoque</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" id="stock-total">0</span>
+                <span class="stat-label">Total Itens</span>
+            </div>
+        </div>
+        <h3>Histórico de Movimentação</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr><th>Data</th><th>Produto</th><th>Mudança</th><th>Motivo</th><th>Usuário</th></tr>
+            </thead>
+            <tbody id="inventory-logs-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Segurança/Security Section (Ultimate) -->
+      <section class="section-panel" id="section-seg-ips">
+        <div class="section-header">
+          <h2>🛡️ Segurança & Firewall</h2>
+          <button class="btn-danger" onclick="openModal('block-ip')">⛔ Bloquear IP</button>
+        </div>
+        
+        <div class="security-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:2rem;">
+            <div class="glass-panel" style="padding:1.5rem;">
+                <h3>🔒 IPs Bloqueados (Blacklist)</h3>
+                <div class="table-container" style="max-height: 400px; overflow-y:auto;">
+                    <table style="width:100%;">
+                        <thead><tr><th>IP</th><th>Motivo</th><th>Ação</th></tr></thead>
+                        <tbody id="blacklist-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="glass-panel" style="padding:1.5rem;">
+                <h3>🕵️ Logs de Auditoria do Sistema</h3>
+                <div class="logs-feed" id="system-logs-feed" style="font-family:monospace; font-size:0.8rem; height:400px; overflow-y:auto; color:#cbd5e1;">
+                    <div style="padding:0.5rem; border-bottom:1px solid rgba(255,255,255,0.05);">[SYSTEM] Iniciando monitoramento...</div>
+                </div>
+            </div>
+        </div>
+      </section>
+
+      <!-- System Health (Ultimate) -->
+      <section class="section-panel" id="section-system-health">
+        <div class="section-header">
+            <h2>🏥 Saúde do Sistema</h2>
+            <span class="pulse-dot"></span>
+        </div>
+        <div class="health-grid" id="health-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1.5rem;">
+            <!-- Loaded via JS -->
+        </div>
+      </section>
+
+      <!-- Categorias -->
+      <section class="section-panel" id="section-categorias">
+        <div class="section-header">
+          <h2>📂 Categorias de Produtos</h2>
+          <button class="btn-primary" onclick="openModal('categoria')">+ Nova Categoria</button>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Nome</th><th>Slug</th><th>Descrição</th><th>Ações</th></tr></thead>
+            <tbody id="categorias-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Backup Section -->
+      <section class="section-panel" id="section-cfg-backup">
+        <div class="section-header">
+          <h2>💾 Backup e Restauração</h2>
+        </div>
+        <div class="backup-cards">
+          <div class="backup-card">
+            <h3>📤 Exportar Dados</h3>
+            <p style="color:#94a3b8; margin:1rem 0;">Faça download de todos os dados do sistema em formato JSON ou CSV.</p>
+            <select id="export-format" style="padding:0.75rem; background:rgba(0,0,0,0.3); border:1px solid #334155; border-radius:10px; color:white; margin-right:1rem;">
+              <option value="json">JSON</option>
+              <option value="csv">CSV</option>
+            </select>
+            <button class="btn-primary" onclick="exportBackup()">Exportar JSON/CSV</button>
+            <button class="btn-secondary" onclick="triggerBackup()" style="margin-left:0.5rem;">Download DB (.sqlite)</button>
+            <div class="last-backup" style="margin-top:1rem; font-size:0.85rem; color:#64748b;">
+              Último backup: <span id="last-backup-date">Nunca</span>
+            </div>
+          </div>
+          <div class="backup-card">
+            <h3>📥 Restaurar Dados</h3>
+            <p style="color:#94a3b8; margin:1rem 0;">Importe um arquivo de backup para restaurar configurações.</p>
+            <input type="file" id="backup-file" accept=".json,.csv" style="display:none;" onchange="restoreBackup(this)" />
+            <button class="btn-secondary" onclick="document.getElementById('backup-file').click()">Selecionar Arquivo</button>
+          </div>
+          <div class="backup-card">
+            <h3>🔄 Backup Automático</h3>
+            <p style="color:#94a3b8; margin:1rem 0;">Configure backups automáticos para o Google Drive ou S3.</p>
+            <div style="display:flex; align-items:center; gap:1rem;">
+              <label class="toggle-switch">
+                <input type="checkbox" id="auto-backup-toggle" />
+                <span class="toggle-slider"></span>
+              </label>
+              <span style="color:white;">Backup diário automático</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Email/SMTP Section -->
+      <section class="section-panel" id="section-cfg-email">
+        <div class="section-header">
+          <h2>✉️ Configuração de Email</h2>
+        </div>
+        <form class="config-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Servidor SMTP</label>
+              <input type="text" id="smtp-host" placeholder="smtp.gmail.com" />
+            </div>
+            <div class="form-group">
+              <label>Porta</label>
+              <input type="number" id="smtp-port" value="587" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Usuário</label>
+              <input type="text" id="smtp-user" placeholder="seu@email.com" />
+            </div>
+            <div class="form-group">
+              <label>Senha</label>
+              <input type="password" id="smtp-pass" placeholder="••••••••" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Email Remetente</label>
+            <input type="email" id="smtp-from" placeholder="noreply@empresa.com" />
+          </div>
+          <div style="display:flex; gap:1rem;">
+            <button type="button" class="btn-secondary" onclick="testEmail()">📧 Testar Envio</button>
+            <button type="submit" class="btn-primary">Salvar SMTP</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- API Tokens Section -->
+      <section class="section-panel" id="section-cfg-api">
+        <div class="section-header">
+          <h2>🔑 API e Tokens</h2>
+          <button class="btn-primary" onclick="generateNewToken()">+ Gerar Novo Token</button>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr><th>Nome</th><th>Token</th><th>Criado em</th><th>Último Uso</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="tokens-tbody">
+              <tr>
+                <td>API Principal</td>
+                <td><code style="background:#1e293b; padding:0.3rem 0.6rem; border-radius:4px;">gnx_live_••••••••••••</code></td>
+                <td>15/01/2026</td>
+                <td>Hoje, 23:45</td>
+                <td><button class="btn-sm" onclick="copyToken()">📋 Copiar</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top:1.5rem; padding:1.5rem; background:rgba(0,212,255,0.1); border:1px solid rgba(0,212,255,0.2); border-radius:12px;">
+          <h4 style="color:white; margin:0 0 0.5rem 0;">📖 Documentação da API</h4>
+          <p style="color:#94a3b8; margin:0;">Acesse a documentação completa em <a href="/api" target="_blank" style="color:#00d4ff;">getnexo.com.br/api</a></p>
+        </div>
+      </section>
+
+      <!-- WhatsApp Management Section -->
+      <section class="section-panel" id="section-int-whatsapp-manage">
+        <div class="section-header">
+          <h2>📱 Gerenciar WhatsApp</h2>
+          <div id="wa-status-badge" class="status-badge offline">Verificando...</div>
+        </div>
+
+        <div class="wa-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.5rem;">
+          <div class="wa-info-panel" style="background: rgba(255,255,255,0.05); padding: 2rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+            <h3 style="margin-top: 0; color: white;">Status da Conexão</h3>
+            <p id="wa-status-text" style="color: #94a3b8; line-height: 1.6;">Aguarde, verificando status do Evolution API...</p>
+            
+            <div id="wa-actions" style="margin-top: 2rem; display: flex; gap: 1rem;">
+              <button class="btn-secondary" onclick="checkWhatsAppStatus()">🔄 Atualizar Status</button>
+              <button id="btn-wa-logout" class="btn-danger" style="display: none;" onclick="logoutWhatsApp()">🚪 Desconectar</button>
+            </div>
+          </div>
+
+          <div class="wa-qr-panel" id="wa-qr-container" style="background: white; padding: 2rem; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 300px;">
+            <div id="wa-qr-code" style="width: 200px; height: 200px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+               <span style="color: #64748b; text-align: center; font-size: 0.8rem;">Carregando QR Code...</span>
+            </div>
+            <p id="wa-qr-hint" style="color: #475569; font-size: 0.8rem; margin-top: 1rem; text-align: center; font-weight: 600;">
+              Abra o WhatsApp no seu celular e escaneie o código acima.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pedidos Section -->
+      <section class="section-panel" id="section-pedidos">
+        <div class="section-header">
+          <h2>📦 Gerenciar Pedidos</h2>
+          <div style="display:flex; gap:1rem;">
+            <select id="pedido-status-filter" class="filter-select" onchange="filterPedidos()">
+              <option value="">Todos os Status</option>
+              <option value="pending">Pendente</option>
+              <option value="paid">Pago</option>
+              <option value="shipped">Enviado</option>
+              <option value="delivered">Entregue</option>
+              <option value="cancelled">Cancelado</option>
+            </select>
+            <button class="btn-secondary" onclick="exportPedidos()">📥 Exportar</button>
+          </div>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Pedido</th>
+                <th>Cliente</th>
+                <th>Produtos</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Data</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="pedidos-tbody">
+              <tr><td colspan="7" class="loading">Carregando pedidos...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Categorias Section -->
+      <section class="section-panel" id="section-categorias">
+        <div class="section-header">
+          <h2>📂 Categorias</h2>
+          <button class="btn-primary" onclick="openModal('categoria')">+ Nova Categoria</button>
+        </div>
+        <div class="categories-grid" id="categories-grid">
+          <div class="loading">Carregando categorias...</div>
+        </div>
+      </section>
+
+      <!-- Estoque Section -->
+      <section class="section-panel" id="section-estoque">
+        <div class="section-header">
+          <h2>📊 Controle de Estoque</h2>
+          <button class="btn-secondary" onclick="exportEstoque()">📥 Exportar</button>
+        </div>
+        <div class="stats-grid" style="margin-bottom:1.5rem;">
+          <div class="stat-card">
+            <span class="stat-icon">📦</span>
+            <div class="stat-info">
+              <span class="stat-value" id="estoque-total">0</span>
+              <span class="stat-label">Itens em Estoque</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">⚠️</span>
+            <div class="stat-info">
+              <span class="stat-value" id="estoque-baixo">0</span>
+              <span class="stat-label">Estoque Baixo</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">❌</span>
+            <div class="stat-info">
+              <span class="stat-value" id="estoque-zerado">0</span>
+              <span class="stat-label">Sem Estoque</span>
+            </div>
+          </div>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr><th>Produto</th><th>SKU</th><th>Estoque Atual</th><th>Estoque Mínimo</th><th>Status</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="estoque-tbody">
+              <tr><td colspan="6" class="loading">Carregando estoque...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Bot Config Section -->
+      <section class="section-panel" id="section-bot-config">
+        <div class="section-header">
+          <h2>🤖 Configuração do Bot</h2>
+        </div>
+        <div class="config-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nome do Bot</label>
+              <input type="text" id="bot-name" value="Nexo" placeholder="Nome exibido ao cliente" />
+            </div>
+            <div class="form-group">
+              <label>Idioma Principal</label>
+              <select id="bot-lang">
+                <option value="pt-BR" selected>Português (Brasil)</option>
+                <option value="en">English</option>
+                <option value="es">Español</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Saudação Inicial</label>
+            <textarea id="bot-greeting" rows="3">Olá! 👋 Sou o assistente virtual do GetNexo. Como posso ajudar você hoje?</textarea>
+          </div>
+          <div class="form-group">
+            <label>Mensagem de Despedida</label>
+            <textarea id="bot-farewell" rows="2">Foi um prazer ajudar! 😊 Volte sempre!</textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group" style="display:flex; align-items:center; gap:1rem;">
+              <label class="toggle-switch">
+                <input type="checkbox" id="bot-auto-reply" checked />
+                <span class="toggle-slider"></span>
+              </label>
+              <span style="color:white;">Resposta Automática</span>
+            </div>
+            <div class="form-group" style="display:flex; align-items:center; gap:1rem;">
+              <label class="toggle-switch">
+                <input type="checkbox" id="bot-typing" checked />
+                <span class="toggle-slider"></span>
+              </label>
+              <span style="color:white;">Simular Digitação</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Tempo de Espera (segundos)</label>
+            <input type="number" id="bot-delay" value="2" min="0" max="10" style="width:100px;" />
+          </div>
+          <button class="btn-primary" onclick="saveBotConfig()">Salvar Configurações</button>
+        </div>
+      </section>
+
+      <!-- Filas Section -->
+      <section class="section-panel" id="section-filas">
+        <div class="section-header">
+          <h2>📋 Filas de Atendimento</h2>
+          <button class="btn-primary" onclick="openModal('fila')">+ Nova Fila</button>
+        </div>
+        <div class="queues-grid" id="queues-grid">
+           <!-- Loaded via JS -->
+        </div>
+      </section>
+
+      <!-- Sessões Section -->
+      <section class="section-panel" id="section-seg-sessoes">
+        <div class="section-header">
+          <h2>🔐 Sessões Ativas</h2>
+          <button class="btn-danger" onclick="revokeAllSessions()">🚫 Encerrar Todas</button>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr><th>Usuário</th><th>IP</th><th>Dispositivo</th><th>Localização</th><th>Iniciada em</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="sessions-tbody">
+              <tr>
+                <td>Admin User</td>
+                <td><code>177.45.xxx.xxx</code></td>
+                <td>Chrome / Linux</td>
+                <td>São Paulo, BR</td>
+                <td>Há 2 horas</td>
+                <td>
+                  <span class="status-badge online" style="font-size:0.75rem;">Sessão Atual</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+
+
+      <!-- Notificações Config Section -->
+      <section class="section-panel" id="section-cfg-notificacoes">
+        <div class="section-header">
+          <h2>🔔 Configuração de Notificações</h2>
+        </div>
+        <div class="config-form">
+          <h4 style="color:white; margin-bottom:1rem;">📧 Notificações por Email</h4>
+          <div class="notifications-grid">
+            <div class="notification-item">
+              <label class="toggle-switch">
+                <input type="checkbox" checked data-notif="new_order" />
+                <span class="toggle-slider"></span>
+              </label>
+              <span>Novo pedido recebido</span>
+            </div>
+            <div class="notification-item">
+              <label class="toggle-switch">
+                <input type="checkbox" checked data-notif="new_lead" />
+                <span class="toggle-slider"></span>
+              </label>
+              <span>Novo lead capturado</span>
+            </div>
+            <div class="notification-item">
+              <label class="toggle-switch">
+                <input type="checkbox" data-notif="low_stock" />
+                <span class="toggle-slider"></span>
+              </label>
+              <span>Estoque baixo</span>
+            </div>
+            <div class="notification-item">
+              <label class="toggle-switch">
+                <input type="checkbox" data-notif="new_message" />
+                <span class="toggle-slider"></span>
+              </label>
+              <span>Nova mensagem (quando offline)</span>
+            </div>
+          </div>
+          
+          <h4 style="color:white; margin:2rem 0 1rem;">📱 Notificações Push</h4>
+          <div class="notifications-grid">
+            <div class="notification-item">
+              <label class="toggle-switch">
+                <input type="checkbox" checked data-push="order" />
+                <span class="toggle-slider"></span>
+              </label>
+              <span>Push no navegador</span>
+            </div>
+            <div class="notification-item">
+              <label class="toggle-switch">
+                <input type="checkbox" data-push="sound" />
+                <span class="toggle-slider"></span>
+              </label>
+              <span>Som de notificação</span>
+            </div>
+          </div>
+          
+          <button class="btn-primary" style="margin-top:1.5rem;" onclick="saveNotifications()">Salvar Preferências</button>
+        </div>
+      </section>
+
+      <!-- Relatório Vendas Section -->
+      <section class="section-panel" id="section-rel-vendas">
+        <div class="section-header">
+          <h2>📊 Relatório de Vendas</h2>
+          <div style="display:flex; gap:1rem;">
+            <select id="rel-vendas-periodo" class="filter-select">
+              <option value="7d">Últimos 7 dias</option>
+              <option value="30d" selected>Últimos 30 dias</option>
+              <option value="90d">Últimos 90 dias</option>
+              <option value="1y">Último ano</option>
+            </select>
+            <button class="btn-secondary" onclick="exportRelVendas()">📥 Exportar</button>
+          </div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-icon">💰</span>
+            <div class="stat-info">
+              <span class="stat-value" id="rel-total-vendas">R$ 0</span>
+              <span class="stat-label">Faturamento Total</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">🛒</span>
+            <div class="stat-info">
+              <span class="stat-value" id="rel-qtd-pedidos">0</span>
+              <span class="stat-label">Pedidos</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">📈</span>
+            <div class="stat-info">
+              <span class="stat-value" id="rel-ticket-medio">R$ 0</span>
+              <span class="stat-label">Ticket Médio</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">🔄</span>
+            <div class="stat-info">
+              <span class="stat-value" id="rel-taxa-conversao">0%</span>
+              <span class="stat-label">Taxa de Conversão</span>
+            </div>
+          </div>
+        </div>
+        <div class="chart-container" style="margin-top:1.5rem; background:rgba(20,30,50,0.6); border:1px solid #1f2937; border-radius:16px; padding:1.5rem;">
+          <canvas id="chart-vendas" height="300"></canvas>
+        </div>
+      </section>
+
+      <!-- Relatório Leads Section -->
+      <section class="section-panel" id="section-rel-leads">
+        <div class="section-header">
+          <h2>👥 Relatório de Leads</h2>
+          <button class="btn-secondary" onclick="exportRelLeads()">📥 Exportar</button>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-icon">👥</span>
+            <div class="stat-info">
+              <span class="stat-value" id="rel-total-leads">0</span>
+              <span class="stat-label">Total de Leads</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">🆕</span>
+            <div class="stat-info">
+              <span class="stat-value" id="rel-novos-leads">0</span>
+              <span class="stat-label">Novos (30 dias)</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">✅</span>
+            <div class="stat-info">
+              <span class="stat-value" id="rel-convertidos">0</span>
+              <span class="stat-label">Convertidos</span>
+            </div>
+          </div>
+        </div>
+        <div class="table-container" style="margin-top:1.5rem;">
+          <table>
+            <thead>
+              <tr><th>Fonte</th><th>Leads</th><th>Conversões</th><th>Taxa</th></tr>
+            </thead>
+            <tbody id="leads-source-tbody">
+              <tr><td>WhatsApp</td><td>245</td><td>89</td><td><span class="status-badge online">36.3%</span></td></tr>
+              <tr><td>Site</td><td>128</td><td>34</td><td><span class="status-badge">26.6%</span></td></tr>
+              <tr><td>Instagram</td><td>67</td><td>12</td><td><span class="status-badge">17.9%</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Relatório Atendimento Section -->
+      <section class="section-panel" id="section-rel-atendimento">
+        <div class="section-header">
+          <h2>💬 Relatório de Atendimento</h2>
+          <button class="btn-secondary" onclick="exportRelAtendimento()">📥 Exportar</button>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-icon">💬</span>
+            <div class="stat-info">
+              <span class="stat-value" id="rel-total-conversas">0</span>
+              <span class="stat-label">Conversas</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">⏱️</span>
+            <div class="stat-info">
+              <span class="stat-value" id="rel-tempo-resposta">0s</span>
+              <span class="stat-label">Tempo Médio Resposta</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">⭐</span>
+            <div class="stat-info">
+              <span class="stat-value" id="rel-csat">0%</span>
+              <span class="stat-label">Satisfação (CSAT)</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">🤖</span>
+            <div class="stat-info">
+              <span class="stat-value" id="rel-bot-taxa">0%</span>
+              <span class="stat-label">Resolvido pelo Bot</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Relatório Performance Section -->
+      <section class="section-panel" id="section-rel-performance">
+        <div class="section-header">
+          <h2>⚡ Performance do Sistema</h2>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-icon">🚀</span>
+            <div class="stat-info">
+              <span class="stat-value" id="perf-uptime">99.9%</span>
+              <span class="stat-label">Uptime</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">⏱️</span>
+            <div class="stat-info">
+              <span class="stat-value" id="perf-latencia">42ms</span>
+              <span class="stat-label">Latência Média</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">⏱️</span>
+            <div class="stat-info">
+              <span class="stat-value" id="perf-uptime">0h</span>
+              <span class="stat-label">Uptime</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">🔗</span>
+            <div class="stat-info">
+              <span class="stat-value" id="perf-load">0.00</span>
+              <span class="stat-label">Load Avg</span>
+            </div>
+          </div>
+        </div>
+        <div class="system-info" style="margin-top:2rem; padding:1.5rem; background:rgba(0,0,0,0.3); border-radius:12px;">
+            <h4 style="color:#00ff9d; margin-bottom:1rem;">Detalhes do Ambiente</h4>
+            <div id="perf-details" style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; color:#ccc;">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+      </section>
+
+      <!-- IA Estratégia (Kira) Section -->
+      <section class="section-panel" id="section-ia-estrategia">
+        <div class="section-header">
+          <div>
+              <h2>🏯 Kira War Room</h2>
+              <p style="color:#888;">Centro de Comando Estratégico</p>
+          </div>
+          <button class="btn-primary" onclick="generateStrategy()">✨ Gerar Nova Estratégia</button>
+        </div>
+        
+        <div class="strategy-grid" style="display:grid; grid-template-columns: 2fr 1fr; gap:2rem;">
+            <!-- Active Plan -->
+            <div class="active-plan">
+                <h3 style="color:white; margin-bottom:1rem; border-left: 3px solid #00ff9d; padding-left:1rem;">Plano Ativo</h3>
+                <div id="kira-active-plan" class="loading-placeholder">
+                    Carregando plano mestre...
+                </div>
+            </div>
+            
+            <!-- Quick Actions / Metrics -->
+            <div class="war-metrics">
+                <h3 style="color:white; margin-bottom:1rem;">Métricas de Combate</h3>
+                 <div class="stat-card compact" style="margin-bottom:1rem;">
+                    <span class="stat-value small" style="color:#00ff9d;">94%</span>
+                    <span class="stat-label">Precisão Tática</span>
+                </div>
+                <div class="stat-card compact">
+                    <span class="stat-value small" style="color:#ff0033;">3</span>
+                    <span class="stat-label">Ameaças Detectadas</span>
+                </div>
+                
+                <h3 style="color:white; margin:1.5rem 0 1rem;">Histórico</h3>
+                <div id="kira-history-list" style="max-height:300px; overflow-y:auto;">
+                    <!-- List -->
+                </div>
+            </div>
+        </div>
+      </section>
+
+      <!-- IA Content Queue Section -->
+      <section class="section-panel" id="section-ia-queue">
+        <div class="section-header">
+          <h2>📝 Fila de Conteúdo (SEO)</h2>
+          <button class="btn-primary" onclick="openModal('content-task')">+ Nova Pauta</button>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr><th>Título</th><th>Keyword</th><th>Status</th><th>Data Gerada</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="ia-queue-tbody">
+              <tr><td colspan="5" class="loading">Carregando fila...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- A/B Testing Section -->
+      <section class="section-panel" id="section-ab-tests">
+        <div class="section-header">
+          <h2>🧪 Testes A/B (Otimizador)</h2>
+          <button class="btn-primary" onclick="openModal('ab-test')">+ Novo Teste</button>
+        </div>
+        <div class="ab-grid" id="ab-tests-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:1.5rem;">
+           <!-- Cards loaded via JS -->
+           <div class="loading-placeholder">Carregando experimentos...</div>
+        </div>
+      </section>
+
+
+
+
+      <!-- IA Histórico Section -->
+      <section class="section-panel" id="section-ia-historico">
+        <div class="section-header">
+          <h2>📜 Histórico de IA</h2>
+          <button class="btn-secondary" onclick="clearIAHistory()">🗑️ Limpar Histórico</button>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr><th>Data</th><th>Usuário</th><th>Pergunta</th><th>Resposta</th><th>Modelo</th></tr>
+            </thead>
+            <tbody id="ia-history-tbody">
+              <tr><td colspan="5" class="loading">Carregando histórico...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- Command Palette Modal -->
+<div class="command-palette" id="command-palette" style="display:none;">
+  <div class="command-content">
+    <input type="text" id="command-input" placeholder="Digite um comando ou busque..." autofocus />
+    <div class="command-results" id="command-results">
+      <div class="command-group">
+        <span class="command-group-title">Ações Rápidas</span>
+        <button class="command-item" data-action="produtos">🛍️ Ir para Produtos</button>
+        <button class="command-item" data-action="cupons">🎟️ Ir para Cupons</button>
+        <button class="command-item" data-action="campanhas">📢 Ir para Campanhas</button>
+        <button class="command-item" data-action="ia-provedores">🤖 Configurar IA</button>
+        <button class="command-item" data-action="macros">⚡ Macros</button>
+        <button class="command-item" data-action="horarios">🕐 Horários</button>
+        <button class="command-item" data-action="int-webhooks">🔗 Webhooks</button>
+        <button class="command-item" data-action="cfg-backup">💾 Backup</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Produto -->
+<div class="modal-overlay" id="modal-produto" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modal-produto-title">Novo Produto</h2>
+      <button class="modal-close" onclick="closeModal('produto')">&times;</button>
+    </div>
+    <form id="form-produto" onsubmit="saveProduto(event)">
+      <input type="hidden" id="produto-id" />
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome do Produto *</label>
+          <input type="text" id="produto-nome" required placeholder="Ex: Camiseta Premium" />
+        </div>
+        <div class="form-group">
+          <label>SKU</label>
+          <input type="text" id="produto-sku" placeholder="SKU-001" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Preço *</label>
+          <input type="number" id="produto-preco" required step="0.01" min="0" placeholder="99.90" />
+        </div>
+        <div class="form-group">
+          <label>Preço Promocional</label>
+          <input type="number" id="produto-preco-promo" step="0.01" min="0" placeholder="79.90" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Estoque</label>
+          <input type="number" id="produto-estoque" min="0" placeholder="100" />
+        </div>
+        <div class="form-group">
+          <label>Categoria</label>
+          <select id="produto-categoria">
+            <option value="">Selecione...</option>
+            <option value="roupas">Roupas</option>
+            <option value="eletronicos">Eletrônicos</option>
+            <option value="acessorios">Acessórios</option>
+            <option value="outros">Outros</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Descrição</label>
+        <textarea id="produto-descricao" rows="3" placeholder="Descreva o produto..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>URL da Imagem</label>
+        <input type="url" id="produto-imagem" placeholder="https://..." />
+      </div>
+      <div class="form-group" style="display:flex; align-items:center; gap:1rem;">
+        <label class="toggle-switch">
+          <input type="checkbox" id="produto-ativo" checked />
+          <span class="toggle-slider"></span>
+        </label>
+        <span style="color:white;">Produto Ativo</span>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeModal('produto')">Cancelar</button>
+        <button type="submit" class="btn-primary">Salvar Produto</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Cupom -->
+<div class="modal-overlay" id="modal-cupom" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modal-cupom-title">Novo Cupom</h2>
+      <button class="modal-close" onclick="closeModal('cupom')">&times;</button>
+    </div>
+    <form id="form-cupom" onsubmit="saveCupom(event)">
+      <input type="hidden" id="cupom-id" />
+      <div class="form-row">
+        <div class="form-group">
+          <label>Código do Cupom *</label>
+          <input type="text" id="cupom-codigo" required placeholder="PROMO20" style="text-transform:uppercase;" />
+        </div>
+        <div class="form-group">
+          <label>Tipo de Desconto *</label>
+          <select id="cupom-tipo" required>
+            <option value="percent">Porcentagem (%)</option>
+            <option value="fixed">Valor Fixo (R$)</option>
+            <option value="frete">Frete Grátis</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Valor do Desconto *</label>
+          <input type="number" id="cupom-valor" required min="0" step="0.01" placeholder="20" />
+        </div>
+        <div class="form-group">
+          <label>Valor Mínimo do Pedido</label>
+          <input type="number" id="cupom-minimo" min="0" step="0.01" placeholder="100" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Data de Expiração</label>
+          <input type="date" id="cupom-expira" />
+        </div>
+        <div class="form-group">
+          <label>Limite de Usos</label>
+          <input type="number" id="cupom-limite" min="0" placeholder="Ilimitado" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Descrição</label>
+        <input type="text" id="cupom-descricao" placeholder="Descrição interna do cupom" />
+      </div>
+      <div class="form-group" style="display:flex; align-items:center; gap:1rem;">
+        <label class="toggle-switch">
+          <input type="checkbox" id="cupom-ativo" checked />
+          <span class="toggle-slider"></span>
+        </label>
+        <span style="color:white;">Cupom Ativo</span>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeModal('cupom')">Cancelar</button>
+        <button type="submit" class="btn-primary">Salvar Cupom</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Macro -->
+<div class="modal-overlay" id="modal-macro" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modal-macro-title">Nova Macro</h2>
+
+<!-- Modal Mailchimp -->
+<div class="modal-overlay" id="modal-mailchimp" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>🐒 Configurar Mailchimp</h2>
+      <button class="close-modal" onclick="closeModal('mailchimp')">&times;</button>
+    </div>
+    <div class="config-form">
+      <div class="form-group">
+        <label>API Key</label>
+        <input type="password" id="mc-apikey" placeholder="Ex: md-..." />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+            <label>Server Prefix (ex: us17)</label>
+            <input type="text" id="mc-prefix" placeholder="us17" />
+        </div>
+        <div class="form-group">
+            <label>Audience ID (Opcional)</label>
+            <input type="text" id="mc-audience" placeholder="Auto-detectar" />
+        </div>
+      </div>
+      <!-- Transactional Email Extension -->
+      <div style="margin-top:1rem; padding-top:1rem; border-top:1px solid #334155;">
+          <h4 style="color:#fbbf24; margin-bottom:0.5rem; font-size:0.9rem;">Transactional API (Mandrill) - Opcional</h4>
+          <div class="form-group">
+            <label>Mandrill API Key</label>
+            <input type="password" id="mc-mandrill" placeholder="md-..." />
+          </div>
+          <div class="form-group">
+            <label>Email do Remetente</label>
+            <input type="email" id="mc-sender" placeholder="noreply@suaempresa.com" />
+          </div>
+      </div>
+      <div class="form-group" style="display:flex; align-items:center; gap:1rem; margin-top:1rem;">
+        <label class="toggle-switch">
+          <input type="checkbox" id="mc-active" />
+          <span class="toggle-slider"></span>
+        </label>
+        <span style="color:white;">Ativar Integração</span>
+      </div>
+      
+      <div style="margin-top:2rem; padding-top:1rem; border-top:1px solid #334155;">
+          <button class="btn-secondary" onclick="triggerMailchimpSync()" style="width:100%; margin-bottom:1rem;">🔄 Forçar Sincronização Agora</button>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModal('mailchimp')">Cancelar</button>
+        <button class="btn-primary" onclick="saveMailchimpConfig()">Salvar Configuração</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Twilio SMS -->
+<div class="modal-overlay" id="modal-twilio" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>📱 Configurar Twilio SMS</h2>
+      <button class="close-modal" onclick="closeModal('twilio')">&times;</button>
+    </div>
+    <div class="config-form">
+      <div class="form-group">
+        <label>Account SID</label>
+        <input type="text" id="tw-sid" placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" />
+        <small style="color:#64748b; font-size:0.75rem;">Encontre em: Twilio Console > Account Info</small>
+      </div>
+      <div class="form-group">
+        <label>Auth Token</label>
+        <input type="password" id="tw-token" placeholder="••••••••••••••••••••••••" />
+      </div>
+      <div class="form-group">
+        <label>Número de Envio (From)</label>
+        <input type="text" id="tw-from" placeholder="+15551234567" />
+        <small style="color:#64748b; font-size:0.75rem;">Formato E.164: +[código país][número]</small>
+      </div>
+      <div class="form-group" style="display:flex; align-items:center; gap:1rem; margin-top:1rem;">
+        <label class="toggle-switch">
+          <input type="checkbox" id="tw-active" />
+          <span class="toggle-slider"></span>
+        </label>
+        <span style="color:white;">Ativar Integração</span>
+      </div>
+      
+      <div style="margin-top:2rem; padding-top:1rem; border-top:1px solid #334155;">
+          <h4 style="color:#fbbf24; margin-bottom:0.5rem; font-size:0.9rem;">Testar Envio</h4>
+          <div class="form-row">
+            <div class="form-group" style="flex:1;">
+              <input type="text" id="tw-test-to" placeholder="+5511999999999" />
+            </div>
+            <button type="button" class="btn-secondary" onclick="sendTestSMS()" style="height:40px;">📤 Enviar Teste</button>
+          </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModal('twilio')">Cancelar</button>
+        <button class="btn-primary" onclick="saveTwilioConfig()">Salvar Configuração</button>
+      </div>
+    </div>
+  </div>
+</div>
+      <button class="modal-close" onclick="closeModal('macro')">&times;</button>
+    </div>
+    <form id="form-macro" onsubmit="saveMacro(event)">
+      <!-- ... -->
+    </form>
+  </div>
+</div>
+
+<!-- Modal Profile -->
+<div class="modal-overlay" id="modal-profile" style="display:none;">
+ <div class="modal-content" style="max-width:400px;">
+   <div class="modal-header">
+     <h2>👤 Meu Perfil</h2>
+     <button class="close-modal" onclick="closeModal('profile')">&times;</button>
+   </div>
+   <div class="config-form">
+       <div class="form-group">
+           <label>Email (Admin)</label>
+           <input type="text" value="lelebrr@gmail.com" disabled style="opacity:0.5;" />
+       </div>
+       <div class="form-group">
+           <label>Nova Senha</label>
+           <input type="password" id="profile-new-pass" placeholder="Deixe em branco para manter" />
+       </div>
+       <button class="btn-primary" onclick="saveProfile()" style="width:100%;">Salvar</button>
+   </div>
+ </div>
+</div>
+      <input type="hidden" id="macro-id" />
+      <div class="form-row">
+        <div class="form-group">
+          <label>Atalho *</label>
+          <input type="text" id="macro-atalho" required placeholder="/ola" />
+          <small style="color:#64748b;">Use / para iniciar (ex: /preco, /horario)</small>
+        </div>
+        <div class="form-group">
+          <label>Título *</label>
+          <input type="text" id="macro-titulo" required placeholder="Saudação inicial" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Conteúdo da Resposta *</label>
+        <textarea id="macro-conteudo" rows="5" required placeholder="Olá! 👋 Seja bem-vindo(a) ao GetNexo!
+
+Como posso ajudar você hoje?"></textarea>
+        <small style="color:#64748b;">Use {'{nome}'} para nome do cliente, {'{produto}'} para último produto visto</small>
+      </div>
+      <div class="form-group">
+        <label>Categoria</label>
+        <select id="macro-categoria">
+          <option value="geral">Geral</option>
+          <option value="vendas">Vendas</option>
+          <option value="suporte">Suporte</option>
+          <option value="financeiro">Financeiro</option>
+        </select>
+      </div>
+      <div class="form-group" style="display:flex; align-items:center; gap:1rem;">
+        <label class="toggle-switch">
+          <input type="checkbox" id="macro-ativo" checked />
+          <span class="toggle-slider"></span>
+        </label>
+        <span style="color:white;">Macro Ativa</span>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeModal('macro')">Cancelar</button>
+        <button type="submit" class="btn-primary">Salvar Macro</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Campanha -->
+<div class="modal-overlay" id="modal-campanha" style="display:none;">
+  <div class="modal-content modal-lg">
+    <div class="modal-header">
+      <h2 id="modal-campanha-title">Nova Campanha</h2>
+      <button class="modal-close" onclick="closeModal('campanha')">&times;</button>
+    </div>
+    <form id="form-campanha" onsubmit="saveCampanha(event)">
+      <input type="hidden" id="campanha-id" />
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome da Campanha *</label>
+          <input type="text" id="campanha-nome" required placeholder="Black Friday 2026" />
+        </div>
+        <div class="form-group">
+          <label>Tipo</label>
+          <select id="campanha-tipo">
+            <option value="broadcast">Broadcast (Envio em massa)</option>
+            <option value="drip">Drip Campaign (Sequência)</option>
+            <option value="trigger">Trigger (Gatilho)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Mensagem *</label>
+        <textarea id="campanha-mensagem" rows="5" required placeholder="🔥 Black Friday GetNexo!
+
+Aproveite 50% de desconto em todos os planos!
+
+Use o cupom: BLACK50"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Segmentação</label>
+          <select id="campanha-segmento" multiple>
+            <option value="todos" selected>Todos os contatos</option>
+            <option value="clientes">Clientes ativos</option>
+            <option value="leads">Leads não convertidos</option>
+            <option value="inativos">Contatos inativos (30+ dias)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Agendamento</label>
+          <input type="datetime-local" id="campanha-agenda" />
+          <small style="color:#64748b;">Deixe vazio para envio imediato</small>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Anexo (opcional)</label>
+        <input type="url" id="campanha-anexo" placeholder="URL da imagem ou documento" />
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeModal('campanha')">Cancelar</button>
+        <button type="submit" class="btn-primary">Criar Campanha</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Webhook -->
+<div class="modal-overlay" id="modal-webhook" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modal-webhook-title">Novo Webhook</h2>
+      <button class="modal-close" onclick="closeModal('webhook')">&times;</button>
+    </div>
+    <form id="form-webhook" onsubmit="saveWebhook(event)">
+      <input type="hidden" id="webhook-id" />
+      <div class="form-group">
+        <label>Nome *</label>
+        <input type="text" id="webhook-nome" required placeholder="Notificação CRM" />
+      </div>
+      <div class="form-group">
+        <label>URL do Webhook *</label>
+        <input type="url" id="webhook-url" required placeholder="https://seu-sistema.com/webhook" />
+      </div>
+      <div class="form-group">
+        <label>Eventos (selecione um ou mais)</label>
+        <div class="checkbox-grid">
+          <label class="checkbox-item"><input type="checkbox" value="new_message" /> Nova Mensagem</label>
+          <label class="checkbox-item"><input type="checkbox" value="new_lead" /> Novo Lead</label>
+          <label class="checkbox-item"><input type="checkbox" value="new_order" /> Novo Pedido</label>
+          <label class="checkbox-item"><input type="checkbox" value="order_paid" /> Pedido Pago</label>
+          <label class="checkbox-item"><input type="checkbox" value="cart_abandoned" /> Carrinho Abandonado</label>
+          <label class="checkbox-item"><input type="checkbox" value="ticket_created" /> Ticket Criado</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Headers (JSON)</label>
+        <textarea id="webhook-headers" rows="3" placeholder='{"Authorization": "Bearer token"}'></textarea>
+      </div>
+      <div class="form-group" style="display:flex; align-items:center; gap:1rem;">
+        <label class="toggle-switch">
+          <input type="checkbox" id="webhook-ativo" checked />
+          <span class="toggle-slider"></span>
+        </label>
+        <span style="color:white;">Webhook Ativo</span>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeModal('webhook')">Cancelar</button>
+        <button type="button" class="btn-outline" onclick="testWebhook()">🧪 Testar</button>
+        <button type="submit" class="btn-primary">Salvar Webhook</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Frase Nexus IA -->
+<div class="modal-overlay" id="modal-frase-nexusia" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modal-frase-nexusia-title">Nova Frase Nexus IA</h2>
+      <button class="modal-close" onclick="closeModal('frase-nexusia')">&times;</button>
+    </div>
+    <form id="form-frase-nexusia" onsubmit="saveFraseNexusia(event)">
+      <input type="hidden" id="frase-nexusia-id" />
+      <div class="form-group">
+        <label>Frase *</label>
+        <textarea id="frase-nexusia-texto" rows="4" required placeholder="Digite a frase aleatória aqui..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Categoria</label>
+        <select id="frase-nexusia-categoria">
+          <option value="geral" selected>Geral</option>
+          <option value="saudacao">Saudação</option>
+          <option value="ajuda">Ajuda</option>
+          <option value="agradecimento">Agradecimento</option>
+          <option value="despedida">Despedida</option>
+        </select>
+      </div>
+      <div class="form-group" style="display:flex; align-items:center; gap:1rem;">
+        <label class="toggle-switch">
+          <input type="checkbox" id="frase-nexusia-ativa" checked />
+          <span class="toggle-slider"></span>
+        </label>
+        <span style="color:white;">Frase Ativa</span>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeModal('frase-nexusia')">Cancelar</button>
+        <button type="submit" class="btn-primary">Salvar Frase</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Frase Nexus Work -->
+<div class="modal-overlay" id="modal-frase-nexuswork" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modal-frase-nexuswork-title">Nova Frase Nexus Work</h2>
+      <button class="modal-close" onclick="closeModal('frase-nexuswork')">&times;</button>
+    </div>
+    <form id="form-frase-nexuswork" onsubmit="saveFraseNexuswork(event)">
+      <input type="hidden" id="frase-nexuswork-id" />
+      <div class="form-group">
+        <label>Frase *</label>
+        <textarea id="frase-nexuswork-texto" rows="4" required placeholder="Digite a frase aleatória aqui..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Categoria</label>
+        <select id="frase-nexuswork-categoria">
+          <option value="geral" selected>Geral</option>
+          <option value="produtividade">Produtividade</option>
+          <option value="motivacao">Motivação</option>
+          <option value="foco">Foco</option>
+          <option value="bem-estar">Bem-estar</option>
+        </select>
+      </div>
+      <div class="form-group" style="display:flex; align-items:center; gap:1rem;">
+        <label class="toggle-switch">
+          <input type="checkbox" id="frase-nexuswork-ativa" checked />
+          <span class="toggle-slider"></span>
+        </label>
+        <span style="color:white;">Frase Ativa</span>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeModal('frase-nexuswork')">Cancelar</button>
+        <button type="submit" class="btn-primary">Salvar Frase</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Categoria -->
+<div class="modal-overlay" id="modal-categoria" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modal-categoria-title">Nova Categoria</h2>
+      <button class="modal-close" onclick="closeModal('categoria')">&times;</button>
+    </div>
+    <form id="form-categoria" onsubmit="saveCategoria(event)">
+      <input type="hidden" id="categoria-id" />
+      <div class="form-group">
+        <label>Nome da Categoria *</label>
+        <input type="text" id="categoria-nome" required placeholder="Ex: Roupas" />
+      </div>
+      <div class="form-group">
+        <label>Slug (URL) *</label>
+        <input type="text" id="categoria-slug" required placeholder="roupas" />
+      </div>
+      <div class="form-group">
+        <label>Descrição</label>
+        <textarea id="categoria-descricao" rows="3" placeholder="Descrição para SEO"></textarea>
+      </div>
+      <div class="form-group" style="display:flex; align-items:center; gap:1rem;">
+        <label class="toggle-switch">
+          <input type="checkbox" id="categoria-ativa" checked />
+          <span class="toggle-slider"></span>
+        </label>
+        <span style="color:white;">Categoria Ativa</span>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeModal('categoria')">Cancelar</button>
+        <button type="submit" class="btn-primary">Salvar Categoria</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Fila -->
+<div class="modal-overlay" id="modal-fila" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modal-fila-title">Nova Fila</h2>
+      <button class="modal-close" onclick="closeModal('fila')">&times;</button>
+    </div>
+    <form id="form-fila" onsubmit="saveFila(event)">
+      <input type="hidden" id="fila-id" />
+      <div class="form-group">
+        <label>Nome da Fila *</label>
+        <input type="text" id="fila-nome" required placeholder="Ex: Suporte Financeiro" />
+      </div>
+      <div class="form-group">
+        <label>Agentes (selecione múltiplos)</label>
+        <select id="fila-agentes" multiple>
+          <option value="joao">João</option>
+          <option value="maria">Maria</option>
+          <option value="carlos">Carlos</option>
+          <option value="ana">Ana</option>
+        </select>
+        <small style="color:#64748b;">Segure Ctrl/Cmd para selecionar vários</small>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Cor</label>
+          <input type="color" id="fila-cor" value="#00d4ff" style="height:40px; width:100%; border-radius:8px; border:none;" />
+        </div>
+        <div class="form-group">
+          <label>Prioridade</label>
+          <select id="fila-prioridade">
+            <option value="1">Baixa</option>
+            <option value="2" selected>Normal</option>
+            <option value="3">Alta</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group" style="display:flex; align-items:center; gap:1rem;">
+        <label class="toggle-switch">
+          <input type="checkbox" id="fila-ativa" checked />
+          <span class="toggle-slider"></span>
+        </label>
+        <span style="color:white;">Fila Ativa</span>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeModal('fila')">Cancelar</button>
+        <button type="submit" class="btn-primary">Salvar Fila</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Bloqueio IP -->
+<div class="modal-overlay" id="modal-bloqueio-ip" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modal-bloqueio-ip-title">Bloquear IP</h2>
+      <button class="modal-close" onclick="closeModal('bloqueio-ip')">&times;</button>
+    </div>
+    <form id="form-bloqueio-ip" onsubmit="saveBloqueioIP(event)">
+      <div class="form-group">
+        <label>Endereço IP *</label>
+        <input type="text" id="ip-endereco" required placeholder="192.168.1.1" pattern="^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$" />
+      </div>
+      <div class="form-group">
+        <label>Motivo do Bloqueio *</label>
+        <select id="ip-motivo" required>
+          <option value="ataque">Tentativa de Ataque</option>
+          <option value="spam">Spam / Abuso</option>
+          <option value="bot">Bot Malicioso</option>
+          <option value="outros">Outros</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Observações</label>
+        <textarea id="ip-obs" rows="3" placeholder="Detalhes adicionais..."></textarea>
+      </div>
+      <div class="form-group" style="display:flex; align-items:center; gap:1rem;">
+        <label class="toggle-switch">
+          <input type="checkbox" id="ip-permanente" checked />
+          <span class="toggle-slider"></span>
+        </label>
+        <span style="color:white;">Bloqueio Permanente</span>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeModal('bloqueio-ip')">Cancelar</button>
+        <button type="submit" class="btn-danger">🚫 Bloquear IP</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Confirmação -->
+<div class="modal-overlay" id="modal-confirm" style="display:none;">
+  <div class="modal-content modal-sm">
+    <div class="modal-header">
+      <h2>Confirmar Ação</h2>
+      <button class="modal-close" onclick="closeModal('confirm')">&times;</button>
+    </div>
+    <p id="confirm-message" style="color:#94a3b8; margin:1.5rem 0;">Tem certeza que deseja continuar?</p>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('confirm')">Cancelar</button>
+      <button class="btn-danger" id="confirm-btn" onclick="confirmAction()">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Content Task -->
+<div class="modal-overlay" id="modal-content-task" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modal-content-task-title">Nova Pauta de Conteúdo</h2>
+      <button class="modal-close" onclick="closeModal('content-task')">&times;</button>
+    </div>
+    <form id="form-content-task" onsubmit="saveContentTask(event)">
+      <div class="form-group">
+        <label>Título do Artigo/Post *</label>
+        <input type="text" id="content-title" required placeholder="Ex: Como usar IA nas vendas" />
+      </div>
+      <div class="form-group">
+        <label>Palavra-Chave Principal *</label>
+        <input type="text" id="content-keyword" required placeholder="IA para vendas" />
+      </div>
+      <div class="form-group">
+        <label>Briefing / Tópicos (Opcional)</label>
+        <textarea id="content-briefing" rows="4" placeholder="Adicione instruções para a IA..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeModal('content-task')">Cancelar</button>
+        <button type="submit" class="btn-primary">Gerar Conteúdo</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal A/B Test -->
+<div class="modal-overlay" id="modal-ab-test" style="display:none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Novo Teste A/B</h2>
+            <button class="modal-close" onclick="closeModal('ab-test')">&times;</button>
+        </div>
+        <form id="form-ab-test" onsubmit="saveABTest(event)">
+            <div class="form-group">
+                <label>Nome do Experimento</label>
+                <input type="text" id="ab-name" required placeholder="Ex: Headline Home v2" />
+            </div>
+            <div class="form-group">
+                <label>URL Alvo</label>
+                <input type="text" id="ab-url" required placeholder="/ (Home)" />
+            </div>
+            <div class="form-group">
+                <label>Variantes (JSON Simples)</label>
+                <textarea id="ab-variants" rows="4" placeholder='[{"name":"A", "weight":50}, {"name":"B", "weight":50}]'></textarea>
+                <small style="color:#64748b">Defina as variantes e pesos de tráfego.</small>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="closeModal('ab-test')">Cancelar</button>
+                <button type="submit" class="btn-primary">Iniciar Teste</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- Modal Edit Content -->
+<div class="modal-overlay" id="modal-edit-content" style="display:none;">
+  <div class="modal-content" style="max-width:800px;">
+    <div class="modal-header">
+      <h2>Editor de Conteúdo</h2>
+      <button class="modal-close" onclick="closeModal('edit-content')">&times;</button>
+    </div>
+    <form id="form-edit-content" onsubmit="updateContentItem(event)">
+      <input type="hidden" id="edit-content-id" />
+      <div class="form-group">
+        <label>Título</label>
+        <input type="text" id="edit-content-title" required />
+      </div>
+      <div class="form-group">
+        <label>Conteúdo (Markdown/HTML)</label>
+        <textarea id="edit-content-body" rows="15" style="font-family:monospace; line-height:1.5;"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeModal('edit-content')">Cancelar</button>
+        <button type="submit" class="btn-primary">Salvar Alterações</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+<style>
+  .admin-central {
+    display: flex;
+    min-height: 100vh;
+    background: #030712;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 280px;
+    background: #0a0e17;
+    border-right: 1px solid #1f2937;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s;
+    position: fixed;
+    height: 100vh;
+    z-index: 100;
+  }
+
+  .sidebar.collapsed {
+    width: 70px;
+  }
+
+  .sidebar.collapsed .nav-text,
+  .sidebar.collapsed .nav-arrow,
+  .sidebar.collapsed .logo-text,
+  .sidebar.collapsed .search-box {
+    display: none;
+  }
+
+  .sidebar-header {
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #1f2937;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    color: black;
+    font-size: 1.2rem;
+  }
+
+  .logo-text {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: white;
+  }
+
+  .accent { color: #00ff9d; }
+
+  .toggle-btn {
+    background: transparent;
+    border: none;
+    color: #64748b;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.5rem;
+  }
+
+  .search-box {
+    padding: 1rem 1.5rem;
+  }
+
+  .search-box input {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid #1f2937;
+    border-radius: 8px;
+    color: white;
+    font-size: 0.9rem;
+  }
+
+  .search-box input:focus {
+    outline: none;
+    border-color: #00d4ff;
+  }
+
+  .sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem 0;
+  }
+
+  .nav-section {
+    margin-bottom: 0.5rem;
+  }
+
+  .nav-item, .nav-group-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    color: #94a3b8;
+    text-decoration: none;
+    width: 100%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: 0.2s;
+    text-align: left;
+  }
+
+  .nav-item:hover, .nav-group-btn:hover {
+    background: rgba(0,212,255,0.1);
+    color: white;
+  }
+
+  .nav-item.active {
+    background: rgba(0,212,255,0.15);
+    color: #00d4ff;
+    border-left: 3px solid #00d4ff;
+  }
+
+  .nav-icon { font-size: 1.1rem; }
+  .nav-arrow { margin-left: auto; font-size: 0.7rem; transition: 0.2s; }
+  .nav-group-btn[aria-expanded="true"] .nav-arrow { transform: rotate(180deg); }
+
+  .nav-submenu {
+    display: none;
+    padding-left: 3rem;
+  }
+
+  .nav-submenu.open { display: block; }
+
+  .nav-subitem {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: #64748b;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: 0.2s;
+    border-radius: 6px;
+    margin: 0.2rem 0;
+  }
+
+  .nav-subitem:hover {
+    color: white;
+    background: rgba(255,255,255,0.05);
+  }
+
+  .nav-subitem.active {
+    color: #00ff9d;
+  }
+
+  .sidebar-footer {
+    padding: 1rem;
+    border-top: 1px solid #1f2937;
+  }
+
+  .logout:hover { color: #ef4444 !important; }
+
+  /* Main Content */
+  .main-content {
+    flex: 1;
+    margin-left: 280px;
+    display: flex;
+    flex-direction: column;
+    transition: margin-left 0.3s;
+  }
+
+  .sidebar.collapsed + .main-content {
+    margin-left: 70px;
+  }
+
+  .content-header {
+    height: 70px;
+    background: #0a0e17;
+    border-bottom: 1px solid #1f2937;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .header-left h1 {
+    font-size: 1.5rem;
+    color: white;
+    margin: 0;
+  }
+
+  .breadcrumb {
+    color: #64748b;
+    font-size: 0.85rem;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .status-badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .status-badge.online {
+    background: rgba(0,255,157,0.15);
+    color: #00ff9d;
+  }
+
+  .time {
+    color: #64748b;
+    font-family: monospace;
+    font-size: 0.9rem;
+  }
+
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: black;
+  }
+
+  .content-area {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+  }
+
+  .section-panel {
+    display: none;
+    background: #111827;
+    border-radius: 16px;
+    padding: 2rem;
+    border: 1px solid #1f2937;
+    animation: fadeIn 0.3s ease;
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 1000px;
+  }
+
+  /* Stats Grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card {
+    background: rgba(20,30,50,0.6);
+    border: 1px solid #1f2937;
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .stat-icon { font-size: 2rem; }
+  .stat-value { display: block; font-size: 1.8rem; font-weight: 800; color: #00d4ff; }
+  .stat-label { color: #64748b; font-size: 0.85rem; }
+
+  /* Quick Actions */
+  .quick-actions, .modules-overview {
+    background: rgba(20,30,50,0.6);
+    border: 1px solid #1f2937;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .quick-actions h3, .modules-overview h3 {
+    color: white;
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+  }
+
+  .actions-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+
+  .action-btn {
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.2);
+    color: white;
+    padding: 1rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 0.95rem;
+  }
+
+  .action-btn:hover {
+    background: rgba(0,212,255,0.2);
+    border-color: #00d4ff;
+    transform: translateY(-2px);
+  }
+
+  /* Modules Grid */
+  .modules-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+
+  .module-card {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid #1f2937;
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: 0.2s;
+  }
+
+  .module-card:hover {
+    border-color: #374151;
+  }
+
+  .module-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .module-info span:first-child {
+    font-size: 1.5rem;
+  }
+
+  .module-name {
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  /* Toggle Switch */
+  .toggle-switch {
+    position: relative;
+    width: 50px;
+    height: 26px;
+  }
+
+  .toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background: #374151;
+    border-radius: 26px;
+    transition: 0.3s;
+  }
+
+  .toggle-slider::before {
+    content: "";
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.3s;
+  }
+
+  input:checked + .toggle-slider {
+    background: #00ff9d;
+  }
+
+  input:checked + .toggle-slider::before {
+    transform: translateX(24px);
+  }
+
+  /* Tables */
+  .table-container {
+    background: rgba(20,30,50,0.6);
+    border: 1px solid #1f2937;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  th {
+    text-align: left;
+    padding: 1rem 1.5rem;
+    background: rgba(0,0,0,0.3);
+    color: #94a3b8;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  td {
+    padding: 1rem 1.5rem;
+    color: white;
+    border-top: 1px solid #1f2937;
+  }
+
+  tr:hover { background: rgba(0,212,255,0.05); }
+
+  .loading {
+    text-align: center;
+    color: #64748b;
+    padding: 3rem;
+  }
+
+  /* Section Header */
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-header h2 {
+    color: white;
+    margin: 0;
+    font-size: 1.5rem;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    color: black;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0,212,255,0.3);
+  }
+
+  /* Integration Cards */
+  .integration-card {
+    background: rgba(20,30,50,0.6);
+    border: 1px solid #1f2937;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .integration-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .integration-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: white;
+  }
+
+  .integration-header h3 {
+    color: white;
+    margin: 0;
+    flex: 1;
+  }
+
+  .integration-status {
+    font-size: 0.85rem;
+    color: #64748b;
+  }
+
+  .integration-status.online { color: #00ff9d; }
+
+  .integration-config {
+    border-top: 1px solid #1f2937;
+    padding-top: 1.5rem;
+  }
+
+  /* Forms */
+  .config-form {
+    background: rgba(20,30,50,0.6);
+    border: 1px solid #1f2937;
+    border-radius: 16px;
+    padding: 2rem;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group label {
+    display: block;
+    color: #94a3b8;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid #334155;
+    border-radius: 10px;
+    color: white;
+    font-size: 0.95rem;
+  }
+
+  .form-group input:focus {
+    outline: none;
+    border-color: #00d4ff;
+  }
+
+  /* Command Palette */
+  .command-palette {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 15vh;
+    z-index: 1000;
+  }
+
+  .command-content {
+    background: #0f172a;
+    border: 1px solid #1f2937;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 600px;
+    overflow: hidden;
+  }
+
+  .command-content input {
+    width: 100%;
+    padding: 1.25rem 1.5rem;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #1f2937;
+    color: white;
+    font-size: 1.1rem;
+  }
+
+  .command-content input:focus { outline: none; }
+
+  .command-results {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 1rem;
+  }
+
+  .command-group-title {
+    display: block;
+    color: #64748b;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.5rem;
+  }
+
+  .command-item {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: transparent;
+    border: none;
+    color: white;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: 0.2s;
+  }
+
+  .command-item:hover {
+    background: rgba(0,212,255,0.1);
+  }
+
+  @media (max-width: 1200px) {
+    .stats-grid, .actions-grid, .modules-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .main-content { margin-left: 0; }
+    .stats-grid, .actions-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Schedule Grid */
+  .schedule-grid { display: flex; flex-direction: column; gap: 1rem; }
+  .schedule-day {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+  }
+  .day-name { color: white; font-weight: 600; width: 100px; }
+  .time-input {
+    padding: 0.5rem;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid #334155;
+    border-radius: 6px;
+    color: white;
+  }
+
+  /* Backup Cards */
+  .backup-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  .backup-card {
+    background: rgba(20,30,50,0.6);
+    border: 1px solid #1f2937;
+    border-radius: 16px;
+    padding: 1.5rem;
+  }
+  .backup-card h3 { color: white; margin: 0; font-size: 1.1rem; }
+
+  /* Playground */
+  .playground-container {
+    background: rgba(20,30,50,0.6);
+    border: 1px solid #1f2937;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .playground-chat {
+    height: 400px;
+    overflow-y: auto;
+    padding: 1.5rem;
+  }
+  .chat-message {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .chat-message .avatar {
+    font-size: 1.5rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #1e293b;
+    border-radius: 50%;
+  }
+  .message-content {
+    background: #1e293b;
+    padding: 1rem;
+    border-radius: 12px;
+    color: white;
+    max-width: 70%;
+  }
+  .chat-message.user { flex-direction: row-reverse; }
+  .chat-message.user .message-content { background: #00d4ff20; }
+  .playground-input {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border-top: 1px solid #1f2937;
+  }
+  .playground-input input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid #334155;
+    border-radius: 10px;
+    color: white;
+  }
+
+  /* Buttons */
+  .btn-secondary {
+    background: #1f2937;
+    color: white;
+    border: 1px solid #374151;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-sm {
+    background: #1f2937;
+    color: white;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  .btn-sm:hover { background: #374151; }
+
+  .integrations-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  /* Modals */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 2rem;
+  }
+
+  .modal-content {
+    background: #0f172a;
+    border: 1px solid #1f2937;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 550px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: modalIn 0.2s ease;
+  }
+
+  .modal-content.modal-lg { max-width: 750px; }
+  .modal-content.modal-sm { max-width: 400px; }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #1f2937;
+  }
+
+  .modal-header h2 {
+    color: white;
+    margin: 0;
+    font-size: 1.3rem;
+  }
+
+  .modal-close {
+    background: transparent;
+    border: none;
+    color: #64748b;
+    font-size: 1.8rem;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  .modal-close:hover { color: white; }
+
+  .modal-content form {
+    padding: 1.5rem 2rem 2rem;
+  }
+
+  .modal-content select,
+  .modal-content textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid #334155;
+    border-radius: 10px;
+    color: white;
+    font-size: 0.95rem;
+  }
+
+  .modal-content textarea { resize: vertical; font-family: inherit; }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #1f2937;
+    margin-top: 1.5rem;
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: #00d4ff;
+    border: 1px solid #00d4ff;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .btn-danger {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* Checkbox Grid */
+  .checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #94a3b8;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  .checkbox-item input { accent-color: #00d4ff; }
+
+  /* Toast */
+  .toast-container {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .toast {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    animation: toastIn 0.3s ease;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  }
+
+  .toast.success { border-color: #00ff9d; }
+  .toast.error { border-color: #ef4444; }
+  .toast.warning { border-color: #f59e0b; }
+
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateX(100%); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .toast-icon { font-size: 1.3rem; }
+</style>
+
+
+<script src="/scripts/adminPanel.js" defer></script>
+</Layout>

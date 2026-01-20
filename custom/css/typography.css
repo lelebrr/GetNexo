@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+    /* Typography Variables */
+    --font-title: 'Bebas Neue', system-ui, -apple-system, sans-serif;
+    --font-body: 'Montserrat', system-ui, -apple-system, sans-serif;
+    --line-height-body: 1.6;
+    --line-height-title: 1.1;
+
+    /* Color Palette (Dynamic) */
+    --bg-primary: #000000;
+    --bg-secondary: #1C1C1C;
+    --text-primary: #FFFFFF;
+    --text-secondary: #B0B0B0;
+    --accent: #FFD500;
+    /* Yellow CTA */
+    --brand: #FF0033;
+    /* Red Brand */
+    --success: #00FF99;
+    --glass: rgba(255, 255, 255, 0.05);
+    --border: rgba(255, 255, 255, 0.1);
+}
+
+/* Light Mode Toggle */
+@media (prefers-color-scheme: light) {
+    :root {
+        --bg-primary: #F5F5F5;
+        --bg-secondary: #FFFFFF;
+        --text-primary: #111111;
+        --text-secondary: #555555;
+        --glass: rgba(0, 0, 0, 0.05);
+        --border: rgba(0, 0, 0, 0.1);
+    }
+}
+
+/* Base Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background 0.3s ease, color 0.3s ease;
+    overflow-x: hidden;
+}
+
+/* Typography Classes */
+h1,
+h2,
+h3,
+.title {
+    font-family: var(--font-title);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    line-height: var(--line-height-title);
+}
+
+h1 {
+    font-size: clamp(3rem, 10vw, 6rem);
+}
+
+h2 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--accent);
+}
+
+p {
+    font-size: 1.1rem;
+    max-width: 70ch;
+}
+
+/* Utilities */
+.glass-panel {
+    background: var(--glass);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.btn {
+    display: inline-block;
+    background: var(--accent);
+    color: #000;
+    font-family: var(--font-title);
+    font-size: 1.5rem;
+    padding: 1rem 3rem;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(255, 213, 0, 0.3);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-enter {
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+.delay-1 {
+    animation-delay: 0.1s;
+}
+
+.delay-2 {
+    animation-delay: 0.2s;
+}
+
+.delay-3 {
+    animation-delay: 0.3s;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}

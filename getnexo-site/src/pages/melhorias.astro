@@ -1,0 +1,99 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Cases e Melhorias — GetNexo">
+    <div class="cases-page">
+  <section class="cases-hero">
+    <div class="hero-badge">Social Proof</div>
+    <h1 class="text-gradient">Fatos. Não Promessas.</h1>
+    <p>O impacto real da migração de SaaS proprietários para o ecossistema GetNexo.</p>
+  </section>
+
+  <section class="cases-content">
+    <div class="table-container glass-panel">
+      <table>
+        <thead>
+          <tr>
+            <th>Métrica de Performance</th>
+            <th>Humano / SaaS Comum</th>
+            <th class="winner-head">GetNexo AI Core</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Tempo de Resposta Inicial</td>
+            <td>4h 12min</td>
+            <td class="winner-cell">⚡ 0.3s (SLA Real)</td>
+          </tr>
+          <tr>
+            <td>Custo por Qualificação</td>
+            <td>R$ 15,40</td>
+            <td class="winner-cell">R$ 0,08 <small>(API Token)</small></td>
+          </tr>
+          <tr>
+            <td>Taxa de Conversão (Lead -> Sale)</td>
+            <td>2.5%</td>
+            <td class="winner-cell">18.7% <small>(+648%)</small></td>
+          </tr>
+          <tr>
+            <td>Disponibilidade de Operação</td>
+            <td>8h / úteis</td>
+            <td class="winner-cell">24/7/365</td>
+          </tr>
+          <tr>
+            <td>Privacidade de Dados</td>
+            <td>Compartilhada</td>
+            <td class="winner-cell">Criptografia Local</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="testimonial-section">
+        <div class="glass-panel testimonial-card">
+            <span class="quote-icon">“</span>
+            <blockquote>
+              "Eu gastava R$ 3k/mês com ferramentas de SaaS engessadas. Hoje rodo tudo no meu servidor central com o GetNexo e vendo 5x mais com zero delay."
+            </blockquote>
+            <cite>— Leandro B., Arquiteto de Software</cite>
+        </div>
+    </div>
+
+    <div class="cases-cta">
+        <a href="#" onclick="window.$chatwoot.toggle(); return false;" class="btn-primary-glow">Quero Esses Resultados</a>
+    </div>
+  </section>
+
+<style>
+  .cases-hero { text-align: center; padding: 10rem 5% 4rem; }
+  .hero-badge { background: rgba(0, 212, 255, 0.1); color: #00d4ff; padding: 0.5rem 1.2rem; border-radius: 50px; font-size: 0.85rem; font-weight: 700; display: inline-block; margin-bottom: 2rem; border: 1px solid rgba(0,212,255,0.2); }
+  .cases-hero h1 { font-size: 3.5rem; margin-bottom: 1rem; font-weight: 800; text-transform: uppercase; }
+  .cases-hero p { color: #94a3b8; font-size: 1.25rem; max-width: 600px; margin: 0 auto; }
+
+  .cases-content { max-width: 1000px; margin: 0 auto; padding: 4rem 5%; }
+  .table-container { border-radius: 24px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+  
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 1.8rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); color: #94a3b8; }
+  th { background: rgba(255,255,255,0.02); color: white; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; }
+  
+  .winner-head { color: #00ff9d; background: rgba(0, 255, 157, 0.05); }
+  .winner-cell { color: white; font-weight: 700; background: rgba(0, 255, 157, 0.02); }
+  .winner-cell small { color: #64748b; font-weight: 400; font-size: 0.8rem; }
+
+  .testimonial-section { padding: 6rem 0; }
+  .testimonial-card { padding: 4rem; border-radius: 32px; text-align: center; position: relative; border-left: 2px solid #00ff9d; }
+  .quote-icon { position: absolute; top: 1rem; left: 2rem; font-size: 6rem; color: rgba(0, 255, 157, 0.1); font-family: serif; }
+  blockquote { font-size: 1.6rem; color: white; line-height: 1.6; font-style: italic; margin-bottom: 2rem; position: relative; z-index: 1; }
+  cite { color: #00ff9d; font-weight: 800; font-family: inherit; font-size: 1.1rem; }
+
+  .cases-cta { text-align: center; margin-top: 2rem; }
+  .btn-primary-glow { display: inline-block; background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1.2rem 3rem; border-radius: 12px; font-weight: 900; text-decoration: none; transition: 0.3s; box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2); }
+
+  @media (max-width: 768px) {
+    .cases-hero h1 { font-size: 2.2rem; }
+    .testimonial-card { padding: 2rem; }
+    blockquote { font-size: 1.2rem; }
+  }
+</style>

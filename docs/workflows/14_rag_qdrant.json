@@ -1,0 +1,90 @@
+{
+    "name": "14_RAG_Qdrant",
+    "nodes": [
+        {
+            "parameters": {},
+            "name": "Start",
+            "type": "n8n-nodes-base.start",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "embeddings",
+                "text": "={{$json[\"query\"]}}",
+                "provider": "ollama",
+                "model": "nomic-embed-text"
+            },
+            "name": "Generate Embedding",
+            "type": "n8n-nodes-base.aiVectorStore",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "search",
+                "collection": "knowledge_base"
+            },
+            "name": "Search Qdrant",
+            "type": "n8n-nodes-base.qdrant",
+            "typeVersion": 1,
+            "position": [
+                650,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "content": "Based on context: {{$json[\"context\"]}}, answer: {{$json[\"query\"]}}"
+            },
+            "name": "Ollama Answer",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 1,
+            "position": [
+                850,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Start": {
+            "main": [
+                [
+                    {
+                        "node": "Generate Embedding",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Generate Embedding": {
+            "main": [
+                [
+                    {
+                        "node": "Search Qdrant",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Search Qdrant": {
+            "main": [
+                [
+                    {
+                        "node": "Ollama Answer",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

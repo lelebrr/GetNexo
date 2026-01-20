@@ -1,0 +1,172 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const title = "Agendamento e Confirmação Automática para Clínicas e Médicos | GetNexo";
+const description = "Reduza o 'no-show' da sua clínica em 80% com confirmação automática de consultas via WhatsApp. Agendamento 24h, triagem de pacientes e integração com agenda médica.";
+const keywords = "whatsapp para clinicas, confirmação consulta whatsapp, chatbot medico, agendamento automatico whatsapp, crm saude, automação consultorio";
+
+const stats = [
+  { value: "-80%", label: "Faltas", desc: "Redução drástica de No-Show" },
+  { value: "24h", label: "Marcação", desc: "Agende fora do horário comercial" },
+  { value: "100%", label: "Seguro", desc: "LGPD Compliance" },
+  { value: "Auto", label: "Lembretes", desc: "Envio automático dia antes" }
+];
+
+const painPoints = [
+  {
+    icon: "📅",
+    title: "Paciente que falta",
+    desc: "O paciente esquece e você perde o horário (e o dinheiro). O GetNexo confirma 24h antes e, se ele cancelar, já avisa a lista de espera."
+  },
+  {
+    icon: "📞",
+    title: "Telefone Ocupado",
+    desc: "Sua secretária não dá conta de atender e confirmar ao mesmo tempo. Com a automação, ela foca no atendimento presencial de qualidade."
+  },
+  {
+    icon: "📋",
+    title: "Triagem Repetitiva",
+    desc: "A automação já pergunta: Convênio ou Particular? Primeira vez ou Retorno? Qual especialidade? Entregando o paciente pronto."
+  }
+];
+
+const features = [
+  {
+    title: "Integração com Agenda",
+    desc: "Google Calendar, Doctoralia ou sistema próprio. O bot vê seus horários livres e oferece apenas o que está disponível.",
+    icon: "📆"
+  },
+  {
+    title: "Campanhas de Retorno",
+    desc: "O sistema lembra automaticamente pacientes que precisam voltar em 6 meses para check-up, gerando receita recorrente.",
+    icon: "🔄"
+  },
+  {
+    title: "Dúvidas Pós-Consulta",
+    desc: "Instruções de preparo para exames ou cuidados pós-operatórios enviados automaticamente, reduzindo a ansiedade do paciente.",
+    icon: "🩺"
+  }
+];
+
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  
+  <section class="segment-hero">
+    <div class="hero-content">
+      <div class="badge">Para Clínicas e Consultórios</div>
+      <h1>Acabe com as faltas e <span class="text-gradient">lote sua agenda</span></h1>
+      <p class="hero-text">
+        Secretária virtual no WhatsApp que trabalha 24h por dia. Confirma consultas, reagenda horários e tira dúvidas dos pacientes sem ocupar sua recepção.
+      </p>
+      <div class="hero-btns">
+        <a href="/criar-bot" class="btn-primary-glow">Automatizar Minha Clínica</a>
+        <a href="/demo" class="btn-outline">Simular Agendamento</a>
+      </div>
+    </div>
+    <div class="hero-stats">
+      {stats.map(s => (
+        <div class="stat-item glass-panel">
+          <span class="stat-val">{s.value}</span>
+          <span class="stat-lbl">{s.label}</span>
+          <span class="stat-dsc">{s.desc}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="seo-content">
+    <h2>A revolução no atendimento de <span class="text-gradient">Saúde</span></h2>
+    <p>
+      A experiência do paciente começa muito antes dele entrar no consultório. Começa quando ele tenta marcar a consulta. 
+      Se ele precisa ligar 3 vezes ou esperar 4 horas por uma resposta no WhatsApp, ele procura outro profissional.
+    </p>
+    <p>
+      Com o **GetNexo Saúde**, você oferece uma experiência premium. O paciente manda mensagem domingo à noite e sai com a consulta agendada para terça-feira. 
+      A percepção de profissionalismo e eficiência da sua clínica aumenta imediatamente.
+    </p>
+  </section>
+
+  <section class="pain-section">
+    <h2>Sintomas de uma gestão manual</h2>
+    <div class="pain-grid">
+      {painPoints.map(p => (
+        <div class="pain-card glass-panel">
+          <span class="pain-icon">{p.icon}</span>
+          <h3>{p.title}</h3>
+          <p>{p.desc}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="features-section">
+    <h2>Tratamento Completo</h2>
+    <div class="feat-grid">
+      {features.map(f => (
+        <div class="feat-card glass-panel">
+          <div class="feat-header">
+            <span class="feat-icon">{f.icon}</span>
+            <h3>{f.title}</h3>
+          </div>
+          <p>{f.desc}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="deep-dive">
+    <article>
+      <h3>Inteligência Artificial na Triagem</h3>
+      <p>
+        Ao contrário de "chatbots burros" que frustram pacientes com menus infinitos, nossa **IA Generativa** entende linguagem natural. 
+        O paciente pode dizer: <em>"Doutor, meu filho está com febre desde ontem, tem horário hoje?"</em> 
+        E a IA responde com empatia, verificando urgência e encaixes, ou orientando ir ao pronto-socorro se configurado para emergências.
+      </p>
+      
+      <h3>Marketing Médico Ético</h3>
+      <p>
+        Mantenha sua base ativa respeitando as normas. O GetNexo permite enviar mensagens informativas de saúde, lembretes de vacinas ou campanhas de check-up (Novembro Azul, Outubro Rosa) para seus pacientes cadastrados, 
+        fortalecendo o vínculo médico-paciente e a fidelização.
+      </p>
+    </article>
+  </section>
+
+  <section class="final-cta">
+    <div class="cta-box glass-panel">
+      <h2>Modernize seu Consultório</h2>
+      <p>Teste gratuitamente e veja a diferença na rotina da sua recepção.</p>
+      <a href="/criar-bot" class="btn-primary-glow">Começar Agora</a>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  /* [CSS Compartilhado] */
+  .segment-hero { padding: 8rem 5% 4rem; max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+  .badge { background: rgba(0, 212, 255, 0.1); color: #00d4ff; padding: 0.5rem 1rem; border-radius: 50px; display: inline-block; margin-bottom: 1.5rem; font-weight: 700; }
+  h1 { font-size: 3.5rem; color: white; font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; }
+  .hero-text { color: #94a3b8; font-size: 1.2rem; line-height: 1.6; margin-bottom: 2.5rem; }
+  .hero-btns { display: flex; gap: 1rem; }
+  .btn-primary-glow { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1rem 2rem; border-radius: 12px; font-weight: 800; text-decoration: none; transition: 0.3s; }
+  .btn-primary-glow:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,212,255,0.3); }
+  .btn-outline { border: 1px solid rgba(255,255,255,0.2); color: white; padding: 1rem 2rem; border-radius: 12px; text-decoration: none; font-weight: 700; }
+  .hero-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .stat-item { padding: 2rem; text-align: center; border-radius: 20px; }
+  .stat-val { display: block; font-size: 2.5rem; font-weight: 900; color: #00ff9d; }
+  .stat-lbl { display: block; color: white; font-weight: 700; margin-top: 0.5rem; }
+  .stat-dsc { display: block; color: #64748b; font-size: 0.8rem; margin-top: 0.5rem; }
+  .seo-content, .pain-section, .features-section, .deep-dive, .final-cta { padding: 4rem 5%; max-width: 1000px; margin: 0 auto; }
+  .seo-content p, .deep-dive p { color: #cbd5e1; font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem; }
+  .seo-content strong { color: white; }
+  h2 { font-size: 2.5rem; color: white; font-weight: 800; margin-bottom: 2rem; text-align: center; }
+  h3 { font-size: 1.8rem; color: white; font-weight: 700; margin-top: 3rem; margin-bottom: 1rem; }
+  .pain-grid, .feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 3rem; }
+  .pain-card, .feat-card { padding: 2rem; border-radius: 20px; }
+  .pain-icon, .feat-icon { font-size: 2.5rem; display: block; margin-bottom: 1rem; }
+  .pain-card h3, .feat-card h3 { font-size: 1.2rem; color: white; margin: 0 0 1rem 0; }
+  .pain-card p, .feat-card p { color: #94a3b8; font-size: 0.95rem; line-height: 1.5; }
+  .cta-box { text-align: center; padding: 5rem; border-radius: 30px; }
+  @media (max-width: 900px) { .segment-hero { grid-template-columns: 1fr; text-align: center; } .hero-btns { justify-content: center; } .pain-grid, .feat-grid { grid-template-columns: 1fr; } }
+</style>

@@ -1,0 +1,361 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout title="Produtos | Admin GetNexo">
+  <!-- Admin Navigation -->
+  <nav style="background:#0f172a; padding:1rem 5%; display:flex; gap:1rem; border-bottom:1px solid #1e293b; flex-wrap:wrap;">
+    <a href="/admin" class="nav-link">📊 Dashboard</a>
+    <a href="/admin/cupons" class="nav-link">🎟️ Cupons</a>
+    <a href="/admin/produtos" class="nav-link active">🛍️ Produtos</a>
+    <a href="/admin/relatorio" class="nav-link">📈 Relatórios</a>
+    <a href="/criar-bot" class="nav-link">🤖 Criar Bot</a>
+  </nav>
+
+  <div class="page-container">
+    <header class="page-header">
+      <h1>🛍️ Produtos</h1>
+      <button id="btn-new" class="btn-primary">+ Novo Produto</button>
+    </header>
+
+    <!-- Modal -->
+    <div id="modal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <h2 id="modal-title">Novo Produto</h2>
+        <form id="form-product">
+          <input type="hidden" name="id" id="product-id" />
+          
+          <div class="field">
+            <label>Nome do Produto *</label>
+            <input type="text" name="name" id="product-name" placeholder="Ex: Camiseta Neon" required />
+          </div>
+          
+          <div class="field-row">
+            <div class="field">
+              <label>Preço (R$) *</label>
+              <input type="number" name="price" id="product-price" placeholder="99.90" step="0.01" required />
+            </div>
+            <div class="field">
+              <label>Estoque</label>
+              <input type="number" name="stock" id="product-stock" placeholder="10" value="10" />
+            </div>
+          </div>
+          
+          <div class="field">
+            <label>URL da Imagem</label>
+            <input type="url" name="image_url" id="product-image" placeholder="https://..." />
+          </div>
+          
+          <div class="field">
+            <label>Descrição</label>
+            <textarea name="description" id="product-desc" rows="3" placeholder="Descrição do produto..."></textarea>
+          </div>
+          
+          <div class="modal-actions">
+            <button type="button" id="btn-cancel" class="btn-secondary">Cancelar</button>
+            <button type="submit" class="btn-primary">Salvar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div id="products-grid" class="products-grid">
+      <p style="color:#64748b; text-align:center; grid-column:1/-1; padding:4rem;">Carregando...</p>
+    </div>
+  </div>
+
+  <script is:inline>
+    const API_URL = window.location.hostname === 'localhost' 
+      ? 'http://localhost:8080' 
+      : 'https://api.getnexo.com.br';
+    
+    const modal = document.getElementById('modal');
+    const form = document.getElementById('form-product');
+    const grid = document.getElementById('products-grid');
+    
+    async function loadProducts() {
+      try {
+        const res = await fetch(`${API_URL}/api/products`);
+        const products = await res.json();
+        
+        if (products.length === 0) {
+          grid.innerHTML = '<p style="color:#64748b; text-align:center; grid-column:1/-1; padding:4rem;">Nenhum produto cadastrado</p>';
+          return;
+        }
+        
+        grid.innerHTML = products.map(p => `
+          <div class="product-card" data-id="${p.id}">
+            <img src="${p.image_url || 'https://placehold.co/200x200/1e293b/64748b?text=Sem+Imagem'}" alt="${p.name}" class="product-image" />
+            <div class="product-info">
+              <h3>${p.name}</h3>
+              <p class="product-price">R$ ${p.price.toFixed(2)}</p>
+              <p class="product-stock">Estoque: ${p.stock || 0}</p>
+            </div>
+            <div class="product-actions">
+              <button onclick="editProduct(${p.id})" class="btn-icon" title="Editar">✏️</button>
+              <button onclick="deleteProduct(${p.id})" class="btn-icon" title="Excluir">🗑️</button>
+            </div>
+          </div>
+        `).join('');
+      } catch (e) {
+        console.error('Error:', e);
+        grid.innerHTML = '<p style="color:#f87171; text-align:center; grid-column:1/-1;">Erro ao carregar produtos</p>';
+      }
+    }
+    
+    // Open modal for new product
+    document.getElementById('btn-new').onclick = () => {
+      form.reset();
+      document.getElementById('product-id').value = '';
+      document.getElementById('modal-title').textContent = 'Novo Produto';
+      modal.style.display = 'flex';
+    };
+    
+    // Close modal
+    document.getElementById('btn-cancel').onclick = () => {
+      modal.style.display = 'none';
+    };
+    
+    // Edit product
+    window.editProduct = async (id) => {
+      try {
+        const res = await fetch(`${API_URL}/api/products`);
+        const products = await res.json();
+        const product = products.find(p => p.id === id);
+        
+        if (!product) return alert('Produto não encontrado');
+        
+        document.getElementById('product-id').value = product.id;
+        document.getElementById('product-name').value = product.name;
+        document.getElementById('product-price').value = product.price;
+        document.getElementById('product-stock').value = product.stock || 0;
+        document.getElementById('product-image').value = product.image_url || '';
+        document.getElementById('product-desc').value = product.description || '';
+        
+        document.getElementById('modal-title').textContent = 'Editar Produto';
+        modal.style.display = 'flex';
+      } catch (e) {
+        console.error('Error:', e);
+      }
+    };
+    
+    // Delete product
+    window.deleteProduct = async (id) => {
+      if (!confirm('Tem certeza que deseja excluir este produto?')) return;
+      
+      try {
+        await fetch(`${API_URL}/api/products/${id}`, { method: 'DELETE' });
+        loadProducts();
+      } catch (e) {
+        console.error('Error:', e);
+        alert('Erro ao excluir produto');
+      }
+    };
+    
+    // Submit form
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const id = data.get('id');
+      
+      const payload = {
+        name: data.get('name'),
+        price: parseFloat(data.get('price')),
+        stock: parseInt(data.get('stock')) || 0,
+        image_url: data.get('image_url') || null,
+        description: data.get('description') || null
+      };
+      
+      try {
+        const url = id ? `${API_URL}/api/products/${id}` : `${API_URL}/api/products`;
+        const method = id ? 'PUT' : 'POST';
+        
+        const res = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        
+        if (!res.ok) throw new Error('Failed');
+        
+        modal.style.display = 'none';
+        loadProducts();
+      } catch (e) {
+        console.error('Error:', e);
+        alert('Erro ao salvar produto');
+      }
+    };
+    
+    loadProducts();
+  </script>
+</Layout>
+
+<style>
+  .nav-link {
+    color: #94a3b8;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+  .nav-link:hover { background: #1e293b; color: white; }
+  .nav-link.active { color: #00ff9d; background: #00ff9d22; font-weight: 600; }
+  
+  .page-container { padding: 2rem 5%; max-width: 1200px; margin: 0 auto; }
+  
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  .page-header h1 { color: #00ff9d; font-size: 2rem; margin: 0; }
+  
+  .btn-primary {
+    background: linear-gradient(90deg, #00d4ff, #00ff9d);
+    color: black;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  
+  .btn-secondary {
+    background: #334155;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  /* Products Grid */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .product-card {
+    background: rgba(20,30,50,0.6);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #1e293b;
+    transition: transform 0.2s;
+  }
+  
+  .product-card:hover { transform: translateY(-4px); }
+  
+  .product-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background: #0f172a;
+  }
+  
+  .product-info {
+    padding: 1rem;
+  }
+  
+  .product-info h3 {
+    color: white;
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+  }
+  
+  .product-price {
+    color: #00ff9d;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin: 0;
+  }
+  
+  .product-stock {
+    color: #64748b;
+    font-size: 0.85rem;
+    margin: 0.3rem 0 0 0;
+  }
+  
+  .product-actions {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0 1rem 1rem;
+  }
+  
+  .btn-icon {
+    background: transparent;
+    border: 1px solid #334155;
+    padding: 0.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  
+  .btn-icon:hover { background: #1e293b; }
+  
+  /* Modal */
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background: #1e293b;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px;
+  }
+  
+  .modal-content h2 {
+    color: #00d4ff;
+    margin: 0 0 1.5rem 0;
+  }
+  
+  .field { margin-bottom: 1rem; }
+  
+  .field label {
+    display: block;
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+  }
+  
+  .field input, .field textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 8px;
+    background: #0f172a;
+    color: white;
+    border: 1px solid #334155;
+    font-size: 1rem;
+  }
+  
+  .field input:focus, .field textarea:focus {
+    outline: none;
+    border-color: #00d4ff;
+  }
+  
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+</style>

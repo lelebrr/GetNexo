@@ -1,0 +1,57 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { glossaryData } from '../data/glossaryData';
+
+const title = "Glossário do WhatsApp Marketing e Automação | Dicionário GetNexo";
+const description = "Entenda todos os termos técnicos do mundo de APIs de WhatsApp, Chatbots e Automação. O dicionário completo para empresas modernas.";
+const keywords = "glossario whatsapp, o que é webhook, dicionario automacao, termos tecnicos whatsapp, api cloud definicao";
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  
+  <section class="gloss-hero relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-b from-[#0f172a] to-black z-[-1]"></div>
+    <div class="container mx-auto px-6 max-w-4xl text-center py-20 pb-10">
+      <div class="hero-badge">Dicionário Técnico</div>
+      <h1 class="text-gradient mb-6">Glossário da Automação</h1>
+      <p class="text-slate-400 text-xl max-w-2xl mx-auto">
+        Domine a linguagem dos desenvolvedores e especialistas em growth.
+      </p>
+    </div>
+  </section>
+
+  <section class="gloss-grid pb-24">
+    <div class="container mx-auto px-6 max-w-6xl">
+      
+      <!-- Search (Visual Only) -->
+      <div class="max-w-xl mx-auto mb-16 relative">
+        <input type="text" placeholder="Buscar termo (ex: Webhook)..." class="w-full bg-white/5 border border-white/10 rounded-full py-4 px-6 text-white outline-none focus:border-[#00ff9d] transition">
+        <span class="absolute right-6 top-4 text-slate-500">🔍</span>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {glossaryData.sort((a, b) => a.term.localeCompare(b.term)).map(item => (
+          <a href={`/glossario/${item.slug}`} class="gloss-card glass-panel group">
+            <h3 class="text-xl font-bold text-white group-hover:text-[#00ff9d] transition mb-3">{item.term}</h3>
+            <p class="text-slate-400 text-sm line-clamp-3 leading-relaxed">
+              {item.definition}
+            </p>
+            <span class="read-more">Ler definição completa →</span>
+          </a>
+        ))}
+      </div>
+
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  .hero-badge { background: rgba(0, 212, 255, 0.1); color: #00d4ff; padding: 0.5rem 1.2rem; border-radius: 50px; font-weight: 700; display: inline-block; margin-bottom: 1.5rem; border: 1px solid rgba(0, 212, 255, 0.2); }
+  
+  .gloss-card { padding: 2rem; display: flex; flex-direction: column; height: 100%; transition: 0.3s; border: 1px solid rgba(255,255,255,0.05); text-decoration: none; }
+  .gloss-card:hover { transform: translateY(-5px); border-color: #00ff9d; background: rgba(255,255,255,0.02); }
+  
+  .read-more { margin-top: auto; padding-top: 1.5rem; color: #00d4ff; font-size: 0.85rem; font-weight: 700; opacity: 0; transform: translateX(-10px); transition: 0.3s; }
+  .gloss-card:hover .read-more { opacity: 1; transform: translateX(0); }
+</style>

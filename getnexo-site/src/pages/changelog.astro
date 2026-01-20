@@ -1,0 +1,242 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const versions = [
+  {
+    version: "2.0.0",
+    date: "17 Jan 2026",
+    type: "major",
+    changes: [
+      { type: "feat", text: "Site completo com 18+ páginas profissionais" },
+      { type: "feat", text: "Página de FAQ com 10 perguntas frequentes" },
+      { type: "feat", text: "Página de Preços com tiers Grátis/Pro/Enterprise" },
+      { type: "feat", text: "Página de Contato com múltiplos canais" },
+      { type: "feat", text: "Página Sobre com história e valores" },
+      { type: "feat", text: "Página de Depoimentos com cases de sucesso" },
+      { type: "feat", text: "Documentação técnica completa" },
+      { type: "feat", text: "SEO agressivo com JSON-LD structured data" },
+      { type: "fix", text: "Correção de sintaxe JSON na página de API" },
+      { type: "perf", text: "Partículas otimizadas para 8GB RAM" }
+    ]
+  },
+  {
+    version: "1.5.0",
+    date: "16 Jan 2026",
+    type: "minor",
+    changes: [
+      { type: "feat", text: "Integração completa com Evolution API 2.2.2" },
+      { type: "feat", text: "Cloudflare Tunnel configurado para todos os serviços" },
+      { type: "feat", text: "Painel Admin com status em tempo real" },
+      { type: "fix", text: "Configuração de portas Docker corrigida" },
+      { type: "docs", text: "Blog com 8 artigos sobre automação WhatsApp" }
+    ]
+  },
+  {
+    version: "1.0.0",
+    date: "15 Jan 2026",
+    type: "major",
+    changes: [
+      { type: "feat", text: "Lançamento inicial do GetNexo" },
+      { type: "feat", text: "Stack completa: Evolution API + n8n + Chatwoot" },
+      { type: "feat", text: "Site Astro com design futurista" },
+      { type: "feat", text: "IA Ara para vendas e suporte" },
+      { type: "feat", text: "Deploy automatizado via Vercel" }
+    ]
+  }
+];
+
+const typeColors = {
+  feat: { bg: 'rgba(0,255,157,0.15)', color: '#00ff9d', label: 'NOVO' },
+  fix: { bg: 'rgba(255,77,77,0.15)', color: '#ff6b6b', label: 'FIX' },
+  perf: { bg: 'rgba(0,212,255,0.15)', color: '#00d4ff', label: 'PERF' },
+  docs: { bg: 'rgba(255,193,7,0.15)', color: '#ffc107', label: 'DOCS' }
+};
+---
+
+<Layout title="Changelog – Histórico de Versões | GetNexo">
+  <section class="changelog-hero">
+    <div class="hero-badge">Build Log</div>
+    <h1 class="text-gradient">Evolução do Produto</h1>
+    <p>Acompanhe cada passo da nossa jornada em democratizar a IA Conversacional no Brasil.</p>
+  </section>
+
+  <section class="changelog-content">
+    {versions.map((v) => (
+      <article class={`version-block glass-panel ${v.type}`}>
+        <div class="version-header">
+          <div class="v-main">
+            <span class="v-tag">v{v.version}</span>
+            <span class={`v-badge ${v.type}`}>{v.type.toUpperCase()}</span>
+          </div>
+          <time>{v.date}</time>
+        </div>
+        <ul class="changes-list">
+          {v.changes.map((change) => (
+            <li class="change-item">
+              <span 
+                class="ch-type" 
+                style={`background: ${typeColors[change.type].bg}; color: ${typeColors[change.type].color}; border: 1px solid ${typeColors[change.type].color}33`}
+              >
+                {typeColors[change.type].label}
+              </span>
+              <span class="ch-text">{change.text}</span>
+            </li>
+          ))}
+        </ul>
+      </article>
+    ))}
+  </section>
+
+  <section class="changelog-footer">
+    <div class="glass-panel news-card">
+        <h3>Quer ser o primeiro a saber?</h3>
+        <p>Receba atualizações técnicas e comerciais direto no seu WhatsApp.</p>
+        <a href="/blog" class="btn-primary-glow">Seguir no Blog →</a>
+    </div>
+  </section>
+
+<style>
+  .changelog-hero { text-align: center; padding: 10rem 5% 4rem; }
+  .hero-badge { background: rgba(0, 212, 255, 0.1); color: #00d4ff; padding: 0.5rem 1.2rem; border-radius: 50px; font-size: 0.85rem; font-weight: 700; display: inline-block; margin-bottom: 2rem; border: 1px solid rgba(0,212,255,0.2); }
+  .changelog-hero h1 { font-size: 3.5rem; margin-bottom: 1rem; }
+  .changelog-hero p { color: #94a3b8; font-size: 1.25rem; max-width: 600px; margin: 0 auto; }
+
+  .changelog-content { max-width: 850px; margin: 0 auto; padding: 4rem 5%; }
+  
+  .version-block { padding: 3rem; border-radius: 24px; margin-bottom: 3rem; position: relative; border-left: 4px solid #00d4ff; transition: 0.3s; }
+  .version-block.major { border-left-color: #00ff9d; }
+  .version-block:hover { transform: translateX(10px); background: rgba(255,255,255,0.03); }
+
+  .version-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+  .v-main { display: flex; align-items: center; gap: 1rem; }
+  .v-tag { font-size: 1.8rem; font-weight: 900; color: white; }
+  .v-badge { font-size: 0.7rem; font-weight: 800; padding: 0.4rem 1rem; border-radius: 50px; }
+  .v-badge.major { background: rgba(0, 255, 157, 0.1); color: #00ff9d; }
+  .v-badge.minor { background: rgba(0, 212, 255, 0.1); color: #00d4ff; }
+  time { color: #64748b; font-weight: 600; }
+
+  .changes-list { list-style: none; padding: 0; }
+  .change-item { display: flex; align-items: center; gap: 1.5rem; padding: 1.2rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .change-item:last-child { border-bottom: none; }
+  
+  .ch-type { font-size: 0.65rem; font-weight: 800; padding: 0.3rem 0.8rem; border-radius: 6px; flex-shrink: 0; }
+  .ch-text { color: #cbd5e1; font-size: 1.1rem; line-height: 1.6; }
+
+  .changelog-footer { padding: 4rem 5% 10rem; max-width: 850px; margin: 0 auto; }
+  .news-card { padding: 4rem; text-align: center; border-radius: 32px; }
+  .news-card h3 { color: white; font-size: 2rem; margin-bottom: 1rem; font-weight: 800; }
+  .news-card p { color: #94a3b8; margin-bottom: 2.5rem; }
+
+  .btn-primary-glow { display: inline-block; background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1.1rem 2.5rem; border-radius: 12px; font-weight: 900; text-decoration: none; transition: 0.3s; box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2); }
+
+  @media (max-width: 768px) {
+    .v-tag { font-size: 1.4rem; }
+    .version-block { padding: 1.5rem; }
+    .change-item { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+  }
+</style>
+</Layout>
+
+<style>
+  .hero {
+    text-align: center;
+    padding: 7rem 5% 4rem;
+    background: linear-gradient(135deg, var(--dark), var(--gray));
+  }
+  .hero h1 {
+    font-size: 3.5rem;
+    background: linear-gradient(90deg, var(--primary), var(--success));
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+  .hero p { color: var(--text); font-size: 1.3rem; margin-top: 1rem; }
+
+  .changelog-content {
+    max-width: 800px;
+    margin: 4rem auto;
+    padding: 0 5%;
+  }
+
+  .version-block {
+    background: rgba(30,41,59,0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0,212,255,0.15);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .version-block::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--primary);
+  }
+  .version-block.major::before { background: var(--success); }
+  .version-block.minor::before { background: var(--primary); }
+
+  .version-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .version-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 0;
+  }
+  .version-number {
+    font-size: 1.8rem;
+    color: var(--light);
+  }
+  .version-badge {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 50px;
+    font-weight: 800;
+  }
+  .version-badge.major { background: rgba(0,255,157,0.2); color: var(--success); }
+  .version-badge.minor { background: rgba(0,212,255,0.2); color: var(--primary); }
+  .version-header time {
+    color: var(--text);
+    font-size: 0.95rem;
+  }
+
+  .changes-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .changes-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    color: var(--light);
+  }
+  .changes-list li:last-child { border-bottom: none; }
+  .change-type {
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .subscribe-section {
+    text-align: center;
+    padding: 4rem 5%;
+    background: rgba(0,212,255,0.05);
+  }
+  .subscribe-section h2 { font-size: 2rem; color: var(--light); margin-bottom: 1rem; }
+  .subscribe-section p { color: var(--text); margin-bottom: 2rem; }
+</style>

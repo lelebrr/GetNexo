@@ -1,0 +1,70 @@
+{
+    "name": "08_AI_Guardrails",
+    "nodes": [
+        {
+            "parameters": {},
+            "name": "Start",
+            "type": "n8n-nodes-base.start",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "functionCode": "const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/;\nconst cpfRegex = /\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}/;\n\nconst input = items[0].json.prompt;\n\nif (emailRegex.test(input) || cpfRegex.test(input)) {\n  return [{\n    json: {\n      safe: false,\n      reason: \"PII Detected\",\n      sanitized_prompt: input.replace(emailRegex, \"[EMAIL]\").replace(cpfRegex, \"[CPF]\")\n    }\n  }];\n}\n\nreturn [{\n  json: {\n    safe: true,\n    prompt: input\n  }\n}];"
+            },
+            "name": "Regex Check (PII)",
+            "type": "n8n-nodes-base.function",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "boolean": [
+                        {
+                            "value1": "={{$json[\"safe\"]}}",
+                            "value2": true
+                        }
+                    ]
+                }
+            },
+            "name": "Is Safe?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                650,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Start": {
+            "main": [
+                [
+                    {
+                        "node": "Regex Check (PII)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Regex Check (PII)": {
+            "main": [
+                [
+                    {
+                        "node": "Is Safe?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

@@ -1,0 +1,689 @@
+---
+// AMP Version of Blog Post
+// SEO Strategy: Mobile-first acceleration + E-A-T optimization
+const post = { title: 'Post Title', slug: 'post-slug' }; // Placeholder, will be replaced by actual logic if needed
+const canonicalUrl = 'https://getnexo.com.br/blog/post-slug';
+const ampUrl = 'https://getnexo.com.br/blog/post-slug.amp';
+---
+<!doctype html>
+<html ⚡ lang="pt-BR" class="dark">
+<head>
+  <meta charset="utf-8" />
+  <title>{post.title} | GetNexo Blog – Automação WhatsApp, IA & Vendas 24h</title>
+  <link rel="canonical" href={`https://getnexo.com.br/blog/${post.slug}`} />
+  <link rel="amphtml" href={ampUrl} />
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1" />
+  <meta name="description" content={`Artigo definitivo sobre ${post.title}. Guia completo com passos práticos, casos reais, dicas de automação WhatsApp com IA, PIX, recuperação de carrinho e dashboard – GetNexo Blog 2026.`} />
+  <meta name="keywords" content="whatsapp business, automação whatsapp, api whatsapp oficial, getnexo, vendas whatsapp, chatbot ia whatsapp, pix whatsapp, carrinho abandonado whatsapp, blog getnexo, whatsapp marketing, whatsapp vendas, whatsapp recuperação carrinho, whatsapp integração e-commerce" />
+  <meta name="author" content="Leandro Barbosa – GetNexo" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content={post.title} />
+  <meta property="og:description" content={`Artigo completo e prático sobre ${post.title} – GetNexo Blog`} />
+  <meta property="og:url" content={canonicalUrl} />
+  <meta property="og:image" content={`https://getnexo.com.br/assets/blog-featured/${post.slug}.jpg`} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="GetNexo Blog" />
+  <meta property="article:published_time" content="2026-01-17T00:00:00-03:00" />
+  <meta property="article:modified_time" content="2026-01-17T00:00:00-03:00" />
+  <meta property="article:author" content="https://getnexo.com.br/about" />
+  <meta property="article:section" content="Automação WhatsApp" />
+  <meta property="article:tag" content="whatsapp business, automação whatsapp, getnexo" />
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={post.title} />
+  <meta name="twitter:description" content={`Guia completo sobre ${post.title} – GetNexo Blog`} />
+  <meta name="twitter:image" content={`https://getnexo.com.br/assets/blog-featured/${post.slug}.jpg`} />
+  <meta name="twitter:site" content="@getnexo" />
+  <meta name="twitter:creator" content="@lelebrr" />
+
+  <!-- Speakable (Voice Search) -->
+  <meta name="speakable" content="#article-body" />
+
+  <!-- AMP Boilerplate -->
+  <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+
+  <!-- AMP Scripts -->
+  <script async src="https://cdn.ampproject.org/v0.js"></script>
+  <script async custom-element="amp-analytics" src="https://cdn.ampproject.org/v0/amp-analytics-0.1.js"></script>
+  <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
+  <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
+  <script async custom-element="amp-youtube" src="https://cdn.ampproject.org/v0/amp-youtube-0.1.js"></script>
+  <script async custom-element="amp-carousel" src="https://cdn.ampproject.org/v0/amp-carousel-0.1.js"></script>
+  <script async custom-element="amp-accordion" src="https://cdn.ampproject.org/v0/amp-accordion-0.1.js"></script>
+  <script async custom-element="amp-bind" src="https://cdn.ampproject.org/v0/amp-bind-0.1.js"></script>
+  <script async custom-element="amp-form" src="https://cdn.ampproject.org/v0/amp-form-0.1.js"></script>
+  <script async custom-element="amp-selector" src="https://cdn.ampproject.org/v0/amp-selector-0.1.js"></script>
+
+  <!-- Structured Data – BlogPosting + Article + FAQ + Speakable -->
+  <script type="application/ld+json" is:inline>
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "{post.title}",
+    "description": "Artigo completo e definitivo sobre {post.title}. Guia prático com passos, casos reais, dicas de automação WhatsApp com IA, PIX, recuperação de carrinho e dashboard – GetNexo Blog 2026.",
+    "author": {
+      "@type": "Person",
+      "name": "Leandro Barbosa",
+      "url": "https://getnexo.com.br/about",
+      "sameAs": ["https://twitter.com/lelebrr", "https://github.com/lelebrr"]
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "GetNexo",
+      "url": "https://getnexo.com.br",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://getnexo.com.br/assets/logo-getnexo-amp.png",
+        "width": 512,
+        "height": 512
+      }
+    },
+    "datePublished": "2026-01-17T00:00:00-03:00",
+    "dateModified": "2026-01-17T00:00:00-03:00",
+    "image": "https://getnexo.com.br/assets/blog-featured/{post.slug}.jpg",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "{canonicalUrl}"
+    },
+    "keywords": "whatsapp business, automação whatsapp, api whatsapp oficial, getnexo, vendas whatsapp, chatbot ia whatsapp, pix whatsapp, carrinho abandonado whatsapp, blog getnexo, whatsapp marketing 2026",
+    "articleSection": "Automação WhatsApp",
+    "wordCount": "3500",
+    "speakable": {
+      "@type": "SpeakableSpecification",
+      "cssSelector": [".speakable-intro", ".speakable-conclusion"]
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "GetNexo",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://getnexo.com.br/assets/logo-getnexo-amp.png"
+      }
+    }
+  }
+  </script>
+
+  <!-- FAQ Schema (exemplo – adapte por post) -->
+  <script type="application/ld+json" is:inline>
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [{
+      "@type": "Question",
+      "name": "O que é {post.title}?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Neste artigo explicamos tudo sobre {post.title} de forma prática e completa para quem quer vender mais no WhatsApp com GetNexo."
+      }
+    }, {
+      "@type": "Question",
+      "name": "Quanto custa usar {post.title} com GetNexo?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "GetNexo tem plano gratuito self-hosted e Pro a partir de R$ 97/mês. Não cobra por mensagem Meta."
+      }
+    }]
+  }
+  </script>
+</head>
+
+<body>
+  <!-- Header fixo com glassmorphism + partículas sutis -->
+  <header class="amp-header">
+    <a href="/" class="amp-logo">
+      <amp-img src="/assets/logo-getnexo-amp.png" width="48" height="48" alt="GetNexo Logo" layout="fixed"></amp-img>
+      <span>GetNexo</span>
+    </a>
+    <nav class="amp-nav">
+      <a href="/blog">Blog</a>
+      <a href="/integracoes">Integrações</a>
+      <a href="/precos">Preços</a>
+      <a href="/revenda">Revenda</a>
+      <a href="/suporte">Suporte</a>
+      <a href="/demo">Demo</a>
+    </nav>
+  </header>
+
+  <!-- Hero com overlay gradiente e ECG animado -->
+  <section class="amp-hero">
+    <amp-img
+      src={`/assets/blog-featured/${post.slug}.avif`}
+      width="1600"
+      height="800"
+      layout="responsive"
+      alt={post.title}
+      srcset={`/assets/blog-featured/${post.slug}-320w.avif 320w,
+              /assets/blog-featured/${post.slug}-640w.avif 640w,
+              /assets/blog-featured/${post.slug}-1200w.avif 1200w,
+              /assets/blog-featured/${post.slug}-1600w.avif 1600w`}
+      sizes="(max-width: 600px) 100vw, (max-width: 1024px) 80vw, 1200px"
+      loading="eager"
+    ></amp-img>
+
+    <div class="amp-hero-overlay">
+      <h1>{post.title}</h1>
+      <div class="amp-meta">
+        <time datetime="2026-01-17">17 de Janeiro de 2026</time>
+        <span class="amp-author">Por Leandro Barbosa</span>
+        <span class="amp-reading-time">~ 15–20 min de leitura</span>
+        <span class="amp-category">Automação WhatsApp</span>
+      </div>
+
+      <!-- ECG animado no hero -->
+      <div class="amp-ecg-pulse">
+        <svg viewBox="0 0 800 100" preserveAspectRatio="none">
+          <path d="M0 50 L100 50 L120 30 L140 70 L160 50 L800 50" fill="none" stroke="#00ff9d" stroke-width="3">
+            <animate attributeName="d" values="M0 50 L100 50 L120 30 L140 70 L160 50 L800 50; M0 50 L100 50 L120 70 L140 30 L160 50 L800 50; M0 50 L100 50 L120 50 L140 50 L160 50 L800 50" dur="4s" repeatCount="indefinite" />
+          </path>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- Conteúdo principal – estrutura enciclopédica -->
+  <article class="amp-article">
+    <div class="amp-toc">
+      <h3>Índice do Artigo</h3>
+      <nav>
+        <a href="#introducao">Introdução</a>
+        <a href="#por-que-importa">Por que {post.title} importa?</a>
+        <a href="#passo-a-passo">Passo a passo: implementação</a>
+        <a href="#casos-sucesso">Casos de sucesso reais</a>
+        <a href="#erros-comuns">Erros comuns e como evitá-los</a>
+        <a href="#faq">Perguntas Frequentes</a>
+        <a href="#conclusao">Conclusão & Próximos passos</a>
+      </nav>
+    </div>
+
+    <div class="amp-content speakable-intro">
+      <h2 id="introducao">Introdução</h2>
+      <p>No cenário digital de 2026, o WhatsApp se consolidou como o principal canal de vendas e relacionamento com o cliente no Brasil. {post.title} é um dos temas mais estratégicos para qualquer negócio que quer crescer de forma sustentável. Neste guia definitivo, você vai encontrar:</p>
+      <ul>
+        <li>Conceitos fundamentais explicados de forma prática</li>
+        <li>Passo a passo com imagens e vídeos</li>
+        <li>Casos reais com números de ROI</li>
+        <li>Erros que 90% das empresas cometem (e como evitá-los)</li>
+        <li>Checklist completo para implementar hoje</li>
+        <li>FAQ e perguntas reais de usuários</li>
+      </ul>
+
+      <h2 id="por-que-importa">Por que {post.title} importa em 2026?</h2>
+      <p>Dados reais do mercado brasileiro mostram:</p>
+      <ul>
+        <li>98% de taxa de abertura no WhatsApp (contra 20% no e-mail)</li>
+        <li>60–80% de aumento nas vendas com automação inteligente</li>
+        <li>70% de recuperação de carrinhos abandonados via WhatsApp</li>
+        <li>Redução de até 85% no custo de suporte ao cliente</li>
+        <li>Empresas que usam WhatsApp + IA crescem 4x mais rápido</li>
+      </ul>
+
+      <h2 id="passo-a-passo">Passo a passo: como implementar {post.title} com GetNexo</h2>
+      <ol>
+        <li>Crie ou migre para WhatsApp Business API oficial (Evolution API)</li>
+        <li>Instale GetNexo localmente (Docker Compose em 3 minutos)</li>
+        <li>Configure chatbot IA (Gemini, Grok ou DeepSeek)</li>
+        <li>Ative catálogo, PIX e recuperação de carrinho</li>
+        <li>Integre com seu e-commerce (Shopify, Woo, Nuvemshop, Tray, VTEX)</li>
+        <li>Crie campanhas broadcast e retargeting</li>
+        <li>Monitore tudo no dashboard neon</li>
+        <li>Teste A/B e otimize continuamente</li>
+      </ol>
+
+      <amp-youtube
+        data-videoid="VIDEO_ID_TUTORIAL_AQUI"
+        layout="responsive"
+        width="480"
+        height="270"
+      ></amp-youtube>
+
+      <h2 id="casos-sucesso">Casos reais de sucesso com GetNexo</h2>
+      <amp-carousel width="auto" height="300" layout="fixed-height" type="carousel">
+        <figure>
+          <amp-img src="/assets/caso-loja-moda.jpg" width="400" height="300" layout="responsive" alt="Loja de moda"></amp-img>
+          <figcaption>Loja de moda: +320% vendas em 60 dias</figcaption>
+        </figure>
+        <figure>
+          <amp-img src="/assets/caso-concessionaria.jpg" width="400" height="300" layout="responsive" alt="Concessionária"></amp-img>
+          <figcaption>Concessionária: +280% agendamentos de test drive</figcaption>
+        </figure>
+        <figure>
+          <amp-img src="/assets/caso-ecommerce.jpg" width="400" height="300" layout="responsive" alt="E-commerce"></amp-img>
+          <figcaption>E-commerce: 68% de carrinhos recuperados</figcaption>
+        </figure>
+      </amp-carousel>
+
+      <h2 id="erros-comuns">Erros comuns e como evitá-los</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Erro comum</th>
+            <th>Impacto</th>
+            <th>Solução com GetNexo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Usar WhatsApp pessoal para vendas</td>
+            <td>Risco alto de banimento</td>
+            <td>Migração para API oficial via GetNexo</td>
+          </tr>
+          <tr>
+            <td>Ignorar LGPD e consentimento</td>
+            <td>Multa até R$ 50 milhões</td>
+            <td>GetNexo tem consentimento explícito nativo</td>
+          </tr>
+          <tr>
+            <td>Não testar fluxos antes de lançar</td>
+            <td>Perda de clientes</td>
+            <td>Modo sandbox e teste A/B integrado</td>
+          </tr>
+          <tr>
+            <td>Não monitorar métricas</td>
+            <td>ROI desconhecido</td>
+            <td>Dashboard real-time com relatórios</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 id="faq">Perguntas Frequentes (FAQ)</h2>
+      <amp-accordion>
+        <section>
+          <h3>O que é {post.title}?</h3>
+          <p>Explicação detalhada aqui...</p>
+        </section>
+        <section>
+          <h3>Quanto custa implementar {post.title} com GetNexo?</h3>
+          <p>Plano grátis self-hosted ou Pro R$ 97/mês...</p>
+        </section>
+        <section>
+          <h3>GetNexo evita ban no WhatsApp?</h3>
+          <p>Sim, usa API oficial Meta aprovada...</p>
+        </section>
+        <!-- Adicione mais 10–15 seções FAQ -->
+      </amp-accordion>
+
+      <!-- CTA final agressivo -->
+      <div class="amp-cta">
+        <h3>Quer multiplicar suas vendas no WhatsApp ainda este mês?</h3>
+        <p>Comece agora mesmo – teste grátis, sem cartão, sem risco.</p>
+        <a href="/criar-bot" class="amp-button">Criar Meu Bot Gratuitamente</a>
+      </div>
+    </div>
+
+    <!-- Social Share expandido -->
+    <div class="amp-social-share">
+      <h3>Compartilhe este guia com quem precisa vender mais</h3>
+      <amp-social-share type="facebook" data-param-app_id="123456789"></amp-social-share>
+      <amp-social-share type="twitter"></amp-social-share>
+      <amp-social-share type="whatsapp"></amp-social-share>
+      <amp-social-share type="linkedin"></amp-social-share>
+      <amp-social-share type="pinterest"></amp-social-share>
+      <amp-social-share type="telegram"></amp-social-share>
+      <amp-social-share type="email"></amp-social-share>
+    </div>
+  </article>
+
+  <!-- Artigos relacionados – grid + carousel -->
+  <section class="amp-related">
+    <h3>Continue aprendendo com estes artigos</h3>
+    <amp-carousel width="auto" height="280" layout="fixed-height" type="carousel">
+      <a href="/blog/recuperar-carrinho.amp" class="amp-related-card">
+        <amp-img src="/assets/blog-thumb-recuperar.jpg" width="400" height="280" layout="responsive" alt="Recuperar Carrinho"></amp-img>
+        <h4>Recuperar 70% dos carrinhos abandonados no WhatsApp</h4>
+      </a>
+      <a href="/blog/api-whatsapp-custo.amp" class="amp-related-card">
+        <amp-img src="/assets/blog-thumb-custo.jpg" width="400" height="280" layout="responsive" alt="Custo API"></amp-img>
+        <h4>Custo real da API WhatsApp em 2026 (sem pegadinha)</h4>
+      </a>
+      <a href="/blog/casos-sucesso.amp" class="amp-related-card">
+        <amp-img src="/assets/blog-thumb-casos.jpg" width="400" height="280" layout="responsive" alt="Casos de Sucesso"></amp-img>
+        <h4>Casos reais: como lojas dobraram vendas com GetNexo</h4>
+      </a>
+      <a href="/blog/ia-vendeu-8k.amp" class="amp-related-card">
+        <amp-img src="/assets/blog-thumb-ia.jpg" width="400" height="280" layout="responsive" alt="IA Vendeu 8k"></amp-img>
+        <h4>IA vendeu R$ 8.000 em 3 dias – veja como</h4>
+      </a>
+    </amp-carousel>
+  </section>
+
+  <!-- Footer com links úteis -->
+  <footer class="amp-footer">
+    <div class="amp-footer-content">
+      <a href="/" class="amp-logo">
+        <amp-img src="/assets/logo-getnexo-amp.png" width="48" height="48" alt="GetNexo Logo"></amp-img>
+        <span>GetNexo</span>
+      </a>
+      <nav class="amp-footer-nav">
+        <a href="/blog">Blog</a>
+        <a href="/integracoes">Integrações</a>
+        <a href="/precos">Preços</a>
+        <a href="/revenda">Revenda</a>
+        <a href="/suporte">Suporte</a>
+        <a href="/demo">Demo</a>
+        <a href="/privacidade">Privacidade</a>
+        <a href="/termos">Termos</a>
+      </nav>
+    </div>
+    <p>© 2026 GetNexo – Feito no Brasil com ❤️ • Plataforma WhatsApp oficial</p>
+  </footer>
+</body>
+</html>
+
+<style amp-custom>
+  /* ==========================================================================
+     AMP CUSTOM STYLES – Dark Neon Futurist Enciclopédico
+     Otimizado para LCP < 1s, CLS 0, TBT < 50ms, mobile-first
+     ========================================================================== */
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #000;
+    color: #f8fafc;
+    line-height: 1.8;
+    font-size: 16px;
+  }
+
+  .amp-header {
+    background: rgba(0,0,0,0.92);
+    backdrop-filter: blur(20px);
+    padding: 1.2rem 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(0,212,255,0.18);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+
+  .amp-logo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    color: #00ff9d;
+    font-weight: 900;
+    font-size: 1.6rem;
+  }
+
+  .amp-nav {
+    display: flex;
+    gap: 2.5rem;
+  }
+
+  .amp-nav a {
+    color: #94a3b8;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+  }
+
+  .amp-nav a:hover {
+    color: #00ff9d;
+  }
+
+  .amp-hero {
+    position: relative;
+    margin-bottom: 4rem;
+  }
+
+  .amp-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.95));
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 4rem 5% 3rem;
+  }
+
+  .amp-hero h1 {
+    font-size: 3.2rem;
+    font-weight: 900;
+    color: white;
+    margin: 0 0 1.2rem 0;
+    line-height: 1.1;
+    text-shadow: 0 6px 30px rgba(0,0,0,0.9);
+  }
+
+  .amp-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.8rem;
+    font-size: 1rem;
+    color: #94a3b8;
+  }
+
+  .amp-article {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 5%;
+  }
+
+  .amp-toc {
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .amp-toc h3 {
+    color: #00d4ff;
+    margin-top: 0;
+  }
+
+  .amp-toc nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .amp-toc a {
+    color: #cbd5e1;
+    text-decoration: none;
+  }
+
+  .amp-toc a:hover {
+    color: #00ff9d;
+  }
+
+  .amp-content {
+    font-size: 1.15rem;
+    line-height: 1.85;
+  }
+
+  .amp-content h2 {
+    color: #00d4ff;
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 3.5rem 0 1.2rem 0;
+    border-bottom: 4px solid #00d4ff;
+    padding-bottom: 0.8rem;
+  }
+
+  .amp-content h3 {
+    color: #00ff9d;
+    font-size: 1.9rem;
+    font-weight: 700;
+    margin: 3rem 0 1rem 0;
+  }
+
+  .amp-content ul, .amp-content ol {
+    margin: 1.8rem 0;
+    padding-left: 2.5rem;
+  }
+
+  .amp-content li {
+    margin-bottom: 1rem;
+  }
+
+  .amp-content blockquote {
+    background: rgba(0,212,255,0.1);
+    border-left: 6px solid #00d4ff;
+    padding: 1.8rem 2.5rem;
+    margin: 2.5rem 0;
+    font-style: italic;
+    color: #cbd5e1;
+    font-size: 1.2rem;
+  }
+
+  .amp-cta {
+    background: linear-gradient(135deg, rgba(0,212,255,0.15), rgba(0,255,157,0.15));
+    border: 1px solid rgba(0,212,255,0.3);
+    border-radius: 20px;
+    padding: 3.5rem 2.5rem;
+    text-align: center;
+    margin: 5rem 0;
+    box-shadow: 0 0 40px rgba(0,212,255,0.25);
+  }
+
+  .amp-cta h3 {
+    color: #00d4ff;
+    font-size: 2.2rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .amp-button {
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    color: #000;
+    padding: 1.4rem 3.5rem;
+    border-radius: 60px;
+    text-decoration: none;
+    font-weight: 900;
+    font-size: 1.4rem;
+    display: inline-block;
+    margin-top: 1.8rem;
+    transition: all 0.4s ease;
+    box-shadow: 0 0 40px rgba(0,212,255,0.5);
+  }
+
+  .amp-button:hover {
+    transform: translateY(-6px) scale(1.04);
+    box-shadow: 0 0 70px rgba(0,212,255,0.8);
+  }
+
+  .amp-social-share {
+    margin: 5rem 0;
+    text-align: center;
+  }
+
+  .amp-social-share h3 {
+    color: #00d4ff;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+  }
+
+  .amp-related {
+    background: rgba(255,255,255,0.03);
+    padding: 5rem 5%;
+    margin: 5rem 0;
+  }
+
+  .amp-related h3 {
+    color: #00ff9d;
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 2.5rem;
+  }
+
+  .amp-related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .amp-related-card {
+    background: rgba(255,255,255,0.05);
+    border-radius: 16px;
+    overflow: hidden;
+    text-decoration: none;
+    transition: all 0.5s ease;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+
+  .amp-related-card:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 20px 50px rgba(0,212,255,0.4);
+  }
+
+  .amp-related-card h4 {
+    color: white;
+    padding: 1.5rem;
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+
+  .amp-footer {
+    background: #000;
+    padding: 5rem 5% 3rem;
+    border-top: 1px solid rgba(0,212,255,0.2);
+    text-align: center;
+  }
+
+  .amp-footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto 3rem;
+    flex-wrap: wrap;
+    gap: 3rem;
+  }
+
+  .amp-footer-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2.5rem;
+  }
+
+  .amp-footer-nav a {
+    color: #94a3b8;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+  }
+
+  .amp-footer-nav a:hover {
+    color: #00ff9d;
+  }
+
+  .amp-footer p {
+    color: #64748b;
+    font-size: 1rem;
+    margin: 0;
+  }
+
+  /* ==========================================================================
+     RESPONSIVIDADE EXTREMA (mobile-first)
+     ========================================================================== */
+  @media (max-width: 1024px) {
+    .amp-hero h1 { font-size: 2.8rem; }
+    .amp-content { font-size: 1.08rem; }
+    .amp-related-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  }
+
+  @media (max-width: 768px) {
+    .amp-header { padding: 1rem 5%; flex-direction: column; gap: 1.5rem; }
+    .amp-nav { flex-direction: column; text-align: center; gap: 1rem; }
+    .amp-article-header h1 { font-size: 2.2rem; }
+    .amp-meta { flex-direction: column; gap: 0.8rem; }
+    .amp-related-grid { grid-template-columns: 1fr; }
+    .amp-footer-content { flex-direction: column; text-align: center; }
+  }
+
+  @media (max-width: 480px) {
+    .amp-hero h1 { font-size: 1.9rem; }
+    .amp-content { font-size: 1rem; }
+    .amp-button { padding: 1rem 2rem; font-size: 1.1rem; }
+  }
+</style>

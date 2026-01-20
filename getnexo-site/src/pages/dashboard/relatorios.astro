@@ -1,0 +1,115 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+---
+
+<DashboardLayout title="Advanced Analytics | OmniNexo">
+  <div style="display:flex; flex-direction:column; gap:2.5rem;">
+    <div class="glass-panel" style="padding:2.5rem; background:linear-gradient(90deg, rgba(0, 212, 255, 0.15), rgba(167, 139, 250, 0.08));">
+        <h2 style="font-size:2.5rem; font-weight:900; color:white; margin:0;" class="text-gradient">Relatórios & Inteligência</h2>
+        <p style="color:#94a3b8; margin:0.5rem 0 0; font-size:1.1rem;">Análise profunda de ROI, conversão e performance da Ara.</p>
+    </div>
+
+    <!-- Stats Matrix -->
+    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:1.5rem;">
+        <div class="glass-panel" style="padding:1.5rem; text-align:center;">
+             <div style="color:#64748b; font-size:0.75rem; font-weight:800; text-transform:uppercase; margin-bottom:0.5rem;">LTV (Média)</div>
+             <div style="font-size:1.8rem; font-weight:900; color:white;">R$ 1.140</div>
+        </div>
+        <div class="glass-panel" style="padding:1.5rem; text-align:center;">
+             <div style="color:#64748b; font-size:0.75rem; font-weight:800; text-transform:uppercase; margin-bottom:0.5rem;">ROI Publicidade</div>
+             <div style="font-size:1.8rem; font-weight:900; color:var(--neon-green);">8.4x</div>
+        </div>
+        <div class="glass-panel" style="padding:1.5rem; text-align:center;">
+             <div style="color:#64748b; font-size:0.75rem; font-weight:800; text-transform:uppercase; margin-bottom:0.5rem;">Custo por Lead</div>
+             <div style="font-size:1.8rem; font-weight:900; color:white;">R$ 4,12</div>
+        </div>
+        <div class="glass-panel" style="padding:1.5rem; text-align:center;">
+             <div style="color:#64748b; font-size:0.75rem; font-weight:800; text-transform:uppercase; margin-bottom:0.5rem;">Satisfação (CSAT)</div>
+             <div style="font-size:1.8rem; font-weight:900; color:var(--neon-blue);">4.9/5</div>
+        </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:2rem;">
+        <div class="glass-panel" style="padding:2rem;">
+            <h3 style="margin:0 0 1.5rem; font-size:1.2rem; font-weight:800;">Funil de Conversão (AI)</h3>
+            <div style="height:350px;">
+                <canvas id="funnelChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="glass-panel" style="padding:2rem;">
+            <h3 style="margin:0 0 1.5rem; font-size:1.2rem; font-weight:800;">Top Produtos (Conversão IA)</h3>
+            <div style="display:flex; flex-direction:column; gap:1rem;">
+                <!-- Table Simulation -->
+                <div style="display:flex; justify-content:space-between; padding-bottom:0.8rem; border-bottom:1px solid rgba(255,255,255,0.05); font-size:0.8rem; font-weight:800; color:#64748b;">
+                    <span>PRODUTO</span>
+                    <span>VENDAS</span>
+                    <span>ROI</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:white; font-weight:700;">Plano Premium (Anual)</span>
+                    <span style="color:#94a3b8;">142</span>
+                    <span style="color:var(--neon-green); font-weight:800;">12.4x</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:white; font-weight:700;">Curso Mentoria VIP</span>
+                    <span style="color:#94a3b8;">89</span>
+                    <span style="color:var(--neon-green); font-weight:800;">9.1x</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:white; font-weight:700;">E-book Estratégias</span>
+                    <span style="color:#94a3b8;">412</span>
+                    <span style="color:var(--neon-green); font-weight:800;">5.2x</span>
+                </div>
+            </div>
+            
+            <div style="margin-top:2rem; padding:1.5rem; background:rgba(167, 139, 250, 0.05); border-radius:12px; border:1px solid rgba(167, 139, 250, 0.1);">
+                <p style="margin:0; font-size:0.85rem; color:#a78bfa; line-height:1.5;">
+                    💡 <b>Insight da Ara:</b> Notei que leads que perguntam sobre "garantia" convertem 40% mais rápido quando citamos o selo de 30 dias. Adicionar isso ao prompt principal?
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div style="display:flex; justify-content:flex-end; gap:1rem;">
+        <button onclick="window.print()" style="background:rgba(255,255,255,0.05); color:white; border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:12px 25px; font-weight:800; cursor:pointer;">Gerar PDF</button>
+        <button style="background:var(--neon-green); color:black; border:none; border-radius:10px; padding:12px 25px; font-weight:900; cursor:pointer;">Exportar CSV</button>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script is:inline>
+    const ctx = document.getElementById('funnelChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Capturados', 'Qualificados', 'Demonstração', 'Proposta', 'Fechado'],
+            datasets: [{
+                label: 'Interações Ara',
+                data: [1200, 850, 420, 180, 95],
+                backgroundColor: [
+                    'rgba(0, 212, 255, 0.2)',
+                    'rgba(0, 212, 255, 0.4)',
+                    'rgba(0, 212, 255, 0.6)',
+                    'rgba(0, 212, 255, 0.8)',
+                    '#00ff9d'
+                ],
+                borderColor: 'rgba(255,255,255,0.1)',
+                borderWidth: 1,
+                borderRadius: 8
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b' } },
+                y: { grid: { display: false }, ticks: { color: 'white', font: { weight: 'bold' } } }
+            }
+        }
+    });
+  </script>
+</DashboardLayout>

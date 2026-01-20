@@ -1,0 +1,123 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+---
+
+<DashboardLayout title="AI Simulation Lab | OmniNexo">
+  <div style="display:flex; flex-direction:column; gap:2.5rem;">
+    <div class="glass-panel" style="padding:2.5rem; background:linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(167, 139, 250, 0.05)); border-color: rgba(0, 212, 255, 0.2);">
+        <h2 style="font-size:2.5rem; font-weight:900; color:white; margin:0;" class="text-gradient">AI Simulation Lab 🧪</h2>
+        <p style="color:#94a3b8; margin:0.5rem 0 0; font-size:1.1rem;">Teste scripts e comportamentos da Ara antes de enviar para produção.</p>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1.2fr; gap:2rem; height: 700px;">
+        
+        <!-- Controls -->
+        <div class="glass-panel" style="padding:2.5rem; display:flex; flex-direction:column; gap:2rem; overflow-y:auto;">
+            <div>
+                <h3 style="margin:0 0 1rem; color:var(--neon-blue);">Configuração do Cenário</h3>
+                
+                <div style="display:flex; flex-direction:column; gap:1.5rem;">
+                    <div>
+                        <label style="display:block; font-size:0.8rem; font-weight:800; color:#64748b; margin-bottom:0.8rem; text-transform:uppercase;">Tipo de Lead</label>
+                        <select class="sim-input">
+                            <option>Novo Lead (Frio)</option>
+                            <option>Cliente Recorrente</option>
+                            <option>Lead Crítico (Reclamação)</option>
+                            <option>Interessado em Preço</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label style="display:block; font-size:0.8rem; font-weight:800; color:#64748b; margin-bottom:0.8rem; text-transform:uppercase;">Contexto Adicional (Override)</label>
+                        <textarea class="sim-textarea" placeholder="Ex: O cliente já comprou 2x e está em dúvida sobre o frete para o Nordeste..."></textarea>
+                    </div>
+
+                    <div style="padding:1rem; background:rgba(255,255,255,0.03); border-radius:12px; border:1px solid rgba(255,255,255,0.05);">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-weight:700; font-size:0.9rem;">Monitoramento de Sinapse</span>
+                            <span style="color:var(--neon-green); font-size:0.75rem; font-weight:900;">ATIVO</span>
+                        </div>
+                        <div style="margin-top:1rem; font-size:0.75rem; color:#64748b; line-height:1.5;">
+                            A Ara simulará o processamento real usando o modelo **Gemini 2.0 Flash**.
+                        </div>
+                    </div>
+
+                    <button id="reset-sim" style="width:100%; padding:1rem; background:rgba(255,0,0,0.05); color:#fca5a5; border:1px solid rgba(255,0,0,0.1); border-radius:10px; font-weight:700; cursor:pointer;">Limpar Simulação</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Sandbox -->
+        <div class="glass-panel" style="padding:0; position:relative; display:flex; flex-direction:column; border-color: rgba(0, 212, 255, 0.1);">
+            <div style="padding:1.5rem; border-bottom:1px solid rgba(255,255,255,0.05); background:rgba(0,0,0,0.2); display:flex; justify-content:space-between;">
+                <span style="font-weight:800; color:white;">Sandbox: Conversa com Ara</span>
+                <span style="color:var(--neon-blue); font-size:0.7rem; font-weight:900;">MODO TESTE</span>
+            </div>
+            
+            <div id="sim-messages" style="flex:1; padding:2rem; overflow-y:auto; display:flex; flex-direction:column; gap:1rem;">
+                <!-- Sim messages -->
+                <div class="sim-msg system">Simulação Iniciada. A Ara aguarda seu input como lead.</div>
+            </div>
+
+            <div style="padding:2rem; border-top:1px solid rgba(255,255,255,0.05);">
+                <div style="position:relative;">
+                    <input type="text" id="sim-input-box" placeholder="Digite como um lead: 'Olá, qual o valor do frete?'" style="width:100%; padding:1.2rem; background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.1); border-radius:12px; color:white; outline:none;" />
+                    <button id="send-sim" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:var(--neon-blue); color:black; border:none; padding:8px 20px; border-radius:8px; font-weight:900; cursor:pointer;">ENVIAR</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+  </div>
+
+  <style>
+    .sim-input { width: 100%; padding: 1rem; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white; outline: none; }
+    .sim-textarea { width: 100%; height: 120px; padding: 1rem; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white; outline: none; resize: none; font-size: 0.9rem; }
+    
+    .sim-msg { max-width: 80%; padding: 1rem; border-radius: 12px; font-size: 0.9rem; line-height: 1.5; animation: pop 0.3s ease-out; }
+    .sim-msg.user { align-self: flex-end; background: var(--neon-blue); color: black; font-weight: 700; }
+    .sim-msg.agent { align-self: flex-start; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); }
+    .sim-msg.system { align-self: center; background: none; color: #64748b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; border: none; }
+    
+    @keyframes pop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  </style>
+
+  <script is:inline>
+      const msgBox = document.getElementById('sim-messages');
+      const inputBox = document.getElementById('sim-input-box');
+      const sendBtn = document.getElementById('send-sim');
+
+      function addMsg(text, type) {
+          const div = document.createElement('div');
+          div.className = `sim-msg ${type}`;
+          div.innerHTML = text;
+          msgBox.appendChild(div);
+          msgBox.scrollTop = msgBox.scrollHeight;
+      }
+
+      async function handleSend() {
+          const text = inputBox.value.trim();
+          if (!text) return;
+
+          addMsg(text, 'user');
+          inputBox.value = '';
+          
+          // Simulation delay
+          setTimeout(() => {
+              const loading = document.createElement('div');
+              loading.className = 'sim-msg agent';
+              loading.innerText = 'Processando sinapse...';
+              msgBox.appendChild(loading);
+              
+              setTimeout(() => {
+                  loading.remove();
+                  addMsg('Para te dar uma resposta precisa, preciso entender se você já conferiu nosso catálogo oficial. Posso te enviar o link agora?', 'agent');
+              }, 1500);
+          }, 300);
+      }
+
+      sendBtn.onclick = handleSend;
+      inputBox.onkeydown = (e) => e.key === 'Enter' && handleSend();
+      document.getElementById('reset-sim').onclick = () => { msgBox.innerHTML = '<div class="sim-msg system">Simulação Iniciada. A Ara aguarda seu input como lead.</div>'; };
+  </script>
+</DashboardLayout>

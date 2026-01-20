@@ -1,0 +1,193 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Login | GetNexo">
+    <div class="login-container">
+        <div class="login-box">
+            <h1 class="glitch-text" data-text="GETNEXO ID">GETNEXO ID</h1>
+            <p class="subtitle">Acesse seu painel ou console de revenda</p>
+
+            <form id="login-form">
+                <div class="input-group">
+                    <label>E-MAIL</label>
+                    <input type="email" name="email" required placeholder="user@exemplo.com">
+                </div>
+                <div class="input-group">
+                    <label>SENHA</label>
+                    <input type="password" name="password" required placeholder="••••••••">
+                </div>
+                
+                <div class="msg-box hidden" id="msg-box"></div>
+
+                <button type="submit" class="btn-login">
+                    INICIAR SESSÃO <span class="arr">→</span>
+                </button>
+            </form>
+
+            <div class="footer-links">
+                <a href="#">Esqueci a senha</a>
+                <span>•</span>
+                <a href="/forge">Criar Conta (Forge)</a>
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .login-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+        color: #fff;
+    }
+
+    .login-box {
+        width: 100%;
+        max-width: 400px;
+        padding: 2rem;
+        background: rgba(10, 10, 10, 0.8);
+        border: 1px solid #333;
+        border-radius: 8px;
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 2rem;
+        letter-spacing: 2px;
+        margin-bottom: 0.5rem;
+        color: #fff;
+    }
+
+    .subtitle {
+        text-align: center;
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 2rem;
+    }
+
+    .input-group { margin-bottom: 1.5rem; }
+    
+    label {
+        display: block;
+        font-size: 0.75rem;
+        color: #888;
+        margin-bottom: 0.5rem;
+        letter-spacing: 1px;
+    }
+
+    input {
+        width: 100%;
+        padding: 1rem;
+        background: #050505;
+        border: 1px solid #333;
+        color: #fff;
+        font-family: inherit;
+        font-size: 1rem;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+    input:focus { border-color: #00ff41; }
+
+    .btn-login {
+        width: 100%;
+        padding: 1rem;
+        background: #fff;
+        color: #000;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 1rem;
+        margin-top: 1rem;
+        transition: transform 0.2s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .btn-login:hover { transform: translateY(-2px); }
+
+    .footer-links {
+        margin-top: 2rem;
+        text-align: center;
+        font-size: 0.8rem;
+        color: #444;
+    }
+    .footer-links a { color: #666; text-decoration: none; transition: color 0.3s; }
+    .footer-links a:hover { color: #fff; }
+
+    .msg-box {
+        padding: 0.8rem;
+        margin-bottom: 1rem;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        text-align: center;
+    }
+    .msg-box.error { background: rgba(255, 0, 60, 0.1); color: #ff003c; border: 1px solid #ff003c; }
+    .hidden { display: none; }
+</style>
+
+<script is:inline>
+    const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '/api-proxy';
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = e.target.email.value;
+        const password = e.target.password.value;
+        const btn = e.target.querySelector('button');
+        const msg = document.getElementById('msg-box');
+
+        btn.disabled = true;
+        btn.innerHTML = 'AUTENTICANDO...';
+        msg.classList.add('hidden');
+
+        try {
+            const res = await fetch(`${API_URL}/api/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await res.json();
+
+            if (res.ok && data.token) {
+                localStorage.setItem('token', data.token);
+                
+                // Determine redirect based on role
+                // We need to fetch user details to know if they are a reseller
+                // But /api/login response usually includes user info if we designed it that way
+                // Let's check server.js... Yes: { token, user: { id, email, role_id } }
+                // Wait, server.js didn't return is_reseller in the login endpoint!
+                // We should fix server.js OR make a subsequent call.
+                // Assuming we'll quick-fix server.js to return is_reseller OR check role_id.
+                // For now, let's fetch profile.
+                
+                const profileRes = await fetch(`${API_URL}/api/revenda/stats`, { 
+                    headers: { 'Authorization': data.token } 
+                });
+                
+                if (profileRes.ok) {
+                    // It's a reseller
+                    window.location.href = '/revenda/dash';
+                } else {
+                    // It's a normal user
+                    window.location.href = '/meu-painel';
+                }
+
+            } else {
+                msg.textContent = data.error || 'Credenciais Inválidas';
+                msg.className = 'msg-box error';
+                btn.disabled = false;
+                btn.innerHTML = 'INICIAR SESSÃO <span class="arr">→</span>';
+            }
+        } catch (err) {
+            msg.textContent = 'Erro de conexão';
+            msg.className = 'msg-box error';
+            btn.disabled = false;
+            btn.innerHTML = 'INICIAR SESSÃO <span class="arr">→</span>';
+        }
+    });
+</script>

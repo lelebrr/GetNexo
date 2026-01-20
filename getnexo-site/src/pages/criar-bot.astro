@@ -1,0 +1,652 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Criar Plugin GetNexo – Instale em qualquer site">
+  <!-- intl-tel-input CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+
+  <div class="wizard-container">
+    <header class="wizard-header">
+      <h1>Criar Plugin</h1>
+      <p>Configure seu assistente de vendas em 3 passos simples</p>
+      <div class="all-required-notice">⚠️ Todos os campos são obrigatórios</div>
+    </header>
+
+    <!-- Step Indicators -->
+    <div class="step-indicators">
+      <div class="step-item active" data-step="1">
+        <span class="step-number">1</span>
+        <span class="step-label">Dados</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-item" data-step="2">
+        <span class="step-number">2</span>
+        <span class="step-label">Validar</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-item" data-step="3">
+        <span class="step-number">3</span>
+        <span class="step-label">Plugin</span>
+      </div>
+    </div>
+
+    <!-- Step 1: Registration Info -->
+    <div class="step-content" id="step1">
+      <h2>📋 Informações de Registro</h2>
+      <form id="form1" class="wizard-form">
+        <div class="form-grid">
+          <div class="field">
+            <label>Nome Completo ou Nome da Empresa *</label>
+            <input type="text" name="nome_empresa" id="nome_empresa" placeholder="Sua Empresa ou Seu Nome" required />
+          </div>
+          <div class="field">
+            <label>CPF ou CNPJ *</label>
+            <input type="text" name="cpf_cnpj" id="cpf_cnpj" placeholder="Apenas números" required />
+          </div>
+          <div class="field">
+            <label>WhatsApp (Verificação) *</label>
+            <input type="tel" name="whatsapp" id="whatsapp" required />
+          </div>
+          <div class="field">
+            <label>E-mail Real *</label>
+            <input type="email" name="email" id="email" placeholder="nome@exemplo.com" required />
+          </div>
+          <div class="field">
+            <label>Seu Site *</label>
+            <input type="url" name="site" id="site" placeholder="https://seusite.com.br" required />
+            <span style="font-size: 0.75rem; color: #94a3b8; margin-top: -0.25rem;">Ex: https://seusite.com.br</span>
+          </div>
+          <div class="field">
+            <label>Sua Plataforma / CMS *</label>
+            <select name="plataforma" id="plataforma" required>
+              <option value="nenhuma">Sem integração específica</option>
+              <option value="shopify">Shopify</option>
+              <option value="woocommerce">WooCommerce (WordPress)</option>
+              <option value="nuvemshop">Nuvemshop</option>
+              <option value="yampi">Yampi</option>
+              <option value="cartpanda">CartPanda</option>
+              <option value="vtex">VTEX</option>
+              <option value="outro">Outra / Site Próprio</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Por que quer usar o GetNexo? *</label>
+            <select name="motivo" id="motivo" required>
+              <option value="">Selecione...</option>
+              <option value="vendas">Aumentar Vendas / Checkout PIX</option>
+              <option value="suporte">Automatizar Suporte / FAQ</option>
+              <option value="recuperacao">Recuperar Carrinhos Abandonados</option>
+              <option value="leads">Gerar e Qualificar Leads</option>
+              <option value="revenda">Sou Agência / Quero Ser Revendedor</option>
+              <option value="outro">Outro Motivo</option>
+            </select>
+          </div>
+        </div>
+        <div id="form-error-msg" class="error-msg"></div>
+        <button type="submit" class="btn-next" id="btn-submit-reg">Validar Número →</button>
+      </form>
+    </div>
+
+    <!-- Step 2: WhatsApp Verification -->
+    <div class="step-content hidden" id="step2">
+      <h2>Validar WhatsApp</h2>
+      <p class="step-desc">Enviamos um código de verificação para o seu WhatsApp. Digite-o abaixo para ativar seu teste de 36 horas.</p>
+      
+      <div class="verification-box">
+        <label>Código de 6 dígitos</label>
+        <input type="text" id="verify-code" maxlength="6" placeholder="000000" />
+        <p id="verify-error" class="error-msg"></p>
+        <button type="button" class="btn-next" id="btn-verify">Ativar Teste Grátis →</button>
+      </div>
+
+      <div class="step-actions">
+        <button type="button" class="btn-back" onclick="goToStep(1)">← Voltar</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Success & Plugin Code -->
+    <div class="step-content hidden" id="step3">
+      <h2>✅ Plugin Gerado!</h2>
+      
+      <div class="success-box">
+        <div class="success-icon">⏳</div>
+        <h3>Seu período de 36h começou!</h3>
+        <p>Abaixo está o seu plugin configurado para o site <strong id="display-site">...</strong></p>
+      </div>
+      
+      <div class="code-box">
+        <code id="widget-code">&lt;script src="..." data-bot="..."&gt;&lt;/script&gt;</code>
+        <button onclick="copiarCodigo()" class="btn-copy">📋 Copiar</button>
+      </div>
+      
+      <div class="next-steps">
+        <h4>Próximos passos:</h4>
+        <ul>
+          <li>✅ Cole o código no final do seu site</li>
+          <li>✅ O tempo de 36h expira em <span id="expire-time">...</span></li>
+          <li>✅ Acesse o <a href="/admin">Painel Admin</a> com seu e-mail</li>
+        </ul>
+      </div>
+      
+      <div class="step-actions">
+        <a href="/admin" class="btn-next">Acessar Painel GetNexo →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- intl-tel-input JS -->
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+
+  <script is:inline>
+    let iti = null;
+    let registrationData = {};
+
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const API_URL = isLocalhost ? 'http://localhost:8080' : '';
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const input = document.querySelector("#whatsapp");
+        if (input) {
+            iti = window.intlTelInput(input, {
+                initialCountry: "br",
+                preferredCountries: ["br", "pt", "us"],
+                separateDialCode: true,
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+            });
+        }
+
+        // CPF/CNPJ Mask
+        const docInput = document.getElementById('cpf_cnpj');
+        if (docInput) {
+            docInput.addEventListener('input', (e) => {
+                let v = e.target.value.replace(/\D/g, "");
+                if (v.length > 14) v = v.slice(0, 14);
+                
+                if (v.length <= 11) {
+                    v = v.replace(/(\d{3})(\d)/, "$1.$2");
+                    v = v.replace(/(\d{3})(\d)/, "$1.$2");
+                    v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+                } else {
+                    v = v.replace(/^(\d{2})(\d)/, "$1.$2");
+                    v = v.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+                    v = v.replace(/\.(\d{3})(\d)/, ".$1/$2");
+                    v = v.replace(/(\d{4})(\d)/, "$1-$2");
+                }
+                e.target.value = v;
+            });
+        }
+    });
+
+    function validateEmail(email) {
+        return String(email)
+            .toLowerCase()
+            .match(
+                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            );
+    }
+
+    function goToStep(step) {
+      document.querySelectorAll('.step-item').forEach((el, i) => {
+        if (i + 1 <= step) el.classList.add('active');
+        else el.classList.remove('active');
+      });
+      document.querySelectorAll('.step-content').forEach((el, i) => {
+        if (i + 1 === step) el.classList.remove('hidden');
+        else el.classList.add('hidden');
+      });
+    }
+
+    const form1 = document.getElementById('form1');
+    form1.onsubmit = async (e) => {
+        e.preventDefault();
+        const errorMsg = document.getElementById('form-error-msg');
+        errorMsg.innerText = "";
+
+        const email = document.getElementById('email').value;
+        if (!validateEmail(email)) {
+            errorMsg.innerText = "❌ E-mail inválido. Use um e-mail real.";
+            return;
+        }
+
+        const site = document.getElementById('site').value;
+        if (!site.startsWith('http://') && !site.startsWith('https://')) {
+            errorMsg.innerText = "⚠️ O site deve incluir http:// ou https://";
+            return;
+        }
+
+        const cpfCnpjRaw = document.getElementById('cpf_cnpj').value.replace(/\D/g, "");
+        if (cpfCnpjRaw.length < 11) {
+            errorMsg.innerText = "❌ CPF ou CNPJ incompleto.";
+            return;
+        }
+
+        if (!iti.isValidNumber()) {
+            errorMsg.innerText = "❌ Número de WhatsApp inválido.";
+            return;
+        }
+
+        const formData = new FormData(e.target);
+        registrationData = {
+            whatsapp: iti.getNumber(),
+            nome: formData.get('nome_empresa'),
+            email: formData.get('email'),
+            cpf_cnpj: formData.get('cpf_cnpj'),
+            motivo: formData.get('motivo'),
+            plataforma: formData.get('plataforma'),
+            site: formData.get('site')
+        };
+
+        const btn = document.getElementById('btn-submit-reg');
+        const originalBtnText = btn.innerText;
+        btn.innerText = "Enviando...";
+        btn.disabled = true;
+
+        try {
+            const res = await fetch(`${API_URL}/api/trial/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(registrationData)
+            });
+            const data = await res.json();
+            if (data.ok) {
+                goToStep(2);
+            } else {
+                errorMsg.innerText = "❌ " + (data.error || "Erro ao registrar.");
+                btn.innerText = originalBtnText;
+                btn.disabled = false;
+            }
+        } catch (err) {
+            console.error(err);
+            errorMsg.innerText = "🚑 Erro de conexão com o servidor. Tente novamente.";
+            btn.innerText = originalBtnText;
+            btn.disabled = false;
+        }
+    };
+
+    document.getElementById('btn-verify').onclick = async () => {
+        const code = document.getElementById('verify-code').value;
+        const errorMsg = document.getElementById('verify-error');
+        errorMsg.innerText = "";
+
+        try {
+            const res = await fetch(`${API_URL}/api/trial/verify`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ whatsapp: registrationData.whatsapp, code })
+            });
+            const data = await res.json();
+            if (data.ok) {
+                generatePlugin(data.expires_at, data.bot_id);
+                goToStep(3);
+            } else {
+                errorMsg.innerText = data.error || "Código incorreto.";
+            }
+        } catch (err) {
+            errorMsg.innerText = "Erro ao verificar.";
+        }
+    };
+
+    function generatePlugin(expiresAt, botId) {
+      const site = registrationData.site;
+      document.getElementById('display-site').innerText = site;
+      
+      const date = new Date(expiresAt);
+      document.getElementById('expire-time').innerText = date.toLocaleString('pt-BR');
+
+      const scriptUrl = window.location.hostname === 'localhost' 
+        ? 'http://localhost:8080/widget.js' 
+        : 'https://api.getnexo.com.br/widget.js';
+      
+      document.getElementById('widget-code').textContent = 
+        `<script src="${scriptUrl}" data-bot="${botId}" data-theme="neon"><\/script>`;
+    }
+
+    window.copiarCodigo = function() {
+      const code = document.getElementById('widget-code').textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        alert('✅ Código do Plugin copiado!');
+      });
+    };
+  </script>
+</Layout>
+
+<style>
+  .wizard-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+    min-height: 100vh;
+  }
+  
+  .wizard-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  
+  .wizard-header h1 {
+    color: #00ff9d;
+    font-size: 3rem;
+    margin: 0;
+    font-weight: 800;
+  }
+  
+  .wizard-header p {
+    color: #94a3b8;
+    margin-top: 0.5rem;
+    font-size: 1.2rem;
+  }
+
+  .all-required-notice {
+    margin-top: 1rem;
+    color: #f87171;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  
+  /* Step Indicators */
+  .step-indicators {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 3rem;
+  }
+  
+  .step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0.3;
+    transition: 0.3s;
+  }
+  
+  .step-item.active {
+    opacity: 1;
+  }
+  
+  .step-number {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: #1e293b;
+    border: 2px solid #334155;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+  
+  .step-item.active .step-number {
+    background: #00ff9d;
+    border-color: #00ff9d;
+    color: black;
+    box-shadow: 0 0 20px rgba(0, 255, 157, 0.3);
+  }
+  
+  .step-label {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    font-weight: 600;
+  }
+  
+  .step-line {
+    width: 60px;
+    height: 2px;
+    background: #334155;
+    margin-bottom: 25px;
+  }
+  
+  /* Step Content */
+  .step-content {
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 3rem;
+    border: 1px solid rgba(0, 212, 255, 0.1);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+  }
+  
+  .step-content.hidden {
+    display: none;
+  }
+  
+  .step-content h2 {
+    color: #00d4ff;
+    margin: 0 0 2rem 0;
+    font-size: 1.8rem;
+    font-weight: 800;
+  }
+  
+  .step-desc {
+    color: #94a3b8;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+  }
+  
+  /* Form */
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  
+  @media (max-width: 650px) {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .field label {
+    color: #e2e8f0;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  
+  .field input, .field select {
+    padding: 1rem;
+    border-radius: 12px;
+    background: #020617;
+    color: white;
+    border: 1px solid #1e293b;
+    font-size: 1rem;
+    transition: 0.3s;
+  }
+  
+  .field input:focus, .field select:focus {
+    outline: none;
+    border-color: #00d4ff;
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+  }
+
+  .iti { width: 100%; } 
+  .iti__country-list { background: #0f172a; border-color: #1e293b; color: white; }
+  .iti__country.iti__highlight { background: #1e293b; }
+  
+  .error-msg {
+    color: #f87171;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    font-weight: 500;
+  }
+
+  /* Verification Box */
+  .verification-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+
+  #verify-code {
+    font-size: 2.5rem;
+    text-align: center;
+    letter-spacing: 0.8rem;
+    width: 100%;
+    font-family: 'JetBrains Mono', monospace;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid #00d4ff;
+    color: #00ff9d;
+    outline: none;
+  }
+
+  /* Buttons */
+  .btn-next {
+    background: linear-gradient(90deg, #00d4ff, #00ff9d);
+    color: black;
+    padding: 1.2rem 2.5rem;
+    border: none;
+    border-radius: 50px;
+    font-weight: 800;
+    cursor: pointer;
+    margin-top: 2rem;
+    font-size: 1.1rem;
+    display: inline-block;
+    text-decoration: none;
+    transition: 0.3s;
+    width: 100%;
+    text-align: center;
+  }
+
+  .btn-next:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 255, 157, 0.4);
+  }
+
+  .btn-next:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+  }
+  
+  .btn-back {
+    background: transparent;
+    color: #94a3b8;
+    padding: 1rem 2rem;
+    border: 1px solid #334155;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: 0.3s;
+  }
+
+  .btn-back:hover {
+      color: white;
+      border-color: white;
+  }
+  
+  .step-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2.5rem;
+  }
+  
+  /* Success Box */
+  .success-box {
+    text-align: center;
+    padding: 2.5rem;
+    background: rgba(0,255,157,0.05);
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(0,255,157,0.1);
+  }
+  
+  .success-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+  }
+  
+  .success-box h3 {
+    color: #00ff9d;
+    margin: 0;
+    font-size: 1.5rem;
+  }
+  
+  .success-box p {
+    color: #94a3b8;
+    margin-top: 0.5rem;
+  }
+  
+  /* Code Box */
+  .code-box {
+    background: #020617;
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border: 1px solid rgba(0, 255, 157, 0.3);
+  }
+  
+  .code-box code {
+    flex: 1;
+    color: #00ff9d;
+    font-size: 0.9rem;
+    word-break: break-all;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  
+  .btn-copy {
+    background: #00ff9d;
+    color: black;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: 0.3s;
+  }
+
+  .btn-copy:hover {
+      background: #00d4ff;
+  }
+  
+  /* Next Steps */
+  .next-steps {
+    margin-top: 2rem;
+    padding: 2rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 20px;
+  }
+  
+  .next-steps h4 {
+    color: #00d4ff;
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  .next-steps ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .next-steps li {
+    color: #94a3b8;
+    padding: 0.5rem 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .next-steps a {
+    color: #00ff9d;
+    font-weight: 700;
+    text-decoration: none;
+  }
+</style>

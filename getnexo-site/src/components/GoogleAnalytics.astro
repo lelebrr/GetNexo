@@ -1,0 +1,350 @@
+---
+// Google Analytics 4 Ultra Avançado
+// Estratégia: GA4 completo com custom events, conversions, e-commerce tracking
+export interface Props {
+  measurementId?: string;
+  enableEcommerce?: boolean;
+  enableHeatmaps?: boolean;
+}
+
+const {
+  measurementId = 'G-F8P994EX00',
+  enableEcommerce = true,
+  enableHeatmaps = true
+} = Astro.props;
+---
+
+<!-- Google Analytics 4 Script -->
+<script async src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}></script>
+<script is:inline define:vars={{ measurementId }}>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  // Configuração base GA4
+  gtag('config', measurementId, {
+    custom_map: {
+      'custom_parameter': 'custom_value'
+    },
+    // Configurações avançadas
+    allow_google_signals: true,
+    allow_ad_personalization_signals: true,
+    allow_ad_features: true,
+    send_page_view: true,
+    cookie_flags: 'SameSite=None;Secure',
+    cookie_domain: 'getnexo.com.br'
+  });
+
+  // Consent management (GDPR/LGPD compliance)
+  gtag('consent', 'default', {
+    analytics_storage: 'granted',
+    ad_storage: 'granted',
+    functionality_storage: 'granted',
+    personalization_storage: 'granted',
+    security_storage: 'granted'
+  });
+</script>
+
+<!-- Enhanced E-commerce Tracking -->
+{enableEcommerce && (
+  <script is:inline define:vars={{ measurementId }}>
+    // E-commerce events tracking
+    window.gtagEcommerce = {
+      // Product view
+      viewItem: (product) => {
+        gtag('event', 'view_item', {
+          currency: 'BRL',
+          value: product.price,
+          items: [{
+            item_id: product.id,
+            item_name: product.name,
+            item_category: product.category,
+            price: product.price,
+            quantity: 1
+          }]
+        });
+      },
+
+      // Add to cart
+      addToCart: (product, quantity = 1) => {
+        gtag('event', 'add_to_cart', {
+          currency: 'BRL',
+          value: product.price * quantity,
+          items: [{
+            item_id: product.id,
+            item_name: product.name,
+            item_category: product.category,
+            price: product.price,
+            quantity: quantity
+          }]
+        });
+      },
+
+      // Purchase/Conversion
+      purchase: (orderData) => {
+        gtag('event', 'purchase', {
+          transaction_id: orderData.id,
+          currency: 'BRL',
+          value: orderData.total,
+          tax: orderData.tax || 0,
+          shipping: orderData.shipping || 0,
+          items: orderData.items.map(item => ({
+            item_id: item.id,
+            item_name: item.name,
+            item_category: item.category,
+            price: item.price,
+            quantity: item.quantity
+          }))
+        });
+      },
+
+      // Lead generation
+      generateLead: (leadData) => {
+        gtag('event', 'generate_lead', {
+          currency: 'BRL',
+          value: 0,
+          custom_parameters: {
+            lead_source: leadData.source,
+            lead_type: leadData.type,
+            lead_value: leadData.value
+          }
+        });
+      }
+    };
+  </script>
+)}
+
+<!-- Custom Events Tracking -->
+<script is:inline>
+  // Enhanced user interaction tracking
+  document.addEventListener('DOMContentLoaded', () => {
+    // Track time on page
+    let startTime = Date.now();
+    window.addEventListener('beforeunload', () => {
+      const timeSpent = Math.round((Date.now() - startTime) / 1000);
+      gtag('event', 'time_on_page', {
+        page_location: window.location.href,
+        page_title: document.title,
+        time_spent: timeSpent,
+        custom_parameter: 'engagement'
+      });
+    });
+
+    // Track scroll depth
+    let maxScroll = 0;
+    window.addEventListener('scroll', () => {
+      const scrollPercent = Math.round((window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100);
+      if (scrollPercent > maxScroll && scrollPercent % 25 === 0) {
+        maxScroll = scrollPercent;
+        gtag('event', 'scroll_depth', {
+          percent_scrolled: scrollPercent,
+          page_location: window.location.href
+        });
+      }
+    });
+
+    // Track outbound links
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a');
+      if (link && link.hostname !== window.location.hostname) {
+        gtag('event', 'outbound_link_click', {
+          link_url: link.href,
+          link_text: link.textContent.trim(),
+          page_location: window.location.href
+        });
+      }
+    });
+
+    // Track WhatsApp clicks (high intent)
+    document.addEventListener('click', (e) => {
+      const whatsappLink = e.target.closest('a[href*="wa.me"], a[href*="whatsapp"]');
+      if (whatsappLink) {
+        gtag('event', 'whatsapp_click', {
+          event_category: 'engagement',
+          event_label: 'whatsapp_contact',
+          value: 1,
+          custom_parameters: {
+            whatsapp_type: whatsappLink.href.includes('wa.me') ? 'wa_me' : 'whatsapp_web',
+            page_location: window.location.href
+          }
+        });
+      }
+    });
+
+    // Track form interactions
+    document.addEventListener('focusin', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+        gtag('event', 'form_interaction', {
+          form_field: e.target.name || e.target.id,
+          form_type: e.target.closest('form')?.id || 'unknown',
+          page_location: window.location.href
+        });
+      }
+    });
+
+    // Track video plays (if any)
+    document.addEventListener('play', (e) => {
+      if (e.target.tagName === 'VIDEO') {
+        gtag('event', 'video_play', {
+          video_title: e.target.dataset.title || 'unknown',
+          video_duration: e.target.duration,
+          page_location: window.location.href
+        });
+      }
+    }, true);
+
+    // Track downloads
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a');
+      if (link && link.href.match(/\.(pdf|doc|docx|xls|xlsx|ppt|pptx|zip|rar|exe|dmg|pkg)$/i)) {
+        gtag('event', 'file_download', {
+          file_name: link.href.split('/').pop(),
+          file_extension: link.href.split('.').pop(),
+          link_url: link.href,
+          page_location: window.location.href
+        });
+      }
+    });
+  });
+
+  // Utility functions for custom tracking
+  window.trackCustomEvent = (eventName, parameters = {}) => {
+    window.gtag('event', eventName, {
+      ...parameters,
+      page_location: window.location.href,
+      timestamp: new Date().toISOString()
+    });
+  };
+
+  // Track search queries
+  window.trackSearch = (searchTerm, resultsCount = 0) => {
+    window.gtag('event', 'search', {
+      search_term: searchTerm,
+      results_count: resultsCount,
+      page_location: window.location.href
+    });
+  };
+
+  // Track user engagement
+  window.trackEngagement = (action, category = 'engagement') => {
+    window.gtag('event', action, {
+      event_category: category,
+      page_location: window.location.href,
+      timestamp: new Date().toISOString()
+    });
+  };
+</script>
+
+<!-- Heatmap Integration (Microsoft Clarity) -->
+{enableHeatmaps && (
+  <script is:inline>
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "jyq1q9z8qk");
+  </script>
+)}
+
+<!-- Conversion tracking for specific goals -->
+<script is:inline>
+  // Track bot creation/conversion
+  window.trackBotCreation = (planType = 'self-hosted') => {
+    gtag('event', 'bot_creation', {
+      event_category: 'conversion',
+      event_label: planType,
+      value: planType === 'pro' ? 97 : 0,
+      currency: 'BRL',
+      custom_parameters: {
+        plan_type: planType,
+        user_type: 'new',
+        conversion_type: 'bot_setup'
+      }
+    });
+  };
+
+  // Track integration setup
+  window.trackIntegration = (integrationName) => {
+    gtag('event', 'integration_setup', {
+      event_category: 'engagement',
+      event_label: integrationName,
+      value: 1,
+      custom_parameters: {
+        integration_type: integrationName,
+        setup_method: 'self_service'
+      }
+    });
+  };
+
+  // Track support interactions
+  window.trackSupport = (supportType, issueCategory = 'general') => {
+    gtag('event', 'support_interaction', {
+      event_category: 'support',
+      event_label: supportType,
+      value: 1,
+      custom_parameters: {
+        support_channel: supportType,
+        issue_category: issueCategory,
+        resolution_time: null // To be set later if available
+      }
+    });
+  };
+
+  // Track feature usage
+  window.trackFeatureUsage = (featureName, usageType = 'click') => {
+    gtag('event', 'feature_usage', {
+      event_category: 'engagement',
+      event_label: featureName,
+      value: 1,
+      custom_parameters: {
+        feature_name: featureName,
+        usage_type: usageType,
+        user_segment: 'active'
+      }
+    });
+  };
+</script>
+
+<!-- Enhanced E-commerce for SaaS -->
+<script is:inline>
+  // Track subscription events
+  window.trackSubscription = (planType, action = 'start') => {
+    const value = planType === 'pro' ? 97 : 0;
+
+    gtag('event', `subscription_${action}`, {
+      event_category: 'ecommerce',
+      event_label: planType,
+      value: value,
+      currency: 'BRL',
+      items: [{
+        item_id: `plan_${planType}`,
+        item_name: `Plano ${planType.toUpperCase()}`,
+        item_category: 'subscription',
+        item_variant: 'monthly',
+        price: value,
+        quantity: 1
+      }],
+      custom_parameters: {
+        subscription_type: planType,
+        billing_cycle: 'monthly',
+        trial_period: planType === 'self-hosted' ? 'unlimited' : '7_days'
+      }
+    });
+  };
+
+  // Track upgrade/downgrade
+  window.trackPlanChange = (fromPlan, toPlan) => {
+    gtag('event', 'plan_change', {
+      event_category: 'ecommerce',
+      event_label: `${fromPlan}_to_${toPlan}`,
+      value: toPlan === 'pro' ? 97 : 0,
+      currency: 'BRL',
+      custom_parameters: {
+        previous_plan: fromPlan,
+        new_plan: toPlan,
+        change_type: toPlan === 'pro' ? 'upgrade' : 'downgrade'
+      }
+    });
+  };
+</script>

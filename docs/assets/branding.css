@@ -1,0 +1,143 @@
+/* GetNexo Branding (Phase 2) */
+:root {
+  --primary-color: #FFD500;
+  /* CTA Yellow */
+  --background-color: #000000;
+  /* Deep Black */
+  --text-color: #FFFFFF;
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --font-title: 'Bebas Neue', scan-serif;
+  --font-body: 'Montserrat', sans-serif;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: var(--font-body);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-title);
+  letter-spacing: 1px;
+}
+
+.cta-button {
+  background-color: var(--primary-color);
+  color: #000;
+  font-weight: bold;
+  padding: 12px 24px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  transition: transform 0.3s ease;
+}
+
+.cta-button:hover {
+  transform: scale(1.05);
+}
+
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+/* Animations */
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* --- UI POLISH (v7.5) --- */
+body {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewport="0 0 24 24" style="fill:rgba(255,255,255,0.8);stroke:black;stroke-width:1px;"><path d="M5.5 3.21l10.08 5.66c.92.52.81 1.9-.17 2.27l-3.32 1.25 2.76 5.51c.42.84-.46 1.76-1.32 1.35l-2.8-5.6-2.58 2.15c-.75.63-1.9-.06-1.74-1.03l1.82-10.73c.17-1.01 1.55-1.35 2.27-.83z"/></svg>'), auto;
+}
+
+a:hover,
+button:hover {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewport="0 0 24 24" style="fill:rgba(255,107,53,1);stroke:white;stroke-width:2px;"><circle cx="12" cy="12" r="8"/></svg>'), pointer;
+}
+
+/* FAQ Accordion Styles */
+.faq-container {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  z-index: 999;
+}
+
+.faq-toggle {
+  background: var(--primary-color);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  color: #000;
+  font-size: 30px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(255, 213, 0, 0.4);
+  transition: transform 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.faq-toggle:hover {
+  transform: scale(1.1);
+}
+
+.faq-content {
+  display: none;
+  background: rgba(10, 10, 10, 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  width: 320px;
+  padding: 24px;
+  border-radius: 16px;
+  margin-bottom: 16px;
+  color: #fff;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.faq-content.active {
+  display: block;
+  animation: fadeInUp 0.3s ease-out;
+}
+
+.faq-content h4 {
+  margin-top: 0;
+  color: var(--primary-color);
+}
+
+.faq-content details {
+  margin-bottom: 12px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 8px;
+}
+
+.faq-content summary {
+  cursor: pointer;
+  font-weight: bold;
+  list-style: none;
+}
+
+.faq-content p {
+  font-size: 0.9rem;
+  color: #ccc;
+  margin-top: 8px;
+  line-height: 1.4;
+}

@@ -1,0 +1,95 @@
+{
+    "annotations": {
+        "list": []
+    },
+    "editable": true,
+    "gnetId": null,
+    "graphTooltip": 0,
+    "id": 1,
+    "links": [],
+    "panels": [
+        {
+            "title": "Total Requests (Traefik)",
+            "type": "graph",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 0
+            },
+            "targets": [
+                {
+                    "expr": "sum(rate(traefik_entrypoint_requests_total[5m]))"
+                }
+            ]
+        },
+        {
+            "title": "CPU Usage (Node)",
+            "type": "gauge",
+            "gridPos": {
+                "h": 8,
+                "w": 6,
+                "x": 12,
+                "y": 0
+            },
+            "targets": [
+                {
+                    "expr": "100 - (avg by (instance) (irate(node_cpu_seconds_total{mode='idle'}[5m])) * 100)"
+                }
+            ]
+        },
+        {
+            "title": "RAM Usage (System)",
+            "type": "gauge",
+            "gridPos": {
+                "h": 8,
+                "w": 6,
+                "x": 18,
+                "y": 0
+            },
+            "targets": [
+                {
+                    "expr": "100 * (1 - ((node_memory_MemFree_bytes + node_memory_Buffers_bytes + node_memory_Cached_bytes) / node_memory_MemTotal_bytes))"
+                }
+            ]
+        },
+        {
+            "title": "Active Chats (Redis)",
+            "type": "stat",
+            "gridPos": {
+                "h": 4,
+                "w": 24,
+                "x": 0,
+                "y": 8
+            },
+            "targets": [
+                {
+                    "expr": "redis_db_keys{db='chatwoot_production'}"
+                }
+            ]
+        }
+    ],
+    "schemaVersion": 16,
+    "style": "dark",
+    "tags": [
+        "getnexo"
+    ],
+    "templating": {
+        "list": []
+    },
+    "time": {
+        "from": "now-6h",
+        "to": "now"
+    },
+    "timepicker": {
+        "refresh_intervals": [
+            "5s",
+            "10s",
+            "30s"
+        ]
+    },
+    "timezone": "",
+    "title": "Use Nexo: Global Command Center",
+    "uid": "nexo-global",
+    "version": 1
+}

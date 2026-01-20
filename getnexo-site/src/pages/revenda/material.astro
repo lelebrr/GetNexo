@@ -1,0 +1,33 @@
+---
+import ResellerLayout from '../../layouts/ResellerLayout.astro';
+---
+
+<ResellerLayout title="Material de Vapo">
+    <h2 class="text-neon-blue mb-8">MATERIAL DE APOIO</h2>
+
+    <div class="grid">
+        <div class="asset-card">
+            <h3>Script de Vendas (WhatsApp)</h3>
+            <p>Abordagem fria para lojistas WooCommerce.</p>
+            <button class="btn-down">COPIAR TEXTO</button>
+        </div>
+        <div class="asset-card">
+            <h3>Banner Stories (1080x1920)</h3>
+            <p>"Aumente suas vendas em 30%" - Cyber Style</p>
+            <button class="btn-down">BAIXAR PNG</button>
+        </div>
+        <div class="asset-card">
+            <h3>Apresentação PDF</h3>
+            <p>Deck comercial para clientes Enterprise (15 slides).</p>
+            <button class="btn-down">BAIXAR PDF</button>
+        </div>
+    </div>
+</ResellerLayout>
+
+<style>
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+    .asset-card { border: 1px solid #333; background: #0a0a0a; padding: 2rem; }
+    .asset-card h3 { color: #fff; margin-top: 0; }
+    .btn-down { background: #333; color: #fff; border: none; padding: 0.5rem 1rem; cursor: pointer; width: 100%; margin-top: 1rem; }
+    .btn-down:hover { background: #00f3ff; color: #000; }
+</style>

@@ -1,0 +1,207 @@
+---
+// Componente Related Posts - SEO Ultra Otimizado
+// Estratégia: Internal linking estratégico para melhorar link equity e autoridade
+export interface Props {
+  currentSlug: string;
+  category?: string;
+  tags?: string[];
+}
+
+const { currentSlug, category, tags = [] } = Astro.props;
+
+// Lista de posts relacionados por categoria/tema
+const relatedPosts = {
+  // WhatsApp Business geral
+  whatsapp: [
+    { title: "WhatsApp Business Automatizado - Guia Completo", slug: "whatsapp-automatizado-guia", desc: "Como configurar WhatsApp Business API automaticamente" },
+    { title: "Custo API WhatsApp - Análise Completa 2024", slug: "api-whatsapp-custo", desc: "Quanto custa manter WhatsApp Business API" },
+    { title: "Futuro do E-commerce no WhatsApp", slug: "futuro-ecommerce", desc: "Tendências e previsões para vendas via WhatsApp" }
+  ],
+
+  // Automação
+  automacao: [
+    { title: "IA Vendeu R$ 8K em 3 Dias", slug: "ia-vendeu-8k", desc: "Estudo de caso real de automação com IA" },
+    { title: "Multiplos Números WhatsApp - Como Gerenciar", slug: "multiplos-numeros", desc: "Estratégias para múltiplos números no WhatsApp" },
+    { title: "Tunnel Cloudflare - Segurança Máxima", slug: "tunnel", desc: "Como proteger sua API com Cloudflare Tunnel" }
+  ],
+
+  // Vendas
+  vendas: [
+    { title: "Carrinho Abandonado WhatsApp", slug: "carrinho-abandonado", desc: "Como recuperar vendas perdidas automaticamente" },
+    { title: "Upsell no WhatsApp - Estratégias Avançadas", slug: "upsell", desc: "Como aumentar ticket médio via WhatsApp" },
+    { title: "Casos de Sucesso - Empresas que Triplicaram Vendas", slug: "casos-sucesso", desc: "Histórias reais de transformação digital" }
+  ],
+
+  // Marketing
+  marketing: [
+    { title: "Campanhas WhatsApp para E-commerce", slug: "campanhas", desc: "Como criar campanhas de marketing eficazes" },
+    { title: "Google Ads + WhatsApp - Integração Perfeita", slug: "google-ads-whatsapp", desc: "Como capturar leads do Google Ads no WhatsApp" },
+    { title: "Dark Mode WhatsApp - Conversão 40% Maior", slug: "dark-mode-conversao", desc: "Como o dark mode impacta a conversão" }
+  ],
+
+  // Técnico
+  tecnico: [
+    { title: "WSL - Windows Subsystem for Linux", slug: "wsl", desc: "Como rodar Linux no Windows para desenvolvimento" },
+    { title: "Instalação WhatsApp - Vídeo Passo a Passo", slug: "instalacao-video", desc: "Tutorial completo de instalação" },
+    { title: "N8N - Automação Visual para WhatsApp", slug: "n8n", desc: "Como criar workflows visuais no N8N" }
+  ],
+
+  // Suporte
+  suporte: [
+    { title: "FAQ Completo GetNexo", slug: "faq-completo", desc: "Todas as dúvidas respondidas em um lugar" },
+    { title: "Suporte Rápido - Como Funciona", slug: "suporte-rapido", desc: "Nossos canais de suporte e SLA" },
+    { title: "Programa de Revenda GetNexo", slug: "programa-revenda", desc: "Como se tornar parceiro e revender nossa solução" }
+  ],
+
+  // Privacidade e Segurança
+  privacidade: [
+    { title: "Privacidade 2026 - LGPD e WhatsApp", slug: "privacidade-2026", desc: "Como estar compliant com a LGPD" },
+    { title: "Segurança WhatsApp Business API", slug: "seguranca-whatsapp", desc: "Melhores práticas de segurança" },
+    { title: "Recuperar Carrinho - Estratégias Éticas", slug: "recuperar-carrinho", desc: "Como recuperar vendas sem spam" }
+  ]
+};
+
+// Função para determinar categoria baseada no slug atual
+function getRelatedCategory(slug: string): string {
+  if (slug.includes('whatsapp') || slug.includes('api') || slug.includes('custo')) return 'whatsapp';
+  if (slug.includes('automacao') || slug.includes('ia') || slug.includes('n8n')) return 'automacao';
+  if (slug.includes('vendas') || slug.includes('carrinho') || slug.includes('upsell')) return 'vendas';
+  if (slug.includes('marketing') || slug.includes('campanhas') || slug.includes('google-ads')) return 'marketing';
+  if (slug.includes('tecnico') || slug.includes('instalacao') || slug.includes('wsl')) return 'tecnico';
+  if (slug.includes('suporte') || slug.includes('faq') || slug.includes('revenda')) return 'suporte';
+  if (slug.includes('privacidade') || slug.includes('seguranca') || slug.includes('lgpd')) return 'privacidade';
+
+  // Fallback baseado em categoria passada
+  return category || 'whatsapp';
+}
+
+// Seleciona posts relacionados (excluindo o atual)
+const categoryPosts = relatedPosts[getRelatedCategory(currentSlug)] || relatedPosts.whatsapp;
+const filteredPosts = categoryPosts.filter(post => post.slug !== currentSlug).slice(0, 3);
+
+// Adiciona posts de outras categorias relevantes se necessário
+if (filteredPosts.length < 3) {
+  const otherCategories = Object.keys(relatedPosts).filter(cat => cat !== getRelatedCategory(currentSlug));
+  for (const otherCat of otherCategories) {
+    if (filteredPosts.length >= 3) break;
+    const additionalPosts = relatedPosts[otherCat]
+      .filter(post => post.slug !== currentSlug && !filteredPosts.find(p => p.slug === post.slug))
+      .slice(0, 3 - filteredPosts.length);
+    filteredPosts.push(...additionalPosts);
+  }
+}
+---
+
+{filteredPosts.length > 0 && (
+  <section class="related-posts">
+    <h2>📚 Conteúdo Relacionado</h2>
+    <p class="related-subtitle">Explore mais sobre {getRelatedCategory(currentSlug).replace(/^\w/, c => c.toUpperCase())}</p>
+
+    <div class="related-grid">
+      {filteredPosts.map(post => (
+        <article class="related-card">
+          <div class="related-content">
+            <h3>
+              <a href={`/blog/${post.slug}`} title={post.title}>
+                {post.title}
+              </a>
+            </h3>
+            <p>{post.desc}</p>
+            <a href={`/blog/${post.slug}`} class="read-more" title={`Leia: ${post.title}`}>
+              Ler artigo →
+            </a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+)}
+
+<style>
+  .related-posts {
+    margin: 4rem 0;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .related-posts h2 {
+    color: white;
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+
+  .related-subtitle {
+    color: #94a3b8;
+    font-size: 1rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-weight: 500;
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .related-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .related-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .related-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(0, 212, 255, 0.3);
+    box-shadow: 0 8px 25px rgba(0, 212, 255, 0.1);
+  }
+
+  .related-content h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+  }
+
+  .related-content h3 a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .related-content h3 a:hover {
+    color: #00d4ff;
+  }
+
+  .related-content p {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+
+  .read-more {
+    color: #00d4ff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+  }
+
+  .read-more:hover {
+    color: #00ff9d;
+    text-decoration: underline;
+  }
+</style>

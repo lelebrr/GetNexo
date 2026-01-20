@@ -1,0 +1,440 @@
+02:47:27 [types] Generated 80ms
+02:47:27 [check] Getting diagnostics for Astro files in /home/lele/usenexo/jetnexo-site...
+[96msrc/components/ARVRContentOptimization.astro[0m:[93m190[0m:[93m13[0m - [93mwarning[0m[90m ts(6196): [0m'Navigator' is declared but never used.
+
+[7m190[0m   interface Navigator {
+[7m   [0m [93m            ~~~~~~~~~[0m
+
+[96msrc/components/AccessibilityControls.astro[0m:[93m100[0m:[93m15[0m - [93mwarning[0m[90m ts(6196): [0m'Window' is declared but never used.
+
+[7m100[0m     interface Window {
+[7m   [0m [93m              ~~~~~~[0m
+
+[96msrc/components/CompetitorAnalysis.astro[0m:[93m10[0m:[93m7[0m - [93mwarning[0m[90m ts(6198): [0mAll destructured elements are unused.
+
+[7m 10[0m const {
+[7m   [0m [93m      ~[0m
+[7m 11[0m   targetKeywords = ['whatsapp business api', 'automacao whatsapp', 'bot whatsapp'],
+[7m   [0m [93m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m...[0m 
+[7m 13[0m   enableRealTime = false
+[7m   [0m [93m~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m 14[0m } = Astro.props;
+[7m   [0m [93m~[0m
+
+[96msrc/components/CookieConsent.astro[0m:[93m296[0m:[93m13[0m - [93mwarning[0m[90m ts(6196): [0m'Window' is declared but never used.
+
+[7m296[0m   interface Window {
+[7m   [0m [93m            ~~~~~~[0m
+
+[96msrc/components/EATSignals.astro[0m:[93m17[0m:[93m3[0m - [93mwarning[0m[90m ts(6133): [0m'contentType' is declared but its value is never read.
+
+[7m17[0m   contentType = 'blog',
+[7m  [0m [93m  ~~~~~~~~~~~[0m
+
+[96msrc/components/GoogleAnalytics.astro[0m:[93m212[0m:[93m10[0m - [93mwarning[0m[90m ts(2568): [0mProperty 'trackCustomEvent' may not exist on type 'Window & typeof globalThis'. Did you mean 'CustomEvent'?
+
+[7m212[0m   window.trackCustomEvent = (eventName, parameters = {}) => {
+[7m   [0m [93m         ~~~~~~~~~~~~~~~~[0m
+[96msrc/components/GoogleAnalytics.astro[0m:[93m18[0m:[93m9[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m18[0m <script async src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}></script>
+[7m  [0m [93m        ~~~~~[0m
+
+[96msrc/components/PredictiveSEOAnalytics.astro[0m:[93m13[0m:[93m3[0m - [93mwarning[0m[90m ts(6133): [0m'predictionHorizon' is declared but its value is never read.
+
+[7m13[0m   predictionHorizon = 30
+[7m  [0m [93m  ~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/PredictiveSEOAnalytics.astro[0m:[93m12[0m:[93m3[0m - [93mwarning[0m[90m ts(6133): [0m'historicalData' is declared but its value is never read.
+
+[7m12[0m   historicalData = null,
+[7m  [0m [93m  ~~~~~~~~~~~~~~[0m
+[96msrc/components/PredictiveSEOAnalytics.astro[0m:[93m603[0m:[93m36[0m - [93mwarning[0m[90m ts(6133): [0m'index' is declared but its value is never read.
+
+[7m603[0m             ${sampleData.map((day, index) => `
+[7m   [0m [93m                                   ~~~~~[0m
+[96msrc/components/PredictiveSEOAnalytics.astro[0m:[93m217[0m:[93m13[0m - [93mwarning[0m[90m ts(6133): [0m'volatility' is declared but its value is never read.
+
+[7m217[0m       const volatility = this.calculateVolatility(historicalRankings);
+[7m   [0m [93m            ~~~~~~~~~~[0m
+[96msrc/components/PredictiveSEOAnalytics.astro[0m:[93m216[0m:[93m13[0m - [93mwarning[0m[90m ts(6133): [0m'trend' is declared but its value is never read.
+
+[7m216[0m       const trend = historicalRankings[historicalRankings.length - 1] - historicalRankings[0];
+[7m   [0m [93m            ~~~~~[0m
+[96msrc/components/PredictiveSEOAnalytics.astro[0m:[93m215[0m:[93m13[0m - [93mwarning[0m[90m ts(6133): [0m'avgRanking' is declared but its value is never read.
+
+[7m215[0m       const avgRanking = historicalRankings.reduce((sum, r) => sum + r, 0) / historicalRankings.length;
+[7m   [0m [93m            ~~~~~~~~~~[0m
+[96msrc/components/PredictiveSEOAnalytics.astro[0m:[93m199[0m:[93m28[0m - [93mwarning[0m[90m ts(6133): [0m'keyword' is declared but its value is never read.
+
+[7m199[0m     generateHistoricalData(keyword, days) {
+[7m   [0m [93m                           ~~~~~~~[0m
+[96msrc/components/PredictiveSEOAnalytics.astro[0m:[93m78[0m:[93m9[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m78[0m <script define:vars={{ enableRealTime }}>
+[7m  [0m [93m        ~~~~~~~~~~~[0m
+
+[96msrc/components/RelatedPosts.astro[0m:[93m101[0m:[93m26[0m - [93mwarning[0m[90m ts(7044): [0mParameter 'post' implicitly has an 'any' type, but a better type may be inferred from usage.
+
+[7m101[0m       {filteredPosts.map(post => (
+[7m   [0m [93m                         ~~~~[0m
+[96msrc/components/RelatedPosts.astro[0m:[93m88[0m:[93m72[0m - [93mwarning[0m[90m ts(7044): [0mParameter 'p' implicitly has an 'any' type, but a better type may be inferred from usage.
+
+[7m88[0m       .filter(post => post.slug !== currentSlug && !filteredPosts.find(p => p.slug === post.slug))
+[7m  [0m [93m                                                                       ~[0m
+[96msrc/components/RelatedPosts.astro[0m:[93m88[0m:[93m15[0m - [93mwarning[0m[90m ts(7044): [0mParameter 'post' implicitly has an 'any' type, but a better type may be inferred from usage.
+
+[7m88[0m       .filter(post => post.slug !== currentSlug && !filteredPosts.find(p => p.slug === post.slug))
+[7m  [0m [93m              ~~~~[0m
+[96msrc/components/RelatedPosts.astro[0m:[93m80[0m:[93m44[0m - [93mwarning[0m[90m ts(7044): [0mParameter 'post' implicitly has an 'any' type, but a better type may be inferred from usage.
+
+[7m80[0m const filteredPosts = categoryPosts.filter(post => post.slug !== currentSlug).slice(0, 3);
+[7m  [0m [93m                                           ~~~~[0m
+[96msrc/components/RelatedPosts.astro[0m:[93m10[0m:[93m32[0m - [93mwarning[0m[90m ts(6133): [0m'tags' is declared but its value is never read.
+
+[7m10[0m const { currentSlug, category, tags = [] } = Astro.props;
+[7m  [0m [93m                               ~~~~[0m
+
+[96msrc/components/VoiceCommerceIntegration.astro[0m:[93m5[0m:[93m7[0m - [93mwarning[0m[90m ts(6133): [0m'enableVirtualAssistants' is declared but its value is never read.
+
+[7m5[0m const enableVirtualAssistants = true;
+[7m [0m [93m      ~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/VoiceCommerceIntegration.astro[0m:[93m4[0m:[93m7[0m - [93mwarning[0m[90m ts(6133): [0m'enableVoiceOrders' is declared but its value is never read.
+
+[7m4[0m const enableVoiceOrders = true;
+[7m [0m [93m      ~~~~~~~~~~~~~~~~~[0m
+[96msrc/components/VoiceCommerceIntegration.astro[0m:[93m601[0m:[93m29[0m - [93mwarning[0m[90m ts(7044): [0mParameter 'status' implicitly has an 'any' type, but a better type may be inferred from usage.
+
+[7m601[0m     updateVoiceStatus(text, status) {
+[7m   [0m [93m                            ~~~~~~[0m
+[96msrc/components/VoiceCommerceIntegration.astro[0m:[93m601[0m:[93m23[0m - [93mwarning[0m[90m ts(7044): [0mParameter 'text' implicitly has an 'any' type, but a better type may be inferred from usage.
+
+[7m601[0m     updateVoiceStatus(text, status) {
+[7m   [0m [93m                      ~~~~[0m
+[96msrc/components/VoiceCommerceIntegration.astro[0m:[93m505[0m:[93m36[0m - [93mwarning[0m[90m ts(7044): [0mParameter 'step' implicitly has an 'any' type, but a better type may be inferred from usage.
+
+[7m505[0m               ${workflow.steps.map(step => `<li>${step}</li>`).join('')}
+[7m   [0m [93m                                   ~~~~[0m
+[96msrc/components/VoiceCommerceIntegration.astro[0m:[93m447[0m:[93m39[0m - [93mwarning[0m[90m ts(7044): [0mParameter 'lang' implicitly has an 'any' type, but a better type may be inferred from usage.
+
+[7m447[0m             ${assistant.languages.map(lang =>
+[7m   [0m [93m                                      ~~~~[0m
+[96msrc/components/VoiceCommerceIntegration.astro[0m:[93m444[0m:[93m36[0m - [93mwarning[0m[90m ts(7044): [0mParameter 'skill' implicitly has an 'any' type, but a better type may be inferred from usage.
+
+[7m444[0m             ${assistant.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+[7m   [0m [93m                                   ~~~~~[0m
+[96msrc/components/VoiceCommerceIntegration.astro[0m:[93m379[0m:[93m28[0m - [93mwarning[0m[90m ts(7044): [0mParameter 'text' implicitly has an 'any' type, but a better type may be inferred from usage.
+
+[7m379[0m     addVoiceResponse(type, text) {
+[7m   [0m [93m                           ~~~~[0m
+[96msrc/components/VoiceCommerceIntegration.astro[0m:[93m379[0m:[93m22[0m - [93mwarning[0m[90m ts(7044): [0mParameter 'type' implicitly has an 'any' type, but a better type may be inferred from usage.
+
+[7m379[0m     addVoiceResponse(type, text) {
+[7m   [0m [93m                     ~~~~[0m
+[96msrc/components/VoiceCommerceIntegration.astro[0m:[93m368[0m:[93m26[0m - [93mwarning[0m[90m ts(7044): [0mParameter 'voice' implicitly has an 'any' type, but a better type may be inferred from usage.
+
+[7m368[0m         ) || voices.find(voice => voice.lang === this.currentLanguage);
+[7m   [0m [93m                         ~~~~~[0m
+[96msrc/components/VoiceCommerceIntegration.astro[0m:[93m365[0m:[93m44[0m - [93mwarning[0m[90m ts(7044): [0mParameter 'voice' implicitly has an 'any' type, but a better type may be inferred from usage.
+
+[7m365[0m         const preferredVoice = voices.find(voice =>
+[7m   [0m [93m                                           ~~~~~[0m
+[96msrc/components/VoiceCommerceIntegration.astro[0m:[93m356[0m:[93m19[0m - [93mwarning[0m[90m ts(7044): [0mParameter 'text' implicitly has an 'any' type, but a better type may be inferred from usage.
+
+[7m356[0m     speakResponse(text) {
+[7m   [0m [93m                  ~~~~[0m
+[96msrc/components/VoiceCommerceIntegration.astro[0m:[93m326[0m:[93m27[0m - [93mwarning[0m[90m ts(6133): [0m'data' is declared but its value is never read.
+
+[7m326[0m     executeAction(action, data) {
+[7m   [0m [93m                          ~~~~[0m
+[96msrc/components/VoiceCommerceIntegration.astro[0m:[93m326[0m:[93m27[0m - [93mwarning[0m[90m ts(7044): [0mParameter 'data' implicitly has an 'any' type, but a better type may be inferred from usage.
+
+[7m326[0m     executeAction(action, data) {
+[7m   [0m [93m                          ~~~~[0m
+[96msrc/components/VoiceCommerceIntegration.astro[0m:[93m326[0m:[93m19[0m - [93mwarning[0m[90m ts(7044): [0mParameter 'action' implicitly has an 'any' type, but a better type may be inferred from usage.
+
+[7m326[0m     executeAction(action, data) {
+[7m   [0m [93m                  ~~~~~~[0m
+[96msrc/components/VoiceCommerceIntegration.astro[0m:[93m308[0m:[93m34[0m - [93mwarning[0m[90m ts(7044): [0mParameter 'command' implicitly has an 'any' type, but a better type may be inferred from usage.
+
+[7m308[0m     async generateRecommendation(command) {
+[7m   [0m [93m                                 ~~~~~~~[0m
+[96msrc/components/VoiceCommerceIntegration.astro[0m:[93m286[0m:[93m31[0m - [93mwarning[0m[90m ts(7044): [0mParameter 'command' implicitly has an 'any' type, but a better type may be inferred from usage.
+
+[7m286[0m     async handleProductSearch(command) {
+[7m   [0m [93m                              ~~~~~~~[0m
+[96msrc/components/VoiceCommerceIntegration.astro[0m:[93m250[0m:[93m36[0m - [93mwarning[0m[90m ts(7044): [0mParameter 'command' implicitly has an 'any' type, but a better type may be inferred from usage.
+
+[7m250[0m     async generateResponse(intent, command) {
+[7m   [0m [93m                                   ~~~~~~~[0m
+[96msrc/components/VoiceCommerceIntegration.astro[0m:[93m250[0m:[93m28[0m - [93mwarning[0m[90m ts(7044): [0mParameter 'intent' implicitly has an 'any' type, but a better type may be inferred from usage.
+
+[7m250[0m     async generateResponse(intent, command) {
+[7m   [0m [93m                           ~~~~~~[0m
+[96msrc/components/VoiceCommerceIntegration.astro[0m:[93m230[0m:[93m18[0m - [93mwarning[0m[90m ts(7044): [0mParameter 'command' implicitly has an 'any' type, but a better type may be inferred from usage.
+
+[7m230[0m     detectIntent(command) {
+[7m   [0m [93m                 ~~~~~~~[0m
+[96msrc/components/VoiceCommerceIntegration.astro[0m:[93m207[0m:[93m31[0m - [93mwarning[0m[90m ts(7044): [0mParameter 'command' implicitly has an 'any' type, but a better type may be inferred from usage.
+
+[7m207[0m     async processVoiceCommand(command) {
+[7m   [0m [93m                              ~~~~~~~[0m
+[96msrc/components/VoiceCommerceIntegration.astro[0m:[93m185[0m:[93m37[0m - [93mwarning[0m[90m ts(7044): [0mParameter 'event' implicitly has an 'any' type, but a better type may be inferred from usage.
+
+[7m185[0m         this.recognition.onerror = (event) => {
+[7m   [0m [93m                                    ~~~~~[0m
+[96msrc/components/VoiceCommerceIntegration.astro[0m:[93m168[0m:[93m38[0m - [93mwarning[0m[90m ts(7044): [0mParameter 'event' implicitly has an 'any' type, but a better type may be inferred from usage.
+
+[7m168[0m         this.recognition.onresult = (event) => {
+[7m   [0m [93m                                     ~~~~~[0m
+
+[96msrc/layouts/DashboardLayout.astro[0m:[93m74[0m:[93m13[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m74[0m     <script async src="https://www.googletagmanager.com/gtag/js?id=G-F8P994EX00"></script>
+[7m  [0m [93m            ~~~~~[0m
+
+[96msrc/layouts/Layout.astro[0m:[93m12[0m:[93m3[0m - [93mwarning[0m[90m ts(6133): [0m'preloadImage' is declared but its value is never read.
+
+[7m12[0m   preloadImage
+[7m  [0m [93m  ~~~~~~~~~~~~[0m
+[96msrc/layouts/Layout.astro[0m:[93m3[0m:[93m1[0m - [93mwarning[0m[90m ts(6133): [0m'PreSupportModal' is declared but its value is never read.
+
+[7m3[0m import PreSupportModal from '../components/PreSupportModal.astro';
+[7m [0m [93m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/layouts/Layout.astro[0m:[93m727[0m:[93m61[0m - [93mwarning[0m[90m ts(2568): [0mProperty 'webkitAudioContext' may not exist on type 'Window & typeof globalThis'. Did you mean 'AudioContext'?
+
+[7m727[0m         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+[7m   [0m [93m                                                            ~~~~~~~~~~~~~~~~~~[0m
+[96msrc/layouts/Layout.astro[0m:[93m149[0m:[93m139[0m - [93mwarning[0m[90m ts(6133): [0m'media' is declared but its value is never read.
+
+[7m149[0m     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+[7m   [0m [93m                                                                                                                                          ~~~~~[0m
+[96msrc/layouts/Layout.astro[0m:[93m131[0m:[93m11[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m131[0m   <script type="application/ld+json">
+[7m   [0m [93m          ~~~~[0m
+[96msrc/layouts/Layout.astro[0m:[93m51[0m:[93m11[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m51[0m   <script async src="https://www.googletagmanager.com/gtag/js?id=G-F8P994EX00"></script>
+[7m  [0m [93m          ~~~~~[0m
+
+[96msrc/pages/404.astro[0m:[93m169[0m:[93m3[0m - [93mwarning[0m[90m ts(7027): [0mUnreachable code detected.
+
+[7m169[0m   const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown'];
+[7m   [0m [93m  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/pages/acessibilidade.astro[0m:[93m3[0m:[93m1[0m - [93mwarning[0m[90m ts(6133): [0m'PreSupportModal' is declared but its value is never read.
+
+[7m3[0m import PreSupportModal from '../components/PreSupportModal.astro';
+[7m [0m [93m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/pages/admin/auditoria.astro[0m:[93m486[0m:[93m17[0m - [93mwarning[0m[90m ts(2570): [0mCould not find name 'Chart'. Did you mean 'chart'?
+
+[7m486[0m     chart = new Chart(ctx, {
+[7m   [0m [93m                ~~~~~[0m
+
+[96msrc/pages/admin/central.astro[0m:[93m3453[0m:[93m12[0m - [93mwarning[0m[90m ts(6133): [0m'loadAutomationIntegrations' is declared but its value is never read.
+
+[7m3453[0m   function loadAutomationIntegrations() {
+[7m    [0m [93m           ~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/pages/admin/central.astro[0m:[93m3441[0m:[93m12[0m - [93mwarning[0m[90m ts(6133): [0m'loadEcommerceIntegrations' is declared but its value is never read.
+
+[7m3441[0m   function loadEcommerceIntegrations() {
+[7m    [0m [93m           ~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/pages/admin/central.astro[0m:[93m2856[0m:[93m9[0m - [93mwarning[0m[90m ts(6133): [0m'originalShowSection' is declared but its value is never read.
+
+[7m2856[0m   const originalShowSection = window.showSection;
+[7m    [0m [93m        ~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/pages/admin/central.astro[0m:[93m2825[0m:[93m10[0m - [93mwarning[0m[90m ts(2568): [0mProperty 'saveNotifications' may not exist on type 'Window & typeof globalThis'. Did you mean 'Notification'?
+
+[7m2825[0m   window.saveNotifications = function() {
+[7m    [0m [93m         ~~~~~~~~~~~~~~~~~[0m
+[96msrc/pages/admin/central.astro[0m:[93m2783[0m:[93m12[0m - [93mwarning[0m[90m ts(6133): [0m'loadBotConfig' is declared but its value is never read.
+
+[7m2783[0m   function loadBotConfig() {
+[7m    [0m [93m           ~~~~~~~~~~~~~[0m
+[96msrc/pages/admin/central.astro[0m:[93m2758[0m:[93m12[0m - [93mwarning[0m[90m ts(6133): [0m'loadSessoes' is declared but its value is never read.
+
+[7m2758[0m   function loadSessoes() {
+[7m    [0m [93m           ~~~~~~~~~~~[0m
+[96msrc/pages/admin/central.astro[0m:[93m1580[0m:[93m58[0m - [93mwarning[0m[90m ts(6385): [0m'event' is deprecated.
+
+[7m1580[0m     <form id="form-bloqueio-ip" onsubmit="saveBloqueioIP(event)">
+[7m    [0m [93m                                                         ~~~~~[0m
+[96msrc/pages/admin/central.astro[0m:[93m1528[0m:[93m45[0m - [93mwarning[0m[90m ts(6385): [0m'event' is deprecated.
+
+[7m1528[0m     <form id="form-fila" onsubmit="saveFila(event)">
+[7m    [0m [93m                                            ~~~~~[0m
+[96msrc/pages/admin/central.astro[0m:[93m1492[0m:[93m55[0m - [93mwarning[0m[90m ts(6385): [0m'event' is deprecated.
+
+[7m1492[0m     <form id="form-categoria" onsubmit="saveCategoria(event)">
+[7m    [0m [93m                                                      ~~~~~[0m
+[96msrc/pages/admin/central.astro[0m:[93m1444[0m:[93m51[0m - [93mwarning[0m[90m ts(6385): [0m'event' is deprecated.
+
+[7m1444[0m     <form id="form-webhook" onsubmit="saveWebhook(event)">
+[7m    [0m [93m                                                  ~~~~~[0m
+[96msrc/pages/admin/central.astro[0m:[93m1385[0m:[93m53[0m - [93mwarning[0m[90m ts(6385): [0m'event' is deprecated.
+
+[7m1385[0m     <form id="form-campanha" onsubmit="saveCampanha(event)">
+[7m    [0m [93m                                                    ~~~~~[0m
+[96msrc/pages/admin/central.astro[0m:[93m1334[0m:[93m47[0m - [93mwarning[0m[90m ts(6385): [0m'event' is deprecated.
+
+[7m1334[0m     <form id="form-macro" onsubmit="saveMacro(event)">
+[7m    [0m [93m                                              ~~~~~[0m
+[96msrc/pages/admin/central.astro[0m:[93m1272[0m:[93m47[0m - [93mwarning[0m[90m ts(6385): [0m'event' is deprecated.
+
+[7m1272[0m     <form id="form-cupom" onsubmit="saveCupom(event)">
+[7m    [0m [93m                                              ~~~~~[0m
+[96msrc/pages/admin/central.astro[0m:[93m1204[0m:[93m51[0m - [93mwarning[0m[90m ts(6385): [0m'event' is deprecated.
+
+[7m1204[0m     <form id="form-produto" onsubmit="saveProduto(event)">
+[7m    [0m [93m                                                  ~~~~~[0m
+
+[96msrc/pages/admin/index.astro[0m:[93m187[0m:[93m13[0m - [93mwarning[0m[90m ts(6133): [0m'sender' is declared but its value is never read.
+
+[7m187[0m       const sender = msg.from_me ? '🤖 Bot' : `👤 ${msg.phone}`;
+[7m   [0m [93m            ~~~~~~[0m
+[96msrc/pages/admin/index.astro[0m:[93m186[0m:[93m13[0m - [93mwarning[0m[90m ts(6133): [0m'msgClass' is declared but its value is never read.
+
+[7m186[0m       const msgClass = msg.from_me ? 'msg-bot' : 'msg-user';
+[7m   [0m [93m            ~~~~~~~~[0m
+
+[96msrc/pages/admin/relatorio.astro[0m:[93m87[0m:[93m20[0m - [93mwarning[0m[90m ts(6387): [0mThe signature '(...text: string[]): void' of 'win.document.write' is deprecated.
+
+[7m87[0m       win.document.write(`
+[7m  [0m [93m                   ~~~~~[0m
+[96msrc/pages/admin/relatorio.astro[0m:[93m78[0m:[93m16[0m - [93mwarning[0m[90m ts(6133): [0m'e' is declared but its value is never read.
+
+[7m78[0m         .catch(e => {
+[7m  [0m [93m               ~[0m
+
+[96msrc/pages/blog/[slug].amp.astro[0m:[93m60[0m:[93m11[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m60[0m   <script async custom-element="amp-selector" src="https://cdn.ampproject.org/v0/amp-selector-0.1.js"></script>
+[7m  [0m [93m          ~~~~~[0m
+[96msrc/pages/blog/[slug].amp.astro[0m:[93m59[0m:[93m11[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m59[0m   <script async custom-element="amp-form" src="https://cdn.ampproject.org/v0/amp-form-0.1.js"></script>
+[7m  [0m [93m          ~~~~~[0m
+[96msrc/pages/blog/[slug].amp.astro[0m:[93m58[0m:[93m11[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m58[0m   <script async custom-element="amp-bind" src="https://cdn.ampproject.org/v0/amp-bind-0.1.js"></script>
+[7m  [0m [93m          ~~~~~[0m
+[96msrc/pages/blog/[slug].amp.astro[0m:[93m57[0m:[93m11[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m57[0m   <script async custom-element="amp-accordion" src="https://cdn.ampproject.org/v0/amp-accordion-0.1.js"></script>
+[7m  [0m [93m          ~~~~~[0m
+[96msrc/pages/blog/[slug].amp.astro[0m:[93m56[0m:[93m11[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m56[0m   <script async custom-element="amp-carousel" src="https://cdn.ampproject.org/v0/amp-carousel-0.1.js"></script>
+[7m  [0m [93m          ~~~~~[0m
+[96msrc/pages/blog/[slug].amp.astro[0m:[93m55[0m:[93m11[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m55[0m   <script async custom-element="amp-youtube" src="https://cdn.ampproject.org/v0/amp-youtube-0.1.js"></script>
+[7m  [0m [93m          ~~~~~[0m
+[96msrc/pages/blog/[slug].amp.astro[0m:[93m54[0m:[93m11[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m54[0m   <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
+[7m  [0m [93m          ~~~~~[0m
+[96msrc/pages/blog/[slug].amp.astro[0m:[93m53[0m:[93m11[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m53[0m   <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
+[7m  [0m [93m          ~~~~~[0m
+[96msrc/pages/blog/[slug].amp.astro[0m:[93m52[0m:[93m11[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m52[0m   <script async custom-element="amp-analytics" src="https://cdn.ampproject.org/v0/amp-analytics-0.1.js"></script>
+[7m  [0m [93m          ~~~~~[0m
+[96msrc/pages/blog/[slug].amp.astro[0m:[93m51[0m:[93m11[0m - [93mwarning[0m[90m astro(4000): [0mThis script will be treated as if it has the `is:inline` directive because it contains an attribute. Therefore, features that require processing (e.g. using TypeScript or npm packages in the script) are unavailable.
+
+See docs for more details: https://docs.astro.build/en/guides/client-side-scripts/#script-processing.
+
+Add the `is:inline` directive explicitly to silence this hint.
+
+[7m51[0m   <script async src="https://cdn.ampproject.org/v0.js"></script>
+[7m  [0m [93m          ~~~~~[0m
+
+[96msrc/pages/blog/dark-mode-conversao.astro[0m:[93m7[0m:[93m7[0m - [93mwarning[0m[90m ts(6133): [0m'schema' is declared but its value is never read.
+
+[7m7[0m const schema = {
+[7m [0m [93m      ~~~~~~[0m
+[96msrc/pages/blog/dark-mode-conversao.astro[0m:[93m2[0m:[93m1[0m - [93mwarning[0m[90m ts(6133): [0m'Layout' is declared but its value is never read.
+
+[7m2[0m import Layout from '../../layouts/Layout.astro';
+[7m [0m [93m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/pages/ferramentas/gerador-link-whatsapp.astro[0m:[93m328[0m:[93m14[0m - [93mwarning[0m[90m ts(6387): [0mThe signature '(commandId: string, showUI?: boolean, value?: string): boolean' of 'document.execCommand' is deprecated.
+
+[7m328[0m     document.execCommand('copy');
+[7m   [0m [93m             ~~~~~~~~~~~[0m
+
+[96msrc/pages/index.astro[0m:[93m180[0m:[93m5[0m - [93mwarning[0m[90m ts(7027): [0mUnreachable code detected.
+
+[7m180[0m     const chatContainer = document.getElementById('hero-chat');
+[7m   [0m [93m    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/pages/oferta.astro[0m:[93m46[0m:[93m45[0m - [93mwarning[0m[90m ts(6385): [0m'event' is deprecated.
+
+[7m46[0m           <form class="beta-form" onsubmit="event.preventDefault(); alert('Acesso Liberado! Verifique seu e-mail.');">
+[7m  [0m [93m                                            ~~~~~[0m
+
+Result (120 files): 
+- 0 errors
+- 0 warnings
+- 86 hints
+

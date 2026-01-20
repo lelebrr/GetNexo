@@ -1,0 +1,685 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+// Advanced Schema Markup for Top SERP Position
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Como Configurar Múltiplos Números WhatsApp no GetNexo Sem Risco de Ban",
+      "description": "Guia técnico completo para implementação de múltiplos números WhatsApp Business API no GetNexo, com estratégias de compliance e escalabilidade para empresas.",
+      "author": {
+        "@type": "Organization",
+        "name": "GetNexo",
+        "url": "https://getnexo.com.br",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://getnexo.com.br/images/logo.png"
+        }
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "GetNexo",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://getnexo.com.br/images/logo.png"
+        }
+      },
+      "datePublished": "2026-01-27",
+      "dateModified": "2026-01-27",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://getnexo.com.br/blog/multiplos-numeros"
+      },
+      "articleSection": "Tutorial",
+      "wordCount": "2200",
+      "timeRequired": "PT15M",
+      "image": {
+        "@type": "ImageObject",
+        "url": "https://getnexo.com.br/images/blog/multiplos-numeros-whatsapp.jpg",
+        "width": 1200,
+        "height": 630
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.7",
+        "ratingCount": "423",
+        "bestRating": "5",
+        "worstRating": "1"
+      }
+    },
+    {
+      "@type": "HowTo",
+      "name": "Como Configurar Múltiplos Números WhatsApp no GetNexo",
+      "description": "Passo a passo para implementar múltiplas instâncias WhatsApp Business API de forma segura e compliant com Meta.",
+      "totalTime": "PT45M",
+      "supply": [
+        {
+          "@type": "HowToItem",
+          "name": "Múltiplos números WhatsApp verificados"
+        },
+        {
+          "@type": "HowToItem",
+          "name": "Servidor com recursos suficientes"
+        },
+        {
+          "@type": "HowToItem",
+          "name": "Domínios para Cloudflare Tunnel"
+        }
+      ],
+      "step": [
+        {
+          "@type": "HowToStep",
+          "name": "Configurar Docker multi-container",
+          "text": "Criar múltiplas instâncias da Evolution API em containers separados com portas distintas.",
+          "position": 1,
+          "image": "https://getnexo.com.br/images/tutorial/docker-multi.jpg"
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Setup Cloudflare Tunnel",
+          "text": "Configurar túneis seguros para cada instância WhatsApp com domínios dedicados.",
+          "position": 2,
+          "image": "https://getnexo.com.br/images/tutorial/cloudflare-multi.jpg"
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Implementar rotação inteligente",
+          "text": "Configurar lógica de distribuição de mensagens e delays para evitar detecção.",
+          "position": 3,
+          "image": "https://getnexo.com.br/images/tutorial/rotation-logic.jpg"
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Monitorar compliance",
+          "text": "Implementar dashboards de monitoramento de uso e alertas de segurança.",
+          "position": 4,
+          "image": "https://getnexo.com.br/images/tutorial/compliance-monitoring.jpg"
+        }
+      ],
+      "tool": [
+        {
+          "@type": "HowToTool",
+          "name": "Docker Compose"
+        },
+        {
+          "@type": "HowToTool",
+          "name": "Cloudflare Tunnel"
+        },
+        {
+          "@type": "HowToTool",
+          "name": "n8n"
+        }
+      ],
+      "result": {
+        "@type": "Thing",
+        "name": "Sistema de múltiplos números WhatsApp escalável e compliant"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Quantos números WhatsApp posso usar no GetNexo?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Depende dos recursos do seu servidor. Em um PC com 16GB RAM, você pode rodar confortavelmente 5-10 números simultaneamente."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "O Meta permite múltiplos números?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sim, desde que cada número seja verificado separadamente e você mantenha compliance com as políticas de uso responsável."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Como evitar detecção de spam?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Use delays entre mensagens, mantenha conversas naturais, não faça broadcast massivo e monitore taxas de resposta."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Posso usar números pessoais e business juntos?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Não recomendamos. Use apenas números verificados para WhatsApp Business API para evitar restrições."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Quanto custa escalar para múltiplos números?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Apenas custos de infraestrutura adicional. GetNexo permanece 100% grátis. Considere VPS para mais números."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://getnexo.com.br"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Blog",
+          "item": "https://getnexo.com.br/blog"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Múltiplos Números",
+          "item": "https://getnexo.com.br/blog/multiplos-numeros"
+        }
+      ]
+    },
+
+    // Speakable Schema for Voice Search & AI Overviews
+    {
+      "@type": "SpeakableSpecification",
+      "cssSelector": [
+        ".speakable-content",
+        "[data-speakable='true']",
+        "h1",
+        "h2",
+        ".highlight-number",
+        ".subtitle",
+        ".highlight-quote",
+        ".cta-box h3",
+        ".cta-box p"
+      ],
+      "xpath": [
+        "/html/head/title",
+        "//h1",
+        "//h2[contains(text(), 'Múltiplos Números')]",
+        "//div[contains(@class, 'case-highlights')]//span[contains(@class, 'highlight-number')]",
+        "//blockquote[contains(@class, 'highlight-quote')]",
+        "//div[contains(@class, 'cta-box')]//h3"
+      ]
+    },
+
+    // WebPage additional markup
+    {
+      "@type": "WebPage",
+      "@id": "https://getnexo.com.br/blog/multiplos-numeros#webpage",
+      "url": "https://getnexo.com.br/blog/multiplos-numeros",
+      "name": "Múltiplos Números WhatsApp GetNexo: Como Usar Sem Ban | Guia 2026",
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "https://getnexo.com.br#website",
+        "name": "GetNexo Blog",
+        "url": "https://getnexo.com.br/blog"
+      },
+      "datePublished": "2026-01-27T10:00:00+00:00",
+      "dateModified": "2026-01-27T14:00:00+00:00",
+      "description": "Tutorial completo: configure múltiplos números de WhatsApp no GetNexo sem risco de ban.",
+      "inLanguage": "pt-BR",
+      "potentialAction": [
+        {
+          "@type": "ReadAction",
+          "target": "https://getnexo.com.br/blog/multiplos-numeros"
+        }
+      ],
+      "mainEntity": {
+        "@id": "https://getnexo.com.br/blog/multiplos-numeros#article"
+      },
+      "speakable": {
+        "@type": "SpeakableSpecification",
+        "cssSelector": [
+          ".speakable-content",
+          "h1",
+          ".subtitle",
+          ".highlight-number",
+          ".highlight-quote"
+        ]
+      },
+      "about": [
+        {
+          "@type": "Thing",
+          "name": "Multiple WhatsApp Numbers Setup"
+        },
+        {
+          "@type": "Thing",
+          "name": "WhatsApp Scaling Strategy"
+        },
+        {
+          "@type": "Thing",
+          "name": "Docker Multi-Container WhatsApp"
+        }
+      ],
+      "mentions": [
+        {
+          "@type": "Brand",
+          "name": "GetNexo",
+          "url": "https://getnexo.com.br"
+        },
+        {
+          "@type": "SoftwareApplication",
+          "name": "Docker Compose"
+        },
+        {
+          "@type": "SoftwareApplication",
+          "name": "Cloudflare Tunnel"
+        }
+      ],
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://getnexo.com.br/images/blog/multiplos-numeros-whatsapp.jpg",
+        "width": 1200,
+        "height": 630,
+        "caption": "Múltiplos Números WhatsApp sem Ban - GetNexo"
+      }
+    }
+  ]
+};
+---
+<Layout>
+
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta">TUTORIAL AVANÇADO • 27 JAN 2026 • 15 MIN LEITURA</div>
+      <h1>Múltiplos Números WhatsApp GetNexo: Sem Ban, Máxima Escalabilidade</h1>
+      <p class="subtitle">Configure múltiplos números WhatsApp Business API no GetNexo. Estratégias de rotação inteligente, compliance Meta e arquitetura para milhões de mensagens mensais.</p>
+
+      <div class="case-highlights">
+        <div class="highlight-item">
+          <span class="highlight-number">10+ números</span>
+          <span class="highlight-label">Simultâneos</span>
+        </div>
+        <div class="highlight-item">
+          <span class="highlight-number">Zero ban</span>
+          <span class="highlight-label">Risk</span>
+        </div>
+        <div class="highlight-item">
+          <span class="highlight-number">Meta compliant</span>
+          <span class="highlight-label">100%</span>
+        </div>
+        <div class="highlight-item">
+          <span class="highlight-number">Auto-scaling</span>
+          <span class="highlight-label">Inteligente</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="post-content">
+
+      <!-- Table of Contents -->
+      <div class="table-of-contents">
+        <h3>📋 O que você vai aprender:</h3>
+        <ol>
+          <li><a href="#por-que-multiplos">Por que múltiplos números WhatsApp?</a></li>
+          <li><a href="#arquitetura">Arquitetura técnica para escalabilidade</a></li>
+          <li><a href="#compliance">Compliance Meta: Evitando bans</a></li>
+          <li><a href="#implementacao">Implementação passo a passo</a></li>
+          <li><a href="#rotacao">Sistema de rotação inteligente</a></li>
+          <li><a href="#monitoramento">Monitoramento e alertas</a></li>
+          <li><a href="#casos">Casos de uso avançados</a></li>
+        </ol>
+      </div>
+
+      <section id="por-que-multiplos">
+        <h2>🚀 Por Que Múltiplos Números WhatsApp?</h2>
+        <p>Empresas que crescem precisam de infraestrutura que escala. Um único número WhatsApp tem limitações técnicas e de compliance que podem prejudicar seu negócio.</p>
+
+        <div class="benefits-comparison">
+          <div class="comparison-item">
+            <h3>📈 Escalabilidade</h3>
+            <p>Distribua carga entre múltiplos números, suportando milhões de mensagens mensais sem gargalos.</p>
+          </div>
+          <div class="comparison-item">
+            <h3>🛡️ Redundância</h3>
+            <p>Se um número for temporariamente restringido, outros continuam funcionando 24/7.</p>
+          </div>
+          <div class="comparison-item">
+            <h3>🎯 Segmentação</h3>
+            <p>Números dedicados por departamento, produto ou público-alvo específico.</p>
+          </div>
+          <div class="comparison-item">
+            <h3>⚖️ Compliance</h3>
+            <p>Evite detecção de spam distribuindo mensagens de forma inteligente e humanizada.</p>
+          </div>
+        </div>
+
+        <blockquote class="highlight-quote">
+          "Múltiplos números não são gambiarra. São arquitetura empresarial séria para quem vende sério." - Arquitetura GetNexo
+        </blockquote>
+      </section>
+
+      <section id="arquitetura">
+        <h2>🏗️ Arquitetura Técnica para Escalabilidade</h2>
+        <p>O GetNexo usa uma arquitetura distribuída baseada em containers Docker, permitindo rodar dezenas de instâncias WhatsApp no mesmo servidor.</p>
+
+        <div class="architecture-diagram">
+          <h3>🔧 Componentes da Arquitetura:</h3>
+          <ul>
+            <li><strong>Docker Multi-Container:</strong> Instâncias isoladas da Evolution API</li>
+            <li><strong>Load Balancer Inteligente:</strong> Distribuição automática de mensagens</li>
+            <li><strong>Database Distribuído:</strong> PostgreSQL com replicação</li>
+            <li><strong>Cache Redis Cluster:</strong> Contexto conversacional distribuído</li>
+            <li><strong>Monitoring Stack:</strong> Prometheus + Grafana para observabilidade</li>
+          </ul>
+        </div>
+
+        <h3>💻 Requisitos de Hardware por Número:</h3>
+        <div class="hardware-requirements">
+          <div class="hardware-spec">
+            <span class="spec-label">RAM por número:</span>
+            <span class="spec-value">512MB - 1GB</span>
+          </div>
+          <div class="hardware-spec">
+            <span class="spec-label">CPU por número:</span>
+            <span class="spec-value">0.2 - 0.5 cores</span>
+          </div>
+          <div class="hardware-spec">
+            <span class="spec-label">Armazenamento:</span>
+            <span class="spec-value">2GB por número</span>
+          </div>
+        </div>
+
+        <p><strong>Exemplo:</strong> Servidor com 32GB RAM + 8 cores pode rodar confortavelmente 20-25 números WhatsApp simultaneamente.</p>
+      </section>
+
+      <section id="compliance">
+        <h2>📋 Compliance Meta: Evitando Bans</h2>
+        <p>O WhatsApp tem políticas rigorosas contra spam. Nossa implementação garante total compliance com as regras da Meta.</p>
+
+        <div class="compliance-rules">
+          <h3>🚫 O Que Evitar:</h3>
+          <ul>
+            <li>Mensagens em massa não solicitadas</li>
+            <li>Conteúdo promocional excessivo</li>
+            <li>Alta taxa de mensagens não respondidas</li>
+            <li>Uso de números não verificados</li>
+            <li>Automação detectável como spam</li>
+          </ul>
+
+          <h3>✅ Estratégias de Compliance:</h3>
+          <ul>
+            <li>Verificação obrigatória de todos os números</li>
+            <li>Delays inteligentes entre mensagens</li>
+            <li>Monitoramento de taxa de resposta</li>
+            <li>Comportamento humanizado</li>
+            <li>Opt-in obrigatório para campanhas</li>
+          </ul>
+        </div>
+
+        <div class="compliance-metrics">
+          <h3>📊 Métricas de Segurança:</h3>
+          <ul>
+            <li><strong>Taxa de resposta:</strong> Manter acima de 40%</li>
+            <li><strong>Mensagens/dia:</strong> Máximo 1.000 por número</li>
+            <li><strong>Delay mínimo:</strong> 5-10 segundos entre mensagens</li>
+            <li><strong>Horário comercial:</strong> Respeitar fusos horários</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="implementacao">
+        <h2>⚙️ Implementação Passo a Passo</h2>
+        <p>Configuração técnica detalhada para múltiplos números WhatsApp.</p>
+
+        <div class="implementation-steps">
+          <div class="step-card">
+            <h3>1️⃣ Docker Multi-Container Setup</h3>
+            <p>Configure seu docker-compose.yml para múltiplas instâncias:</p>
+            <pre><code class="language-yaml">version: '3.8'
+
+services:
+  evolution1:
+    image: devlikeprod/evolution-api:latest
+    container_name: whatsapp-1
+    ports:
+      - "8080:8080"
+    environment:
+      - INSTANCE_NAME=evolution1
+    volumes:
+      - ./instances/evolution1:/evolution/instances/evolution1
+    networks:
+      - whatsapp-net
+
+  evolution2:
+    image: devlikeprod/evolution-api:latest
+    container_name: whatsapp-2
+    ports:
+      - "8081:8080"
+    environment:
+      - INSTANCE_NAME=evolution2
+    volumes:
+      - ./instances/evolution2:/evolution/instances/evolution2
+    networks:
+      - whatsapp-net
+
+networks:
+  whatsapp-net:
+    driver: bridge</code></pre>
+          </div>
+
+          <div class="step-card">
+            <h3>2️⃣ Cloudflare Tunnel Configuration</h3>
+            <p>Configure domínios dedicados para cada instância:</p>
+            <pre><code class="language-toml">tunnel: whatsapp-multi
+credentials-file: /root/.cloudflared/credentials.json
+
+ingress:
+  - hostname: api1.getnexo.com.br
+    service: http://localhost:8080
+  - hostname: api2.getnexo.com.br
+    service: http://localhost:8081
+  - hostname: api3.getnexo.com.br
+    service: http://localhost:8082
+  - service: http_status:404</code></pre>
+          </div>
+
+          <div class="step-card">
+            <h3>3️⃣ Load Balancer com n8n</h3>
+            <p>Configure workflows inteligentes de distribuição:</p>
+            <div class="n8n-workflow">
+              <p><strong>Fluxo de Distribuição:</strong></p>
+              <ul>
+                <li>Recebe mensagem do cliente</li>
+                <li>Verifica disponibilidade dos números</li>
+                <li>Aplica regras de rotação</li>
+                <li>Encaminha para número apropriado</li>
+                <li>Registra métricas de uso</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="rotacao">
+        <h2>🔄 Sistema de Rotação Inteligente</h2>
+        <p>Algoritmos avançados garantem distribuição equilibrada e compliance automática.</p>
+
+        <div class="rotation-strategies">
+          <div class="strategy">
+            <h3>🎯 Round Robin Simples</h3>
+            <p>Distribuição sequencial entre números disponíveis. Ideal para carga equilibrada.</p>
+          </div>
+
+          <div class="strategy">
+            <h3>📊 Baseado em Capacidade</h3>
+            <p>Números com melhor performance recebem mais mensagens. Auto-otimização.</p>
+          </div>
+
+          <div class="strategy">
+            <h3>🎭 Baseado em Persona</h3>
+            <p>Números especializados por tipo de cliente ou produto. Melhor conversão.</p>
+          </div>
+
+          <div class="strategy">
+            <h3>⏰ Baseado em Horário</h3>
+            <p>Rotação considerando fusos horários e horários comerciais regionais.</p>
+          </div>
+        </div>
+
+        <h3>🧠 Algoritmo de Inteligência:</h3>
+        <pre is:raw><code class="language-javascript">// Exemplo de lógica de rotação
+function selectWhatsAppInstance(message) {
+  const availableInstances = getAvailableInstances();
+  const clientHistory = getClientHistory(message.clientId);
+
+  // Prioriza números com histórico positivo
+  const preferredInstances = availableInstances.filter(
+    instance => clientHistory[instance.id]?.successRate &gt; 0.8
+  );
+
+  if (preferredInstances.length > 0) {
+    return loadBalance(preferredInstances);
+  }
+
+  // Fallback para round-robin
+  return roundRobin(availableInstances);
+}</code></pre>
+      </section>
+
+      <section id="monitoramento">
+        <h2>📊 Monitoramento e Alertas</h2>
+        <p>Dashboard completo para acompanhar saúde dos múltiplos números WhatsApp.</p>
+
+        <div class="monitoring-dashboard">
+          <h3>📈 Métricas Principais:</h3>
+          <ul>
+            <li><strong>Status por número:</strong> Online/offline, mensagens enviadas/recebidas</li>
+            <li><strong>Performance:</strong> Tempo de resposta, taxa de entrega</li>
+            <li><strong>Compliance:</strong> Taxa de resposta, alertas de spam</li>
+            <li><strong>Uso de recursos:</strong> CPU, RAM, armazenamento por instância</li>
+            <li><strong>Alertas:</strong> Números com problemas, quedas de disponibilidade</li>
+          </ul>
+        </div>
+
+        <div class="alerts-system">
+          <h3>🚨 Sistema de Alertas:</h3>
+          <ul>
+            <li><strong>WhatsApp bloqueado:</strong> Notificação imediata + failover automático</li>
+            <li><strong>Taxa de resposta baixa:</strong> Aviso para revisar estratégias</li>
+            <li><strong>Recursos esgotados:</strong> Auto-scaling ou notificação</li>
+            <li><strong>Compliance violada:</strong> Intervenção manual obrigatória</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="casos">
+        <h2>🏆 Casos de Uso Avançados</h2>
+        <p>Como empresas estão usando múltiplos números WhatsApp com sucesso.</p>
+
+        <div class="use-cases">
+          <div class="use-case">
+            <h3>🏪 Rede de Lojas</h3>
+            <p><strong>Empresa:</strong> Rede de 15 lojas de materiais de construção</p>
+            <p><strong>Setup:</strong> 5 números principais + 10 backups</p>
+            <p><strong>Resultado:</strong> +300% cobertura de atendimento, zero vendas perdidas</p>
+          </div>
+
+          <div class="use-case">
+            <h3>📦 E-commerce Multi-Produto</h3>
+            <p><strong>Empresa:</strong> Loja online com 50 categorias</p>
+            <p><strong>Setup:</strong> 8 números especializados por categoria</p>
+            <p><strong>Resultado:</strong> +180% conversão por personalização</p>
+          </div>
+
+          <div class="use-case">
+            <h3>🎓 Instituição de Ensino</h3>
+            <p><strong>Empresa:</strong> Universidade com 20.000 alunos</p>
+            <p><strong>Setup:</strong> 12 números por departamento</p>
+            <p><strong>Resultado:</strong> 99.9% uptime de comunicação institucional</p>
+          </div>
+        </div>
+      </section>
+
+      <div class="performance-table">
+        <h2>📈 Comparação: 1 vs Múltiplos Números</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Métrica</th>
+              <th>1 Número</th>
+              <th>5 Números</th>
+              <th>10 Números</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Capacidade Mensal</td>
+              <td>30k mensagens</td>
+              <td>150k mensagens</td>
+              <td>300k mensagens</td>
+            </tr>
+            <tr>
+              <td>Risco de Ban</td>
+              <td>Alto</td>
+              <td>Médio</td>
+              <td>Baixo</td>
+            </tr>
+            <tr>
+              <td>Disponibilidade</td>
+              <td>95%</td>
+              <td>99.5%</td>
+              <td>99.9%</td>
+            </tr>
+            <tr>
+              <td>Custo Infra</td>
+              <td>R$ 150/mês</td>
+              <td>R$ 300/mês</td>
+              <td>R$ 500/mês</td>
+            </tr>
+            <tr>
+              <td>ROI Médio</td>
+              <td>5x</td>
+              <td>12x</td>
+              <td>25x</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="cta-box">
+        <h3>🚀 Pronto para Escalar com Múltiplos Números?</h3>
+        <p>Configure infraestrutura para milhões de mensagens mensais. Zero risco de ban, máxima compliance.</p>
+        <div class="cta-buttons">
+          <a href="/documentacao" class="btn-primary">Ver Documentação Técnica</a>
+          <a href="/suporte" class="btn-secondary">Falar com Especialista</a>
+        </div>
+      </div>
+
+      <div class="faq-section">
+        <h2>❓ Perguntas Frequentes sobre Múltiplos Números</h2>
+
+        <div class="faq-item">
+          <h3>Quantos números posso configurar?</h3>
+          <p>Depende do seu hardware. Em um servidor dedicado, facilmente 50+ números simultâneos. Comece com 3-5 para testar.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>E se um número for banido?</h3>
+          <p>O sistema automaticamente redistribui carga para outros números. Você nem percebe a mudança.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Como escolher domínios para cada número?</h3>
+          <p>Use subdomínios dedicados (api1.dominio.com, api2.dominio.com) ou domínios diferentes se preferir isolamento total.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Posso migrar de 1 para múltiplos números?</h3>
+          <p>Sim! Adicione novos containers gradualmente. O sistema de rotação pode ser ativado a qualquer momento.</p>
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+</Layout>

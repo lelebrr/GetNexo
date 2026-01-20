@@ -1,0 +1,265 @@
+---
+// PreSupportModal.astro - Componente discreto para suporte multimodal
+---
+
+<div id="support-modal" class="support-widget hidden">
+  <div class="widget-content">
+    <button id="close-support" class="close-btn" aria-label="Fechar">&times;</button>
+    
+    <div class="widget-header">
+      <span class="icon">✨</span>
+      <h3>Como quer começar?</h3>
+    </div>
+    
+    <div class="widget-actions">
+      <button id="btn-text" class="action-btn">
+        <span class="btn-icon">⌨️</span>
+        Digitar
+      </button>
+      
+      <button id="btn-voice" class="action-btn voice">
+        <span class="btn-icon">🎙️</span>
+        Falar
+      </button>
+    </div>
+
+    <div id="voice-feedback" class="voice-feedback hidden">
+      <div class="wave"></div>
+      <p id="feedback-text">Ouvindo...</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  class SupportWidget {
+    widget: HTMLElement | null;
+    textBtn: HTMLElement | null;
+    voiceBtn: HTMLElement | null;
+    closeBtn: HTMLElement | null;
+    feedback: HTMLElement | null;
+    feedbackText: HTMLElement | null;
+
+    constructor() {
+      this.widget = document.getElementById('support-modal');
+      this.textBtn = document.getElementById('btn-text');
+      this.voiceBtn = document.getElementById('btn-voice');
+      this.closeBtn = document.getElementById('close-support');
+      this.feedback = document.getElementById('voice-feedback');
+      this.feedbackText = document.getElementById('feedback-text');
+      
+      this.init();
+    }
+
+    init() {
+      if (!this.widget) return;
+
+      // Show widget after a small delay
+      setTimeout(() => {
+        if (this.widget) this.widget.classList.remove('hidden');
+      }, 1000);
+
+      this.bindEvents();
+    }
+
+    bindEvents() {
+      this.closeBtn?.addEventListener('click', () => {
+        if (this.widget) this.widget.style.display = 'none';
+      });
+
+      this.textBtn?.addEventListener('click', () => {
+        this.openChat();
+      });
+
+      this.voiceBtn?.addEventListener('click', () => {
+        this.startVoice();
+      });
+    }
+
+    openChat() {
+      const win = window as any;
+      if (win.$chatwoot) {
+        win.$chatwoot.toggle();
+        if (this.widget) this.widget.style.display = 'none';
+      } else {
+        window.location.href = '/contato';
+      }
+    }
+
+    startVoice() {
+      const win = window as any;
+      const SpeechRecognition = win.SpeechRecognition || win.webkitSpeechRecognition;
+      
+      if (!SpeechRecognition) {
+        alert('Seu navegador não suporta reconhecimento de voz.');
+        return;
+      }
+
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'pt-BR';
+      recognition.interimResults = true;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = () => {
+        if (this.feedback) this.feedback.classList.remove('hidden');
+        if (this.feedbackText) this.feedbackText.textContent = "Ouvindo...";
+      };
+
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[event.results.length - 1][0].transcript;
+        if (this.feedbackText) this.feedbackText.textContent = transcript;
+        
+        if (event.results[0].isFinal) {
+          setTimeout(() => {
+            this.openChat();
+          }, 1000);
+        }
+      };
+
+      recognition.onerror = (event: any) => {
+        if (this.feedbackText) this.feedbackText.textContent = "Erro ao ouvir. Tente novamente.";
+        console.error('Speech recognition error', event.error);
+      };
+
+      recognition.start();
+    }
+  }
+
+  // Initialize
+  document.addEventListener('astro:page-load', () => new SupportWidget());
+  if (document.readyState === 'complete') new SupportWidget();
+  else document.addEventListener('DOMContentLoaded', () => new SupportWidget());
+</script>
+
+<style>
+  .support-widget {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    font-family: 'Inter', sans-serif;
+    animation: slideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .widget-content {
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.25rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    width: 280px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 4px;
+    border-radius: 50%;
+    transition: 0.2s;
+    line-height: 1;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .close-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+
+  .widget-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .widget-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+  }
+
+  .widget-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .action-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 0.75rem;
+    color: #cbd5e1;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  .action-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .action-btn.voice:hover {
+    border-color: #00ff9d;
+    color: #00ff9d;
+  }
+
+  .btn-icon {
+    font-size: 1.2rem;
+  }
+
+  .voice-feedback {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.75rem;
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  .voice-feedback.hidden {
+    display: none;
+  }
+
+  .voice-feedback p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #00ff9d;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

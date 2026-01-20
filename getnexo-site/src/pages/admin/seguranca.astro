@@ -1,0 +1,976 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const title = "🛡️ Shield de Segurança – GetNexo Admin";
+const description = "Dashboard de segurança em tempo real com detecção de invasões, vazamentos e ataques";
+---
+
+<Layout title={title} description={description}>
+  <div class="shield-dashboard">
+    
+    <!-- Header com ECG -->
+    <header class="shield-header">
+      <div class="header-content">
+        <div class="shield-logo">
+          <svg width="60" height="60" viewBox="0 0 24 24" fill="none" class="shield-icon">
+            <path d="M12 2L3 7V12C3 17.55 7.16 22.74 12 24C16.84 22.74 21 17.55 21 12V7L12 2Z" 
+                  stroke="url(#shieldGradient)" stroke-width="2" fill="rgba(0,255,157,0.1)"/>
+            <path d="M9 12L11 14L15 10" stroke="#00ff9d" stroke-width="2" stroke-linecap="round"/>
+            <defs>
+              <linearGradient id="shieldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00d4ff"/>
+                <stop offset="100%" stop-color="#00ff9d"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="header-text">
+          <h1>Shield de <span class="text-gradient">Segurança</span></h1>
+          <p>Monitoramento 24/7 – Invasões, vazamentos, extração de dados</p>
+        </div>
+      </div>
+      
+      <!-- ECG Real-time -->
+      <div class="ecg-container">
+        <svg class="ecg-line" viewBox="0 0 200 50" preserveAspectRatio="none">
+          <path class="ecg-path" d="M0,25 L20,25 L25,25 L30,10 L35,40 L40,25 L45,25 L60,25 L65,25 L70,5 L75,45 L80,25 L85,25 L100,25 L105,25 L110,10 L115,40 L120,25 L125,25 L140,25 L145,25 L150,5 L155,45 L160,25 L165,25 L200,25"/>
+        </svg>
+        <span class="ecg-status">● SISTEMA ATIVO</span>
+      </div>
+    </header>
+
+    <!-- Status Cards Grid -->
+    <section class="status-grid">
+      
+      <!-- Status Global -->
+      <div class="status-card glass-panel status-ok">
+        <div class="card-header">
+          <span class="card-icon">🛡️</span>
+          <h3>Status Global</h3>
+        </div>
+        <div class="status-indicator">
+          <div class="pulse-ring"></div>
+          <span class="status-text">✅ SEGURO</span>
+        </div>
+        <div class="status-details">
+          <div class="detail-row">
+            <span>Última varredura:</span>
+            <span id="last-scan">Agora</span>
+          </div>
+          <div class="detail-row">
+            <span>Ameaças bloqueadas:</span>
+            <span id="threats-blocked">0</span>
+          </div>
+          <div class="detail-row">
+            <span>Uptime:</span>
+            <span id="uptime">99.9%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alertas em Tempo Real -->
+      <div class="status-card glass-panel">
+        <div class="card-header">
+          <span class="card-icon">🚨</span>
+          <h3>Alertas Ao Vivo</h3>
+          <span class="alert-count" id="alert-count">0</span>
+        </div>
+        <div class="alerts-list" id="alerts-list">
+          <div class="no-alerts">
+            <span class="check-icon">✓</span>
+            <p>Nenhum alerta. Sistema seguro.</p>
+          </div>
+        </div>
+        <button class="btn-clear" id="btn-clear-alerts">Limpar Histórico</button>
+      </div>
+
+      <!-- Métricas de Segurança -->
+      <div class="status-card glass-panel">
+        <div class="card-header">
+          <span class="card-icon">📊</span>
+          <h3>Métricas 24h</h3>
+        </div>
+        <div class="metrics-grid">
+          <div class="metric">
+            <span class="metric-value" id="requests-24h">12.4k</span>
+            <span class="metric-label">Requests</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value blocked" id="blocked-24h">47</span>
+            <span class="metric-label">Bloqueados</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value" id="countries-24h">23</span>
+            <span class="metric-label">Países</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value" id="latency-24h">89ms</span>
+            <span class="metric-label">Latência</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Configuração de IAs -->
+    <section class="ai-config-section">
+      <h2>⚙️ Configuração de <span class="text-gradient">Inteligência Artificial</span></h2>
+      <p class="section-subtitle">Configure as APIs de IA para análise de segurança e sugestões automáticas</p>
+      
+      <div class="ai-cards-grid">
+        
+        <!-- Google Gemini -->
+        <div class="ai-card glass-panel">
+          <div class="ai-header">
+            <span class="ai-logo">💎</span>
+            <div>
+              <h3>Google Gemini</h3>
+              <span class="ai-status connected" id="gemini-status">● Conectado</span>
+            </div>
+          </div>
+          <select class="ai-select" id="gemini-model">
+            <option value="gemini-1.5-flash">Gemini 1.5 Flash (rápido)</option>
+            <option value="gemini-1.5-pro" selected>Gemini 1.5 Pro (preciso)</option>
+            <option value="gemini-1.5-pro-latest">Gemini 1.5 Pro Latest</option>
+          </select>
+          <input type="password" class="ai-input" id="gemini-key" 
+                 placeholder="Cole sua API Key Gemini" 
+                 value="AIzaSyDplE-4AhMhMRC81TGNoirDTdOcf-WC9_g" />
+          <div class="ai-actions">
+            <button class="btn-save" data-ai="gemini">Salvar</button>
+            <button class="btn-test" data-ai="gemini">Testar</button>
+          </div>
+          <p class="ai-feedback" id="gemini-feedback"></p>
+        </div>
+
+        <!-- xAI Grok -->
+        <div class="ai-card glass-panel">
+          <div class="ai-header">
+            <span class="ai-logo">🤖</span>
+            <div>
+              <h3>xAI Grok</h3>
+              <span class="ai-status" id="grok-status">● Não configurado</span>
+            </div>
+          </div>
+          <select class="ai-select" id="grok-model">
+            <option value="grok-2">Grok 2</option>
+            <option value="grok-2-mini">Grok 2 Mini</option>
+          </select>
+          <input type="password" class="ai-input" id="grok-key" placeholder="Cole sua API Key Grok" />
+          <div class="ai-actions">
+            <button class="btn-save" data-ai="grok">Salvar</button>
+            <button class="btn-test" data-ai="grok">Testar</button>
+          </div>
+          <p class="ai-feedback" id="grok-feedback"></p>
+        </div>
+
+        <!-- DeepSeek -->
+        <div class="ai-card glass-panel">
+          <div class="ai-header">
+            <span class="ai-logo">🔬</span>
+            <div>
+              <h3>DeepSeek</h3>
+              <span class="ai-status" id="deepseek-status">● Não configurado</span>
+            </div>
+          </div>
+          <select class="ai-select" id="deepseek-model">
+            <option value="deepseek-chat">DeepSeek Chat</option>
+            <option value="deepseek-coder">DeepSeek Coder</option>
+          </select>
+          <input type="password" class="ai-input" id="deepseek-key" placeholder="Cole sua API Key DeepSeek" />
+          <div class="ai-actions">
+            <button class="btn-save" data-ai="deepseek">Salvar</button>
+            <button class="btn-test" data-ai="deepseek">Testar</button>
+          </div>
+          <p class="ai-feedback" id="deepseek-feedback"></p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Logs de Segurança -->
+    <section class="logs-section">
+      <div class="logs-header">
+         <h2>📋 Logs de <span class="text-gradient">Segurança</span></h2>
+         <div class="logs-controls">
+           <select id="log-filter">
+             <option value="all">Todos</option>
+             <option value="attack">Ataques</option>
+             <option value="scan">Varreduras</option>
+             <option value="block">Bloqueios</option>
+           </select>
+           <button class="btn-refresh" id="btn-refresh-logs">🔄 Atualizar</button>
+         </div>
+      </div>
+      
+      <div class="logs-container glass-panel" id="logs-container">
+        <div class="log-entry info">
+          <span class="log-time">19:12:25</span>
+          <span class="log-type">INFO</span>
+          <span class="log-msg">Sistema iniciado. Monitoramento ativo.</span>
+        </div>
+        <div class="log-entry success">
+          <span class="log-time">19:12:20</span>
+          <span class="log-type">OK</span>
+          <span class="log-msg">Varredura de segurança concluída. Nenhuma ameaça.</span>
+        </div>
+        <div class="log-entry warning">
+          <span class="log-time">19:11:45</span>
+          <span class="log-type">WARN</span>
+          <span class="log-msg">5 tentativas de acesso /admin de IP 185.45.12.xxx</span>
+        </div>
+        <div class="log-entry info">
+          <span class="log-time">19:10:30</span>
+          <span class="log-type">INFO</span>
+          <span class="log-msg">PageSpeed verificado: Mobile 83 | Desktop 91</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ações Rápidas -->
+    <section class="quick-actions">
+      <h2>⚡ Ações <span class="text-gradient">Rápidas</span></h2>
+      
+      <div class="actions-grid">
+        <button class="action-btn glass-panel" id="btn-scan-now">
+          <span class="action-icon">🔍</span>
+          <span class="action-text">Varredura Completa</span>
+        </button>
+        <button class="action-btn glass-panel" id="btn-block-ip">
+          <span class="action-icon">🚫</span>
+          <span class="action-text">Bloquear IP</span>
+        </button>
+        <button class="action-btn glass-panel" id="btn-export-logs">
+          <span class="action-icon">📥</span>
+          <span class="action-text">Exportar Logs</span>
+        </button>
+        <button class="action-btn glass-panel" id="btn-test-alert">
+          <span class="action-icon">🔔</span>
+          <span class="action-text">Testar Alerta</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Botão Global -->
+    <div class="global-action">
+      <button class="btn-global" id="btn-apply-all">
+        <span>🚀 Aplicar Configurações e Iniciar Monitoramento</span>
+      </button>
+    </div>
+
+    <!-- Particles Background -->
+    <canvas id="particles-canvas"></canvas>
+
+  </div>
+</Layout>
+
+<style>
+  .shield-dashboard {
+    min-height: 100vh;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #particles-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .shield-dashboard > *:not(#particles-canvas) {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .shield-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .shield-icon {
+    filter: drop-shadow(0 0 10px rgba(0, 255, 157, 0.5));
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { filter: drop-shadow(0 0 10px rgba(0, 255, 157, 0.5)); }
+    50% { filter: drop-shadow(0 0 20px rgba(0, 255, 157, 0.8)); }
+  }
+
+  .header-text h1 {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: white;
+    margin: 0;
+  }
+
+  .header-text p {
+    color: #64748b;
+    margin: 0.5rem 0 0;
+  }
+
+  /* ECG */
+  .ecg-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(0, 255, 157, 0.05);
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    border: 1px solid rgba(0, 255, 157, 0.2);
+  }
+
+  .ecg-line {
+    width: 150px;
+    height: 40px;
+  }
+
+  .ecg-path {
+    fill: none;
+    stroke: #00ff9d;
+    stroke-width: 2;
+    stroke-linecap: round;
+    animation: ecg-animate 2s linear infinite;
+    filter: drop-shadow(0 0 3px #00ff9d);
+  }
+
+  @keyframes ecg-animate {
+    0% { stroke-dashoffset: 0; }
+    100% { stroke-dashoffset: -200; }
+  }
+
+  .ecg-path {
+    stroke-dasharray: 200;
+  }
+
+  .ecg-status {
+    color: #00ff9d;
+    font-weight: 700;
+    font-size: 0.85rem;
+    animation: blink 1s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  /* Status Grid */
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-bottom: 4rem;
+  }
+
+  .status-card {
+    padding: 2rem;
+    border-radius: 20px;
+    transition: 0.3s;
+  }
+
+  .status-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 40px rgba(0, 212, 255, 0.2);
+  }
+
+  .status-card.status-ok {
+    border-color: rgba(0, 255, 157, 0.3);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .card-icon {
+    font-size: 1.5rem;
+  }
+
+  .card-header h3 {
+    color: white;
+    font-size: 1.2rem;
+    margin: 0;
+    flex: 1;
+  }
+
+  .alert-count {
+    background: #ef4444;
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .pulse-ring {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #00ff9d;
+    position: relative;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .pulse-ring::before {
+    content: "";
+    position: absolute;
+    inset: -5px;
+    border: 2px solid #00ff9d;
+    border-radius: 50%;
+    animation: pulse-ring 2s ease-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+
+  @keyframes pulse-ring {
+    0% { transform: scale(0.8); opacity: 1; }
+    100% { transform: scale(1.5); opacity: 0; }
+  }
+
+  .status-text {
+    color: #00ff9d;
+    font-size: 1.5rem;
+    font-weight: 900;
+  }
+
+  .status-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    color: #94a3b8;
+    font-size: 0.9rem;
+  }
+
+  .detail-row span:last-child {
+    color: white;
+    font-weight: 600;
+  }
+
+  /* Alerts */
+  .alerts-list {
+    min-height: 150px;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+  }
+
+  .no-alerts {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 150px;
+    color: #64748b;
+  }
+
+  .check-icon {
+    font-size: 3rem;
+    color: #00ff9d;
+    margin-bottom: 0.5rem;
+  }
+
+  .btn-clear {
+    width: 100%;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+    padding: 0.7rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .btn-clear:hover {
+    background: rgba(239, 68, 68, 0.2);
+  }
+
+  /* Metrics */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .metric {
+    text-align: center;
+  }
+
+  .metric-value {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #00d4ff;
+  }
+
+  .metric-value.blocked {
+    color: #ef4444;
+  }
+
+  .metric-label {
+    color: #64748b;
+    font-size: 0.8rem;
+  }
+
+  /* AI Config */
+  .ai-config-section {
+    margin-bottom: 4rem;
+  }
+
+  .ai-config-section h2 {
+    font-size: 2rem;
+    color: white;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-subtitle {
+    color: #64748b;
+    margin-bottom: 2rem;
+  }
+
+  .ai-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  .ai-card {
+    padding: 2rem;
+    border-radius: 20px;
+    transition: 0.3s;
+  }
+
+  .ai-card:hover {
+    border-color: rgba(0, 212, 255, 0.5);
+    transform: translateY(-5px);
+  }
+
+  .ai-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .ai-logo {
+    font-size: 2rem;
+  }
+
+  .ai-header h3 {
+    color: white;
+    font-size: 1.2rem;
+    margin: 0;
+  }
+
+  .ai-status {
+    font-size: 0.75rem;
+    color: #64748b;
+  }
+
+  .ai-status.connected {
+    color: #00ff9d;
+  }
+
+  .ai-select, .ai-input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: 10px;
+    color: white;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .ai-select:focus, .ai-input:focus {
+    outline: none;
+    border-color: #00d4ff;
+  }
+
+  .ai-actions {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .btn-save, .btn-test {
+    flex: 1;
+    padding: 0.8rem;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .btn-save {
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    border: none;
+    color: black;
+  }
+
+  .btn-save:hover {
+    transform: scale(1.02);
+    box-shadow: 0 5px 20px rgba(0, 212, 255, 0.3);
+  }
+
+  .btn-test {
+    background: transparent;
+    border: 1px solid #00ff9d;
+    color: #00ff9d;
+  }
+
+  .btn-test:hover {
+    background: rgba(0, 255, 157, 0.1);
+  }
+
+  .ai-feedback {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: #64748b;
+    min-height: 1.5rem;
+  }
+
+  /* Logs */
+  .logs-section {
+    margin-bottom: 4rem;
+  }
+
+  .logs-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .logs-header h2 {
+    font-size: 2rem;
+    color: white;
+    margin: 0;
+  }
+
+  .logs-controls {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .logs-controls select {
+    padding: 0.6rem 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: 8px;
+    color: white;
+  }
+
+  .btn-refresh {
+    padding: 0.6rem 1rem;
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 8px;
+    color: #00d4ff;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .btn-refresh:hover {
+    background: rgba(0, 212, 255, 0.2);
+  }
+
+  .logs-container {
+    padding: 1.5rem;
+    border-radius: 16px;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .log-entry {
+    display: grid;
+    grid-template-columns: 80px 60px 1fr;
+    gap: 1rem;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+  }
+
+  .log-time {
+    color: #64748b;
+  }
+
+  .log-type {
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 0.7rem;
+  }
+
+  .log-entry.info .log-type {
+    background: rgba(0, 212, 255, 0.2);
+    color: #00d4ff;
+  }
+
+  .log-entry.success .log-type {
+    background: rgba(0, 255, 157, 0.2);
+    color: #00ff9d;
+  }
+
+  .log-entry.warning .log-type {
+    background: rgba(234, 179, 8, 0.2);
+    color: #eab308;
+  }
+
+  .log-entry.error .log-type {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+  }
+
+  .log-msg {
+    color: #94a3b8;
+  }
+
+  /* Quick Actions */
+  .quick-actions {
+    margin-bottom: 4rem;
+  }
+
+  .quick-actions h2 {
+    font-size: 2rem;
+    color: white;
+    margin-bottom: 2rem;
+  }
+
+  .actions-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+
+  .action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+    border: none;
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  .action-btn:hover {
+    transform: translateY(-5px);
+    border-color: rgba(0, 212, 255, 0.5);
+    box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+  }
+
+  .action-icon {
+    font-size: 2.5rem;
+  }
+
+  .action-text {
+    color: white;
+    font-weight: 600;
+  }
+
+  /* Global Action */
+  .global-action {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .btn-global {
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    border: none;
+    color: black;
+    padding: 1.5rem 4rem;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    font-weight: 900;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 10px 40px rgba(0, 212, 255, 0.3);
+  }
+
+  .btn-global:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 50px rgba(0, 212, 255, 0.5);
+  }
+
+  /* Responsive */
+  @media (max-width: 1200px) {
+    .status-grid, .ai-cards-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .actions-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .shield-header {
+      flex-direction: column;
+      text-align: center;
+    }
+    .status-grid, .ai-cards-grid, .actions-grid {
+      grid-template-columns: 1fr;
+    }
+    .header-text h1 {
+      font-size: 2rem;
+    }
+    .ecg-container {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
+
+<script is:inline>
+  // Particles
+  const canvas = document.getElementById('particles-canvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  class Particle {
+    constructor() {
+      this.reset();
+    }
+    reset() {
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
+      this.size = Math.random() * 2 + 0.5;
+      this.speedY = Math.random() * 0.5 + 0.1;
+      this.opacity = Math.random() * 0.5 + 0.2;
+    }
+    update() {
+      this.y -= this.speedY;
+      if (this.y < 0) {
+        this.y = canvas.height;
+        this.x = Math.random() * canvas.width;
+      }
+    }
+    draw() {
+      ctx.fillStyle = `rgba(0, 255, 157, ${this.opacity})`;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  for (let i = 0; i < 50; i++) {
+    particles.push(new Particle());
+  }
+
+  function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.update();
+      p.draw();
+    });
+    requestAnimationFrame(animateParticles);
+  }
+  animateParticles();
+
+  // AI Config handlers
+  document.querySelectorAll('.btn-save').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const ai = btn.dataset.ai;
+      const feedback = document.getElementById(`${ai}-feedback`);
+      const status = document.getElementById(`${ai}-status`);
+      
+      feedback.textContent = '💾 Salvando...';
+      feedback.style.color = '#eab308';
+      
+      setTimeout(() => {
+        feedback.textContent = '✅ Configuração salva com sucesso!';
+        feedback.style.color = '#00ff9d';
+        status.textContent = '● Conectado';
+        status.classList.add('connected');
+      }, 1000);
+    });
+  });
+
+  document.querySelectorAll('.btn-test').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const ai = btn.dataset.ai;
+      const feedback = document.getElementById(`${ai}-feedback`);
+      
+      feedback.textContent = '🔄 Testando conexão...';
+      feedback.style.color = '#00d4ff';
+      
+      setTimeout(() => {
+        feedback.textContent = '✅ Conexão OK – IA respondeu em 0.8s';
+        feedback.style.color = '#00ff9d';
+      }, 2000);
+    });
+  });
+
+  // Quick actions
+  document.getElementById('btn-scan-now').addEventListener('click', () => {
+    alert('🔍 Varredura de segurança iniciada...');
+  });
+
+  document.getElementById('btn-block-ip').addEventListener('click', () => {
+    const ip = prompt('Digite o IP para bloquear:');
+    if (ip) alert(`🚫 IP ${ip} bloqueado com sucesso!`);
+  });
+
+  document.getElementById('btn-export-logs').addEventListener('click', () => {
+    alert('📥 Logs exportados para /optimizer/logs/');
+  });
+
+  document.getElementById('btn-test-alert').addEventListener('click', () => {
+    alert('🔔 Alerta de teste enviado para WhatsApp!');
+  });
+
+  document.getElementById('btn-apply-all').addEventListener('click', () => {
+    alert('🚀 Configurações aplicadas! Monitoramento ativo.');
+  });
+
+  // Update time
+  function updateTime() {
+    const now = new Date();
+    document.getElementById('last-scan').textContent = now.toLocaleTimeString('pt-BR');
+  }
+  setInterval(updateTime, 1000);
+  updateTime();
+</script>

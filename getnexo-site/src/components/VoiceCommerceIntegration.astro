@@ -1,0 +1,1182 @@
+---
+// Voice Commerce Integration
+// Estratégia: Commerce conversacional via WhatsApp + assistentes virtuais
+const enableVoiceOrders = true;
+const enableVirtualAssistants = true;
+const supportedLanguages = ['pt-BR', 'en-US', 'es-ES'];
+---
+
+<!-- Voice Commerce Control Panel -->
+<div id="voice-commerce-panel" class="voice-commerce-container" style="display: none;">
+  <div class="panel-header">
+    <h3>🗣️ Voice Commerce Integration</h3>
+    <div class="voice-controls">
+      <button id="start-voice-session" class="voice-btn primary">Iniciar Sessão de Voz</button>
+      <button id="configure-assistants" class="voice-btn secondary">Configurar Assistentes</button>
+      <button id="voice-analytics" class="voice-btn tertiary">Analytics de Voz</button>
+    </div>
+  </div>
+
+  <!-- Voice Session Interface -->
+  <div class="voice-session-interface">
+    <div class="voice-status">
+      <div class="status-indicator" id="voice-status-indicator">
+        <span class="status-dot"></span>
+        <span id="status-text">Pronto para voz</span>
+      </div>
+      <div class="voice-language-selector">
+        <select id="voice-language">
+          {supportedLanguages.map(lang => (
+            <option value={lang}>
+              {lang === 'pt-BR' ? 'Português (Brasil)' :
+               lang === 'en-US' ? 'English (US)' :
+               lang === 'es-ES' ? 'Español (España)' : lang}
+            </option>
+          ))}
+        </select>
+      </div>
+    </div>
+
+    <div class="voice-input-area">
+      <div class="microphone-button" id="microphone-btn">
+        <div class="mic-icon">🎤</div>
+        <div class="mic-waves" id="mic-waves">
+          <span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+      <div class="voice-text" id="voice-text">Clique para falar ou diga "Oi"</div>
+    </div>
+
+    <div class="voice-responses" id="voice-responses">
+      <!-- Respostas aparecem aqui -->
+    </div>
+  </div>
+
+  <!-- Virtual Assistants Configuration -->
+  <div class="assistants-config" id="assistants-config-panel">
+    <h4>🤖 Assistentes Virtuais Configurados</h4>
+    <div class="assistants-grid" id="assistants-grid">
+      <!-- Assistentes aparecem aqui -->
+    </div>
+
+    <div class="add-assistant">
+      <button id="add-assistant-btn" class="add-btn">+ Adicionar Assistente</button>
+    </div>
+  </div>
+
+  <!-- Voice Analytics Dashboard -->
+  <div class="voice-analytics-dashboard" id="voice-analytics-dashboard">
+    <h4>📊 Voice Commerce Analytics</h4>
+    <div class="analytics-grid">
+      <div class="analytics-card">
+        <h5>Conversões por Voz</h5>
+        <div class="metric-large" id="voice-conversions">0</div>
+        <div class="metric-change positive">+12%</div>
+      </div>
+
+      <div class="analytics-card">
+        <h5>Taxa de Sucesso</h5>
+        <div class="metric-large" id="voice-success-rate">94%</div>
+        <div class="metric-change positive">+3%</div>
+      </div>
+
+      <div class="analytics-card">
+        <h5>Tempo Médio</h5>
+        <div class="metric-large" id="avg-voice-time">2:34</div>
+        <div class="metric-change negative">-8%</div>
+      </div>
+
+      <div class="analytics-card">
+        <h5>Satisfação</h5>
+        <div class="metric-large" id="voice-satisfaction">4.8/5</div>
+        <div class="metric-change positive">+0.2</div>
+      </div>
+    </div>
+
+    <div class="voice-insights">
+      <h5>🔍 Insights de Voz</h5>
+      <div class="insights-list" id="voice-insights">
+        <!-- Insights aparecem aqui -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio Commerce Workflows -->
+  <div class="audio-workflows">
+    <h4>🎵 Workflows de Audio Commerce</h4>
+    <div class="workflows-list" id="workflows-list">
+      <!-- Workflows aparecem aqui -->
+    </div>
+  </div>
+</div>
+
+<script>
+  // Voice Commerce Engine
+  class VoiceCommerceEngine {
+    isListening: boolean;
+    recognition: any;
+    synthesis: any;
+    currentLanguage: string;
+    voiceResponses: any[];
+    assistants: any[];
+    workflows: any[];
+    voices: any[];
+    analytics: any;
+
+    constructor() {
+      this.isListening = false;
+      this.recognition = null;
+      this.synthesis = null;
+      this.currentLanguage = 'pt-BR';
+      this.voiceResponses = [];
+      this.assistants = [];
+      this.workflows = [];
+      this.voices = [];
+      this.analytics = {
+        conversions: 0,
+        successRate: 94,
+        avgTime: '2:34',
+        satisfaction: 4.8
+      };
+
+      this.init();
+    }
+
+    init() {
+      this.initializeSpeechRecognition();
+      this.initializeSpeechSynthesis();
+      this.loadAssistants();
+      this.loadWorkflows();
+      this.bindEvents();
+    }
+
+    // Inicializar reconhecimento de voz
+    initializeSpeechRecognition() {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+      if (SpeechRecognition) {
+        this.recognition = new SpeechRecognition();
+        this.recognition.continuous = false;
+        this.recognition.interimResults = true;
+        this.recognition.lang = this.currentLanguage;
+
+        this.recognition.onstart = () => {
+          this.updateVoiceStatus('Ouvindo...', 'listening');
+          this.showMicWaves();
+        };
+
+        this.recognition.onresult = (event) => {
+          const transcript = Array.from(event.results)
+            .map(result => result[0].transcript)
+            .join('');
+
+          document.getElementById('voice-text').textContent = transcript;
+
+          if (event.results[0].isFinal) {
+            this.processVoiceCommand(transcript);
+          }
+        };
+
+        this.recognition.onend = () => {
+          this.updateVoiceStatus('Pronto para voz', 'ready');
+          this.hideMicWaves();
+        };
+
+        this.recognition.onerror = (event) => {
+          console.error('Erro no reconhecimento de voz:', event.error);
+          this.updateVoiceStatus('Erro: ' + event.error, 'error');
+        };
+      } else {
+        this.updateVoiceStatus('Navegador não suporta voz', 'unsupported');
+      }
+    }
+
+    // Inicializar síntese de voz
+    initializeSpeechSynthesis() {
+      if ('speechSynthesis' in window) {
+        this.synthesis = window.speechSynthesis;
+
+        // Carregar vozes disponíveis
+        this.synthesis.onvoiceschanged = () => {
+          this.voices = this.synthesis.getVoices();
+        };
+      }
+    }
+
+    // Processar comando de voz
+    async processVoiceCommand(command) {
+      const lowerCommand = command.toLowerCase();
+
+      // Detectar intenção
+      const intent = this.detectIntent(lowerCommand);
+
+      // Processar baseado na intenção
+      const response = await this.generateResponse(intent, lowerCommand);
+
+      // Adicionar à conversa
+      this.addVoiceResponse('user', command);
+      this.addVoiceResponse('assistant', response.text);
+
+      // Executar ação se houver
+      if (response.action) {
+        this.executeAction(response.action, response.data);
+      }
+
+      // Falar resposta
+      this.speakResponse(response.text);
+    }
+
+    // Detectar intenção do comando
+    detectIntent(command) {
+      const intents = {
+        greeting: ['oi', 'olá', 'bom dia', 'boa tarde', 'boa noite'],
+        product_search: ['quero comprar', 'procuro', 'estou procurando', 'gostaria de'],
+        order_status: ['status do pedido', 'onde está meu pedido', 'acompanhar pedido'],
+        support: ['ajuda', 'suporte', 'problema', 'não funciona'],
+        checkout: ['finalizar compra', 'checkout', 'pagar', 'comprar'],
+        recommendation: ['recomendação', 'sugestão', 'qual escolher']
+      };
+
+      for (const [intent, keywords] of Object.entries(intents)) {
+        if (keywords.some(keyword => command.includes(keyword))) {
+          return intent;
+        }
+      }
+
+      return 'general';
+    }
+
+    // Gerar resposta baseada na intenção
+    async generateResponse(intent, command) {
+      const responses = {
+        greeting: {
+          text: 'Olá! Sou seu assistente de voz GetNexo. Como posso ajudar você hoje?',
+          action: null
+        },
+        product_search: {
+          text: await this.handleProductSearch(command),
+          action: 'show_products'
+        },
+        order_status: {
+          text: 'Vou verificar o status do seu pedido. Por favor, diga o número do pedido.',
+          action: 'request_order_number'
+        },
+        support: {
+          text: 'Entendo que você precisa de ajuda. Vou conectar você com nosso suporte especializado.',
+          action: 'initiate_support'
+        },
+        checkout: {
+          text: 'Perfeito! Vou ajudar você a finalizar sua compra. Vamos revisar seu carrinho?',
+          action: 'show_checkout'
+        },
+        recommendation: {
+          text: await this.generateRecommendation(command),
+          action: 'show_recommendations'
+        },
+        general: {
+          text: 'Desculpe, não entendi completamente. Você pode reformular sua pergunta?',
+          action: null
+        }
+      };
+
+      return responses[intent] || responses.general;
+    }
+
+    // Buscar produtos por voz
+    async handleProductSearch(command) {
+      // Simulação de busca de produtos
+      const products = [
+        'WhatsApp Business API',
+        'Automação de Vendas',
+        'Bot para WhatsApp',
+        'Integração CRM',
+        'Consultoria WhatsApp'
+      ];
+
+      const foundProducts = products.filter(product =>
+        command.toLowerCase().includes(product.toLowerCase().split(' ')[0])
+      );
+
+      if (foundProducts.length > 0) {
+        return `Encontrei ${foundProducts.length} produto(s) relacionado(s): ${foundProducts.join(', ')}. Gostaria de ver mais detalhes?`;
+      } else {
+        return 'Não encontrei produtos específicos para sua busca. Você pode descrever melhor o que procura?';
+      }
+    }
+
+    // Gerar recomendações
+    async generateRecommendation(command) {
+      const recommendations = {
+        'automacao': 'Recomendo nossa solução de Automação WhatsApp com IA integrada.',
+        'vendas': 'Para aumentar vendas, sugiro nosso Bot de Vendas 24/7.',
+        'atendimento': 'Para atendimento ao cliente, nossa solução de Chatbot é perfeita.',
+        'integracao': 'Para integrações, oferecemos conectores nativos com os principais ERPs.'
+      };
+
+      for (const [key, recommendation] of Object.entries(recommendations)) {
+        if (command.includes(key)) {
+          return recommendation;
+        }
+      }
+
+      return 'Baseado no seu perfil, recomendo nossa solução completa de WhatsApp Business.';
+    }
+
+    // Executar ações baseadas na resposta
+    executeAction(action, data) {
+      switch (action) {
+        case 'show_products':
+          // Simular abertura de página de produtos
+          console.log('Abrindo página de produtos');
+          break;
+        case 'request_order_number':
+          // Simular solicitação de número do pedido
+          setTimeout(() => {
+            this.addVoiceResponse('assistant', 'Qual é o número do seu pedido?');
+          }, 1000);
+          break;
+        case 'initiate_support':
+          // Simular início de suporte
+          setTimeout(() => {
+            this.addVoiceResponse('assistant', 'Conectando com suporte... Um atendente irá ajudar você em breve.');
+          }, 1500);
+          break;
+        case 'show_checkout':
+          // Simular abertura do checkout
+          console.log('Abrindo checkout');
+          break;
+        case 'show_recommendations':
+          // Simular exibição de recomendações
+          console.log('Mostrando recomendações');
+          break;
+      }
+    }
+
+    // Falar resposta
+    speakResponse(text) {
+      if (this.synthesis) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = this.currentLanguage;
+        utterance.rate = 0.9;
+        utterance.pitch = 1;
+
+        // Selecionar voz apropriada
+        const voices = this.synthesis.getVoices();
+        const preferredVoice = voices.find(voice =>
+          voice.lang.startsWith(this.currentLanguage.split('-')[0]) &&
+          voice.name.includes('Natural')
+        ) || voices.find(voice => voice.lang === this.currentLanguage);
+
+        if (preferredVoice) {
+          utterance.voice = preferredVoice;
+        }
+
+        this.synthesis.speak(utterance);
+      }
+    }
+
+    // Adicionar resposta à interface
+    addVoiceResponse(type, text) {
+      const responsesContainer = document.getElementById('voice-responses');
+      const responseElement = document.createElement('div');
+      responseElement.className = `voice-response ${type}`;
+      responseElement.innerHTML = `
+        <div class="response-avatar">
+          ${type === 'user' ? '👤' : '🤖'}
+        </div>
+        <div class="response-content">
+          <p>${text}</p>
+          <span class="response-time">${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
+        </div>
+      `;
+
+      responsesContainer.appendChild(responseElement);
+      responsesContainer.scrollTop = responsesContainer.scrollHeight;
+
+      this.voiceResponses.push({ type, text, timestamp: new Date() });
+    }
+
+    // Carregar assistentes virtuais
+    loadAssistants() {
+      this.assistants = [
+        {
+          id: 'sales-assistant',
+          name: 'Assistente de Vendas',
+          description: 'Especializado em conversão e vendas',
+          skills: ['prospecção', 'qualificação', 'fechamento'],
+          languages: ['pt-BR', 'en-US'],
+          active: true
+        },
+        {
+          id: 'support-assistant',
+          name: 'Assistente de Suporte',
+          description: 'Especializado em atendimento ao cliente',
+          skills: ['suporte', 'solução de problemas', 'escalação'],
+          languages: ['pt-BR', 'en-US', 'es-ES'],
+          active: true
+        },
+        {
+          id: 'product-assistant',
+          name: 'Assistente de Produto',
+          description: 'Especializado em recomendações e informações',
+          skills: ['recomendação', 'informações', 'comparação'],
+          languages: ['pt-BR'],
+          active: false
+        }
+      ];
+
+      this.renderAssistants();
+    }
+
+    // Renderizar assistentes
+    renderAssistants() {
+      const container = document.getElementById('assistants-grid');
+      container.innerHTML = this.assistants.map(assistant => `
+        <div class="assistant-card ${assistant.active ? 'active' : ''}">
+          <div class="assistant-header">
+            <h5>${assistant.name}</h5>
+            <div class="assistant-status ${assistant.active ? 'online' : 'offline'}">
+              ${assistant.active ? '🟢 Online' : '🔴 Offline'}
+            </div>
+          </div>
+          <p class="assistant-description">${assistant.description}</p>
+          <div class="assistant-skills">
+            ${assistant.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+          </div>
+          <div class="assistant-languages">
+            ${assistant.languages.map(lang =>
+              `<span class="lang-tag">${lang === 'pt-BR' ? '🇧🇷' : lang === 'en-US' ? '🇺🇸' : '🇪🇸'}</span>`
+            ).join('')}
+          </div>
+          <div class="assistant-actions">
+            <button class="edit-assistant" data-id="${assistant.id}">Editar</button>
+            <button class="toggle-assistant" data-id="${assistant.id}">
+              ${assistant.active ? 'Desativar' : 'Ativar'}
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Carregar workflows de voz
+    loadWorkflows() {
+      this.workflows = [
+        {
+          id: 'order-workflow',
+          name: 'Workflow de Pedidos',
+          description: 'Processo completo de pedido por voz',
+          steps: ['Saudação', 'Identificação do produto', 'Confirmação', 'Pagamento', 'Confirmação final'],
+          status: 'active'
+        },
+        {
+          id: 'support-workflow',
+          name: 'Workflow de Suporte',
+          description: 'Atendimento ao cliente por voz',
+          steps: ['Identificação do problema', 'Diagnóstico', 'Solução', 'Acompanhamento'],
+          status: 'active'
+        },
+        {
+          id: 'consultation-workflow',
+          name: 'Workflow de Consultoria',
+          description: 'Agendamento de consultoria por voz',
+          steps: ['Disponibilidade', 'Agendamento', 'Confirmação', 'Lembrete'],
+          status: 'inactive'
+        }
+      ];
+
+      this.renderWorkflows();
+    }
+
+    // Renderizar workflows
+    renderWorkflows() {
+      const container = document.getElementById('workflows-list');
+      container.innerHTML = this.workflows.map(workflow => `
+        <div class="workflow-card ${workflow.status}">
+          <div class="workflow-header">
+            <h5>${workflow.name}</h5>
+            <span class="workflow-status ${workflow.status}">
+              ${workflow.status === 'active' ? 'Ativo' : 'Inativo'}
+            </span>
+          </div>
+          <p class="workflow-description">${workflow.description}</p>
+          <div class="workflow-steps">
+            <h6>Passos do Workflow:</h6>
+            <ol>
+              ${workflow.steps.map(step => `<li>${step}</li>`).join('')}
+            </ol>
+          </div>
+          <div class="workflow-actions">
+            <button class="edit-workflow" data-id="${workflow.id}">Editar</button>
+            <button class="test-workflow" data-id="${workflow.id}">Testar</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Vincular eventos
+    bindEvents() {
+      // Botão do microfone
+      document.getElementById('microphone-btn')?.addEventListener('click', () => {
+        this.toggleVoiceListening();
+      });
+
+      // Seleção de idioma
+      document.getElementById('voice-language')?.addEventListener('change', (e) => {
+        this.currentLanguage = (e.target as HTMLSelectElement).value;
+        if (this.recognition) {
+          this.recognition.lang = this.currentLanguage;
+        }
+      });
+
+      // Botões de controle
+      document.getElementById('start-voice-session')?.addEventListener('click', () => {
+        this.startVoiceSession();
+      });
+
+      document.getElementById('configure-assistants')?.addEventListener('click', () => {
+        document.getElementById('assistants-config-panel').scrollIntoView({ behavior: 'smooth' });
+      });
+
+      document.getElementById('voice-analytics')?.addEventListener('click', () => {
+        document.getElementById('voice-analytics-dashboard').scrollIntoView({ behavior: 'smooth' });
+      });
+
+      // Adicionar assistente
+      document.getElementById('add-assistant-btn')?.addEventListener('click', () => {
+        this.addNewAssistant();
+      });
+    }
+
+    // Alternar escuta de voz
+    toggleVoiceListening() {
+      if (this.isListening) {
+        this.stopListening();
+      } else {
+        this.startListening();
+      }
+    }
+
+    startListening() {
+      if (this.recognition) {
+        this.isListening = true;
+        this.recognition.start();
+      }
+    }
+
+    stopListening() {
+      if (this.recognition) {
+        this.isListening = false;
+        this.recognition.stop();
+      }
+    }
+
+    // Iniciar sessão de voz
+    startVoiceSession() {
+      this.updateVoiceStatus('Sessão iniciada', 'active');
+      document.getElementById('voice-text').textContent = 'Diga "Oi" para começar';
+
+      // Saudação inicial
+      setTimeout(() => {
+        this.addVoiceResponse('assistant', 'Olá! Bem-vindo ao Voice Commerce da GetNexo. Como posso ajudar você hoje?');
+        this.speakResponse('Olá! Bem-vindo ao Voice Commerce da GetNexo. Como posso ajudar você hoje?');
+      }, 500);
+    }
+
+    // Adicionar novo assistente
+    addNewAssistant() {
+      const newAssistant = {
+        id: 'new-assistant-' + Date.now(),
+        name: 'Novo Assistente',
+        description: 'Assistente personalizado',
+        skills: ['geral'],
+        languages: ['pt-BR'],
+        active: false
+      };
+
+      this.assistants.push(newAssistant);
+      this.renderAssistants();
+    }
+
+    // Atualizar status da voz
+    updateVoiceStatus(text, status) {
+      const indicator = document.getElementById('voice-status-indicator');
+      const statusText = document.getElementById('status-text');
+
+      if (indicator) {
+        indicator.className = `status-indicator ${status}`;
+      }
+
+      if (statusText) {
+        statusText.textContent = text;
+      }
+    }
+
+    // Mostrar ondas do microfone
+    showMicWaves() {
+      const waves = document.getElementById('mic-waves');
+      if (waves) {
+        waves.style.display = 'flex';
+      }
+    }
+
+    // Ocultar ondas do microfone
+    hideMicWaves() {
+      const waves = document.getElementById('mic-waves');
+      if (waves) {
+        waves.style.display = 'none';
+      }
+    }
+
+    // Atualizar analytics
+    updateAnalytics() {
+      // Simular atualização de métricas
+      this.analytics.conversions += Math.floor(Math.random() * 5);
+      this.analytics.successRate = Math.max(90, Math.min(98, this.analytics.successRate + (Math.random() - 0.5) * 2));
+      this.analytics.satisfaction = Math.max(4.5, Math.min(5.0, this.analytics.satisfaction + (Math.random() - 0.5) * 0.1));
+
+      // Atualizar interface
+      document.getElementById('voice-conversions').textContent = this.analytics.conversions;
+      document.getElementById('voice-success-rate').textContent = Math.round(this.analytics.successRate) + '%';
+      document.getElementById('voice-satisfaction').textContent = this.analytics.satisfaction.toFixed(1) + '/5';
+    }
+  }
+
+  // Inicializar quando DOM estiver pronto
+  document.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('admin_token')) {
+      document.getElementById('voice-commerce-panel').style.display = 'block';
+      new VoiceCommerceEngine();
+    }
+  });
+</script>
+
+<style>
+  .voice-commerce-container {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 450px;
+    max-height: 90vh;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    overflow-y: auto;
+    z-index: 1000;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .panel-header h3 {
+    color: #00d4ff;
+    margin: 0 0 1rem 0;
+    font-size: 1.2rem;
+  }
+
+  .voice-controls {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .voice-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .voice-btn.primary {
+    background: linear-gradient(135deg, #00d4ff, #0099cc);
+    color: white;
+  }
+
+  .voice-btn.secondary {
+    background: linear-gradient(135deg, #00ff9d, #00cc7a);
+    color: #030712;
+  }
+
+  .voice-btn.tertiary {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .voice-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+  }
+
+  .voice-session-interface {
+    margin: 1.5rem 0;
+  }
+
+  .voice-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .status-indicator.ready {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+  }
+
+  .status-indicator.listening {
+    background: rgba(245, 158, 11, 0.2);
+    color: #f59e0b;
+    animation: pulse 1s infinite;
+  }
+
+  .status-indicator.active {
+    background: rgba(0, 212, 255, 0.2);
+    color: #00d4ff;
+  }
+
+  .status-indicator.error {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+  }
+
+  .status-indicator.unsupported {
+    background: rgba(107, 114, 128, 0.2);
+    color: #9ca3af;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .voice-language-selector select {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.5rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+  }
+
+  .voice-input-area {
+    text-align: center;
+    margin: 2rem 0;
+  }
+
+  .microphone-button {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00d4ff, #0099cc);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .microphone-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(0, 212, 255, 0.4);
+  }
+
+  .microphone-button.listening {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    animation: pulse 1s infinite;
+  }
+
+  .mic-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .mic-waves {
+    display: none;
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    flex-direction: row;
+    gap: 2px;
+  }
+
+  .mic-waves span {
+    width: 4px;
+    height: 4px;
+    background: white;
+    border-radius: 50%;
+    animation: wave 1.5s ease-in-out infinite;
+  }
+
+  .mic-waves span:nth-child(1) { animation-delay: 0s; }
+  .mic-waves span:nth-child(2) { animation-delay: 0.1s; }
+  .mic-waves span:nth-child(3) { animation-delay: 0.2s; }
+  .mic-waves span:nth-child(4) { animation-delay: 0.3s; }
+
+  @keyframes wave {
+    0%, 100% { transform: scale(1); opacity: 0.7; }
+    50% { transform: scale(1.5); opacity: 1; }
+  }
+
+  .voice-text {
+    color: #94a3b8;
+    font-size: 1rem;
+    margin: 0;
+    min-height: 1.2em;
+  }
+
+  .voice-responses {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+  }
+
+  .voice-response {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .voice-response.assistant {
+    background: rgba(0, 212, 255, 0.1);
+    border-left: 3px solid #00d4ff;
+  }
+
+  .response-avatar {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  .response-content p {
+    margin: 0 0 0.25rem 0;
+    color: white;
+    line-height: 1.4;
+  }
+
+  .response-time {
+    font-size: 0.7rem;
+    color: #94a3b8;
+  }
+
+  .assistants-config h4 {
+    color: #00d4ff;
+    margin: 0 0 1rem 0;
+  }
+
+  .assistants-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .assistant-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+  }
+
+  .assistant-card.active {
+    border-color: rgba(0, 212, 255, 0.3);
+    background: rgba(0, 212, 255, 0.05);
+  }
+
+  .assistant-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .assistant-header h5 {
+    color: white;
+    margin: 0;
+  }
+
+  .assistant-status.online {
+    color: #10b981;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+
+  .assistant-status.offline {
+    color: #ef4444;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+
+  .assistant-description {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .assistant-skills, .assistant-languages {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .skill-tag {
+    background: rgba(0, 212, 255, 0.2);
+    color: #00d4ff;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+  }
+
+  .lang-tag {
+    font-size: 1rem;
+  }
+
+  .assistant-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .assistant-actions button {
+    padding: 0.3rem 0.6rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .assistant-actions .edit-assistant {
+    background: rgba(59, 130, 246, 0.2);
+    color: #3b82f6;
+  }
+
+  .assistant-actions .toggle-assistant {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+  }
+
+  .add-btn {
+    background: linear-gradient(135deg, #00ff9d, #00cc7a);
+    color: #030712;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .add-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 255, 157, 0.3);
+  }
+
+  .analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .analytics-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .analytics-card h5 {
+    color: #94a3b8;
+    margin: 0 0 0.5rem 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .metric-large {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #00d4ff;
+    margin-bottom: 0.25rem;
+  }
+
+  .metric-change.positive {
+    color: #10b981;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .metric-change.negative {
+    color: #ef4444;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .voice-insights h5 {
+    color: #00d4ff;
+    margin: 0 0 1rem 0;
+  }
+
+  .insights-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .insights-list div {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.75rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: #94a3b8;
+  }
+
+  .workflows-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .workflow-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  .workflow-card.active {
+    border-left: 3px solid #10b981;
+  }
+
+  .workflow-card.inactive {
+    border-left: 3px solid #ef4444;
+    opacity: 0.6;
+  }
+
+  .workflow-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .workflow-header h5 {
+    color: white;
+    margin: 0;
+  }
+
+  .workflow-status {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .workflow-card.active .workflow-status {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+  }
+
+  .workflow-card.inactive .workflow-status {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+  }
+
+  .workflow-description {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .workflow-steps h6 {
+    color: #00d4ff;
+    margin: 0 0 0.5rem 0;
+    font-size: 0.8rem;
+  }
+
+  .workflow-steps ol {
+    margin: 0;
+    padding-left: 1.5rem;
+  }
+
+  .workflow-steps li {
+    color: #94a3b8;
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .workflow-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .workflow-actions button {
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .edit-workflow {
+    background: rgba(59, 130, 246, 0.2);
+    color: #3b82f6;
+  }
+
+  .test-workflow {
+    background: rgba(245, 158, 11, 0.2);
+    color: #f59e0b;
+  }
+
+  /* Responsividade */
+  @media (max-width: 768px) {
+    .voice-commerce-container {
+      width: 95vw;
+      left: 2.5vw;
+      top: 10px;
+    }
+
+    .voice-controls {
+      flex-direction: column;
+    }
+
+    .analytics-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .assistants-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+</style>

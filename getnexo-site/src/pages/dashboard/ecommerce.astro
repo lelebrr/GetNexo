@@ -1,0 +1,312 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+---
+
+<DashboardLayout title="Integrações E-commerce | OmniNexo">
+    <div style="display:flex; flex-direction:column; gap:2.5rem;">
+        
+        <div class="glass-panel" style="padding:2.5rem; background:linear-gradient(90deg, rgba(234, 179, 8, 0.1), rgba(0, 212, 255, 0.05)); border-color: rgba(234, 179, 8, 0.2);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                <div>
+                    <h2 style="font-size:2.5rem; font-weight:900; color:white; margin:0;" class="text-gradient">Hub de Integrações 🛒</h2>
+                    <p style="color:#94a3b8; margin:0.5rem 0 0; font-size:1.1rem;">Sincronize seu catálogo e estoque em tempo real com as maiores plataformas.</p>
+                </div>
+                <div style="display:flex; gap:1rem; align-items:center;">
+                    <div class="stat-pill" style="background:rgba(0,255,157,0.1); color:#00ff9d;">
+                        <span style="font-size:0.8rem;">12</span>
+                        <span style="font-size:0.6rem;">ATIVAS</span>
+                    </div>
+                    <div class="stat-pill" style="background:rgba(0,212,255,0.1); color:#00d4ff;">
+                        <span style="font-size:0.8rem;">45.2k</span>
+                        <span style="font-size:0.6rem;">PRODUTOS</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sync Status Overview -->
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; margin-top:2rem;">
+                <div style="background:rgba(0,255,157,0.05); padding:1rem; border-radius:12px; border:1px solid rgba(0,255,157,0.1);">
+                    <div style="font-size:0.75rem; color:#00ff9d; font-weight:800; text-transform:uppercase;">Última Sincronização</div>
+                    <div style="font-size:1.1rem; color:white; margin-top:0.2rem;">há 8 minutos</div>
+                </div>
+                <div style="background:rgba(0,212,255,0.05); padding:1rem; border-radius:12px; border:1px solid rgba(0,212,255,0.1);">
+                    <div style="font-size:0.75rem; color:#00d4ff; font-weight:800; text-transform:uppercase;">Produtos Indexados</div>
+                    <div style="font-size:1.1rem; color:white; margin-top:0.2rem;">34.567 SKUs</div>
+                </div>
+                <div style="background:rgba(234,179,8,0.05); padding:1rem; border-radius:12px; border:1px solid rgba(234,179,8,0.1);">
+                    <div style="font-size:0.75rem; color:#eab308; font-weight:800; text-transform:uppercase;">Alertas de Estoque</div>
+                    <div style="font-size:1.1rem; color:white; margin-top:0.2rem;">23 produtos</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:2rem;">
+            <!-- Shopify -->
+            <div class="integration-card glass-panel">
+                <div class="card-header">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Shopify_Logo.png" alt="Shopify" style="height:35px; filter: grayscale(1) brightness(2) contrast(1.2);">
+                    <span class="status-pill offline">Desconectado</span>
+                </div>
+                <div class="card-body">
+                    <div class="input-group">
+                        <label>URL da Loja</label>
+                        <input type="text" placeholder="minha-loja.myshopify.com" id="shopify-url">
+                    </div>
+                    <div class="input-group">
+                        <label>Admin Access Token</label>
+                        <input type="password" placeholder="shpat_..." id="shopify-token">
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.8rem; margin-top:1rem;">
+                        <button onclick="testShopify()" class="btn-dash secondary">Testar</button>
+                        <button onclick="syncShopify()" class="btn-dash primary">Sincronizar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WooCommerce -->
+            <div class="integration-card glass-panel">
+                <div class="card-header">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/WooCommerce_logo.svg" alt="WooCommerce" style="height:25px; filter: grayscale(1) brightness(2);">
+                    <span class="status-pill offline">Desconectado</span>
+                </div>
+                <div class="card-body">
+                    <div class="input-group">
+                        <label>URL do WordPress</label>
+                        <input type="text" placeholder="https://meusite.br" id="woo-url">
+                    </div>
+                    <div class="input-group">
+                        <label>Consumer Key</label>
+                        <input type="password" placeholder="ck_..." id="woo-key">
+                    </div>
+                    <div class="input-group">
+                        <label>Consumer Secret</label>
+                        <input type="password" placeholder="cs_..." id="woo-secret">
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.8rem; margin-top:1rem;">
+                        <button onclick="testWoo()" class="btn-dash secondary">Testar</button>
+                        <button onclick="syncWoo()" class="btn-dash primary">Sincronizar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nuvemshop -->
+            <div class="integration-card glass-panel">
+                <div class="card-header">
+                    <img src="https://assets.nuvemshop.com.br/images/brand/logo-nuvemshop.svg" alt="Nuvemshop" style="height:30px; filter: grayscale(1) brightness(4);">
+                    <span class="status-pill online">Conectado</span>
+                </div>
+                <div class="card-body">
+                    <div style="background:rgba(0,255,157,0.05); padding:1.2rem; border-radius:12px; border:1px solid rgba(0,255,157,0.1); margin-bottom:1.5rem;">
+                        <div style="font-size:0.75rem; color:var(--neon-green); font-weight:800; text-transform:uppercase;">Status da Sincronia</div>
+                        <div style="font-size:0.9rem; color:white; margin-top:0.4rem;">4.120 SKUs monitorados pela Ara</div>
+                        <div style="font-size:0.7rem; color:#94a3b8; margin-top:0.2rem;">Última sync: há 5 minutos</div>
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.8rem;">
+                        <button class="btn-dash secondary">Configurações</button>
+                        <button class="btn-dash primary">Re-sync</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tray Commerce -->
+            <div class="integration-card glass-panel">
+                <div class="card-header">
+                    <div style="display:flex; align-items:center; gap:0.5rem;">
+                        <span style="font-size:1.5rem;">🛍️</span>
+                        <span style="font-weight:800; color:white; font-size:1.1rem;">Tray Commerce</span>
+                    </div>
+                    <span class="status-pill offline">Desconectado</span>
+                </div>
+                <div class="card-body">
+                    <div class="input-group">
+                        <label>URL da API</label>
+                        <input type="text" placeholder="https://api.tray.com.br" id="tray-url">
+                    </div>
+                    <div class="input-group">
+                        <label>Access Token</label>
+                        <input type="password" placeholder="Bearer ..." id="tray-token">
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.8rem; margin-top:1rem;">
+                        <button onclick="testTray()" class="btn-dash secondary">Testar</button>
+                        <button onclick="syncTray()" class="btn-dash primary">Sincronizar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VTEX -->
+            <div class="integration-card glass-panel">
+                <div class="card-header">
+                    <div style="display:flex; align-items:center; gap:0.5rem;">
+                        <span style="font-size:1.5rem;">🏪</span>
+                        <span style="font-weight:800; color:white; font-size:1.1rem;">VTEX</span>
+                    </div>
+                    <span class="status-pill offline">Desconectado</span>
+                </div>
+                <div class="card-body">
+                    <div class="input-group">
+                        <label>Account Name</label>
+                        <input type="text" placeholder="minhaloja" id="vtex-account">
+                    </div>
+                    <div class="input-group">
+                        <label>App Key</label>
+                        <input type="password" placeholder="vtexappkey-..." id="vtex-key">
+                    </div>
+                    <div class="input-group">
+                        <label>App Token</label>
+                        <input type="password" placeholder="vtexapptoken-..." id="vtex-token">
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.8rem; margin-top:1rem;">
+                        <button onclick="testVtex()" class="btn-dash secondary">Testar</button>
+                        <button onclick="syncVtex()" class="btn-dash primary">Sincronizar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Yampi -->
+            <div class="integration-card glass-panel">
+                <div class="card-header">
+                    <div style="display:flex; align-items:center; gap:0.5rem;">
+                        <span style="font-size:1.5rem;">🛒</span>
+                        <span style="font-weight:800; color:white; font-size:1.1rem;">Yampi</span>
+                    </div>
+                    <span class="status-pill offline">Desconectado</span>
+                </div>
+                <div class="card-body">
+                    <div class="input-group">
+                        <label>Store ID</label>
+                        <input type="text" placeholder="12345" id="yampi-store">
+                    </div>
+                    <div class="input-group">
+                        <label>API Token</label>
+                        <input type="password" placeholder="yampi_..." id="yampi-token">
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.8rem; margin-top:1rem;">
+                        <button onclick="testYampi()" class="btn-dash secondary">Testar</button>
+                        <button onclick="syncYampi()" class="btn-dash primary">Sincronizar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mercado Livre -->
+            <div class="integration-card glass-panel">
+                <div class="card-header">
+                    <div style="display:flex; align-items:center; gap:0.5rem;">
+                        <span style="font-size:1.5rem;">📦</span>
+                        <span style="font-weight:800; color:white; font-size:1.1rem;">Mercado Livre</span>
+                    </div>
+                    <span class="status-pill offline">Desconectado</span>
+                </div>
+                <div class="card-body">
+                    <div class="input-group">
+                        <label>Client ID</label>
+                        <input type="text" placeholder="123456789" id="ml-client">
+                    </div>
+                    <div class="input-group">
+                        <label>Client Secret</label>
+                        <input type="password" placeholder="..." id="ml-secret">
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.8rem; margin-top:1rem;">
+                        <button onclick="testML()" class="btn-dash secondary">Testar</button>
+                        <button onclick="syncML()" class="btn-dash primary">Sincronizar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loja Integrada -->
+            <div class="integration-card glass-panel">
+                <div class="card-header">
+                    <div style="display:flex; align-items:center; gap:0.5rem;">
+                        <span style="font-size:1.5rem;">🛍️</span>
+                        <span style="font-weight:800; color:white; font-size:1.1rem;">Loja Integrada</span>
+                    </div>
+                    <span class="status-pill offline">Desconectado</span>
+                </div>
+                <div class="card-body">
+                    <div class="input-group">
+                        <label>API Key</label>
+                        <input type="password" placeholder="li_..." id="loja-key">
+                    </div>
+                    <div class="input-group">
+                        <label>Store Code</label>
+                        <input type="text" placeholder="ABC123" id="loja-code">
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.8rem; margin-top:1rem;">
+                        <button onclick="testLoja()" class="btn-dash secondary">Testar</button>
+                        <button onclick="syncLoja()" class="btn-dash primary">Sincronizar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custom / API -->
+            <div class="integration-card glass-panel flex-center" style="border-style: dashed; background: transparent;">
+                <div style="text-align:center;">
+                    <div style="font-size:2rem; margin-bottom:1rem;">🔌</div>
+                    <h4 style="margin:0; color:white;">Nova Integração API</h4>
+                    <p style="font-size:0.8rem; color:#64748b; margin-top:0.5rem;">Documentação para Devs</p>
+                    <button class="btn-dash primary" style="margin-top:1rem;">Criar Integração</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .integration-card { padding: 2rem; transition: 0.4s; }
+        .integration-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.2); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        
+        .status-pill { font-size: 0.65rem; font-weight: 900; text-transform: uppercase; padding: 4px 10px; border-radius: 50px; letter-spacing: 1px; }
+        .status-pill.offline { background: #1e293b; color: #64748b; }
+        .status-pill.online { background: rgba(0, 255, 157, 0.1); color: var(--neon-green); border: 1px solid rgba(0, 255, 157, 0.2); }
+
+        .input-group { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.2rem; }
+        .input-group label { font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; }
+        .input-group input { padding: 0.8rem; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: white; font-size: 0.9rem; outline: none; }
+        .input-group input:focus { border-color: var(--neon-blue); }
+
+        .btn-dash { padding: 12px; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 0.8rem; transition: 0.3s; }
+        .btn-dash.primary { background: var(--neon-blue); color: black; }
+        .btn-dash.secondary { background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); }
+        .btn-dash:hover { filter: brightness(1.2); transform: scale(1.02); }
+
+        .flex-center { display: flex; align-items: center; justify-content: center; }
+    </style>
+
+    <script is:inline>
+        async function testShopify() { alert('Enviando handshake para Shopify... OK!'); }
+        async function syncShopify() { alert('Iniciando indexação de catálogo para o cérebro da Ara...'); }
+        async function testWoo() { alert('Testando conexão WooCommerce...'); }
+        async function syncWoo() { alert('Sincronizando produtos WooCommerce...'); }
+        async function testTray() { alert('Testando conexão Tray Commerce...'); }
+        async function syncTray() { alert('Sincronizando catálogo Tray...'); }
+        async function testVtex() { alert('Testando API VTEX...'); }
+        async function syncVtex() { alert('Sincronizando produtos VTEX...'); }
+        async function testYampi() { alert('Testando integração Yampi...'); }
+        async function syncYampi() { alert('Sincronizando produtos Yampi...'); }
+        async function testML() { alert('Testando Mercado Livre API...'); }
+        async function syncML() { alert('Sincronizando anúncios ML...'); }
+        async function testLoja() { alert('Testando Loja Integrada...'); }
+        async function syncLoja() { alert('Sincronizando produtos...'); }
+
+        // Sistema de notificações para integrações
+        function showNotification(message, type = 'success') {
+            const colors = {
+                success: '#00ff9d',
+                error: '#ef4444',
+                warning: '#f59e0b',
+                info: '#00d4ff'
+            };
+            // Simula uma notificação toast
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        // Auto-sync status updates
+        setInterval(() => {
+            // Simular atualização de status em tempo real
+            const onlineIndicators = document.querySelectorAll('.status-pill.online');
+            onlineIndicators.forEach(indicator => {
+                // Pequena animação de "pulsing"
+                indicator.style.animation = indicator.style.animation ? '' : 'pulse 2s infinite';
+            });
+        }, 30000);
+    </script>
+</DashboardLayout>

@@ -1,0 +1,80 @@
+{
+    "name": "02_Shopify_Stock_Sync",
+    "nodes": [
+        {
+            "parameters": {
+                "pollTimes": {
+                    "item": [
+                        {
+                            "mode": "everyMinute"
+                        }
+                    ]
+                }
+            },
+            "name": "Cron",
+            "type": "n8n-nodes-base.cron",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "product",
+                "operation": "getAll",
+                "limit": 10
+            },
+            "name": "Shopify Get Products",
+            "type": "n8n-nodes-base.shopify",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ],
+            "credentials": {
+                "shopifyApi": {
+                    "id": "YOUR_SHOPIFY_ID",
+                    "name": "Shopify Account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "table": "products",
+                "columns": "sku,stock_quantity"
+            },
+            "name": "Update Database",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                650,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Cron": {
+            "main": [
+                [
+                    {
+                        "node": "Shopify Get Products",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Shopify Get Products": {
+            "main": [
+                [
+                    {
+                        "node": "Update Database",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

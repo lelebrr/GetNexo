@@ -1,0 +1,40 @@
+name: Backup Diário
+on:
+  schedule:
+    - cron: '0 4 * * *' # 4am UTC = 1am BRT
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Instala Astro
+        run: npm ci --only=prod || npm install
+
+      - name: Gera site completo (Build)
+        run: npm run build
+
+      - name: Snapshot IA & Content
+        run: |
+          mkdir -p backup-ia
+          echo "Backup Date: $(date)" > backup-ia/meta.txt
+          # Copy content directories if they exist
+          if [ -d "src/pages/blog" ]; then cp -r src/pages/blog backup-ia/; fi
+          
+      - name: Compacta tudo (Site + Content)
+        run: zip -r jetnexo-backup-$(date +%Y-%m-%d).zip dist/ backup-ia/ src/
+
+      - name: Salva backup no GitHub
+        uses: actions/upload-artifact@v4
+        with:
+          name: backup-site
+          path: jetnexo-backup-*.zip
+          retention-days: 7

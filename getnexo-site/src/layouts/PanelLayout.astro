@@ -1,0 +1,192 @@
+---
+const { title } = Astro.props;
+const nonce = Astro.locals.nonce;
+---
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title} | GetNexo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style is:global>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-sidebar: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #10b981;
+            --accent-hover: #059669;
+            --danger: #ef4444;
+        }
+
+        /* Basic Reset & Theme */
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--bg-sidebar);
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logo-area {
+            padding: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .logo-area span { color: var(--accent); }
+
+        .nav-links {
+            flex: 1;
+            padding: 1rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent);
+        }
+
+        .nav-link i { margin-right: 0.8rem; width: 20px; text-align: center; }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .top-header {
+            height: 70px;
+            background: var(--bg-sidebar); /* Or bg-dark specific */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+        }
+
+        .timer-badge {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            background: #334155;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .content-area {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        /* Utility */
+        .btn-logout {
+            background: none;
+            border: 1px solid #334155;
+            color: var(--text-secondary);
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .btn-logout:hover { background: #334155; color: #fff; }
+    </style>
+</head>
+<body>
+
+<aside class="sidebar">
+    <div class="logo-area">Get<span>Nexo</span></div>
+    <nav class="nav-links">
+        <a href="/meu-painel" class="nav-link">📊 Dashboard</a>
+        <a href="/meu-painel/dominios" class="nav-link">🌐 Domínios</a>
+        <a href="/meu-painel/plugin" class="nav-link">🧩 Meu Plugin</a>
+        <a href="/meu-painel/teste" class="nav-link">⚡ Teste Ativo</a>
+        <div style="flex:1"></div>
+        <a href="/meu-painel/faturar" class="nav-link" style="color: #f59e0b;">⭐ Assinar Pro</a>
+        <a href="/meu-painel/config" class="nav-link">⚙️ Ajustes</a>
+    </nav>
+</aside>
+
+<div class="main-content">
+    <header class="top-header">
+        <div class="timer-badge">⏳ Faltam 3d 12h 05m para o fim do teste</div>
+        <div class="user-menu">
+            <button class="btn-logout" onclick="logout()">Sair</button>
+            <div class="avatar">U</div>
+            <span style="font-size: 0.9rem;">Olá, Usuário</span>
+        </div>
+    </header>
+
+    <div class="content-area">
+        <slot />
+    </div>
+</div>
+
+<script is:inline nonce={nonce}>
+    // Just simple active state based on URL
+    const currentPath = window.location.pathname;
+    document.querySelectorAll('.nav-link').forEach(link => {
+        if (link.getAttribute('href') === currentPath) {
+            link.classList.add('active');
+        }
+    });
+
+    function logout() {
+        if(confirm('Sair do painel?')) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+    }
+
+    // Auth Guard
+    if (!localStorage.getItem('token')) {
+        window.location.href = '/login';
+    }
+</script>
+
+</body>
+</html>

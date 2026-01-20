@@ -1,0 +1,120 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+---
+
+<DashboardLayout title="Leads | OmniNexo">
+    <div style="display:flex; flex-direction:column; gap:2.5rem;">
+        
+        <div class="glass-panel" style="padding:2.5rem; background:linear-gradient(90deg, rgba(167, 139, 250, 0.15), rgba(0, 212, 255, 0.05)); border-color: rgba(167, 139, 250, 0.2); display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <h2 style="font-size:2.5rem; font-weight:900; color:white; margin:0;" class="text-gradient">Smart CRM 🎯</h2>
+                <p style="color:#94a3b8; margin:0.5rem 0 0; font-size:1.1rem;">Gestão de inteligência e relacionamento com leads capturados pela Ara.</p>
+            </div>
+            <div style="display:flex; gap:1.2rem;">
+                <div class="stat-pill">
+                    <span class="label">Total Leads</span>
+                    <span class="value">4.210</span>
+                </div>
+                <div class="stat-pill">
+                    <span class="label">Novos (24h)</span>
+                    <span class="value" style="color:var(--neon-green);">+85</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr 0.5fr; gap:1.5rem;">
+            <div class="glass-panel search-bar">
+                <span>🔍</span>
+                <input type="text" placeholder="Nome, Telefone ou Tag..." />
+            </div>
+            <div class="glass-panel tags-filter" style="display:flex; align-items:center; gap:0.5rem; overflow-x:auto; padding:0.5rem 1rem;">
+                <span class="mini-tag">#vip</span>
+                <span class="mini-tag">#interessado-ia</span>
+                <span class="mini-tag">#carrinho-abandonado</span>
+                <span class="mini-tag">+ Mais</span>
+            </div>
+            <button class="btn-dash secondary">Exportar Inteligência (CSV)</button>
+        </div>
+
+        <div class="glass-panel" style="padding:0; overflow:hidden;">
+            <table style="width:100%; border-collapse:collapse; text-align:left;">
+                <thead style="background:rgba(255,255,255,0.03); border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <tr>
+                        <th style="padding:1.5rem; font-size:0.75rem; text-transform:uppercase; color:#64748b;">Lead</th>
+                        <th style="padding:1.5rem; font-size:0.75rem; text-transform:uppercase; color:#64748b;">Contato</th>
+                        <th style="padding:1.5rem; font-size:0.75rem; text-transform:uppercase; color:#64748b;">Status / Tags</th>
+                        <th style="padding:1.5rem; font-size:0.75rem; text-transform:uppercase; color:#64748b;">Data</th>
+                        <th style="padding:1.5rem; font-size:0.75rem; text-transform:uppercase; color:#64748b; text-align:right;">Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="leads-body">
+                    <tr class="crm-row">
+                        <td style="padding:1.5rem;">
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <div class="avatar">JS</div>
+                                <div>
+                                    <div style="font-weight:800; color:white;">João Silva</div>
+                                    <div style="font-size:0.7rem; color:var(--neon-blue);">Score: 92/100</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="padding:1.5rem;">
+                            <div style="color:white; font-size:0.9rem;">(11) 98765-4321</div>
+                            <div style="font-size:0.75rem; color:#64748b;">joao.silva@email.com</div>
+                        </td>
+                        <td style="padding:1.5rem;">
+                            <div style="display:flex; gap:5px;">
+                                <span class="tag-status" style="background:rgba(0, 212, 255, 0.1); color:var(--neon-blue);">Interessado IA</span>
+                                <span class="tag-status" style="background:rgba(167, 139, 250, 0.1); color:#a78bfa;">VIP</span>
+                            </div>
+                        </td>
+                        <td style="padding:1.5rem; color:#64748b; font-size:0.85rem;">Há 2 horas</td>
+                        <td style="padding:1.5rem; text-align:right;">
+                            <button class="btn-action-crm">Perfil</button>
+                            <a href="https://wa.me/5511987654321" class="btn-action-crm primary" style="text-decoration:none;">Conversar</a>
+                        </td>
+                    </tr>
+                    <tr class="crm-row">
+                        <td style="padding:1.5rem;">
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <div class="avatar" style="background:var(--neon-green); color:black;">MA</div>
+                                <div>
+                                    <div style="font-weight:800; color:white;">Maria Oliveira</div>
+                                    <div style="font-size:0.7rem; color:var(--neon-green);">Lead Aquecido</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="padding:1.5rem;">
+                            <div style="color:white; font-size:0.9rem;">(21) 91234-5678</div>
+                            <div style="font-size:0.75rem; color:#64748b;">maria.o@empresa.com.br</div>
+                        </td>
+                        <td style="padding:1.5rem;">
+                            <div style="display:flex; gap:5px;">
+                                <span class="tag-status" style="background:rgba(0, 255, 157, 0.1); color:var(--neon-green);">Pendente Resposta</span>
+                            </div>
+                        </td>
+                        <td style="padding:1.5rem; color:#64748b; font-size:0.85rem;">Há 5 horas</td>
+                        <td style="padding:1.5rem; text-align:right;">
+                            <button class="btn-action-crm">Perfil</button>
+                            <a href="#" class="btn-action-crm primary" style="text-decoration:none;">Conversar</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <style>
+        .crm-row { border-bottom: 1px solid rgba(255,255,255,0.03); transition: 0.3s; }
+        .crm-row:hover { background: rgba(255,255,255,0.02); }
+        .avatar { width: 40px; height: 40px; background: var(--neon-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; color: black; font-size: 0.8rem; }
+        .tag-status { padding: 4px 10px; border-radius: 6px; font-size: 0.65rem; font-weight: 800; }
+        .btn-action-crm { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 10px 18px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 0.75rem; }
+        .btn-action-crm.primary { background: var(--neon-green); color: black; border: none; }
+        .search-bar { padding: 1rem; display: flex; align-items: center; gap: 1rem; }
+        .search-bar input { background: none; border: none; color: white; width: 100%; outline: none; font-weight: 600; }
+        .mini-tag { background: rgba(255,255,255,0.05); color: #64748b; padding: 4px 10px; border-radius: 50px; font-size: 0.7rem; font-weight: 800; white-space: nowrap; cursor: pointer; }
+        .mini-tag:hover { color: white; background: rgba(255,255,255,0.1); }
+    </style>
+</DashboardLayout>

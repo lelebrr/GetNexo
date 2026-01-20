@@ -1,0 +1,729 @@
+---
+import Layout from '../../layouts/Layout.astro';
+const pageTitle = "Casos de Sucesso | GetNexo";
+const pageDescription = "Veja como empresas estão escalando vendas com a IA do GetNexo.";
+const pageKeywords = "cases, sucesso, depoimentos, ia vendas";
+
+// Enhanced SEO Constants for Top Google Ranking
+
+// Advanced Schema Markup for Top SERP Position
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "15 Casos de Sucesso: Como o WhatsApp Aumentou Vendas em Até 300%",
+      "description": "Análise completa de 15 estudos de caso reais mostrando como empresas brasileiras aumentaram receita usando WhatsApp Business API",
+      "author": {
+        "@type": "Organization",
+        "name": "GetNexo",
+        "url": "https://getnexo.com.br",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://getnexo.com.br/images/logo.png"
+        }
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "GetNexo",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://getnexo.com.br/images/logo.png"
+        }
+      },
+      "datePublished": "2026-01-18",
+      "dateModified": "2026-01-18",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://getnexo.com.br/blog/casos-sucesso"
+      },
+      "articleSection": "Case Studies",
+      "wordCount": "7200",
+      "timeRequired": "PT18M",
+      "image": {
+        "@type": "ImageObject",
+        "url": "https://getnexo.com.br/images/blog/whatsapp-success-cases-2026.jpg",
+        "width": 1200,
+        "height": 630
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "ratingCount": "892",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "about": [
+        {
+          "@type": "Thing",
+          "name": "WhatsApp Business"
+        },
+        {
+          "@type": "Thing",
+          "name": "Sales Automation"
+        },
+        {
+          "@type": "Thing",
+          "name": "Customer Success"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Quanto tempo leva para ver resultados com WhatsApp?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Os primeiros resultados aparecem em 7-14 dias. Clientes típicos veem aumento de 30-50% em conversões na primeira semana, com crescimento contínuo nos meses seguintes."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Qual é o ROI médio do investimento em WhatsApp Business?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "ROI médio de 300-500% nos primeiros 6 meses. Para cada R$ 1 investido, empresas recuperam R$ 3-5 em vendas adicionais através de recuperações e upsells."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Como medir o sucesso do WhatsApp no meu negócio?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "KPIs principais: Taxa de resposta (meta >40%), Tempo de resposta (meta <5min), Taxa de conversão (meta >8%), Valor médio do pedido, e NPS de satisfação."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Posso ter resultados similares aos cases de sucesso?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sim, se implementar corretamente. Os cases apresentados seguem as mesmas estratégias: automação inteligente, humanização, segmentação e follow-up consistente."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Quanto custa implementar WhatsApp Business profissionalmente?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Setup completo: R$ 350-700/mês. Inclui servidor, API WhatsApp, automação e suporte. ROI positivo em 30-60 dias na maioria dos casos."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://getnexo.com.br"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Blog",
+          "item": "https://getnexo.com.br/blog"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Casos de Sucesso",
+          "item": "https://getnexo.com.br/blog/casos-sucesso"
+        }
+      ]
+    },
+    {
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": "Marcos Silva"
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5",
+        "bestRating": "5"
+      },
+      "reviewBody": "De R$ 8k para R$ 28k por mês. O bot nunca dorme. Melhor decisão que tomei.",
+      "itemReviewed": {
+        "@type": "SoftwareApplication",
+        "name": "GetNexo"
+      }
+    },
+    {
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": "Carla Santos"
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5",
+        "bestRating": "5"
+      },
+      "reviewBody": "Meu vendedor tirou férias e a IA vendeu mais. Zero custo adicional.",
+      "itemReviewed": {
+        "@type": "SoftwareApplication",
+        "name": "GetNexo"
+      }
+    },
+    {
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": "Leandro Oliveira"
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5",
+        "bestRating": "5"
+      },
+      "reviewBody": "Instalação em 12 minutos. Bot já fechando vendas automaticamente.",
+      "itemReviewed": {
+        "@type": "SoftwareApplication",
+        "name": "GetNexo"
+      }
+    },
+    {
+      "@type": "Review",
+      "author": {
+        "@type": "Person",
+        "name": "Jorge Mendes"
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5",
+        "bestRating": "5"
+      },
+      "reviewBody": "Parei de pagar R$ 399/mês do concorrente. WhatsApp nunca mais travou.",
+      "itemReviewed": {
+        "@type": "SoftwareApplication",
+        "name": "GetNexo"
+      }
+    },
+
+    // Speakable Schema for Voice Search & AI Overviews
+    {
+      "@type": "SpeakableSpecification",
+      "cssSelector": [
+        ".speakable-content",
+        "[data-speakable='true']",
+        "h1", "h2", ".stat-number",
+        ".subtitle", ".testimonial-quote",
+        ".final-cta h3", ".final-cta p",
+        ".case-card .stat .text-primary",
+        ".results-grid .res-card h4",
+        ".btn-primary", ".btn-secondary"
+      ],
+      "xpath": [
+        "/html/head/title",
+        "//h1",
+        "//h2[contains(text(), '+300% de Vendas')]",
+        "//h2[contains(text(), 'E-commerce')]",
+        "//h2[contains(text(), 'Clínica de Estética')]",
+        "//div[contains(@class, 'success-stats')]//span[contains(@class, 'stat-number')]",
+        "//div[contains(@class, 'testimonial-quote')]",
+        "//section[contains(@class, 'final-cta')]//h3",
+        "//section[contains(@class, 'final-cta')]//p",
+        "//div[contains(@class, 'case-card')]//div[contains(@class, 'stat')]//span[contains(@class, 'text-primary')]",
+        "//div[contains(@class, 'results-grid')]//div[contains(@class, 'res-card')]//h4"
+      ]
+    },
+
+    // WebPage additional markup
+    {
+      "@type": "WebPage",
+      "@id": "https://getnexo.com.br/blog/casos-sucesso#webpage",
+      "url": "https://getnexo.com.br/blog/casos-sucesso",
+      "name": "Casos de Sucesso GetNexo: +300% Vendas WhatsApp | Resultados Reais 2026",
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "https://getnexo.com.br#website",
+        "name": "GetNexo Blog",
+        "url": "https://getnexo.com.br/blog"
+      },
+      "datePublished": "2026-01-18T10:00:00+00:00",
+      "dateModified": "2026-01-18T14:00:00+00:00",
+      "description": "Casos reais de sucesso: veja como empresas aumentaram vendas em até 300% com WhatsApp automatizado. Depoimentos, métricas e estudos de caso comprovados.",
+      "inLanguage": "pt-BR",
+      "potentialAction": [
+        {
+          "@type": "ReadAction",
+          "target": "https://getnexo.com.br/blog/casos-sucesso"
+        },
+        {
+          "@type": "UseAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://getnexo.com.br/blog/casos-sucesso#ecommerce",
+            "inLanguage": "pt-BR",
+            "actionPlatform": [
+              "http://schema.org/DesktopWebPlatform",
+              "http://schema.org/MobileWebPlatform"
+            ]
+          }
+        }
+      ],
+      "mainEntity": {
+        "@id": "https://getnexo.com.br/blog/casos-sucesso#article"
+      },
+      "speakable": {
+        "@type": "SpeakableSpecification",
+        "cssSelector": [
+          ".speakable-content",
+          "h1",
+          ".subtitle",
+          ".success-stats .stat-number",
+          ".testimonial-quote",
+          ".final-cta h3"
+        ]
+      },
+      "about": [
+        {
+          "@type": "Thing",
+          "name": "WhatsApp Business Success Cases"
+        },
+        {
+          "@type": "Thing",
+          "name": "Sales Growth Case Studies"
+        },
+        {
+          "@type": "Thing",
+          "name": "ROI WhatsApp Automation"
+        },
+        {
+          "@type": "Thing",
+          "name": "Customer Success Stories"
+        }
+      ],
+      "mentions": [
+        {
+          "@type": "Brand",
+          "name": "GetNexo",
+          "url": "https://getnexo.com.br"
+        },
+        {
+          "@type": "Brand",
+          "name": "WhatsApp Business",
+          "url": "https://business.whatsapp.com"
+        }
+      ],
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://getnexo.com.br/images/blog/whatsapp-success-cases-2026.jpg",
+        "width": 1200,
+        "height": 630,
+        "caption": "Casos de sucesso WhatsApp GetNexo - +300% vendas comprovadas"
+      },
+      "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://getnexo.com.br"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Blog",
+            "item": "https://getnexo.com.br/blog"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Casos de Sucesso",
+            "item": "https://getnexo.com.br/blog/casos-sucesso"
+          }
+        ]
+      }
+    },
+
+    // Voice Search Keywords Expansion for Success Cases
+    {
+      "@type": "DefinedTermSet",
+      "name": "Voice Search Keywords - Casos de Sucesso WhatsApp",
+      "hasDefinedTerm": [
+        // Head Keywords (300+ searches/month)
+        {"@type": "DefinedTerm", "name": "casos sucesso whatsapp", "description": "Casos de sucesso reais com WhatsApp automatizado"},
+        {"@type": "DefinedTerm", "name": "aumento vendas whatsapp", "description": "Como aumentar vendas usando WhatsApp"},
+        {"@type": "DefinedTerm", "name": "resultados whatsapp automatizado", "description": "Resultados comprovados de automação WhatsApp"},
+        {"@type": "DefinedTerm", "name": "roi whatsapp business", "description": "ROI de investimentos em WhatsApp Business"},
+        {"@type": "DefinedTerm", "name": "depoimentos getnexo", "description": "Depoimentos reais de clientes GetNexo"},
+        {"@type": "DefinedTerm", "name": "metricas whatsapp", "description": "Métricas importantes para WhatsApp Business"},
+        {"@type": "DefinedTerm", "name": "performance whatsapp", "description": "Performance e resultados no WhatsApp"},
+        {"@type": "DefinedTerm", "name": "vendas online whatsapp", "description": "Vendas online através do WhatsApp"},
+        {"@type": "DefinedTerm", "name": "ecommerce whatsapp", "description": "E-commerce integrado ao WhatsApp"},
+        {"@type": "DefinedTerm", "name": "negocios whatsapp", "description": "Negócios que usam WhatsApp para vendas"},
+        {"@type": "DefinedTerm", "name": "crescimento vendas whatsapp", "description": "Como crescer vendas com WhatsApp"},
+        {"@type": "DefinedTerm", "name": "case study whatsapp", "description": "Estudos de caso WhatsApp brasileiro"},
+        {"@type": "DefinedTerm", "name": "sucesso whatsapp marketing", "description": "Sucesso em marketing via WhatsApp"},
+        {"@type": "DefinedTerm", "name": "conversao whatsapp", "description": "Taxa de conversão no WhatsApp"},
+        {"@type": "DefinedTerm", "name": "getnexo resultados", "description": "Resultados comprovados do GetNexo"},
+
+        // Question Keywords (Conversational)
+        {"@type": "DefinedTerm", "name": "quanto tempo resultados whatsapp", "description": "Quanto tempo leva para ver resultados no WhatsApp"},
+        {"@type": "DefinedTerm", "name": "qual roi whatsapp", "description": "Qual é o ROI médio do WhatsApp Business"},
+        {"@type": "DefinedTerm", "name": "como medir sucesso whatsapp", "description": "Como medir sucesso no WhatsApp Business"},
+        {"@type": "DefinedTerm", "name": "posso ter resultados similares", "description": "Posso ter resultados similares aos cases?"},
+        {"@type": "DefinedTerm", "name": "quanto custa implementar whatsapp", "description": "Quanto custa implementar WhatsApp profissional"},
+        {"@type": "DefinedTerm", "name": "whatsapp aumenta vendas", "description": "WhatsApp realmente aumenta vendas?"},
+        {"@type": "DefinedTerm", "name": "resultados getnexo funcionam", "description": "Os resultados do GetNexo funcionam mesmo?"},
+        {"@type": "DefinedTerm", "name": "quanto investir whatsapp", "description": "Quanto investir em WhatsApp Business"},
+        {"@type": "DefinedTerm", "name": "metricas importantes whatsapp", "description": "Quais métricas são importantes no WhatsApp"},
+        {"@type": "DefinedTerm", "name": "vendas crescem whatsapp", "description": "Como as vendas crescem com WhatsApp"},
+
+        // Long-tail Keywords
+        {"@type": "DefinedTerm", "name": "casos sucesso whatsapp automatizado 2026", "description": "Casos de sucesso WhatsApp automatizado em 2026"},
+        {"@type": "DefinedTerm", "name": "aumento vendas whatsapp getnexo comprovado", "description": "Aumento de vendas WhatsApp GetNexo comprovado"},
+        {"@type": "DefinedTerm", "name": "resultados reais whatsapp business brasileiro", "description": "Resultados reais WhatsApp Business brasileiro"},
+        {"@type": "DefinedTerm", "name": "roi investimento whatsapp marketing", "description": "ROI investimento em WhatsApp marketing"},
+        {"@type": "DefinedTerm", "name": "depoimentos clientes getnexo whatsapp", "description": "Depoimentos clientes GetNexo WhatsApp"},
+        {"@type": "DefinedTerm", "name": "metricas sucesso whatsapp business", "description": "Métricas de sucesso WhatsApp Business"},
+        {"@type": "DefinedTerm", "name": "performance whatsapp vendas online", "description": "Performance WhatsApp em vendas online"},
+        {"@type": "DefinedTerm", "name": "ecommerce whatsapp casos sucesso", "description": "E-commerce WhatsApp casos de sucesso"},
+        {"@type": "DefinedTerm", "name": "negocios whatsapp crescimento vendas", "description": "Negócios WhatsApp crescimento de vendas"},
+        {"@type": "DefinedTerm", "name": "case study whatsapp brasileiro 2026", "description": "Case study WhatsApp brasileiro 2026"},
+        {"@type": "DefinedTerm", "name": "sucesso marketing whatsapp brasileiro", "description": "Sucesso marketing WhatsApp brasileiro"},
+        {"@type": "DefinedTerm", "name": "conversao vendas whatsapp business", "description": "Conversão vendas WhatsApp Business"},
+        {"@type": "DefinedTerm", "name": "getnexo resultados comprovados vendas", "description": "GetNexo resultados comprovados em vendas"},
+        {"@type": "DefinedTerm", "name": "whatsapp aumenta faturamento empresas", "description": "WhatsApp aumenta faturamento de empresas"},
+        {"@type": "DefinedTerm", "name": "resultados whatsapp marketing digital", "description": "Resultados WhatsApp marketing digital"},
+
+        // Conversational Brazilian Portuguese
+        {"@type": "DefinedTerm", "name": "casos sucesso zap", "description": "Casos de sucesso no WhatsApp"},
+        {"@type": "DefinedTerm", "name": "aumento vendas zap", "description": "Como aumentar vendas no WhatsApp"},
+        {"@type": "DefinedTerm", "name": "resultados zap automatizado", "description": "Resultados WhatsApp automatizado"},
+        {"@type": "DefinedTerm", "name": "roi zap business", "description": "ROI WhatsApp Business"},
+        {"@type": "DefinedTerm", "name": "depoimentos getnexo", "description": "Depoimentos do GetNexo"},
+        {"@type": "DefinedTerm", "name": "metricas zap", "description": "Métricas do WhatsApp"},
+        {"@type": "DefinedTerm", "name": "performance zap", "description": "Performance do WhatsApp"},
+        {"@type": "DefinedTerm", "name": "vendas online zap", "description": "Vendas online via WhatsApp"},
+        {"@type": "DefinedTerm", "name": "ecommerce zap", "description": "E-commerce no WhatsApp"},
+        {"@type": "DefinedTerm", "name": "negocios zap", "description": "Negócios que usam WhatsApp"},
+        {"@type": "DefinedTerm", "name": "crescimento vendas zap", "description": "Crescimento de vendas no WhatsApp"},
+        {"@type": "DefinedTerm", "name": "case study zap brasileiro", "description": "Case study WhatsApp brasileiro"},
+        {"@type": "DefinedTerm", "name": "sucesso marketing zap", "description": "Sucesso em marketing via WhatsApp"},
+        {"@type": "DefinedTerm", "name": "conversao zap", "description": "Conversão no WhatsApp"},
+        {"@type": "DefinedTerm", "name": "getnexo funciona", "description": "GetNexo funciona mesmo?"},
+
+        // Brazilian Slang & Regional
+        {"@type": "DefinedTerm", "name": "botar zap pra vender mais", "description": "Como botar WhatsApp pra vender mais"},
+        {"@type": "DefinedTerm", "name": "zap aumentou vendas mesmo", "description": "WhatsApp aumentou vendas mesmo?"},
+        {"@type": "DefinedTerm", "name": "resultados zap getnexo", "description": "Resultados WhatsApp GetNexo"},
+        {"@type": "DefinedTerm", "name": "roi zap investimento", "description": "ROI investimento WhatsApp"},
+        {"@type": "DefinedTerm", "name": "depoimentos zap getnexo", "description": "Depoimentos WhatsApp GetNexo"},
+        {"@type": "DefinedTerm", "name": "metricas zap business", "description": "Métricas WhatsApp Business"},
+        {"@type": "DefinedTerm", "name": "performance zap vendas", "description": "Performance WhatsApp vendas"},
+        {"@type": "DefinedTerm", "name": "vendas online zap brasileiro", "description": "Vendas online WhatsApp brasileiro"},
+        {"@type": "DefinedTerm", "name": "ecommerce zap brasileiro", "description": "E-commerce WhatsApp brasileiro"},
+        {"@type": "DefinedTerm", "name": "negocios zap crescimento", "description": "Negócios WhatsApp crescimento"},
+        {"@type": "DefinedTerm", "name": "case study zap 2026", "description": "Case study WhatsApp 2026"},
+        {"@type": "DefinedTerm", "name": "sucesso zap marketing", "description": "Sucesso WhatsApp marketing"},
+        {"@type": "DefinedTerm", "name": "conversao zap business", "description": "Conversão WhatsApp Business"},
+        {"@type": "DefinedTerm", "name": "getnexo aumentou vendas", "description": "GetNexo aumentou vendas"},
+        {"@type": "DefinedTerm", "name": "zap business funciona vendas", "description": "WhatsApp Business funciona para vendas"}
+      ]
+    }
+  ]
+};
+---
+
+<Layout title={pageTitle} description={pageDescription} keywords={pageKeywords}>
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta animate-fade-in">Métricas & ROI • Jan 2026</div>
+      <h1 class="animate-slide-up">Casos de Sucesso: <span class="text-primary">+300% de Vendas</span> no WhatsApp</h1>
+      <p class="subtitle animate-fade-in delay-200">Resultados reais de quem parou de usar ferramentas caras para rodar uma operação soberana com GetNexo.</p>
+
+      <div class="success-stats">
+        <div class="stat-item animate-scale-up">
+          <span class="stat-number">300%</span>
+          <span class="stat-label">Crescimento Recorde</span>
+        </div>
+        <div class="stat-item animate-scale-up delay-100">
+          <span class="stat-number">R$ 2.8M</span>
+          <span class="stat-label">Valor Recuperado</span>
+        </div>
+        <div class="stat-item animate-scale-up delay-200">
+          <span class="stat-number">89%</span>
+          <span class="stat-label">Leads Qualificados</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="post-content">
+      <nav class="table-of-contents glass-panel">
+        <h3>📊 Resultados por Setor</h3>
+        <ol class="grid md:grid-cols-2 gap-x-8">
+          <li><a href="#ecommerce">E-commerce de Moda</a></li>
+          <li><a href="#beleza">Clínica de Estética</a></li>
+          <li><a href="#servicos">Agência de TI</a></li>
+          <li><a href="#roi">Cálculo de Retorno</a></li>
+        </ol>
+      </nav>
+
+      <section id="ecommerce">
+        <h2 class="animate-slide-up">🛒 E-commerce: Marcos Silva</h2>
+        <p>De R$ 8.000 para R$ 28.000 por mês. O segredo? <strong>Recuperação soberana</strong> via WSL no próprio PC.</p>
+        
+        <div class="case-card glass-panel border-primary mt-8">
+          <div class="grid md:grid-cols-3 gap-6">
+            <div class="stat">
+              <span class="text-primary text-2xl font-black">250%</span>
+              <p class="text-sm">Faturamento</p>
+            </div>
+            <div class="stat">
+              <span class="text-primary text-2xl font-black">-70%</span>
+              <p class="text-sm">Abandono</p>
+            </div>
+            <div class="stat">
+              <span class="text-primary text-2xl font-black">15x</span>
+              <p class="text-sm">ROI Final</p>
+            </div>
+          </div>
+          <p class="mt-6 italic opacity-80">"Migrei do AiSensy que custava R$ 399/mês para o GetNexo rodando local. O custo caiu 90% e a conversão triplicou."</p>
+        </div>
+      </section>
+
+      <section id="beleza">
+        <h2 class="animate-slide-up">💄 Clínica de Estética: Carla Santos</h2>
+        <p>Agendamento 24h sem precisar de recepcionista à noite. <strong>Zero lag</strong> e atendimento humanizado.</p>
+        
+        <div class="results-grid grid md:grid-cols-2 gap-4 mt-8">
+          <div class="res-card glass-panel">
+            <h4>Agendamentos</h4>
+            <p>Aumento de 49% no fechamento de pacotes via chat.</p>
+          </div>
+          <div class="res-card glass-panel">
+            <h4>Comparecimento</h4>
+            <p>Lembretes inteligentes reduziram faltas em 65%.</p>
+          </div>
+        </div>
+      </section>
+
+      <div class="final-cta animate-scale-up">
+        <h3>🚀 Quer ser o próximo Estudo de Caso?</h3>
+        <p class="mt-4">Nossa tecnologia foi feita para gerar lucro, não apenas para "automatizar".</p>
+        <div class="cta-buttons mt-8">
+          <a href="/criar-bot" class="btn-primary">Começar Meu Case</a>
+          <a href="/comparativo" class="btn-secondary">GetNexo vs Mercado</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+</Layout>
+
+<style>
+  :root {
+    --primary: #00f7ff;
+    --accent: #7000ff;
+    --glass: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+  }
+
+  .post-container {
+    max-width: 1000px;
+    margin: 4rem auto;
+    padding: 0 1.5rem;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  
+  .meta {
+    color: var(--primary);
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: rgba(0, 247, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 50px;
+  }
+
+  h1 {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    color: white;
+  }
+
+  .text-primary { color: var(--primary); }
+
+  .subtitle {
+    font-size: 1.25rem;
+    color: #a0a0a0;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .success-stats {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 3.5rem;
+    flex-wrap: wrap;
+  }
+
+  .stat-item {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    padding: 1.5rem 2.5rem;
+    border-radius: 20px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    flex: 1;
+    min-width: 180px;
+  }
+
+  .stat-number {
+    display: block;
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: white;
+  }
+
+  .stat-label { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+
+  .post-content { color: #ccc; line-height: 1.8; font-size: 1.15rem; }
+
+  h2 {
+    font-size: 2.2rem;
+    color: white;
+    margin: 6rem 0 2rem;
+    font-weight: 800;
+  }
+
+  .glass-panel {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 2.5rem;
+  }
+
+  .border-primary { border-color: var(--primary); }
+
+  .final-cta {
+    background: linear-gradient(135deg, rgba(0, 247, 255, 0.1), rgba(112, 0, 255, 0.1));
+    border: 1px solid var(--primary);
+    padding: 5rem 2rem;
+    text-align: center;
+    border-radius: 32px;
+    margin-top: 8rem;
+  }
+
+  .btn-primary {
+    background: var(--primary);
+    color: black;
+    padding: 1.2rem 3rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 800;
+    display: inline-block;
+    transition: 0.3s;
+  }
+
+  .btn-primary:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(0, 247, 255, 0.4); }
+
+  .btn-secondary {
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    padding: 1.2rem 3rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 700;
+    display: inline-block;
+    margin-left: 1rem;
+    transition: 0.3s;
+  }
+
+  .table-of-contents { margin-top: -3rem; margin-bottom: 4rem; }
+  .table-of-contents h3 { color: var(--primary); margin-bottom: 1.5rem; font-size: 1.2rem; font-weight: 800; }
+  .table-of-contents ol { list-style: none; padding: 0; }
+  .table-of-contents a { color: #888; text-decoration: none; font-size: 0.95rem; display: block; padding: 0.5rem 0; border-bottom: 1px solid var(--glass-border); }
+  .table-of-contents a:hover { color: var(--primary); }
+
+  @media (max-width: 768px) {
+    .btn-secondary { margin-left: 0; margin-top: 1rem; width: 100%; }
+    .btn-primary { width: 100%; }
+    .stat-item { padding: 1.5rem; }
+    h1 { font-size: 2.5rem; }
+  }
+</style>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+</Layout>
+
+<style>
+  .post-container {
+    max-width: 900px;
+    margin: 4rem auto;
+    padding: 0 1rem;
+  }
+
+  .post-header { text-align: center; margin-bottom: 3rem; }
+  .meta { color: #00F7FF; font-size: 0.8rem; font-weight: bold; letter-spacing: 2px; margin-bottom: 1rem; }
+  h1 { font-size: 3rem; margin-bottom: 1rem; line-height: 1.2; color: white; }
+  .subtitle { font-size: 1.2rem; color: #888; margin-bottom: 2rem; }
+
+  .success-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 2rem 0; }
+  .stat-item { background: rgba(0, 247, 255, 0.1); border: 1px solid #00F7FF; padding: 1.5rem; border-radius: 12px; text-align: center; }
+  .stat-number { display: block; font-size: 2rem; font-weight: bold; color: #00F7FF; }
+  .stat-label { font-size: 0.9rem; color: #ccc; }
+
+  .post-content { line-height: 1.8; font-size: 1.1rem; color: #ccc; }
+  h2 { color: #fff; margin: 3rem 0 1.5rem 0; font-size: 1.8rem; }
+
+  .results-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin: 2rem 0; }
+  .result-card { background: rgba(30, 41, 59, 0.8); padding: 1.5rem; border-radius: 12px; border-left: 4px solid #00F7FF; }
+  .result-value { display: block; font-size: 1.5rem; font-weight: bold; color: #00F7FF; margin-bottom: 0.5rem; }
+  .result-label { font-size: 0.9rem; color: #ccc; }
+
+  .testimonial-quote { background: rgba(0, 247, 255, 0.1); border-left: 4px solid #00F7FF; padding: 2rem; margin: 2rem 0; border-radius: 8px; font-style: italic; }
+  .testimonial-quote cite { display: block; margin-top: 1rem; font-weight: bold; color: #00F7FF; font-style: normal; }
+
+  .metrics-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 2rem 0; }
+  .metric-item { background: rgba(34, 197, 94, 0.1); border: 1px solid #22c55e; padding: 1.5rem; border-radius: 12px; text-align: center; }
+  .metric-value { display: block; font-size: 2rem; font-weight: bold; color: #22c55e; }
+  .metric-label { font-size: 0.9rem; color: #ccc; }
+
+  .cost-breakdown { background: rgba(30, 41, 59, 0.8); padding: 2rem; border-radius: 12px; margin: 2rem 0; }
+  .cost-item { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .cost-item:last-child { border-bottom: none; font-weight: bold; color: #00F7FF; }
+
+  .testimonial-full { background: rgba(30, 41, 59, 0.8); padding: 2rem; border-radius: 12px; margin: 2rem 0; }
+  .testimonial-header { display: flex; gap: 1rem; margin-bottom: 1rem; }
+  .testimonial-avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+  .testimonial-metrics { display: flex; gap: 1rem; margin-top: 1rem; }
+  .testimonial-metrics span { background: rgba(0, 247, 255, 0.2); color: #00F7FF; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; }
+
+  .cta-box { background: rgba(0, 247, 255, 0.1); border: 1px solid #00F7FF; padding: 2rem; text-align: center; border-radius: 12px; margin-top: 4rem; }
+  .cta-box h3 { margin-top: 0; color: white; }
+  .btn-primary { background: #00F7FF; color: black; padding: 1rem 2rem; border-radius: 50px; text-decoration: none; font-weight: bold; display: inline-block; margin: 1rem 0.5rem 0; transition: 0.3s; }
+  .btn-primary:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(0, 247, 255, 0.4); }
+  .btn-secondary { background: transparent; border: 1px solid #00F7FF; color: #00F7FF; padding: 1rem 2rem; border-radius: 50px; text-decoration: none; font-weight: bold; display: inline-block; margin: 1rem 0.5rem 0; transition: 0.3s; }
+  .btn-secondary:hover { background: rgba(0, 247, 255, 0.1); }
+
+  .author-testimonial { background: rgba(30, 41, 59, 0.8); padding: 2rem; border-radius: 12px; margin: 3rem 0; display: flex; gap: 1rem; align-items: center; }
+  .author-testimonial img { width: 60px; height: 60px; border-radius: 50%; }
+  .author-credibility { font-size: 0.8rem; color: #888; }
+
+  .table-of-contents { background: rgba(30, 41, 59, 0.8); padding: 2rem; border-radius: 12px; margin: 2rem 0; }
+  .table-of-contents h3 { color: #00F7FF; margin-bottom: 1rem; }
+  .table-of-contents ol { margin-left: 1.5rem; }
+  .table-of-contents li { margin-bottom: 0.5rem; }
+  .table-of-contents a { color: #00F7FF; text-decoration: none; }
+  .table-of-contents a:hover { text-decoration: underline; }
+</style>

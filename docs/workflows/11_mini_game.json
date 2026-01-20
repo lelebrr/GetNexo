@@ -1,0 +1,63 @@
+{
+    "name": "11_Mini_Game_Quiz",
+    "nodes": [
+        {
+            "parameters": {},
+            "name": "Start",
+            "type": "n8n-nodes-base.start",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "functionCode": "const questions = [\n  { q: \"What is 2+2?\", a: \"4\" },\n  { q: \"Capital of France?\", a: \"Paris\" }\n];\nconst randomQ = questions[Math.floor(Math.random() * questions.length)];\n\nreturn [{ json: { question: randomQ.q, expected_answer: randomQ.a } }];"
+            },
+            "name": "Get Question",
+            "type": "n8n-nodes-base.function",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "content": "={{$json[\"question\"]}}"
+            },
+            "name": "Ask User",
+            "type": "n8n-nodes-base.chatwoot",
+            "typeVersion": 1,
+            "position": [
+                650,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Start": {
+            "main": [
+                [
+                    {
+                        "node": "Get Question",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Get Question": {
+            "main": [
+                [
+                    {
+                        "node": "Ask User",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

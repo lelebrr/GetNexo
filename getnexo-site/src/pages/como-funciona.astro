@@ -1,0 +1,852 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const title = "Como Funciona o GetNexo - Automação WhatsApp em 4 Passos";
+const description = "Entenda como o GetNexo transforma seu WhatsApp em uma máquina de vendas automática. Do primeiro contato ao pagamento confirmado, tudo com IA e API Oficial Meta.";
+const keywords = "como funciona getnexo, automação whatsapp tutorial, configurar chatbot whatsapp, setup whatsapp ia, getnexo passo a passo, integrar whatsapp negócio";
+
+const steps = [
+  {
+    num: "01",
+    icon: "🔌",
+    title: "Conecte seu WhatsApp",
+    description: "Vincule seu número à plataforma GetNexo em menos de 2 minutos. Usamos a API Oficial Cloud do Meta para garantir segurança e estabilidade.",
+    details: [
+      "Conexão via QR Code ou API Cloud Meta",
+      "Não bloqueia seu número",
+      "Funciona com número existente",
+      "Múltiplos dispositivos simultâneos"
+    ],
+    time: "2 min"
+  },
+  {
+    num: "02",
+    icon: "🧠",
+    title: "Configure a IA",
+    description: "Ensine a IA sobre seu negócio. Adicione FAQ, produtos, preços e tom de voz. Ela aprende e responde como seu melhor vendedor.",
+    details: [
+      "Upload de documentos e FAQ",
+      "Catálogo de produtos sincronizado",
+      "Tom de voz personalizável",
+      "Contexto de negócio específico"
+    ],
+    time: "10 min"
+  },
+  {
+    num: "03",
+    icon: "⚙️",
+    title: "Configure automações",
+    description: "Defina fluxos automáticos: boas-vindas, qualificação de leads, agendamentos, checkout e follow-ups. A IA cuida de tudo.",
+    details: [
+      "Flow builder visual",
+      "Gatilhos por palavra-chave",
+      "Integrações com CRM e e-commerce",
+      "Horário de funcionamento"
+    ],
+    time: "15 min"
+  },
+  {
+    num: "04",
+    icon: "🚀",
+    title: "Comece a vender",
+    description: "Pronto! Sua IA está ativa 24/7, respondendo clientes, qualificando leads, gerando PIX e fechando vendas automaticamente.",
+    details: [
+      "Atendimento 24 horas",
+      "Checkout PIX automático",
+      "Relatórios em tempo real",
+      "Escale sem limites"
+    ],
+    time: "∞"
+  }
+];
+
+const architecture = [
+  { layer: "Cliente", icon: "📱", desc: "Envia mensagem no WhatsApp", color: "#00d4ff" },
+  { layer: "API Meta", icon: "🔗", desc: "Webhooks oficiais", color: "#a855f7" },
+  { layer: "GetNexo", icon: "⚡", desc: "Processa e envia para IA", color: "#00ff9d" },
+  { layer: "IA Generativa", icon: "🧠", desc: "Gera resposta inteligente", color: "#eab308" },
+  { layer: "Integrações", icon: "🔌", desc: "CRM, e-commerce, PIX", color: "#f97316" },
+  { layer: "Resposta", icon: "💬", desc: "Cliente recebe no WhatsApp", color: "#00d4ff" }
+];
+
+const deployOptions = [
+  {
+    name: "Nuvem GetNexo",
+    icon: "☁️",
+    recommended: true,
+    price: "A partir de R$ 97/mês",
+    features: ["Zero configuração", "Uptime 99.9%", "Suporte prioritário", "Backups automáticos", "SSL incluso"]
+  },
+  {
+    name: "Self-Hosted",
+    icon: "🖥️",
+    recommended: false,
+    price: "Gratuito",
+    features: ["Docker Compose", "Controle total", "Seus dados", "Sem mensalidade", "Comunidade ativa"]
+  },
+  {
+    name: "VPS Personalizado",
+    icon: "🎛️",
+    recommended: false,
+    price: "Sob consulta",
+    features: ["Instalação assistida", "Configuração otimizada", "Treinamento incluso", "SLA customizado", "Suporte dedicado"]
+  }
+];
+
+const techStack = [
+  { name: "Meta Cloud API", desc: "API oficial para WhatsApp Business", category: "Conexão" },
+  { name: "OpenAI / Gemini", desc: "IA generativa para respostas", category: "Inteligência" },
+  { name: "Node.js", desc: "Backend de alta performance", category: "Servidor" },
+  { name: "PostgreSQL", desc: "Banco de dados robusto", category: "Dados" },
+  { name: "Redis", desc: "Cache e filas em tempo real", category: "Performance" },
+  { name: "React", desc: "Dashboard moderno", category: "Interface" }
+];
+
+const faqs = [
+  {
+    q: "Preciso de conhecimento técnico para usar?",
+    a: "Não! Se você escolher a opção Nuvem GetNexo, tudo é gerenciado por nós. Você só precisa conectar seu WhatsApp e configurar a IA pelo painel visual. Para self-hosted, conhecimento básico de Docker é útil, mas temos tutoriais passo a passo."
+  },
+  {
+    q: "Quanto tempo leva para configurar?",
+    a: "Na nuvem, você pode estar vendendo em menos de 30 minutos. O processo envolve: conectar WhatsApp (2 min), configurar IA (10 min), definir automações (15 min). Clientes mais complexos podem levar 1-2 horas para otimizar."
+  },
+  {
+    q: "Meu número pode ser banido?",
+    a: "Usando a API Oficial Meta Cloud (que é o padrão do GetNexo), o risco de ban é praticamente zero. Diferente de soluções não-oficiais, aqui você está dentro das regras do WhatsApp Business."
+  },
+  {
+    q: "Posso usar meu número pessoal?",
+    a: "Sim, desde que seja um número que pode receber SMS para verificação. Recomendamos um número dedicado para negócios, mas não é obrigatório. O número continua funcionando normalmente no seu celular."
+  },
+  {
+    q: "Como a IA aprende sobre meu negócio?",
+    a: "Você alimenta a IA com: documentos (PDF, TXT), FAQ, descrição de produtos, tom de voz desejado e exemplos de conversas. A IA usa esses dados para contextualizar respostas. Quanto mais informação, melhor ela responde."
+  },
+  {
+    q: "Consigo integrar com meu e-commerce?",
+    a: "Sim! Temos integrações nativas com Shopify, WooCommerce, Nuvemshop e via API/Webhooks com qualquer sistema. Produtos, estoque e pedidos sincronizam automaticamente."
+  }
+];
+
+const timeline = [
+  { time: "0:00", action: "Cliente envia: 'Oi, quero saber o preço'" },
+  { time: "0:02", action: "IA responde com catálogo e preços" },
+  { time: "0:15", action: "Cliente escolhe produto" },
+  { time: "0:20", action: "IA gera PIX automático" },
+  { time: "0:45", action: "Cliente paga" },
+  { time: "0:46", action: "Webhook confirma pagamento" },
+  { time: "0:47", action: "Cliente recebe confirmação" },
+  { time: "0:48", action: "Pedido cai no ERP" }
+];
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  
+  <!-- Hero Section -->
+  <section class="how-hero">
+    <div class="hero-badge">⚡ Setup em 30 minutos</div>
+    <h1>Como o GetNexo <span class="text-gradient">transforma seu WhatsApp</span></h1>
+    <p class="hero-subtitle">
+      Do primeiro contato ao pagamento confirmado. Entenda exatamente como a magia acontece — sem segredos, sem termos técnicos complicados.
+    </p>
+    <div class="hero-ctas">
+      <a href="/criar-bot" class="btn-primary-glow">Começar Agora</a>
+      <a href="/demo" class="btn-outline">Ver em Ação →</a>
+    </div>
+  </section>
+
+  <!-- Steps Section -->
+  <section class="steps-section">
+    <h2>4 passos para <span class="text-gradient">automatizar vendas</span></h2>
+    <p class="section-subtitle">Do zero ao primeiro bot vendendo em menos de 30 minutos</p>
+    
+    <div class="steps-grid">
+      {steps.map(step => (
+        <div class="step-card glass-panel">
+          <div class="step-header">
+            <span class="step-num">{step.num}</span>
+            <span class="step-time">⏱️ {step.time}</span>
+          </div>
+          <span class="step-icon">{step.icon}</span>
+          <h3>{step.title}</h3>
+          <p class="step-desc">{step.description}</p>
+          <ul class="step-details">
+            {step.details.map(d => <li>✓ {d}</li>)}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Architecture Section -->
+  <section class="architecture-section">
+    <h2>Arquitetura <span class="text-gradient">simplificada</span></h2>
+    <p class="section-subtitle">Entenda o fluxo de uma mensagem</p>
+    
+    <div class="architecture-flow">
+      {architecture.map((layer, i) => (
+        <div class="arch-node">
+          <div class="arch-icon" style={`background: ${layer.color}20; border-color: ${layer.color}`}>
+            <span>{layer.icon}</span>
+          </div>
+          <strong style={`color: ${layer.color}`}>{layer.layer}</strong>
+          <span class="arch-desc">{layer.desc}</span>
+          {i < architecture.length - 1 && <div class="arch-arrow">↓</div>}
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Timeline Demo -->
+  <section class="timeline-section">
+    <div class="glass-panel timeline-box">
+      <div class="timeline-content">
+        <h2>Veja uma venda <span class="text-gradient">acontecer</span></h2>
+        <p>Acompanhe o tempo real de uma conversão automática</p>
+      </div>
+      
+      <div class="timeline-visual">
+        {timeline.map(t => (
+          <div class="timeline-item">
+            <span class="tl-time">{t.time}</span>
+            <div class="tl-dot"></div>
+            <span class="tl-action">{t.action}</span>
+          </div>
+        ))}
+        <div class="timeline-result glass-panel">
+          <span class="result-icon">🎉</span>
+          <span class="result-text">Venda concluída em menos de 1 minuto!</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Deploy Options -->
+  <section class="deploy-section">
+    <h2>Escolha como <span class="text-gradient">hospedar</span></h2>
+    <p class="section-subtitle">Nuvem gerenciada ou self-hosted — você decide</p>
+    
+    <div class="deploy-grid">
+      {deployOptions.map(opt => (
+        <div class={`deploy-card glass-panel ${opt.recommended ? 'recommended' : ''}`}>
+          {opt.recommended && <span class="rec-badge">Recomendado</span>}
+          <span class="deploy-icon">{opt.icon}</span>
+          <h3>{opt.name}</h3>
+          <span class="deploy-price">{opt.price}</span>
+          <ul class="deploy-features">
+            {opt.features.map(f => <li>✓ {f}</li>)}
+          </ul>
+          <a href="/criar-bot" class={opt.recommended ? 'btn-primary-glow' : 'btn-outline'}>
+            {opt.recommended ? 'Começar' : 'Saiba mais'}
+          </a>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Tech Stack -->
+  <section class="tech-section">
+    <h2>Tecnologia de <span class="text-gradient">ponta</span></h2>
+    <p class="section-subtitle">Stack moderna e escalável</p>
+    
+    <div class="tech-grid">
+      {techStack.map(tech => (
+        <div class="tech-card glass-panel">
+          <span class="tech-category">{tech.category}</span>
+          <strong>{tech.name}</strong>
+          <span class="tech-desc">{tech.desc}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <h2>Perguntas <span class="text-gradient">frequentes</span></h2>
+    
+    <div class="faq-list">
+      {faqs.map(faq => (
+        <details class="faq-item glass-panel">
+          <summary>
+            <span class="faq-q">{faq.q}</span>
+            <span class="faq-toggle">+</span>
+          </summary>
+          <p class="faq-a">{faq.a}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta">
+    <div class="glass-panel cta-box">
+      <h2>Pronto para <span class="text-gradient">começar</span>?</h2>
+      <p>Crie seu bot em minutos e veja suas vendas automatizarem.</p>
+      <div class="cta-buttons">
+        <a href="/criar-bot" class="btn-primary-glow">Criar Meu Bot Grátis</a>
+        <a href="/documentacao" class="btn-outline">Ver Documentação</a>
+      </div>
+      <p class="cta-note">Sem cartão de crédito • Setup em 30 min • Suporte incluso</p>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  /* Hero */
+  .how-hero {
+    text-align: center;
+    padding: 10rem 5% 5rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .hero-badge {
+    background: rgba(0, 212, 255, 0.1);
+    color: #00d4ff;
+    padding: 0.5rem 1.2rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: inline-block;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(0,212,255,0.2);
+  }
+
+  .how-hero h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 900;
+    color: white;
+    line-height: 1.1;
+  }
+
+  .hero-subtitle {
+    color: #94a3b8;
+    font-size: 1.3rem;
+    line-height: 1.6;
+    margin-bottom: 3rem;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary-glow {
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    color: black;
+    padding: 1.2rem 2.8rem;
+    border-radius: 12px;
+    font-weight: 900;
+    text-decoration: none;
+    transition: 0.3s;
+    box-shadow: 0 10px 30px rgba(0,212,255,0.2);
+  }
+
+  .btn-primary-glow:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(0,212,255,0.4);
+  }
+
+  .btn-outline {
+    border: 1px solid rgba(255,255,255,0.1);
+    color: white;
+    padding: 1.2rem 2.8rem;
+    border-radius: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    background: rgba(255,255,255,0.03);
+    transition: 0.3s;
+  }
+
+  .btn-outline:hover {
+    background: rgba(255,255,255,0.08);
+    border-color: #00d4ff;
+  }
+
+  /* Steps */
+  .steps-section {
+    padding: 6rem 5%;
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .steps-section h2 {
+    font-size: 2.5rem;
+    color: white;
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+
+  .section-subtitle {
+    color: #64748b;
+    font-size: 1.1rem;
+    margin-bottom: 4rem;
+  }
+
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+  }
+
+  .step-card {
+    padding: 2.5rem 2rem;
+    text-align: center;
+    transition: 0.3s;
+    position: relative;
+  }
+
+  .step-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(0, 255, 157, 0.3);
+  }
+
+  .step-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .step-num {
+    font-size: 2rem;
+    font-weight: 900;
+    color: #00d4ff;
+    opacity: 0.3;
+  }
+
+  .step-time {
+    font-size: 0.75rem;
+    color: #00ff9d;
+    font-weight: 600;
+  }
+
+  .step-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1.5rem;
+  }
+
+  .step-card h3 {
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+
+  .step-desc {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .step-details {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+  }
+
+  .step-details li {
+    color: #64748b;
+    font-size: 0.8rem;
+    padding: 0.3rem 0;
+  }
+
+  /* Architecture */
+  .architecture-section {
+    padding: 6rem 5%;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .architecture-section h2 {
+    font-size: 2.5rem;
+    color: white;
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+
+  .architecture-flow {
+    margin-top: 3rem;
+  }
+
+  .arch-node {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .arch-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.8rem;
+    border: 2px solid;
+    font-size: 1.5rem;
+  }
+
+  .arch-node strong {
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .arch-desc {
+    color: #64748b;
+    font-size: 0.8rem;
+  }
+
+  .arch-arrow {
+    color: #334155;
+    font-size: 1.5rem;
+    margin: 0.5rem 0;
+  }
+
+  /* Timeline */
+  .timeline-section {
+    padding: 6rem 5%;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .timeline-box {
+    padding: 3rem;
+    border-radius: 32px;
+  }
+
+  .timeline-content {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .timeline-content h2 {
+    font-size: 2rem;
+    color: white;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .timeline-content p {
+    color: #64748b;
+  }
+
+  .timeline-visual {
+    position: relative;
+    padding-left: 2rem;
+    border-left: 2px solid rgba(0, 212, 255, 0.2);
+  }
+
+  .timeline-item {
+    display: grid;
+    grid-template-columns: 60px 20px 1fr;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .tl-time {
+    color: #00d4ff;
+    font-family: monospace;
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+
+  .tl-dot {
+    width: 12px;
+    height: 12px;
+    background: #00ff9d;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #00ff9d;
+    margin-left: -26px;
+  }
+
+  .tl-action {
+    color: #94a3b8;
+    font-size: 0.9rem;
+  }
+
+  .timeline-result {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    text-align: center;
+    border-color: rgba(0, 255, 157, 0.3);
+  }
+
+  .result-icon {
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
+  }
+
+  .result-text {
+    color: #00ff9d;
+    font-weight: 700;
+  }
+
+  /* Deploy */
+  .deploy-section {
+    padding: 6rem 5%;
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .deploy-section h2 {
+    font-size: 2.5rem;
+    color: white;
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+
+  .deploy-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+
+  .deploy-card {
+    padding: 2.5rem;
+    text-align: center;
+    position: relative;
+  }
+
+  .deploy-card.recommended {
+    border-color: rgba(0, 255, 157, 0.3);
+    transform: scale(1.05);
+  }
+
+  .rec-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #00ff9d;
+    color: black;
+    padding: 0.3rem 1rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 800;
+  }
+
+  .deploy-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .deploy-card h3 {
+    color: white;
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .deploy-price {
+    color: #00d4ff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: block;
+    margin-bottom: 1.5rem;
+  }
+
+  .deploy-features {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 2rem;
+  }
+
+  .deploy-features li {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    padding: 0.4rem 0;
+  }
+
+  /* Tech */
+  .tech-section {
+    padding: 6rem 5%;
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .tech-section h2 {
+    font-size: 2.5rem;
+    color: white;
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .tech-card {
+    padding: 2rem;
+    text-align: left;
+  }
+
+  .tech-category {
+    color: #00d4ff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .tech-card strong {
+    color: white;
+    font-size: 1rem;
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+
+  .tech-desc {
+    color: #64748b;
+    font-size: 0.85rem;
+  }
+
+  /* FAQ */
+  .faq-section {
+    padding: 6rem 5%;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .faq-section h2 {
+    font-size: 2.5rem;
+    color: white;
+    font-weight: 800;
+    margin-bottom: 3rem;
+    text-align: center;
+  }
+
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .faq-item {
+    padding: 1.5rem;
+    cursor: pointer;
+  }
+
+  .faq-item summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    list-style: none;
+  }
+
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-q {
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .faq-toggle {
+    color: #00d4ff;
+    font-size: 1.5rem;
+    font-weight: 300;
+    transition: 0.3s;
+  }
+
+  .faq-item[open] .faq-toggle {
+    transform: rotate(45deg);
+  }
+
+  .faq-a {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+
+  /* Final CTA */
+  .final-cta {
+    padding: 4rem 5% 8rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .cta-box {
+    padding: 5rem;
+    text-align: center;
+    border-radius: 40px;
+  }
+
+  .cta-box h2 {
+    font-size: 2.8rem;
+    color: white;
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+
+  .cta-box > p {
+    color: #94a3b8;
+    font-size: 1.2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+
+  .cta-note {
+    color: #475569;
+    font-size: 0.85rem;
+  }
+
+  /* Responsive */
+  @media (max-width: 1000px) {
+    .steps-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .deploy-grid, .tech-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .deploy-card.recommended {
+      transform: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .how-hero h1 {
+      font-size: 2.5rem;
+    }
+    .steps-grid, .deploy-grid, .tech-grid {
+      grid-template-columns: 1fr;
+    }
+    .cta-box {
+      padding: 3rem 2rem;
+    }
+    .cta-box h2 {
+      font-size: 2rem;
+    }
+  }
+</style>

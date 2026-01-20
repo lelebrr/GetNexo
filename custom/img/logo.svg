@@ -1,0 +1,29 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%">
+      <stop offset="0%" stop-color="#FFD500"/>
+      <stop offset="100%" stop-color="#FF0033"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feFlood flood-color="#FF0033" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Outer Circle -->
+  <circle cx="200" cy="200" r="190" fill="none" stroke="url(#grad)" stroke-width="6"/>
+  
+  <!-- Main Text -->
+  <text x="50%" y="42%" text-anchor="middle" font-family="Arial, sans-serif" font-weight="900" font-size="100" fill="#FFFFFF" letter-spacing="4">USE</text>
+  <text x="50%" y="68%" text-anchor="middle" font-family="Arial, sans-serif" font-weight="900" font-size="100" letter-spacing="4">
+    <tspan fill="#FFD500">N</tspan><tspan fill="url(#grad)">EX</tspan><tspan fill="#FF0033">O</tspan>
+  </text>
+  
+  <!-- Accent Line -->
+  <path d="M140 280 L260 280" stroke="#FFD500" stroke-width="4" stroke-linecap="round" filter="url(#glow)"/>
+</svg>

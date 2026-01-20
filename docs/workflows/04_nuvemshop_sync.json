@@ -1,0 +1,80 @@
+{
+    "name": "04_Nuvemshop_Sync",
+    "nodes": [
+        {
+            "parameters": {
+                "pollTimes": {
+                    "item": [
+                        {
+                            "mode": "everyHour"
+                        }
+                    ]
+                }
+            },
+            "name": "Cron Timer",
+            "type": "n8n-nodes-base.cron",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "url": "https://api.nuvemshop.com.br/v1/products",
+                "authentication": "headerAuth",
+                "headerParametersUi": {
+                    "parameter": [
+                        {
+                            "name": "Authentication",
+                            "value": "bearer YOUR_TOKEN"
+                        }
+                    ]
+                }
+            },
+            "name": "Nuvemshop API",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "functionCode": "return items.map(item => {\n  return {\n    json: {\n      name: item.json.name,\n      id: item.json.id,\n      price: item.json.variants[0].price\n    }\n  }\n});"
+            },
+            "name": "Extract Data",
+            "type": "n8n-nodes-base.function",
+            "typeVersion": 1,
+            "position": [
+                650,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Cron Timer": {
+            "main": [
+                [
+                    {
+                        "node": "Nuvemshop API",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Nuvemshop API": {
+            "main": [
+                [
+                    {
+                        "node": "Extract Data",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

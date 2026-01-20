@@ -1,0 +1,327 @@
+---
+// AccessibilityControls.astro
+// Painel de controle de acessibilidade flutuante
+// Certificações: WCAG 2.2 AA, CIDA, PAL, ISO 9241-171
+---
+
+<div class="accessibility-panel-wrapper">
+    <button 
+        id="a11y-toggle" 
+        class="a11y-float-btn" 
+        aria-label="Abrir menu de acessibilidade" 
+        aria-expanded="false" 
+        aria-controls="a11y-menu"
+        title="Opções de Acessibilidade"
+    >
+        <span class="icon">♿</span>
+    </button>
+
+    <div id="a11y-menu" class="a11y-menu hidden" role="dialog" aria-label="Opções de Acessibilidade">
+        <div class="a11y-header">
+            <h3>Acessibilidade</h3>
+            <button id="a11y-close" class="close-btn" aria-label="Fechar menu">&times;</button>
+        </div>
+
+    <div class="a11y-controls">
+            <!-- Support Section (New) -->
+            <div class="support-group">
+                <p class="section-title">Como quer começar?</p>
+                <div class="support-actions">
+                    <button id="btn-a11y-chat" class="support-btn" title="Digitar">
+                        <span class="btn-icon">⌨️</span> Digitar
+                    </button>
+                    <button id="btn-a11y-voice" class="support-btn" title="Falar">
+                        <span class="btn-icon">🎙️</span> Falar
+                    </button>
+                </div>
+                <!-- Voice Feedback -->
+                 <div id="a11y-voice-feedback" class="voice-feedback hidden">
+                    <span class="pulse-dot"></span> Ouvindo...
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Modo Idoso (CIDA) -->
+            <div class="control-group">
+                <label class="switch-label" for="elderly-mode">
+                    <span class="label-text">
+                        <span class="icon">👴</span> Modo Idoso (CIDA)
+                    </span>
+                    <span class="description">Alto contraste e textos claros</span>
+                    <input type="checkbox" id="elderly-mode" class="a11y-switch">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Suporte Cognitivo (PAL) -->
+            <div class="control-group">
+                <label class="switch-label" for="cognitive-mode">
+                    <span class="label-text">
+                        <span class="icon">🧠</span> Suporte Cognitivo
+                    </span>
+                    <span class="description">Foco e simplificação visual</span>
+                    <input type="checkbox" id="cognitive-mode" class="a11y-switch">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Alto Contraste (WCAG) -->
+            <div class="control-group">
+                <label class="switch-label" for="high-contrast">
+                    <span class="label-text">
+                        <span class="icon">🌓</span> Alto Contraste
+                    </span>
+                    <input type="checkbox" id="high-contrast" class="a11y-switch">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Fonte Grande (WCAG) -->
+            <div class="control-group">
+                <label class="switch-label" for="large-font">
+                    <span class="label-text">
+                        <span class="icon">🔤</span> Fonte Aumentada
+                    </span>
+                    <input type="checkbox" id="large-font" class="a11y-switch">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <button id="a11y-reset" class="reset-btn">
+                ↺ Restaurar Padrões
+            </button>
+        </div>
+    </div>
+</div>
+
+<script is:inline src="/scripts/performance/a11y-manager.js" defer data-cfasync="false"></script>
+
+<style>
+    .accessibility-panel-wrapper {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        z-index: 9999;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .a11y-float-btn {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #00d4ff;
+        border: 2px solid #fff;
+        color: #000;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        transition: transform 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .a11y-float-btn:hover {
+        transform: scale(1.1);
+    }
+    
+    .a11y-float-btn:focus-visible {
+        outline: 3px solid #fff;
+        outline-offset: 2px;
+    }
+
+    .a11y-menu {
+        position: absolute;
+        bottom: 70px;
+        left: 0;
+        width: 320px;
+        background: #1a1a1a;
+        color: #fff;
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        border: 1px solid #333;
+        overflow: hidden;
+        animation: slideUp 0.3s ease;
+    }
+
+    .a11y-menu.hidden {
+        display: none;
+    }
+
+    .a11y-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        background: #000;
+        border-bottom: 1px solid #333;
+    }
+
+    .a11y-header h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .close-btn {
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 0 5px;
+    }
+
+    .a11y-controls {
+        padding: 20px;
+    }
+
+    .control-group {
+        margin-bottom: 20px;
+    }
+
+    .switch-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        flex-wrap: wrap;
+    }
+
+    .label-text {
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .description {
+        width: 100%;
+        font-size: 0.8rem;
+        color: #999;
+        margin-top: 4px;
+        margin-left: 28px;
+    }
+
+    /* Custom Switch */
+    .a11y-switch {
+        display: none;
+    }
+
+    .slider {
+        width: 44px;
+        height: 24px;
+        background-color: #333;
+        border-radius: 34px;
+        position: relative;
+        transition: 0.3s;
+    }
+
+    .slider:before {
+        content: "";
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: #fff;
+        border-radius: 50%;
+        transition: 0.3s;
+    }
+
+    .a11y-switch:checked + .slider {
+        background-color: #00d4ff;
+    }
+
+    .a11y-switch:checked + .slider:before {
+        transform: translateX(20px);
+    }
+    
+    .a11y-switch:focus-visible + .slider {
+        outline: 2px solid #fff;
+        outline-offset: 2px;
+    }
+
+    .reset-btn {
+        width: 100%;
+        padding: 10px;
+        background: #333;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        margin-top: 10px;
+        transition: background 0.2s;
+    }
+
+    .reset-btn:hover {
+        background: #444;
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* High Contrast overrides for panel */
+    :global(body.a11y-high-contrast) .a11y-float-btn,
+    :global(body.a11y-elderly) .a11y-float-btn {
+        background: #000;
+        color: #fff;
+        border: 2px solid #fff;
+    }
+
+    /* Support Styles */
+    .support-group { margin-bottom: 20px; }
+    .section-title { font-size: 0.85rem; color: #999; margin-bottom: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    
+    .support-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    
+    .support-btn {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        color: #fff;
+        padding: 12px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: 0.2s;
+    }
+    
+    .support-btn:hover {
+        background: rgba(0, 212, 255, 0.1);
+        border-color: #00d4ff;
+        color: #00d4ff;
+    }
+
+    .voice-feedback {
+        margin-top: 10px;
+        background: rgba(0, 255, 157, 0.1);
+        color: #00ff9d;
+        padding: 8px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    
+    .voice-feedback.hidden { display: none; }
+    
+    .pulse-dot {
+        width: 8px; height: 8px; background: #00ff9d; border-radius: 50%;
+        animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse { 0% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.4); } 100% { opacity: 0.5; transform: scale(1); } }
+
+    .divider { height: 1px; background: rgba(255,255,255,0.1); margin: 20px 0; }
+</style>

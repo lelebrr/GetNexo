@@ -1,0 +1,113 @@
+{
+    "name": "06_AI_Router",
+    "nodes": [
+        {
+            "parameters": {},
+            "name": "Start",
+            "type": "n8n-nodes-base.start",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "string": [
+                        {
+                            "value1": "={{$json[\"complexity\"]}}",
+                            "operation": "equal",
+                            "value2": "high"
+                        }
+                    ]
+                }
+            },
+            "name": "Router Logic",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "url": "https://api.anthropic.com/v1/messages",
+                "method": "POST",
+                "authentication": "headerAuth",
+                "headerParametersUi": {
+                    "parameter": [
+                        {
+                            "name": "x-api-key",
+                            "value": "={{$env[\"CLAUDE_API_KEY\"]}}"
+                        }
+                    ]
+                }
+            },
+            "name": "Claude (High Complexity)",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 1,
+            "position": [
+                700,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "url": "http://ollama:11434/api/generate",
+                "method": "POST",
+                "bodyParametersUi": {
+                    "parameter": [
+                        {
+                            "name": "model",
+                            "value": "phi3"
+                        },
+                        {
+                            "name": "prompt",
+                            "value": "={{$json[\"prompt\"]}}"
+                        }
+                    ]
+                }
+            },
+            "name": "Ollama (Local/Low Cost)",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 1,
+            "position": [
+                700,
+                400
+            ]
+        }
+    ],
+    "connections": {
+        "Start": {
+            "main": [
+                [
+                    {
+                        "node": "Router Logic",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Router Logic": {
+            "main": [
+                [
+                    {
+                        "node": "Claude (High Complexity)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Ollama (Local/Low Cost)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

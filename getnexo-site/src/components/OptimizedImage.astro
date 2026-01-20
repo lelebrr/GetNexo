@@ -1,0 +1,219 @@
+---
+// Componente de Imagem Ultra Otimizada com WebP/AVIF
+// SEO Strategy: Performance máxima + Core Web Vitals otimizados
+export interface Props {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  loading?: 'lazy' | 'eager';
+  priority?: boolean;
+  sizes?: string;
+  class?: string;
+  style?: string;
+}
+
+const {
+  src,
+  alt,
+  width = 800,
+  height = 600,
+  loading = 'lazy',
+  priority = false,
+  sizes = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw',
+  class: className,
+  style
+} = Astro.props;
+
+// Gera URLs otimizadas para diferentes formatos
+const getOptimizedSrc = (originalSrc: string, format: string, width: number) => {
+  // Para produção, isso seria integrado com CDN (Cloudflare Images, ImageKit, etc.)
+  // Por enquanto, simulamos a otimização
+  return originalSrc.replace(/\.(jpg|jpeg|png)$/i, `_${width}.${format}`);
+};
+
+// Srcset para responsive images
+const webpSrcset = `
+  ${getOptimizedSrc(src, 'webp', 400)} 400w,
+  ${getOptimizedSrc(src, 'webp', 800)} 800w,
+  ${getOptimizedSrc(src, 'webp', 1200)} 1200w,
+  ${getOptimizedSrc(src, 'webp', 1600)} 1600w
+`;
+
+const avifSrcset = `
+  ${getOptimizedSrc(src, 'avif', 400)} 400w,
+  ${getOptimizedSrc(src, 'avif', 800)} 800w,
+  ${getOptimizedSrc(src, 'avif', 1200)} 1200w,
+  ${getOptimizedSrc(src, 'avif', 1600)} 1600w
+`;
+
+const fallbackSrcset = `
+  ${getOptimizedSrc(src, 'jpg', 400)} 400w,
+  ${getOptimizedSrc(src, 'jpg', 800)} 800w,
+  ${getOptimizedSrc(src, 'jpg', 1200)} 1200w,
+  ${getOptimizedSrc(src, 'jpg', 1600)} 1600w
+`;
+---
+
+<picture class={className} style={style}>
+  <!-- AVIF format (melhor compressão) -->
+  <source
+    srcset={avifSrcset}
+    sizes={sizes}
+    type="image/avif"
+  />
+
+  <!-- WebP format (fallback moderno) -->
+  <source
+    srcset={webpSrcset}
+    sizes={sizes}
+    type="image/webp"
+  />
+
+  <!-- Fallback para navegadores antigos -->
+  <img
+    src={getOptimizedSrc(src, 'jpg', 800)}
+    srcset={fallbackSrcset}
+    sizes={sizes}
+    alt={alt}
+    width={width}
+    height={height}
+    loading={priority ? 'eager' : loading}
+    decoding="async"
+    fetchpriority={priority ? 'high' : 'auto'}
+    class="optimized-image"
+  />
+</picture>
+
+<style>
+  .optimized-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: opacity 0.3s ease;
+  }
+
+  .optimized-image:not([src]) {
+    opacity: 0;
+  }
+
+  .optimized-image[src] {
+    opacity: 1;
+  }
+
+  /* Lazy loading blur effect */
+  .optimized-image[loading="lazy"] {
+    filter: blur(0.5px);
+    transform: scale(1.01);
+  }
+
+  .optimized-image[loading="lazy"][src] {
+    filter: none;
+    transform: scale(1);
+    transition: filter 0.3s ease, transform 0.3s ease;
+  }
+</style>
+
+<script>
+  // Lazy loading avançado com Intersection Observer
+  class OptimizedImageLoader {
+    images: Map<any, any>;
+    observer: IntersectionObserver | null;
+
+    constructor() {
+      this.images = new Map();
+      this.observer = null;
+      this.init();
+    }
+
+    init() {
+      // Verifica suporte a Intersection Observer
+      if ('IntersectionObserver' in window) {
+        this.observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const img = entry.target as HTMLImageElement;
+              this.loadImage(img);
+              this.observer?.unobserve(img);
+            }
+          });
+        }, {
+          rootMargin: '50px 0px',
+          threshold: 0.1
+        });
+
+        // Observa todas as imagens otimizadas
+        document.querySelectorAll('.optimized-image[loading="lazy"]').forEach(img => {
+          this.observer?.observe(img);
+        });
+      } else {
+        // Fallback para navegadores antigos
+        this.loadAllImages();
+      }
+    }
+
+    loadImage(img: HTMLImageElement) {
+      const src = img.dataset.src;
+      if (src && !img.src) {
+        img.src = src;
+        img.classList.add('loading');
+
+        img.onload = () => {
+          img.classList.remove('loading');
+          img.classList.add('loaded');
+        };
+
+        img.onerror = () => {
+          // Fallback para imagem original se otimizada falhar
+          img.src = img.dataset.fallback || src;
+        };
+      }
+    }
+
+    loadAllImages() {
+      document.querySelectorAll('.optimized-image[loading="lazy"]').forEach(img => {
+        this.loadImage(img as HTMLImageElement);
+      });
+    }
+  }
+
+  // Performance monitoring para Core Web Vitals
+  class PerformanceMonitor {
+    constructor() {
+      this.init();
+    }
+
+    init() {
+      // Largest Contentful Paint (LCP)
+      new PerformanceObserver((list) => {
+        const entries = list.getEntries();
+        const lastEntry = entries[entries.length - 1];
+        console.log('LCP:', lastEntry.startTime);
+      }).observe({ entryTypes: ['largest-contentful-paint'] });
+
+      // First Input Delay (FID)
+      new PerformanceObserver((list) => {
+        for (const entry of list.getEntries() as any[]) {
+          console.log('FID:', entry.processingStart - entry.startTime);
+        }
+      }).observe({ entryTypes: ['first-input'] });
+
+      // Cumulative Layout Shift (CLS)
+      let clsValue = 0;
+      new PerformanceObserver((list) => {
+        for (const entry of list.getEntries() as any[]) {
+          if (!entry.hadRecentInput) {
+            clsValue += entry.value;
+          }
+        }
+        console.log('CLS:', clsValue);
+      }).observe({ entryTypes: ['layout-shift'] });
+    }
+  }
+
+  // Inicializa quando DOM estiver pronto
+  document.addEventListener('DOMContentLoaded', () => {
+    new OptimizedImageLoader();
+    new PerformanceMonitor();
+  });
+</script>

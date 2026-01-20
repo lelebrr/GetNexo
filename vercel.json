@@ -1,0 +1,16 @@
+{
+    "version": 2,
+    "rootDirectory": "getnexo-site",
+    "builds": [
+        {
+            "src": "package.json",
+            "use": "@vercel/astro"
+        }
+    ],
+    "crons": [
+        {
+            "path": "/api/monitor/daily-report",
+            "schedule": "0 7 * * *"
+        }
+    ]
+}

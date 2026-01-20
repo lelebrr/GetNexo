@@ -1,0 +1,347 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const title = "Soluções GetNexo - Automação WhatsApp com IA | Vendas, CRM e Marketing";
+const description = "Conheça todas as soluções GetNexo: Automação com IA, PIX nativo, CRM Kanban, Broadcast e Click-to-WhatsApp Ads. Ferramentas completas para escalar vendas no WhatsApp.";
+const keywords = "automação whatsapp, crm whatsapp, pix whatsapp, broadcast whatsapp, chatbot ia, getnexo produtos, vendas whatsapp";
+
+const products = [
+  {
+    icon: "🤖",
+    title: "Automação com IA",
+    description: "Chatbot inteligente com IA generativa que responde, qualifica leads e agenda reuniões automaticamente 24/7. Treinado com dados do seu negócio.",
+    href: "/produtos/automacao",
+    badge: "Mais Popular",
+    features: ["Respostas humanizadas", "Qualificação automática", "Handoff para humano"]
+  },
+  {
+    icon: "💰",
+    title: "Vendas & Checkout PIX",
+    description: "Pagamentos via PIX nativo dentro do WhatsApp. Gere cobranças, confirme pagamentos e gerencie pedidos sem sair da conversa.",
+    href: "/produtos/vendas",
+    badge: null,
+    features: ["PIX copia e cola", "QR Code automático", "Webhook de confirmação"]
+  },
+  {
+    icon: "📢",
+    title: "Marketing & Broadcast",
+    description: "Dispare mensagens para milhares de contatos com segmentação avançada. Integre Click-to-WhatsApp Ads e meça seu ROI.",
+    href: "/produtos/marketing",
+    badge: "Novo",
+    features: ["Broadcast ilimitado", "Templates aprovados", "UTM tracking"]
+  },
+  {
+    icon: "📊",
+    title: "CRM Multi-Agente",
+    description: "Organize leads em Kanban, atribua conversas para sua equipe, monitore SLA e nunca perca uma oportunidade de venda.",
+    href: "/produtos/crm",
+    badge: null,
+    features: ["Kanban visual", "Multi-atendentes", "Métricas em tempo real"]
+  }
+];
+
+const useCases = [
+  { icon: "🛒", title: "E-commerce", desc: "Recupere carrinhos abandonados e venda mais", href: "/segmentos/e-commerce" },
+  { icon: "🏥", title: "Clínicas", desc: "Agende consultas e envie lembretes automáticos", href: "/segmentos/clinicas" },
+  { icon: "🏠", title: "Imobiliárias", desc: "Qualifique leads e agende visitas 24h", href: "/segmentos/imobiliarias" },
+  { icon: "📚", title: "Educação", desc: "Engaje alunos e automatize matrículas", href: "/segmentos/educacao" },
+  { icon: "🍕", title: "Delivery", desc: "Receba pedidos e confirme pagamentos via PIX", href: "/segmentos/delivery" },
+  { icon: "💼", title: "Consultoria", desc: "Agende reuniões e qualifique prospects", href: "/segmentos/consultoria" },
+  { icon: "💻", title: "Agência Web", desc: "Automatize suporte, captação e relatórios", href: "/segmentos/agencia-web" },
+  { icon: "➕", title: "Outros Segmentos", desc: "Turismo, Eventos, Varejo e muito mais", href: "/segmentos/outros" }
+];
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  <section class="products-hero">
+    <div class="hero-badge">Ecossistema Completo</div>
+    <h1>Soluções <span class="text-gradient">GetNexo</span></h1>
+    <p class="hero-desc">
+      Ferramentas poderosas para automatizar cada etapa do seu funil de vendas no WhatsApp — do primeiro contato ao pagamento confirmado.
+    </p>
+
+    <div class="products-grid">
+      {products.map(product => (
+        <a href={product.href} class="product-card glass-panel">
+          {product.badge && <span class="card-badge">{product.badge}</span>}
+          <div class="card-icon">{product.icon}</div>
+          <h3>{product.title}</h3>
+          <p>{product.description}</p>
+          <ul class="feature-list">
+            {product.features.map(f => <li>✓ {f}</li>)}
+          </ul>
+          <span class="learn-more">Explorar solução →</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- Use Cases Section -->
+  <section class="use-cases">
+    <h2>Usado por <span class="text-gradient">milhares de empresas</span></h2>
+    <p class="section-desc">Descubra como diferentes segmentos estão transformando suas vendas com GetNexo</p>
+    
+    <div class="cases-grid">
+      {useCases.map(uc => (
+        <a href={uc.href} class="case-card glass-panel">
+          <span class="case-icon">{uc.icon}</span>
+          <h4>{uc.title}</h4>
+          <p>{uc.desc}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="products-cta">
+    <div class="glass-panel cta-box">
+      <h2>Pronto para <span class="text-gradient">automatizar suas vendas</span>?</h2>
+      <p>Comece gratuitamente e veja resultados em minutos, não dias.</p>
+      <div class="cta-buttons">
+        <a href="/criar-bot" class="btn-primary">Criar Meu Bot Grátis</a>
+        <a href="/demo" class="btn-outline">Ver Demonstração</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .products-hero { 
+    padding: 8rem 5% 4rem; 
+    text-align: center; 
+    max-width: 1300px; 
+    margin: 0 auto; 
+  }
+  
+  .hero-badge { 
+    background: rgba(0, 212, 255, 0.1); 
+    color: #00d4ff; 
+    padding: 0.5rem 1.2rem; 
+    border-radius: 50px; 
+    font-size: 0.85rem; 
+    font-weight: 700; 
+    border: 1px solid rgba(0, 212, 255, 0.2); 
+    display: inline-block; 
+    margin-bottom: 2rem; 
+  }
+  
+  .products-hero h1 { 
+    font-size: 3.5rem; 
+    margin-bottom: 1.5rem; 
+    color: white;
+    font-weight: 900;
+  }
+  
+  .hero-desc { 
+    font-size: 1.35rem; 
+    color: #94a3b8; 
+    max-width: 800px; 
+    margin: 0 auto 5rem; 
+    line-height: 1.6;
+  }
+
+  .products-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+    gap: 2rem; 
+  }
+  
+  .product-card { 
+    padding: 2.5rem 2rem; 
+    text-decoration: none; 
+    text-align: left; 
+    transition: 0.3s; 
+    border: 1px solid rgba(255,255,255,0.05); 
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .product-card:hover { 
+    border-color: #00ff9d; 
+    transform: translateY(-10px); 
+    box-shadow: 0 20px 40px rgba(0, 255, 157, 0.1);
+  }
+  
+  .card-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    color: black;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+  
+  .card-icon { 
+    font-size: 3rem; 
+    margin-bottom: 1.5rem; 
+  }
+  
+  .product-card h3 { 
+    color: white; 
+    font-size: 1.4rem; 
+    margin-bottom: 1rem; 
+    font-weight: 800; 
+  }
+  
+  .product-card p { 
+    color: #94a3b8; 
+    font-size: 0.95rem; 
+    line-height: 1.6; 
+    margin-bottom: 1.5rem; 
+  }
+  
+  .feature-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 2rem;
+  }
+  
+  .feature-list li {
+    color: #64748b;
+    font-size: 0.85rem;
+    padding: 0.3rem 0;
+  }
+  
+  .learn-more { 
+    color: #00ff9d; 
+    font-weight: 700; 
+    font-size: 0.9rem; 
+  }
+
+  /* Use Cases */
+  .use-cases {
+    padding: 6rem 5%;
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .use-cases h2 {
+    font-size: 2.5rem;
+    color: white;
+    margin-bottom: 1rem;
+    font-weight: 800;
+  }
+  
+  .section-desc {
+    color: #64748b;
+    font-size: 1.1rem;
+    margin-bottom: 4rem;
+  }
+  
+  .cases-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .case-card {
+    padding: 2rem 1.5rem;
+    text-align: center;
+    transition: 0.3s;
+    text-decoration: none;
+    display: block;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  
+  .case-card:hover {
+    transform: translateY(-5px);
+    border-color: #00d4ff;
+    background: rgba(255,255,255,0.03);
+  }
+  
+  .case-icon {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 1rem;
+  }
+  
+  .case-card h4 {
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  
+  .case-card p {
+    color: #64748b;
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  /* CTA Section */
+  .products-cta {
+    padding: 4rem 5% 8rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  .cta-box {
+    padding: 4rem;
+    text-align: center;
+    border-radius: 32px;
+  }
+  
+  .cta-box h2 {
+    font-size: 2.5rem;
+    color: white;
+    margin-bottom: 1rem;
+    font-weight: 800;
+  }
+  
+  .cta-box p {
+    color: #94a3b8;
+    font-size: 1.2rem;
+    margin-bottom: 2.5rem;
+  }
+  
+  .cta-buttons {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .btn-primary {
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    color: black;
+    padding: 1rem 2.5rem;
+    border-radius: 12px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: 0.3s;
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+  }
+  
+  .btn-outline {
+    border: 1px solid rgba(255,255,255,0.1);
+    color: white;
+    padding: 1rem 2.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    background: rgba(255,255,255,0.03);
+    transition: 0.3s;
+  }
+  
+  .btn-outline:hover {
+    background: rgba(255,255,255,0.08);
+    border-color: #00d4ff;
+  }
+
+  @media (max-width: 768px) {
+    .products-hero h1 { font-size: 2.5rem; }
+    .hero-desc { font-size: 1.1rem; }
+    .use-cases h2 { font-size: 2rem; }
+    .cta-box { padding: 2.5rem; }
+    .cta-box h2 { font-size: 2rem; }
+  }
+</style>

@@ -1,0 +1,50 @@
+name: Deploy Global Machine
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Check Scripts Syntax (Validation)
+        run: |
+            node -c scripts/ads.js
+            python3 -m py_compile scripts/marketing_ab.py
+
+      - name: Security Audit (Trivy)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          ignore-unfixed: true
+          format: 'table'
+          exit-code: '0'
+
+      - name: Deploy to Server (SSH)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/lele/getnexo
+            git pull origin main
+            docker compose down linkedin-ads # Graceful reload
+            docker compose up -d linkedin-ads
+            docker compose exec n8n n8n import:workflow --input=data/n8n/workflows/
+            
+      - name: Notify Telegram (Success)
+        if: success()
+        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage \
+          -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+          -d text="✅ Global Machine Deployed Successfully! rev: ${{ github.sha }}"

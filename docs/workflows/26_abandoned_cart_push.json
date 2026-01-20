@@ -1,0 +1,171 @@
+{
+    "name": "26_Abandoned_Cart_Recovery",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "track-cart",
+                "options": {}
+            },
+            "name": "Cart Update",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "set",
+                "key": "=cart:{{$json[\"body\"][\"user_id\"]}}",
+                "value": "={{$json[\"body\"]}}",
+                "options": {
+                    "expire": 3600
+                }
+            },
+            "name": "Save to Redis (1h TTL)",
+            "type": "n8n-nodes-base.redis",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "amount": 30,
+                "unit": "minutes"
+            },
+            "name": "Wait 30m",
+            "type": "n8n-nodes-base.wait",
+            "typeVersion": 1,
+            "position": [
+                650,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "get",
+                "key": "=cart:{{$json[\"body\"][\"user_id\"]}}"
+            },
+            "name": "Check Cart Status",
+            "type": "n8n-nodes-base.redis",
+            "typeVersion": 1,
+            "position": [
+                850,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "boolean": [
+                        {
+                            "value1": "={{$json[\"data\"] != null}}",
+                            "value2": true
+                        }
+                    ]
+                }
+            },
+            "name": "Still Abandoned?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                1050,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "url": "https://fcm.googleapis.com/fcm/send",
+                "method": "POST",
+                "headerParametersUi": {
+                    "parameter": [
+                        {
+                            "name": "Authorization",
+                            "value": "key=YOUR_FCM_SERVER_KEY"
+                        }
+                    ]
+                },
+                "bodyParametersUi": {
+                    "parameter": [
+                        {
+                            "name": "to",
+                            "value": "={{$node[\"Cart Update\"].json[\"body\"][\"fcm_token\"]}}"
+                        },
+                        {
+                            "name": "notification",
+                            "value": "{\"title\": \"Volta aqui! 😱\", \"body\": \"Seu carrinho está sentindo sua falta. Ganhe 5% OFF finalizando agora!\"}"
+                        }
+                    ]
+                }
+            },
+            "name": "Send Web Push",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 1,
+            "position": [
+                1250,
+                200
+            ]
+        }
+    ],
+    "connections": {
+        "Cart Update": {
+            "main": [
+                [
+                    {
+                        "node": "Save to Redis (1h TTL)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Save to Redis (1h TTL)": {
+            "main": [
+                [
+                    {
+                        "node": "Wait 30m",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Wait 30m": {
+            "main": [
+                [
+                    {
+                        "node": "Check Cart Status",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check Cart Status": {
+            "main": [
+                [
+                    {
+                        "node": "Still Abandoned?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Still Abandoned?": {
+            "main": [
+                [
+                    {
+                        "node": "Send Web Push",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

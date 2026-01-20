@@ -1,0 +1,15 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+import RolesManager from '../../components/RolesManager.jsx';
+---
+
+<DashboardLayout title="Gerenciar Funções | OmniNexo">
+    <div style="display:flex; flex-direction:column; gap:2.5rem;">
+        <div class="glass-panel" style="padding:2.5rem; background:linear-gradient(90deg, rgba(167, 139, 250, 0.15), rgba(0, 212, 255, 0.05)); border-color: rgba(167, 139, 250, 0.2);">
+            <h2 style="font-size:2.5rem; font-weight:900; color:white; margin:0;" class="text-gradient">Permissões & Matriz RBAC</h2>
+            <p style="color:#94a3b8; margin:0.5rem 0 0; font-size:1.1rem;">Defina o que cada nível hierárquico pode acessar no ecossistema.</p>
+        </div>
+
+        <RolesManager client:only="react" />
+    </div>
+</DashboardLayout>

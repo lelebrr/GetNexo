@@ -1,0 +1,113 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+---
+
+<DashboardLayout title="Suporte & Logs | OmniNexo">
+    
+    <div style="display:flex; gap:2rem; height:calc(100vh - 160px);">
+        
+        <!-- FAQ & Support Chat -->
+        <div style="flex:1; display:flex; flex-direction:column; gap:1.5rem;">
+            <div class="glass-panel" style="padding:2rem;">
+                <h2 style="margin:0 0 1.5rem; font-size:1.5rem; color:white; font-weight:800;">Central de Ajuda</h2>
+                
+                <div style="margin-bottom:2rem;">
+                    <div class="faq-item">
+                        <div class="faq-q">Como conectar meu WhatsApp?</div>
+                        <div class="faq-a">Vá até a aba "Instâncias", clique em "Nova Instância" e escaneie o QR Code.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-q">O que é a "Taxa de Conversão IA"?</div>
+                        <div class="faq-a">É a porcentagem de leads que a IA conseguiu levar até o checkout ou agendamento.</div>
+                    </div>
+                     <div class="faq-item">
+                        <div class="faq-q">Como mudar meu plano?</div>
+                        <div class="faq-a">Acesse "Faturamento" e escolha o plano desejado. O upgrade é imediato.</div>
+                    </div>
+                </div>
+
+                <div style="height:250px; background:rgba(0,0,0,0.2); border-radius:12px; display:flex; flex-direction:column; border:1px solid rgba(255,255,255,0.05);">
+                    <div style="padding:10px; border-bottom:1px solid rgba(255,255,255,0.05); font-weight:700; color:#94a3b8; font-size:0.8rem;">Chat com Especialista (Online)</div>
+                    <div id="chat-msgs" style="flex:1; padding:10px; overflow-y:auto; font-size:0.9rem;">
+                        <div style="margin-bottom:8px;"><span style="color:var(--neon-green); font-weight:700;">Suporte:</span> Olá! Como posso ajudar hoje?</div>
+                    </div>
+                    <div style="padding:10px; display:flex; gap:10px;">
+                        <input type="text" id="chat-input" placeholder="Digite sua dúvida..." style="flex:1; background:rgba(255,255,255,0.05); border:none; padding:8px; color:white; border-radius:6px; outline:none;" />
+                        <button onclick="sendMsg()" style="background:var(--neon-blue); color:black; border:none; padding:8px 16px; border-radius:6px; font-weight:700; cursor:pointer;">Enviar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Logs -->
+        <div class="glass-panel" style="flex:1; display:flex; flex-direction:column; background:#000;">
+            <div style="padding:1.5rem; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0; color:white; font-family:'JetBrains Mono';">System Logs</h3>
+                <span style="font-size:0.7rem; color:#10b981;">● LIVE STREAM</span>
+            </div>
+            <div id="log-container" style="flex:1; overflow-y:auto; padding:1.5rem; font-family:'JetBrains Mono', monospace; font-size:0.8rem; color:#a3a3a3; display:flex; flex-direction:column; gap:6px;">
+                <!-- Logs Injected Here -->
+            </div>
+        </div>
+
+    </div>
+
+    <style>
+        .faq-item { margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 1rem; }
+        .faq-q { color:white; font-weight:700; margin-bottom:0.3rem; cursor:pointer; }
+        .faq-a { color:#94a3b8; font-size:0.9rem; }
+    </style>
+
+    <script is:inline>
+        // Log Stream Simulation
+        const logs = document.getElementById('log-container');
+        const types = [
+            { type: 'INFO', color: '#3b82f6' },
+            { type: 'SUCCESS', color: '#10b981' },
+            { type: 'WARN', color: '#facc15' },
+            { type: 'ERROR', color: '#ef4444' }
+        ];
+
+        function addLog() {
+            const now = new Date().toLocaleTimeString();
+            const t = types[Math.floor(Math.random() * types.length)];
+            const msgs = [
+                'Webhook event received: message_update',
+                'AI Processing started for Session #9281',
+                'Connection latency spike detected (120ms)',
+                'Database backup completed',
+                'Rate limit triggered: 192.168.1.5'
+            ];
+            const msg = msgs[Math.floor(Math.random() * msgs.length)];
+
+            const line = document.createElement('div');
+            line.innerHTML = `<span style="opacity:0.5;">[${now}]</span> <span style="color:${t.color}; font-weight:700;">${t.type}</span> ${msg}`;
+            logs.appendChild(line);
+            logs.scrollTop = logs.scrollHeight;
+            
+            if (logs.children.length > 50) logs.removeChild(logs.firstChild);
+        }
+
+        setInterval(addLog, 2000);
+        for(let i=0; i<10; i++) addLog(); // Initial fill
+
+        // Chat Logic
+        const chat = document.getElementById('chat-msgs');
+        const input = document.getElementById('chat-input');
+
+        window.sendMsg = () => {
+            const txt = input.value;
+            if(!txt) return;
+            
+            chat.innerHTML += `<div style="margin-bottom:8px; text-align:right;"><span style="color:#fff; font-weight:700;">Você:</span> ${txt}</div>`;
+            input.value = '';
+            chat.scrollTop = chat.scrollHeight;
+
+            setTimeout(() => {
+                chat.innerHTML += `<div style="margin-bottom:8px;"><span style="color:var(--neon-green); font-weight:700;">Suporte:</span> Um atendente humano responderá em breve. (Ticket #${Math.floor(Math.random()*9000)})</div>`;
+                chat.scrollTop = chat.scrollHeight;
+            }, 1000);
+        };
+    </script>
+
+</DashboardLayout>

@@ -1,0 +1,66 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const posts = [
+  { slug: 'lancamento', title: 'Lançamento do GetNexo – Assistente de Vendas WhatsApp 100% Grátis', date: '17 Jan 2026', excerpt: 'Depois de meses de desenvolvimento, o GetNexo está no ar. Zero mensalidade, zero nuvem, total controle.' },
+  { slug: 'n8n', title: 'Automação com n8n: integrar WhatsApp e fechar vendas automáticas', date: '18 Jan 2026', excerpt: 'Fluxos prontos que qualificam leads, enviam upsell, recuperam carrinho abandonado e vendem 24h.' },
+  { slug: 'wsl', title: 'Segurança no WSL: assistente de vendas IA em PC de 8GB', date: '19 Jan 2026', excerpt: 'Servidor local com Docker, Cloudflare Tunnel e firewall – zero portas abertas.' },
+  { slug: 'tunnel', title: 'Cloudflare Tunnel: expondo serviços locais de forma segura', date: '20 Jan 2026', excerpt: 'Túnel zero trust – a configuração exata que usamos em produção.' },
+  { slug: 'comparacao-blog', title: 'GetNexo vs Suri, AiSensy, BotZapIA – qual o melhor em 2026?', date: '21 Jan 2026', excerpt: 'Comparação honesta: custo, privacidade, risco de ban, performance.' },
+  { slug: 'casos-sucesso', title: 'Depoimentos: GetNexo aumentou vendas em até 300%', date: '22 Jan 2026', excerpt: 'Histórias de quem trocou nuvem paga por GetNexo.' },
+  { slug: 'faq-completo', title: 'FAQ: 20 dúvidas sobre assistente de vendas WhatsApp grátis', date: '23 Jan 2026', excerpt: 'Ban, instalação, limite de mensagens, privacidade – tudo respondido.' },
+  { slug: 'suporte-rapido', title: 'Suporte GetNexo: resolver 95% dos problemas em 2 min', date: '24 Jan 2026', excerpt: 'Erros comuns, prints, soluções rápidas.' },
+  { slug: 'programa-revenda', title: 'Revenda GetNexo: ganhe R$500 por cliente instalado', date: '25 Jan 2026', excerpt: 'Como agências estão lucrando R$2.500–10.000/mês.' },
+  { slug: 'futuro-ecommerce', title: 'O futuro do e-commerce no WhatsApp: self-hosted vai dominar', date: '26 Jan 2026', excerpt: 'Tendências, dados de mercado, por que nuvem está morrendo.' },
+  { slug: 'multiplos-numeros', title: 'Múltiplos números de WhatsApp no GetNexo sem risco de ban', date: '27 Jan 2026', excerpt: 'Configuração Docker multi-container + dicas de rotatividade.' },
+  { slug: 'upsell', title: 'Upsell automático no WhatsApp: +40% no ticket médio', date: '28 Jan 2026', excerpt: 'Fluxos n8n que sugerem produtos no momento certo.' },
+  { slug: 'carrinho-abandonado', title: 'Recuperação de carrinho abandonado via WhatsApp', date: '29 Jan 2026', excerpt: 'Script pronto que recupera até 60% dos carrinhos perdidos.' },
+  { slug: 'instalacao-video', title: 'Vídeo: instalando GetNexo em 10 minutos no Windows', date: '30 Jan 2026', excerpt: 'Do zero ao bot vendendo – tela real do processo.' },
+  { slug: 'privacidade-2026', title: 'Privacidade em 2026: nuvem é risco, self-hosted é o futuro', date: '31 Jan 2026', excerpt: 'Vazamentos, LGPD e por que GetNexo é a escolha segura.' }
+];
+---
+
+<Layout title="Blog GetNexo – 15 Artigos sobre Assistente de Vendas WhatsApp Grátis">
+  <section class="blog-hero">
+    <h1>Blog GetNexo</h1>
+    <p>15 artigos completos sobre assistente de vendas WhatsApp grátis, automação IA, n8n, Evolution API e tecnologia self-hosted.</p>
+  </section>
+
+  <section class="blog-list">
+    {posts.map(post => (
+      <article class="blog-card">
+        <h2>
+          <a href={`/blog/${post.slug}`}>
+            {post.title}
+          </a>
+        </h2>
+        <time>{post.date}</time>
+        <p>{post.excerpt}</p>
+        <a href={`/blog/${post.slug}`} class="read-more">
+          Ler mais →
+        </a>
+      </article>
+    ))}
+  </section>
+</Layout>
+
+<style>
+  .blog-hero { text-align: center; padding: 7rem 5% 4rem; background: linear-gradient(135deg, var(--dark), var(--gray)); }
+  .blog-hero h1 { font-size: 3.5rem; background: linear-gradient(90deg, var(--primary), var(--success)); -webkit-background-clip: text; color: transparent; margin: 0 0 1rem; }
+  .blog-hero p { color: var(--text); font-size: 1.3rem; max-width: 700px; margin: 0 auto; }
+  .blog-list { max-width: 1100px; margin: 4rem auto; padding: 0 5%; display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 2.5rem; }
+  .blog-card { background: rgba(30,41,59,0.8); backdrop-filter: blur(10px); border: 1px solid rgba(0,212,255,0.15); border-radius: 16px; padding: 2rem; transition: all 0.4s; }
+  .blog-card:hover { transform: translateY(-12px); border-color: var(--primary); box-shadow: 0 20px 40px rgba(0,212,255,0.2); }
+  .blog-card h2 { font-size: 1.4rem; margin: 0 0 0.8rem; line-height: 1.4; }
+  .blog-card h2 a { color: var(--light); text-decoration: none; }
+  .blog-card h2 a:hover { color: var(--primary); }
+  .blog-card time { font-size: 0.9rem; color: #64748b; display: block; margin-bottom: 1rem; }
+  .blog-card p { color: var(--text); margin: 0 0 1.2rem; line-height: 1.6; font-size: 0.95rem; }
+  .read-more { color: var(--success); font-weight: 600; text-decoration: none; }
+  .read-more:hover { text-decoration: underline; }
+  
+  @media (max-width: 768px) {
+    .blog-hero h1 { font-size: 2.5rem; }
+    .blog-list { grid-template-columns: 1fr; }
+  }
+</style>

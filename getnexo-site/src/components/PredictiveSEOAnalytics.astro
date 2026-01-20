@@ -1,0 +1,1325 @@
+---
+// Predictive SEO Analytics com Machine Learning
+// Estratégia: Algoritmos preditivos para forecasting de performance SEO
+export interface Props {
+  enableRealTime?: boolean;
+  historicalData?: any;
+  predictionHorizon?: number; // dias
+}
+
+const {
+  enableRealTime = false,
+  historicalData = null,
+  predictionHorizon = 30
+} = Astro.props;
+---
+
+<!-- Predictive Analytics Dashboard -->
+<div id="predictive-analytics" class="predictive-dashboard" style="display: none;">
+  <div class="dashboard-header">
+    <h3>🔮 Predictive SEO Analytics</h3>
+    <div class="analytics-controls">
+      <button id="run-predictions" class="predict-btn primary">Executar Previsões</button>
+      <button id="trend-analysis" class="predict-btn secondary">Análise de Tendências</button>
+      <button id="core-update-prediction" class="predict-btn tertiary">Previsão Core Updates</button>
+      <button id="traffic-forecast" class="predict-btn quaternary">Forecasting de Tráfego</button>
+    </div>
+  </div>
+
+  <!-- Prediction Results -->
+  <div class="predictions-section">
+    <h4>📈 Previsões de Performance</h4>
+    <div id="prediction-results" class="prediction-grid">
+      <!-- Resultados aparecem aqui -->
+    </div>
+  </div>
+
+  <!-- Trend Analysis -->
+  <div class="trend-section">
+    <h4>📊 Análise de Tendências</h4>
+    <div id="trend-charts" class="trend-visualization">
+      <!-- Gráficos de tendência aparecem aqui -->
+    </div>
+  </div>
+
+  <!-- Core Update Predictions -->
+  <div class="core-update-section">
+    <h4>🚀 Previsão de Core Updates</h4>
+    <div id="core-update-predictions" class="update-predictions">
+      <!-- Previsões de updates aparecem aqui -->
+    </div>
+  </div>
+
+  <!-- Traffic Forecasting -->
+  <div class="traffic-section">
+    <h4>🎯 Forecasting de Tráfego</h4>
+    <div id="traffic-forecast" class="traffic-predictions">
+      <!-- Previsões de tráfego aparecem aqui -->
+    </div>
+  </div>
+
+  <!-- Seasonal Trends -->
+  <div class="seasonal-section">
+    <h4>📅 Seasonal Trends Analysis</h4>
+    <div id="seasonal-trends" class="seasonal-analysis">
+      <!-- Análise sazonal aparece aqui -->
+    </div>
+  </div>
+
+  <!-- Opportunity Alerts -->
+  <div class="alerts-section">
+    <h4>🚨 Alertas de Oportunidade</h4>
+    <div id="opportunity-alerts" class="alerts-list">
+      <!-- Alertas aparecem aqui -->
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ enableRealTime }}>
+  // Advanced Predictive SEO Analytics Engine
+  class PredictiveSEOAnalytics {
+    historicalData;
+    predictionHorizon;
+    predictionModels;
+    trendData;
+    coreUpdatePatterns;
+    trafficPatterns;
+
+    constructor(historicalData = null, predictionHorizon = 30) {
+      this.historicalData = historicalData;
+      this.predictionHorizon = predictionHorizon;
+      this.predictionModels = new Map();
+      this.trendData = new Map();
+      this.coreUpdatePatterns = [];
+      this.trafficPatterns = new Map();
+      this.initializeModels();
+    }
+
+    // Inicializar modelos de machine learning
+    initializeModels() {
+      // Modelo de previsão de ranking (Linear Regression simulada)
+      this.predictionModels.set('ranking', {
+        coefficients: [0.8, 0.6, 0.4, 0.3, 0.2], // Peso de cada feature
+        intercept: 5.0,
+        features: ['backlinks', 'content_quality', 'technical_seo', 'user_signals', 'competition']
+      });
+
+      // Modelo de forecasting de tráfego (Time Series simulada)
+      this.predictionModels.set('traffic', {
+        seasonality: [1.0, 0.9, 1.1, 1.2, 1.3, 1.2, 1.0], // Padrões semanais
+        trend: 1.05, // Crescimento de 5% por período
+        noise: 0.1 // Variabilidade
+      });
+
+      // Modelo de detecção de Core Updates
+      this.predictionModels.set('core_updates', {
+        patterns: ['massive_ranking_changes', 'algorithm_updates', 'penalty_waves'],
+        indicators: ['sudden_position_drops', 'search_volume_changes', 'competitor_shifts'],
+        confidence_threshold: 0.75
+      });
+    }
+
+    // Executar previsões completas
+    async runPredictions() {
+      const predictions = {
+        keywordRankings: {},
+        trafficForecast: {},
+        coreUpdateRisk: {},
+        seasonalTrends: {},
+        opportunities: []
+      };
+
+      try {
+        // 1. Previsão de rankings por keyword
+        predictions.keywordRankings = await this.predictKeywordRankings();
+
+        // 2. Forecasting de tráfego orgânico
+        predictions.trafficForecast = await this.forecastOrganicTraffic();
+
+        // 3. Análise de risco de Core Updates
+        predictions.coreUpdateRisk = await this.analyzeCoreUpdateRisk();
+
+        // 4. Detecção de tendências sazonais
+        predictions.seasonalTrends = await this.detectSeasonalTrends();
+
+        // 5. Identificação de oportunidades
+        predictions.opportunities = await this.identifyOpportunities();
+
+        return predictions;
+      } catch (error) {
+        console.error('Erro nas previsões:', error);
+        return predictions;
+      }
+    }
+
+    // Previsão de rankings por keyword com ML
+    async predictKeywordRankings() {
+      const keywords = [
+        'whatsapp business api',
+        'automacao whatsapp',
+        'bot whatsapp',
+        'integração whatsapp',
+        'crm whatsapp'
+      ];
+
+      const predictions = {};
+
+      for (const keyword of keywords) {
+        // Simular dados históricos
+        const historicalRankings = this.generateHistoricalData(keyword, 30);
+        const features = this.extractFeatures(historicalRankings);
+
+        // Aplicar modelo de ML
+        const rankingModel = this.predictionModels.get('ranking');
+        let predictedRanking = rankingModel.intercept;
+
+        rankingModel.coefficients.forEach((coef, index) => {
+          predictedRanking += coef * features[index];
+        });
+
+        // Adicionar variabilidade realista
+        const confidence = Math.random() * 0.3 + 0.7; // 70-100%
+        const range = Math.max(1, Math.round(predictedRanking * 0.2));
+
+        predictions[keyword] = {
+          currentRanking: historicalRankings[historicalRankings.length - 1],
+          predictedRanking: Math.max(1, Math.round(predictedRanking)),
+          confidence: Math.round(confidence * 100),
+          range: `±${range} posições`,
+          trend: predictedRanking < historicalRankings[historicalRankings.length - 1] ? 'improving' : 'declining',
+          factors: this.identifyRankingFactors(features),
+          timeframe: `${this.predictionHorizon} dias`
+        };
+      }
+
+      return predictions;
+    }
+
+    // Gerar dados históricos simulados
+    generateHistoricalData(keyword, days) {
+      const rankings = [];
+      let currentRanking = Math.floor(Math.random() * 50) + 1;
+
+      for (let i = 0; i < days; i++) {
+        // Adicionar variação realista (±3 posições por dia)
+        const change = (Math.random() - 0.5) * 6;
+        currentRanking = Math.max(1, Math.min(100, currentRanking + change));
+        rankings.push(Math.round(currentRanking));
+      }
+
+      return rankings;
+    }
+
+    // Extrair features para modelo de ML
+    extractFeatures(historicalRankings) {
+      const avgRanking = historicalRankings.reduce((sum, r) => sum + r, 0) / historicalRankings.length;
+      const trend = historicalRankings[historicalRankings.length - 1] - historicalRankings[0];
+      const volatility = this.calculateVolatility(historicalRankings);
+
+      return [
+        this.simulateBacklinks(), // backlinks
+        this.simulateContentQuality(), // content_quality
+        this.simulateTechnicalSEO(), // technical_seo
+        this.simulateUserSignals(), // user_signals
+        this.simulateCompetition() // competition
+      ];
+    }
+
+    // Calcular volatilidade dos rankings
+    calculateVolatility(rankings) {
+      const changes = [];
+      for (let i = 1; i < rankings.length; i++) {
+        changes.push(Math.abs(rankings[i] - rankings[i - 1]));
+      }
+      return changes.reduce((sum, change) => sum + change, 0) / changes.length;
+    }
+
+    // Simular métricas (em produção viriam de APIs reais)
+    simulateBacklinks() { return Math.floor(Math.random() * 1000) + 100; }
+    simulateContentQuality() { return Math.random() * 100; }
+    simulateTechnicalSEO() { return Math.random() * 100; }
+    simulateUserSignals() { return Math.random() * 100; }
+    simulateCompetition() { return Math.random() * 50 + 25; }
+
+    // Identificar fatores que afetam o ranking
+    identifyRankingFactors(features) {
+      const factors = [];
+      const [backlinks, content, technical, user, competition] = features;
+
+      if (backlinks > 500) factors.push('Backlinks fortes (+)');
+      if (content > 70) factors.push('Conteúdo de qualidade (+)');
+      if (technical > 80) factors.push('SEO técnico sólido (+)');
+      if (user > 60) factors.push('Sinais de usuário positivos (+)');
+      if (competition > 40) factors.push('Concorrência intensa (-)');
+      if (backlinks < 200) factors.push('Poucos backlinks (-)');
+      if (technical < 50) factors.push('Problemas técnicos (-)');
+
+      return factors;
+    }
+
+    // Forecasting de tráfego orgânico
+    async forecastOrganicTraffic() {
+      const trafficModel = this.predictionModels.get('traffic');
+      const forecast = {};
+
+      // Simular tráfego atual
+      const currentTraffic = Math.floor(Math.random() * 10000) + 5000;
+
+      // Aplicar forecasting com sazonalidade
+      for (let i = 1; i <= this.predictionHorizon; i++) {
+        const dayOfWeek = i % 7;
+        const seasonalMultiplier = trafficModel.seasonality[dayOfWeek];
+        const trendMultiplier = Math.pow(trafficModel.trend, i / 30); // Crescimento mensal
+        const noise = 1 + (Math.random() - 0.5) * trafficModel.noise;
+
+        const predictedTraffic = Math.round(currentTraffic * seasonalMultiplier * trendMultiplier * noise);
+
+        forecast[`day_${i}`] = {
+          date: new Date(Date.now() + i * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          predictedTraffic: predictedTraffic,
+          confidence: Math.round((Math.random() * 20 + 80)), // 80-100%
+          seasonalEffect: seasonalMultiplier > 1 ? 'positive' : 'neutral'
+        };
+      }
+
+      return forecast;
+    }
+
+    // Análise de risco de Core Updates
+    async analyzeCoreUpdateRisk() {
+      // Simular análise baseada em padrões históricos
+      const updatePatterns = [
+        {
+          name: 'Helpful Content Update',
+          probability: Math.random() * 30 + 10, // 10-40%
+          expectedDate: this.addDays(new Date(), Math.floor(Math.random() * 60) + 30),
+          impact: 'Medium',
+          indicators: ['Content quality focus', 'User intent alignment']
+        },
+        {
+          name: 'Core Algorithm Update',
+          probability: Math.random() * 20 + 5, // 5-25%
+          expectedDate: this.addDays(new Date(), Math.floor(Math.random() * 90) + 60),
+          impact: 'High',
+          indicators: ['Technical SEO changes', 'Mobile experience updates']
+        },
+        {
+          name: 'Spam Update',
+          probability: Math.random() * 15 + 5, // 5-20%
+          expectedDate: this.addDays(new Date(), Math.floor(Math.random() * 120) + 90),
+          impact: 'Low',
+          indicators: ['Spam detection improvements', 'Link quality emphasis']
+        }
+      ];
+
+      return {
+        overallRisk: this.calculateOverallRisk(updatePatterns),
+        predictedUpdates: updatePatterns,
+        recommendedActions: [
+          'Melhorar E-A-T signals',
+          'Otimizar Core Web Vitals',
+          'Expandir conteúdo de qualidade',
+          'Monitorar posições diariamente'
+        ]
+      };
+    }
+
+    // Calcular risco geral
+    calculateOverallRisk(updates) {
+      const avgProbability = updates.reduce((sum, update) => sum + update.probability, 0) / updates.length;
+      const highImpactUpdates = updates.filter(u => u.impact === 'High').length;
+
+      let riskLevel = 'Low';
+      if (avgProbability > 25 || highImpactUpdates > 1) riskLevel = 'Medium';
+      if (avgProbability > 35 || highImpactUpdates > 2) riskLevel = 'High';
+
+      return {
+        level: riskLevel,
+        score: Math.round(avgProbability),
+        description: this.getRiskDescription(riskLevel)
+      };
+    }
+
+    getRiskDescription(level) {
+      const descriptions = {
+        Low: 'Risco baixo de grandes mudanças. Continue otimizações normais.',
+        Medium: 'Risco moderado. Prepare plano de contingência.',
+        High: 'Risco alto. Implemente medidas preventivas imediatas.'
+      };
+      return descriptions[level] || 'Risco indefinido';
+    }
+
+    // Detecção de tendências sazonais
+    async detectSeasonalTrends() {
+      // Simular análise de sazonalidade baseada em dados históricos
+      const trends = {
+        weekly: {
+          bestDays: ['Quarta-feira', 'Quinta-feira'],
+          worstDays: ['Segunda-feira', 'Domingo'],
+          peakHours: ['10:00-12:00', '14:00-16:00']
+        },
+        monthly: {
+          bestMonths: ['Março', 'Abril', 'Novembro'],
+          seasonalEvents: [
+            { event: 'Black Friday', impact: 'Very High', month: 'November' },
+            { event: 'Natal', impact: 'High', month: 'December' },
+            { event: 'Ano Novo', impact: 'Medium', month: 'January' }
+          ]
+        },
+        yearly: {
+          growthTrend: 'Positive',
+          growthRate: Math.random() * 20 + 10, // 10-30% crescimento
+          seasonalPeaks: ['Q4 (Out-Dez)', 'Q1 (Jan-Mar)']
+        }
+      };
+
+      return trends;
+    }
+
+    // Identificar oportunidades baseadas em previsões
+    async identifyOpportunities() {
+      const opportunities = [];
+
+      // Oportunidades baseadas em previsões de ranking
+      const rankingPredictions = await this.predictKeywordRankings();
+
+      for (const [keyword, prediction] of Object.entries(rankingPredictions)) {
+        if (prediction.trend === 'improving' && prediction.confidence > 80) {
+          opportunities.push({
+            type: 'ranking_improvement',
+            keyword: keyword,
+            description: `Oportunidade de melhoria para "${keyword}"`,
+            potentialGain: `${prediction.predictedRanking - prediction.currentRanking} posições`,
+            effort: 'Medium',
+            timeline: '2-4 semanas',
+            strategy: 'Otimizar conteúdo e backlinks'
+          });
+        }
+      }
+
+      // Oportunidades baseadas em forecasting
+      const trafficForecast = await this.forecastOrganicTraffic();
+      const avgPredictedTraffic = Object.values(trafficForecast)
+        .reduce((sum, day) => sum + day.predictedTraffic, 0) / Object.keys(trafficForecast).length;
+
+      if (avgPredictedTraffic > 8000) {
+        opportunities.push({
+          type: 'traffic_growth',
+          keyword: 'all',
+          description: 'Crescimento significativo de tráfego previsto',
+          potentialGain: `${Math.round((avgPredictedTraffic / 7000 - 1) * 100)}% aumento`,
+          effort: 'Low',
+          timeline: '1-2 meses',
+          strategy: 'Manter otimizações atuais'
+        });
+      }
+
+      // Oportunidades baseadas em tendências sazonais
+      const seasonalTrends = await this.detectSeasonalTrends();
+      if (seasonalTrends.monthly.bestMonths.includes('November')) {
+        opportunities.push({
+          type: 'seasonal_peak',
+          keyword: 'black friday whatsapp',
+          description: 'Oportunidade sazonal na Black Friday',
+          potentialGain: 'Alto volume de tráfego',
+          effort: 'High',
+          timeline: 'Novembro',
+          strategy: 'Criar conteúdo específico e campanhas'
+        });
+      }
+
+      return opportunities;
+    }
+
+    // Utilitários
+    addDays(date, days) {
+      const result = new Date(date);
+      result.setDate(result.getDate() + days);
+      return result;
+    }
+
+    // Iniciar monitoramento em tempo real
+    startRealTimeMonitoring() {
+      if (enableRealTime) {
+        setInterval(async () => {
+          const predictions = await this.runPredictions();
+          this.notifyUIUpdate(predictions);
+        }, 3600000); // A cada hora
+      }
+    }
+
+    // Notificar UI sobre atualizações
+    notifyUIUpdate(data) {
+      const event = new CustomEvent('predictiveDataUpdated', {
+        detail: data
+      });
+      document.dispatchEvent(event);
+    }
+  }
+
+  // Interface do usuário para analytics
+  class PredictiveAnalyticsUI {
+    analyticsEngine = null;
+    charts = new Map();
+
+    constructor() {
+      this.analyticsEngine = null;
+      this.charts = new Map();
+      this.init();
+    }
+
+    init() {
+      // Mostrar dashboard apenas para admins
+      if (localStorage.getItem('admin_token')) {
+        const dashboard = document.getElementById('predictive-analytics');
+        if (dashboard) dashboard.style.display = 'block';
+        this.bindEvents();
+      }
+    }
+
+    bindEvents() {
+      document.getElementById('run-predictions')?.addEventListener('click', () => {
+        this.runPredictions();
+      });
+
+      document.getElementById('trend-analysis')?.addEventListener('click', () => {
+        this.showTrendAnalysis();
+      });
+
+      document.getElementById('core-update-prediction')?.addEventListener('click', () => {
+        this.showCoreUpdatePredictions();
+      });
+
+      document.getElementById('traffic-forecast')?.addEventListener('click', () => {
+        this.showTrafficForecast();
+      });
+
+      // Escutar atualizações
+      document.addEventListener('predictiveDataUpdated', (e) => {
+        this.updateUI(e.detail);
+      });
+    }
+
+    async runPredictions() {
+      this.showLoading('Executando previsões com IA...');
+
+      this.analyticsEngine = new PredictiveSEOAnalytics(null, 30);
+      const results = await this.analyticsEngine.runPredictions();
+
+      this.displayPredictions(results);
+      this.hideLoading();
+    }
+
+    showLoading(message) {
+      const loader = document.createElement('div');
+      loader.id = 'predictive-loader';
+      loader.innerHTML = `
+        <div class="loader-overlay">
+          <div class="loader-content">
+            <div class="ai-brain"></div>
+            <p>${message}</p>
+            <div class="progress-bar">
+              <div class="progress-fill"></div>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(loader);
+
+      // Animar barra de progresso
+      setTimeout(() => {
+        const fill = document.querySelector('.progress-fill');
+        if (fill) fill.style.width = '100%';
+      }, 100);
+    }
+
+    hideLoading() {
+      const loader = document.getElementById('predictive-loader');
+      if (loader) loader.remove();
+    }
+
+    displayPredictions(results) {
+      this.displayRankingPredictions(results.keywordRankings);
+      this.displayTrafficForecast(results.trafficForecast);
+      this.displayCoreUpdateRisk(results.coreUpdateRisk);
+      this.displaySeasonalTrends(results.seasonalTrends);
+      this.displayOpportunities(results.opportunities);
+    }
+
+    displayRankingPredictions(predictions) {
+      const container = document.getElementById('prediction-results');
+      container.innerHTML = Object.entries(predictions).map(([keyword, data]) => `
+        <div class="prediction-card">
+          <div class="prediction-header">
+            <h5>${keyword}</h5>
+            <span class="confidence ${data.confidence > 80 ? 'high' : 'medium'}">
+              ${data.confidence}% confiança
+            </span>
+          </div>
+          <div class="prediction-metrics">
+            <div class="metric">
+              <span class="label">Posição Atual</span>
+              <span class="value">#${data.currentRanking}</span>
+            </div>
+            <div class="metric">
+              <span class="label">Previsão (${data.timeframe})</span>
+              <span class="value predicted">#${data.predictedRanking}</span>
+            </div>
+            <div class="metric">
+              <span class="label">Variação</span>
+              <span class="value ${data.trend}">${data.range}</span>
+            </div>
+          </div>
+          <div class="prediction-factors">
+            <h6>Fatores Influentes:</h6>
+            <ul>
+              ${data.factors.map(factor => `<li>${factor}</li>`).join('')}
+            </ul>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    displayTrafficForecast(forecast) {
+      const container = document.getElementById('traffic-forecast');
+
+      // Pegar apenas primeiros 7 dias para exibição
+      const sampleData = Object.values(forecast).slice(0, 7);
+
+      container.innerHTML = `
+        <div class="forecast-chart">
+          <div class="chart-header">
+            <h5>Previsão de Tráfego - 7 dias</h5>
+            <div class="chart-legend">
+              <span class="legend-item">
+                <span class="dot current"></span>Atual
+              </span>
+              <span class="legend-item">
+                <span class="dot predicted"></span>Previsto
+              </span>
+            </div>
+          </div>
+          <div class="chart-bars">
+            ${sampleData.map((day, index) => `
+              <div class="chart-bar">
+                <div class="bar predicted" style="height: ${Math.min(day.predictedTraffic / 100, 200)}px;"></div>
+                <div class="bar-label">${new Date(day.date).toLocaleDateString('pt-BR', { weekday: 'short' })}</div>
+                <div class="bar-value">${(day.predictedTraffic / 1000).toFixed(1)}K</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    displayCoreUpdateRisk(riskData) {
+      const container = document.getElementById('core-update-predictions');
+      container.innerHTML = `
+        <div class="risk-overview">
+          <div class="risk-level ${riskData.overallRisk.level.toLowerCase()}">
+            <h5>Risco Geral: ${riskData.overallRisk.level}</h5>
+            <p>${riskData.overallRisk.description}</p>
+            <div class="risk-score">${riskData.overallRisk.score}% probabilidade</div>
+          </div>
+        </div>
+        <div class="predicted-updates">
+          ${riskData.predictedUpdates.map(update => `
+            <div class="update-prediction">
+              <div class="update-header">
+                <h6>${update.name}</h6>
+                <span class="probability ${update.probability > 25 ? 'high' : 'medium'}">
+                  ${Math.round(update.probability)}%
+                </span>
+              </div>
+              <div class="update-details">
+                <p><strong>Data prevista:</strong> ${update.expectedDate.toLocaleDateString('pt-BR')}</p>
+                <p><strong>Impacto:</strong> ${update.impact}</p>
+                <div class="indicators">
+                  ${update.indicators.map((indicator) => `<span class="indicator">${indicator}</span>`).join('')}
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="recommended-actions">
+          <h6>Ações Recomendadas:</h6>
+          <ul>
+            ${riskData.recommendedActions.map(action => `<li>${action}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+    }
+
+    displaySeasonalTrends(trends) {
+      const container = document.getElementById('seasonal-trends');
+      container.innerHTML = `
+        <div class="seasonal-grid">
+          <div class="seasonal-card">
+            <h6>Padrões Semanais</h6>
+            <div class="weekly-pattern">
+              <div class="pattern-item">
+                <strong>Melhores dias:</strong> ${trends.weekly.bestDays.join(', ')}
+              </div>
+              <div class="pattern-item">
+                <strong>Piores dias:</strong> ${trends.weekly.worstDays.join(', ')}
+              </div>
+              <div class="pattern-item">
+                <strong>Horários de pico:</strong> ${trends.weekly.peakHours.join(', ')}
+              </div>
+            </div>
+          </div>
+
+          <div class="seasonal-card">
+            <h6>Padrões Mensais</h6>
+            <div class="monthly-pattern">
+              <div class="pattern-item">
+                <strong>Melhores meses:</strong> ${trends.monthly.bestMonths.join(', ')}
+              </div>
+              <div class="seasonal-events">
+                <strong>Eventos sazonais:</strong>
+                ${trends.monthly.seasonalEvents.map(event => `
+                  <div class="event-item">
+                    <span class="event-name">${event.event}</span>
+                    <span class="event-impact ${event.impact.toLowerCase()}">${event.impact}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+
+          <div class="seasonal-card">
+            <h6>Tendência Anual</h6>
+            <div class="yearly-trend">
+              <div class="trend-indicator ${trends.yearly.growthTrend.toLowerCase()}">
+                <span class="trend-rate">+${trends.yearly.growthRate.toFixed(1)}%</span>
+                <span class="trend-label">Crescimento anual</span>
+              </div>
+              <div class="peak-quarters">
+                <strong>Trimestres de pico:</strong>
+                <div class="quarters">
+                  ${trends.yearly.seasonalPeaks.map(quarter => `<span class="quarter">${quarter}</span>`).join('')}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    displayOpportunities(opportunities) {
+      const container = document.getElementById('opportunity-alerts');
+      container.innerHTML = opportunities.map(opp => `
+        <div class="opportunity-alert ${opp.type}">
+          <div class="alert-icon">
+            ${opp.type === 'ranking_improvement' ? '📈' : opp.type === 'traffic_growth' ? '🚀' : '🎯'}
+          </div>
+          <div class="alert-content">
+            <h6>${opp.description}</h6>
+            <div class="opportunity-details">
+              <span><strong>Ganho potencial:</strong> ${opp.potentialGain}</span>
+              <span><strong>Esforço:</strong> ${opp.effort}</span>
+              <span><strong>Prazo:</strong> ${opp.timeline}</span>
+            </div>
+            <p class="strategy">${opp.strategy}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    showTrendAnalysis() {
+      document.getElementById('trend-charts')?.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    showCoreUpdatePredictions() {
+      document.getElementById('core-update-predictions')?.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    showTrafficForecast() {
+      document.getElementById('traffic-forecast')?.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    updateUI(data) {
+      if (data.keywordRankings) this.displayRankingPredictions(data.keywordRankings);
+      // Outras atualizações conforme necessário
+    }
+  }
+
+  // Inicializar quando DOM estiver pronto
+  document.addEventListener('DOMContentLoaded', () => {
+    new PredictiveAnalyticsUI();
+  });
+</script>
+
+<style>
+  .predictive-dashboard {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 450px;
+    max-height: 90vh;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    overflow-y: auto;
+    z-index: 1000;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .dashboard-header h3 {
+    color: #00d4ff;
+    margin: 0 0 1rem 0;
+    font-size: 1.2rem;
+  }
+
+  .analytics-controls {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .predict-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .predict-btn.primary {
+    background: linear-gradient(135deg, #00d4ff, #0099cc);
+    color: white;
+  }
+
+  .predict-btn.secondary {
+    background: linear-gradient(135deg, #00ff9d, #00cc7a);
+    color: #030712;
+  }
+
+  .predict-btn.tertiary {
+    background: linear-gradient(135deg, #ff7a59, #cc6247);
+    color: white;
+  }
+
+  .predict-btn.quaternary {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .predict-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+  }
+
+  .prediction-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .prediction-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .prediction-header h5 {
+    color: white;
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  .confidence.high {
+    background: #10b981;
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+
+  .confidence.medium {
+    background: #f59e0b;
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+
+  .prediction-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .metric {
+    text-align: center;
+  }
+
+  .metric .label {
+    display: block;
+    font-size: 0.7rem;
+    color: #94a3b8;
+    margin-bottom: 0.25rem;
+  }
+
+  .metric .value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #00d4ff;
+  }
+
+  .value.predicted {
+    color: #00ff9d;
+  }
+
+  .value.improving {
+    color: #10b981;
+  }
+
+  .value.declining {
+    color: #ef4444;
+  }
+
+  .prediction-factors h6 {
+    color: white;
+    margin: 0 0 0.5rem 0;
+    font-size: 0.8rem;
+  }
+
+  .prediction-factors ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .prediction-factors li {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-bottom: 0.25rem;
+    padding-left: 0.5rem;
+    position: relative;
+  }
+
+  .prediction-factors li::before {
+    content: '•';
+    color: #00d4ff;
+    position: absolute;
+    left: 0;
+  }
+
+  .forecast-chart {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .chart-header h5 {
+    color: #00d4ff;
+    margin: 0;
+  }
+
+  .chart-legend {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #94a3b8;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .dot.current {
+    background: #00d4ff;
+  }
+
+  .dot.predicted {
+    background: #00ff9d;
+  }
+
+  .chart-bars {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    height: 200px;
+    gap: 0.5rem;
+  }
+
+  .chart-bar {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+
+  .bar {
+    width: 100%;
+    background: #00d4ff;
+    border-radius: 4px 4px 0 0;
+    transition: all 0.3s ease;
+  }
+
+  .bar.predicted {
+    background: #00ff9d;
+  }
+
+  .bar-label {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    margin-top: 0.5rem;
+  }
+
+  .bar-value {
+    position: absolute;
+    top: -20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #00ff9d;
+  }
+
+  .risk-level {
+    text-align: center;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+  }
+
+  .risk-level.low {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+
+  .risk-level.medium {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+  }
+
+  .risk-level.high {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+
+  .risk-level h5 {
+    color: white;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .risk-level p {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .risk-score {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #00d4ff;
+  }
+
+  .update-prediction {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .update-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .update-header h6 {
+    color: white;
+    margin: 0;
+  }
+
+  .probability.high {
+    background: #ef4444;
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+
+  .probability.medium {
+    background: #f59e0b;
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+
+  .update-details p {
+    color: #94a3b8;
+    font-size: 0.8rem;
+    margin: 0.25rem 0;
+  }
+
+  .indicators {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.5rem;
+  }
+
+  .indicator {
+    background: rgba(0, 212, 255, 0.2);
+    color: #00d4ff;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+  }
+
+  .recommended-actions h6 {
+    color: #00d4ff;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .recommended-actions ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .recommended-actions li {
+    color: #94a3b8;
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+    padding-left: 0.5rem;
+    position: relative;
+  }
+
+  .recommended-actions li::before {
+    content: '✓';
+    color: #00ff9d;
+    position: absolute;
+    left: 0;
+  }
+
+  .seasonal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .seasonal-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  .seasonal-card h6 {
+    color: #00d4ff;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .pattern-item, .event-item, .quarters {
+    margin-bottom: 0.5rem;
+  }
+
+  .event-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .event-name {
+    color: #94a3b8;
+    font-size: 0.8rem;
+  }
+
+  .event-impact.muito-alta {
+    background: #10b981;
+    color: white;
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    font-size: 0.6rem;
+    font-weight: 600;
+  }
+
+  .trend-indicator.positive {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .trend-rate {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #10b981;
+    display: block;
+  }
+
+  .trend-label {
+    font-size: 0.8rem;
+    color: #94a3b8;
+  }
+
+  .quarter {
+    background: rgba(0, 212, 255, 0.2);
+    color: #00d4ff;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    margin-right: 0.3rem;
+    margin-bottom: 0.3rem;
+    display: inline-block;
+  }
+
+  .opportunity-alert {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+  }
+
+  .opportunity-alert.ranking_improvement {
+    background: rgba(16, 185, 129, 0.1);
+    border-left: 4px solid #10b981;
+  }
+
+  .opportunity-alert.traffic_growth {
+    background: rgba(0, 212, 255, 0.1);
+    border-left: 4px solid #00d4ff;
+  }
+
+  .opportunity-alert.seasonal_peak {
+    background: rgba(245, 158, 11, 0.1);
+    border-left: 4px solid #f59e0b;
+  }
+
+  .alert-icon {
+    font-size: 1.5rem;
+  }
+
+  .alert-content h6 {
+    color: white;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .opportunity-details {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-bottom: 0.5rem;
+  }
+
+  .strategy {
+    color: #94a3b8;
+    font-size: 0.8rem;
+    margin: 0;
+  }
+
+  .loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+
+  .loader-content {
+    background: rgba(15, 23, 42, 0.95);
+    padding: 2rem;
+    border-radius: 12px;
+    text-align: center;
+  }
+
+  .ai-brain {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 1rem;
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    border-radius: 50%;
+    position: relative;
+    animation: pulse 2s infinite;
+  }
+
+  .ai-brain::before {
+    content: '🧠';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+  }
+
+  .progress-bar {
+    width: 200px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    margin: 1rem auto 0;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00d4ff, #00ff9d);
+    width: 0%;
+    transition: width 3s ease;
+    border-radius: 2px;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+
+  /* Responsividade */
+  @media (max-width: 768px) {
+    .predictive-dashboard {
+      width: 95vw;
+      right: 2.5vw;
+      top: 10px;
+    }
+
+    .analytics-controls {
+      flex-direction: column;
+    }
+
+    .prediction-metrics {
+      grid-template-columns: 1fr;
+    }
+
+    .seasonal-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,82 @@
+---
+import PanelLayout from '../../layouts/PanelLayout.astro';
+---
+
+<PanelLayout title="Faturamento">
+    <div class="billing-container">
+        <div class="current-plan">
+            <h2>Plano Atual</h2>
+            <div class="plan-card">
+                <div class="plan-header">
+                    <h3>Teste Grátis</h3>
+                    <span class="badge">Ativo até 28/01</span>
+                </div>
+                <div class="price">R$ 0,00<span>/mês</span></div>
+                <ul>
+                    <li>✅ 1 Domínio</li>
+                    <li>✅ IA Básica</li>
+                    <li>❌ Sem Automação Avançada</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="upgrade-options">
+            <h2>Melhore Seu Plano</h2>
+            <div class="plan-card pro">
+                <div class="plan-header">
+                    <h3>Professional</h3>
+                    <span class="badge best-value">Mais Popular</span>
+                </div>
+                <div class="price">R$ 97<span>/mês</span></div>
+                <p>Para quem quer vender de verdade.</p>
+                <ul>
+                    <li>✅ Domínios Ilimitados</li>
+                    <li>✅ IA Premium (Gemini/Grok)</li>
+                    <li>✅ Recuperação de Carrinho</li>
+                    <li>✅ Suporte Prioritário</li>
+                </ul>
+                <button class="btn-upgrade">MIGRAR AGORA</button>
+            </div>
+        </div>
+    </div>
+</PanelLayout>
+
+<style>
+    .billing-container { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-width: 900px; }
+    
+    .plan-card {
+        background: #1e293b;
+        border-radius: 12px;
+        padding: 2rem;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .plan-card.pro {
+        border: 1px solid #f59e0b;
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(30, 41, 59, 1) 100%);
+    }
+
+    .plan-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .plan-header h3 { margin: 0; color: #fff; }
+    .badge { background: #334155; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; color: #cbd5e1; }
+    .badge.best-value { background: #f59e0b; color: #000; font-weight: bold; }
+
+    .price { font-size: 2.5rem; font-weight: 700; color: #fff; margin-bottom: 1rem; }
+    .price span { font-size: 1rem; color: #64748b; font-weight: normal; }
+
+    ul { list-style: none; padding: 0; margin-bottom: 2rem; }
+    ul li { margin-bottom: 0.8rem; color: #cbd5e1; }
+
+    .btn-upgrade {
+        width: 100%;
+        background: #f59e0b;
+        color: #000;
+        border: none;
+        padding: 1rem;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 1.1rem;
+    }
+    .btn-upgrade:hover { opacity: 0.9; }
+</style>

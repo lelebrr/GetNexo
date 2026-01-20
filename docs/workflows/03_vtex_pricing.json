@@ -1,0 +1,76 @@
+{
+    "name": "03_VTEX_Pricing_API",
+    "nodes": [
+        {
+            "parameters": {
+                "path": "vtex/price",
+                "method": "GET"
+            },
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "url": "https://{accountName}.vtexcommercestable.com.br/api/pricing/pvt/price-sheet/{skuId}",
+                "authentication": "genericCredentialType",
+                "genericAuthType": "httpHeaderAuth"
+            },
+            "name": "VTEX API Request",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "keepOnlySet": true,
+                "values": {
+                    "string": [
+                        {
+                            "name": "price",
+                            "value": "={{$node[\"VTEX API Request\"].json[\"basePrice\"]}}"
+                        }
+                    ]
+                }
+            },
+            "name": "Format Response",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 1,
+            "position": [
+                650,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "VTEX API Request",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "VTEX API Request": {
+            "main": [
+                [
+                    {
+                        "node": "Format Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

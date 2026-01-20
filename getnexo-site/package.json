@@ -1,0 +1,32 @@
+{
+    "name": "getnexo-site",
+    "description": "GetNexo: SaaS Automation Platform",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "dev": "astro dev --host",
+        "start": "node ./dist/server/entry.mjs",
+        "build": "astro build",
+        "preview": "node ./dist/server/entry.mjs",
+        "test:perf": "npx lighthouse-ci --url=https://jetnexo.com.br --budget=performance:100,accessibility:100,seo:100"
+    },
+    "dependencies": {
+        "@astrojs/check": "^0.9.6",
+        "@astrojs/compiler": "^2.13.0",
+        "@astrojs/node": "8.3",
+        "@astrojs/partytown": "^2.0.0",
+        "@astrojs/react": "^3.6.3",
+        "@astrojs/sitemap": "^3.0.0",
+        "@astrojs/tailwind": "^5.1.5",
+        "@astrojs/vercel": "^7.5.0",
+        "@nanostores/react": "^1.0.0",
+        "astro": "^4.16.19",
+        "axios": "^1.6.0",
+        "nanostores": "^1.1.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "socket.io-client": "^4.8.3",
+        "tailwindcss": "^3.4.19",
+        "typescript": "^5.9.3"
+    }
+}

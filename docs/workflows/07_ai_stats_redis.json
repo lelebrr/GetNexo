@@ -1,0 +1,73 @@
+{
+    "name": "07_AI_Stats_Redis",
+    "nodes": [
+        {
+            "parameters": {},
+            "name": "Start",
+            "type": "n8n-nodes-base.start",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "incrby",
+                "key": "ai_tokens_total",
+                "value": "={{$json[\"tokens_used\"]}}"
+            },
+            "name": "Increment Tokens",
+            "type": "n8n-nodes-base.redis",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ],
+            "credentials": {
+                "redis": {
+                    "id": "YOUR_REDIS_ID",
+                    "name": "Redis Account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "incrbyfloat",
+                "key": "ai_cost_daily",
+                "value": "={{$json[\"request_cost\"]}}"
+            },
+            "name": "Increment Cost",
+            "type": "n8n-nodes-base.redis",
+            "typeVersion": 1,
+            "position": [
+                650,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Start": {
+            "main": [
+                [
+                    {
+                        "node": "Increment Tokens",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Increment Tokens": {
+            "main": [
+                [
+                    {
+                        "node": "Increment Cost",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

@@ -1,0 +1,748 @@
+---
+// AI-Powered Content Optimization System
+// Estratégia: IA generativa para otimização de conteúdo em tempo real
+export interface Props {
+  content: string;
+  keywords?: string[];
+  enableRealTime?: boolean;
+  targetAudience?: string;
+}
+
+const { } = Astro.props;
+---
+
+<!-- AI Content Analysis Dashboard (Admin Only) -->
+<div id="ai-content-optimizer" class="ai-optimizer-container">
+  <div class="optimizer-header">
+    <h3>🤖 AI Content Optimizer</h3>
+    <div class="optimizer-controls">
+      <button id="analyze-content" class="optimizer-btn primary">Analisar Conteúdo</button>
+      <button id="optimize-titles" class="optimizer-btn secondary">Otimizar Títulos</button>
+      <button id="check-trends" class="optimizer-btn tertiary">Trending Topics</button>
+    </div>
+  </div>
+
+  <div class="optimizer-results">
+    <div class="analysis-section">
+      <h4>📊 Análise de Conteúdo</h4>
+      <div id="content-score" class="score-display">
+        <div class="score-circle">
+          <span id="seo-score">--</span>
+          <span class="score-label">SEO Score</span>
+        </div>
+        <div class="score-details">
+          <div class="score-item">
+            <span>Comprimento ideal:</span>
+            <span id="length-check">Analisando...</span>
+          </div>
+          <div class="score-item">
+            <span>Keywords otimizadas:</span>
+            <span id="keyword-optimization">Analisando...</span>
+          </div>
+          <div class="score-item">
+            <span>Estrutura Hx:</span>
+            <span id="heading-structure">Analisando...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="suggestions-section">
+      <h4>💡 Sugestões da IA</h4>
+      <div id="ai-suggestions" class="suggestions-list">
+        <!-- Sugestões aparecem aqui -->
+      </div>
+    </div>
+
+    <div class="competitor-insights">
+      <h4>🎯 Insights Concorrentes</h4>
+      <div id="competitor-data" class="competitor-grid">
+        <!-- Dados de concorrentes aparecem aqui -->
+      </div>
+    </div>
+
+    <div class="trending-section">
+      <h4>📈 Trending Topics</h4>
+      <div id="trending-topics" class="trending-list">
+        <!-- Trending topics aparecem aqui -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI Content Enhancement Scripts -->
+<script is:inline>
+  // AI Content Optimization Engine
+  class AIContentOptimizer {
+    constructor(content, keywords = []) {
+      this.content = content;
+      this.keywords = keywords;
+      this.apiEndpoint = '/api/ai-content-optimize';
+      this.trendingCache = new Map();
+      this.competitorData = new Map();
+    }
+
+    // Análise completa de conteúdo com IA
+    async analyzeContent() {
+      const analysis = {
+        seoScore: 0,
+        suggestions: [],
+        optimizations: {},
+        competitorInsights: [],
+        trendingTopics: []
+      };
+
+      try {
+        // 1. Análise de SEO Score
+        analysis.seoScore = this.calculateSEOScore();
+
+        // 2. Sugestões de otimização baseadas em IA
+        analysis.suggestions = await this.generateAISuggestions();
+
+        // 3. Otimizações automáticas
+        analysis.optimizations = await this.generateOptimizations();
+
+        // 4. Insights de concorrentes
+        analysis.competitorInsights = await this.analyzeCompetitors();
+
+        // 5. Trending topics
+        analysis.trendingTopics = await this.getTrendingTopics();
+
+        return analysis;
+      } catch (error) {
+        console.error('Erro na análise de conteúdo:', error);
+        return analysis;
+      }
+    }
+
+    // Cálculo de SEO Score inteligente
+    calculateSEOScore() {
+      let score = 0;
+      const checks = {
+        length: this.content.length > 1500 && this.content.length < 2500,
+        keywords: this.checkKeywordOptimization(),
+        headings: this.checkHeadingStructure(),
+        readability: this.checkReadability(),
+        engagement: this.checkEngagementSignals()
+      };
+
+      Object.values(checks).forEach(check => {
+        if (check) score += 20;
+      });
+
+      return Math.min(100, score);
+    }
+
+    // Verificação de otimização de keywords
+    checkKeywordOptimization() {
+      const keywordDensity = this.keywords.reduce((count, keyword) => {
+        const regex = new RegExp(keyword, 'gi');
+        return count + (this.content.match(regex) || []).length;
+      }, 0);
+
+      const totalWords = this.content.split(' ').length;
+      const density = (keywordDensity / totalWords) * 100;
+
+      return density >= 0.5 && density <= 2.5;
+    }
+
+    // Verificação de estrutura de headings
+    checkHeadingStructure() {
+      const headingRegex = /^#{1,6}\s/m;
+      const headings = this.content.match(new RegExp(headingRegex, 'gm')) || [];
+      return headings.length >= 3;
+    }
+
+    // Análise de legibilidade
+    checkReadability() {
+      const sentences = this.content.split(/[.!?]+/).length;
+      const words = this.content.split(' ').length;
+      const avgWordsPerSentence = words / sentences;
+
+      return avgWordsPerSentence >= 10 && avgWordsPerSentence <= 25;
+    }
+
+    // Sinais de engajamento
+    checkEngagementSignals() {
+      const engagementPatterns = [
+        /\?/g,  // Perguntas
+        /!/g,   // Exclamações
+        /🎯|💡|📈|🚀/g,  // Emojis estratégicos
+        /como|gostaria|imagine|descubra/g  // Palavras de engajamento
+      ];
+
+      const engagementScore = engagementPatterns.reduce((score, pattern) => {
+        return score + (this.content.match(pattern) || []).length;
+      }, 0);
+
+      return engagementScore >= 5;
+    }
+
+    // Geração de sugestões com IA simulada
+    async generateAISuggestions() {
+      const suggestions = [];
+
+      // Sugestões baseadas em análise
+      if (this.content.length < 1500) {
+        suggestions.push({
+          type: 'length',
+          priority: 'high',
+          suggestion: 'Conteúdo muito curto. Adicione mais detalhes para melhor ranking.',
+          action: 'expandir'
+        });
+      }
+
+      if (!this.checkKeywordOptimization()) {
+        suggestions.push({
+          type: 'keywords',
+          priority: 'high',
+          suggestion: 'Densidade de keywords inadequada. Otimize naturalmente.',
+          action: 'otimizar'
+        });
+      }
+
+      if (!this.checkHeadingStructure()) {
+        suggestions.push({
+          type: 'structure',
+          priority: 'medium',
+          suggestion: 'Melhore a estrutura com mais headings H2/H3.',
+          action: 'reestruturar'
+        });
+      }
+
+      // Sugestões específicas para WhatsApp Business
+      if (this.content.includes('WhatsApp')) {
+        suggestions.push({
+          type: 'whatsapp',
+          priority: 'medium',
+          suggestion: 'Adicione mais detalhes sobre automação e casos de uso.',
+          action: 'especializar'
+        });
+      }
+
+      return suggestions;
+    }
+
+    // Geração de otimizações automáticas
+    async generateOptimizations() {
+      return {
+        titleSuggestions: await this.generateTitleSuggestions(),
+        metaDescription: this.generateMetaDescription(),
+        internalLinks: this.suggestInternalLinks(),
+        schemaMarkup: this.suggestSchemaImprovements()
+      };
+    }
+
+    // Sugestões de títulos otimizados
+    async generateTitleSuggestions() {
+      const baseTitle = this.content.split('\n')[0].replace(/^#+\s*/, '');
+      const suggestions = [
+        `Como ${baseTitle} - Guia Completo 2024`,
+        `${baseTitle}: Tudo que Você Precisa Saber`,
+        `Domine ${baseTitle} em 2024 | GetNexo`,
+        `${baseTitle} - Estratégias Avançadas`,
+        `O Guia Definitivo de ${baseTitle}`
+      ];
+
+      return suggestions.slice(0, 3);
+    }
+
+    // Meta description otimizada
+    generateMetaDescription() {
+      const firstParagraph = this.content.split('\n\n')[1] || this.content.substring(0, 160);
+      const cleanText = firstParagraph.replace(/[#*`]/g, '').trim();
+
+      if (cleanText.length > 155) {
+        return cleanText.substring(0, 152) + '...';
+      }
+
+      return cleanText;
+    }
+
+    // Sugestões de links internos
+    suggestInternalLinks() {
+      const suggestions = [];
+
+      if (this.content.includes('WhatsApp') && !this.content.includes('/integracoes')) {
+        suggestions.push({
+          text: 'integrações WhatsApp',
+          url: '/integracoes',
+          anchor: 'Ver todas as integrações'
+        });
+      }
+
+      if (this.content.includes('preços') && !this.content.includes('/precos')) {
+        suggestions.push({
+          text: 'planos GetNexo',
+          url: '/precos',
+          anchor: 'Confira nossos preços'
+        });
+      }
+
+      return suggestions;
+    }
+
+    // Sugestões de Schema markup
+    suggestSchemaImprovements() {
+      const suggestions = [];
+
+      if (this.content.includes('tutorial') || this.content.includes('guia')) {
+        suggestions.push('HowTo Schema - Para guias passo a passo');
+      }
+
+      if (this.content.includes('preços') || this.content.includes('comparação')) {
+        suggestions.push('Offer Schema - Para produtos e preços');
+      }
+
+      if (this.content.includes('perguntas') || this.content.includes('FAQ')) {
+        suggestions.push('FAQ Schema - Para páginas de perguntas frequentes');
+      }
+
+      return suggestions;
+    }
+
+    // Análise de concorrentes (simulada)
+    async analyzeCompetitors() {
+      // Simulação de dados de concorrentes
+      return [
+        {
+          competitor: 'Concorrente A',
+          position: 3,
+          keywords: ['whatsapp business', 'automacao whatsapp'],
+          backlinks: 245,
+          contentLength: 3200
+        },
+        {
+          competitor: 'Concorrente B',
+          position: 7,
+          keywords: ['bot whatsapp', 'chatbot whatsapp'],
+          backlinks: 189,
+          contentLength: 2800
+        }
+      ];
+    }
+
+    // Trending topics (simulados baseados em dados reais)
+    async getTrendingTopics() {
+      return [
+        {
+          topic: 'WhatsApp Business API 2024',
+          growth: '+45%',
+          searches: '12.5K/mês',
+          opportunity: 'Alta'
+        },
+        {
+          topic: 'Automação WhatsApp IA',
+          growth: '+67%',
+          searches: '8.9K/mês',
+          opportunity: 'Muito Alta'
+        },
+        {
+          topic: 'Integração WhatsApp CRM',
+          growth: '+23%',
+          searches: '15.2K/mês',
+          opportunity: 'Alta'
+        }
+      ];
+    }
+  }
+
+  // Interface do usuário para otimização
+  class OptimizerUI {
+    constructor() {
+      this.optimizer = null;
+      this.init();
+    }
+
+    init() {
+      // Mostrar otimizador apenas para admins (simulação)
+      if (localStorage.getItem('admin_token')) {
+        document.getElementById('ai-content-optimizer').style.display = 'block';
+        this.bindEvents();
+      }
+    }
+
+    bindEvents() {
+      document.getElementById('analyze-content')?.addEventListener('click', () => {
+        this.runAnalysis();
+      });
+
+      document.getElementById('optimize-titles')?.addEventListener('click', () => {
+        this.showTitleOptimizations();
+      });
+
+      document.getElementById('check-trends')?.addEventListener('click', () => {
+        this.showTrendingTopics();
+      });
+    }
+
+    async runAnalysis() {
+      const content = document.body.innerText;
+      const keywords = ['whatsapp', 'automação', 'ia', 'getnexo'];
+
+      this.optimizer = new AIContentOptimizer(content, keywords);
+      const analysis = await this.optimizer.analyzeContent();
+
+      this.displayResults(analysis);
+    }
+
+    displayResults(analysis) {
+      // Atualizar score
+      document.getElementById('seo-score').textContent = analysis.seoScore;
+
+      // Atualizar checks
+      document.getElementById('length-check').textContent =
+        analysis.seoScore >= 80 ? '✅ Otimizado' : '⚠️ Precisa melhorar';
+
+      document.getElementById('keyword-optimization').textContent =
+        analysis.suggestions.some(s => s.type === 'keywords') ? '⚠️ Otimizar' : '✅ Bom';
+
+      document.getElementById('heading-structure').textContent =
+        analysis.suggestions.some(s => s.type === 'structure') ? '⚠️ Melhorar' : '✅ Estruturado';
+
+      // Mostrar sugestões
+      this.displaySuggestions(analysis.suggestions);
+
+      // Mostrar concorrentes
+      this.displayCompetitors(analysis.competitorInsights);
+
+      // Mostrar trending
+      this.displayTrending(analysis.trendingTopics);
+    }
+
+    displaySuggestions(suggestions) {
+      const container = document.getElementById('ai-suggestions');
+      container.innerHTML = suggestions.map(suggestion => `
+        <div class="suggestion-item ${suggestion.priority}">
+          <div class="suggestion-header">
+            <span class="priority-${suggestion.priority}">${suggestion.priority.toUpperCase()}</span>
+            <span class="suggestion-type">${suggestion.type}</span>
+          </div>
+          <p>${suggestion.suggestion}</p>
+          <button class="apply-suggestion" data-action="${suggestion.action}">
+            Aplicar Sugestão
+          </button>
+        </div>
+      `).join('');
+    }
+
+    displayCompetitors(competitors) {
+      const container = document.getElementById('competitor-data');
+      container.innerHTML = competitors.map(comp => `
+        <div class="competitor-card">
+          <h5>${comp.competitor}</h5>
+          <div class="competitor-metrics">
+            <span>Posição: ${comp.position}</span>
+            <span>Backlinks: ${comp.backlinks}</span>
+            <span>Comprimento: ${comp.contentLength} palavras</span>
+          </div>
+          <div class="competitor-keywords">
+            ${comp.keywords.map(kw => `<span class="keyword-tag">${kw}</span>`).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    displayTrending(trending) {
+      const container = document.getElementById('trending-topics');
+      container.innerHTML = trending.map(topic => `
+        <div class="trending-item">
+          <div class="trending-header">
+            <h5>${topic.topic}</h5>
+            <span class="growth ${topic.growth.startsWith('+') ? 'positive' : 'negative'}">
+              ${topic.growth}
+            </span>
+          </div>
+          <div class="trending-metrics">
+            <span>Buscas: ${topic.searches}</span>
+            <span class="opportunity ${topic.opportunity.toLowerCase()}">${topic.opportunity}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    showTitleOptimizations() {
+      if (this.optimizer) {
+        this.optimizer.generateOptimizations().then(optimizations => {
+          alert(`Sugestões de títulos:\n${optimizations.titleSuggestions.join('\n')}`);
+        });
+      }
+    }
+
+    showTrendingTopics() {
+      if (this.optimizer) {
+        this.optimizer.getTrendingTopics().then(trending => {
+          const topics = trending.map(t => `${t.topic} (${t.growth})`).join('\n');
+          alert(`Trending Topics:\n${topics}`);
+        });
+      }
+    }
+  }
+
+  // Inicializar quando DOM estiver pronto
+  document.addEventListener('DOMContentLoaded', () => {
+    new OptimizerUI();
+  });
+</script>
+
+<style>
+  .ai-optimizer-container {
+    display: none;
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    width: 400px;
+    max-height: 80vh;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    overflow-y: auto;
+    z-index: 1000;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .optimizer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .optimizer-header h3 {
+    color: #00d4ff;
+    margin: 0;
+    font-size: 1.2rem;
+  }
+
+  .optimizer-controls {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .optimizer-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .optimizer-btn.primary {
+    background: #00d4ff;
+    color: #030712;
+  }
+
+  .optimizer-btn.secondary {
+    background: #00ff9d;
+    color: #030712;
+  }
+
+  .optimizer-btn.tertiary {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .optimizer-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+  }
+
+  .score-display {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .score-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: conic-gradient(#00d4ff 0% 75%, #333 75% 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+  }
+
+  .score-circle span:first-child {
+    font-size: 1.5rem;
+  }
+
+  .score-label {
+    font-size: 0.7rem;
+    opacity: 0.8;
+  }
+
+  .score-details {
+    flex: 1;
+  }
+
+  .score-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .score-item span:first-child {
+    color: #94a3b8;
+  }
+
+  .suggestion-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .suggestion-item.high {
+    border-color: #ef4444;
+  }
+
+  .suggestion-item.medium {
+    border-color: #f59e0b;
+  }
+
+  .suggestion-item.low {
+    border-color: #10b981;
+  }
+
+  .suggestion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .priority-high { color: #ef4444; font-weight: 700; }
+  .priority-medium { color: #f59e0b; font-weight: 700; }
+  .priority-low { color: #10b981; font-weight: 700; }
+
+  .suggestion-type {
+    font-size: 0.7rem;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+
+  .apply-suggestion {
+    background: #00d4ff;
+    color: #030712;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 0.5rem;
+  }
+
+  .competitor-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .competitor-card h5 {
+    color: #00d4ff;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .competitor-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-bottom: 0.5rem;
+  }
+
+  .keyword-tag {
+    background: rgba(0, 212, 255, 0.2);
+    color: #00d4ff;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    margin-right: 0.3rem;
+    margin-bottom: 0.3rem;
+    display: inline-block;
+  }
+
+  .trending-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .trending-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .trending-header h5 {
+    color: white;
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  .growth.positive {
+    color: #10b981;
+    font-weight: 700;
+  }
+
+  .growth.negative {
+    color: #ef4444;
+    font-weight: 700;
+  }
+
+  .trending-metrics {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #94a3b8;
+  }
+
+  .opportunity {
+    font-weight: 600;
+  }
+
+  .opportunity.muito-alta {
+    color: #10b981;
+  }
+
+  .opportunity.alta {
+    color: #00d4ff;
+  }
+
+  .opportunity.média {
+    color: #f59e0b;
+  }
+
+  /* Responsividade */
+  @media (max-width: 768px) {
+    .ai-optimizer-container {
+      width: 90vw;
+      right: 5vw;
+      top: 70px;
+    }
+
+    .score-display {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+</style>

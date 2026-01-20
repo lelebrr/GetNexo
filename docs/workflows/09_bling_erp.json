@@ -1,0 +1,53 @@
+{
+    "name": "09_Bling_ERP_Invoice",
+    "nodes": [
+        {
+            "parameters": {},
+            "name": "Start",
+            "type": "n8n-nodes-base.start",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "url": "https://bling.com.br/Api/v2/pedido/json/",
+                "method": "POST",
+                "bodyParametersUi": {
+                    "parameter": [
+                        {
+                            "name": "apikey",
+                            "value": "YOUR_BLING_API_KEY"
+                        },
+                        {
+                            "name": "xml",
+                            "value": "={{$json[\"order_xml\"]}}"
+                        }
+                    ]
+                }
+            },
+            "name": "Bling Create Order",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Start": {
+            "main": [
+                [
+                    {
+                        "node": "Bling Create Order",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

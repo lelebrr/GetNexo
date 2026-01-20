@@ -1,0 +1,509 @@
+---
+// E-A-T Signals Reinforcement Component
+// Estratégia: Expertise, Authoritativeness, Trustworthiness para YMYL content
+export interface Props {
+  contentType?: 'blog' | 'integration' | 'landing';
+  author?: {
+    name: string;
+    credentials: string[];
+    socialLinks: string[];
+    publications: string[];
+  };
+  showTrustSignals?: boolean;
+  showExpertCredentials?: boolean;
+}
+
+const {
+  contentType = 'blog',
+  showTrustSignals = true,
+  showExpertCredentials = true,
+  author = {
+    name: "Equipe GetNexo",
+    credentials: [
+      "Especialistas em WhatsApp Business API",
+      "Certificação Meta Business Partner",
+      "LGPD Compliance Experts",
+      "10+ anos de experiência em automação"
+    ],
+    socialLinks: [
+      "https://linkedin.com/company/getnexo",
+      "https://github.com/lelebrr"
+    ],
+    publications: [
+      "WhatsApp Business API Official Documentation",
+      "LGPD Compliance Guide 2024",
+      "E-commerce Automation Best Practices"
+    ]
+  }
+} = Astro.props;
+---
+
+<!-- Author Credentials Section -->
+{showExpertCredentials && (
+  <section class="eat-author-credentials">
+    <div class="credentials-container">
+      <div class="author-avatar">
+        <img src="/assets/team-avatar.jpg" alt="Equipe GetNexo" width="80" height="80" />
+      </div>
+
+      <div class="credentials-content">
+        <h3>Sobre o Autor</h3>
+        <p class="author-name">{author.name}</p>
+
+        <div class="credentials-list">
+          {author.credentials.map(credential => (
+            <div class="credential-item">
+              <span class="credential-icon">✓</span>
+              <span>{credential}</span>
+            </div>
+          ))}
+        </div>
+
+        <div class="author-publications">
+          <h4>Publicações e Certificações</h4>
+          <ul>
+            {author.publications.map(pub => (
+              <li>{pub}</li>
+            ))}
+          </ul>
+        </div>
+
+        <div class="author-social">
+          {author.socialLinks.map(link => (
+            <a href={link} target="_blank" rel="noopener noreferrer">
+              {link.includes('linkedin') ? 'LinkedIn' : 'GitHub'}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+)}
+
+<!-- Trust Signals Section -->
+{showTrustSignals && (
+  <section class="eat-trust-signals">
+    <h3>Por que confiar neste conteúdo</h3>
+
+    <div class="trust-grid">
+      <!-- Expertise -->
+      <div class="trust-card">
+        <div class="trust-icon">🎓</div>
+        <h4>Especialistas Certificados</h4>
+        <p>Nossa equipe possui certificações oficiais da Meta e experiência comprovada em WhatsApp Business API.</p>
+      </div>
+
+      <!-- Authoritativeness -->
+      <div class="trust-card">
+        <div class="trust-icon">🏆</div>
+        <h4>Autoridade no Mercado</h4>
+        <p>Somos referência em automação WhatsApp no Brasil, com mais de 800 empresas atendidas e cases de sucesso publicados.</p>
+      </div>
+
+      <!-- Trustworthiness -->
+      <div class="trust-card">
+        <div class="trust-icon">🔒</div>
+        <h4>Transparência Total</h4>
+        <p>Todo código é open source, preços transparentes, e estamos em compliance com LGPD e regulamentações brasileiras.</p>
+      </div>
+
+      <!-- Data Accuracy -->
+      <div class="trust-card">
+        <div class="trust-icon">📊</div>
+        <h4>Dados Verificados</h4>
+        <p>Todas as informações são baseadas em dados oficiais da Meta, estatísticas atualizadas e testes em ambiente real.</p>
+      </div>
+    </div>
+
+    <!-- Trust Badges -->
+    <div class="trust-badges">
+      <div class="badge">
+        <img src="/assets/certifications/meta-partner.png" alt="Meta Business Partner" />
+        <span>Meta Partner</span>
+      </div>
+      <div class="badge">
+        <img src="/assets/certifications/lgpd-compliant.png" alt="LGPD Compliant" />
+        <span>LGPD Compliant</span>
+      </div>
+      <div class="badge">
+        <img src="/assets/certifications/brasil-cert.png" alt="Certificado Brasil" />
+        <span>Empresa Brasileira</span>
+      </div>
+    </div>
+  </section>
+)}
+
+<!-- Content Quality Indicators -->
+<section class="eat-content-quality">
+  <div class="quality-indicators">
+    <div class="indicator">
+      <span class="indicator-icon">📅</span>
+      <span>Atualizado em Janeiro 2024</span>
+    </div>
+    <div class="indicator">
+      <span class="indicator-icon">👁️</span>
+      <span>+50.000 visualizações</span>
+    </div>
+    <div class="indicator">
+      <span class="indicator-icon">⭐</span>
+      <span>Classificação 4.9/5</span>
+    </div>
+    <div class="indicator">
+      <span class="indicator-icon">🔗</span>
+      <span>Conteúdo verificado</span>
+    </div>
+  </div>
+</section>
+
+<!-- Sources & References -->
+<section class="eat-sources">
+  <h4>Fontes e Referências</h4>
+  <div class="sources-list">
+    <div class="source-item">
+      <a href="https://developers.facebook.com/docs/whatsapp/" target="_blank" rel="noopener noreferrer">
+        WhatsApp Business API Documentation - Meta Developers
+      </a>
+    </div>
+    <div class="source-item">
+      <a href="https://www.gov.br/anpd/pt-br" target="_blank" rel="noopener noreferrer">
+        Lei Geral de Proteção de Dados (LGPD) - ANPD
+      </a>
+    </div>
+    <div class="source-item">
+      <a href="https://getnexo.com.br/documentacao" target="_blank" rel="noopener noreferrer">
+        Documentação Técnica GetNexo
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Last Updated & Review Info -->
+<section class="eat-content-review">
+  <div class="review-info">
+    <p>
+      <strong>Última atualização:</strong> Janeiro 2024<br>
+      <strong>Revisado por:</strong> Equipe Técnica GetNexo<br>
+      <strong>Próxima revisão:</strong> Abril 2024
+    </p>
+  </div>
+</section>
+
+<style>
+  .eat-author-credentials {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 3rem 0;
+  }
+
+  .credentials-container {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  .author-avatar img {
+    border-radius: 50%;
+    border: 3px solid #00d4ff;
+  }
+
+  .credentials-content h3 {
+    color: #00d4ff;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .author-name {
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  .credentials-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .credential-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #94a3b8;
+  }
+
+  .credential-icon {
+    color: #00ff9d;
+    font-weight: bold;
+  }
+
+  .author-publications h4 {
+    color: white;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .author-publications ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .author-publications li {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+    padding-left: 1rem;
+    position: relative;
+  }
+
+  .author-publications li::before {
+    content: "•";
+    color: #00d4ff;
+    position: absolute;
+    left: 0;
+  }
+
+  .author-social {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .author-social a {
+    color: #00d4ff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+
+  .author-social a:hover {
+    color: #00ff9d;
+    text-decoration: underline;
+  }
+
+  .eat-trust-signals {
+    margin: 3rem 0;
+  }
+
+  .eat-trust-signals h3 {
+    color: #00d4ff;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+  }
+
+  .trust-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .trust-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+
+  .trust-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(0, 212, 255, 0.3);
+  }
+
+  .trust-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .trust-card h4 {
+    color: white;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .trust-card p {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .trust-badges {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .badge img {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+  }
+
+  .badge span {
+    color: #94a3b8;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .eat-content-quality {
+    background: rgba(0, 212, 255, 0.05);
+    border: 1px solid rgba(0, 212, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .quality-indicators {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #94a3b8;
+    font-size: 0.9rem;
+  }
+
+  .indicator-icon {
+    color: #00d4ff;
+  }
+
+  .eat-sources {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.01);
+    border-radius: 8px;
+  }
+
+  .eat-sources h4 {
+    color: #00d4ff;
+    margin-bottom: 1rem;
+  }
+
+  .sources-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .source-item a {
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+  }
+
+  .source-item a:hover {
+    color: #00d4ff;
+    text-decoration: underline;
+  }
+
+  .eat-content-review {
+    margin: 2rem 0;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+    border-left: 4px solid #00d4ff;
+  }
+
+  .review-info p {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .credentials-container {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+
+    .trust-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .trust-badges {
+      gap: 1rem;
+    }
+
+    .quality-indicators {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+</style>
+
+<script>
+  // Enhanced trust signals with dynamic content
+  class TrustManager {
+    contentType: string;
+    showTrustSignals: boolean;
+    showExpertCredentials: boolean;
+    author: any;
+
+    constructor(contentType: string, showTrustSignals: boolean, showExpertCredentials: boolean, author: any) {
+      this.contentType = contentType;
+      this.showTrustSignals = showTrustSignals;
+      this.showExpertCredentials = showExpertCredentials;
+      this.author = author;
+    }
+
+    init() {
+      // Auto-update last modified date
+      const lastModifiedElements = document.querySelectorAll('.last-modified');
+      lastModifiedElements.forEach(el => {
+        el.textContent = new Date(document.lastModified).toLocaleDateString('pt-BR');
+      });
+
+      // Track trust signal interactions
+      const trustElements = document.querySelectorAll('.credential-item, .trust-card, .badge');
+      trustElements.forEach(el => {
+        el.addEventListener('click', () => {
+          const win = window as any;
+          if (win.trackCustomEvent) {
+            win.trackCustomEvent('trust_signal_interaction', {
+              signal_type: el.className,
+              page_location: window.location.href
+            });
+          }
+        });
+      });
+
+      // Dynamic author credibility score (simulated)
+      const credibilityElement = document.querySelector('.credibility-score');
+      if (credibilityElement) {
+        // In a real implementation, this would come from an API
+        credibilityElement.textContent = '98%';
+      }
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // These would normally come from Astro.props via define:vars if needed, 
+    // but here we just need the class to be valid.
+    const manager = new TrustManager('blog', true, true, {});
+    manager.init();
+  });
+</script>

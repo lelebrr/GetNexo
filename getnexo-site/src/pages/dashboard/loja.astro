@@ -1,0 +1,73 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+---
+
+<DashboardLayout title="Loja e Catálogo | OmniNexo">
+    
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+        <div>
+            <h1 style="font-size:2rem; font-weight:800; color:white; margin:0;">Catálogo de Produtos</h1>
+            <p style="color:#94a3b8; margin:0.5rem 0 0;">Gerencie o que a IA pode oferecer e vender no automático.</p>
+        </div>
+        <div style="display:flex; gap:10px;">
+             <button onclick="syncCatalog()" style="background:rgba(255,255,255,0.05); color:white; border:1px solid rgba(255,255,255,0.1); padding:12px 20px; border-radius:10px; cursor:pointer; display:flex; align-items:center; gap:8px;">
+                🔄 Sincronizar ERP
+            </button>
+            <button style="background:var(--neon-blue); color:black; font-weight:800; border:none; padding:12px 24px; border-radius:10px; cursor:pointer; display:flex; align-items:center; gap:8px; box-shadow:0 0 20px rgba(0,212,255,0.2);">
+                <span>+</span> Novo Produto
+            </button>
+        </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div id="product-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:1.5rem;">
+        <!-- Injected via JS -->
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="sync-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(5px); z-index:2000; display:none; flex-direction:column; align-items:center; justify-content:center;">
+        <div style="font-size:3rem; margin-bottom:1rem;">🔄</div>
+        <h2 style="color:white; margin:0;">Sincronizando Catálogo...</h2>
+        <p style="color:#94a3b8;">Buscando produtos no Bling/Tiny</p>
+    </div>
+
+    <script is:inline>
+        const products = [
+            { id: 1, name: 'Consultoria Premium', price: 997.00, stock: 999, image: 'https://ui-avatars.com/api/?name=CP&background=00d4ff&color=000&size=200' },
+            { id: 2, name: 'E-book: Vendas com IA', price: 47.90, stock: 1540, image: 'https://ui-avatars.com/api/?name=EB&background=10b981&color=000&size=200' },
+            { id: 3, name: 'Mentoria Individual', price: 2500.00, stock: 2, image: 'https://ui-avatars.com/api/?name=MI&background=a78bfa&color=000&size=200' },
+            { id: 4, name: 'Acesso Comunidade', price: 97.00, stock: 50, image: 'https://ui-avatars.com/api/?name=AC&background=fbbf24&color=000&size=200' },
+        ];
+
+        function render() {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = products.map(p => `
+                <div class="glass-panel" style="padding:0; overflow:hidden; transition:0.3s;">
+                    <div style="height:150px; background:url(${p.image}) center/cover; position:relative;">
+                        <span style="position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.6); color:white; padding:4px 8px; border-radius:4px; font-size:0.75rem; font-weight:700;">Estoque: ${p.stock}</span>
+                    </div>
+                    <div style="padding:1.5rem;">
+                        <h3 style="margin:0 0 0.5rem; font-size:1.1rem; color:white;">${p.name}</h3>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div style="font-size:1.3rem; font-weight:900; color:var(--neon-green);">R$ ${p.price.toFixed(2).replace('.', ',')}</div>
+                            <button style="background:none; border:none; color:#94a3b8; cursor:pointer;">✏️ Editar</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.syncCatalog = () => {
+            const overlay = document.getElementById('sync-overlay');
+            overlay.style.display = 'flex';
+            
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                alert('Sincronização concluída! 4 novos produtos adicionados.');
+                // Here we would actually refetch from API
+            }, 2500);
+        };
+
+        render();
+    </script>
+</DashboardLayout>

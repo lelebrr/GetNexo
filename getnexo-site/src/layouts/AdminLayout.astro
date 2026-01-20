@@ -1,0 +1,245 @@
+---
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+const nonce = Astro.locals.nonce;
+---
+
+<!doctype html>
+<html lang="pt-BR">
+	<head>
+		<meta charset="UTF-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+		<meta name="generator" content={Astro.generator} />
+		<title>{title} | Admin Nexus</title>
+	</head>
+	<body class="admin-body">
+		<div class="sidebar">
+			<div class="logo">
+				NEXUS<span class="dot">.</span>
+			</div>
+			
+			<nav class="menu">
+				<div class="category">MAIN</div>
+				<a href="/admin" class="active"><span class="icon">📊</span> Dashboard</a>
+				<a href="/admin?tab=content"><span class="icon">📝</span> Conteúdo</a>
+				<a href="/ara"><span class="icon">🤖</span> IA (Ara/Kira)</a>
+				
+				<div class="category">GROWTH</div>
+				<a href="/admin?tab=strategy"><span class="icon">⚔️</span> Estratégia</a>
+				<a href="/admin?tab=marketing"><span class="icon">📢</span> Marketing</a>
+				<a href="/admin?tab=ab"><span class="icon">⚖️</span> A/B Tests</a>
+				
+				<div class="category">TECHNICAL</div>
+				<a href="/admin?tab=security"><span class="icon">🛡️</span> Segurança</a>
+				<a href="/admin?tab=performance"><span class="icon">⚡</span> Performance</a>
+				<a href="/admin?tab=logs"><span class="icon">📋</span> Logs</a>
+				<a href="/admin?tab=backup"><span class="icon">💾</span> Backup</a>
+				
+				<div class="category">CONFIG</div>
+				<a href="/admin?tab=users"><span class="icon">👥</span> Usuários</a>
+				<a href="/admin?tab=integrations"><span class="icon">🔌</span> Integrações</a>
+				<a href="/admin?tab=config"><span class="icon">⚙️</span> Configs</a>
+				<a href="/admin?tab=downloads"><span class="icon">📥</span> Downloads</a>
+				<a href="/admin?tab=notifications"><span class="icon">🔔</span> Notificações</a>
+
+				<div class="category">SYSTEM</div>
+				<a href="/" target="_blank"><span class="icon">↗</span> Ver Site</a>
+				<a href="#" class="logout"><span class="icon">🚪</span> Logout</a>
+			</nav>
+
+			<!-- Global Admin Scripts -->
+			<script src="/custom/js/command_palette.js" is:inline nonce={nonce}></script>
+			<script src="/custom/js/admin_sounds.js" is:inline nonce={nonce}></script>
+			<script src="/custom/js/holo_agent.js" is:inline nonce={nonce}></script>
+
+			<div class="user-profile">
+				<div class="avatar">L</div>
+				<div class="info">
+					<span class="name">Leandro</span>
+					<span class="role">Supreme Admin</span>
+				</div>
+			</div>
+		</div>
+
+		<main class="content">
+			<header>
+				<h1>{title}</h1>
+				<div class="header-actions">
+					<span class="status-indicator online">SYSTEM ONLINE</span>
+					<span class="time" id="clock">00:00</span>
+				</div>
+			</header>
+			
+			<div class="scroll-area">
+				<slot />
+			</div>
+		</main>
+
+		<script nonce={nonce}>
+			function updateClock() {
+				const now = new Date();
+				const time = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+				const el = document.getElementById('clock');
+				if (el) el.innerText = time;
+			}
+			setInterval(updateClock, 1000);
+			updateClock();
+		</script>
+	</body>
+</html>
+
+<style is:global>
+	:root {
+		--bg: #050505;
+		--sidebar: #0A0A0A;
+		--border: #222;
+		--accent: #FF0033;
+		--text: #eee;
+		--text-muted: #666;
+	}
+
+	* { box-sizing: border-box; margin: 0; padding: 0; }
+
+	body {
+		font-family: 'Inter', sans-serif;
+		background: var(--bg);
+		color: var(--text);
+		height: 100vh;
+		display: flex;
+		overflow: hidden;
+	}
+
+	/* Sidebar */
+	.sidebar {
+		width: 250px;
+		background: var(--sidebar);
+		border-right: 1px solid var(--border);
+		display: flex;
+		flex-direction: column;
+		padding: 1.5rem;
+	}
+
+	.logo {
+		font-family: 'JetBrains Mono', monospace;
+		font-weight: 800;
+		font-size: 1.5rem;
+		margin-bottom: 3rem;
+		letter-spacing: -1px;
+	}
+	
+	.dot { color: var(--accent); }
+
+	.menu {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		flex: 1;
+	}
+
+	.category {
+		font-size: 0.7rem;
+		color: var(--text-muted);
+		font-weight: bold;
+		margin-top: 1.5rem;
+		margin-bottom: 0.5rem;
+		letter-spacing: 1px;
+	}
+
+	.menu a {
+		color: #999;
+		text-decoration: none;
+		padding: 0.75rem 1rem;
+		border-radius: 6px;
+		font-size: 0.9rem;
+		transition: 0.2s;
+		display: flex;
+		align-items: center;
+	}
+
+	.menu a:hover, .menu a.active {
+		background: #151515;
+		color: white;
+		border-left: 2px solid var(--accent);
+	}
+
+	.logout { color: #555 !important; margin-top: auto; }
+	.logout:hover { color: #ff4444 !important; }
+
+	.user-profile {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid var(--border);
+	}
+
+	.avatar {
+		width: 35px;
+		height: 35px;
+		background: #222;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-weight: bold;
+		color: white;
+	}
+
+	.info { display: flex; flex-direction: column; }
+	.name { font-size: 0.9rem; font-weight: 600; }
+	.role { font-size: 0.7rem; color: var(--text-muted); }
+
+	/* Main Content */
+	.content {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+	}
+
+	header {
+		height: 70px;
+		border-bottom: 1px solid var(--border);
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0 2rem;
+	}
+
+	h1 { font-size: 1.2rem; }
+
+	.header-actions {
+		display: flex;
+		align-items: center;
+		gap: 1.5rem;
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 0.8rem;
+	}
+
+	.status-indicator {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		color: #0f0;
+	}
+	
+	.status-indicator::before {
+		content: '';
+		width: 8px;
+		height: 8px;
+		background: #0f0;
+		border-radius: 50%;
+		box-shadow: 0 0 10px #0f0;
+	}
+
+	.scroll-area {
+		flex: 1;
+		overflow-y: auto;
+		padding: 2rem;
+	}
+</style>

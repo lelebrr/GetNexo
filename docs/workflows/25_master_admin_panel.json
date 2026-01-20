@@ -1,0 +1,138 @@
+{
+    "name": "25_Master_Admin_Panel",
+    "nodes": [
+        {
+            "parameters": {
+                "path": "admin-panel",
+                "formTitle": "GetNexo Master Admin",
+                "formDescription": "Provision new clients instantly.",
+                "formFields": {
+                    "values": [
+                        {
+                            "displayName": "Client Slug (No spaces)",
+                            "name": "slug",
+                            "required": true
+                        },
+                        {
+                            "displayName": "Admin Email",
+                            "name": "email",
+                            "type": "email",
+                            "required": true
+                        },
+                        {
+                            "displayName": "Plan",
+                            "name": "plan",
+                            "type": "dropdown",
+                            "options": {
+                                "values": [
+                                    {
+                                        "name": "Starter",
+                                        "value": "starter"
+                                    },
+                                    {
+                                        "name": "Pro",
+                                        "value": "pro"
+                                    },
+                                    {
+                                        "name": "Reseller",
+                                        "value": "reseller"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "name": "Admin Form",
+            "type": "n8n-nodes-base.n8nFormTrigger",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "=CREATE DATABASE chatwoot_{{$json[\"slug\"]}};\nCREATE USER {{$json[\"slug\"]}} WITH ENCRYPTED PASSWORD '{{$json[\"slug\"]}}_secure_pass';\nGRANT ALL PRIVILEGES ON DATABASE chatwoot_{{$json[\"slug\"]}} TO {{$json[\"slug\"]}};"
+            },
+            "name": "Provision DB",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                500,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "postgres_cred_id",
+                    "name": "Postgres Connection"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "mode": "json",
+                "json": "={\n  \"plan\": \"{{$json[\"plan\"]}}\",\n  \"email\": \"{{$json[\"email\"]}}\",\n  \"created_at\": \"{{$now}}\",\n  \"status\": \"active\"\n}",
+                "key": "=tenant:{{$json[\"slug\"]}}:config"
+            },
+            "name": "Set Redis Config",
+            "type": "n8n-nodes-base.redis",
+            "typeVersion": 1,
+            "position": [
+                700,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "text",
+                "responseBody": "=✅ Client '{{$json[\"slug\"]}}' provisioned successfully!\nPlan: {{$json[\"plan\"]}}\nDB: chatwoot_{{$json[\"slug\"]}}",
+                "options": {}
+            },
+            "name": "Success Page",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                900,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Admin Form": {
+            "main": [
+                [
+                    {
+                        "node": "Provision DB",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Provision DB": {
+            "main": [
+                [
+                    {
+                        "node": "Set Redis Config",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Set Redis Config": {
+            "main": [
+                [
+                    {
+                        "node": "Success Page",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

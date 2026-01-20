@@ -1,0 +1,170 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { competitorData } from '../../data/competitorData';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  return competitorData.map((comp) => ({
+    params: { competitor: comp.slug },
+    props: { comp },
+  }));
+}
+
+const { comp } = Astro.props;
+
+if (!comp) {
+  return Astro.redirect('/comparativo');
+}
+
+const title = `GetNexo vs ${comp.name}: Comparativo Completo 2026 | Qual o melhor?`;
+const description = `Pensando em usar ${comp.name}? Veja este comparativo detalhado. Descubra porque o GetNexo é a melhor alternativa ao ${comp.name} para empresas brasileiras. Preços, funcionalidades e suporte.`;
+const keywords = `getnexo vs ${comp.slug}, alternativa ${comp.slug}, ${comp.slug} preço brasil, api whatsapp ${comp.slug} vs getnexo, migrar de ${comp.slug}`;
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  
+  <!-- Battle Hero -->
+  <section class="battle-hero relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-[#0f172a] to-black z-[-1]"></div>
+    
+    <div class="container mx-auto px-6 max-w-5xl py-20 text-center relative z-10">
+      <div class="hero-badge mb-8">Comparativo Oficial 2026</div>
+      
+      <div class="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 mb-12">
+        <!-- Competitor -->
+        <div class="text-center opacity-60 grayscale hover:grayscale-0 transition duration-500">
+          <div class="text-4xl md:text-5xl font-black mb-2" style={`color: ${comp.color}`}>{comp.name}</div>
+          <p class="text-sm font-mono text-slate-400">{comp.type}</p>
+        </div>
+
+        <div class="text-3xl font-black text-slate-600 italic">VS</div>
+
+        <!-- GetNexo -->
+        <div class="text-center scale-110">
+          <div class="text-5xl md:text-6xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-r from-[#00d4ff] to-[#00ff9d]">GetNexo</div>
+          <p class="text-sm font-mono text-[#00d4ff]">The AI Powerhouse</p>
+        </div>
+      </div>
+
+      <h1 class="text-2xl md:text-3xl font-bold text-white mb-6">
+        Por que empresas estão trocando {comp.name} pelo GetNexo?
+      </h1>
+      <p class="text-lg text-slate-400 max-w-3xl mx-auto">
+        {comp.whySwitch}
+      </p>
+    </div>
+  </section>
+
+  <!-- Side by Side Comparison -->
+  <section class="py-20 bg-[#050912]">
+    <div class="container mx-auto px-6 max-w-6xl">
+      <div class="grid md:grid-cols-2 gap-8">
+        
+        <!-- Competitor Card (Red/Neutral) -->
+        <div class="glass-panel p-8 border-t-4 border-slate-600 relative overflow-hidden">
+          <div class="absolute top-0 right-0 p-4 opacity-10 text-6xl font-black">{comp.name[0]}</div>
+          <h3 class="text-2xl font-bold text-slate-300 mb-6">{comp.name}</h3>
+          
+          <ul class="space-y-6">
+            <li class="comp-item negative">
+              <span class="label">Modelo de Preço</span>
+              <span class="value">{comp.comparison.priceModel}</span>
+            </li>
+            <li class="comp-item negative">
+              <span class="label">Setup e Instalação</span>
+              <span class="value">{comp.comparison.setupTime}</span>
+            </li>
+            <li class="comp-item neutral">
+              <span class="label">Interface</span>
+              <span class="value">{comp.comparison.interface}</span>
+            </li>
+            <li class="comp-item negative">
+              <span class="label">Suporte</span>
+              <span class="value">{comp.comparison.support}</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- GetNexo Card (Green/Winner) -->
+        <div class="glass-panel p-8 border-t-4 border-[#00ff9d] bg-[#00ff9d]/5 relative overflow-hidden scale-105 shadow-2xl shadow-[#00ff9d]/10 z-10">
+          <div class="absolute top-0 right-0 p-2 bg-[#00ff9d] text-black text-xs font-bold rounded-bl-xl shadow-lg">VENCEDOR 🏆</div>
+          <h3 class="text-3xl font-bold text-white mb-6">GetNexo</h3>
+          
+          <ul class="space-y-6">
+            <li class="comp-item positive">
+              <span class="label">Modelo de Preço</span>
+              <span class="value">{comp.getnexoAdvantage.priceModel}</span>
+            </li>
+            <li class="comp-item positive">
+              <span class="label">Setup e Instalação</span>
+              <span class="value">{comp.getnexoAdvantage.setupTime}</span>
+            </li>
+            <li class="comp-item positive">
+              <span class="label">Interface</span>
+              <span class="value">{comp.getnexoAdvantage.interface}</span>
+            </li>
+            <li class="comp-item positive">
+              <span class="label">Suporte</span>
+              <span class="value">{comp.getnexoAdvantage.support}</span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Deep Dive Content -->
+  <section class="py-20 bg-[#0a0f1a]">
+    <div class="container mx-auto px-6 max-w-4xl">
+      <div class="prose prose-invert prose-lg max-w-none">
+        
+        <h2>O Veredito Final: {comp.verdict}</h2>
+        <p>
+          Embora o <strong>{comp.name}</strong> seja uma ferramenta conhecida no mercado de {comp.type}, ele falha em entregar o que o mercado brasileiro mais precisa: 
+          Agilidade, Custo em Reais e Funcionalidades Nativas (como PIX).
+        </p>
+        
+        <h3>Principais Pontos de Dor no {comp.name}</h3>
+        <ul>
+          {comp.painPoints.map(pain => (
+            <li class="text-red-300"><strong>{pain}:</strong> Isso gera atrito na sua operação e reduz sua margem de lucro.</li>
+          ))}
+        </ul>
+
+        <h3>A Vantagem Desleal do GetNexo</h3>
+        <p>
+          Ao migrar para o GetNexo, você não está apenas trocando de software. Você está atualizando sua empresa para a era da <strong>IA Generativa</strong>.
+          Enquanto o {comp.name} foca em conectar cabos, nós focamos em fechar vendas.
+        </p>
+
+        <div class="not-prose mt-12 p-8 bg-gradient-to-r from-blue-900/40 to-[#00ff9d]/10 rounded-2xl border border-[#00ff9d]/20 text-center">
+          <h3 class="text-2xl font-bold text-white mb-4">Migração Gratuita</h3>
+          <p class="text-slate-300 mb-8">
+            Nossa equipe ajuda você a importar seus contatos e fluxos do {comp.name} para o GetNexo. Sem dor de cabeça.
+          </p>
+          <a href="/criar-bot" class="btn-primary-glow">Iniciar Migração Agora</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  .battle-hero { padding: 4rem 0 2rem; }
+  .hero-badge { background: rgba(255, 255, 255, 0.05); color: #94a3b8; padding: 0.5rem 1.2rem; border-radius: 50px; font-weight: 700; display: inline-block; font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; }
+  
+  .comp-item { display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .comp-item .label { color: #94a3b8; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; }
+  .comp-item .value { font-weight: 700; text-align: right; max-width: 60%; }
+  
+  .comp-item.positive .value { color: #00ff9d; }
+  .comp-item.negative .value { color: #f87171; }
+  .comp-item.neutral .value { color: #cbd5e1; }
+
+  .btn-primary-glow { display: inline-block; background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1rem 2.5rem; border-radius: 12px; font-weight: 800; text-decoration: none; transition: 0.3s; box-shadow: 0 5px 20px rgba(0, 255, 157, 0.3); }
+  .btn-primary-glow:hover { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(0, 255, 157, 0.5); }
+</style>

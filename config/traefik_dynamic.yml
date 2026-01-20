@@ -1,0 +1,28 @@
+http:
+  middlewares:
+    mtls-auth:
+      basicAuth:
+        users:
+          - "admin:$apr1$H6uskkkW$IgXLP6ew.bdOb.h9.Q9q.1" # admin / admin (Security Placeholder)
+    
+    # Real mTLS requires certificate authority setup
+    # clientAuth:
+    #   caFiles:
+    #     - /etc/traefik/certs/ca.crt
+    #   clientAuthType: RequireAndVerifyClientCert
+
+  routers:
+    secure-api:
+      rule: "Host(`secure.getnexo.com.br`)"
+      service: "secure-service"
+      middlewares:
+        - "mtls-auth"
+      tls: {}
+
+tcp:
+  routers:
+    secure-db:
+      rule: "HostSNI(`db.getnexo.com.br`)"
+      service: "postgres"
+      tls:
+        passthrough: true

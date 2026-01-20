@@ -1,0 +1,1281 @@
+// AR/VR Content Optimization System
+// Estratégia: Realidade aumentada e virtual para e-commerce
+
+---
+const enableAR = true;
+const enableVR = true;
+const productId = 'demo-product';
+const arEnabled = true;
+---
+
+<!-- AR/VR Experience Panel -->
+<div id="ar-vr-panel" class="ar-vr-container" style="display: none;">
+  <div class="panel-header">
+    <h3>🥽 AR/VR Commerce Experience</h3>
+    <div class="ar-vr-controls">
+      <button id="start-ar-experience" class="ar-btn primary">Iniciar AR</button>
+      <button id="start-vr-showroom" class="ar-btn secondary">Showroom VR</button>
+      <button id="qr-generator" class="ar-btn tertiary">Gerar QR Code</button>
+    </div>
+  </div>
+
+  <!-- AR Experience Interface -->
+  <div class="ar-experience" id="ar-experience">
+    <div class="ar-preview">
+      <div class="ar-camera-view">
+        <video id="ar-camera" autoplay playsinline muted></video>
+        <canvas id="ar-overlay" class="ar-overlay"></canvas>
+        <div class="ar-instructions">
+          <p>Posicione o produto no espaço desejado</p>
+          <div class="ar-hint">🎯 Alinhe o marcador para começar</div>
+        </div>
+      </div>
+
+      <div class="ar-controls">
+        <button id="capture-ar" class="ar-control-btn">📸 Capturar</button>
+        <button id="place-product" class="ar-control-btn">📦 Colocar Produto</button>
+        <button id="rotate-product" class="ar-control-btn">🔄 Rotacionar</button>
+        <button id="scale-product" class="ar-control-btn">📏 Escalar</button>
+      </div>
+    </div>
+
+    <div class="ar-product-info">
+      <h4>Produto em Destaque</h4>
+      <div class="product-details">
+        <div class="product-image">
+          <img src="/assets/products/whatsapp-api.jpg" alt="WhatsApp Business API" />
+        </div>
+        <div class="product-specs">
+          <h5>WhatsApp Business API</h5>
+          <p class="product-description">
+            Plataforma completa de automação WhatsApp com IA integrada. 100% self-hosted.
+          </p>
+          <div class="product-features">
+            <span class="feature-tag">🤖 IA Integrada</span>
+            <span class="feature-tag">🔒 Self-Hosted</span>
+            <span class="feature-tag">📱 Mobile First</span>
+            <span class="feature-tag">⚡ Alta Performance</span>
+          </div>
+          <div class="product-price">
+            <span class="price">R$ 97/mês</span>
+            <span class="original-price">R$ 197/mês</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VR Showroom Interface -->
+  <div class="vr-showroom" id="vr-showroom" style="display: none;">
+    <div class="vr-header">
+      <h4>🏪 Showroom Virtual GetNexo</h4>
+      <div class="vr-controls">
+        <button id="vr-fullscreen" class="vr-btn">⛶ Fullscreen</button>
+        <button id="vr-reset" class="vr-btn">🔄 Reset View</button>
+        <button id="vr-info" class="vr-btn">ℹ️ Info</button>
+      </div>
+    </div>
+
+    <div class="vr-scene">
+      <canvas id="vr-canvas" class="vr-canvas"></canvas>
+      <div class="vr-navigation">
+        <button id="move-forward" class="nav-btn">↑</button>
+        <div class="nav-side">
+          <button id="move-left" class="nav-btn">←</button>
+          <button id="move-right" class="nav-btn">→</button>
+        </div>
+        <button id="move-back" class="nav-btn">↓</button>
+      </div>
+
+      <div class="vr-products">
+        <div class="vr-product-item" data-product="whatsapp-api">
+          <div class="product-marker">📱</div>
+          <span>WhatsApp API</span>
+        </div>
+        <div class="vr-product-item" data-product="automation">
+          <div class="product-marker">🤖</div>
+          <span>Automação</span>
+        </div>
+        <div class="vr-product-item" data-product="analytics">
+          <div class="product-marker">📊</div>
+          <span>Analytics</span>
+        </div>
+        <div class="vr-product-item" data-product="integrations">
+          <div class="product-marker">🔗</div>
+          <span>Integrações</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="vr-product-details">
+      <div id="vr-selected-product">
+        <h5>Selecione um produto no showroom</h5>
+        <p>Clique nos marcadores para ver detalhes</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Code Generator -->
+  <div class="qr-generator" id="qr-generator-panel">
+    <h4>📱 QR Codes para AR Experience</h4>
+    <div class="qr-options">
+      <div class="qr-option">
+        <input type="radio" id="product-qr" name="qr-type" value="product" checked />
+        <label for="product-qr">Produto Específico</label>
+      </div>
+      <div class="qr-option">
+        <input type="radio" id="showroom-qr" name="qr-type" value="showroom" />
+        <label for="showroom-qr">Showroom Completo</label>
+      </div>
+      <div class="qr-option">
+        <input type="radio" id="demo-qr" name="qr-type" value="demo" />
+        <label for="demo-qr">Demo Interativo</label>
+      </div>
+    </div>
+
+    <div class="qr-preview">
+      <div id="qr-code-display" class="qr-code">
+        <!-- QR Code será gerado aqui -->
+      </div>
+      <div class="qr-info">
+        <p><strong>Escaneie para AR Experience</strong></p>
+        <p>Use seu smartphone para visualizar produtos em realidade aumentada</p>
+        <button id="download-qr" class="download-btn">📥 Download QR</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AR/VR Analytics -->
+  <div class="ar-vr-analytics">
+    <h4>📊 AR/VR Performance</h4>
+    <div class="analytics-grid">
+      <div class="analytics-card">
+        <h5>Experiências Iniciadas</h5>
+        <div class="metric-large" id="ar-sessions">1,247</div>
+        <div class="metric-change positive">+18%</div>
+      </div>
+
+      <div class="analytics-card">
+        <h5>Conversões AR</h5>
+        <div class="metric-large" id="ar-conversions">23%</div>
+        <div class="metric-change positive">+5%</div>
+      </div>
+
+      <div class="analytics-card">
+        <h5>Tempo Médio AR</h5>
+        <div class="metric-large" id="ar-avg-time">4:32</div>
+        <div class="metric-change positive">+12%</div>
+      </div>
+
+      <div class="analytics-card">
+        <h5>Engajamento VR</h5>
+        <div class="metric-large" id="vr-engagement">87%</div>
+        <div class="metric-change positive">+9%</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Global declarations for external libraries and APIs
+  declare var THREE: any;
+  declare var QRCode: any;
+
+  // WebXR API declarations
+  interface XR extends EventTarget {
+    isSessionSupported(mode: string): Promise<boolean>;
+    requestSession(mode: string, options?: any): Promise<any>;
+  }
+
+  interface Navigator {
+    xr: XR;
+  }
+
+  // AR/VR Commerce Engine
+  class ARVRCommerceEngine {
+    arScene: {
+      camera: any;
+      renderer: any;
+      scene: any;
+      product: any;
+      markerDetected: boolean;
+      placed: boolean;
+    };
+    vrScene: {
+      scene: any;
+      camera: any;
+      renderer: any;
+      objects: any[];
+      controls: any;
+    } | null;
+    arSession: any;
+    productModels: any;
+    qrGenerator: any;
+    currentMode: string;
+
+    constructor() {
+      this.arScene = {
+        camera: null,
+        renderer: null,
+        scene: null,
+        product: null,
+        markerDetected: false,
+        placed: false
+      };
+      this.vrScene = null;
+      this.arSession = null;
+      this.productModels = {};
+      this.qrGenerator = null;
+      this.currentMode = 'ar'; // 'ar' or 'vr'
+
+      this.init();
+    }
+
+    init() {
+      this.initializeAR();
+      this.initializeVR();
+      this.initializeQRGenerator();
+      this.bindEvents();
+      this.loadProductModels();
+    }
+
+    // Inicializar AR usando WebXR ou simulada
+    initializeAR() {
+      // Verificar suporte a WebXR
+      if ('xr' in navigator) {
+        (navigator as any).xr.isSessionSupported('immersive-ar').then((supported: boolean) => {
+          if (supported) {
+            this.setupWebXR();
+          } else {
+            this.setupFallbackAR();
+          }
+        });
+      } else {
+        this.setupFallbackAR();
+      }
+    }
+
+    // Setup WebXR para AR real
+    async setupWebXR() {
+      try {
+        const session = await (navigator as any).xr.requestSession('immersive-ar', {
+          requiredFeatures: ['hit-test', 'dom-overlay'],
+          domOverlay: { root: document.getElementById('ar-experience') }
+        });
+
+        this.arSession = session;
+        this.setupARScene();
+
+        session.addEventListener('end', () => {
+          this.endARSession();
+        });
+
+      } catch (error) {
+        console.error('Erro ao iniciar WebXR:', error);
+        this.setupFallbackAR();
+      }
+    }
+
+    // Setup AR Scene for WebXR
+    setupARScene() {
+      // This method would set up the AR scene for WebXR
+      // For now, it's a placeholder
+      console.log('AR Scene setup for WebXR');
+    }
+
+    // AR fallback usando câmera + canvas
+    setupFallbackAR() {
+      const video = document.getElementById('ar-camera') as HTMLVideoElement;
+      const canvas = document.getElementById('ar-overlay') as HTMLCanvasElement;
+
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+          .then((stream) => {
+            if (video) video.srcObject = stream;
+            this.setupCanvasAR(canvas, video);
+          })
+          .catch((error) => {
+            console.error('Erro ao acessar câmera:', error);
+            this.showARPlaceholder();
+          });
+      } else {
+        this.showARPlaceholder();
+      }
+    }
+
+    // Setup AR com canvas simulada
+    setupCanvasAR(canvas: HTMLCanvasElement, video: HTMLVideoElement) {
+      if (!canvas || !video) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      
+      canvas.width = video.videoWidth || 640;
+      canvas.height = video.videoHeight || 480;
+
+      const draw = () => {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Simular detecção de marcador
+        if (Math.random() > 0.95) { // 5% chance por frame
+          this.simulateMarkerDetection(ctx);
+        }
+
+        requestAnimationFrame(draw);
+      };
+
+      video.addEventListener('loadedmetadata', () => {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        draw();
+      });
+    }
+
+    // Simular detecção de marcador AR
+    simulateMarkerDetection(ctx: CanvasRenderingContext2D) {
+      this.arScene.markerDetected = true;
+
+      // Desenhar marcador simulado
+      ctx.strokeStyle = '#00d4ff';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(
+        ctx.canvas.width * 0.3,
+        ctx.canvas.height * 0.3,
+        ctx.canvas.width * 0.4,
+        ctx.canvas.height * 0.4
+      );
+
+      // Texto de orientação
+      ctx.fillStyle = '#00d4ff';
+      ctx.font = '16px Arial';
+      ctx.fillText('Marcador detectado!', ctx.canvas.width * 0.35, ctx.canvas.height * 0.25);
+
+      const instructions = document.querySelector('.ar-instructions p');
+      if (instructions) instructions.textContent = 'Marcador detectado! Toque para colocar o produto.';
+    }
+
+    // Colocar produto na cena AR
+    placeProduct() {
+      if (!this.arScene.markerDetected) return;
+
+      this.arScene.placed = true;
+
+      // Simular colocação do produto
+      const canvas = document.getElementById('ar-overlay') as HTMLCanvasElement;
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // Desenhar produto simulado
+      ctx.fillStyle = 'rgba(0, 212, 255, 0.7)';
+      ctx.fillRect(
+        canvas.width * 0.35,
+        canvas.height * 0.35,
+        canvas.width * 0.3,
+        canvas.height * 0.2
+      );
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '14px Arial';
+      ctx.fillText('📱 WhatsApp API', canvas.width * 0.38, canvas.height * 0.45);
+
+      const instructions = document.querySelector('.ar-instructions p');
+      if (instructions) instructions.textContent = 'Produto colocado! Use os controles para ajustar.';
+    }
+
+    // Inicializar VR usando Three.js
+    initializeVR() {
+      // Verificar se Three.js está disponível
+      if (typeof THREE === 'undefined') {
+        this.loadThreeJS().then(() => {
+          this.setupVRScene();
+        });
+      } else {
+        this.setupVRScene();
+      }
+    }
+
+    // Carregar Three.js dinamicamente
+    loadThreeJS() {
+      return new Promise<void>((resolve) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+        script.onload = () => resolve();
+        document.head.appendChild(script);
+      });
+    }
+
+    // Setup cena VR
+    setupVRScene() {
+      const canvas = document.getElementById('vr-canvas') as HTMLCanvasElement;
+      if (!canvas || typeof THREE === 'undefined') return;
+
+      // Cena Three.js básica
+      this.vrScene = {
+        scene: new THREE.Scene(),
+        camera: new THREE.PerspectiveCamera(75, canvas.width / canvas.height, 0.1, 1000),
+        renderer: new THREE.WebGLRenderer({ canvas: canvas, antialias: true }),
+        objects: [],
+        controls: null
+      };
+
+      const { scene, camera, renderer } = this.vrScene;
+
+      // Setup renderer
+      renderer.setSize(canvas.width, canvas.height);
+      renderer.setClearColor(0x0f0a1f);
+
+      // Luz ambiente
+      const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+      scene.add(ambientLight);
+
+      // Luz direcional
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      directionalLight.position.set(1, 1, 1);
+      scene.add(directionalLight);
+
+      // Chão
+      const floorGeometry = new THREE.PlaneGeometry(20, 20);
+      const floorMaterial = new THREE.MeshLambertMaterial({ color: 0x1a1a2e });
+      const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+      floor.rotation.x = -Math.PI / 2;
+      floor.position.y = -1;
+      scene.add(floor);
+
+      // Posicionar câmera
+      camera.position.set(0, 0, 5);
+
+      // Adicionar produtos 3D
+      this.addVRProducts();
+
+      // Iniciar loop de renderização
+      this.animateVR();
+    }
+
+    // Adicionar produtos 3D ao VR
+    addVRProducts() {
+      if (!this.vrScene) return;
+      const products = [
+        { name: 'whatsapp-api', position: [-3, 0, -2], color: 0x00d4ff, icon: '📱' },
+        { name: 'automation', position: [3, 0, -2], color: 0x00ff9d, icon: '🤖' },
+        { name: 'analytics', position: [-3, 0, 2], color: 0xff7a59, icon: '📊' },
+        { name: 'integrations', position: [3, 0, 2], color: 0x9c88ff, icon: '🔗' }
+      ];
+
+      products.forEach(product => {
+        // Base do produto
+        const geometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 8);
+        const material = new THREE.MeshLambertMaterial({ color: product.color });
+        const mesh = new THREE.Mesh(geometry, material);
+
+        mesh.position.set(product.position[0], product.position[1], product.position[2]);
+        mesh.userData = { name: product.name, icon: product.icon };
+
+        this.vrScene!.scene.add(mesh);
+        this.vrScene!.objects.push(mesh);
+
+        // Label flutuante
+        this.addVRLabel(mesh, product.icon + ' ' + product.name.replace('-', ' ').toUpperCase());
+      });
+    }
+
+    // Adicionar label aos produtos VR
+    addVRLabel(mesh: any, text: string) {
+      if (!this.vrScene) return;
+      // Canvas para texto
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      canvas.width = 256;
+      canvas.height = 64;
+
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = 'white';
+      ctx.font = '16px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText(text, canvas.width / 2, canvas.height / 2 + 5);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+      const sprite = new THREE.Sprite(spriteMaterial);
+
+      sprite.position.set(mesh.position.x, mesh.position.y + 1.5, mesh.position.z);
+      sprite.scale.set(2, 0.5, 1);
+
+      this.vrScene.scene.add(sprite);
+    }
+
+    // Loop de animação VR
+    animateVR() {
+      if (!this.vrScene) return;
+
+      requestAnimationFrame(() => this.animateVR());
+
+      // Animação dos objetos
+      this.vrScene.objects.forEach((obj, index) => {
+        obj.rotation.y += 0.01 * (index + 1);
+      });
+
+      this.vrScene.renderer.render(this.vrScene.scene, this.vrScene.camera);
+    }
+
+    // Movimentação na VR
+    moveVR(direction: string) {
+      if (!this.vrScene) return;
+
+      const speed = 0.5;
+      const { camera } = this.vrScene;
+
+      switch (direction) {
+        case 'forward':
+          camera.position.z -= speed;
+          break;
+        case 'back':
+          camera.position.z += speed;
+          break;
+        case 'left':
+          camera.position.x -= speed;
+          break;
+        case 'right':
+          camera.position.x += speed;
+          break;
+      }
+    }
+
+    // Inicializar gerador de QR Code
+    initializeQRGenerator() {
+      // Carregar biblioteca QR Code
+      if (typeof QRCode === 'undefined') {
+        this.loadQRCodeLibrary().then(() => {
+          const display = document.getElementById('qr-code-display');
+          if (display) {
+            this.qrGenerator = new QRCode(display, {
+              text: 'https://getnexo.com.br/ar-demo',
+              width: 128,
+              height: 128
+            });
+          }
+        });
+      }
+    }
+
+    // Carregar biblioteca QR Code
+    loadQRCodeLibrary() {
+      return new Promise<void>((resolve) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+        script.onload = () => resolve();
+        document.head.appendChild(script);
+      });
+    }
+
+    // Gerar QR Code para AR
+    generateQRCode(type = 'product') {
+      let url = '';
+
+      switch (type) {
+        case 'product':
+          url = `https://getnexo.com.br/ar-product/demo-product`;
+          break;
+        case 'showroom':
+          url = 'https://getnexo.com.br/vr-showroom';
+          break;
+        case 'demo':
+          url = 'https://getnexo.com.br/ar-demo';
+          break;
+      }
+
+      if (this.qrGenerator) {
+        const display = document.getElementById('qr-code-display');
+        if (display) display.innerHTML = '';
+        this.qrGenerator.makeCode(url);
+      }
+    }
+
+    // Vincular eventos
+    bindEvents() {
+      // AR Controls
+      document.getElementById('start-ar-experience')?.addEventListener('click', () => {
+        const arExp = document.getElementById('ar-experience');
+        const vrShow = document.getElementById('vr-showroom');
+        const qrPanel = document.getElementById('qr-generator-panel');
+        if (arExp) arExp.style.display = 'flex';
+        if (vrShow) vrShow.style.display = 'none';
+        if (qrPanel) qrPanel.style.display = 'none';
+        this.currentMode = 'ar';
+      });
+
+      document.getElementById('place-product')?.addEventListener('click', () => {
+        this.placeProduct();
+      });
+
+      // VR Controls
+      document.getElementById('start-vr-showroom')?.addEventListener('click', () => {
+        const arExp = document.getElementById('ar-experience');
+        const vrShow = document.getElementById('vr-showroom');
+        const qrPanel = document.getElementById('qr-generator-panel');
+        if (arExp) arExp.style.display = 'none';
+        if (vrShow) vrShow.style.display = 'block';
+        if (qrPanel) qrPanel.style.display = 'none';
+        this.currentMode = 'vr';
+      });
+
+      document.getElementById('move-forward')?.addEventListener('click', () => this.moveVR('forward'));
+      document.getElementById('move-back')?.addEventListener('click', () => this.moveVR('back'));
+      document.getElementById('move-left')?.addEventListener('click', () => this.moveVR('left'));
+      document.getElementById('move-right')?.addEventListener('click', () => this.moveVR('right'));
+
+      // VR Product interaction
+      document.querySelectorAll('.vr-product-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const productItem = item as HTMLElement;
+          this.selectVRProduct(productItem.dataset.product);
+        });
+      });
+
+      // QR Generator
+      document.getElementById('qr-generator')?.addEventListener('click', () => {
+        const arExp = document.getElementById('ar-experience');
+        const vrShow = document.getElementById('vr-showroom');
+        const qrPanel = document.getElementById('qr-generator-panel');
+        if (arExp) arExp.style.display = 'none';
+        if (vrShow) vrShow.style.display = 'none';
+        if (qrPanel) qrPanel.style.display = 'block';
+
+        const selected = document.querySelector('input[name="qr-type"]:checked') as HTMLInputElement;
+        if (selected) {
+          const selectedType = selected.value;
+          this.generateQRCode(selectedType);
+        }
+      });
+
+      // QR Type change
+      document.querySelectorAll('input[name="qr-type"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+          this.generateQRCode((e.target as HTMLInputElement).value);
+        });
+      });
+
+      // Download QR
+      document.getElementById('download-qr')?.addEventListener('click', () => {
+        this.downloadQRCode();
+      });
+
+      // VR Canvas resize
+      window.addEventListener('resize', () => {
+        if (this.vrScene) {
+          const canvas = document.getElementById('vr-canvas') as HTMLCanvasElement;
+          if (canvas) {
+            this.vrScene.camera.aspect = canvas.width / canvas.height;
+            this.vrScene.camera.updateProjectionMatrix();
+            this.vrScene.renderer.setSize(canvas.width, canvas.height);
+          }
+        }
+      });
+    }
+
+    // Selecionar produto no VR
+    selectVRProduct(productName: string | undefined) {
+      if (!productName) return;
+      const productInfo: Record<string, any> = {
+        'whatsapp-api': {
+          title: 'WhatsApp Business API',
+          description: 'Plataforma completa de automação WhatsApp com IA integrada.',
+          price: 'R$ 97/mês',
+          features: ['IA Conversacional', 'Auto-Reply', 'Relatórios Avançados', 'Integrações']
+        },
+        'automation': {
+          title: 'Automação Inteligente',
+          description: 'Soluções completas de automação para fluxos de trabalho.',
+          price: 'Grátis',
+          features: ['Workflow Builder', 'IA Integration', 'API Rest', 'Self-Hosted']
+        },
+        'analytics': {
+          title: 'Analytics Avançado',
+          description: 'Dashboards completos e relatórios de performance.',
+          price: 'Incluso',
+          features: ['Real-time Metrics', 'Custom Reports', 'AI Insights', 'Export Data']
+        },
+        'integrations': {
+          title: 'Integrações Completas',
+          description: 'Mais de 20 integrações nativas com ERPs e plataformas.',
+          price: 'Grátis',
+          features: ['Bling', 'Tiny', 'Hotmart', 'Mercado Pago', 'RD Station', 'HubSpot']
+        }
+      };
+
+      const info = productInfo[productName];
+      const display = document.getElementById('vr-selected-product');
+      if (info && display) {
+        display.innerHTML = `
+          <h5>${info.title}</h5>
+          <p>${info.description}</p>
+          <div class="vr-product-price">${info.price}</div>
+          <ul class="vr-features">
+            ${info.features.map((feature: string) => `<li>${feature}</li>`).join('')}
+          </ul>
+          <button class="vr-buy-btn">Saiba Mais</button>
+        `;
+      }
+    }
+
+    // Download QR Code
+    downloadQRCode() {
+      const canvas = document.querySelector('#qr-code-display canvas') as HTMLCanvasElement;
+      if (canvas) {
+        const link = document.createElement('a');
+        link.download = 'getnexo-ar-qr.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      }
+    }
+
+    // Carregar modelos 3D de produtos
+    loadProductModels() {
+      this.productModels = {
+        'whatsapp-api': {
+          geometry: 'cylinder',
+          color: 0x00d4ff,
+          scale: [1, 1, 1]
+        },
+        'automation': {
+          geometry: 'box',
+          color: 0x00ff9d,
+          scale: [1.2, 1.2, 1.2]
+        },
+        'analytics': {
+          geometry: 'sphere',
+          color: 0xff7a59,
+          scale: [0.8, 0.8, 0.8]
+        },
+        'integrations': {
+          geometry: 'torus',
+          color: 0x9c88ff,
+          scale: [1, 0.5, 1]
+        }
+      };
+    }
+
+    // Mostrar placeholder quando AR não disponível
+    showARPlaceholder() {
+      const overlay = document.getElementById('ar-overlay') as HTMLCanvasElement;
+      if (!overlay) return;
+
+      const ctx = overlay.getContext('2d');
+      if (!ctx) return;
+
+      ctx.fillStyle = '#1a1a2e';
+      ctx.fillRect(0, 0, overlay.width, overlay.height);
+
+      ctx.fillStyle = '#00d4ff';
+      ctx.font = '20px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('AR não disponível neste dispositivo', overlay.width / 2, overlay.height / 2 - 20);
+      ctx.font = '14px Arial';
+      ctx.fillText('Use um smartphone com câmera', overlay.width / 2, overlay.height / 2 + 20);
+    }
+
+    // Encerrar sessão AR
+    endARSession() {
+      if (this.arSession) {
+        this.arSession.end();
+        this.arSession = null;
+      }
+    }
+  }
+
+  // Inicializar quando DOM estiver pronto
+  document.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('admin_token')) {
+      const panel = document.getElementById('ar-vr-panel');
+      if (panel) panel.style.display = 'block';
+      new ARVRCommerceEngine();
+    }
+  });
+</script>
+
+<style>
+  .ar-vr-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 500px;
+    max-height: 90vh;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    overflow-y: auto;
+    z-index: 1000;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .panel-header h3 {
+    color: #00d4ff;
+    margin: 0 0 1rem 0;
+    font-size: 1.2rem;
+  }
+
+  .ar-vr-controls {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .ar-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .ar-btn.primary {
+    background: linear-gradient(135deg, #00d4ff, #0099cc);
+    color: white;
+  }
+
+  .ar-btn.secondary {
+    background: linear-gradient(135deg, #ff7a59, #cc6247);
+    color: white;
+  }
+
+  .ar-btn.tertiary {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .ar-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+  }
+
+  .ar-experience, .vr-showroom, .qr-generator {
+    margin: 1.5rem 0;
+  }
+
+  .ar-preview {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .ar-camera-view {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    background: #000;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+
+  #ar-camera, .ar-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ar-overlay {
+    pointer-events: none;
+  }
+
+  .ar-instructions {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0.5rem;
+    border-radius: 6px;
+    text-align: center;
+  }
+
+  .ar-hint {
+    color: #00d4ff;
+    font-weight: 600;
+    margin-top: 0.25rem;
+  }
+
+  .ar-controls {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .ar-control-btn {
+    padding: 0.5rem 1rem;
+    background: rgba(0, 212, 255, 0.2);
+    color: #00d4ff;
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .ar-control-btn:hover {
+    background: rgba(0, 212, 255, 0.3);
+    transform: translateY(-1px);
+  }
+
+  .ar-product-info h4 {
+    color: #00d4ff;
+    margin-bottom: 1rem;
+  }
+
+  .product-details {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 1rem;
+    align-items: start;
+  }
+
+  .product-image img {
+    width: 100%;
+    border-radius: 8px;
+  }
+
+  .product-specs h5 {
+    color: white;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .product-description {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+  }
+
+  .product-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-bottom: 1rem;
+  }
+
+  .feature-tag {
+    background: rgba(0, 212, 255, 0.2);
+    color: #00d4ff;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 500;
+  }
+
+  .product-price {
+    margin-top: 0.5rem;
+  }
+
+  .price {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #00ff9d;
+    margin-right: 0.5rem;
+  }
+
+  .original-price {
+    text-decoration: line-through;
+    color: #94a3b8;
+    font-size: 0.9rem;
+  }
+
+  .vr-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .vr-header h4 {
+    color: #ff7a59;
+    margin: 0;
+  }
+
+  .vr-controls {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .vr-btn {
+    padding: 0.3rem 0.6rem;
+    background: rgba(255, 122, 89, 0.2);
+    color: #ff7a59;
+    border: 1px solid rgba(255, 122, 89, 0.3);
+    border-radius: 4px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .vr-btn:hover {
+    background: rgba(255, 122, 89, 0.3);
+  }
+
+  .vr-scene {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 1rem;
+    position: relative;
+  }
+
+  .vr-canvas {
+    width: 100%;
+    height: 300px;
+    border-radius: 8px;
+    background: #0f0a1f;
+  }
+
+  .vr-navigation {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .nav-side {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .nav-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(0, 212, 255, 0.2);
+    color: #00d4ff;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .nav-btn:hover {
+    background: rgba(0, 212, 255, 0.3);
+    transform: scale(1.1);
+  }
+
+  .vr-products {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .vr-product-item {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.8rem;
+    text-align: center;
+  }
+
+  .vr-product-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateX(-5px);
+  }
+
+  .product-marker {
+    font-size: 1.2rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .vr-product-details {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+  }
+
+  .vr-product-details h5 {
+    color: white;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .vr-product-price {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #00ff9d;
+    margin: 0.5rem 0;
+  }
+
+  .vr-features {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0;
+  }
+
+  .vr-features li {
+    color: #94a3b8;
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+    padding-left: 1rem;
+    position: relative;
+  }
+
+  .vr-features li::before {
+    content: '✓';
+    color: #00ff9d;
+    position: absolute;
+    left: 0;
+  }
+
+  .vr-buy-btn {
+    background: linear-gradient(135deg, #00ff9d, #00cc7a);
+    color: #030712;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .vr-buy-btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .qr-generator h4 {
+    color: #9c88ff;
+    margin-bottom: 1rem;
+  }
+
+  .qr-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .qr-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .qr-option label {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  .qr-preview {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 1rem;
+    align-items: start;
+  }
+
+  .qr-code {
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .qr-info p {
+    margin: 0 0 0.5rem 0;
+    color: #94a3b8;
+    font-size: 0.9rem;
+  }
+
+  .download-btn {
+    background: linear-gradient(135deg, #9c88ff, #7c3aed);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .download-btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 0;
+  }
+
+  .analytics-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .analytics-card h5 {
+    color: #94a3b8;
+    margin: 0 0 0.5rem 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .metric-large {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #00d4ff;
+    margin-bottom: 0.25rem;
+  }
+
+  .metric-change.positive {
+    color: #10b981;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  /* Responsividade */
+  @media (max-width: 768px) {
+    .ar-vr-container {
+      width: 95vw;
+      right: 2.5vw;
+      top: 10px;
+    }
+
+    .product-details {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+
+    .vr-navigation {
+      bottom: 10px;
+      transform: translateX(-50%) scale(0.8);
+    }
+
+    .qr-preview {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+
+    .analytics-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

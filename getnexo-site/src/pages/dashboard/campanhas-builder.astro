@@ -1,0 +1,124 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+---
+
+<DashboardLayout title="Campaign Builder | OmniNexo">
+  <div style="display:flex; flex-direction:column; gap:2.5rem;">
+    <div class="glass-panel" style="padding:2.5rem; background:linear-gradient(135deg, rgba(0, 255, 157, 0.1), rgba(0, 212, 255, 0.05)); border-color: rgba(0, 255, 157, 0.2);">
+        <h2 style="font-size:2.5rem; font-weight:900; color:white; margin:0;" class="text-gradient">Broadcast & Campanhas</h2>
+        <p style="color:#94a3b8; margin:0.5rem 0 0; font-size:1.1rem;">Crie disparos em massa inteligentes com segmentação avançada.</p>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:2rem;">
+        
+        <!-- Step Wizard -->
+        <div class="glass-panel" style="padding:2.5rem;">
+            <div style="display:flex; gap:1.5rem; margin-bottom:3rem;">
+                <div class="step-badge active">1. Público</div>
+                <div class="step-badge">2. Mensagem</div>
+                <div class="step-badge">3. Agendamento</div>
+            </div>
+
+            <div id="step-content" style="display:flex; flex-direction:column; gap:2rem;">
+                <div>
+                    <h3 style="margin:0 0 1rem; font-size:1.3rem;">Quem receberá esta campanha?</h3>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+                        <div class="seg-opt active">
+                            <span style="font-size:1.5rem;">👥</span>
+                            <div>
+                                <div style="font-weight:800; color:white;">Todos os Leads</div>
+                                <div style="font-size:0.75rem; color:#64748b;">(4.210 contatos)</div>
+                            </div>
+                        </div>
+                        <div class="seg-opt">
+                            <span style="font-size:1.5rem;">🛒</span>
+                            <div>
+                                <div style="font-weight:800; color:white;">Carrinhos Abandonados</div>
+                                <div style="font-size:0.75rem; color:#64748b;">(154 contatos)</div>
+                            </div>
+                        </div>
+                        <div class="seg-opt">
+                            <span style="font-size:1.5rem;">🏷️</span>
+                            <div>
+                                <div style="font-weight:800; color:white;">Tag: Interessados IA</div>
+                                <div style="font-size:0.75rem; color:#64748b;">(890 contatos)</div>
+                            </div>
+                        </div>
+                        <div class="seg-opt">
+                            <span style="font-size:1.5rem;">➕</span>
+                            <div>
+                                <div style="font-weight:800; color:white;">Filtro Customizado</div>
+                                <div style="font-size:0.75rem; color:#64748b;">RQL Builder</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; margin-top:2rem;">
+                    <button id="next-step" style="background:var(--neon-green); color:black; font-weight:900; padding:15px 40px; border-radius:12px; border:none; cursor:pointer; box-shadow:0 10px 20px rgba(0,255,157,0.2);">Continuar para Mensagem →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview Mobile -->
+        <div style="display:flex; flex-direction:column; gap:1.5rem; align-items:center;">
+            <div style="font-size:0.8rem; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:1px;">Live Preview</div>
+            <div class="phone-mockup">
+                <div class="phone-screen-small">
+                    <div style="background:#075e54; padding:20px 15px 10px; color:white; font-size:0.7rem; font-weight:700;">GetNexo Business</div>
+                    <div style="padding:15px; display:flex; flex-direction:column; gap:10px;">
+                        <div class="wa-bubble">
+                            Olá [Nome]! 🚀 <br><br>
+                            Vimos que você se interessou pela **Ara AI**. <br><br>
+                            Queremos te dar um presente: **20% OFF** na primeira mensalidade. <br><br>
+                            Clique abaixo para ativar:
+                        </div>
+                        <div class="wa-btn">🎁 Resgatar Desconto</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+  </div>
+
+  <style>
+    .step-badge {
+        flex: 1; padding: 1rem; text-align: center; background: rgba(255,255,255,0.03); 
+        border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; color: #64748b;
+        font-weight: 800; font-size: 0.85rem;
+    }
+    .step-badge.active { background: rgba(0, 212, 255, 0.1); border-color: var(--neon-blue); color: white; }
+
+    .seg-opt {
+        padding: 1.5rem; background: rgba(255,255,255,0.02); border: 2px solid rgba(255,255,255,0.05);
+        border-radius: 16px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.3s;
+    }
+    .seg-opt:hover { background: rgba(255,255,255,0.05); transform: translateY(-3px); }
+    .seg-opt.active { border-color: var(--neon-green); background: rgba(0, 255, 157, 0.05); }
+
+    .phone-mockup {
+        width: 280px; height: 560px; background: #000; border: 8px solid #1e293b; border-radius: 35px;
+        box-shadow: 0 40px 80px rgba(0,0,0,0.6); position: relative; overflow: hidden;
+    }
+    .phone-screen-small { height: 100%; background: #ece5dd; }
+    .wa-bubble { background: white; padding: 12px; border-radius: 12px 12px 12px 0; color: #333; font-size: 0.75rem; line-height: 1.4; max-width: 90%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .wa-btn { background: white; border: 1px solid #e5e7eb; color: #00a884; padding: 8px; border-radius: 8px; text-align: center; font-size: 0.75rem; font-weight: 800; cursor: pointer; margin-top: 5px; }
+
+    .text-gradient { background: linear-gradient(90deg, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  </style>
+
+  <script is:inline>
+      document.querySelectorAll('.seg-opt').forEach(opt => {
+          opt.onclick = () => {
+              document.querySelectorAll('.seg-opt').forEach(o => o.classList.remove('active'));
+              opt.classList.add('active');
+          };
+      });
+
+      document.getElementById('next-step').onclick = () => {
+          alert('Configurando canal de disparo e pré-computando tokens de IA...');
+      };
+  </script>
+</DashboardLayout>

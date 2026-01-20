@@ -1,0 +1,76 @@
+{
+    "name": "20_AR_Virtual_Try_On",
+    "nodes": [
+        {
+            "parameters": {},
+            "name": "Start",
+            "type": "n8n-nodes-base.start",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "url": "http://browserless:3000/content",
+                "method": "POST",
+                "bodyParametersUi": {
+                    "parameter": [
+                        {
+                            "name": "url",
+                            "value": "https://ar-viewer.com?product={{$json[\"product_id\"]}}"
+                        },
+                        {
+                            "name": "waitFor",
+                            "value": "2000"
+                        }
+                    ]
+                }
+            },
+            "name": "Generate AR Preview",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "content": "Here is your virtual try-on preview! [Click here]({{$json[\"url\"]}})"
+            },
+            "name": "Send to User",
+            "type": "n8n-nodes-base.chatwoot",
+            "typeVersion": 1,
+            "position": [
+                650,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Start": {
+            "main": [
+                [
+                    {
+                        "node": "Generate AR Preview",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Generate AR Preview": {
+            "main": [
+                [
+                    {
+                        "node": "Send to User",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

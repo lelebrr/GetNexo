@@ -1,0 +1,10 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+import OmniChatApp from '../../components/OmniChatApp.jsx';
+---
+
+<DashboardLayout title="Kanban CRM | OmniNexo">
+    <div class="glass-panel" style="padding:1.5rem; height: calc(100vh - 150px); overflow:hidden;">
+        <OmniChatApp client:idle initialTab="kanban" />
+    </div>
+</DashboardLayout>

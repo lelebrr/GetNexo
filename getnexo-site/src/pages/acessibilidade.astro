@@ -1,0 +1,320 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PreSupportModal from '../components/PreSupportModal.astro';
+
+const certifications = [
+  {
+    id: 'wcag',
+    name: 'WCAG 2.2 AA',
+    fullname: 'Web Content Accessibility Guidelines',
+    status: 'TOTALMENTE CONFORME',
+    description: 'Padrão internacional da W3C para acessibilidade web, nível AA (avançado).',
+    requirements: [
+      'Perceivable: Conteúdo alternativo para mídias',
+      'Operable: Navegação por teclado completa',
+      'Understandable: Conteúdo claro e consistente',
+      'Robust: Compatível com tecnologias assistivas'
+    ],
+    icon: '🌐'
+  },
+  {
+    id: 'section508',
+    name: 'Section 508',
+    fullname: 'U.S. Rehabilitation Act',
+    status: 'TOTALMENTE CONFORME',
+    description: 'Lei americana que exige acessibilidade em sistemas eletrônicos governamentais.',
+    requirements: [
+      '1194.22 Web-based intranet',
+      '1194.21 Software',
+      '1194.31 Functional performance',
+      '1194.41 Information, documentation, and support'
+    ],
+    icon: '🇺🇸'
+  },
+  {
+    id: 'emag',
+    name: 'e-MAG',
+    fullname: 'Modelo de Acessibilidade em Governo Eletrônico',
+    status: 'TOTALMENTE CONFORME',
+    description: 'Padrão brasileiro para acessibilidade em serviços digitais governamentais.',
+    requirements: [
+      'Percepção: Alternativas textuais',
+      'Operabilidade: Navegação independente',
+      'Compreensibilidade: Linguagem clara',
+      'Robustez: Compatibilidade tecnológica'
+    ],
+    icon: '🇧🇷'
+  },
+  {
+    id: 'en301549',
+    name: 'EN 301 549',
+    fullname: 'European Standard for ICT Accessibility',
+    status: 'TOTALMENTE CONFORME',
+    description: 'Padrão europeu para acessibilidade de produtos e serviços TIC.',
+    requirements: [
+      'Website: Sites e aplicações web',
+      'Software não-web: Aplicativos desktop/móvel',
+      'Documentos: PDFs e documentos digitais',
+      'Hardware: Dispositivos tecnológicos'
+    ],
+    icon: '🇪🇺'
+  },
+  {
+    id: 'bitv',
+    name: 'BITV',
+    fullname: 'Barrierefreie Informationstechnik-Verordnung',
+    status: 'TOTALMENTE CONFORME',
+    description: 'Lei alemã para acessibilidade de tecnologia da informação.',
+    requirements: [
+      'Conformidade WCAG 2.1 AA',
+      'Requisitos específicos alemães',
+      'Declaração de acessibilidade obrigatória',
+      'Contato para feedback de acessibilidade'
+    ],
+    icon: '🇩🇪'
+  },
+  {
+    id: 'cida',
+    name: 'CIDA',
+    fullname: 'Certificado de Inclusão Digital Avançada',
+    status: 'TOTALMENTE CONFORME',
+    description: 'Certificação conjunta Sebrae + UFRJ focada em inclusão digital avançada.',
+    requirements: [
+      'Linguagem Simples: Textos adaptados para baixa alfabetização',
+      'Contraste para Idosos: Combinações cromáticas otimizadas',
+      'Interface Intuitiva: Design self-explanatory',
+      'Suporte a Idosos: Navegação simplificada'
+    ],
+    icon: '🇧🇷'
+  },
+  {
+    id: 'pal',
+    name: 'PAL',
+    fullname: 'Programa de Acessibilidade Linguística',
+    status: 'TOTALMENTE CONFORME',
+    description: 'Programa do MEC para acessibilidade linguística, especialmente para deficientes intelectuais.',
+    requirements: [
+      'Linguagem Simples: Vocabulário básico',
+      'Estruturas Visuais: Ícones, imagens, infográficos',
+      'Conteúdo Essencial: Foco no fundamental',
+      'Suporte Cognitivo: Auxílios para compreensão'
+    ],
+    icon: '🇧🇷'
+  },
+  {
+    id: 'abnt',
+    name: 'ABNT NBR 17.049',
+    fullname: 'Acessibilidade em Serviços de Atendimento',
+    status: 'TOTALMENTE CONFORME',
+    description: 'Norma brasileira para acessibilidade em serviços digitais e atendimento.',
+    requirements: [
+      'TTS (Text-to-Speech): Síntese de voz clara',
+      'STT (Speech-to-Text): Reconhecimento de voz preciso',
+      'Teclado Virtual: Alternativa ao físico',
+      'Feedback Multimodal: Áudio + visual + tátil'
+    ],
+    icon: '🇧🇷'
+  },
+  {
+    id: 'iso',
+    name: 'ISO 9241-171',
+    fullname: 'Ergonomics of Human-System Interaction',
+    status: 'TOTALMENTE CONFORME',
+    description: 'Padrão internacional ISO para design de diálogos com sistemas interativos.',
+    requirements: [
+      'Clareza: Instruções compreensíveis',
+      'Consistência: Padrões previsíveis',
+      'Flexibilidade: Adaptações às necessidades',
+      'Robustez: Tratamento de erros elegante'
+    ],
+    icon: '🌐'
+  },
+  {
+    id: 'slif',
+    name: 'SLIF',
+    fullname: 'Selo de Linguagem Inclusiva Federal',
+    status: 'TOTALMENTE CONFORME',
+    description: 'Selo do governo federal brasileiro para linguagem não discriminatória.',
+    requirements: [
+      'Não-Gênero: Linguagem neutra',
+      'Não-Raça: Terminologia antirracista',
+      'Não-Deficiência: Linguagem respeitosa',
+      'Não-Idade: Inclusão de faixas etárias'
+    ],
+    icon: '🇧🇷'
+  }
+];
+---
+
+<Layout 
+  title="Acessibilidade e Certificações - GetNexo"
+  description="Conheça todas as certificações internacionais de acessibilidade conquistadas pelo GetNexo. Comprometimento total com a inclusão digital."
+  keywords="acessibilidade web, wcag 2.2, section 508, inclusão digital, getnexo acessível"
+>
+  <style>
+    .hero-section {
+      background: radial-gradient(circle at center, rgba(0, 212, 255, 0.15) 0%, rgba(3, 7, 18, 0) 70%);
+      padding: 6rem 5% 4rem;
+      text-align: center;
+    }
+    
+    .cert-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto 4rem;
+      padding: 0 5%;
+    }
+    
+    .cert-card {
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 2rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .cert-card:hover {
+      transform: translateY(-5px);
+      background: rgba(15, 23, 42, 0.8);
+      border-color: var(--primary);
+      box-shadow: 0 10px 30px rgba(0, 212, 255, 0.1);
+    }
+    
+    .cert-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+    
+    .cert-status {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: var(--success);
+      background: rgba(0, 255, 157, 0.1);
+      padding: 0.3rem 0.6rem;
+      border-radius: 99px;
+      border: 1px solid rgba(0, 255, 157, 0.2);
+    }
+    
+    .cert-name {
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+    }
+    
+    .cert-fullname {
+      color: var(--primary);
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: block;
+    }
+    
+    .cert-description {
+      color: #94a3b8;
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+    
+    .req-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 1rem;
+    }
+    
+    .req-item {
+      color: #cbd5e1;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .req-item::before {
+      content: "✓";
+      color: var(--success);
+      font-weight: bold;
+    }
+
+    .modal-section {
+      max-width: 1000px;
+      margin: 0 auto 6rem;
+      padding: 3rem 5%;
+      background: rgba(0, 212, 255, 0.03);
+      border-radius: 20px;
+      border: 1px solid rgba(0, 212, 255, 0.1);
+      text-align: center;
+    }
+
+    .section-title {
+      font-size: 2.5rem;
+      color: white;
+      margin-bottom: 1rem;
+      font-weight: 800;
+    }
+    
+    .section-subtitle {
+      color: var(--text);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto 3rem;
+    }
+  </style>
+
+  <section class="hero-section">
+    <h1 class="section-title">Acessibilidade e <span class="text-gradient">Certificações</span></h1>
+    <p class="section-subtitle">
+      Compromisso total com a inclusão digital. O GetNexo segue os mais rigorosos padrões internacionais para garantir que nossa tecnologia seja acessível para todos.
+    </p>
+  </section>
+
+  <div class="cert-grid">
+    {certifications.map(cert => (
+      <article class="cert-card">
+        <span class="cert-status">✓ {cert.status}</span>
+        <span class="cert-icon">{cert.icon}</span>
+        <h2 class="cert-name">{cert.name}</h2>
+        <span class="cert-fullname">{cert.fullname}</span>
+        <p class="cert-description">{cert.description}</p>
+        
+        <ul class="req-list">
+          {cert.requirements.map(req => (
+            <li class="req-item">{req}</li>
+          ))}
+        </ul>
+      </article>
+    ))}
+  </div>
+
+  <section class="modal-section">
+    <h2 class="section-title" style="font-size: 2rem;">Suporte Multimodal Avançado</h2>
+    <p class="section-subtitle">
+      Além das certificações, implementamos tecnologias proprietárias de IA para tornar a interface ainda mais acessível através de comandos de voz e leitura de tela inteligente.
+    </p>
+    
+    <div style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem;">
+      <div style="text-align: left; background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 12px; width: 300px;">
+        <h3 style="color:white; margin-bottom:0.5rem;">🎤 Comandos de Voz</h3>
+        <p style="color:#94a3b8; font-size: 0.9rem;">Navegue e interaja com a plataforma usando apenas sua voz com nossa IA nativa.</p>
+      </div>
+      <div style="text-align: left; background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 12px; width: 300px;">
+        <h3 style="color:white; margin-bottom:0.5rem;">👁️ Leitura Inteligente</h3>
+        <p style="color:#94a3b8; font-size: 0.9rem;">Compatibilidade total e otimizada com NVDA, JAWS e VoiceOver.</p>
+      </div>
+    </div>
+  </section>
+
+</Layout>

@@ -1,0 +1,159 @@
+/* Neuro-Psychological Interface Styles */
+
+:root {
+    --mood-color: #ffd500;
+    /* Default: GetNexo Yellow */
+    --bg-mood: #000000;
+}
+
+body {
+    background-color: var(--bg-mood);
+    transition: background-color 0.8s ease-in-out;
+    /* Smooth mood transition (Item 165) */
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Item 153: Dynamic Borders */
+.chat-bubble-ai {
+    border-left: 6px solid var(--mood-color);
+    padding: 10px;
+    margin: 5px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 0 8px 8px 0;
+    transition: border-color 0.5s ease;
+}
+
+/* Item 181: Brand Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #111;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #FF0033;
+    /* Distinctive Orange/Red */
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--mood-color);
+}
+
+/* Item 152: Aroma Simulation (Visual) */
+@keyframes scent-vapor {
+    0% {
+        opacity: 0;
+        transform: translateY(0) scale(0.5);
+    }
+
+    50% {
+        opacity: 0.8;
+        transform: translateY(-10px) scale(1.2);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-20px) scale(1.5);
+        color: var(--mood-color);
+    }
+}
+
+.scent-icon::after {
+    content: '♨️';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    animation: scent-vapor 2s infinite;
+    font-size: 1.5em;
+    filter: drop-shadow(0 0 5px var(--mood-color));
+}
+
+/* Item 173: Urgency Button */
+button#send-btn {
+    transition: background-color 0.3s;
+}
+
+button#send-btn.urgent {
+    background-color: red !important;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Item 156: Avatar Switcher */
+.avatar {
+    width: 50px;
+    height: 50px;
+    transition: filter 0.3s;
+}
+
+/* Item 185: Visual Listening Mode (Focus) */
+input.chat-input:focus {
+    /* Using a standard SVG data URI for "Eye" icon to avoid external dep */
+    cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'><circle cx='10' cy='10' r='5' fill='%23FF6600'/></svg>") 10 10, auto;
+    border-color: #FF6600;
+}
+
+/* Item 190: Golden Birthday Mode */
+.golden-mode {
+    background-color: #FFD700 !important;
+    transition: background-color 1s ease;
+}
+
+/* Item 195: Urgency Shake */
+.shake-red {
+    background-color: #330000 !important;
+    animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+}
+
+@keyframes shake {
+
+    10%,
+    90% {
+        transform: translate3d(-1px, 0, 0);
+    }
+
+    20%,
+    80% {
+        transform: translate3d(2px, 0, 0);
+    }
+
+    30%,
+    50%,
+    70% {
+        transform: translate3d(-4px, 0, 0);
+    }
+
+    40%,
+    60% {
+        transform: translate3d(4px, 0, 0);
+    }
+}
+
+/* Item 199: Success Button */
+.btn-close.success {
+    background-color: #00CC66 !important;
+    /* Emerald Green */
+    color: white;
+}
+
+/* Item 174: Micro-Pause Indicator */
+.typing-indicator span {
+    background-color: var(--mood-color);
+}

@@ -1,0 +1,163 @@
+---
+import ResellerLayout from '../../layouts/ResellerLayout.astro';
+---
+
+<ResellerLayout title="Equipe da Conta">
+    <div class="team-container">
+        <h2 class="text-neon-blue mb-4">Equipe da Conta</h2>
+
+        <!-- Botão novo membro -->
+        <button onclick="document.getElementById('modal').classList.remove('hidden')" class="btn-gold mb-4">+ Adicionar</button>
+
+        <!-- Modal novo membro -->
+        <div id="modal" class="hidden modal-overlay">
+            <div class="modal-content">
+                <h3 class="text-white mb-2">Novo membro</h3>
+                <input id="new-nome" placeholder="Nome" class="input-field" />
+                <input id="new-email" placeholder="E-mail" class="input-field" />
+                <select id="new-permissao" class="input-field">
+                    <option value="EDITOR">Pode editar</option>
+                    <option value="VISUAL">Só visualiza</option>
+                </select>
+                <div class="modal-actions">
+                    <button onclick="adicionarMembro()" class="btn-gold w-full mb-2">Adicionar</button>
+                    <button onclick="document.getElementById('modal').classList.add('hidden')" class="btn-cancel w-full">Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de membros -->
+        <table class="w-full border border-neon-blue text-muted table-cyber">
+            <thead>
+                <tr class="text-neon-blue">
+                    <th>Nome</th>
+                    <th>E-mail</th>
+                    <th>Permissão</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="members-body">
+                <tr><td colspan="4" class="text-center p-4">Carregando...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</ResellerLayout>
+
+<style>
+    .team-container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+    .text-neon-blue { color: #00f3ff; font-family: 'JetBrains Mono', monospace; }
+    .btn-gold { 
+        background: #ffd700; color: #000; padding: 0.5rem 1rem; border: none; border-radius: 4px; 
+        font-weight: bold; cursor: pointer; text-transform: uppercase;
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+    }
+    .btn-cancel {
+        background: transparent; color: #ff003c; border: 1px solid #ff003c; padding: 0.5rem 1rem;
+        cursor: pointer; border-radius: 4px;
+    }
+
+    .modal-overlay { 
+        position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; 
+        align-items: center; justify-content: center; z-index: 50;
+    }
+    .hidden { display: none !important; }
+    .modal-content { 
+        background: #0a0a0a; padding: 2rem; border: 1px solid #00f3ff; width: 400px; border-radius: 8px;
+        box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+    }
+    .input-field { 
+        display: block; width: 100%; padding: 0.8rem; margin-bottom: 1rem; 
+        background: #000; border: 1px solid #334155; color: #fff; outline: none;
+    }
+    .input-field:focus { border-color: #00f3ff; }
+
+    .table-cyber { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    .table-cyber th, .table-cyber td { padding: 1rem; border: 1px solid #334155; text-align: left; color: #cbd5e1; }
+    .table-cyber th { background: rgba(0, 243, 255, 0.05); }
+
+    .action-btn { background: none; border: none; cursor: pointer; font-weight: bold; margin-right: 1rem; }
+    .text-gold { color: #ffd700; }
+    .text-red { color: #ff003c; }
+</style>
+
+<script is:inline>
+    const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '/api-proxy';
+
+    async function loadMembers() {
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`${API_URL}/api/revenda/equipe`, { headers: { 'Authorization': token } });
+            const data = await res.json();
+            renderTable(data);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    function renderTable(data) {
+        const tbody = document.getElementById('members-body');
+        if (data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center p-4">Nenhum membro encontrado.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = data.map(m => `
+            <tr>
+                <td>${m.nome}</td>
+                <td>${m.email}</td>
+                <td>${m.permissao}</td>
+                <td>
+                    <button onclick="mudarPermissao(${m.id}, '${m.permissao === 'EDITOR' ? 'VISUAL' : 'EDITOR'}')" 
+                        class="action-btn text-gold">Trocar Permissão</button>
+                    <button onclick="remover(${m.id})" class="action-btn text-red">X</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    window.adicionarMembro = async () => {
+        const nome = document.getElementById('new-nome').value;
+        const email = document.getElementById('new-email').value;
+        const permissao = document.getElementById('new-permissao').value;
+
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`${API_URL}/api/revenda/equipe`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': token },
+                body: JSON.stringify({ nome, email, permissao })
+            });
+            const json = await res.json();
+            if (json.ok) {
+                alert('Adicionado!');
+                document.getElementById('modal').classList.add('hidden');
+                loadMembers();
+            } else {
+                alert(json.error);
+            }
+        } catch (e) { alert('Erro de conexão'); }
+    };
+
+    window.remover = async (id) => {
+        if (confirm('Excluir?')) {
+            const token = localStorage.getItem('token');
+            await fetch(`${API_URL}/api/revenda/equipe?id=${id}`, { 
+                method: 'DELETE',
+                headers: { 'Authorization': token }
+            });
+            loadMembers();
+        }
+    };
+
+    window.mudarPermissao = async (id, novaPerm) => {
+        const token = localStorage.getItem('token');
+        await fetch(`${API_URL}/api/revenda/equipe`, { 
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'Authorization': token },
+            body: JSON.stringify({ id, novaPermissao: novaPerm })
+        });
+        loadMembers();
+    };
+
+    loadMembers();
+</script>

@@ -1,0 +1,152 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Loja Oficial | GetNexo">
+    <div class="store-container">
+        <header class="store-header">
+            <h1 class="text-neon-blue">Loja de Plugins & Recursos</h1>
+            <div id="cart-summary" class="cart-summary">
+                🛒 <span id="cart-count">0</span> itens - R$ <span id="cart-total">0,00</span>
+                <button onclick="checkout()" class="btn-checkout">FINALIZAR</button>
+            </div>
+        </header>
+
+        <div class="store-layout">
+            <aside class="categories-sidebar">
+                <h3>Categorias</h3>
+                <ul id="categories-list">
+                    <li>Carregando...</li>
+                </ul>
+            </aside>
+
+            <main class="products-grid" id="products-list">
+                <!-- Products loaded via JS -->
+                 <div class="loading">Carregando produtos...</div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="modal hidden">
+        <div class="modal-content">
+             <h2>Checkout PIX</h2>
+             <div id="pix-area">
+                 <p>Gerando QR Code...</p>
+             </div>
+             <button onclick="closeCheckout()" class="btn-cancel">Fechar</button>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .store-container { max-width: 1200px; margin: 0 auto; padding: 2rem; color: #fff; }
+    .store-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid #333; padding-bottom: 1rem; }
+    .store-layout { display: grid; grid-template-columns: 250px 1fr; gap: 2rem; }
+    
+    .categories-sidebar h3 { color: #ffd700; border-bottom: 1px solid #333; padding-bottom: 0.5rem; }
+    .categories-sidebar ul { list-style: none; padding: 0; }
+    .categories-sidebar li { padding: 0.5rem 0; cursor: pointer; color: #aaa; }
+    .categories-sidebar li:hover { color: #00f3ff; }
+
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; }
+    .product-card { background: #111; border: 1px solid #333; padding: 1rem; border-radius: 8px; transition: 0.2s; }
+    .product-card:hover { border-color: #00f3ff; transform: translateY(-2px); }
+    .product-card h4 { color: #fff; margin: 0 0 0.5rem 0; }
+    .product-price { color: #00ff41; font-weight: bold; font-size: 1.2rem; }
+    
+    .btn-buy { background: #00f3ff; color: #000; border: none; padding: 0.5rem; width: 100%; margin-top: 1rem; cursor: pointer; font-weight: bold; }
+    .btn-checkout { background: #00ff41; color: #000; border: none; padding: 0.5rem 1rem; margin-left: 1rem; cursor: pointer; font-weight: bold; }
+    
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 100; }
+    .modal.hidden { display: none; }
+    .modal-content { background: #111; padding: 2rem; border: 1px solid #00f3ff; border-radius: 8px; text-align: center; }
+</style>
+
+<script is:inline>
+    const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '/api-proxy';
+    let cart = [];
+    let products = [];
+
+    async function initStore() {
+        // Load Categories
+        fetch(`${API_URL}/api/categories`)
+            .then(r => r.json())
+            .then(cats => {
+                const list = document.getElementById('categories-list');
+                list.innerHTML = cats.map(c => `<li>${c.name}</li>`).join('');
+            });
+
+        // Load Products (Mock for now if API not full, or hit /api/products)
+        // Assuming /api/products implemented or we mock
+        products = [
+            { id: 1, name: 'Plugin WooCommerce', price: 97.00 },
+            { id: 2, name: 'Plugin Shopify', price: 127.00 },
+            { id: 3, name: 'Pacote Revenda Ouro', price: 997.00 }
+        ];
+        renderProducts();
+    }
+
+    function renderProducts() {
+        const grid = document.getElementById('products-list');
+        grid.innerHTML = products.map(p => `
+            <div class="product-card">
+                <h4>${p.name}</h4>
+                <div class="product-price">R$ ${p.price.toFixed(2)}</div>
+                <button onclick="addToCart(${p.id})" class="btn-buy">ADICIONAR</button>
+            </div>
+        `).join('');
+    }
+
+    window.addToCart = (id) => {
+        const p = products.find(x => x.id === id);
+        if (p) {
+            const existing = cart.find(x => x.productId === id);
+            if (existing) existing.quantity++;
+            else cart.push({ productId: id, quantity: 1, price: p.price });
+            updateCartUI();
+        }
+    };
+
+    function updateCartUI() {
+        const count = cart.reduce((a,b) => a + b.quantity, 0);
+        const total = cart.reduce((a,b) => a + (b.quantity * b.price), 0);
+        document.getElementById('cart-count').textContent = count;
+        document.getElementById('cart-total').textContent = total.toFixed(2);
+    }
+
+    window.checkout = async () => {
+        if (cart.length === 0) return alert('Carrinho vazio');
+        
+        document.getElementById('checkout-modal').classList.remove('hidden');
+        document.getElementById('pix-area').innerHTML = 'Gerando PIX...';
+
+        try {
+            const res = await fetch(`${API_URL}/api/orders/checkout`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cart, userData: { phone: '5511999999999' } }) // Mock user
+            });
+            const data = await res.json();
+            
+            if (data.success) {
+                document.getElementById('pix-area').innerHTML = `
+                    <p style="color:#00ff41; margin-bottom:1rem;">PIX Gerado!</p>
+                    <textarea style="width:100%; height:100px; background:#000; color:#fff;">${data.pix.qr_code}</textarea>
+                    <p style="font-size:0.8rem; color:#aaa;">Copie e pague no app do banco</p>
+                `;
+            } else {
+                alert('Erro checkout: ' + data.error);
+            }
+        } catch (e) {
+            console.error(e);
+            document.getElementById('pix-area').innerHTML = 'Erro ao gerar PIX';
+        }
+    };
+
+    window.closeCheckout = () => {
+        document.getElementById('checkout-modal').classList.add('hidden');
+    };
+
+    initStore();
+</script>

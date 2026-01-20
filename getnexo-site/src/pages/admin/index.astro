@@ -1,0 +1,391 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout title="GetNexo Admin – Dashboard">
+
+  <header style="background:#0a0e17; padding:2rem; display:flex; justify-content:space-between; color:#00ff9d; align-items:center; border-bottom: 1px solid #1f2937;">
+    <h1 style="margin:0; font-size:2rem; font-weight:bold; letter-spacing:-1px;">GetNexo <span style="color:#fff">Admin</span></h1>
+    <div style="display:flex; align-items:center;">
+      <span id="user-info" style="color:#9ca3af; font-size:0.9rem;">Carregando...</span>
+      <button style="margin-left:1rem; background:#1f2937; color:white; padding:0.5rem 1rem; border:1px solid #374151; border-radius:8px; cursor:pointer;" onclick="logout()">Sair</button>
+    </div>
+  </header>
+
+  <!-- Admin Navigation -->
+  <nav style="background:#0f172a; padding:1rem 5%; display:flex; gap:1rem; border-bottom:1px solid #1e293b; flex-wrap:wrap;">
+    <a href="/admin" class="nav-link active">📊 Dashboard</a>
+    <a href="/admin/usuarios" class="nav-link">👥 Usuários</a>
+    <a href="/admin/roles" class="nav-link">🛡️ Roles</a>
+    <a href="/admin/auditoria" class="nav-link">📋 Auditoria</a>
+    <a href="/admin/cupons" class="nav-link">🎟️ Cupons</a>
+    <a href="/admin/produtos" class="nav-link">🛍️ Produtos</a>
+    <a href="/admin/relatorio" class="nav-link">📈 Relatórios</a>
+    <a href="/admin/seguranca" class="nav-link">🔒 Segurança</a>
+    <a href="/criar-bot" class="nav-link">🤖 Criar Bot</a>
+  </nav>
+
+  <main style="padding:2rem 5%; display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:2rem; max-width:1400px; margin:0 auto;">
+     <!-- Status dos Serviços -->
+     <div class="card" style="grid-column:1 / -1;">
+       <h2 style="margin:0 0 1rem 0; font-size:1.5rem;">🔧 Status dos Serviços</h2>
+       <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;">
+         <div class="service-status" style="background:#1e293b; padding:1rem; border-radius:8px; border:1px solid #374151;">
+           <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
+             <span class="status-dot offline">●</span>
+             <span style="font-weight:600; color:white;">Evolution API</span>
+           </div>
+           <div style="font-size:0.8rem; color:#64748b;">WhatsApp Business API</div>
+           <div style="font-size:0.7rem; color:#64748b; margin-top:0.2rem;">Offline</div>
+         </div>
+
+         <div class="service-status" style="background:#1e293b; padding:1rem; border-radius:8px; border:1px solid #374151;">
+           <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
+             <span class="status-dot offline">●</span>
+             <span style="font-weight:600; color:white;">Keycloak Auth</span>
+           </div>
+           <div style="font-size:0.8rem; color:#64748b;">Autenticação SSO</div>
+           <div style="font-size:0.7rem; color:#64748b; margin-top:0.2rem;">Offline</div>
+         </div>
+
+         <div class="service-status" style="background:#1e293b; padding:1rem; border-radius:8px; border:1px solid #374151;">
+           <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
+             <span class="status-dot offline">●</span>
+             <span style="font-weight:600; color:white;">Uptime Kuma</span>
+           </div>
+           <div style="font-size:0.8rem; color:#64748b;">Monitoramento</div>
+           <div style="font-size:0.7rem; color:#64748b; margin-top:0.2rem;">Offline</div>
+         </div>
+
+         <div class="service-status" style="background:#1e293b; padding:1rem; border-radius:8px; border:1px solid #374151;">
+           <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
+             <span class="status-dot offline">●</span>
+             <span style="font-weight:600; color:white;">WebSocket</span>
+           </div>
+           <div style="font-size:0.8rem; color:#64748b;">Tempo Real</div>
+           <div style="font-size:0.7rem; color:#64748b; margin-top:0.2rem;">Desconectado</div>
+         </div>
+       </div>
+     </div>
+
+    <!-- Conversas em tempo real -->
+    <div class="card" style="grid-column:1 / -1; min-height:400px;">
+      <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+          <h2 style="margin:0; font-size:1.5rem;">💬 Conversas ao vivo</h2>
+          <span id="socket-status" style="font-size:0.8rem; background:#f8717122; color:#f87171; padding:2px 8px; border-radius:12px; display:flex; align-items:center;">● Desconectado</span>
+      </div>
+      <div id="conversas" style="height:350px; overflow-y:auto; background:#00000066; border-radius:8px; padding:1.5rem; font-family:monospace; font-size:0.9rem;">
+        <p style="color:#666; text-align:center; margin-top:150px;">Aguardando conexão com o servidor...</p>
+      </div>
+    </div>
+
+    <!-- Relatórios -->
+    <div class="card">
+      <h2>📊 Relatório de hoje</h2>
+      <div style="margin-top:1.5rem;">
+          <p style="display:flex; justify-content:space-between;"><span style="color:#9ca3af;">Vendas</span> <strong id="stat-vendas" style="color:#00ff9d;">Carregando...</strong></p>
+          <p style="display:flex; justify-content:space-between;"><span style="color:#9ca3af;">Pedidos</span> <strong id="stat-pedidos" style="color:white;">-</strong></p>
+          <p style="display:flex; justify-content:space-between;"><span style="color:#9ca3af;">Conversas</span> <strong id="stat-conversas" style="color:#00d4ff;">-</strong></p>
+          <div style="margin-top:1rem; padding-top:1rem; border-top:1px solid #374151;">
+             <p style="display:flex; justify-content:space-between;"><span style="color:#9ca3af;">Cupons Ativos</span> <strong id="stat-cupons" style="color:#fbbf24;">-</strong></p>
+          </div>
+      </div>
+      <a href="/admin/relatorio" style="display:block; margin-top:1rem; color:#00d4ff; font-size:0.9rem;">Ver relatório completo →</a>
+    </div>
+
+    <!-- Contatos Recentes -->
+    <div class="card">
+      <h2>👥 Contatos Recentes</h2>
+      <ul id="contacts-list" style="list-style:none; padding:0; margin-top:1.5rem; max-height:250px; overflow-y:auto;">
+        <li style="color:#64748b; text-align:center; padding:2rem;">Carregando...</li>
+      </ul>
+      <p style="color:#64748b; font-size:0.8rem; margin-top:1rem;">Total: <span id="total-contacts">0</span> contatos</p>
+    </div>
+
+    <!-- Produtos -->
+    <div class="card">
+      <h2>🛍️ Produtos</h2>
+      <ul id="products-list" style="list-style:none; padding:0; margin-top:1.5rem; max-height:250px; overflow-y:auto;">
+        <li style="color:#64748b; text-align:center; padding:2rem;">Carregando...</li>
+      </ul>
+      <p style="color:#64748b; font-size:0.8rem; margin-top:1rem;">Total: <span id="total-products">0</span> produtos</p>
+    </div>
+
+  </main>
+
+  <script is:inline src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script is:inline>
+    // Check authentication first
+    const adminToken = localStorage.getItem('adminToken');
+    const omnichatToken = localStorage.getItem('omnichat_token');
+
+    if (!adminToken && !omnichatToken) {
+      window.location.href = '/admin/login';
+    }
+
+    const API_URL = window.location.hostname === 'localhost'
+      ? 'http://localhost:8080'
+      : 'https://api.getnexo.com.br';
+
+    const SOCKET_URL = window.location.hostname === 'localhost'
+      ? 'http://localhost:8080'
+      : 'https://api.getnexo.com.br';
+    
+    // Load Statistics
+    async function loadStats() {
+      try {
+        const res = await fetch(`${API_URL}/api/relatorio`);
+        const data = await res.json();
+        
+        document.getElementById('stat-vendas').textContent = 
+          'R$ ' + (data.totalVendas || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+        document.getElementById('stat-pedidos').textContent = data.pedidos || 0;
+        document.getElementById('stat-conversas').textContent = data.conversas || 0;
+      } catch (e) {
+        console.error('Error loading stats:', e);
+        document.getElementById('stat-vendas').textContent = 'Erro';
+      }
+      
+      // Load coupons count
+      try {
+        const cRes = await fetch(`${API_URL}/api/coupons`);
+        const coupons = await cRes.json();
+        const active = coupons.filter(c => c.active).length;
+        document.getElementById('stat-cupons').textContent = active;
+      } catch (e) {
+        document.getElementById('stat-cupons').textContent = '0';
+      }
+    }
+    
+    // Load Contacts
+    async function loadContacts() {
+      try {
+        const res = await fetch(`${API_URL}/contacts`);
+        const contacts = await res.json();
+        const list = document.getElementById('contacts-list');
+        
+        if (contacts.length === 0) {
+          list.innerHTML = '<li style="color:#64748b; text-align:center; padding:2rem;">Nenhum contato ainda</li>';
+        } else {
+          list.innerHTML = contacts.slice(0, 10).map(c => `
+            <li style="padding:8px 0; border-bottom:1px solid #1e293b; display:flex; justify-content:space-between; align-items:center;">
+              <span style="color:white;">${c.name || c.phone}</span>
+              <span style="font-size:0.8rem; color:#64748b;">${c.phone}</span>
+            </li>
+          `).join('');
+        }
+        
+        document.getElementById('total-contacts').textContent = contacts.length;
+      } catch (e) {
+        console.error('Error loading contacts:', e);
+      }
+    }
+    
+    // Load Products
+    async function loadProducts() {
+      try {
+        const res = await fetch(`${API_URL}/api/products`);
+        const products = await res.json();
+        const list = document.getElementById('products-list');
+        
+        if (products.length === 0) {
+          list.innerHTML = '<li style="color:#64748b; text-align:center; padding:2rem;">Nenhum produto cadastrado</li>';
+        } else {
+          list.innerHTML = products.map(p => `
+            <li style="padding:8px 0; border-bottom:1px solid #1e293b; display:flex; justify-content:space-between; align-items:center;">
+              <span style="color:white;">${p.name}</span>
+              <span style="color:#00ff9d; font-weight:600;">R$ ${p.price.toFixed(2)}</span>
+            </li>
+          `).join('');
+        }
+        
+        document.getElementById('total-products').textContent = products.length;
+      } catch (e) {
+        console.error('Error loading products:', e);
+      }
+    }
+    
+    // Socket.io Connection
+    const socket = io(SOCKET_URL, { 
+      transports: ['websocket', 'polling'],
+      reconnectionAttempts: 5
+    });
+    
+    const chatDiv = document.getElementById('conversas');
+    const statusSpan = document.getElementById('socket-status');
+    let messages = [];
+    
+    socket.on('connect', () => {
+      console.log('[Admin] Conectado ao socket');
+      statusSpan.style.background = '#00ff9d22';
+      statusSpan.style.color = '#00ff9d';
+      statusSpan.textContent = '● Online';
+      chatDiv.innerHTML = '<p style="color:#00ff9d; text-align:center; margin-top:150px;">● Conectado! Monitorando mensagens...</p>';
+    });
+    
+    socket.on('disconnect', () => {
+      statusSpan.style.background = '#f8717122';
+      statusSpan.style.color = '#f87171';
+      statusSpan.textContent = '● Desconectado';
+    });
+    
+    socket.on('new-message', (msg) => {
+      messages.push(msg);
+      if (messages.length > 50) messages.shift();
+      
+      const msgClass = msg.from_me ? 'msg-bot' : 'msg-user';
+      const sender = msg.from_me ? '🤖 Bot' : `👤 ${msg.phone}`;
+      
+      chatDiv.innerHTML = messages.map(m => `
+        <div style="margin-bottom:0.8rem; padding:0.5rem; border-radius:8px; background:${m.from_me ? '#00ff9d11' : '#00d4ff11'};">
+          <span style="font-size:0.75rem; color:${m.from_me ? '#00ff9d' : '#00d4ff'};">${m.from_me ? '🤖 Bot' : '👤 ' + m.phone}</span>
+          <p style="margin:0.3rem 0 0 0; color:white;">${m.body}</p>
+        </div>
+      `).join('');
+      
+      chatDiv.scrollTop = chatDiv.scrollHeight;
+    });
+    
+    socket.on('contact:new', (contact) => {
+      console.log('[Admin] New contact:', contact);
+      loadContacts();
+    });
+    
+    // Logout function
+    window.logout = function() {
+      localStorage.removeItem('adminToken');
+      window.location.href = '/admin/login';
+    };
+    
+    // Check login and load user
+    function checkAuth() {
+      const token = localStorage.getItem('adminToken');
+      if (token) {
+        try {
+          const email = atob(token);
+          document.getElementById('user-info').innerHTML = `Bem-vindo, <strong style="color:white;">${email}</strong>`;
+        } catch {
+          document.getElementById('user-info').textContent = 'Admin';
+        }
+      } else {
+        document.getElementById('user-info').textContent = 'Convidado';
+      }
+    }
+    
+    // Add Service Status Panel
+    function addServiceStatusPanel() {
+      const nav = document.querySelector('nav');
+      if (!nav) return;
+
+      const statusPanel = document.createElement('div');
+      statusPanel.style.cssText = 'padding:2rem 5%; max-width:1400px; margin:0 auto;';
+      statusPanel.innerHTML = `
+        <style>
+          .status-dot { color: #ef4444; font-size: 1.2rem; font-weight: bold; }
+          .status-dot.online { color: #00ff9d; }
+          .status-dot.warning { color: #f59e0b; }
+        </style>
+        <div class="card" style="grid-column:1 / -1;">
+          <h2 style="margin:0 0 1rem 0; font-size:1.5rem;">🔧 Status dos Serviços</h2>
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;">
+            <div class="service-status" id="evolution-status" style="background:#1e293b; padding:1rem; border-radius:8px; border:1px solid #374151;">
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
+                <span class="status-dot offline">●</span>
+                <span style="font-weight:600; color:white;">Evolution API</span>
+              </div>
+              <div style="font-size:0.8rem; color:#64748b;">WhatsApp Business API</div>
+              <div style="font-size:0.7rem; color:#64748b; margin-top:0.2rem;">Offline</div>
+            </div>
+
+            <div class="service-status" id="keycloak-status" style="background:#1e293b; padding:1rem; border-radius:8px; border:1px solid #374151;">
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
+                <span class="status-dot offline">●</span>
+                <span style="font-weight:600; color:white;">Keycloak Auth</span>
+              </div>
+              <div style="font-size:0.8rem; color:#64748b;">Autenticação SSO</div>
+              <div style="font-size:0.7rem; color:#64748b; margin-top:0.2rem;">Offline</div>
+            </div>
+
+            <div class="service-status" id="uptime-status" style="background:#1e293b; padding:1rem; border-radius:8px; border:1px solid #374151;">
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
+                <span class="status-dot offline">●</span>
+                <span style="font-weight:600; color:white;">Uptime Kuma</span>
+              </div>
+              <div style="font-size:0.8rem; color:#64748b;">Monitoramento</div>
+              <div style="font-size:0.7rem; color:#64748b; margin-top:0.2rem;">Offline</div>
+            </div>
+
+            <div class="service-status" id="socket-status-admin" style="background:#1e293b; padding:1rem; border-radius:8px; border:1px solid #374151;">
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
+                <span class="status-dot offline">●</span>
+                <span style="font-weight:600; color:white;">WebSocket</span>
+              </div>
+              <div style="font-size:0.8rem; color:#64748b;">Tempo Real</div>
+              <div style="font-size:0.7rem; color:#64748b; margin-top:0.2rem;">Desconectado</div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      nav.parentNode.insertBefore(statusPanel, nav.nextSibling);
+    }
+
+    // Initial Load
+    checkAuth();
+    addServiceStatusPanel();
+    loadStats();
+    loadContacts();
+    loadProducts();
+
+    // Auto refresh every 30 seconds
+    setInterval(() => {
+      loadStats();
+      loadContacts();
+    }, 30000);
+  </script>
+</Layout>
+
+<style>
+  .card {
+    background: rgba(20,30,50,0.6);
+    border-radius: 16px;
+    padding: 1.5rem;
+    border: 1px solid #1f2937;
+  }
+  
+  .card h2 {
+    color: #00d4ff;
+    font-size: 1.2rem;
+    margin: 0;
+  }
+  
+  .nav-link {
+    color: #94a3b8;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+  
+  .nav-link:hover {
+    background: #1e293b;
+    color: white;
+  }
+  
+  .nav-link.active {
+    color: #00ff9d;
+    background: #00ff9d22;
+    font-weight: 600;
+  }
+  
+  .btn-cta {
+    background: linear-gradient(90deg, #00d4ff, #00ff9d);
+    color: black;
+    padding: 0.6rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .btn-cta:hover { transform: scale(1.05); }
+</style>

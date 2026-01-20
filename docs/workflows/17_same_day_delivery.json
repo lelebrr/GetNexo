@@ -1,0 +1,50 @@
+{
+    "name": "17_Same_Day_Delivery",
+    "nodes": [
+        {
+            "parameters": {},
+            "name": "Start",
+            "type": "n8n-nodes-base.start",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "url": "https://api.loggi.com/v1/orders",
+                "method": "POST",
+                "authentication": "headerAuth",
+                "headerParametersUi": {
+                    "parameter": [
+                        {
+                            "name": "Authorization",
+                            "value": "ApiKey YOUR_EMAIL:YOUR_API_KEY"
+                        }
+                    ]
+                }
+            },
+            "name": "Request Loggi",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Start": {
+            "main": [
+                [
+                    {
+                        "node": "Request Loggi",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

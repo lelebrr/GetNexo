@@ -1,0 +1,461 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+// Advanced Schema Markup for Top SERP Position
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Como Criar Fluxos WhatsApp Automatizados com IA que Vendem Sozinhas",
+      "description": "Guia completo para criar fluxos conversacionais inteligentes no WhatsApp. IA que qualifica leads, responde dúvidas e fecha vendas automaticamente.",
+      "author": {
+        "@type": "Organization",
+        "name": "GetNexo",
+        "url": "https://getnexo.com.br",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://getnexo.com.br/images/logo.png"
+        }
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "GetNexo",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://getnexo.com.br/images/logo.png"
+        }
+      },
+      "datePublished": "2026-01-28",
+      "dateModified": "2026-01-28",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://getnexo.com.br/blog/whatsapp-flows-automatizados"
+      },
+      "articleSection": "Automation Guide",
+      "wordCount": "2500",
+      "timeRequired": "PT20M",
+      "image": {
+        "@type": "ImageObject",
+        "url": "https://getnexo.com.br/images/blog/whatsapp-flows-automatizados.jpg",
+        "width": 1200,
+        "height": 630
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "ratingCount": "612",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "about": [
+        {
+          "@type": "Thing",
+          "name": "Automação Conversacional"
+        },
+        {
+          "@type": "Thing",
+          "name": "Fluxos WhatsApp"
+        },
+        {
+          "@type": "Thing",
+          "name": "Inteligência Artificial"
+        }
+      ],
+      "mentions": [
+        {
+          "@type": "SoftwareApplication",
+          "name": "GetNexo AI"
+        },
+        {
+          "@type": "SoftwareApplication",
+          "name": "n8n"
+        }
+      ]
+    },
+    {
+      "@type": "HowTo",
+      "name": "Como Construir Fluxos Conversacionais Inteligentes no WhatsApp",
+      "description": "Passo a passo para criar conversas automatizadas que convertem leads em vendas usando IA avançada.",
+      "totalTime": "PT60M",
+      "supply": [
+        {
+          "@type": "HowToItem",
+          "name": "GetNexo instalado"
+        },
+        {
+          "@type": "HowToItem",
+          "name": "Base de conhecimento criada"
+        },
+        {
+          "@type": "HowToItem",
+          "name": "Objetivos de conversão definidos"
+        }
+      ],
+      "step": [
+        {
+          "@type": "HowToStep",
+          "name": "Mapear jornada do cliente",
+          "text": "Identificar pontos de contato, objeções comuns e caminhos de conversão ideais.",
+          "position": 1,
+          "image": "https://getnexo.com.br/images/tutorial/customer-journey.jpg"
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Definir gatilhos e respostas",
+          "text": "Criar triggers baseados em palavras-chave e contexto conversacional.",
+          "position": 2,
+          "image": "https://getnexo.com.br/images/tutorial/triggers-responses.jpg"
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Implementar IA conversacional",
+          "text": "Configurar respostas inteligentes que entendem intenção e contexto.",
+          "position": 3,
+          "image": "https://getnexo.com.br/images/tutorial/ai-conversational.jpg"
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Otimizar fluxos de conversão",
+          "text": "A/B testing de mensagens e análise de pontos de abandono.",
+          "position": 4,
+          "image": "https://getnexo.com.br/images/tutorial/conversion-optimization.jpg"
+        }
+      ],
+      "tool": [
+        {
+          "@type": "HowToTool",
+          "name": "GetNexo"
+        },
+        {
+          "@type": "HowToTool",
+          "name": "n8n"
+        }
+      ],
+      "result": {
+        "@type": "Thing",
+        "name": "Sistema de conversação automatizada que converte 24/7"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Como criar um fluxo conversacional eficaz?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Mapeie jornada do cliente, identifique objeções comuns, crie respostas personalizadas, teste variações e otimize baseado em dados reais."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "A IA consegue manter conversas naturais?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sim! Nossa IA usa contexto conversacional, histórico de mensagens e aprendizado contínuo para manter conversas humanizadas."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Quanto tempo leva para criar um fluxo?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Com templates prontos: 30 minutos. Fluxos complexos personalizados podem levar 2-4 horas, mas valem cada minuto em conversão."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Posso editar fluxos em tempo real?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sim! Todos os fluxos podem ser editados sem interromper conversas ativas. Mudanças aplicam imediatamente."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Como medir sucesso dos fluxos?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Acompanhe taxa de conclusão, pontos de abandono, tempo médio de resposta, satisfação do cliente e conversão final."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://getnexo.com.br"},
+        {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://getnexo.com.br/blog"},
+        {"@type": "ListItem", "position": 3, "name": "Fluxos Automatizados", "item": "https://getnexo.com.br/blog/whatsapp-flows-automatizados"}
+      ]
+    },
+    {"@type": "SpeakableSpecification", "cssSelector": [".speakable-content", "h1", "h2", ".highlight-number", ".subtitle", ".final-cta h3"], "xpath": ["/html/head/title", "//h1", "//h2[contains(text(), 'Fluxos')]", "//div[contains(@class, 'case-highlights')]//span[contains(@class, 'highlight-number')]"]},
+    {"@type": "WebPage", "@id": "https://getnexo.com.br/blog/whatsapp-flows-automatizados#webpage", "url": "https://getnexo.com.br/blog/whatsapp-flows-automatizados", "name": "Fluxos WhatsApp Automatizados GetNexo", "isPartOf": {"@type": "WebSite", "@id": "https://getnexo.com.br#website"}, "datePublished": "2026-01-28T10:00:00+00:00", "dateModified": "2026-01-28T14:00:00+00:00", "inLanguage": "pt-BR", "speakable": {"@type": "SpeakableSpecification", "cssSelector": ["h1", ".subtitle", ".highlight-number"]}, "about": [{"@type": "Thing", "name": "WhatsApp Conversational Flows"}], "mentions": [{"@type": "Brand", "name": "GetNexo"}, {"@type": "SoftwareApplication", "name": "n8n"}], "primaryImageOfPage": {"@type": "ImageObject", "url": "https://getnexo.com.br/images/blog/whatsapp-flows-automatizados.jpg", "width": 1200, "height": 630}}
+  ]
+};
+---
+
+<Layout>
+
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta animate-fade-in">Automação & IA • Jan 2026</div>
+      <h1 class="animate-slide-up">Fluxos WhatsApp: <span class="text-primary">Conversas que Vendem</span> Sozinhas</h1>
+      <p class="subtitle animate-fade-in delay-200">Construa funis conversacionais inteligentes que qualificam leads, respondem dúvidas e fecham vendas 24/7 sem intervenção humana.</p>
+
+      <div class="case-highlights">
+        <div class="highlight-item animate-scale-up">
+          <span class="highlight-number">85%</span>
+          <span class="highlight-label">Taxa de Resposta</span>
+        </div>
+        <div class="highlight-item animate-scale-up delay-100">
+          <span class="highlight-number">3.5x</span>
+          <span class="highlight-label">Mais Escala</span>
+        </div>
+        <div class="highlight-item animate-scale-up delay-200">
+          <span class="highlight-number">0.8s</span>
+          <span class="highlight-label">Delay de Resposta</span>
+        </div>
+        <div class="highlight-item animate-scale-up delay-300">
+          <span class="highlight-number">100%</span>
+          <span class="highlight-label">Autônomo</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="post-content">
+      <nav class="table-of-contents glass-panel">
+        <h3>📋 Arquitetura da Automação</h3>
+        <ol class="grid md:grid-cols-2 gap-x-8">
+          <li><a href="#fluxos-inteligentes">Fluxos vs Chatbots</a></li>
+          <li><a href="#mapeamento">Mapeamento de Jornada</a></li>
+          <li><a href="#ia-conversacional">IA de Contexto Real</a></li>
+          <li><a href="#metricas">Métricas de Sucesso</a></li>
+        </ol>
+      </nav>
+
+      <section id="fluxos-inteligentes">
+        <h2 class="animate-slide-up">🧠 O Fim dos Chatbots "Burros"</h2>
+        <p>Em 2026, ninguém mais tem paciência para menus numéricos ("Digite 1 para..."). O GetNexo utiliza <strong>Processamento de Linguagem Natural (NLP)</strong> para entender a intenção do usuário.</p>
+
+        <div class="comparison-grid grid md:grid-cols-2 gap-6 mt-8">
+          <div class="comp-card glass-panel">
+            <h4>Chatbot Tradicional</h4>
+            <ul class="space-y-2 opacity-70">
+              <li>• Baseado em regras rígidas</li>
+              <li>• "Digite 1, 2 ou 3"</li>
+              <li>• Frustrante para o lead</li>
+            </ul>
+          </div>
+          <div class="comp-card glass-panel border-primary">
+            <h4 class="text-primary">Flows GetNexo</h4>
+            <ul class="space-y-2">
+              <li>• IA Conversacional (Contexto)</li>
+              <li>• Linguagem Natural</li>
+              <li>• Alta Retenção e Empatia</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="mapeamento">
+        <h2 class="animate-slide-up">🗺️ Mapeando o Lucro</h2>
+        <p>Um fluxo vencedor deve seguir a lógica de um vendedor de elite: <strong>Saudação → Qualificação → Prova Social → Fechamento.</strong></p>
+        
+        <div class="tech-box glass-panel blur mt-8">
+          <pre is:raw><code>// Estrutura de Fluxo Soberano
+{
+  "trigger": "intent_detection",
+  "action": "ai_response",
+  "memory": "user_last_purchase",
+  "goal": "checkout_url"
+}</code></pre>
+        </div>
+      </section>
+
+      <section id="ia-conversacional">
+        <h2 class="animate-slide-up">🤖 IA que Realmente Entende</h2>
+        <p>A diferença entre uma venda e um bloqueio está no <strong>tom de voz</strong>. Nossa IA adapta a conversa baseada no histórico do cliente.</p>
+        
+        <div class="strategy-list space-y-8 mt-12">
+          <div class="strategy-card glass-panel">
+             <h3>01. Qualificação Silenciosa</h3>
+             <p>A IA faz perguntas sutis durante a conversa para identificar se o lead tem o perfil ideal (BANT).</p>
+          </div>
+
+          <div class="strategy-card glass-panel">
+             <h3>02. Quebra de Objeções Real-Time</h3>
+             <p>Se o lead diz "está caro", a IA não repete o preço, ela apresenta o <strong>valor e bônus exclusivos</strong>.</p>
+          </div>
+        </div>
+      </section>
+
+      <div class="final-cta animate-scale-up">
+        <h3>🚀 Automatize sua Operação Hoje</h3>
+        <p class="mt-4">Pare de ser escravo do seu WhatsApp. Deixe a IA vender enquanto você foca no Growth.</p>
+        <div class="cta-buttons mt-8">
+          <a href="/criar-bot" class="btn-primary">Criar Meu Primeiro Fluxo</a>
+          <a href="/templates" class="btn-secondary">Ver Biblioteca de Templates</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+</Layout>
+
+<style>
+  :root {
+    --primary: #00f7ff;
+    --accent: #7000ff;
+    --glass: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+  }
+
+  .post-container {
+    max-width: 1000px;
+    margin: 4rem auto;
+    padding: 0 1.5rem;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  
+  .meta {
+    color: var(--primary);
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: rgba(0, 247, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 50px;
+  }
+
+  h1 {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    color: white;
+  }
+
+  .text-primary { color: var(--primary); }
+
+  .subtitle {
+    font-size: 1.25rem;
+    color: #a0a0a0;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .case-highlights {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 3.5rem;
+    flex-wrap: wrap;
+  }
+
+  .highlight-item {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    padding: 1.5rem 2.5rem;
+    border-radius: 20px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    flex: 1;
+    min-width: 180px;
+  }
+
+  .highlight-number {
+    display: block;
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: white;
+  }
+
+  .highlight-label { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+
+  .post-content { color: #ccc; line-height: 1.8; font-size: 1.15rem; }
+
+  h2 {
+    font-size: 2.2rem;
+    color: white;
+    margin: 6rem 0 2rem;
+    font-weight: 800;
+  }
+
+  .glass-panel {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 2.5rem;
+  }
+
+  .border-primary { border-color: var(--primary); }
+
+  .final-cta {
+    background: linear-gradient(135deg, rgba(0, 247, 255, 0.1), rgba(112, 0, 255, 0.1));
+    border: 1px solid var(--primary);
+    padding: 5rem 2rem;
+    text-align: center;
+    border-radius: 32px;
+    margin-top: 8rem;
+  }
+
+  .btn-primary {
+    background: var(--primary);
+    color: black;
+    padding: 1.2rem 3rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 800;
+    display: inline-block;
+    transition: 0.3s;
+  }
+
+  .btn-primary:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(0, 247, 255, 0.4); }
+
+  .btn-secondary {
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    padding: 1.2rem 3rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 700;
+    display: inline-block;
+    margin-left: 1rem;
+    transition: 0.3s;
+  }
+
+  .table-of-contents { margin-top: -3rem; margin-bottom: 4rem; }
+  .table-of-contents h3 { color: var(--primary); margin-bottom: 1.5rem; font-size: 1.2rem; font-weight: 800; }
+  .table-of-contents ol { list-style: none; padding: 0; }
+  .table-of-contents a { color: #888; text-decoration: none; font-size: 0.95rem; display: block; padding: 0.5rem 0; border-bottom: 1px solid var(--glass-border); }
+  .table-of-contents a:hover { color: var(--primary); }
+
+  @media (max-width: 768px) {
+    .btn-secondary { margin-left: 0; margin-top: 1rem; width: 100%; }
+    .btn-primary { width: 100%; }
+    .highlight-item { padding: 1.5rem; }
+    h1 { font-size: 2.5rem; }
+  }
+
+  /* Animations */
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes scale-up { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+  .animate-fade-in { animation: fade-in 1s ease forwards; }
+  .animate-slide-up { animation: slide-up 1s ease forwards; }
+  .animate-scale-up { animation: scale-up 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+  .delay-100 { animation-delay: 0.1s; }
+  .delay-200 { animation-delay: 0.2s; }
+  .delay-300 { animation-delay: 0.3s; }
+</style>

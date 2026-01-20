@@ -1,0 +1,111 @@
+{
+    "name": "13_Correios_Tracking",
+    "nodes": [
+        {
+            "parameters": {
+                "pollTimes": {
+                    "item": [
+                        {
+                            "mode": "everyHour"
+                        }
+                    ]
+                }
+            },
+            "name": "Cron Loop",
+            "type": "n8n-nodes-base.cron",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "url": "https://api.correios.com.br/rastreio/{{$json[\"tracking_code\"]}}",
+                "authentication": "headerAuth",
+                "headerParametersUi": {
+                    "parameter": [
+                        {
+                            "name": "Authorization",
+                            "value": "Bearer YOUR_TOKEN"
+                        }
+                    ]
+                }
+            },
+            "name": "Get Tracking",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "string": [
+                        {
+                            "value1": "={{$json[\"status\"]}}",
+                            "operation": "equal",
+                            "value2": "delivered"
+                        }
+                    ]
+                }
+            },
+            "name": "Is Delivered?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                650,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "content": "Your package has arrived!"
+            },
+            "name": "Notify User",
+            "type": "n8n-nodes-base.chatwoot",
+            "typeVersion": 1,
+            "position": [
+                850,
+                200
+            ]
+        }
+    ],
+    "connections": {
+        "Cron Loop": {
+            "main": [
+                [
+                    {
+                        "node": "Get Tracking",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Get Tracking": {
+            "main": [
+                [
+                    {
+                        "node": "Is Delivered?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Is Delivered?": {
+            "main": [
+                [
+                    {
+                        "node": "Notify User",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

@@ -1,0 +1,135 @@
+{
+    "name": "27_Billing_Invoice_Generation",
+    "nodes": [
+        {
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "months",
+                            "minutes": 0,
+                            "hours": 0,
+                            "days": 1
+                        }
+                    ]
+                }
+            },
+            "name": "Monthly Trigger",
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "keys",
+                "key": "tenant:*:config"
+            },
+            "name": "Get All Tenants",
+            "type": "n8n-nodes-base.redis",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "functionCode": "return items[0].json.data.map(key => ({ json: { key } }));"
+            },
+            "name": "Split Keys",
+            "type": "n8n-nodes-base.function",
+            "typeVersion": 1,
+            "position": [
+                650,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "get",
+                "key": "={{$json[\"key\"]}}"
+            },
+            "name": "Get Tenant Details",
+            "type": "n8n-nodes-base.redis",
+            "typeVersion": 1,
+            "position": [
+                850,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "url": "https://bling.com.br/Api/v2/nfe/json/",
+                "method": "POST",
+                "bodyParametersUi": {
+                    "parameter": [
+                        {
+                            "name": "apikey",
+                            "value": "YOUR_API_KEY"
+                        },
+                        {
+                            "name": "xml",
+                            "value": "={{$json[\"data\"]}}"
+                        }
+                    ]
+                }
+            },
+            "name": "Generate Invoice (Mock)",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 1,
+            "position": [
+                1050,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Monthly Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "Get All Tenants",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Get All Tenants": {
+            "main": [
+                [
+                    {
+                        "node": "Split Keys",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Split Keys": {
+            "main": [
+                [
+                    {
+                        "node": "Get Tenant Details",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Get Tenant Details": {
+            "main": [
+                [
+                    {
+                        "node": "Generate Invoice (Mock)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

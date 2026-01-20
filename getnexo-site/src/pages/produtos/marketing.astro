@@ -1,0 +1,315 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const title = "Marketing no WhatsApp: Click-to-WhatsApp Ads e Disparos Oficiais | GetNexo";
+const description = "Plataforma oficial para Marketing no WhatsApp. Escale vendas com Click-to-WhatsApp Ads, Broadcast ilimitado sem bloqueios e Retargeting automático.";
+const keywords = "click to whatsapp, whatsapp ads, disparo em massa whatsapp, api oficial whatsapp, marketing whatsapp, retargeting whatsapp, nexo marketing, meta business partner";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "GetNexo Marketing",
+      "applicationCategory": "MarketingApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "BRL"
+      },
+      "description": "Plataforma de automação de marketing para WhatsApp com API Oficial da Meta.",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "ratingCount": "128"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "O disparo em massa dá bloqueio?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Não quando feito via API Oficial (Cloud API). O GetNexo utiliza a infraestrutura oficial da Meta, garantindo conformidade e alta entrega sem risco de banimento."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "O que é Click-to-WhatsApp Ads?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "São anúncios no Facebook ou Instagram que, ao serem clicados, abrem diretamente uma conversa no WhatsApp da sua empresa, permitindo conversão imediata."
+          }
+        }
+      ]
+    }
+  ]
+};
+
+const stats = [
+  { value: "5x", label: "mais conversão", desc: "que landing pages tradicionais" },
+  { value: "98%", label: "taxa de leitura", desc: "nas primeiras 2 horas" },
+  { value: "45%", label: "taxa de resposta", desc: "em campanhas de reaquecimento" },
+  { value: "R$0,00", label: "risco de ban", desc: "usando API Oficial Meta" }
+];
+
+const features = [
+  {
+    icon: "🚀",
+    title: "Click-to-WhatsApp Ads",
+    description: "Conecte seus anúncios do Meta (Facebook/Instagram) diretamente ao funil. Mensure o ROAS exato de cada conversa iniciada.",
+    details: [
+      "Integração nativa Meta Business",
+      "Pixel de conversão no WhatsApp",
+      "Atribuição de vendas por anúncio",
+      "Sincronização de catálogos"
+    ]
+  },
+  {
+    icon: "📡",
+    title: "Broadcast Oficial",
+    description: "Envie campanhas em massa sem medo de perder o número. Use templates aprovados e garanta a entrega na caixa de entrada.",
+    details: [
+      "Alta taxa de entrega",
+      "Templates multimídia (Vídeo/Img)",
+      "Agendamento inteligente",
+      "Botões de Call-to-Action"
+    ]
+  },
+  {
+    icon: "🎯",
+    title: "Segmentação Precisa",
+    description: "Crie audiências ultra-qualificadas baseadas no comportamento do cliente, etiquetas e histórico de compras.",
+    details: [
+      "Filtros por tags e status",
+      "Histórico de inatividade",
+      "Ticket médio",
+      "Lookalike de compradores"
+    ]
+  },
+  {
+    icon: "🔄",
+    title: "Retargeting Automático",
+    description: "Não deixe dinheiro na mesa. O sistema identifica quem parou no meio do fluxo e envia ofertas de recuperação automaticamente.",
+    details: [
+      "Recuperação de carrinho",
+      "Boleto não pago",
+      "Ofertas de 'volte aqui'",
+      "Gatilhos comportamentais"
+    ]
+  }
+];
+
+const complianceItems = [
+  { title: "Meta Tech Provider", desc: "Parceiro tecnológico oficial" },
+  { title: "Criptografia E2E", desc: "Segurança total de dados" },
+  { title: "LGPD Ready", desc: "Conformidade com leis de dados" },
+  { title: "Opt-in Management", desc: "Gestão automática de consentimento" }
+];
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+
+  <!-- Hero Section -->
+  <section class="prod-hero relative overflow-hidden" aria-label="Introdução Marketing WhatsApp">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-slate-900 to-slate-900 -z-10"></div>
+    
+    <div class="hero-badge">📢 Oficial Meta Partner</div>
+    <h1 class="text-4xl md:text-6xl font-black text-white mb-6 leading-tight">
+      Transforme cliques em <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Vendas Reais</span>
+    </h1>
+    <p class="hero-subtitle text-lg md:text-xl text-slate-300 max-w-2xl mx-auto mb-10 leading-relaxed">
+      A única plataforma que une <strong>Click-to-WhatsApp Ads</strong>, disparo em massa oficial e automação de vendas em um só lugar. Sem hacks, sem banimentos.
+    </p>
+    
+    <div class="hero-ctas flex flex-col md:flex-row gap-4 justify-center mb-16">
+      <a href="/criar-bot" class="btn-primary-glow px-8 py-4 rounded-xl font-bold bg-blue-600 hover:bg-blue-500 text-white transition-all shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2">
+        <span>🚀</span> Criar Campanha Agora
+      </a>
+      <a href="/demo" class="btn-outline px-8 py-4 rounded-xl font-bold border border-slate-700 hover:border-blue-400 text-slate-300 hover:text-white transition-all flex items-center justify-center gap-2 bg-slate-800/50">
+        <span>▶️</span> Ver Demonstração
+      </a>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="hero-stats grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+      {stats.map(stat => (
+        <div class="stat-card p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-colors">
+          <span class="block text-3xl md:text-4xl font-black text-blue-400 mb-2">{stat.value}</span>
+          <span class="block text-sm font-bold text-white uppercase tracking-wider mb-1">{stat.label}</span>
+          <span class="block text-xs text-slate-400">{stat.desc}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Ad Flow Visual (Accessible) -->
+  <section class="ad-flow-section py-20 px-4" aria-label="Fluxo de Conversão de Anúncios">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">O Novo Funil de <span class="text-blue-400">Alta Conversão</span></h2>
+        <p class="text-slate-400 text-lg">Do anúncio à venda em segundos, sem sair do WhatsApp.</p>
+      </div>
+
+      <div class="flow-container relative p-8 rounded-3xl bg-slate-800/50 border border-slate-700/50 backdrop-blur-md overflow-hidden" role="img" aria-label="Diagrama visual mostrando o fluxo: Usuário clica no anúncio Instagram, abre WhatsApp, Interage com Bot, Realiza compra">
+        <!-- Connecting Line Background -->
+        <div class="absolute top-1/2 left-0 w-full h-1 bg-gradient-to-r from-blue-900/0 via-blue-500/30 to-blue-900/0 -translate-y-1/2 hidden md:block"></div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative z-10">
+          
+          <!-- Step 1: Ad -->
+          <div class="flow-step group">
+            <div class="step-card bg-[#1a1f2e] p-6 rounded-2xl border border-slate-700 hover:border-blue-500/50 transition-all text-center relative h-full">
+              <div class="absolute -top-3 -right-3 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm">1</div>
+              <div class="text-4xl mb-4 grayscale group-hover:grayscale-0 transition-all duration-500">📱</div>
+              <h3 class="text-white font-bold mb-2">Anúncio Social</h3>
+              <p class="text-slate-400 text-sm">Cliente vê seu anúncio no Instagram/Facebook e clica em "Enviar Mensagem".</p>
+            </div>
+          </div>
+
+          <!-- Step 2: WhatsApp Open -->
+          <div class="flow-step group">
+            <div class="step-card bg-[#1a1f2e] p-6 rounded-2xl border border-slate-700 hover:border-green-500/50 transition-all text-center relative h-full">
+              <div class="absolute -top-3 -right-3 w-8 h-8 bg-green-600 rounded-full flex items-center justify-center text-white font-bold text-sm">2</div>
+              <div class="text-4xl mb-4 text-green-500">💬</div>
+              <h3 class="text-white font-bold mb-2">WhatsApp Abre</h3>
+              <p class="text-slate-400 text-sm">Conversa inicia automaticamente com uma mensagem pré-definida.</p>
+            </div>
+          </div>
+
+          <!-- Step 3: Automation -->
+          <div class="flow-step group">
+            <div class="step-card bg-[#1a1f2e] p-6 rounded-2xl border border-slate-700 hover:border-purple-500/50 transition-all text-center relative h-full">
+              <div class="absolute -top-3 -right-3 w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">3</div>
+              <div class="text-4xl mb-4 text-purple-400">🤖</div>
+              <h3 class="text-white font-bold mb-2">Nexo Bot Atende</h3>
+              <p class="text-slate-400 text-sm">IA qualifica o lead, tira dúvidas e apresenta produtos instantaneamente.</p>
+            </div>
+          </div>
+
+          <!-- Step 4: Conversion -->
+          <div class="flow-step group">
+            <div class="step-card bg-[#1a1f2e] p-6 rounded-2xl border border-slate-700 hover:border-yellow-500/50 transition-all text-center relative h-full">
+              <div class="absolute -top-3 -right-3 w-8 h-8 bg-yellow-600 rounded-full flex items-center justify-center text-white font-bold text-sm">4</div>
+              <div class="text-4xl mb-4 text-yellow-400">💰</div>
+              <h3 class="text-white font-bold mb-2">Venda Realizada</h3>
+              <p class="text-slate-400 text-sm">Pagamento via PIX/Link gerado no chat. Venda atribuída ao anúncio original.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid -->
+  <section class="features-section py-20 bg-slate-900/50">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-3xl font-bold text-white text-center mb-16">Ferramentas de <span class="text-blue-400">Elite</span></h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {features.map(feature => (
+          <article class="feature-card p-8 rounded-3xl bg-[#131b2e] border border-white/5 hover:border-blue-500/30 transition-all group">
+            <div class="flex items-start gap-6">
+              <span class="text-4xl p-4 bg-blue-900/20 rounded-2xl group-hover:scale-110 transition-transform">{feature.icon}</span>
+              <div>
+                <h3 class="text-xl font-bold text-white mb-3">{feature.title}</h3>
+                <p class="text-slate-300 leading-relaxed mb-6">{feature.description}</p>
+                <ul class="space-y-3">
+                  {feature.details.map(detail => (
+                    <li class="flex items-center gap-3 text-slate-400 text-sm">
+                      <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                      {detail}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Compliance Section -->
+  <section class="compliance-section py-16 border-t border-white/5 bg-[#0b101b]">
+    <div class="max-w-6xl mx-auto px-4 text-center">
+      <h2 class="text-2xl font-bold text-white mb-10">Segurança e <span class="text-green-400">Compliance</span> Oficial</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        {complianceItems.map(item => (
+          <div class="p-4 rounded-xl bg-white/5 border border-white/5">
+            <h3 class="text-white font-bold mb-1">{item.title}</h3>
+            <p class="text-xs text-slate-400">{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section py-20 px-4 max-w-4xl mx-auto">
+    <h2 class="text-3xl font-bold text-white text-center mb-12">Dúvidas Frequentes</h2>
+    <div class="space-y-4">
+      <details class="group bg-white/5 rounded-2xl border border-white/5 open:bg-white/10 transition-colors">
+        <summary class="flex justify-between items-center cursor-pointer p-6 font-semibold text-white list-none focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-2xl">
+          <span>O que é a API Oficial (Cloud API)?</span>
+          <span class="transition-transform group-open:rotate-180">▼</span>
+        </summary>
+        <div class="px-6 pb-6 text-slate-300 leading-relaxed">
+          É a conexão direta fornecida pela Meta para empresas. Diferente de ferramentas "cinzas" que simulam um celular web (QR Code), a API é estável, suporta alto volume e é autorizada para fins comerciais, eliminando riscos de bloqueio por uso da ferramenta errada.
+        </div>
+      </details>
+
+      <details class="group bg-white/5 rounded-2xl border border-white/5 open:bg-white/10 transition-colors">
+        <summary class="flex justify-between items-center cursor-pointer p-6 font-semibold text-white list-none focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-2xl">
+          <span>Preciso ter o Facebook Business Manager?</span>
+          <span class="transition-transform group-open:rotate-180">▼</span>
+        </summary>
+        <div class="px-6 pb-6 text-slate-300 leading-relaxed">
+          Sim. Para usar a API Oficial e fazer anúncios Click-to-WhatsApp com rastreamento, você precisa de uma conta verificada no Gerenciador de Negócios da Meta. O GetNexo auxilia neste processo de verificação.
+        </div>
+      </details>
+      
+      <details class="group bg-white/5 rounded-2xl border border-white/5 open:bg-white/10 transition-colors">
+        <summary class="flex justify-between items-center cursor-pointer p-6 font-semibold text-white list-none focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-2xl">
+          <span>Posso importar meus contatos antigos?</span>
+          <span class="transition-transform group-open:rotate-180">▼</span>
+        </summary>
+        <div class="px-6 pb-6 text-slate-300 leading-relaxed">
+          Sim, você pode importar listas de contatos (CSV/Excel) desde que tenham dado opt-in (consentimento) prévio. A Meta exige que você envie mensagens apenas para usuários que aceitaram receber contato.
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta py-20 text-center px-4">
+    <div class="max-w-4xl mx-auto bg-gradient-to-b from-blue-900/40 to-slate-900 rounded-3xl p-10 border border-blue-500/20 shadow-2xl">
+      <h2 class="text-3xl md:text-4xl font-black text-white mb-6">Pare de queimar dinheiro com Leads ruins</h2>
+      <p class="text-xl text-slate-300 mb-10">
+        Comece a converter com a inteligência do GetNexo hoje mesmo.
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <a href="/criar-bot" class="btn-primary-glow px-10 py-4 rounded-xl font-bold bg-white text-blue-900 hover:bg-blue-50 transition-colors shadow-lg shadow-white/10 text-lg">
+          Começar Gratuitamente
+        </a>
+      </div>
+      <p class="mt-6 text-sm text-slate-500">
+        🔒 Garantia de 7 dias • Sem fidelidade • Suporte em Português
+      </p>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  /* Custom utility classes if needed, mostly using Tailwind */
+  .pattern-grid {
+    background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+</style>

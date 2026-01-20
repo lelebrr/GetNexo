@@ -1,0 +1,205 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const title = "Automação WhatsApp para Qualquer Negócio | GetNexo";
+const description = "Turismo, Eventos, Varejo, Estética, Automotivo e muito mais. Adapte o GetNexo para automatizar o antendimento e vendas do seu nicho específico.";
+const keywords = "whatsapp para turismo, whatsapp para eventos, crm automotivo whatsapp, bot para varejo, atendimento automatizado whatsapp, api whatsapp business";
+
+const stats = [
+  { value: "100%", label: "Adaptável", desc: "Fluxos customizáveis (Arrastar e Soltar)" },
+  { value: "API", label: "Aberta", desc: "Conecte com seu sistema via Webhooks" },
+  { value: "IA", label: "Treinável", desc: "Aprende com seus PDFs e manuais" },
+  { value: "Multi", label: "Canal", desc: "WhatsApp, Instagram e Webchat" }
+];
+
+const painPoints = [
+  {
+    icon: "🧩",
+    title: "Meu Negócio é Único",
+    desc: "Você acha que 'robô de prateleira' não serve pra você? Nosso construtor de fluxos permite desenhar qualquer processo: check-in de hotel, agendamento de revisão de carro, venda de ingresso..."
+  },
+  {
+    icon: "🔌",
+    title: "Sistema Legado",
+    desc: "Você usa um ERP antigo? Sem problemas. O GetNexo conecta via API/Webhook para consultar estoque, status de pedido ou saldo de cliente em tempo real."
+  },
+  {
+    icon: "🌍",
+    title: "Atendimento Bilíngue",
+    desc: "Para turismo e hotelaria: A IA do GetNexo detecta o idioma do cliente e responde em Inglês, Espanhol ou Francês automaticamente."
+  }
+];
+
+const features = [
+  {
+    title: "Construtor de Fluxos (No-Code)",
+    desc: "Desenhe sua árvore de decisão. 'Se cliente digitar 1, faça isso. Se tiver saldo X, faça aquilo'. Tudo visual, sem código.",
+    icon: "🛠️"
+  },
+  {
+    title: "Treinamento com Documentos",
+    desc: "Tem um manual de 500 páginas sobre seus produtos ou normas? Faça upload do PDF e a IA vira especialista no seu negócio em 2 minutos.",
+    icon: "🧠"
+  },
+  {
+    title: "Agendamento de Eventos",
+    desc: "Ideal para casas noturnas e workshops. Venda ingressos, gere QR Code e envie lembretes automáticos na véspera.",
+    icon: "🎟️"
+  }
+];
+
+const segments = [
+  { name: "Turismo & Hotelaria", desc: "Check-in, Concierge Virtual e Venda de Passeios" },
+  { name: "Automotivo", desc: "Agendamento de Revisão, Venda de Peças e Test-drive" },
+  { name: "Beleza & Estética", desc: "Agenda de procedimentos e lembretes de retorno" },
+  { name: "Varejo Físico", desc: "Catálogo, Drive-thru e Clube de Fidelidade" },
+  { name: "ONGs", desc: "Captação de doações e relacionamento com voluntários" },
+  { name: "Logística", desc: "Rastreio de encomendas e aviso de entrega" }
+];
+
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  
+  <section class="segment-hero">
+    <div class="hero-content">
+      <div class="badge">Para Todos os Segmentos</div>
+      <h1>A Automação que se <span class="text-gradient">Moldam ao Seu Negócio</span></h1>
+      <p class="hero-text">
+        Não importa se você vende viagens, peças de carro ou ingressos. Se o seu cliente usa WhatsApp, o GetNexo funciona para você.
+      </p>
+      <div class="hero-btns">
+        <a href="/criar-bot" class="btn-primary-glow">Criar Fluxo Personalizado</a>
+        <a href="/demo" class="btn-outline">Ver API</a>
+      </div>
+    </div>
+    <div class="hero-stats">
+      {stats.map(s => (
+        <div class="stat-item glass-panel">
+          <span class="stat-val">{s.value}</span>
+          <span class="stat-lbl">{s.label}</span>
+          <span class="stat-dsc">{s.desc}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="seo-content">
+    <h2>Flexibilidade Total com <span class="text-gradient">No-Code + IA</span></h2>
+    <p>
+      Muitas ferramentas de mercado te obrigam a seguir o "jeito deles". O GetNexo te dá uma tela em branco e ferramentas poderosas.
+    </p>
+    <p>
+      Você pode criar um funil simples de atendimento ou uma integração complexa que consulta seu banco de dados SQL, gera um PDF dinâmico e envia para o cliente. O limite é sua criatividade.
+    </p>
+  </section>
+
+  <section class="pain-section">
+    <h2>Versatilidade para nichos específicos</h2>
+    <div class="pain-grid">
+      {painPoints.map(p => (
+        <div class="pain-card glass-panel">
+          <span class="pain-icon">{p.icon}</span>
+          <h3>{p.title}</h3>
+          <p>{p.desc}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="features-section">
+    <h2>Ferramentas Universais</h2>
+    <div class="feat-grid">
+      {features.map(f => (
+        <div class="feat-card glass-panel">
+          <div class="feat-header">
+            <span class="feat-icon">{f.icon}</span>
+            <h3>{f.title}</h3>
+          </div>
+          <p>{f.desc}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="deep-dive">
+    <article>
+      <h3>Outros Segmentos Atendidos</h3>
+      <p>O GetNexo já está operando em diversas verticais. Veja alguns exemplos de uso:</p>
+      
+      <div class="segments-grid">
+        {segments.map(s => (
+          <div class="seg-item">
+            <strong>{s.name}</strong>
+            <span>{s.desc}</span>
+          </div>
+        ))}
+      </div>
+      
+      <h3>API para Desenvolvedores</h3>
+      <p>
+        Tem equipe de TI? Use nossa API REST e Webhooks para conectar o WhatsApp ao seu CRM proprietário, ERP SAP/Totvs ou qualquer sistema legado.
+        Documentação completa e Swagger disponível.
+      </p>
+    </article>
+  </section>
+
+  <section class="final-cta">
+    <div class="cta-box glass-panel">
+      <h2>Não achou seu segmento?</h2>
+      <p>Fale com nossos consultores. Desenhamos a solução sob medida para você.</p>
+      <a href="/contato" class="btn-primary-glow">Falar com Consultor</a>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  /* [CSS Compartilhado - Mantendo a identidade] */
+  .segment-hero { padding: 8rem 5% 4rem; max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+  .badge { background: rgba(0, 212, 255, 0.1); color: #00d4ff; padding: 0.5rem 1rem; border-radius: 50px; display: inline-block; margin-bottom: 1.5rem; font-weight: 700; }
+  h1 { font-size: 3.5rem; color: white; font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; }
+  .hero-text { color: #94a3b8; font-size: 1.2rem; line-height: 1.6; margin-bottom: 2.5rem; }
+  .hero-btns { display: flex; gap: 1rem; }
+  .btn-primary-glow { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1rem 2rem; border-radius: 12px; font-weight: 800; text-decoration: none; transition: 0.3s; }
+  .btn-primary-glow:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,212,255,0.3); }
+  .btn-outline { border: 1px solid rgba(255,255,255,0.2); color: white; padding: 1rem 2rem; border-radius: 12px; text-decoration: none; font-weight: 700; }
+  .hero-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .stat-item { padding: 2rem; text-align: center; border-radius: 20px; }
+  .stat-val { display: block; font-size: 2.5rem; font-weight: 900; color: #00ff9d; }
+  .stat-lbl { display: block; color: white; font-weight: 700; margin-top: 0.5rem; }
+  .stat-dsc { display: block; color: #64748b; font-size: 0.8rem; margin-top: 0.5rem; }
+  .seo-content, .pain-section, .features-section, .deep-dive, .final-cta { padding: 4rem 5%; max-width: 1000px; margin: 0 auto; }
+  .seo-content p, .deep-dive p { color: #cbd5e1; font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem; }
+  .seo-content strong { color: white; }
+  h2 { font-size: 2.5rem; color: white; font-weight: 800; margin-bottom: 2rem; text-align: center; }
+  h3 { font-size: 1.8rem; color: white; font-weight: 700; margin-top: 3rem; margin-bottom: 1rem; }
+  .pain-grid, .feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 3rem; }
+  .pain-card, .feat-card { padding: 2rem; border-radius: 20px; }
+  .pain-icon, .feat-icon { font-size: 2.5rem; display: block; margin-bottom: 1rem; }
+  .pain-card h3, .feat-card h3 { font-size: 1.2rem; color: white; margin: 0 0 1rem 0; }
+  .pain-card p, .feat-card p { color: #94a3b8; font-size: 0.95rem; line-height: 1.5; }
+  .cta-box { text-align: center; padding: 5rem; border-radius: 30px; }
+  
+  /* Grid de Outros Segmentos */
+  .segments-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+  .seg-item {
+    background: rgba(255,255,255,0.05);
+    padding: 1rem;
+    border-radius: 12px;
+  }
+  .seg-item strong { display: block; color: #00ff9d; margin-bottom: 0.3rem; }
+  .seg-item span { color: #cbd5e1; font-size: 0.9rem; }
+
+  @media (max-width: 900px) { 
+    .segment-hero { grid-template-columns: 1fr; text-align: center; } 
+    .hero-btns { justify-content: center; } 
+    .pain-grid, .feat-grid { grid-template-columns: 1fr; } 
+    .segments-grid { grid-template-columns: 1fr; }
+  }
+</style>

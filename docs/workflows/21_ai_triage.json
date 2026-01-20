@@ -1,0 +1,130 @@
+{
+    "name": "21_AI_Triage",
+    "nodes": [
+        {
+            "parameters": {},
+            "name": "Start",
+            "type": "n8n-nodes-base.start",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "url": "http://ollama:11434/api/generate",
+                "method": "POST",
+                "bodyParametersUi": {
+                    "parameter": [
+                        {
+                            "name": "model",
+                            "value": "phi3"
+                        },
+                        {
+                            "name": "prompt",
+                            "value": "Classify this support ticket: '{{$json[\"message\"]}}'. Return ONLY: 'DEFECT' or 'USAGE_QUESTION'."
+                        },
+                        {
+                            "name": "stream",
+                            "value": "false"
+                        }
+                    ]
+                }
+            },
+            "name": "Classify Issue",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "string": [
+                        {
+                            "value1": "={{$json[\"response\"]}}",
+                            "operation": "contains",
+                            "value2": "DEFECT"
+                        }
+                    ]
+                }
+            },
+            "name": "Is Defect?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                650,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "content": "I'm escalating this defect to the technical team immediately."
+            },
+            "name": "Escalate Ticket",
+            "type": "n8n-nodes-base.chatwoot",
+            "typeVersion": 1,
+            "position": [
+                850,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "content": "Here is a guide on how to use that feature..."
+            },
+            "name": "Send Guide",
+            "type": "n8n-nodes-base.chatwoot",
+            "typeVersion": 1,
+            "position": [
+                850,
+                400
+            ]
+        }
+    ],
+    "connections": {
+        "Start": {
+            "main": [
+                [
+                    {
+                        "node": "Classify Issue",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Classify Issue": {
+            "main": [
+                [
+                    {
+                        "node": "Is Defect?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Is Defect?": {
+            "main": [
+                [
+                    {
+                        "node": "Escalate Ticket",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Send Guide",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

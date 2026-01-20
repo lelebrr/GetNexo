@@ -1,0 +1,70 @@
+{
+    "name": "10_Upsell_Logic",
+    "nodes": [
+        {
+            "parameters": {},
+            "name": "Start",
+            "type": "n8n-nodes-base.start",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "boolean": [
+                        {
+                            "value1": "={{$json[\"cart_value\"] > 100}}",
+                            "value2": true
+                        }
+                    ]
+                }
+            },
+            "name": "Qualify for Upsell?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "content": "Hey! Since you're buying X, take Y for 20% off!"
+            },
+            "name": "Send Offer",
+            "type": "n8n-nodes-base.chatwoot",
+            "typeVersion": 1,
+            "position": [
+                650,
+                200
+            ]
+        }
+    ],
+    "connections": {
+        "Start": {
+            "main": [
+                [
+                    {
+                        "node": "Qualify for Upsell?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Qualify for Upsell?": {
+            "main": [
+                [
+                    {
+                        "node": "Send Offer",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

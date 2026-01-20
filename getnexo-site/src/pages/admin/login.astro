@@ -1,0 +1,250 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Login Admin | GetNexo">
+    <div class="login-container">
+        <div class="glass-panel login-card">
+            <div class="logo-area">
+                <div class="logo-icon">N</div>
+                <h1>Get<span>Nexo</span></h1>
+            </div>
+            
+            <p class="subtitle">Acesse seu centro de comando</p>
+
+            <form id="login-form">
+                <div class="input-group">
+                    <label>E-mail</label>
+                    <input type="email" id="email" required placeholder="admin@getnexo.local" />
+                </div>
+                
+                <div class="input-group">
+                    <label>Senha</label>
+                    <input type="password" id="password" required placeholder="••••••••" />
+                </div>
+
+                <!-- 2FA Hidden Field -->
+                <div class="input-group" id="2fa-container" style="display:none; animation: fadeIn 0.5s;">
+                    <label style="color:#00ff9d;">Código 2FA</label>
+                    <input type="text" id="2fa-code" placeholder="000 000" style="text-align:center; letter-spacing:4px; font-weight:800; border-color:#00ff9d;" />
+                </div>
+
+                <!-- LGPD Consent -->
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:1.5rem; text-align:left;">
+                    <input type="checkbox" id="lgpd-consent" style="width:20px; height:20px;" />
+                    <label for="lgpd-consent" style="font-size:0.8rem; font-weight:400; color:#64748b; margin:0;">
+                        Aceito os <a href="#" style="color:#00d4ff;">Termos de Uso</a> e concordo com o processamento de dados conforme a LGPD.
+                    </label>
+                </div>
+
+                <div id="error-msg" class="error-msg"></div>
+
+                <button type="submit" id="btn-login">
+                    <span class="btn-text">Entrar no Sistema</span>
+                </button>
+            </form>
+
+            <div class="footer-links">
+                <a href="/">← Voltar ao site</a>
+                <a href="/suporte">Esqueci a senha</a>
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .login-container {
+        min-height: 90vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(circle at center, #111827 0%, #030712 100%);
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 420px;
+        padding: 3rem 2.5rem;
+        border-radius: 24px;
+        border: 1px solid rgba(0, 212, 255, 0.1);
+        text-align: center;
+    }
+
+    .logo-area {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .logo-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #00d4ff, #00ff9d);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+        color: black;
+        font-size: 1.5rem;
+        box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+    }
+
+    h1 {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 800;
+        color: white;
+    }
+
+    h1 span { color: #00ff9d; }
+
+    .subtitle {
+        color: #94a3b8;
+        margin-bottom: 2.5rem;
+    }
+
+    .input-group {
+        text-align: left;
+        margin-bottom: 1.5rem;
+    }
+
+    label {
+        display: block;
+        color: #e5e7eb;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    input {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid #334155;
+        border-radius: 10px;
+        color: white;
+        font-size: 1rem;
+        transition: 0.3s;
+    }
+
+    input:focus {
+        border-color: #00d4ff;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
+    }
+
+    button {
+        width: 100%;
+        padding: 1rem;
+        background: #00d4ff;
+        color: #030712;
+        font-weight: 800;
+        font-size: 1rem;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: 0.3s;
+        box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+        margin-top: 1rem;
+    }
+
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 212, 255, 0.4);
+    }
+
+    .error-msg {
+        color: #f87171;
+        font-size: 0.85rem;
+        margin-bottom: 1rem;
+        min-height: 1.2rem;
+    }
+
+    .footer-links {
+        margin-top: 2rem;
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+    }
+
+    .footer-links a {
+        color: #64748b;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+
+    .footer-links a:hover { color: #00d4ff; }
+</style>
+
+<script is:inline>
+    const API = 'https://api.getnexo.com.br';
+    const form = document.getElementById('login-form');
+    const errorDiv = document.getElementById('error-msg');
+    const btn = document.getElementById('btn-login');
+
+    // 2FA STATE
+    let pending2FA = false;
+
+    form.onsubmit = async (e) => {
+        e.preventDefault();
+        errorDiv.innerText = '';
+
+        // LGPD Check
+        const lgpd = document.getElementById('lgpd-consent');
+        if (!lgpd.checked) {
+            errorDiv.innerText = 'Você deve aceitar os termos e LGPD.';
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerText = pending2FA ? 'Verificando 2FA...' : 'Autenticando...';
+
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const code = document.getElementById('2fa-code')?.value;
+
+        try {
+            const body = { email, password };
+            if (code) body.code = code;
+
+            const res = await fetch(`${API}/api/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                // Check if 2FA Challenge
+                if (data.requires2fa) {
+                    pending2FA = true;
+                    document.getElementById('2fa-container').style.display = 'block';
+                    document.getElementById('email').disabled = true;
+                    document.getElementById('password').disabled = true;
+                    document.getElementById('btn-login').innerText = 'Validar Token 2FA';
+                    document.getElementById('2fa-code').focus();
+                    errorDiv.innerText = 'Digite o código do Google Authenticator.';
+                    errorDiv.style.color = '#00ff9d';
+                } else {
+                    // Success
+                    localStorage.setItem('omnichat_token', data.token);
+                    localStorage.setItem('adminUser', JSON.stringify(data.user));
+                    window.location.href = '/dashboard';
+                }
+            } else {
+                errorDiv.innerText = data.error || 'Erro ao fazer login.';
+                errorDiv.style.color = '#f87171';
+            }
+        } catch (err) {
+            errorDiv.innerText = 'Falha na conexão com o servidor.';
+            errorDiv.style.color = '#f87171';
+        } finally {
+            btn.disabled = false;
+            if (!pending2FA) btn.innerText = 'Entrar no Sistema';
+        }
+    };
+</script>

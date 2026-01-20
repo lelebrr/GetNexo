@@ -1,0 +1,104 @@
+---
+import Layout from '../layouts/Layout.astro';
+const title = "FAQ GetNexo – Perguntas Frequentes WhatsApp API Oficial Grátis 2026";
+const description = "FAQ completo GetNexo: respostas para dúvidas sobre assistente vendas WhatsApp grátis, risco ban, instalação, privacidade, revenda. Tire todas suas dúvidas sobre automação vendas.";
+const keywords = "faq getnexo whatsapp, perguntas frequentes assistente vendas whatsapp, duvidas whatsapp api gratis, risco ban whatsapp getnexo, instalacao getnexo gratis, privacidade dados whatsapp, revenda getnexo";
+const ogImage = "https://getnexo.com.br/assets/og-poster.jpg";
+---
+<Layout title={title} description={description} keywords={keywords} ogImage={ogImage}>
+  <section class="faq-hero">
+    <div class="hero-badge">Centro de Ajuda</div>
+    <h1 class="text-gradient">Perguntas Frequentes</h1>
+    <p>As principais dúvidas sobre o ecossistema GetNexo respondidas de forma direta.</p>
+  </section>
+
+  <section class="faq-content">
+    <div class="faq-grid">
+      <details class="faq-item glass-panel" open>
+        <summary>Preciso de um servidor caro para rodar?</summary>
+        <div class="faq-answer">
+          <p>Não. O GetNexo foi otimizado para rodar em hardware modesto. Um computador com 8GB de RAM (mesmo um notebook antigo com i5) é suficiente para gerenciar milhares de conversas diárias via Docker e WSL.</p>
+        </div>
+      </details>
+
+      <details class="faq-item glass-panel">
+        <summary>Existe risco de banimento do meu WhatsApp?</summary>
+        <div class="faq-answer">
+          <p>Trabalhamos com a API Oficial (via Evolution) e conexões seguras através do Cloudflare Tunnel (Zero Trust). Seguindo as práticas de tempo de resposta e conteúdo humano da nossa IA, o risco é drasticamente reduzido se comparado a automações de "click/spam" tradicionais.</p>
+        </div>
+      </details>
+
+      <details class="faq-item glass-panel">
+        <summary>Posso integrar com Shopify, WooCommerce ou VTEX?</summary>
+        <div class="faq-answer">
+          <p>Sim. Temos conectores nativos para as principais plataformas. O GetNexo sincroniza seu catálogo, monitora carrinhos abandonados e gera links de pagamento automaticamente dentro do chat.</p>
+        </div>
+      </details>
+
+      <details class="faq-item glass-panel">
+        <summary>Meus dados de clientes ficam salvos onde?</summary>
+        <div class="faq-answer">
+          <p>Diferente de SaaS comuns, no GetNexo <strong>você é o dono do banco de dados</strong>. Todas as conversas e informações de leads ficam salvas no seu próprio servidor local, criptografadas em AES-256. Privacidade total.</p>
+        </div>
+      </details>
+
+      <details class="faq-item glass-panel">
+        <summary>O GetNexo é realmente 100% gratuito?</summary>
+        <div class="faq-answer">
+          <p>Sim. O core da nossa plataforma é open-source e self-hosted. Você não paga mensalidade para usar o software. Seus únicos custos serão o hardware (que você já tem) e os tokens de IA (como Gemini ou OpenAI) se optar por usá-los.</p>
+        </div>
+      </details>
+
+      <details class="faq-item glass-panel">
+        <summary>Como funciona a revenda?</summary>
+        <div class="faq-answer">
+          <p>Você pode instalar o GetNexo para seus clientes e cobrar pela implementação e manutenção. Oferecemos um kit de revenda completo para quem deseja criar uma agência de automação white-label.</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <section class="faq-footer">
+    <div class="glass-panel help-card">
+        <h3>Ainda tem alguma dúvida?</h3>
+        <p>Nossa inteligência artificial está treinada para tirar todas as suas dúvidas técnicas e comerciais.</p>
+        <a href="#" onclick="window.$chatwoot.toggle(); return false;" class="btn-primary-glow">Conversar com Suporte IA</a>
+    </div>
+  </section>
+
+<style>
+  .faq-hero { text-align: center; padding: 10rem 5% 4rem; }
+  .hero-badge { background: rgba(0, 212, 255, 0.1); color: #00d4ff; padding: 0.5rem 1.2rem; border-radius: 50px; font-size: 0.85rem; font-weight: 700; display: inline-block; margin-bottom: 2rem; border: 1px solid rgba(0,212,255,0.2); }
+  .faq-hero h1 { font-size: 3.5rem; margin-bottom: 1rem; }
+  .faq-hero p { color: #94a3b8; font-size: 1.25rem; max-width: 600px; margin: 0 auto; }
+
+  .faq-content { max-width: 800px; margin: 0 auto; padding: 4rem 5%; }
+  .faq-grid { display: flex; flex-direction: column; gap: 1.5rem; }
+  
+  .faq-item { border-radius: 20px; transition: 0.3s; border: 1px solid rgba(255,255,255,0.05); }
+  .faq-item[open] { border-color: rgba(0, 255, 157, 0.2); background: rgba(0, 255, 157, 0.02); }
+  
+  summary { 
+    padding: 2rem; list-style: none; cursor: pointer; color: white; 
+    font-size: 1.2rem; font-weight: 700; display: flex; justify-content: space-between; align-items: center;
+  }
+  summary::after { content: "＋"; color: #00d4ff; font-size: 1.4rem; transition: 0.3s; }
+  .faq-item[open] summary::after { content: "✕"; transform: rotate(90deg); color: #00ff9d; }
+
+  .faq-answer { padding: 0 2rem 2rem; color: #94a3b8; line-height: 1.7; font-size: 1.1rem; }
+  
+  .faq-footer { padding: 4rem 5% 10rem; max-width: 800px; margin: 0 auto; }
+  .help-card { padding: 4rem; text-align: center; border-radius: 32px; }
+  .help-card h3 { color: white; font-size: 2rem; margin-bottom: 1rem; }
+  .help-card p { color: #94a3b8; margin-bottom: 2.5rem; }
+
+  .btn-primary-glow { display: inline-block; background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1.1rem 2.5rem; border-radius: 12px; font-weight: 900; text-decoration: none; transition: 0.3s; box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2); }
+  .btn-primary-glow:hover { transform: scale(1.05); box-shadow: 0 15px 40px rgba(0, 212, 255, 0.4); }
+
+  @media (max-width: 768px) {
+    .faq-hero h1 { font-size: 2.8rem; }
+    .help-card { padding: 2rem; }
+    summary { font-size: 1.1rem; }
+  }
+</style>
+</Layout>

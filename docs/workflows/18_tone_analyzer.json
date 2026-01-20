@@ -1,0 +1,111 @@
+{
+    "name": "18_Tone_Analyzer",
+    "nodes": [
+        {
+            "parameters": {},
+            "name": "Start",
+            "type": "n8n-nodes-base.start",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "url": "http://ollama:11434/api/generate",
+                "method": "POST",
+                "bodyParametersUi": {
+                    "parameter": [
+                        {
+                            "name": "model",
+                            "value": "phi3"
+                        },
+                        {
+                            "name": "prompt",
+                            "value": "Analyze the sentiment of this text: '{{$json[\"message\"]}}'. Return ONLY one word: POSITIVE, NEGATIVE, or NEUTRAL."
+                        },
+                        {
+                            "name": "stream",
+                            "value": "false"
+                        }
+                    ]
+                }
+            },
+            "name": "Analyze with Ollama",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "string": [
+                        {
+                            "value1": "={{$json[\"response\"]}}",
+                            "operation": "contains",
+                            "value2": "NEGATIVE"
+                        }
+                    ]
+                }
+            },
+            "name": "Is Negative?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                650,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "content": "Alert: User seems angry. Priority handling advised."
+            },
+            "name": "Notify Admin",
+            "type": "n8n-nodes-base.chatwoot",
+            "typeVersion": 1,
+            "position": [
+                850,
+                200
+            ]
+        }
+    ],
+    "connections": {
+        "Start": {
+            "main": [
+                [
+                    {
+                        "node": "Analyze with Ollama",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Analyze with Ollama": {
+            "main": [
+                [
+                    {
+                        "node": "Is Negative?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Is Negative?": {
+            "main": [
+                [
+                    {
+                        "node": "Notify Admin",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

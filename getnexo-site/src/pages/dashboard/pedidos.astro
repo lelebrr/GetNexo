@@ -1,0 +1,120 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+---
+
+<DashboardLayout title="Gestão de Pedidos | OmniNexo">
+    <div style="display:flex; flex-direction:column; gap:2.5rem;">
+        
+        <div class="glass-panel" style="padding:2.5rem; background:linear-gradient(90deg, rgba(0, 255, 157, 0.1), rgba(0, 212, 255, 0.05)); border-color: rgba(0, 255, 157, 0.2); display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <h2 style="font-size:2.5rem; font-weight:900; color:white; margin:0;" class="text-gradient">Order Power Management 🧾</h2>
+                <p style="color:#94a3b8; margin:0.5rem 0 0; font-size:1.1rem;">Acompanhe o fluxo de receita e conversões assistidas pela Ara.</p>
+            </div>
+            <div style="display:flex; gap:1.2rem;">
+                <div class="stat-pill">
+                    <span class="label">Hoje</span>
+                    <span class="value">R$ 1.420,00</span>
+                </div>
+                <div class="stat-pill">
+                    <span class="label">Pendente (PIX)</span>
+                    <span class="value" style="color:#eab308;">12</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div style="display:grid; grid-template-columns: 1.5fr 1fr 1fr; gap:1.5rem;">
+            <div class="glass-panel" style="padding:1rem; display:flex; align-items:center; gap:1rem;">
+                <span style="font-size:1.2rem;">🔍</span>
+                <input type="text" placeholder="Pesquisar por cliente, telefone ou ID..." style="background:none; border:none; color:white; width:100%; outline:none; font-weight:600;" />
+            </div>
+            <select class="glass-panel glass-select">
+                <option>Todos os Status</option>
+                <option>Pago (Confirmado)</option>
+                <option>Aguardando PIX</option>
+                <option>Carrinho Abandonado</option>
+            </select>
+            <button class="btn-dash primary" style="padding:1rem 2rem;">Exportar Conciliação</button>
+        </div>
+
+        <!-- Table -->
+        <div class="glass-panel" style="padding:0; overflow:hidden;">
+            <table style="width:100%; border-collapse:collapse; color:white; text-align:left;">
+                <thead style="background:rgba(255,255,255,0.03); border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <tr>
+                        <th style="padding:1.5rem; font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:#64748b;">Ordem</th>
+                        <th style="padding:1.5rem; font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:#64748b;">Cliente</th>
+                        <th style="padding:1.5rem; font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:#64748b;">Canal</th>
+                        <th style="padding:1.5rem; font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:#64748b;">Valor</th>
+                        <th style="padding:1.5rem; font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:#64748b;">Status</th>
+                        <th style="padding:1.5rem; font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:#64748b;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="orders-list">
+                    <!-- Injected rows -->
+                    <tr class="order-row">
+                        <td style="padding:1.5rem; font-family:monospace; color:var(--neon-blue); font-weight:800;">#NEXO-9821</td>
+                        <td style="padding:1.5rem;">
+                            <div style="font-weight:800;">(11) 98765-4321</div>
+                            <div style="font-size:0.7rem; color:#64748b;">Assistido por Ara AI</div>
+                        </td>
+                        <td style="padding:1.5rem;">
+                            <span class="badge-wa">WhatsApp</span>
+                        </td>
+                        <td style="padding:1.5rem; font-weight:900; color:white;">R$ 499,90</td>
+                        <td style="padding:1.5rem;">
+                            <span class="status-chip paid">PAGO</span>
+                        </td>
+                        <td style="padding:1.5rem;">
+                            <button class="btn-action">👁️</button>
+                            <button class="btn-action">📄</button>
+                        </td>
+                    </tr>
+                    <tr class="order-row">
+                        <td style="padding:1.5rem; font-family:monospace; color:var(--neon-blue); font-weight:800;">#NEXO-9820</td>
+                        <td style="padding:1.5rem;">
+                            <div style="font-weight:800;">(21) 91234-5678</div>
+                            <div style="font-size:0.7rem; color:#64748b;">Conversão Orgânica</div>
+                        </td>
+                        <td style="padding:1.5rem;">
+                            <span class="badge-wa">Instagram</span>
+                        </td>
+                        <td style="padding:1.5rem; font-weight:900; color:white;">R$ 1.250,00</td>
+                        <td style="padding:1.5rem;">
+                            <span class="status-chip pending">AGUARDANDO PIX</span>
+                        </td>
+                        <td style="padding:1.5rem;">
+                            <button class="btn-action">👁️</button>
+                            <button class="btn-action">📨</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <style>
+        .order-row { border-bottom: 1px solid rgba(255,255,255,0.03); transition: 0.3s; }
+        .order-row:hover { background: rgba(0, 212, 255, 0.05); }
+        .stat-pill { background: rgba(0,0,0,0.3); padding: 0.8rem 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 4px; }
+        .stat-pill .label { font-size: 0.6rem; font-weight: 800; color: #64748b; text-transform: uppercase; }
+        .stat-pill .value { font-size: 1.1rem; font-weight: 900; color: white; }
+        
+        .badge-wa { background: rgba(0,255,157,0.05); color: var(--neon-green); padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; }
+        
+        .status-chip { padding: 4px 12px; border-radius: 50px; font-size: 0.65rem; font-weight: 900; letter-spacing: 1px; }
+        .status-chip.paid { background: rgba(0, 255, 157, 0.1); color: var(--neon-green); border: 1px solid rgba(0, 255, 157, 0.2); }
+        .status-chip.pending { background: rgba(234, 179, 8, 0.1); color: #eab308; border: 1px solid rgba(234, 179, 8, 0.2); }
+        
+        .btn-action { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 8px; border-radius: 8px; cursor: pointer; font-size: 1rem; margin-right: 5px; transition: 0.2s; }
+        .btn-action:hover { background: var(--neon-blue); color: black; border-color: var(--neon-blue); }
+
+        .glass-select { background: rgba(0,0,0,0.3); color: white; border: 1px solid rgba(255,255,255,0.1); padding: 1rem; border-radius: 12px; cursor: pointer; outline: none; }
+        .glass-select option { background: #0f172a; color: white; }
+    </style>
+
+    <style>
+        .hover-row:hover { background: rgba(0,212,255,0.03); }
+    </style>
+</DashboardLayout>

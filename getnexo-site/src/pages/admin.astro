@@ -1,0 +1,39 @@
+---
+import Layout from '../layouts/Layout.astro';
+const services = [
+  { name: 'Chatwoot', url: 'https://chat.getnexo.com.br', status: 'Online' },
+  { name: 'n8n', url: 'https://n8n.getnexo.com.br', status: 'Online' },
+  { name: 'Evolution API', url: 'https://api.getnexo.com.br/status', status: 'Online' },
+  { name: 'Keycloak Auth', url: 'https://auth.getnexo.com.br', status: 'Online' },
+  { name: 'Uptime Kuma', url: 'https://status.getnexo.com.br', status: 'Online' },
+];
+---
+
+<Layout title="Admin GetNexo – Assistente de Vendas WhatsApp">
+  <section class="container">
+    <h1>Painel Admin GetNexo</h1>
+    <p>Status em tempo real dos serviços (atualizado manualmente).</p>
+
+    <div class="services-grid">
+      {services.map(service => (
+        <div class="service-card">
+          <h3>{service.name}</h3>
+          <p class="status {service.status.toLowerCase()}">{service.status}</p>
+          <a href={service.url} target="_blank">Acessar →</a>
+        </div>
+      ))}
+    </div>
+
+    <p><a href="/">← Voltar ao site</a></p>
+  </section>
+</Layout>
+
+<style>
+  .container { max-width: 1100px; margin: 6rem auto; padding: 0 5%; }
+  h1 { font-size: 3rem; background: linear-gradient(90deg, var(--primary), var(--success)); -webkit-background-clip: text; color: transparent; }
+  .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 3rem 0; }
+  .service-card { background: rgba(30,41,59,0.8); backdrop-filter: blur(10px); border: 1px solid rgba(0,212,255,0.15); border-radius: 16px; padding: 2rem; text-align: center; transition: all 0.4s; }
+  .service-card:hover { transform: translateY(-10px); border-color: var(--primary); box-shadow: 0 20px 40px rgba(0,212,255,0.2); }
+  .status { font-size: 1.3rem; font-weight: 800; margin: 1rem 0; }
+  .status.online { color: var(--success); }
+</style>

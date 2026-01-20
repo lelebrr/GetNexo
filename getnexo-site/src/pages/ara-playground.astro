@@ -1,0 +1,130 @@
+---
+import Layout from '../layouts/Layout.astro';
+const title = "Ara Playground – Interaja com a IA GetNexo";
+const description = "Experimente o poder da Ara em nosso ambiente de testes. Peça rascunhos, fluxos e ideias de vendas em tempo real.";
+---
+
+<Layout title={title} description={description}>
+  <section class="playground-container">
+    <div class="playground-header reveal">
+        <h1 class="text-gradient">Ara Playground</h1>
+        <p>Experimente o cérebro por trás da GetNexo em um ambiente seguro.</p>
+    </div>
+
+    <div class="terminal-shell glass-panel reveal">
+        <div class="shell-header">
+            <div class="header-dots">
+                <span></span><span></span><span></span>
+            </div>
+            <div class="header-title">nexus://ara/sandbox-v4</div>
+        </div>
+        <div class="shell-body" id="shell-output">
+            <div class="line">Ready. Ara Neural Engine 4.0 initialized.</div>
+            <div class="line">Type <span class="cmd">/ajuda</span> to see available commands.</div>
+        </div>
+        <div class="shell-input-area">
+            <span class="prompt">$</span>
+            <input type="text" id="shell-input" placeholder="Peça algo para a Ara..." autofocus autocomplete="off" />
+        </div>
+    </div>
+
+    <div class="playground-hints reveal">
+        <div class="hint-card glass-panel">
+            <h4>"Crie um rascunho de artigo sobre recuperação de carrinhos"</h4>
+        </div>
+        <div class="hint-card glass-panel">
+            <h4>"Quais as melhores estratégias de Click-to-WhatsApp?"</h4>
+        </div>
+        <div class="hint-card glass-panel">
+            <h4>"Me conte uma vantagem de usar a API Oficial Meta"</h4>
+        </div>
+    </div>
+  </section>
+</Layout>
+
+<script is:inline>
+    const input = document.getElementById('shell-input');
+    const output = document.getElementById('shell-output');
+
+    const responses = {
+        'default': 'Interessante! Como sua Editora Chefe, eu recomendaria focar em copy persuasivo e gatilhos de escassez para esse cenário. Quer que eu escreva um rascunho inicial?',
+        'ajuda': 'Comandos disponíveis: /ajuda, /limpar, /versao, /quem-e-ara.',
+        'limpar': 'CLEAR',
+        'versao': 'Ara Engine v4.0.1+build.2026.01.17',
+        'quem-e-ara': 'Eu sou Ara, a inteligência central da GetNexo. Fui projetada para orquestrar suas vendas, marketing e suporte no WhatsApp de forma autônoma.'
+    };
+
+    function addLine(text, type = 'line') {
+        const div = document.createElement('div');
+        div.className = type;
+        div.innerHTML = text;
+        output.appendChild(div);
+        output.scrollTop = output.scrollHeight;
+    }
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const val = input.value.trim();
+            if (!val) return;
+
+            addLine(`<span class="prompt">$</span> ${val}`, 'line user-cmd');
+            input.value = '';
+
+            setTimeout(() => {
+                const cmd = val.toLowerCase();
+                const response = responses[cmd] || responses['default'];
+                
+                if (response === 'CLEAR') {
+                    output.innerHTML = '';
+                    return;
+                }
+
+                addLine(`<span class="ara-prefix">Ara >></span> ${response}`, 'line ara-resp');
+            }, 600);
+        }
+    });
+
+    // Intersection Observer for Reveal
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('active');
+        });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+<style>
+  .playground-container { padding: 12rem 5% 8rem; max-width: 1000px; margin: 0 auto; }
+  .playground-header { text-align: center; margin-bottom: 4rem; }
+  .playground-header h1 { font-size: 3.5rem; font-weight: 900; margin-bottom: 1rem; }
+  .playground-header p { color: #64748b; font-size: 1.25rem; }
+
+  .terminal-shell { height: 600px; display: flex; flex-direction: column; overflow: hidden; border-color: rgba(0, 212, 255, 0.2); }
+  .shell-header { background: rgba(0,0,0,0.5); padding: 1rem 1.5rem; display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .header-dots { display: flex; gap: 0.5rem; margin-right: 2rem; }
+  .header-dots span { width: 10px; height: 10px; border-radius: 50%; background: #334155; }
+  .header-title { color: #475569; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 800; letter-spacing: 1px; }
+
+  .shell-body { flex: 1; padding: 2rem; overflow-y: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; line-height: 1.6; color: #cbd5e1; display: flex; flex-direction: column; gap: 0.8rem; }
+  .line { word-break: break-word; }
+  .cmd { color: #00ff9d; font-weight: 800; }
+  .prompt { color: #00d4ff; font-weight: 800; margin-right: 0.5rem; }
+  .ara-prefix { color: #00ff9d; font-weight: 800; text-shadow: 0 0 10px rgba(0, 255, 157, 0.3); }
+
+  .shell-input-area { background: rgba(0,0,0,0.3); padding: 1.5rem 2rem; border-top: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; }
+  #shell-input { flex: 1; background: transparent; border: none; outline: none; color: white; font-family: 'JetBrains Mono', monospace; font-size: 1rem; }
+
+  .playground-hints { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 4rem; }
+  .hint-card { padding: 2rem; border-radius: 16px; transition: 0.3s; cursor: help; }
+  .hint-card:hover { border-color: #00d4ff; background: rgba(0, 212, 255, 0.05); }
+  .hint-card h4 { color: #94a3b8; font-size: 0.9rem; font-weight: 600; font-style: italic; line-height: 1.4; }
+
+  /* Animations */
+  .reveal { opacity: 0; transform: translateY(30px); transition: 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  .reveal.active { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    .playground-header h1 { font-size: 2.5rem; }
+    .terminal-shell { height: 500px; }
+  }
+</style>

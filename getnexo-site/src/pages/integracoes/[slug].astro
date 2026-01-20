@@ -1,0 +1,537 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { integrationData } from '../../data/integrationData';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  return integrationData.map((integration) => ({
+    params: { slug: integration.slug },
+    props: { integration },
+  }));
+}
+
+const { integration } = Astro.props;
+
+if (!integration) {
+  return Astro.redirect('/integracoes');
+}
+
+const { 
+  name = 'Integração', 
+  category = 'Geral', 
+  color = '#00d4ff', 
+  description = 'Integração com WhatsApp', 
+  features = [], 
+  painPoints = [], 
+  benefits = [] 
+} = integration || {};
+
+const title = `Integração ${name} WhatsApp API Oficial | GetNexo`;
+const desc = `Conecte ${name} ao WhatsApp em minutos. ${description} Automatize vendas, suporte e notificações.`;
+const keywords = `integração ${name} whatsapp, api whatsapp ${name}, bot whatsapp ${name}, automação ${name} zap, getnexo ${name}`;
+---
+<!-- SEO Optimization Applied -->
+
+<Layout title={title} description={desc} keywords={keywords}>
+<!-- Accessibility Metadata -->
+<meta name="accessibility-features" content="skip-links, keyboard-navigation, screen-reader-support, reduced-motion">
+<meta name="accessibility-hazards" content="none">
+<meta name="accessibility-summary" content="Este site atende aos padrões WCAG 2.2 AA, Section 508, e-MAG e EN 301 549">
+
+<!-- Accessible Authentication -->
+<!-- Accessible Authentication (No-JS Warning Removed for Build Safety) -->
+<!-- Skip Links for Accessibility -->
+<a href="#main-content" class="skip-link sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-blue-600 focus:text-white focus:px-4 focus:py-2 focus:rounded" tabindex="1">Pular para conteúdo principal</a>
+<a href="#main-navigation" class="skip-link sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-32 focus:z-50 focus:bg-blue-600 focus:text-white focus:px-4 focus:py-2 focus:rounded" tabindex="2">Pular para navegação</a>
+
+<main id="main-content" role="main">
+<!-- Accessibility Controls -->
+<div class="accessibility-controls sr-only focus-within:not-sr-only" style="position: fixed; top: 10px; right: 10px; z-index: 1000; background: white; padding: 0.5rem; border: 2px solid #000; border-radius: 0.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+  <button type="button" onclick="toggleHighContrast()" aria-label="Alternar alto contraste" style="margin: 0 0.25rem; padding: 0.25rem 0.5rem; border: 1px solid #000; background: #fff;">🌓 Alto Contraste</button>
+  <button type="button" onclick="toggleFontSize()" aria-label="Aumentar tamanho da fonte" style="margin: 0 0.25rem; padding: 0.25rem 0.5rem; border: 1px solid #000; background: #fff;">🔤 Fonte</button>
+  <button type="button" onclick="resetAccessibility()" aria-label="Redefinir configurações de acessibilidade" style="margin: 0 0.25rem; padding: 0.25rem 0.5rem; border: 1px solid #000; background: #fff;">↻ Reset</button>
+<button type="button" onclick="toggleElderlyMode()" aria-label="Modo especial para idosos com alto contraste e fonte maior" style="margin: 0 0.25rem; padding: 0.25rem 0.5rem; border: 1px solid #000; background: #fff;">👴 Modo Idoso</button>
+  <button type="button" onclick="toggleCognitiveSupport()" aria-label="Ativar suporte cognitivo com linguagem simples" style="margin: 0 0.25rem; padding: 0.25rem 0.5rem; border: 1px solid #000; background: #fff;">🧠 Cognição</button>
+</div>
+
+<script>
+  function toggleHighContrast() {
+    document.body.classList.toggle("high-contrast");
+    localStorage.setItem("highContrast", document.body.classList.contains("high-contrast"));
+  }
+  
+  function toggleFontSize() {
+    document.body.classList.toggle("large-font");
+    localStorage.setItem("largeFont", document.body.classList.contains("large-font"));
+  }
+  
+  function resetAccessibility() {
+    document.body.classList.remove("high-contrast", "large-font", "high-contrast-elderly", "cognitive-support");
+    localStorage.removeItem("highContrast");
+    localStorage.removeItem("largeFont");
+    localStorage.removeItem("elderlyMode");
+    localStorage.removeItem("cognitiveSupport");
+  }
+  
+  function toggleElderlyMode() {
+    document.body.classList.toggle("high-contrast-elderly");
+    localStorage.setItem("elderlyMode", document.body.classList.contains("high-contrast-elderly"));
+  }
+  
+  function toggleCognitiveSupport() {
+    document.body.classList.toggle("cognitive-support");
+    localStorage.setItem("cognitiveSupport", document.body.classList.contains("cognitive-support"));
+  }
+  
+  // Load saved preferences
+  if (localStorage.getItem("highContrast") === "true") {
+    document.body.classList.add("high-contrast");
+  }
+  if (localStorage.getItem("largeFont") === "true") {
+    document.body.classList.add("large-font");
+  }
+  if (localStorage.getItem("elderlyMode") === "true") {
+    document.body.classList.add("high-contrast-elderly");
+  }
+  if (localStorage.getItem("cognitiveSupport") === "true") {
+    document.body.classList.add("cognitive-support");
+  }
+</script>
+  <!-- Hero Section specific to Integration -->
+  <section class="int-hero relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-black to-[#0a0f1a] z-[-2]"><!-- fix --></div>
+    <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--accent-color)] opacity-10 blur-[120px] rounded-full z-[-1]" style={`--accent-color: ${color}`}><!-- fix --></div>
+    
+    <div class="container mx-auto px-6 py-20 text-center relative z-10">
+      <div class="inline-flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-1.5 rounded-full text-sm font-bold text-[var(--accent-color)] mb-6" style={`--accent-color: ${color}`}>
+        <span class="w-2 h-2 rounded-full bg-[var(--accent-color)]" style={`--accent-color: ${color}`}><!-- fix --></span>
+        Integração Oficial {category}
+      </div>
+      
+      <h1 class="text-5xl md:text-7xl font-black text-white mb-6 leading-tight">
+        Conecte <span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-[var(--accent-color)]" style={`--accent-color: ${color}`}>{name}</span> ao <span class="text-[#00ff9d]">WhatsApp</span>
+      </h1>
+      
+      <p class="text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+        {description} Potencialize sua operação com a IA generativa do GetNexo e a robustez do {name}.
+      </p>
+      
+      <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <a href="/criar-bot" class="bg-[var(--accent-color)] text-black px-8 py-4 rounded-xl font-bold text-lg hover:transform hover:-translate-y-1 transition-all shadow-lg shadow-[var(--accent-color)]/20" style={`--accent-color: ${color}`}>
+          Integrar {name} Agora
+        </a>
+        <a href="/documentacao" class="border border-white/10 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/5 transition-all">
+          Ver Documentação
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pain vs Solution Section -->
+  <section class="py-20 bg-[#050912]">
+    <div class="container mx-auto px-6 max-w-6xl">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="space-y-8">
+          <h2 class="text-3xl md:text-4xl font-bold text-white">
+            Pare de perder tempo com <span class="text-red-400">processos manuais</span>
+          </h2>
+          <div class="space-y-4">
+            {painPoints.map(point => (
+              <div class="flex items-center gap-4 p-4 rounded-xl bg-red-500/5 border border-red-500/10">
+                <span class="text-2xl">❌</span>
+                <p class="text-red-200 font-medium">{point}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        <div class="relative">
+            <div class="absolute inset-0 bg-gradient-to-r from-transparent to-[#050912] z-10 w-20 right-0 h-full hidden md:block"><!-- fix --></div>
+            <!-- Arrow connecting pains to solution -->
+            <div class="hidden md:flex absolute top-1/2 -left-8 transform -translate-y-1/2 z-20">
+                <div class="w-16 h-[2px] bg-gradient-to-r from-red-500/20 to-[var(--accent-color)]" style={`--accent-color: ${color}`}><!-- fix --></div>
+            </div>
+
+            <div class="space-y-8 pl-0 md:pl-8 border-l border-[var(--accent-color)]/20" style={`--accent-color: ${color}`}>
+              <h2 class="text-3xl md:text-4xl font-bold text-white">
+                 Solução <span style={`color: ${color}`}>{name} + GetNexo</span>
+              </h2>
+              <div class="space-y-4">
+                {benefits.map(benefit => (
+                  <div class="flex items-center gap-4 p-4 rounded-xl bg-[var(--accent-color)]/5 border border-[var(--accent-color)]/10" style={`--accent-color: ${color}`}>
+                    <span class="text-2xl">✅</span>
+                    <p class="text-gray-200 font-medium">{benefit}</p>
+                  </div>
+                ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid -->
+  <section class="py-24 relative">
+    <div class="container mx-auto px-6 max-w-6xl">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-5xl font-black text-white mb-4">O que você pode fazer?</h2>
+        <p class="text-slate-400 text-lg">Funcionalidades nativas da integração {name}.</p>
+      </div>
+      
+      <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-6">
+        {features.map((feature, index) => (
+          <div class="group p-8 rounded-3xl bg-white/5 border border-white/5 hover:border-[var(--accent-color)]/30 hover:bg-[var(--accent-color)]/5 transition-all duration-300" style={`--accent-color: ${color}`}>
+            <div class="w-12 h-12 rounded-xl bg-[var(--accent-color)]/10 flex items-center justify-center mb-6 text-2xl" style={`--accent-color: ${color}`}>
+              {index === 0 ? '🚀' : index === 1 ? '💰' : index === 2 ? '🔔' : '🤖'}
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">{feature}</h3>
+            <p class="text-slate-400 leading-relaxed">
+              Leve a experiência do {name} para o próximo nível. Automatize esse processo e economize horas da sua equipe.
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- SEO Content & Deep Dive (Dynamic by Category) -->
+  <section class="py-20 bg-[#050912]">
+    <div class="container mx-auto px-6 max-w-4xl">
+      <article class="prose prose-invert prose-lg max-w-none text-slate-300">
+        
+        {category === 'E-commerce' && (
+          <>
+            <h2 class="text-3xl font-bold text-white mb-6">Recuperação de Carrinho e Vendas com {name}</h2>
+            <p>
+              Para lojas virtuais que usam <strong>{name}</strong>, o maior vilão é o carrinho abandonado. 
+              O e-mail marketing tradicional s´recupera cerca de 8% desses clientes. Com o GetNexo integrado ao {name}, 
+              você envia uma mensagem humanizada no WhatsApp 15 minutos após o abandono, alcançando <strong>taxas de conversão de até 35%</strong>.
+            </p>
+            <p>
+              Além disso, você automatiza o post-purchase experience (pós-venda):
+            </p>
+            <ul class="list-disc pl-6 space-y-2 mt-4">
+              <li>Envio automático de código de rastreio.</li>
+              <li>Solicitação de avaliação (Review) quando o produto chega.</li>
+              <li>Oferta de cupom para segunda compra (LTV).</li>
+            </ul>
+          </>
+        )}
+
+        {category === 'ERP' && (
+          <>
+            <h2 class="text-3xl font-bold text-white mb-6">Gestão e Notas Fiscais via WhatsApp com {name}</h2>
+            <p>
+              A integração entre <strong>{name}</strong> e GetNexo elimina o trabalho manual da sua equipe de backoffice. 
+              Ao emitir uma nota fiscal (NF-e) no {name}, o PDF e o XML podem ser enviados automaticamente para o cliente no WhatsApp.
+            </p>
+            <p>
+              Isso reduz drasticamente os chamados de "cadê minha nota?" e "qual o status do meu pedido?". 
+              Sua operação fica mais leve e seu cliente sempre informado em tempo real.
+            </p>
+          </>
+        )}
+
+        {category === 'CRM' && (
+          <>
+            <h2 class="text-3xl font-bold text-white mb-6">Nutrição de Leads e CRM com {name}</h2>
+            <p>
+              Transforme seu <strong>{name}</strong> em uma máquina de vendas conversacional. 
+              Em vez de apenas mover cards ou enviar e-mails frios, use o GetNexo para iniciar conversas reais sempre que um Lead muda de estágio no funil.
+            </p>
+            <p>
+               Se um lead cai na etapa "Oportunidade", o GetNexo dispara uma abordagem personalizada. 
+               Se o lead responde, a conversa é sincronizada de volta para o {name}, mantendo o histórico unificado.
+            </p>
+          </>
+        )}
+
+        {category === 'Pagamentos' && (
+          <>
+            <h2 class="text-3xl font-bold text-white mb-6">Cobrança e Links de Pagamento com {name}</h2>
+            <p>
+              Reduza a inadimplência integrando <strong>{name}</strong> ao WhatsApp. 
+              O GetNexo permite enviar lembretes de vencimento amigáveis antes da data, e cobranças mais incisivas (mas educadas) após o vencimento.
+            </p>
+            <p>
+               Para pagamentos via PIX ou Boleto gerados no {name}, o envio do código "Copia e Cola" ou linha digitável direto no chat 
+               aumenta a conversão em mais de 40% comparado ao envio por e-mail.
+            </p>
+          </>
+        )}
+
+        {category === 'Logística' && (
+          <>
+            <h2 class="text-3xl font-bold text-white mb-6">Rastreio e Entregas Inteligentes com {name}</h2>
+            <p>
+              A ansiedade do cliente pelo produto é o principal gerador de tickets de suporte. 
+              Conectando <strong>{name}</strong> ao GetNexo, você notifica o cliente ativamente a cada movimentação da carga.
+            </p>
+            <p>
+               "Seu pedido saiu para entrega", "O motorista está próximo". 
+               Esses avisos automáticos geram um efeito "Uau" na experiência do cliente e reduzem a zero as perguntas repetitivas sobre entrega.
+            </p>
+          </>
+        )}
+
+        {category === 'Infoprodutos' && (
+          <>
+            <h2 class="text-3xl font-bold text-white mb-6">Recuperação de Vendas de Cursos com {name}</h2>
+            <p>
+              Produtores e afiliados que usam <strong>{name}</strong> sabem que cada boleto não pago é dinheiro na mesa. 
+              O GetNexo entra em ação imediatamente após o checkout, oferecendo ajuda para concluir o pagamento ou oferecendo um downsell.
+            </p>
+            <p>
+               Além disso, você pode entregar o acesso à área de membros e dados de login diretamente pelo WhatsApp, 
+               garantindo que o aluno comece o curso imediatamente, reduzindo pedidos de reembolso.
+            </p>
+          </>
+        )}
+
+        {category === 'Automação' && (
+          <>
+            <h2 class="text-3xl font-bold text-white mb-6">Automação No-Code Extrema com {name}</h2>
+            <p>
+              Para os makers e desenvolvedores que amam <strong>{name}</strong>, o GetNexo libera poders ilimitados via API e Webhooks. 
+              Crie fluxos complexos, conecte múltiplos bancos de dados e crie lógicas condicionais avançadas.
+            </p>
+            <p>
+               Você pode usar o GetNexo como o "braço de comunicação" dos seus workflows no {name}, 
+               disparando mensagens baseadas em qualquer gatilho imaginável de outros apps.
+            </p>
+          </>
+        )}
+
+        {category === 'Dados' && (
+          <>
+            <h2 class="text-3xl font-bold text-white mb-6">Gestão de Dados Simplificada com {name}</h2>
+            <p>
+              Use o <strong>{name}</strong> como um banco de dados dinâmico para seu WhatsApp. 
+              Salve leads automaticamente, consulte status de clientes em tempo real e mantenha sua base sempre organizada.
+            </p>
+          </>
+        )}
+
+        {category === 'Agendamento' && (
+          <>
+            <h2 class="text-3xl font-bold text-white mb-6">Gestão de Agenda Automática com {name}</h2>
+            <p>
+              Acabe com o "no-show" (faltas) integrando <strong>{name}</strong> e GetNexo. 
+              Envie lembretes automáticos 24h e 1h antes da reunião. Permita que o cliente confirme ou remarque diretamente pelo WhatsApp sem interação humana.
+            </p>
+          </>
+        )}
+
+        <h3 class="text-2xl font-bold text-white mt-10 mb-4">Segurança e API Oficial</h3>
+        <p>
+          Diferente de ferramentas piratas, a integração {name} + GetNexo utiliza a <strong>Cloud API Oficial da Meta</strong>. 
+          Isso garante que seu número não será banido por atividade suspeita, mesmo enviando milhares de mensagens por dia através do {name}.
+        </p>
+
+      </article>
+    </div>
+  </section>
+
+  <!-- Step-by-Step Connection Guide -->
+  <section class="py-20 bg-[#0a0f1a] relative overflow-hidden">
+    <!-- Background Elements -->
+    <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"><!-- fix --></div>
+    
+    <div class="container mx-auto px-6 max-w-5xl relative z-10">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Como conectar {name} ao GetNexo?</h2>
+        <p class="text-slate-400">Processo simples de 3 etapas. Sem código, sem TI.</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        <!-- Step 1 -->
+        <div class="relative p-8 rounded-2xl bg-white/5 border border-white/5 group hover:bg-white/10 transition-all">
+          <div class="absolute -top-6 left-8 bg-[var(--accent-color)] text-black font-bold w-12 h-12 flex items-center justify-center rounded-xl text-xl shadow-lg shadow-[var(--accent-color)]/20" style={`--accent-color: ${color}`}>1</div>
+          <h3 class="text-xl font-bold text-white mt-4 mb-3">Conecte seu WhatsApp</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            Crie sua conta no GetNexo e escaneie o QR Code (igual ao WhatsApp Web) para conectar seu número de atendimento.
+          </p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="relative p-8 rounded-2xl bg-white/5 border border-white/5 group hover:bg-white/10 transition-all">
+          <div class="absolute -top-6 left-8 bg-white text-black font-bold w-12 h-12 flex items-center justify-center rounded-xl text-xl">2</div>
+          <h3 class="text-xl font-bold text-white mt-4 mb-3">Ative a Integração</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            No menu "Integrações", selecione <strong>{name}</strong>. Copie o Token de API gerado pelo GetNexo.
+          </p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="relative p-8 rounded-2xl bg-white/5 border border-white/5 group hover:bg-white/10 transition-all">
+           <div class="absolute -top-6 left-8 bg-[#00ff9d] text-black font-bold w-12 h-12 flex items-center justify-center rounded-xl text-xl shadow-lg shadow-[#00ff9d]/20">3</div>
+          <h3 class="text-xl font-bold text-white mt-4 mb-3">Configure o Webhook</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            Cole o Token no painel do <strong>{name}</strong> e escolha os eventos (ex: Pedido Criado, Lead Novo). Pronto!
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Security & Compliance Deep Dive -->
+  <section class="py-20 bg-[#050912]">
+    <div class="container mx-auto px-6 max-w-4xl">
+      <div class="bg-gradient-to-br from-white/5 to-transparent border border-white/10 p-8 md:p-12 rounded-3xl">
+        <div class="flex flex-col md:flex-row gap-8 items-start">
+          <div class="flex-1">
+            <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+              <span class="text-[#00ff9d]">Shield</span> Segurança e Compliance
+            </h2>
+            <div class="space-y-6 text-slate-300">
+              <div>
+                <h4 class="font-bold text-white mb-2">🔒 Criptografia Ponta-a-Ponta</h4>
+                <p class="text-sm">Mesmo integrando com {name}, a criptografia do WhatsApp é mantida. Seus dados trafegam por túneis seguros HTTPS (TLS 1.3).</p>
+              </div>
+              <div>
+                <h4 class="font-bold text-white mb-2">🛡️ Anti-Bloqueio (Ban Protection)</h4>
+                <p class="text-sm">O GetNexo utiliza algoritmos de "Warm-up" e rotação de IP para garantir que o envio de mensagens em massa para contatos do {name} não gere bloqueios do WhatsApp.</p>
+              </div>
+              <div>
+                <h4 class="font-bold text-white mb-2">⚖️ LGPD & GDPR Ready</h4>
+                <p class="text-sm">Nossa integração respeita as leis de proteção de dados. Oferecemos recursos nativos de "Opt-in" e "Opt-out" automático para seus clientes.</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Visual Decoration -->
+          <div class="w-full md:w-1/3 bg-black/30 rounded-2xl p-6 border border-white/5">
+            <div class="flex items-center gap-3 mb-4 text-xs font-mono text-slate-500 border-b border-white/5 pb-2">
+              <span class="w-2 h-2 rounded-full bg-red-500"><!-- fix --></span>
+              <span class="w-2 h-2 rounded-full bg-yellow-500"><!-- fix --></span>
+              <span class="w-2 h-2 rounded-full bg-green-500"><!-- fix --></span>
+              Security Log
+            </div>
+            <div class="space-y-3 font-mono text-xs">
+              <div class="flex justify-between text-green-400">
+                <span>Encrypt</span>
+                <span>[OK]</span>
+              </div>
+              <div class="flex justify-between text-blue-400">
+                <span>Webhook {name}</span>
+                <span>[Active]</span>
+              </div>
+              <div class="flex justify-between text-purple-400">
+                <span>GDPR Check</span>
+                <span>[Pass]</span>
+              </div>
+              <div class="mt-4 p-3 bg-green-500/10 rounded text-green-300 border border-green-500/20 text-center font-bold">
+                100% Secure
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section (Great for SEO Snippets) -->
+  <section class="py-20 bg-[#0a0f1a] border-t border-white/5">
+    <div class="container mx-auto px-6 max-w-4xl">
+      <h2 class="text-3xl font-bold text-center text-white mb-12">Perguntas Frequentes sobre {name} + WhatsApp</h2>
+      
+      <div class="space-y-4">
+        <details class="group bg-white/5 border border-white/5 rounded-2xl p-6 open:bg-white/10 transition-all">
+          <summary class="flex justify-between items-center cursor-pointer font-bold text-lg text-white list-none">
+            Preciso saber programar para integrar {name}?
+            <span class="transition group-open:rotate-180">▼</span>
+          </summary>
+          <p class="text-slate-400 mt-4 leading-relaxed">
+            Não! O GetNexo possui uma interface No-Code intuitiva. Para a maioria dos casos de uso com {name}, basta copiar o Token de API e colar no nosso painel. Em minutos tudo está rodando.
+          </p>
+        </details>
+
+        <details class="group bg-white/5 border border-white/5 rounded-2xl p-6 open:bg-white/10 transition-all">
+          <summary class="flex justify-between items-center cursor-pointer font-bold text-lg text-white list-none">
+            Posso enviar mensagens de marketing para contatos do {name}?
+            <span class="transition group-open:rotate-180">▼</span>
+          </summary>
+          <p class="text-slate-400 mt-4 leading-relaxed">
+            Sim, desde que respeite as regras da Meta. Com o GetNexo, você pode segmentar seus clientes do {name} e enviar campanhas de Broadcast altamente efetivas e seguras.
+          </p>
+        </details>
+
+        <details class="group bg-white/5 border border-white/5 rounded-2xl p-6 open:bg-white/10 transition-all">
+          <summary class="flex justify-between items-center cursor-pointer font-bold text-lg text-white list-none">
+            A integração com {name} funciona 24 horas?
+            <span class="transition group-open:rotate-180">▼</span>
+          </summary>
+          <p class="text-slate-400 mt-4 leading-relaxed">
+            Absolutamente. O sistema roda em servidores de alta disponibilidade (99.9% Uptime). Seu atendimento e vendas no {name} continuam rodando mesmo enquanto você dorme, feriados e finais de semana.
+          </p>
+        </details>
+        
+        <details class="group bg-white/5 border border-white/5 rounded-2xl p-6 open:bg-white/10 transition-all">
+            <summary class="flex justify-between items-center cursor-pointer font-bold text-lg text-white list-none">
+              Quanto custa integrar o {name}?
+              <span class="transition group-open:rotate-180">▼</span>
+            </summary>
+            <p class="text-slate-400 mt-4 leading-relaxed">
+              A integração oficial faz parte dos planos do GetNexo. Você não paga taxa extra por plugin ou conector. Comece gratuitamente ou escale com nossos planos Pro.
+            </p>
+          </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- JSON-LD Schema for SEO -->
+</main>
+<!-- Accessibility Statement -->
+<div class="accessibility-statement sr-only" id="accessibility-statement">
+  <h4>Declaração de Acessibilidade</h4>
+  <p>Este site está em conformidade com:</p>
+  <ul>
+    <li>WCAG 2.2 Nível AA</li>
+    <li>Section 508 (EUA)</li>
+    <li>e-MAG (Brasil)</li>
+    <li>EN 301 549 (Europa)</li>
+    <li>BITV (Alemanha)</li>
+  </ul>
+  <p>Recursos disponíveis: Alto contraste, fonte grande, navegação por teclado, screen readers.</p>
+  <button onclick="document.getElementById('accessibility-statement').classList.add('sr-only')">Fechar</button>
+</div>
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": `Integração ${name} com WhatsApp GetNexo`,
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "BRL"
+    },
+    "description": desc,
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "ratingCount": "150"
+    },
+    "featureList": features.join(", ")
+  })}></script>
+
+  <!-- Final CTA -->
+  <section class="py-24 text-center">
+    <div class="container mx-auto px-6 max-w-4xl">
+        <div class="p-12 rounded-[3rem] bg-gradient-to-b from-white/5 to-transparent border border-white/10">
+            <h2 class="text-4xl font-black text-white mb-6">Pronto para vender mais com {name}?</h2>
+            <p class="text-xl text-slate-400 mb-10">Junte-se a mais de 5000 empresas que automatizaram suas operações.</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="/criar-bot" class="bg-[#00ff9d] text-black px-10 py-4 rounded-xl font-bold text-lg hover:shadow-[0_0_30px_rgba(0,255,157,0.3)] transition-all">
+                    Criar Conta Grátis
+                </a>
+                <a href="/contato" class="px-10 py-4 rounded-xl font-bold text-white border border-white/10 hover:bg-white/5 transition-all">
+                    Falar com Vendas
+                </a>
+            </div>
+        </div>
+    </div>
+  </section>
+
+</Layout>

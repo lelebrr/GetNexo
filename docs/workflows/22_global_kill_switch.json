@@ -1,0 +1,78 @@
+{
+    "name": "22_Global_Kill_Switch",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "kill-switch",
+                "options": {}
+            },
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "set",
+                "key": "GLOBAL_KILL_SWITCH",
+                "value": "ACTIVE",
+                "options": {
+                    "expire": 3600
+                }
+            },
+            "name": "Activate Kill Switch",
+            "type": "n8n-nodes-base.redis",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ],
+            "credentials": {
+                "redis": {
+                    "id": "YOUR_REDIS_ID",
+                    "name": "Redis Account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "content": "⚠️ **EMERGENCY**: Global Kill Switch Activated! All non-critical systems paused."
+            },
+            "name": "Notify Admin",
+            "type": "n8n-nodes-base.chatwoot",
+            "typeVersion": 1,
+            "position": [
+                650,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Activate Kill Switch",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Activate Kill Switch": {
+            "main": [
+                [
+                    {
+                        "node": "Notify Admin",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

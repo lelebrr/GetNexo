@@ -1,0 +1,786 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout title="Gerenciamento de Roles | GetNexo Admin">
+
+  <header style="background:#0a0e17; padding:2rem; display:flex; justify-content:space-between; color:#00ff9d; align-items:center; border-bottom: 1px solid #1f2937;">
+    <h1 style="margin:0; font-size:2rem; font-weight:bold; letter-spacing:-1px;">🛡️ <span style="color:#fff">Roles & Permissões</span></h1>
+    <div style="display:flex; align-items:center; gap:1rem;">
+      <button id="btn-new-role" class="btn-primary">+ Novo Role</button>
+      <button style="background:#1f2937; color:white; padding:0.5rem 1rem; border:1px solid #374151; border-radius:8px; cursor:pointer;" onclick="window.location.href='/admin'">← Voltar</button>
+    </div>
+  </header>
+
+  <!-- Admin Navigation -->
+  <nav style="background:#0f172a; padding:1rem 5%; display:flex; gap:1rem; border-bottom:1px solid #1e293b; flex-wrap:wrap;">
+    <a href="/admin" class="nav-link">📊 Dashboard</a>
+    <a href="/admin/usuarios" class="nav-link">👥 Usuários</a>
+    <a href="/admin/roles" class="nav-link active">🛡️ Roles</a>
+    <a href="/admin/auditoria" class="nav-link">📋 Auditoria</a>
+    <a href="/admin/cupons" class="nav-link">🎟️ Cupons</a>
+    <a href="/admin/produtos" class="nav-link">🛍️ Produtos</a>
+    <a href="/admin/seguranca" class="nav-link">🔒 Segurança</a>
+  </nav>
+
+  <main style="padding:2rem 5%; max-width:1400px; margin:0 auto;">
+    
+    <div class="roles-grid">
+      
+      <!-- Roles List -->
+      <div class="roles-list glass-panel">
+        <h2 style="color:white; margin:0 0 1.5rem 0; font-size:1.2rem;">📋 Roles do Sistema</h2>
+        <div id="roles-container">
+          <div class="loading">Carregando roles...</div>
+        </div>
+      </div>
+      
+      <!-- Role Detail / Editor -->
+      <div class="role-editor glass-panel">
+        <div id="no-selection" class="empty-state">
+          <span style="font-size:4rem;">🛡️</span>
+          <h3>Selecione um Role</h3>
+          <p>Clique em um role para editar suas permissões</p>
+        </div>
+        
+        <div id="role-detail" style="display:none;">
+          <div class="editor-header">
+            <input type="text" id="role-name" placeholder="Nome do Role" class="role-name-input" />
+            <div class="editor-actions">
+              <button class="btn-icon" id="btn-save-role" title="Salvar">💾</button>
+              <button class="btn-icon danger" id="btn-delete-role" title="Excluir">🗑️</button>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>Descrição</label>
+            <input type="text" id="role-description" placeholder="Descrição do role" />
+          </div>
+          
+          <div class="permissions-section">
+            <h3>🔐 Permissões</h3>
+            <p class="hint">Selecione as permissões que este role terá acesso</p>
+            
+            <div id="permissions-grid" class="permissions-grid">
+              <!-- Permissions will be loaded here -->
+            </div>
+          </div>
+          
+          <div class="users-with-role">
+            <h3>👥 Usuários com este Role</h3>
+            <div id="role-users" class="role-users-list">
+              <span class="no-users">Nenhum usuário</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Modal Novo Role -->
+  <div id="new-role-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-content glass-panel" style="max-width:450px;">
+      <div class="modal-header">
+        <h2>Novo Role</h2>
+        <button class="modal-close" onclick="closeNewRoleModal()">×</button>
+      </div>
+      <form id="new-role-form">
+        <div class="form-group">
+          <label>Nome</label>
+          <input type="text" id="new-role-name" required placeholder="Ex: Gerente de Vendas" />
+        </div>
+        <div class="form-group">
+          <label>Descrição</label>
+          <input type="text" id="new-role-desc" placeholder="Descrição do role" />
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeNewRoleModal()">Cancelar</button>
+          <button type="submit" class="btn-primary">Criar Role</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</Layout>
+
+<style>
+  .roles-grid {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 2rem;
+    min-height: 70vh;
+  }
+
+  .roles-list {
+    padding: 1.5rem;
+    border-radius: 16px;
+    height: fit-content;
+    position: sticky;
+    top: 2rem;
+  }
+
+  .role-item {
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+    margin-bottom: 0.75rem;
+    border: 1px solid transparent;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .role-item:hover {
+    background: rgba(0,212,255,0.1);
+    border-color: rgba(0,212,255,0.2);
+  }
+
+  .role-item.active {
+    background: rgba(0,212,255,0.15);
+    border-color: #00d4ff;
+  }
+
+  .role-item-info h4 {
+    color: white;
+    margin: 0 0 0.25rem 0;
+    font-size: 1rem;
+  }
+
+  .role-item-info p {
+    color: #64748b;
+    margin: 0;
+    font-size: 0.8rem;
+  }
+
+  .role-user-count {
+    background: #1f2937;
+    color: #94a3b8;
+    padding: 0.3rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+  }
+
+  .role-editor {
+    padding: 2rem;
+    border-radius: 16px;
+  }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+    color: #64748b;
+    text-align: center;
+  }
+
+  .empty-state h3 {
+    color: #94a3b8;
+    margin: 1rem 0 0.5rem;
+  }
+
+  .editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #1f2937;
+  }
+
+  .role-name-input {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    width: 100%;
+    padding: 0;
+  }
+
+  .role-name-input:focus {
+    outline: none;
+  }
+
+  .editor-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .btn-icon {
+    background: #1f2937;
+    border: 1px solid #374151;
+    padding: 0.6rem 0.8rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: 0.2s;
+  }
+
+  .btn-icon:hover {
+    background: #374151;
+  }
+
+  .btn-icon.danger:hover {
+    background: #ef444420;
+    border-color: #ef4444;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group label {
+    display: block;
+    color: #94a3b8;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid #334155;
+    border-radius: 10px;
+    color: white;
+    font-size: 0.95rem;
+  }
+
+  .form-group input:focus {
+    outline: none;
+    border-color: #00d4ff;
+  }
+
+  .permissions-section {
+    margin-top: 2rem;
+  }
+
+  .permissions-section h3 {
+    color: white;
+    font-size: 1.1rem;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .hint {
+    color: #64748b;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .permissions-grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .permission-group {
+    background: rgba(0,0,0,0.2);
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+
+  .permission-group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .permission-group h4 {
+    color: #00d4ff;
+    font-size: 0.95rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .select-all-btn {
+    background: transparent;
+    border: 1px solid #334155;
+    color: #64748b;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .select-all-btn:hover {
+    color: white;
+    border-color: #00d4ff;
+  }
+
+  .permission-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .permission-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .permission-item:hover {
+    background: rgba(255,255,255,0.05);
+  }
+
+  .permission-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #00ff9d;
+  }
+
+  .permission-item label {
+    color: #e5e7eb;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+
+  .users-with-role {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #1f2937;
+  }
+
+  .users-with-role h3 {
+    color: white;
+    font-size: 1.1rem;
+    margin: 0 0 1rem 0;
+  }
+
+  .role-users-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .user-chip {
+    background: #1f2937;
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .user-chip .avatar-mini {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: black;
+  }
+
+  .no-users {
+    color: #64748b;
+    font-size: 0.9rem;
+  }
+
+  .loading {
+    color: #64748b;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    color: black;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0,212,255,0.3);
+  }
+
+  .btn-secondary {
+    background: #1f2937;
+    color: white;
+    border: 1px solid #374151;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  .modal-content {
+    padding: 2rem;
+    border-radius: 20px;
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .modal-header h2 {
+    color: white;
+    margin: 0;
+  }
+
+  .modal-close {
+    background: transparent;
+    border: none;
+    color: #64748b;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .nav-link {
+    color: #94a3b8;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+  
+  .nav-link:hover {
+    background: #1e293b;
+    color: white;
+  }
+  
+  .nav-link.active {
+    color: #00ff9d;
+    background: #00ff9d22;
+    font-weight: 600;
+  }
+
+  @media (max-width: 900px) {
+    .roles-grid {
+      grid-template-columns: 1fr;
+    }
+    .roles-list {
+      position: relative;
+      top: 0;
+    }
+  }
+</style>
+
+<script is:inline>
+  const API_URL = window.location.hostname === 'localhost' 
+    ? '/api/admin'
+    : '/api/admin';
+
+  // Definição de permissões (sync with permissions.js)
+  const PERMISSION_GROUPS = {
+    'Usuários': ['users.view', 'users.create', 'users.edit', 'users.delete'],
+    'Roles': ['roles.view', 'roles.create', 'roles.edit', 'roles.delete'],
+    'Produtos': ['products.view', 'products.create', 'products.edit', 'products.delete'],
+    'Cupons': ['coupons.view', 'coupons.create', 'coupons.edit', 'coupons.delete'],
+    'Relatórios': ['reports.view', 'reports.export'],
+    'Auditoria': ['audit.view', 'audit.export', 'audit.clear'],
+    'Segurança': ['security.view', 'security.manage', 'security.block_ip'],
+    'IA': ['ai.view', 'ai.configure'],
+    'Dashboard': ['dashboard.view', 'dashboard.analytics'],
+    'Conversas': ['conversations.view', 'conversations.manage']
+  };
+
+  const PERMISSION_LABELS = {
+    'users.view': 'Ver', 'users.create': 'Criar', 'users.edit': 'Editar', 'users.delete': 'Excluir',
+    'roles.view': 'Ver', 'roles.create': 'Criar', 'roles.edit': 'Editar', 'roles.delete': 'Excluir',
+    'products.view': 'Ver', 'products.create': 'Criar', 'products.edit': 'Editar', 'products.delete': 'Excluir',
+    'coupons.view': 'Ver', 'coupons.create': 'Criar', 'coupons.edit': 'Editar', 'coupons.delete': 'Excluir',
+    'reports.view': 'Ver', 'reports.export': 'Exportar',
+    'audit.view': 'Ver', 'audit.export': 'Exportar', 'audit.clear': 'Limpar',
+    'security.view': 'Ver', 'security.manage': 'Gerenciar', 'security.block_ip': 'Bloquear IP',
+    'ai.view': 'Ver', 'ai.configure': 'Configurar',
+    'dashboard.view': 'Ver', 'dashboard.analytics': 'Analytics',
+    'conversations.view': 'Ver', 'conversations.manage': 'Gerenciar'
+  };
+
+  const GROUP_ICONS = {
+    'Usuários': '👥', 'Roles': '🛡️', 'Produtos': '🛍️', 'Cupons': '🎟️',
+    'Relatórios': '📊', 'Auditoria': '📋', 'Segurança': '🔒', 'IA': '🤖',
+    'Dashboard': '📈', 'Conversas': '💬'
+  };
+
+  let roles = [];
+  let users = [];
+  let selectedRoleId = null;
+
+  function getToken() {
+    return localStorage.getItem('token');
+  }
+
+  // Load roles
+  async function loadRoles() {
+    try {
+      const res = await fetch(`${API_URL}/roles`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      roles = await res.json();
+      renderRolesList();
+    } catch (e) {
+      console.error('Error loading roles:', e);
+    }
+  }
+
+  // Load users
+  async function loadUsers() {
+    try {
+      const res = await fetch(`${API_URL}/users`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      users = await res.json();
+    } catch (e) {
+      console.error('Error loading users:', e);
+    }
+  }
+
+  // Render roles list
+  function renderRolesList() {
+    const container = document.getElementById('roles-container');
+    
+    if (roles.length === 0) {
+      container.innerHTML = '<div class="loading">Nenhum role encontrado.</div>';
+      return;
+    }
+    
+    container.innerHTML = roles.map(role => {
+      const userCount = users.filter(u => u.role_name === role.name).length;
+      const isActive = role.id === selectedRoleId;
+      
+      return `
+        <div class="role-item ${isActive ? 'active' : ''}" onclick="selectRole(${role.id})">
+          <div class="role-item-info">
+            <h4>${role.name}</h4>
+            <p>${role.description || 'Sem descrição'}</p>
+          </div>
+          <span class="role-user-count">${userCount} usuários</span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Render permissions grid
+  function renderPermissionsGrid(rolePermissions = []) {
+    const container = document.getElementById('permissions-grid');
+    
+    container.innerHTML = Object.entries(PERMISSION_GROUPS).map(([groupName, permissions]) => {
+      const icon = GROUP_ICONS[groupName] || '📁';
+      
+      return `
+        <div class="permission-group">
+          <div class="permission-group-header">
+            <h4>${icon} ${groupName}</h4>
+            <button class="select-all-btn" onclick="toggleGroup('${groupName}')">Selecionar tudo</button>
+          </div>
+          <div class="permission-items">
+            ${permissions.map(perm => {
+              const isChecked = rolePermissions.includes(perm) || rolePermissions.includes('all');
+              const label = PERMISSION_LABELS[perm] || perm;
+              return `
+                <div class="permission-item">
+                  <input type="checkbox" id="perm-${perm}" value="${perm}" ${isChecked ? 'checked' : ''} />
+                  <label for="perm-${perm}">${label}</label>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Select role
+  window.selectRole = function(roleId) {
+    selectedRoleId = roleId;
+    const role = roles.find(r => r.id === roleId);
+    if (!role) return;
+    
+    document.getElementById('no-selection').style.display = 'none';
+    document.getElementById('role-detail').style.display = 'block';
+    
+    document.getElementById('role-name').value = role.name;
+    document.getElementById('role-description').value = role.description || '';
+    
+    renderPermissionsGrid(role.permissions || []);
+    renderRoleUsers(role.name);
+    renderRolesList(); // Update active state
+  };
+
+  // Render users with role
+  function renderRoleUsers(roleName) {
+    const container = document.getElementById('role-users');
+    const roleUsers = users.filter(u => u.role_name === roleName);
+    
+    if (roleUsers.length === 0) {
+      container.innerHTML = '<span class="no-users">Nenhum usuário com este role</span>';
+      return;
+    }
+    
+    container.innerHTML = roleUsers.map(user => {
+      const initial = user.name ? user.name.charAt(0).toUpperCase() : '?';
+      return `
+        <div class="user-chip">
+          <span class="avatar-mini">${initial}</span>
+          ${user.name}
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Toggle permission group
+  window.toggleGroup = function(groupName) {
+    const permissions = PERMISSION_GROUPS[groupName] || [];
+    const checkboxes = permissions.map(p => document.getElementById(`perm-${p}`));
+    const allChecked = checkboxes.every(cb => cb && cb.checked);
+    
+    checkboxes.forEach(cb => {
+      if (cb) cb.checked = !allChecked;
+    });
+  };
+
+  // Get selected permissions
+  function getSelectedPermissions() {
+    const checkboxes = document.querySelectorAll('#permissions-grid input[type="checkbox"]:checked');
+    return Array.from(checkboxes).map(cb => cb.value);
+  }
+
+  // Save role
+  document.getElementById('btn-save-role').addEventListener('click', async () => {
+    if (!selectedRoleId) return;
+    
+    const name = document.getElementById('role-name').value;
+    const description = document.getElementById('role-description').value;
+    const permissions = getSelectedPermissions();
+    
+    if (!name.trim()) {
+      alert('Nome do role é obrigatório');
+      return;
+    }
+    
+    try {
+      await fetch(`${API_URL}/roles/${selectedRoleId}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${getToken()}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name, description, permissions })
+      });
+      
+      await loadRoles();
+      selectRole(selectedRoleId);
+      alert('Role salvo com sucesso!');
+    } catch (e) {
+      console.error('Error saving role:', e);
+      alert('Erro ao salvar role.');
+    }
+  });
+
+  // Delete role
+  document.getElementById('btn-delete-role').addEventListener('click', async () => {
+    if (!selectedRoleId) return;
+    
+    const role = roles.find(r => r.id === selectedRoleId);
+    const roleUsers = users.filter(u => u.role_name === role?.name);
+    
+    if (roleUsers.length > 0) {
+      alert(`Não é possível excluir. ${roleUsers.length} usuário(s) ainda estão usando este role.`);
+      return;
+    }
+    
+    if (!confirm(`Tem certeza que deseja excluir o role "${role?.name}"?`)) return;
+    
+    try {
+      await fetch(`${API_URL}/roles/${selectedRoleId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      
+      selectedRoleId = null;
+      document.getElementById('no-selection').style.display = 'flex';
+      document.getElementById('role-detail').style.display = 'none';
+      await loadRoles();
+    } catch (e) {
+      console.error('Error deleting role:', e);
+      alert('Erro ao excluir role.');
+    }
+  });
+
+  // New role modal
+  document.getElementById('btn-new-role').addEventListener('click', () => {
+    document.getElementById('new-role-modal').style.display = 'flex';
+  });
+
+  window.closeNewRoleModal = function() {
+    document.getElementById('new-role-modal').style.display = 'none';
+  };
+
+  // Create new role
+  document.getElementById('new-role-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const name = document.getElementById('new-role-name').value;
+    const description = document.getElementById('new-role-desc').value;
+    
+    try {
+      const res = await fetch(`${API_URL}/roles`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${getToken()}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name, description, permissions: [] })
+      });
+      
+      const newRole = await res.json();
+      closeNewRoleModal();
+      await loadRoles();
+      selectRole(newRole.id);
+    } catch (e) {
+      console.error('Error creating role:', e);
+      alert('Erro ao criar role.');
+    }
+  });
+
+  // Init
+  async function init() {
+    await loadUsers();
+    await loadRoles();
+  }
+  init();
+</script>

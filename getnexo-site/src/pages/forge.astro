@@ -1,0 +1,314 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="NexoPlatformForge - Gerador de Plugins">
+    <main class="forge-container">
+        <div class="forge-header">
+            <h1>NEXO PLATFORM <span class="gradient-text">FORGE</span></h1>
+            <p>Gere seu plugin de teste personalizado em 30 segundos.</p>
+        </div>
+
+        <div class="forge-console" id="console-step-1">
+            <div class="step-indicator">PASSO 1: IDENTIFICAÇÃO DO ALVO</div>
+            <div class="input-group">
+                <label for="domain-input">DOMÍNIO DA LOJA</label>
+                <input type="text" id="domain-input" placeholder="ex: minhaloja.com.br" />
+                <button id="btn-detect" class="btn-forge">Rastrear Plataforma</button>
+            </div>
+            <div id="detection-status" class="status-line"></div>
+        </div>
+
+        <div class="forge-console hidden" id="console-step-2">
+            <div class="step-indicator">PASSO 2: CONFIGURAÇÃO DO ARTEFATO</div>
+            
+            <div class="detected-box">
+                <span class="label">Plataforma Detectada:</span>
+                <span id="detected-platform-name" class="value">...</span>
+                <span class="edit-link" onclick="document.getElementById('platform-select-container').classList.remove('hidden')">[Alterar]</span>
+            </div>
+
+            <div id="platform-select-container" class="hidden input-group" style="margin-top: 1rem;">
+                <label>Selecione Manualmente:</label>
+                <select id="platform-select">
+                    <option value="woo">WooCommerce</option>
+                    <option value="shopify">Shopify</option>
+                    <option value="bling">Bling (Loja Virtual)</option>
+                    <option value="nuvem">Nuvemshop</option>
+                    <option value="tray">Tray</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="phone-input">WHATSAPP (Para Suporte e Teste)</label>
+                <input type="text" id="phone-input" placeholder="+55 11 99999-9999" />
+            </div>
+
+            <button id="btn-generate" class="btn-forge btn-lg">FORJAR PLUGIN AGORA</button>
+        </div>
+
+        <div class="forge-console hidden" id="console-step-3">
+            <div class="step-indicator">STATUS: CONCLUÍDO</div>
+            <div class="success-message">
+                <h2>PLUGIN GERADO COM SUCESSO</h2>
+                <p>O download do seu arquivo <code>plugin_teste.zip</code> começou.</p>
+                <p class="crypto-note">Conteúdo criptografado AES-256. Validade: 7 Dias.</p>
+            </div>
+            <button onclick="location.reload()" class="btn-ghost">Gerar Novo</button>
+        </div>
+
+    </main>
+</Layout>
+
+<style>
+    .forge-container {
+        min-height: 100vh;
+        background: #050505;
+        color: #00ff41; /* Matrix Green / Terminal */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        font-family: 'Courier New', Courier, monospace;
+    }
+
+    .forge-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .forge-header h1 {
+        font-size: 3rem;
+        letter-spacing: -2px;
+        margin-bottom: 0.5rem;
+        color: #fff;
+    }
+
+    .gradient-text {
+        color: #00ff41;
+        text-shadow: 0 0 10px #00ff41;
+    }
+
+    .forge-console {
+        background: #0a0a0a;
+        border: 1px solid #333;
+        padding: 2rem;
+        width: 100%;
+        max-width: 600px;
+        border-radius: 4px;
+        box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
+        margin-bottom: 2rem;
+    }
+
+    .hidden { display: none; }
+
+    .step-indicator {
+        font-size: 0.8rem;
+        color: #666;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid #222;
+        padding-bottom: 0.5rem;
+    }
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    label {
+        font-size: 0.8rem;
+        color: #888;
+        text-transform: uppercase;
+    }
+
+    input, select {
+        background: #111;
+        border: 1px solid #333;
+        padding: 1rem;
+        color: #fff;
+        font-family: inherit;
+        font-size: 1.1rem;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+
+    input:focus, select:focus {
+        border-color: #00ff41;
+    }
+
+    .btn-forge {
+        background: #00ff41;
+        color: #000;
+        border: none;
+        padding: 1rem 2rem;
+        font-weight: bold;
+        cursor: pointer;
+        font-family: inherit;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-forge:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 15px rgba(0, 255, 65, 0.4);
+    }
+
+    .btn-lg {
+        width: 100%;
+        font-size: 1.2rem;
+    }
+
+    .status-line {
+        height: 20px;
+        margin-top: 1rem;
+        font-size: 0.9rem;
+    }
+
+    .detected-box {
+        background: #111;
+        padding: 1rem;
+        border: 1px solid #00ff41;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .detected-box .value {
+        font-weight: bold;
+        color: #fff;
+        text-transform: uppercase;
+    }
+
+    .edit-link {
+        font-size: 0.8rem;
+        text-decoration: underline;
+        cursor: pointer;
+        color: #666;
+    }
+
+    .success-message {
+        text-align: center;
+        padding: 2rem 0;
+    }
+
+    .success-message h2 {
+        color: #fff;
+        margin-bottom: 1rem;
+    }
+
+    .crypto-note {
+        font-size: 0.8rem;
+        color: #444;
+        margin-top: 2rem;
+    }
+    
+    .btn-ghost {
+        background: transparent;
+        border: 1px solid #333;
+        color: #666;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        width: 100%;
+    }
+</style>
+
+<script>
+    const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '/api-proxy'; 
+    // Usually via nginx /api goes to 3000, but if local dev, might need direct port.
+    // Assuming backend is at 3000 and site at 4321.
+    // Adjust logic to be robust.
+
+    const state = {
+        domain: '',
+        platform: '',
+        phone: ''
+    };
+
+    const steps = {
+        1: document.getElementById('console-step-1'),
+        2: document.getElementById('console-step-2'),
+        3: document.getElementById('console-step-3')
+    };
+
+    function showStep(step) {
+        Object.values(steps).forEach(el => el.classList.add('hidden'));
+        steps[step].classList.remove('hidden');
+    }
+
+    document.getElementById('btn-detect').addEventListener('click', async () => {
+        const domainInput = document.getElementById('domain-input');
+        const status = document.getElementById('detection-status');
+        let domain = domainInput.value.trim();
+
+        if (!domain) {
+            status.textContent = '[ERRO] Domínio inválido.';
+            return;
+        }
+        
+        // Basic clean
+        domain = domain.replace(/^https?:\/\//, '').replace(/\/$/, '');
+        state.domain = domain;
+
+        status.textContent = '>> INICIANDO VARREDURA DE ARTEFATOS...';
+        
+        try {
+            // Simulated delay for effect if too fast
+            const response = await fetch(`${API_URL}/api/forge/detect`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ domain })
+            });
+            const data = await response.json();
+            
+            if (data.platform && data.platform !== 'unknown' && data.platform !== 'error') {
+                state.platform = data.platform;
+                document.getElementById('detected-platform-name').textContent = data.platform;
+                document.getElementById('platform-select').value = data.platform === 'vtex' ? 'tray' : data.platform; // Fallback logic if needed
+            } else {
+                state.platform = 'generic'; // Or force manual
+                document.getElementById('detected-platform-name').textContent = 'NÃO IDENTIFICADA';
+                document.getElementById('platform-select-container').classList.remove('hidden');
+            }
+
+            // Move to Step 2
+            setTimeout(() => {
+                showStep(2);
+            }, 800);
+
+        } catch (e) {
+            console.error(e);
+            status.textContent = '[FALHA DE CONEXÃO] Tente novamente.';
+        }
+    });
+
+    document.getElementById('btn-generate').addEventListener('click', async () => {
+        const select = document.getElementById('platform-select');
+        // If user changed select, use it
+        if (!document.getElementById('platform-select-container').classList.contains('hidden') || state.platform === 'generic' || state.platform === 'unknown') {
+            state.platform = select.value;
+        }
+
+        state.phone = document.getElementById('phone-input').value;
+
+        // Trigger Download
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `${API_URL}/api/forge/generate`;
+        // form.target = '_blank'; // Optional, but usually better for download
+
+        const i1 = document.createElement('input'); i1.name = 'domain'; i1.value = state.domain; form.appendChild(i1);
+        const i2 = document.createElement('input'); i2.name = 'platform'; i2.value = state.platform; form.appendChild(i2);
+        const i3 = document.createElement('input'); i3.name = 'phone'; i3.value = state.phone; form.appendChild(i3);
+
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+
+        showStep(3);
+    });
+
+</script>

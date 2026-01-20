@@ -1,0 +1,668 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const title = "Contato GetNexo | Suporte, Privacidade e Solicitações LGPD";
+const description = "Entre em contato com a GetNexo. Suporte técnico, solicitações de direitos ARCO (LGPD), DPO, dúvidas sobre privacidade e dados pessoais.";
+const keywords = "contato getnexo, suporte whatsapp api, direitos lgpd, dpo getnexo, privacidade dados, solicitar exclusao dados, suporte tecnico";
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  <section class="contact-hero">
+    <div class="hero-badge">Contato</div>
+    <h1 class="text-gradient">Fale Conosco</h1>
+    <p>Suporte técnico, solicitações de direitos ARCO (LGPD) e atendimento personalizado.</p>
+  </section>
+
+  <section class="contact-content">
+    <div class="contact-grid">
+      <!-- Suporte Geral -->
+      <div class="contact-card">
+        <div class="card-header">
+          <div class="card-icon">💬</div>
+          <h3>Suporte Geral</h3>
+        </div>
+        <div class="card-body">
+          <p>Dúvidas sobre instalação, configuração ou uso da plataforma.</p>
+          <div class="contact-methods">
+            <a href="https://wa.me/5511999999999?text=Olá%20GetNexo!%20Preciso%20de%20ajuda..." target="_blank" class="contact-link whatsapp">
+              <span>📱</span> WhatsApp
+            </a>
+            <a href="mailto:suporte@getnexo.com.br" class="contact-link email">
+              <span>📧</span> suporte@getnexo.com.br
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Privacidade e LGPD -->
+      <div class="contact-card featured">
+        <div class="card-header">
+          <div class="card-icon">🔒</div>
+          <h3>Privacidade & LGPD</h3>
+        </div>
+        <div class="card-body">
+          <p>Solicitações de direitos ARCO, dúvidas sobre proteção de dados e DPO.</p>
+          <div class="contact-methods">
+            <a href="mailto:dpo@getnexo.com.br" class="contact-link email">
+              <span>🛡️</span> dpo@getnexo.com.br
+            </a>
+            <a href="mailto:privacidade@getnexo.com.br" class="contact-link email">
+              <span>📋</span> privacidade@getnexo.com.br
+            </a>
+          </div>
+          <div class="lgpd-notice">
+            <p><strong>Dados do Controlador:</strong></p>
+            <p>GetNexo Tecnologia Ltda.<br>CNPJ: 45.678.901/0001-23<br>Encarregado: Leandro Brandão</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vendas e Parcerias -->
+      <div class="contact-card">
+        <div class="card-header">
+          <div class="card-icon">🚀</div>
+          <h3>Vendas & Parcerias</h3>
+        </div>
+        <div class="card-body">
+          <p>Demonstrações, propostas comerciais e programa de revenda.</p>
+          <div class="contact-methods">
+            <a href="https://wa.me/5511999999999?text=Olá!%20Gostaria%20de%20saber%20mais%20sobre%20a%20GetNexo..." target="_blank" class="contact-link whatsapp">
+              <span>📱</span> WhatsApp Vendas
+            </a>
+            <a href="mailto:vendas@getnexo.com.br" class="contact-link email">
+              <span>📧</span> vendas@getnexo.com.br
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Jurídico -->
+      <div class="contact-card">
+        <div class="card-header">
+          <div class="card-icon">⚖️</div>
+          <h3>Assuntos Jurídicos</h3>
+        </div>
+        <div class="card-body">
+          <p>Contratos, compliance e questões legais.</p>
+          <div class="contact-methods">
+            <a href="mailto:juridico@getnexo.com.br" class="contact-link email">
+              <span>📜</span> juridico@getnexo.com.br
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulário de Solicitação LGPD -->
+    <div class="lgpd-form-section">
+      <div class="glass-panel lgpd-form-wrap">
+        <h2>Solicitação de Direitos ARCO (LGPD)</h2>
+        <p>Utilize este formulário para exercer seus direitos sob a Lei Geral de Proteção de Dados:</p>
+
+        <form id="lgpd-request-form" class="lgpd-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="requester-name">Nome Completo *</label>
+              <input type="text" id="requester-name" name="name" required placeholder="Seu nome completo" />
+            </div>
+            <div class="form-group">
+              <label for="requester-email">E-mail *</label>
+              <input type="email" id="requester-email" name="email" required placeholder="seu@email.com" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="requester-doc">CPF/CNPJ *</label>
+              <input type="text" id="requester-doc" name="document" required placeholder="000.000.000-00 ou 00.000.000/0000-00" />
+            </div>
+            <div class="form-group">
+              <label for="requester-phone">Telefone (WhatsApp)</label>
+              <input type="tel" id="requester-phone" name="phone" placeholder="(11) 99999-9999" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="request-type">Tipo de Solicitação *</label>
+            <select id="request-type" name="request_type" required>
+              <option value="">Selecione o direito que deseja exercer</option>
+              <option value="confirmacao">Confirmação de tratamento de dados</option>
+              <option value="acesso">Acesso aos dados pessoais</option>
+              <option value="correcao">Correção de dados incompletos/inexatos</option>
+              <option value="anonimizacao">Anonimização de dados</option>
+              <option value="portabilidade">Portabilidade dos dados</option>
+              <option value="eliminacao">Eliminação dos dados</option>
+              <option value="informacao">Informação sobre compartilhamento</option>
+              <option value="oposicao">Oposição ao tratamento</option>
+              <option value="revocacao">Revogação de consentimento</option>
+              <option value="outro">Outro (especificar abaixo)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="request-description">Descrição da Solicitação *</label>
+            <textarea id="request-description" name="description" required rows="4" placeholder="Descreva detalhadamente sua solicitação. Inclua informações que nos ajudem a identificar seus dados (período aproximado de uso, serviços utilizados, etc.)"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="request-evidence">Evidências/Comprovação (Opcional)</label>
+            <input type="file" id="request-evidence" name="evidence" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" />
+            <small>Formatos aceitos: PDF, JPG, PNG, DOC, DOCX (máx. 5MB)</small>
+          </div>
+
+          <div class="form-consent">
+            <input type="checkbox" id="lgpd-consent" name="consent" required />
+            <label for="lgpd-consent">
+              Declaro que as informações fornecidas são verdadeiras e que estou ciente de que a solicitação será processada conforme a LGPD. *
+            </label>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">Enviar Solicitação</button>
+            <button type="reset" class="btn-secondary">Limpar Formulário</button>
+          </div>
+        </form>
+
+        <div class="lgpd-info">
+          <h3>ℹ️ Sobre os Direitos ARCO</h3>
+          <p>Os direitos ARCO (Acesso, Retificação, Cancelamento e Oposição) estão previstos no Art. 18 da LGPD. Processaremos sua solicitação em até 15 dias úteis, prorrogável por mais 15 dias quando necessário.</p>
+          <p><strong>Resposta garantida:</strong> Você receberá confirmação de recebimento em até 24 horas e resposta final no prazo legal.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Horários de Atendimento -->
+    <div class="support-hours">
+      <h2>Horários de Atendimento</h2>
+      <div class="hours-grid">
+        <div class="hours-item">
+          <h4>Suporte Técnico</h4>
+          <p>Segunda a Sexta: 9h às 18h<br>Sábado: 9h às 12h</p>
+        </div>
+        <div class="hours-item">
+          <h4>Privacidade & LGPD</h4>
+          <p>Segunda a Sexta: 9h às 18h<br>Resposta em até 24h</p>
+        </div>
+        <div class="hours-item">
+          <h4>Emergências</h4>
+          <p>24/7 para questões críticas<br>WhatsApp: +55 11 99999-9999</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .contact-hero {
+    text-align: center;
+    padding: 10rem 5% 4rem;
+  }
+  .hero-badge {
+    background: rgba(0, 212, 255, 0.1);
+    color: #00d4ff;
+    padding: 0.5rem 1.2rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: inline-block;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(0,212,255,0.2);
+  }
+  .contact-hero h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    font-weight: 800;
+  }
+  .contact-hero p {
+    color: #94a3b8;
+    font-size: 1.25rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .contact-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 5% 10rem;
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 6rem;
+  }
+
+  .contact-card {
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 2rem;
+    transition: 0.3s;
+  }
+
+  .contact-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(0, 212, 255, 0.2);
+  }
+
+  .contact-card.featured {
+    border-color: rgba(0, 255, 157, 0.3);
+    background: rgba(0, 255, 157, 0.02);
+  }
+
+  .contact-card.featured:hover {
+    border-color: rgba(0, 255, 157, 0.5);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .card-icon {
+    font-size: 2rem;
+    width: 60px;
+    height: 60px;
+    background: rgba(0, 212, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .contact-card.featured .card-icon {
+    background: rgba(0, 255, 157, 0.1);
+  }
+
+  .card-header h3 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: white;
+    margin: 0;
+  }
+
+  .card-body p {
+    color: #94a3b8;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .contact-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    color: #cbd5e1;
+    text-decoration: none;
+    transition: 0.3s;
+  }
+
+  .contact-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    transform: translateX(5px);
+  }
+
+  .contact-link.whatsapp:hover {
+    background: #25d366;
+    color: white;
+  }
+
+  .lgpd-notice {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    border-left: 3px solid #00d4ff;
+  }
+
+  .lgpd-notice p {
+    margin: 0.3rem 0;
+    font-size: 0.85rem;
+    color: #cbd5e1;
+  }
+
+  .lgpd-form-section {
+    margin-bottom: 6rem;
+  }
+
+  .lgpd-form-wrap {
+    padding: 3rem;
+    border-radius: 24px;
+    border-color: rgba(0, 212, 255, 0.2);
+  }
+
+  .lgpd-form-wrap h2 {
+    color: white;
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+
+  .lgpd-form-wrap > p {
+    color: #94a3b8;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  .lgpd-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-group label {
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
+    outline: none;
+    transition: 0.3s;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: #00d4ff;
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  .form-group input[type="file"] {
+    padding: 0.5rem;
+  }
+
+  .form-group small {
+    color: #64748b;
+    font-size: 0.8rem;
+  }
+
+  .form-consent {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .form-consent input[type="checkbox"] {
+    margin-top: 0.2rem;
+    width: 16px;
+    height: 16px;
+    accent-color: #00d4ff;
+  }
+
+  .form-consent label {
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+
+  .btn-primary, .btn-secondary {
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    font-size: 1rem;
+    transition: 0.3s;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    color: black;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
+  }
+
+  .btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .lgpd-info {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    border-left: 4px solid #00ff9d;
+  }
+
+  .lgpd-info h3 {
+    color: #00ff9d;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+  }
+
+  .lgpd-info p {
+    color: #cbd5e1;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .lgpd-info p:last-child {
+    margin-bottom: 0;
+  }
+
+  .support-hours {
+    text-align: center;
+  }
+
+  .support-hours h2 {
+    color: white;
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 2rem;
+  }
+
+  .hours-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .hours-item {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 2rem;
+  }
+
+  .hours-item h4 {
+    color: #00d4ff;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  .hours-item p {
+    color: #94a3b8;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .contact-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+
+    .lgpd-form-wrap {
+      padding: 2rem;
+    }
+
+    .hours-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .contact-hero h1 {
+      font-size: 2.5rem;
+    }
+
+    .lgpd-form-wrap h2 {
+      font-size: 1.5rem;
+    }
+  }
+</style>
+
+<script is:inline>
+  // Form handling for LGPD requests
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('lgpd-request-form');
+
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        // Basic validation
+        if (!data.name || !data.email || !data.document || !data.request_type || !data.description) {
+          alert('Por favor, preencha todos os campos obrigatórios.');
+          return;
+        }
+
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(data.email.toString())) {
+          alert('Por favor, insira um e-mail válido.');
+          return;
+        }
+
+        // Document validation (basic)
+        const docRegex = /^(\d{3}\.\d{3}\.\d{3}-\d{2}|\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2})$/;
+        if (!docRegex.test(data.document.toString().replace(/\s/g, ''))) {
+          alert('Por favor, insira um CPF ou CNPJ válido.');
+          return;
+        }
+
+        // Show loading
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Enviando...';
+        submitBtn.disabled = true;
+
+        try {
+          // Send to backend (you would implement this)
+          const response = await fetch('/api/lgpd-request', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              ...data,
+              timestamp: new Date().toISOString(),
+              ip: '127.0.0.1'
+            })
+          });
+
+          if (response.ok) {
+            alert('Solicitação enviada com sucesso! Você receberá confirmação por e-mail em até 24 horas.');
+            form.reset();
+          } else {
+            throw new Error('Erro ao enviar solicitação');
+          }
+        } catch (error) {
+          console.error('Error submitting LGPD request:', error);
+          alert('Erro ao enviar solicitação. Tente novamente ou entre em contato diretamente via e-mail.');
+        } finally {
+          submitBtn.textContent = originalText;
+          submitBtn.disabled = false;
+        }
+      });
+    }
+
+    // Phone number formatting
+    const phoneInput = document.getElementById('requester-phone');
+    if (phoneInput) {
+      phoneInput.addEventListener('input', (e) => {
+        const target = e.target;
+        let value = target.value.replace(/\D/g, '');
+        if (value.length <= 11) {
+          value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+          target.value = value;
+        }
+      });
+    }
+
+    // Document formatting
+    const docInput = document.getElementById('requester-doc');
+    if (docInput) {
+      docInput.addEventListener('input', (e) => {
+        const target = e.target;
+        let value = target.value.replace(/\D/g, '');
+        if (value.length <= 11) {
+          // CPF
+          value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+        } else {
+          // CNPJ
+          value = value.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+        }
+        target.value = value;
+      });
+    }
+  });
+</script>

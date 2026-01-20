@@ -1,0 +1,98 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { glossaryData } from '../../data/glossaryData';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  return glossaryData.map((item) => ({
+    params: { term: item.slug },
+    props: { item },
+  }));
+}
+
+const { item } = Astro.props;
+
+if (!item) {
+  return Astro.redirect('/glossario');
+}
+
+const title = `O que é ${item.term}? Definição Completa | Glossário GetNexo`;
+const description = `Entenda o significado de ${item.term} no contexto de WhatsApp Marketing e Automação. ${item.definition} Guia técnico para empresas.`;
+const keywords = `o que é ${item.slug}, definicao ${item.slug}, significado ${item.term}, glossario whatsapp`;
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  
+  <section class="term-hero bg-[#050912] border-b border-white/5">
+    <div class="container mx-auto px-6 max-w-4xl py-20 text-center">
+      <div class="mb-6 flex justify-center">
+         <a href="/glossario" class="text-slate-500 hover:text-white transition text-sm font-bold uppercase tracking-widest">← Glossário GetNexo</a>
+      </div>
+      <h1 class="text-4xl md:text-6xl font-black text-white mb-8 leading-tight">
+        <span class="text-gradient">O que é</span><br>{item.term}?
+      </h1>
+      <p class="text-xl md:text-2xl text-slate-300 font-medium max-w-3xl mx-auto leading-relaxed border-l-4 border-[#00ff9d] pl-6 text-left md:text-center md:border-none md:pl-0">
+        "{item.definition}"
+      </p>
+    </div>
+  </section>
+
+  <section class="term-content py-20">
+    <div class="container mx-auto px-6 max-w-3xl">
+      
+      <article class="prose prose-invert prose-lg max-w-none">
+        <h2>Detalhes Técnicos</h2>
+        <p class="lead">{item.details}</p>
+        
+        <h3>Por que isso importa para sua empresa?</h3>
+        <p>
+          Entender o conceito de <strong>{item.term}</strong> é fundamental para construir uma operação de vendas escalável no WhatsApp. 
+          Sem dominar essa tecnologia, você fica refém de processos manuais ou ferramentas limitadas.
+        </p>
+
+        <div class="not-prose my-12 p-8 bg-gradient-to-br from-white/5 to-transparent border border-white/10 rounded-2xl">
+          <h4 class="text-xl font-bold text-white mb-4">Veja na Prática</h4>
+          <p class="text-slate-400 mb-6">
+            O GetNexo utiliza <strong>{item.term}</strong> nativamente em sua plataforma. 
+            Não precisa configurar nada, já vem pronto para usar.
+          </p>
+          <a href="/criar-bot" class="btn-primary-glow">Testar Gratuitamente</a>
+        </div>
+
+      </article>
+
+      {item.related && item.related.length > 0 && (
+        <div class="mt-20 pt-12 border-t border-white/10">
+          <h3 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-6">Termos Relacionados</h3>
+          <div class="flex flex-wrap gap-3">
+             {/* Using dummy links here since we don't have slugs for related terms in data yet, 
+                 but in a real app we would map this correctly using a find function */}
+            {item.related.map(tag => (
+              <span class="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-slate-300 text-sm">
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+    </div>
+  </section>
+
+  <!-- Schema.org Definition -->
+  <script type="application/ld+json" is:inline set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "DefinedTerm",
+    "name": item.term,
+    "description": item.definition,
+    "inDefinedTermSet": "https://getnexo.com.br/glossario"
+  })} />
+
+</Layout>
+
+<style>
+  .lead { font-size: 1.25rem; line-height: 1.8; color: #94a3b8; }
+  .btn-primary-glow { display: inline-block; background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 0.8rem 2rem; border-radius: 12px; font-weight: 800; text-decoration: none; transition: 0.3s; box-shadow: 0 5px 20px rgba(0, 255, 157, 0.2); }
+  .btn-primary-glow:hover { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(0, 255, 157, 0.4); }
+</style>

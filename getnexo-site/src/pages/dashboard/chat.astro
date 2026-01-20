@@ -1,0 +1,117 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+import OmniChatApp from '../../components/OmniChatApp.jsx';
+---
+
+<DashboardLayout title="Chat & Inbox | OmniNexo">
+    <div style="display:flex; flex-direction:column; gap:2rem;">
+
+        <!-- Header with Stats -->
+        <div class="glass-panel" style="padding:2rem; background:linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.05)); border-color: rgba(0, 212, 255, 0.2);">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <div>
+                    <h2 style="font-size:2.5rem; font-weight:900; color:white; margin:0;" class="text-gradient">Central de Conversas 💬</h2>
+                    <p style="color:#94a3b8; margin:0.5rem 0 0; font-size:1.1rem;">Gerencie todas as conversas dos seus clientes em tempo real.</p>
+                </div>
+                <div style="display:flex; gap:1rem;">
+                    <div class="stat-pill" style="background:rgba(0,255,157,0.1); color:#00ff9d; border:1px solid rgba(0,255,157,0.2);">
+                        <span style="font-size:0.8rem;">23</span>
+                        <span style="font-size:0.6rem;">ATIVAS</span>
+                    </div>
+                    <div class="stat-pill" style="background:rgba(0,212,255,0.1); color:#00d4ff; border:1px solid rgba(0,212,255,0.2);">
+                        <span style="font-size:0.8rem;">98%</span>
+                        <span style="font-size:0.6rem;">SATISFAÇÃO</span>
+                    </div>
+                    <div class="stat-pill" style="background:rgba(147,51,234,0.1); color:#9333ea; border:1px solid rgba(147,51,234,0.2);">
+                        <span style="font-size:0.8rem;">2.3min</span>
+                        <span style="font-size:0.6rem;">TEMPO RESP.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div style="display:flex; gap:1rem; margin-top:2rem;">
+                <button class="btn-dash primary" onclick="startNewChat()">💬 Nova Conversa</button>
+                <button class="btn-dash secondary" onclick="openBulkActions()">📊 Ações em Massa</button>
+                <button class="btn-dash secondary" onclick="exportChats()">📥 Exportar</button>
+                <button class="btn-dash secondary" onclick="openSettings()">⚙️ Configurações</button>
+            </div>
+        </div>
+
+        <!-- Chat Interface -->
+        <div style="display:grid; grid-template-columns: 1fr 300px; gap:1.5rem; height: calc(100vh - 280px);">
+            <!-- Main Chat Area -->
+            <div class="glass-panel" style="padding:0; overflow:hidden; display:flex; flex-direction:column;">
+                <OmniChatApp client:only="react" initialTab="chat" />
+            </div>
+
+            <!-- Sidebar with Stats & Quick Actions -->
+            <div style="display:flex; flex-direction:column; gap:1rem;">
+                <!-- Active Conversations Summary -->
+                <div class="glass-panel" style="padding:1.5rem;">
+                    <h3 style="color:white; font-weight:800; margin:0 0 1rem 0; font-size:1.1rem;">📈 Conversas Ativas</h3>
+                    <div style="display:flex; flex-direction:column; gap:0.8rem;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="color:#94a3b8; font-size:0.9rem;">Aguardando resposta</span>
+                            <span style="color:#f59e0b; font-weight:800;">8</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="color:#94a3b8; font-size:0.9rem;">Em andamento</span>
+                            <span style="color:#00d4ff; font-weight:800;">15</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="color:#94a3b8; font-size:0.9rem;">Resolvidas hoje</span>
+                            <span style="color:#00ff9d; font-weight:800;">47</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Responses -->
+                <div class="glass-panel" style="padding:1.5rem;">
+                    <h3 style="color:white; font-weight:800; margin:0 0 1rem 0; font-size:1.1rem;">⚡ Respostas Rápidas</h3>
+                    <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                        <button class="quick-reply-btn" onclick="insertReply('Olá! Como posso ajudar você hoje?')">👋 Saudação</button>
+                        <button class="quick-reply-btn" onclick="insertReply('Obrigado pelo contato! Em breve retornaremos.')">🙏 Agradecimento</button>
+                        <button class="quick-reply-btn" onclick="insertReply('Estamos verificando sua solicitação...')">🔍 Verificando</button>
+                        <button class="quick-reply-btn" onclick="insertReply('Problema resolvido! Ficamos felizes em ajudar.')">✅ Resolvido</button>
+                    </div>
+                </div>
+
+                <!-- AI Assistant Status -->
+                <div class="glass-panel" style="padding:1.5rem;">
+                    <h3 style="color:white; font-weight:800; margin:0 0 1rem 0; font-size:1.1rem;">🤖 Assistente IA</h3>
+                    <div style="display:flex; align-items:center; gap:0.8rem; margin-bottom:1rem;">
+                        <div style="width:8px; height:8px; background:#00ff9d; border-radius:50%;"></div>
+                        <span style="color:#00ff9d; font-size:0.9rem;">Online - Respondendo</span>
+                    </div>
+                    <div style="background:rgba(0,255,157,0.05); padding:1rem; border-radius:8px; border:1px solid rgba(0,255,157,0.1);">
+                        <div style="color:#94a3b8; font-size:0.8rem; margin-bottom:0.5rem;">Mensagens processadas hoje</div>
+                        <div style="color:white; font-weight:800; font-size:1.2rem;">1.247</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .stat-pill { padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+        .btn-dash { padding: 0.7rem 1.2rem; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.85rem; transition: 0.3s; }
+        .btn-dash.primary { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; }
+        .btn-dash.secondary { background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); }
+        .btn-dash:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        .quick-reply-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); color: white; padding: 0.6rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem; text-align: left; transition: 0.2s; }
+        .quick-reply-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(0,212,255,0.3); }
+    </style>
+
+    <script is:inline>
+        function startNewChat() { alert('Iniciando nova conversa...'); }
+        function openBulkActions() { alert('Abrindo ações em massa...'); }
+        function exportChats() { alert('Exportando conversas...'); }
+        function openSettings() { alert('Abrindo configurações...'); }
+        function insertReply(text) {
+            // Simular inserção no chat ativo
+            console.log('Inserindo resposta:', text);
+            alert('Resposta inserida: ' + text);
+        }
+    </script>
+</DashboardLayout>

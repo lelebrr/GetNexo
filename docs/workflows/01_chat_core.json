@@ -1,0 +1,40 @@
+{
+  "name": "01_Chat_Core_Validation",
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "content": "Hello! This is a test from n8n."
+      },
+      "name": "Chatwoot Message",
+      "type": "n8n-nodes-base.chatwoot",
+      "typeVersion": 1,
+      "position": [450, 300],
+      "credentials": {
+        "chatwootApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Chatwoot Account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Chatwoot Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

@@ -1,0 +1,224 @@
+---
+import Layout from '../layouts/Layout.astro';
+// Enhanced SEO Constants for Top Google Ranking
+const title = "Sobre GetNexo: Revolução IA WhatsApp | Soberania Digital 2026";
+const description = "Sobre GetNexo: democratizamos IA para vendas WhatsApp. Soberania digital, API oficial Meta, zero custos ocultos. Conheça nossa missão e visão para 2026.";
+const keywords = "sobre getnexo, missao getnexo, visao getnexo, soberania digital, ia whatsapp oficial, api meta gratuita";
+
+const aboutSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "name": "GetNexo",
+      "url": "https://getnexo.com.br",
+      "logo": "https://getnexo.com.br/logo.svg",
+      "description": "Plataforma de IA e Automação para WhatsApp focada em performance e soberania digital."
+    },
+    {
+      "@type": "WebPage",
+      "name": "Sobre Nós - GetNexo",
+      "description": "A história e missão da GetNexo no ecossistema de vendas conversacionais."
+    }
+  ]
+};
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(aboutSchema)}></script>
+
+  <section class="about-hero">
+    <div class="hero-badge reveal">Nossa Essência</div>
+    <h1 class="text-gradient reveal">Democratizando a Elite da <span class="white">Automação</span></h1>
+    <p class="hero-subtitle reveal">
+      Nascemos da inconformidade com ferramentas caras e limitadas. O GetNexo é o manifesto pela liberdade comercial e performance absoluta.
+    </p>
+  </section>
+
+  <section class="mission-vision">
+    <div class="mission-grid">
+      <div class="glass-panel mv-card reveal">
+        <div class="mv-icon">🎯</div>
+        <h3>Nossa Missão</h3>
+        <p>Prover tecnologia de ponta para que qualquer negócio possa escalar suas vendas no WhatsApp com a mesma sofisticação das gigantes do mercado, sem as taxas abusivas.</p>
+      </div>
+      <div class="glass-panel mv-card reveal">
+        <div class="mv-icon">👁️</div>
+        <h3>Nossa Visão</h3>
+        <p>Ser a infraestrutura padrão global para comércio conversacional, onde a privacidade e o controle dos dados pertencem exclusivamente ao empreendedor.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="story-timeline-modern">
+    <h2 class="section-title reveal">Nossa Evolução</h2>
+    <div class="timeline-wrapper">
+      <div class="timeline-line"></div>
+      
+      <div class="timeline-block reveal">
+        <div class="block-content glass-panel">
+          <span class="block-year">2024</span>
+          <h4>A Rachadura no Sistema</h4>
+          <p>Percebemos que o mercado de automação estava quebrado: ou era muito caro (SaaS), ou muito instável (APIs paralelas). Começamos a desenhar a solução.</p>
+        </div>
+        <div class="block-dot"></div>
+      </div>
+
+      <div class="timeline-block reverse reveal">
+        <div class="block-content glass-panel">
+          <span class="block-year">2025</span>
+          <h4>O Nascimento do Nexus</h4>
+          <p>Unificamos a API Oficial da Meta com a inteligência do Gemini e a flexibilidade do n8n. O primeiro protocolo de autogestão de vendas foi criado.</p>
+        </div>
+        <div class="block-dot"></div>
+      </div>
+
+      <div class="timeline-block reveal">
+        <div class="block-content glass-panel">
+          <span class="block-year">2026</span>
+          <h4>A Escala Global</h4>
+          <p>Hoje, o GetNexo processa milhões de mensagens diárias, garantindo que o chat de cada cliente seja uma máquina de lucro ininterrupta e soberana.</p>
+        </div>
+        <div class="block-dot"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="core-values">
+    <h2 class="section-title reveal">Pilares Inegociáveis</h2>
+    <div class="values-grid">
+      <div class="value-item reveal">
+        <div class="v-icon">🏰</div>
+        <h3>Soberania Digital</h3>
+        <p>Seus dados são seu maior ativo. No GetNexo, você manda no seu servidor e nas suas informações.</p>
+      </div>
+      <div class="value-item reveal">
+        <div class="v-icon">⚡</div>
+        <h3>Alta Performance</h3>
+        <p>Latência zero e conversão máxima. Cada linha de código é otimizada para o ROI do seu negócio.</p>
+      </div>
+      <div class="value-item reveal">
+        <div class="v-icon">🤝</div>
+        <h3>Ética & Transparência</h3>
+        <p>API Oficial Meta e conformidade com LGPD. Honestidade absoluta em cada atualização.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-cta">
+    <div class="glass-panel cta-box reveal">
+      <h2>Pronto para escrever o próximo capítulo conosco?</h2>
+      <p>A revolução das vendas conversacionais já começou. Sua empresa está pronta?</p>
+      <div class="cta-btns">
+        <a href="/criar-bot" class="btn-primary-glow">Ativar Minha IA Agora</a>
+        <a href="/contato" class="btn-outline">Falar com um Estrategista</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .about-hero {
+    padding: 12rem 5% 6rem;
+    text-align: center;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  .hero-badge {
+    background: rgba(0, 212, 255, 0.1);
+    color: #00d4ff;
+    padding: 0.6rem 1.4rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    display: inline-block;
+    margin-bottom: 2rem;
+  }
+  .about-hero h1 {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+  .white { color: white; }
+  .hero-subtitle {
+    font-size: 1.4rem;
+    color: #94a3b8;
+    line-height: 1.6;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  /* Mission Vision */
+  .mission-vision { padding: 4rem 5%; max-width: 1200px; margin: 0 auto; }
+  .mission-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .mv-card { padding: 3rem; border-radius: 32px; transition: 0.4s; }
+  .mv-card:hover { transform: translateY(-10px); border-color: #00ff9d; }
+  .mv-icon { font-size: 2.5rem; margin-bottom: 1.5rem; }
+  .mv-card h3 { font-size: 1.8rem; color: white; margin-bottom: 1rem; font-weight: 800; }
+  .mv-card p { color: #94a3b8; font-size: 1.1rem; line-height: 1.7; }
+
+  /* Timeline */
+  .story-timeline-modern { padding: 8rem 5%; max-width: 1100px; margin: 0 auto; }
+  .section-title { text-align: center; font-size: 3rem; font-weight: 900; margin-bottom: 5rem; color: white; }
+  
+  .timeline-wrapper { position: relative; }
+  .timeline-line { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, transparent, #00d4ff, #00ff9d, transparent); transform: translateX(-50%); }
+  
+  .timeline-block { display: flex; justify-content: flex-end; width: 100%; margin-bottom: 4rem; position: relative; }
+  .timeline-block.reverse { justify-content: flex-start; }
+  
+  .block-content { width: 45%; padding: 3rem; border-radius: 24px; }
+  .block-year { font-size: 2rem; font-weight: 900; color: #00ff9d; display: block; margin-bottom: 0.5rem; }
+  .block-content h4 { font-size: 1.4rem; color: white; margin-bottom: 1rem; }
+  .block-content p { color: #64748b; line-height: 1.6; }
+  
+  .block-dot { position: absolute; left: 50%; top: 2rem; width: 20px; height: 20px; background: #00ff9d; border: 4px solid #030712; border-radius: 50%; transform: translateX(-50%); box-shadow: 0 0 20px #00ff9d; }
+
+  /* Core Values */
+  .core-values { padding: 6rem 5%; max-width: 1200px; margin: 0 auto; text-align: center; }
+  .values-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem; margin-top: 4rem; }
+  .v-icon { font-size: 3rem; margin-bottom: 2rem; }
+  .value-item h3 { font-size: 1.5rem; color: white; margin-bottom: 1rem; font-weight: 800; }
+  .value-item p { color: #94a3b8; line-height: 1.6; }
+
+  /* About CTA */
+  .about-cta { padding: 6rem 5% 12rem; max-width: 1100px; margin: 0 auto; }
+  .cta-box { padding: 6rem 4rem; text-align: center; border-radius: 48px; }
+  .cta-box h2 { font-size: 3rem; color: white; font-weight: 900; margin-bottom: 1.5rem; }
+  .cta-box p { color: #94a3b8; font-size: 1.2rem; margin-bottom: 3rem; }
+  .cta-btns { display: flex; gap: 2rem; justify-content: center; }
+
+  .btn-primary-glow { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1.2rem 3rem; border-radius: 12px; font-weight: 900; text-decoration: none; transition: 0.3s; box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2); }
+  .btn-outline { border: 1px solid rgba(255,255,255,0.1); color: white; padding: 1.2rem 3rem; border-radius: 12px; font-weight: 700; text-decoration: none; transition: 0.3s; background: rgba(255,255,255,0.03); }
+  .btn-primary-glow:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(0, 212, 255, 0.4); }
+  .btn-outline:hover { background: rgba(255,255,255,0.08); border-color: #00ff9d; }
+
+  @media (max-width: 900px) {
+    .mission-grid { grid-template-columns: 1fr; }
+    .timeline-line { left: 0; }
+    .timeline-block, .timeline-block.reverse { justify-content: flex-start; padding-left: 2rem; }
+    .block-content { width: 100%; }
+    .block-dot { left: 0; }
+    .values-grid { grid-template-columns: 1fr; gap: 4rem; }
+    .cta-btns { flex-direction: column; }
+    .cta-box { padding: 4rem 2rem; }
+    .cta-box h2 { font-size: 2rem; }
+  }
+
+  /* Reveal Implementation */
+  .reveal { opacity: 0; transform: translateY(30px); transition: 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  .reveal.active { opacity: 1; transform: translateY(0); }
+</style>
+
+<script is:inline>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>

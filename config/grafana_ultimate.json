@@ -1,0 +1,102 @@
+{
+    "title": "Use Nexo: Global Machine Dashboard",
+    "panels": [
+        {
+            "title": "Total Active Clients",
+            "type": "stat",
+            "targets": [
+                {
+                    "expr": "sum(getnexo_active_clients)",
+                    "refId": "A"
+                }
+            ],
+            "options": {
+                "reduceOptions": {
+                    "values": false,
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                }
+            }
+        },
+        {
+            "title": "AI Conversion Rate",
+            "type": "gauge",
+            "targets": [
+                {
+                    "expr": "getnexo_ai_conversion_rate",
+                    "refId": "A"
+                }
+            ],
+            "options": {
+                "min": 0,
+                "max": 100,
+                "thresholds": {
+                    "steps": [
+                        {
+                            "color": "red",
+                            "value": 0
+                        },
+                        {
+                            "color": "green",
+                            "value": 25
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "title": "Average Response Time",
+            "type": "graph",
+            "targets": [
+                {
+                    "expr": "rate(getnexo_http_request_duration_seconds_sum[5m]) / rate(getnexo_http_request_duration_seconds_count[5m])",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "s"
+                }
+            }
+        },
+        {
+            "title": "Monthly Infrastructure Cost",
+            "type": "stat",
+            "targets": [
+                {
+                    "expr": "getnexo_infra_cost_brl",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "currencyBRL"
+                }
+            }
+        },
+        {
+            "title": "ROI Calculator (Avg)",
+            "type": "stat",
+            "targets": [
+                {
+                    "expr": "getnexo_client_roi_multiplier",
+                    "refId": "A"
+                }
+            ],
+            "options": {
+                "suffix": "x"
+            }
+        },
+        {
+            "title": "Post-Quantum Handshakes (24h)",
+            "type": "heatmap",
+            "targets": [
+                {
+                    "expr": "sum(rate(getnexo_pqc_handshakes_total[1h]))",
+                    "refId": "A"
+                }
+            ]
+        }
+    ]
+}

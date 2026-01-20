@@ -1,0 +1,16 @@
+tunnel: getnexo-tunnel-failover
+credentials-file: /etc/cloudflared/token.json
+
+ingress:
+  # Main Route
+  - hostname: chat.getnexo.com
+    service: http://chatwoot:3000
+    originRequest:
+      connectTimeout: 10s
+  
+  # Failover Route (simulated logic handled by Cloudflare Load Balancer usually, but here defined)
+  
+  - service: http_status:404
+
+# Tailscale Mock Config
+# tailscale up --authkey=tskey-xxxxx --advertise-routes=10.0.0.0/24

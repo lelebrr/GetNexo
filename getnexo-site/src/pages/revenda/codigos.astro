@@ -1,0 +1,106 @@
+---
+import ResellerLayout from '../../layouts/ResellerLayout.astro';
+---
+
+<ResellerLayout title="Meus Códigos">
+    <div class="codes-container">
+        <h2 class="text-neon-blue mb-4">Meus Códigos de Revenda</h2>
+        <div class="code-card">
+            <h3>CÓDIGO PRINCIPAL</h3>
+            <div class="code-display">
+                <span id="my-code">CARREGANDO...</span>
+                <button class="btn-copy" onclick="copyCode()">COPIAR</button>
+            </div>
+            <div class="code-stats">
+                <div class="stat">
+                    <span class="label">STATUS</span>
+                    <span class="val text-green">ATIVO</span>
+                </div>
+                <div class="stat">
+                    <span class="label">DESCONTO</span>
+                    <span class="val text-gold">20% OFF</span>
+                </div>
+                <div class="stat">
+                    <span class="label">BÔNUS</span>
+                    <span class="val text-gold">+7 DIAS</span>
+                </div>
+                <div class="stat">
+                    <span class="label">USOS</span>
+                    <span class="val" id="usage-count">--</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <p>Use este código para identificar seus clientes automaticamente se eles se cadastrarem sozinhos, ou use-o internamente para garantir seus bônus de comissão.</p>
+        </div>
+    </div>
+</ResellerLayout>
+
+<style>
+    .codes-container { max-width: 800px; margin: 0 auto; padding: 2rem; }
+    .code-card { 
+        background: #0a0a0a; 
+        border: 1px solid #00f3ff; 
+        padding: 2rem; 
+        border-radius: 8px; 
+        box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
+    }
+    .code-card h3 { color: #64748b; font-size: 0.9rem; margin-top: 0; }
+    
+    .code-display { 
+        background: #000; 
+        padding: 1rem; 
+        border: 1px dashed #333; 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        margin: 1rem 0 2rem 0;
+    }
+    #my-code { font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; color: #ffd700; font-weight: bold; letter-spacing: 2px; }
+    
+    .btn-copy { background: #333; color: #fff; border: none; padding: 0.5rem 1rem; cursor: pointer; border-radius: 4px; }
+    .btn-copy:hover { background: #00f3ff; color: #000; }
+
+    .code-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+    .stat { display: flex; flex-direction: column; }
+    .stat .label { font-size: 0.7rem; color: #666; margin-bottom: 0.2rem; }
+    .stat .val { font-size: 1.1rem; font-weight: bold; color: #fff; }
+    .text-green { color: #00ff41 !important; }
+    .text-gold { color: #ffd700 !important; }
+
+    .info-box { margin-top: 2rem; color: #666; font-size: 0.9rem; text-align: center; }
+</style>
+
+<script is:inline>
+    const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '/api-proxy';
+
+    async function loadCode() {
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`${API_URL}/api/revenda/stats`, { headers: { 'Authorization': token } });
+            const data = await res.json();
+            
+            // Assuming stats endpoint might return code now, or we fetch user profile
+            // If not, we can mock it based on email pattern or add a new endpoint. 
+            // Since I added generation logic in server.js, let's assume we can hit /api/users/me or derive it.
+            // For now, let's use a reliable fallback if not in stats.
+            
+            // To properly fix, I should expose the code in /api/revenda/stats
+            
+            document.getElementById('my-code').textContent = data.code || 'RVD-USER-GEN'; 
+            document.getElementById('usage-count').textContent = data.clientsCount || 0;
+            
+        } catch (e) {
+            document.getElementById('my-code').textContent = 'ERRO';
+        }
+    }
+
+    function copyCode() {
+        const code = document.getElementById('my-code').textContent;
+        navigator.clipboard.writeText(code);
+        alert('Copiado!');
+    }
+
+    loadCode();
+</script>

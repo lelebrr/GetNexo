@@ -1,0 +1,187 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="404 - Página não encontrada | GetNexo">
+  <div class="error-container">
+    <div class="glitch-wrapper">
+      <h1 class="glitch" data-text="404">404</h1>
+    </div>
+    
+    <div class="message-box">
+      <h2>🔮 Você se perdeu na Matrix...</h2>
+      <p>A página que você procura não existe nesta dimensão.</p>
+      
+      <div class="suggestions">
+        <p>Talvez você queira:</p>
+        <ul>
+          <li><a href="/">🏠 Voltar para o início</a></li>
+          <li><a href="/blog">📚 Ler nosso blog</a></li>
+          <li><a href="/oferta">🔥 Ver nossa oferta</a></li>
+          <li><a href="#" onclick="if(window.$chatwoot){window.$chatwoot.toggle()}else{window.location.href='/contato'}; return false;">💬 Falar com o Nexo</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="easter-egg">
+      <p>Ou pressione <kbd>↑</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>↓</kbd> para algo especial...</p>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .error-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+    color: #fff;
+    font-family: 'JetBrains Mono', monospace;
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .glitch-wrapper {
+    position: relative;
+    margin-bottom: 2rem;
+  }
+  
+  .glitch {
+    font-size: 12rem;
+    font-weight: 900;
+    color: #00F7FF;
+    text-shadow: 
+      0 0 10px #00F7FF,
+      0 0 20px #00F7FF,
+      0 0 40px #00F7FF;
+    position: relative;
+    animation: flicker 2s infinite;
+  }
+  
+  .glitch::before,
+  .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .glitch::before {
+    color: #FF0033;
+    animation: glitch-1 0.3s infinite;
+    clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+  }
+  
+  .glitch::after {
+    color: #00FF00;
+    animation: glitch-2 0.3s infinite;
+    clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+  }
+  
+  @keyframes glitch-1 {
+    0%, 100% { transform: translate(0); }
+    20% { transform: translate(-3px, 3px); }
+    40% { transform: translate(3px, -3px); }
+    60% { transform: translate(-3px, -3px); }
+    80% { transform: translate(3px, 3px); }
+  }
+  
+  @keyframes glitch-2 {
+    0%, 100% { transform: translate(0); }
+    20% { transform: translate(3px, -3px); }
+    40% { transform: translate(-3px, 3px); }
+    60% { transform: translate(3px, 3px); }
+    80% { transform: translate(-3px, -3px); }
+  }
+  
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    92% { opacity: 1; }
+    93% { opacity: 0.8; }
+    94% { opacity: 1; }
+    95% { opacity: 0.6; }
+    96% { opacity: 1; }
+  }
+  
+  .message-box {
+    background: rgba(0, 247, 255, 0.1);
+    border: 1px solid #00F7FF;
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 500px;
+    backdrop-filter: blur(10px);
+  }
+  
+  .message-box h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .message-box p {
+    color: #888;
+    margin-bottom: 1.5rem;
+  }
+  
+  .suggestions ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .suggestions a {
+    color: #00F7FF;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border: 1px solid #00F7FF33;
+    border-radius: 8px;
+    display: block;
+    transition: all 0.3s;
+  }
+  
+  .suggestions a:hover {
+    background: #00F7FF22;
+    border-color: #00F7FF;
+    box-shadow: 0 0 20px #00F7FF44;
+  }
+  
+  .easter-egg {
+    margin-top: 3rem;
+    opacity: 0.3;
+    font-size: 0.8rem;
+  }
+  
+  kbd {
+    background: #222;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid #444;
+  }
+</style>
+
+<script is:inline>
+  // Konami Code Easter Egg
+  const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown'];
+  let konamiIndex = 0;
+  
+  document.addEventListener('keydown', (e) => {
+    if (e.key === konamiCode[konamiIndex]) {
+      konamiIndex++;
+      if (konamiIndex === konamiCode.length) {
+        document.body.style.transition = 'all 1s';
+        document.body.style.filter = 'hue-rotate(180deg)';
+        setTimeout(() => {
+          alert('🎮 Matrix Mode Activated! You found the secret.');
+        }, 500);
+        konamiIndex = 0;
+      }
+    } else {
+      konamiIndex = 0;
+    }
+  });
+</script>

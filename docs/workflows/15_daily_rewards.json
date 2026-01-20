@@ -1,0 +1,96 @@
+{
+    "name": "15_Daily_Rewards",
+    "nodes": [
+        {
+            "parameters": {},
+            "name": "Start",
+            "type": "n8n-nodes-base.start",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "get",
+                "key": "user_last_login:{{$json[\"user_id\"]}}"
+            },
+            "name": "Check Last Login",
+            "type": "n8n-nodes-base.redis",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "boolean": [
+                        {
+                            "value1": "={{$json[\"data\"] == null}}",
+                            "value2": true
+                        }
+                    ]
+                }
+            },
+            "name": "Is First Today?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                650,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "incrby",
+                "key": "user_points:{{$json[\"user_id\"]}}",
+                "value": 10
+            },
+            "name": "Add Points",
+            "type": "n8n-nodes-base.redis",
+            "typeVersion": 1,
+            "position": [
+                850,
+                200
+            ]
+        }
+    ],
+    "connections": {
+        "Start": {
+            "main": [
+                [
+                    {
+                        "node": "Check Last Login",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check Last Login": {
+            "main": [
+                [
+                    {
+                        "node": "Is First Today?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Is First Today?": {
+            "main": [
+                [
+                    {
+                        "node": "Add Points",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

@@ -1,0 +1,581 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout title="Auditoria | GetNexo Admin">
+
+  <header style="background:#0a0e17; padding:2rem; display:flex; justify-content:space-between; color:#00ff9d; align-items:center; border-bottom: 1px solid #1f2937;">
+    <h1 style="margin:0; font-size:2rem; font-weight:bold; letter-spacing:-1px;">📋 <span style="color:#fff">Auditoria</span></h1>
+    <div style="display:flex; align-items:center; gap:1rem;">
+      <button id="btn-export" class="btn-secondary">📥 Exportar CSV</button>
+      <button id="btn-refresh" class="btn-primary">🔄 Atualizar</button>
+    </div>
+  </header>
+
+  <!-- Admin Navigation -->
+  <nav style="background:#0f172a; padding:1rem 5%; display:flex; gap:1rem; border-bottom:1px solid #1e293b; flex-wrap:wrap;">
+    <a href="/admin" class="nav-link">📊 Dashboard</a>
+    <a href="/admin/usuarios" class="nav-link">👥 Usuários</a>
+    <a href="/admin/roles" class="nav-link">🛡️ Roles</a>
+    <a href="/admin/auditoria" class="nav-link active">📋 Auditoria</a>
+    <a href="/admin/cupons" class="nav-link">🎟️ Cupons</a>
+    <a href="/admin/produtos" class="nav-link">🛍️ Produtos</a>
+    <a href="/admin/seguranca" class="nav-link">🔒 Segurança</a>
+  </nav>
+
+  <main style="padding:2rem 5%; max-width:1600px; margin:0 auto;">
+    
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-icon">📊</span>
+        <div>
+          <span class="stat-value" id="total-logs">-</span>
+          <span class="stat-label">Total de Logs</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">🕐</span>
+        <div>
+          <span class="stat-value" id="logs-today">-</span>
+          <span class="stat-label">Hoje</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">👥</span>
+        <div>
+          <span class="stat-value" id="unique-users">-</span>
+          <span class="stat-label">Usuários Ativos</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">🔐</span>
+        <div>
+          <span class="stat-value" id="login-count">-</span>
+          <span class="stat-label">Logins (24h)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-bar">
+      <input type="text" id="search-input" placeholder="🔍 Buscar por usuário ou ação..." class="search-input" />
+      <select id="action-filter" class="filter-select">
+        <option value="">Todas as Ações</option>
+        <option value="LOGIN">Login</option>
+        <option value="CREATE_USER">Criar Usuário</option>
+        <option value="UPDATE_USER">Atualizar Usuário</option>
+        <option value="DELETE_USER">Excluir Usuário</option>
+        <option value="CREATE_ROLE">Criar Role</option>
+        <option value="UPDATE_ROLE">Atualizar Role</option>
+        <option value="DELETE_ROLE">Excluir Role</option>
+      </select>
+      <input type="date" id="date-filter" class="filter-select" />
+    </div>
+
+    <!-- Activity Chart -->
+    <div class="chart-section glass-panel">
+      <h3>📈 Atividade dos Últimos 7 Dias</h3>
+      <div class="chart-container">
+        <canvas id="activity-chart"></canvas>
+      </div>
+    </div>
+
+    <!-- Logs Table -->
+    <div class="table-container glass-panel">
+      <h3 style="color:white; margin:0 0 1rem 0; font-size:1.1rem;">📋 Histórico de Atividades</h3>
+      <table id="logs-table">
+        <thead>
+          <tr>
+            <th>Horário</th>
+            <th>Usuário</th>
+            <th>Ação</th>
+            <th>Detalhes</th>
+          </tr>
+        </thead>
+        <tbody id="logs-tbody">
+          <tr>
+            <td colspan="4" style="text-align:center; color:#64748b; padding:3rem;">
+              Carregando logs...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Timeline -->
+    <div class="timeline-section glass-panel">
+      <h3 style="color:white; margin:0 0 1.5rem 0;">⏱️ Timeline de Eventos Recentes</h3>
+      <div id="timeline-container" class="timeline">
+        <div class="loading">Carregando timeline...</div>
+      </div>
+    </div>
+
+  </main>
+
+</Layout>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card {
+    background: rgba(20,30,50,0.6);
+    border: 1px solid #1f2937;
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .stat-icon { font-size: 2rem; }
+  .stat-value { display: block; font-size: 1.8rem; font-weight: 800; color: #00d4ff; }
+  .stat-label { color: #64748b; font-size: 0.85rem; }
+
+  .filters-bar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .search-input {
+    flex: 1;
+    min-width: 250px;
+    padding: 0.75rem 1rem;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid #334155;
+    border-radius: 10px;
+    color: white;
+    font-size: 0.95rem;
+  }
+
+  .search-input:focus { outline: none; border-color: #00d4ff; }
+
+  .filter-select {
+    padding: 0.75rem 1rem;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid #334155;
+    border-radius: 10px;
+    color: white;
+    min-width: 180px;
+  }
+
+  .chart-section {
+    padding: 1.5rem;
+    border-radius: 16px;
+    margin-bottom: 2rem;
+  }
+
+  .chart-section h3 {
+    color: white;
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+  }
+
+  .chart-container {
+    height: 200px;
+    position: relative;
+  }
+
+  .table-container {
+    overflow-x: auto;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  th {
+    text-align: left;
+    padding: 1rem;
+    background: rgba(0,0,0,0.3);
+    color: #94a3b8;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #1f2937;
+  }
+
+  td {
+    padding: 1rem;
+    border-bottom: 1px solid #1f2937;
+    color: white;
+    font-size: 0.9rem;
+  }
+
+  tr:hover { background: rgba(0,212,255,0.05); }
+
+  .action-badge {
+    display: inline-block;
+    padding: 0.3rem 0.7rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .action-login { background: #22c55e20; color: #4ade80; }
+  .action-create { background: #3b82f620; color: #60a5fa; }
+  .action-update { background: #f59e0b20; color: #fbbf24; }
+  .action-delete { background: #ef444420; color: #f87171; }
+  .action-default { background: #64748b20; color: #94a3b8; }
+
+  .timeline-section {
+    padding: 1.5rem;
+    border-radius: 16px;
+  }
+
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, #00d4ff, #00ff9d);
+  }
+
+  .timeline-item {
+    position: relative;
+    padding-bottom: 1.5rem;
+    padding-left: 1.5rem;
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -1.6rem;
+    top: 0.25rem;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #00d4ff;
+    border: 2px solid #0f172a;
+  }
+
+  .timeline-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+  }
+
+  .timeline-user {
+    color: #00ff9d;
+    font-weight: 600;
+  }
+
+  .timeline-time {
+    color: #64748b;
+    font-size: 0.8rem;
+  }
+
+  .timeline-action {
+    color: white;
+    font-size: 0.9rem;
+  }
+
+  .timeline-details {
+    color: #94a3b8;
+    font-size: 0.85rem;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    color: black;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .btn-secondary {
+    background: #1f2937;
+    color: white;
+    border: 1px solid #374151;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .loading { color: #64748b; text-align: center; padding: 2rem; }
+
+  .nav-link {
+    color: #94a3b8;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+  
+  .nav-link:hover { background: #1e293b; color: white; }
+  .nav-link.active { color: #00ff9d; background: #00ff9d22; font-weight: 600; }
+
+  @media (max-width: 768px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+
+<script is:inline>
+  const API_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3005' 
+    : 'https://api.getnexo.com.br';
+
+  let logs = [];
+  let chart = null;
+
+  function getToken() {
+    return localStorage.getItem('omnichat_token');
+  }
+
+  // Load audit logs
+  async function loadLogs() {
+    try {
+      const res = await fetch(`${API_URL}/logs`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      logs = await res.json();
+      renderLogs(logs);
+      updateStats();
+      renderTimeline();
+      renderChart();
+    } catch (e) {
+      console.error('Error loading logs:', e);
+      document.getElementById('logs-tbody').innerHTML = `
+        <tr><td colspan="4" style="text-align:center; color:#ef4444; padding:3rem;">
+          Erro ao carregar logs.
+        </td></tr>
+      `;
+    }
+  }
+
+  // Render logs table
+  function renderLogs(logsToRender) {
+    const tbody = document.getElementById('logs-tbody');
+    
+    if (logsToRender.length === 0) {
+      tbody.innerHTML = `
+        <tr><td colspan="4" style="text-align:center; color:#64748b; padding:3rem;">
+          Nenhum log encontrado.
+        </td></tr>
+      `;
+      return;
+    }
+    
+    tbody.innerHTML = logsToRender.map(log => {
+      const date = new Date(log.created_at);
+      const time = date.toLocaleString('pt-BR');
+      const actionClass = getActionClass(log.action);
+      
+      return `
+        <tr>
+          <td style="white-space:nowrap;">${time}</td>
+          <td>${log.user_name || 'Sistema'}</td>
+          <td><span class="action-badge ${actionClass}">${formatAction(log.action)}</span></td>
+          <td style="color:#94a3b8;">${log.details || '-'}</td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function getActionClass(action) {
+    if (action.includes('LOGIN')) return 'action-login';
+    if (action.includes('CREATE')) return 'action-create';
+    if (action.includes('UPDATE')) return 'action-update';
+    if (action.includes('DELETE')) return 'action-delete';
+    return 'action-default';
+  }
+
+  function formatAction(action) {
+    const map = {
+      'LOGIN': 'Login',
+      'CREATE_USER': 'Criar Usuário',
+      'UPDATE_USER': 'Atualizar Usuário',
+      'DELETE_USER': 'Excluir Usuário',
+      'CREATE_ROLE': 'Criar Role',
+      'UPDATE_ROLE': 'Atualizar Role',
+      'DELETE_ROLE': 'Excluir Role'
+    };
+    return map[action] || action;
+  }
+
+  // Update stats
+  function updateStats() {
+    document.getElementById('total-logs').textContent = logs.length;
+    
+    const today = new Date().toDateString();
+    const logsToday = logs.filter(l => new Date(l.created_at).toDateString() === today).length;
+    document.getElementById('logs-today').textContent = logsToday;
+    
+    const uniqueUsers = [...new Set(logs.map(l => l.user_id).filter(Boolean))].length;
+    document.getElementById('unique-users').textContent = uniqueUsers;
+    
+    const now = Date.now();
+    const dayAgo = now - 24 * 60 * 60 * 1000;
+    const logins24h = logs.filter(l => 
+      l.action === 'LOGIN' && new Date(l.created_at).getTime() > dayAgo
+    ).length;
+    document.getElementById('login-count').textContent = logins24h;
+  }
+
+  // Render timeline
+  function renderTimeline() {
+    const container = document.getElementById('timeline-container');
+    const recentLogs = logs.slice(0, 10);
+    
+    if (recentLogs.length === 0) {
+      container.innerHTML = '<div class="loading">Nenhum evento recente.</div>';
+      return;
+    }
+    
+    container.innerHTML = recentLogs.map(log => {
+      const date = new Date(log.created_at);
+      const time = date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      const dayDiff = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24));
+      const timeLabel = dayDiff === 0 ? `Hoje às ${time}` : 
+                        dayDiff === 1 ? `Ontem às ${time}` : 
+                        date.toLocaleDateString('pt-BR');
+      
+      return `
+        <div class="timeline-item">
+          <div class="timeline-item-header">
+            <span class="timeline-user">${log.user_name || 'Sistema'}</span>
+            <span class="timeline-time">${timeLabel}</span>
+          </div>
+          <div class="timeline-action">${formatAction(log.action)}</div>
+          ${log.details ? `<div class="timeline-details">${log.details}</div>` : ''}
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Render activity chart
+  function renderChart() {
+    const ctx = document.getElementById('activity-chart').getContext('2d');
+    
+    // Group logs by day
+    const days = [];
+    const counts = [];
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toDateString();
+      const dayLabel = date.toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric' });
+      
+      days.push(dayLabel);
+      counts.push(logs.filter(l => new Date(l.created_at).toDateString() === dateStr).length);
+    }
+    
+    if (chart) chart.destroy();
+    
+    chart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: days,
+        datasets: [{
+          label: 'Atividades',
+          data: counts,
+          backgroundColor: 'rgba(0, 212, 255, 0.5)',
+          borderColor: '#00d4ff',
+          borderWidth: 1,
+          borderRadius: 8
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: { color: 'rgba(255,255,255,0.05)' },
+            ticks: { color: '#64748b' }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { color: '#64748b' }
+          }
+        }
+      }
+    });
+  }
+
+  // Search
+  document.getElementById('search-input').addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase();
+    const filtered = logs.filter(l => 
+      (l.user_name || '').toLowerCase().includes(query) ||
+      (l.action || '').toLowerCase().includes(query) ||
+      (l.details || '').toLowerCase().includes(query)
+    );
+    renderLogs(filtered);
+  });
+
+  // Action filter
+  document.getElementById('action-filter').addEventListener('change', (e) => {
+    const action = e.target.value;
+    if (!action) {
+      renderLogs(logs);
+    } else {
+      renderLogs(logs.filter(l => l.action === action));
+    }
+  });
+
+  // Date filter
+  document.getElementById('date-filter').addEventListener('change', (e) => {
+    const date = e.target.value;
+    if (!date) {
+      renderLogs(logs);
+    } else {
+      const selectedDate = new Date(date).toDateString();
+      renderLogs(logs.filter(l => new Date(l.created_at).toDateString() === selectedDate));
+    }
+  });
+
+  // Refresh
+  document.getElementById('btn-refresh').addEventListener('click', loadLogs);
+
+  // Export CSV
+  document.getElementById('btn-export').addEventListener('click', () => {
+    const headers = ['Horário', 'Usuário ID', 'Usuário Nome', 'Ação', 'Detalhes'];
+    const rows = logs.map(l => [
+      new Date(l.created_at).toISOString(),
+      l.user_id || '',
+      l.user_name || '',
+      l.action,
+      l.details || ''
+    ]);
+    
+    const csv = [
+      headers.join(','),
+      ...rows.map(r => r.map(c => `"${c}"`).join(','))
+    ].join('\n');
+    
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `auditoria_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+  });
+
+  // Init
+  loadLogs();
+</script>

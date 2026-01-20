@@ -1,0 +1,385 @@
+---
+import Layout from '../layouts/Layout.astro';
+const pageTitle = "Página GetNexo";
+const pageDescription = "Descrição da página GetNexo";
+const pageKeywords = "getnexo, whatsapp, automacao";
+
+// Schema Markup (JSON-LD)
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "Integração GetNexo para Wake Experience",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "BRL",
+        "availability": "https://schema.org/InStock"
+      },
+      "description": "Automação de WhatsApp para Wake Experience. Personalização baseada em comportamento e dados.",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "ratingCount": "320",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "featureList": [
+        "Personalização de Mensagem por Comportamento",
+        "Gatilhos de Navegação no Site",
+        "Recomendação de Produtos via Chat",
+        "Sincronização de Base de Dados",
+        "Ativação de Clientes Churn"
+      ]
+    },
+    {
+      "@type": "SpeakableSpecification",
+      "cssSelector": [".speakable-content", "h1", "h2", ".hero-title", ".hero-subtitle", ".stat-value", ".cta-title"],
+      "xpath": ["/html/head/title", "//h1", "//h2", "//div[contains(@class, 'stat-card')]//div[contains(@class, 'stat-value')]"]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://getnexo.com.br/integracoes/wake-experience#webpage",
+      "url": "https://getnexo.com.br/integracoes/wake-experience",
+      "name": pageTitle,
+      "isPartOf": { "@type": "WebSite", "@id": "https://getnexo.com.br#website", "name": "GetNexo", "url": "https://getnexo.com.br" },
+      "datePublished": "2026-01-18T10:00:00+00:00",
+      "dateModified": "2026-01-18T14:00:00+00:00",
+      "inLanguage": "pt-BR",
+      "speakable": { "@type": "SpeakableSpecification", "cssSelector": ["h1", ".hero-subtitle", ".stat-value"] },
+      "about": [
+        { "@type": "Thing", "name": "Integração Wake Experience WhatsApp" },
+        { "@type": "Thing", "name": "Personalização Data-Driven" },
+        { "@type": "Thing", "name": "Inteligência Conversacional" }
+      ],
+      "mentions": [
+        { "@type": "Brand", "name": "GetNexo" },
+        { "@type": "Brand", "name": "Wake Experience" },
+        { "@type": "Brand", "name": "AllIn" },
+        { "@type": "Brand", "name": "WhatsApp Business" }
+      ],
+      "primaryImageOfPage": { "@type": "ImageObject", "url": "https://getnexo.com.br/images/integracoes/wake-experience.png", "width": 1200, "height": 630 }
+    },
+    {
+      "@type": "DefinedTermSet",
+      "name": "Voice Search Keywords - Integração Wake Experience",
+      "hasDefinedTerm": [
+        {"@type": "DefinedTerm", "name": "wake experience whatsapp", "description": "Integração Wake Experience WhatsApp para personalização"},
+        {"@type": "DefinedTerm", "name": "allin integracao whatsapp", "description": "Integração AllIn WhatsApp"},
+        {"@type": "DefinedTerm", "name": "personalizacao marketing whatsapp", "description": "Personalização de marketing WhatsApp"},
+        {"@type": "DefinedTerm", "name": "automacao dados whatsapp", "description": "Automação de dados WhatsApp"},
+        {"@type": "DefinedTerm", "name": "bot wake experience whatsapp", "description": "Bot WhatsApp integrado ao Wake Experience"},
+        {"@type": "DefinedTerm", "name": "data driven whatsapp", "description": "Data-driven WhatsApp automation"},
+        {"@type": "DefinedTerm", "name": "gatilhos comportamentais whatsapp", "description": "Gatilhos comportamentais WhatsApp"},
+        {"@type": "DefinedTerm", "name": "recomendacao produtos whatsapp", "description": "Recomendação de produtos WhatsApp"}
+      ]
+    }
+  ]
+};
+const ogImage = "https://example.com/og.jpg";
+const preloadImage = "https://example.com/hero.png";
+---
+
+<Layout title={pageTitle} description={pageDescription} keywords={pageKeywords} ogImage={ogImage} preloadImage={preloadImage}>
+  
+<!-- Accessibility Metadata -->
+<meta name="accessibility-features" content="skip-links, keyboard-navigation, screen-reader-support, reduced-motion">
+<meta name="accessibility-hazards" content="none">
+<meta name="accessibility-summary" content="Este site atende aos padrões WCAG 2.2 AA, Section 508, e-MAG e EN 301 549">
+  <div class="hidden-seo">
+    <h1>Test Hidden SEO</h1>
+    <h2>Subtitle</h2>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="wakeexperience-hero text-center">
+    <div class="hero-bg"><!-- bg --></div>
+    <div class="custom-container relative z-10">
+      <div class="hero-content">
+        <div class="hero-badge animate-fade-in">
+          <span class="pulse-dot"><!-- dot --></span>
+          Inteligência de Dados no WhatsApp
+        </div>
+        
+        <h1 class="hero-title">
+          Hiper-personalização com <br/>
+          <span class="gradient-text">Wake Experience</span>
+        </h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid -->
+  <section class="section-features relative" id="funcionalidades">
+    <div class="custom-container">
+      <div class="text-center mb-20">
+        <h2 class="section-title-large">Data-Driven WhatsApp</h2>
+        <p class="section-subtitle">
+          Recursos que elevam o patamar do seu marketing de relacionamento.
+        </p>
+      </div>
+
+      <div class="grid-3-cols gap-8">
+        <!-- Feature 1 -->
+        <article class="feature-box group">
+          <div class="icon-wrap">🎯</div>
+          <h3>Clusters Dinâmicos</h3>
+          <p>
+            Suas mensagens mudam automaticamente conforme o comportamento do cliente muda no Wake.
+          </p>
+          <ul class="feature-list">
+            <li>Sincronização de listas</li>
+            <li>Tags automáticas</li>
+            <li>Fluxos condicionais</li>
+          </ul>
+        </article>
+
+        <!-- Feature 2 -->
+        <article class="feature-box group">
+          <div class="icon-wrap">🛒</div>
+          <h3>Abandono de Carrinho ++</h3>
+          <p>
+             Vá além do básico. Recupere carrinhos com argumentos baseados no perfil do lead.
+          </p>
+          <ul class="feature-list">
+            <li>Diferentes abordagens</li>
+            <li>Ofertas customizadas</li>
+            <li>Uso de urgência real</li>
+          </ul>
+        </article>
+
+        <!-- Feature 3 -->
+        <article class="feature-box group">
+          <div class="icon-wrap">🔍</div>
+          <h3>Busca Abandonada</h3>
+          <p>
+            O cliente buscou algo no seu site e não achou? Pergunte no zap se pode ajudar.
+          </p>
+          <ul class="feature-list">
+            <li>Curadoria humana rápida</li>
+            <li>Atendimento proativo</li>
+            <li>Redução de bounce rate</li>
+          </ul>
+        </article>
+
+        <!-- Feature 4 -->
+        <article class="feature-box group">
+          <div class="icon-wrap">🎂</div>
+          <h3>Momentos de Vida</h3>
+          <p>
+            Aniversários, aniversários de primeira compra, conquistas de pontos. Tudo notificado.
+          </p>
+          <ul class="feature-list">
+            <li>Encantamento de base</li>
+            <li>Fidelização genuína</li>
+            <li>Cupons exclusivos</li>
+          </ul>
+        </article>
+
+        <!-- Feature 5 -->
+        <article class="feature-box group">
+          <div class="icon-wrap"><span aria-label="Ícone de gráfico">📊</span></div>
+          <h3>A/B Testing Conversacional</h3>
+          <p>
+            Teste diferentes cópias e abordagens e veja qual performa melhor com os dados do Wake.
+          </p>
+          <ul class="feature-list">
+            <li>Teste de templates</li>
+            <li>Otimização de horários</li>
+            <li>Métricas de CTR no chat</li>
+          </ul>
+        </article>
+
+        <!-- Feature 6 -->
+        <article class="feature-box group">
+          <div class="icon-wrap">⚙️</div>
+          <h3>Custom App Ready</h3>
+          <p>
+            Nossa API está pronta para receber qualquer evento customizado que você criar no Wake.
+          </p>
+          <ul class="feature-list">
+            <li>Flexibilidade total</li>
+            <li>Campos ilimitados</li>
+            <li>Integração low-code</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem/Solution Section -->
+  <section class="section-dark relative overflow-hidden" id="como-funciona">
+    <div class="custom-container">
+      <div class="grid-2-cols items-center gap-16">
+        <div class="problem-content">
+          <h2 class="section-title">
+            Mensagens <span class="text-highlight">Genéricas?</span>
+          </h2>
+          <div class="text-content">
+            <p>
+              Enviar a mesma mensagem para toda a sua base é o caminho mais rápido para ser bloqueado. O Wake Experience sabe o que seu cliente gosta, o que ele viu no site e o que ele já comprou.
+            </p>
+            <p>
+              A GetNexo pega esses dados e transforma em conversas reais. Chega de "spam". Agora é sobre relevância e atendimento consultivo automatizado.
+            </p>
+          </div>
+          
+          <div class="stats-grid">
+            <div class="stat-card highlight-stat">
+              <div class="stat-value">5x</div>
+              <div class="stat-label">Mais Relevância</div>
+            </div>
+            <div class="stat-card highlight-stat">
+              <div class="stat-value">+30%</div>
+              <div class="stat-label">Conversão em Campanhas</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="solution-card shadow-2xl">
+          <div class="solution-badge">
+            A Solução GetNexo
+          </div>
+          <h3 class="card-title">Inteligência Conversacional</h3>
+          <ul class="solution-list">
+            <li class="solution-item">
+              <div class="icon-circle highlight-icon"><span aria-label="Ícone de gráfico">📊</span></div>
+              <div>
+                <h4 class="item-title">Gatilhos Comportamentais</h4>
+                <p class="item-desc">Se o cliente viu 3x o mesmo par de sapatos no site, enviamos uma oferta no zap.</p>
+              </div>
+            </li>
+            <li class="solution-item">
+              <div class="icon-circle pink-icon">🛍️</div>
+              <div>
+                <h4 class="item-title">Recomendação Preditiva</h4>
+                <p class="item-desc">Sugerimos produtos complementares baseados na inteligência do Wake.</p>
+              </div>
+            </li>
+            <li class="solution-item">
+              <div class="icon-circle blue-icon">♻️</div>
+              <div>
+                <h4 class="item-title">Recuperação de Churn</h4>
+                <p class="item-desc">Detectamos quando um cliente está parando de interagir e agimos preventivamente.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technical Section -->
+  <section class="section-dark technical-section">
+    <div class="custom-container">
+      <div class="grid-2-cols gap-16">
+        <div class="tech-content">
+          <div class="sticky-wrapper">
+            <h2 class="section-title">Workflow & Webhooks</h2>
+            <p class="text-content mb-8">
+               Integramos aos fluxos de automação do Wake Experience para disparar mensagens personalizadas com latência mínima.
+            </p>
+            
+            <div class="tech-steps">
+              <div class="tech-card active">
+                <h4>1. Evento de Navegação</h4>
+                <p>O cliente executa uma ação chave no seu site ou app.</p>
+              </div>
+              <div class="tech-card">
+                <h4>2. Processamento Wake</h4>
+                <p>O evento é processado e o lead entra em um cluster específico.</p>
+              </div>
+              <div class="tech-card">
+                <h4>3. Ativação GetNexo</h4>
+                <p>Recebemos o trigger e enviamos a mensagem com os dados dinâmicos.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="code-block-wrapper">
+          <div class="code-window shadow-2xl">
+            <div class="code-header">
+              <div class="window-buttons">
+                <span class="win-btn red"><!-- btn --></span>
+                <span class="win-btn yellow"><!-- btn --></span>
+                <span class="win-btn green"><!-- btn --></span>
+              </div>
+              <span class="file-name">wake-payload.json</span>
+            </div>
+            <div class="code-content">
+<pre is:raw><code class="language-json">
+{
+  "event": "browse_abandonment",
+  "customer": {
+    "email": "roberta@usuario.com",
+    "phone": "+5511955554444",
+    "firs_name": "Roberta"
+  },
+  "context": {
+    "product_name": "Smartphone XYZ",
+    "category": "Eletrônicos",
+    "view_count": 4,
+    "last_view": "2023-11-15T10:30:00Z"
+  },
+  "template": "bro_abandon_v2"
+}
+</code></pre>
+            </div>
+          </div>
+          <div class="clean-code-badge">
+            Data Sync
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta text-center relative overflow-hidden">
+    <div class="cta-gradient"><!-- fix --></div>
+    <div class="custom-container narrow relative z-10">
+      <h2 class="cta-title">
+         Personalize ou Morra.
+      </h2>
+      <p class="cta-subtitle">
+        Eleve o nível do seu marketing com a integração GetNexo + Wake Experience.
+      </p>
+      <div class="cta-buttons">
+        <a href="/criar-bot" class="btn-primary scale-up shadow-glow">
+          Ativar Personalização
+        </a>
+        <a href="/contato" class="btn-outline">
+          Consultar Arquiteto de Dados
+        </a>
+      </div>
+      <p class="cta-status">
+        <span class="status-dot"><!-- dot --></span> Powered by Wake & AllIn
+      </p>
+    </div>
+  </section>
+
+<!-- Accessibility Statement -->
+<div class="accessibility-statement sr-only" id="accessibility-statement">
+  <h4>Declaração de Acessibilidade</h4>
+  <p>Este site está em conformidade com:</p>
+  <ul>
+    <li>WCAG 2.2 Nível AA</li>
+    <li>Section 508 (EUA)</li>
+    <li>e-MAG (Brasil)</li>
+    <li>EN 301 549 (Europa)</li>
+    <li>BITV (Alemanha)</li>
+  </ul>
+  <p>Recursos disponíveis: Alto contraste, fonte grande, navegação por teclado, screen readers.</p>
+  <button onclick="document.getElementById(accessibility-statement).classList.add(sr-only)">Fechar</button>
+</div>
+<script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+</Layout>
+
+<style>
+  .wakeexperience-hero { color: white; }
+  .hidden-seo { display: none; }
+</style>

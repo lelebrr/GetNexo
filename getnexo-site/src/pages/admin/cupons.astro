@@ -1,0 +1,405 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+---
+<DashboardLayout title="Cupons de Desconto | Admin GetNexo">
+  <div class="cupons-page">
+    <header class="page-header">
+      <h1>🎟️ Cupons de Desconto</h1>
+      <button id="btn-new" class="btn-primary">+ Novo Cupom</button>
+    </header>
+
+    <!-- Create/Edit Form Modal -->
+    <div id="modal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <h2 id="modal-title">Novo Cupom</h2>
+        <form id="form-coupon">
+          <input type="hidden" name="id" id="coupon-id" />
+          
+          <div class="field">
+            <label>Código do Cupom *</label>
+            <input type="text" name="code" id="coupon-code" placeholder="Ex: DESCONTO10" required />
+          </div>
+          
+          <div class="field-row">
+            <div class="field">
+              <label>Tipo de Desconto</label>
+              <select name="discount_type" id="coupon-type">
+                <option value="percentage">Porcentagem (%)</option>
+                <option value="fixed">Valor Fixo (R$)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Valor do Desconto *</label>
+              <input type="number" name="discount_value" id="coupon-value" placeholder="10" step="0.01" required />
+            </div>
+          </div>
+          
+          <div class="field-row">
+            <div class="field">
+              <label>Pedido Mínimo (R$)</label>
+              <input type="number" name="min_order_value" id="coupon-min" placeholder="0" step="0.01" value="0" />
+            </div>
+            <div class="field">
+              <label>Máximo de Usos (0 = ilimitado)</label>
+              <input type="number" name="max_uses" id="coupon-max" placeholder="0" value="0" />
+            </div>
+          </div>
+          
+          <div class="field">
+            <label>Data de Expiração</label>
+            <input type="date" name="expires_at" id="coupon-expires" />
+          </div>
+          
+          <div class="field checkbox-field">
+            <label>
+              <input type="checkbox" name="active" id="coupon-active" checked />
+              Cupom Ativo
+            </label>
+          </div>
+          
+          <div class="modal-actions">
+            <button type="button" id="btn-cancel" class="btn-secondary">Cancelar</button>
+            <button type="submit" class="btn-primary">Salvar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Coupons Table -->
+    <div class="table-container">
+      <table id="coupons-table">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Desconto</th>
+            <th>Mín. Pedido</th>
+            <th>Usos</th>
+            <th>Expira</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="coupons-body">
+          <tr><td colspan="7" style="text-align:center; color:#64748b;">Carregando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script is:inline>
+    const API_URL = window.location.hostname === 'localhost' 
+      ? 'http://localhost:8080' 
+      : 'https://api.getnexo.com.br';
+    
+    const modal = document.getElementById('modal');
+    const form = document.getElementById('form-coupon');
+    const tbody = document.getElementById('coupons-body');
+    
+    // Load coupons
+    async function loadCoupons() {
+      try {
+        const res = await fetch(`${API_URL}/api/coupons`);
+        const coupons = await res.json();
+        
+        if (coupons.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#64748b;">Nenhum cupom cadastrado</td></tr>';
+          return;
+        }
+        
+        tbody.innerHTML = coupons.map(c => `
+          <tr data-id="${c.id}">
+            <td><code class="coupon-code">${c.code}</code></td>
+            <td>${c.discount_type === 'percentage' ? c.discount_value + '%' : 'R$ ' + c.discount_value.toFixed(2)}</td>
+            <td>R$ ${c.min_order_value.toFixed(2)}</td>
+            <td>${c.uses_count}${c.max_uses > 0 ? ' / ' + c.max_uses : ''}</td>
+            <td>${c.expires_at ? new Date(c.expires_at).toLocaleDateString('pt-BR') : '—'}</td>
+            <td><span class="status ${c.active ? 'active' : 'inactive'}">${c.active ? 'Ativo' : 'Inativo'}</span></td>
+            <td class="actions">
+              <button onclick="editCoupon(${c.id})" class="btn-icon" title="Editar">✏️</button>
+              <button onclick="deleteCoupon(${c.id})" class="btn-icon" title="Excluir">🗑️</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (e) {
+        console.error('Error loading coupons:', e);
+        tbody.innerHTML = '<tr><td colspan="7" style="color:red;">Erro ao carregar cupons</td></tr>';
+      }
+    }
+    
+    // Open modal for new coupon
+    document.getElementById('btn-new').onclick = () => {
+      form.reset();
+      document.getElementById('coupon-id').value = '';
+      document.getElementById('modal-title').textContent = 'Novo Cupom';
+      document.getElementById('coupon-active').checked = true;
+      modal.style.display = 'flex';
+    };
+    
+    // Close modal
+    document.getElementById('btn-cancel').onclick = () => {
+      modal.style.display = 'none';
+    };
+    
+    // Edit coupon
+    window.editCoupon = async (id) => {
+      try {
+        const res = await fetch(`${API_URL}/api/coupons`);
+        const coupons = await res.json();
+        const coupon = coupons.find(c => c.id === id);
+        
+        if (!coupon) return alert('Cupom não encontrado');
+        
+        document.getElementById('coupon-id').value = coupon.id;
+        document.getElementById('coupon-code').value = coupon.code;
+        document.getElementById('coupon-type').value = coupon.discount_type;
+        document.getElementById('coupon-value').value = coupon.discount_value;
+        document.getElementById('coupon-min').value = coupon.min_order_value;
+        document.getElementById('coupon-max').value = coupon.max_uses;
+        document.getElementById('coupon-expires').value = coupon.expires_at ? coupon.expires_at.split('T')[0] : '';
+        document.getElementById('coupon-active').checked = coupon.active;
+        
+        document.getElementById('modal-title').textContent = 'Editar Cupom';
+        modal.style.display = 'flex';
+      } catch (e) {
+        console.error('Error:', e);
+      }
+    };
+    
+    // Delete coupon
+    window.deleteCoupon = async (id) => {
+      if (!confirm('Tem certeza que deseja excluir este cupom?')) return;
+      
+      try {
+        await fetch(`${API_URL}/api/coupons/${id}`, { method: 'DELETE' });
+        loadCoupons();
+      } catch (e) {
+        console.error('Error:', e);
+        alert('Erro ao excluir cupom');
+      }
+    };
+    
+    // Submit form (create or update)
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const id = data.get('id');
+      
+      const payload = {
+        code: data.get('code'),
+        discount_type: data.get('discount_type'),
+        discount_value: parseFloat(data.get('discount_value')),
+        min_order_value: parseFloat(data.get('min_order_value')) || 0,
+        max_uses: parseInt(data.get('max_uses')) || 0,
+        expires_at: data.get('expires_at') || null,
+        active: document.getElementById('coupon-active').checked
+      };
+      
+      try {
+        const url = id ? `${API_URL}/api/coupons/${id}` : `${API_URL}/api/coupons`;
+        const method = id ? 'PUT' : 'POST';
+        
+        const res = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || 'Failed');
+        }
+        
+        modal.style.display = 'none';
+        loadCoupons();
+      } catch (e) {
+        console.error('Error:', e);
+        alert('Erro: ' + e.message);
+      }
+    };
+    
+    // Initial load
+    loadCoupons();
+  </script>
+</DashboardLayout>
+
+<style>
+  .cupons-page {
+    padding: 2rem;
+  }
+  
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  .page-header h1 {
+    color: #00ff9d;
+    font-size: 2rem;
+    margin: 0;
+  }
+  
+  .btn-primary {
+    background: linear-gradient(90deg, #00d4ff, #00ff9d);
+    color: black;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .btn-primary:hover { transform: scale(1.05); }
+  
+  .btn-secondary {
+    background: #334155;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .table-container {
+    background: rgba(20,30,50,0.6);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #1e293b;
+  }
+  
+  th {
+    background: #0f172a;
+    color: #94a3b8;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+  }
+  
+  td { color: #e5e7eb; }
+  
+  .coupon-code {
+    background: #00ff9d22;
+    color: #00ff9d;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    font-family: monospace;
+    font-weight: bold;
+  }
+  
+  .status {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .status.active { background: #00ff9d22; color: #00ff9d; }
+  .status.inactive { background: #f8717122; color: #f87171; }
+  
+  .actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .btn-icon {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0.3rem;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+  .btn-icon:hover { opacity: 1; }
+  
+  /* Modal */
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background: #1e293b;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  
+  .modal-content h2 {
+    color: #00d4ff;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+  }
+  
+  .field {
+    margin-bottom: 1rem;
+  }
+  
+  .field label {
+    display: block;
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+  }
+  
+  .field input, .field select {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 8px;
+    background: #0f172a;
+    color: white;
+    border: 1px solid #334155;
+    font-size: 1rem;
+  }
+  
+  .field input:focus, .field select:focus {
+    outline: none;
+    border-color: #00d4ff;
+  }
+  
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  
+  .checkbox-field label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+  }
+  
+  .checkbox-field input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+</style>

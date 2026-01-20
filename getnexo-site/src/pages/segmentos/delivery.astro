@@ -1,0 +1,172 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const title = "Delivery Automatizado no WhatsApp: Cardápio e Pedidos com IA | GetNexo";
+const description = "Automatize seu Delivery no WhatsApp. Cardápio digital, pedidos com IA, pagamento PIX automático e envio para cozinha/motoqueiro sem intervenção humana.";
+const keywords = "delivery whatsapp, cardapio digital whatsapp, bot para pizzaria, bot para hamburgueria, automação ifood, pedidos whatsapp";
+
+const stats = [
+  { value: "0%", label: "Erros", desc: "Fim dos erros de anotação" },
+  { value: "30s", label: "Pedido", desc: "Tempo médio de compra" },
+  { value: "+25%", label: "Ticket", desc: "Com upselling automático" },
+  { value: "PIX", label: "Auto", desc: "Confirmação instantânea" }
+];
+
+const painPoints = [
+  {
+    icon: "🍔",
+    title: "Sexta-feira à noite",
+    desc: "O telefone toca, o WhatsApp apita e você tem que anotar pedidos correndo. O GetNexo atende 100 clientes ao mesmo tempo com calma e precisão."
+  },
+  {
+    icon: "🛵",
+    title: "Endereco Errado",
+    desc: "Motoqueiro se perdeu porque anotaram a rua errada? O sistema pede a localização do WhatsApp (GPS), garantindo entrega precisa."
+  },
+  {
+    icon: "😫",
+    title: "Cliente Indeciso",
+    desc: "O cliente pergunta 'quais os sabores?'. O bot envia o cardápio lindo em PDF ou Web, e só processa o pedido quando o cliente decide."
+  }
+];
+
+const features = [
+  {
+    title: "Cardápio Digital Nativo",
+    desc: "O cliente escolhe os itens direto na conversa com botões e listas. Adicionais (Borda Recheada, Sem Cebola) são solicitados passo-a-passo.",
+    icon: "📜"
+  },
+  {
+    title: "Upselling Inteligente",
+    desc: "O cliente pediu um lanche? A IA oferece: 'Vai uma Coca gelada por +R$5?' ou 'Que tal uma batata grande?'. Aumente seu ticket médio no piloto automático.",
+    icon: "🍟"
+  },
+  {
+    title: "Impressão na Cozinha",
+    desc: "O pedido chega formatado (comanda) pronto para imprimir na sua térmica na cozinha. Sem re-digitação.",
+    icon: "🖨️"
+  }
+];
+
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  
+  <section class="segment-hero">
+    <div class="hero-content">
+      <div class="badge">Para Delivery e Restaurantes</div>
+      <h1>Seu Delivery no <span class="text-gradient">Piloto Automático</span></h1>
+      <p class="hero-text">
+        Atenda centenas de pedidos simultâneos no WhatsApp sem erros. Cardápio digital, pagamentos PIX e impressão automática na cozinha.
+      </p>
+      <div class="hero-btns">
+        <a href="/criar-bot" class="btn-primary-glow">Digitalizar Meu Delivery</a>
+        <a href="/demo" class="btn-outline">Ver Pedido ao Vivo</a>
+      </div>
+    </div>
+    <div class="hero-stats">
+      {stats.map(s => (
+        <div class="stat-item glass-panel">
+          <span class="stat-val">{s.value}</span>
+          <span class="stat-lbl">{s.label}</span>
+          <span class="stat-dsc">{s.desc}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="seo-content">
+    <h2>Livre-se das taxas abusivas dos <span class="text-gradient">Marketplaces</span></h2>
+    <p>
+      Apps de entrega cobram até 30% de comissão. No WhatsApp, o cliente é SEU e a taxa é ZERO. 
+      Use o GetNexo para migrar seus clientes fiéis para o canal direto, oferecendo descontos exclusivos com a margem que você economiza.
+    </p>
+    <p>
+      Além de economizar, você constrói uma base de dados (CRM) para enviar promoções em dias fracos:
+      <em>"Terça-feira da Pizza Dobrada! Peça pelo nosso Zap."</em> - e lote sua cozinha quando quiser.
+    </p>
+  </section>
+
+  <section class="pain-section">
+    <h2>O Caos da Cozinha</h2>
+    <div class="pain-grid">
+      {painPoints.map(p => (
+        <div class="pain-card glass-panel">
+          <span class="pain-icon">{p.icon}</span>
+          <h3>{p.title}</h3>
+          <p>{p.desc}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="features-section">
+    <h2>Ingredientes do Sucesso</h2>
+    <div class="feat-grid">
+      {features.map(f => (
+        <div class="feat-card glass-panel">
+          <div class="feat-header">
+            <span class="feat-icon">{f.icon}</span>
+            <h3>{f.title}</h3>
+          </div>
+          <p>{f.desc}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="deep-dive">
+    <article>
+      <h3>Gestão de Motoboys e Roteirização</h3>
+      <p>
+        Quando o pedido fica pronto, o sistema pode notificar automaticamente o entregador responsável com o link do Google Maps do cliente.
+        Você também pode avisar o cliente: <em>"Seu lanche saiu para entrega! Acompanhe o motoqueiro aqui."</em>
+      </p>
+      
+      <h3>Fidelidade Digital</h3>
+      <p>
+        Esqueça o cartãozinho de papel que o cliente perde. O GetNexo gerencia pontos automaticamente.
+        <em>"Parabéns! Você completou 10 pedidos. O próximo lanche é por nossa conta!"</em>
+        O cliente ama e volta sempre.
+      </p>
+    </article>
+  </section>
+
+  <section class="final-cta">
+    <div class="cta-box glass-panel">
+      <h2>Venda Mais, Trabalhe Menos</h2>
+      <p>Deixe o robô atender enquanto você foca na qualidade da comida.</p>
+      <a href="/criar-bot" class="btn-primary-glow">Testar Agora</a>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  /* [CSS Compartilhado] */
+  .segment-hero { padding: 8rem 5% 4rem; max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+  .badge { background: rgba(0, 212, 255, 0.1); color: #00d4ff; padding: 0.5rem 1rem; border-radius: 50px; display: inline-block; margin-bottom: 1.5rem; font-weight: 700; }
+  h1 { font-size: 3.5rem; color: white; font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; }
+  .hero-text { color: #94a3b8; font-size: 1.2rem; line-height: 1.6; margin-bottom: 2.5rem; }
+  .hero-btns { display: flex; gap: 1rem; }
+  .btn-primary-glow { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1rem 2rem; border-radius: 12px; font-weight: 800; text-decoration: none; transition: 0.3s; }
+  .btn-primary-glow:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,212,255,0.3); }
+  .btn-outline { border: 1px solid rgba(255,255,255,0.2); color: white; padding: 1rem 2rem; border-radius: 12px; text-decoration: none; font-weight: 700; }
+  .hero-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .stat-item { padding: 2rem; text-align: center; border-radius: 20px; }
+  .stat-val { display: block; font-size: 2.5rem; font-weight: 900; color: #00ff9d; }
+  .stat-lbl { display: block; color: white; font-weight: 700; margin-top: 0.5rem; }
+  .stat-dsc { display: block; color: #64748b; font-size: 0.8rem; margin-top: 0.5rem; }
+  .seo-content, .pain-section, .features-section, .deep-dive, .final-cta { padding: 4rem 5%; max-width: 1000px; margin: 0 auto; }
+  .seo-content p, .deep-dive p { color: #cbd5e1; font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem; }
+  .seo-content strong { color: white; }
+  h2 { font-size: 2.5rem; color: white; font-weight: 800; margin-bottom: 2rem; text-align: center; }
+  h3 { font-size: 1.8rem; color: white; font-weight: 700; margin-top: 3rem; margin-bottom: 1rem; }
+  .pain-grid, .feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 3rem; }
+  .pain-card, .feat-card { padding: 2rem; border-radius: 20px; }
+  .pain-icon, .feat-icon { font-size: 2.5rem; display: block; margin-bottom: 1rem; }
+  .pain-card h3, .feat-card h3 { font-size: 1.2rem; color: white; margin: 0 0 1rem 0; }
+  .pain-card p, .feat-card p { color: #94a3b8; font-size: 0.95rem; line-height: 1.5; }
+  .cta-box { text-align: center; padding: 5rem; border-radius: 30px; }
+  @media (max-width: 900px) { .segment-hero { grid-template-columns: 1fr; text-align: center; } .hero-btns { justify-content: center; } .pain-grid, .feat-grid { grid-template-columns: 1fr; } }
+</style>
