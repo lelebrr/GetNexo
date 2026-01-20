@@ -152,6 +152,30 @@ app.post('/api/forge/generate', async (req, res) => {
     }
 });
 
+
+const authenticate = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    // Accepts "Bearer token" or just "token"
+    const token = authHeader && (authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : authHeader);
+
+    if (!token) return res.status(401).json({ error: 'Unauthorized: No token provided' });
+
+    const session = db.prepare('SELECT * FROM sessions WHERE token = ?').get(token);
+    if (!session) return res.status(403).json({ error: 'Forbidden: Invalid token' });
+
+    // Session Timeout Check (30 min = 1800000 ms)
+    if (Date.now() - session.created_at > 1800000) {
+        db.prepare('DELETE FROM sessions WHERE token = ?').run(token);
+        return res.status(403).json({ error: 'Session expired' });
+    }
+
+    // Refresh session time (Activity resets timer? Or strict 30m? User said "30 min inatividade" -> Reset timer)
+    db.prepare('UPDATE sessions SET created_at = ? WHERE token = ?').run(Date.now(), token);
+
+    req.user = { id: session.user_id };
+    next();
+};
+
 // --- INTEGRATIONS MODULES ---
 const { triggerWebhook } = require('./integrations/webhooks');
 const { exportToSheet, scheduleMeeting } = require('./integrations/google');
@@ -933,28 +957,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // --- AUTH MIDDLEWARE & LOGIN ---
 const crypto = require('crypto');
 
-const authenticate = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    // Accepts "Bearer token" or just "token"
-    const token = authHeader && (authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : authHeader);
 
-    if (!token) return res.status(401).json({ error: 'Unauthorized: No token provided' });
-
-    const session = db.prepare('SELECT * FROM sessions WHERE token = ?').get(token);
-    if (!session) return res.status(403).json({ error: 'Forbidden: Invalid token' });
-
-    // Session Timeout Check (30 min = 1800000 ms)
-    if (Date.now() - session.created_at > 1800000) {
-        db.prepare('DELETE FROM sessions WHERE token = ?').run(token);
-        return res.status(403).json({ error: 'Session expired' });
-    }
-
-    // Refresh session time (Activity resets timer? Or strict 30m? User said "30 min inatividade" -> Reset timer)
-    db.prepare('UPDATE sessions SET created_at = ? WHERE token = ?').run(Date.now(), token);
-
-    req.user = { id: session.user_id };
-    next();
-};
 
 // POST /api/login
 app.post('/api/login', async (req, res) => {
