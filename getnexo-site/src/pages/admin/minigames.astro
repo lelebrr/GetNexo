@@ -1,0 +1,16 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import GameAdmin from '../../components/admin/GameAdmin.jsx';
+---
+
+<AdminLayout title="Minigames no Chat">
+    <div class="minigames-admin">
+        <GameAdmin client:load />
+    </div>
+</AdminLayout>
+
+<style>
+    .minigames-admin {
+        min-height: calc(100vh - 200px);
+    }
+</style>

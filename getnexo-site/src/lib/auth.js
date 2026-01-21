@@ -28,6 +28,9 @@ const users = [
     },
 ];
 
+// Magic link tokens (in-memory storage for demo)
+const magicLinks = new Map();
+
 // Audit logs
 let auditLogs = [];
 
@@ -269,4 +272,114 @@ export const exchangeGitHubCode = async (code, redirectUri = '/api/auth/github/c
         avatar: user.avatar_url,
         provider: 'github'
     };
+};
+
+// Passwordless Authentication
+
+// Generate magic link token
+export const generateMagicLink = async (email) => {
+    const user = findUserByEmail(email);
+    if (!user) {
+        // For demo, create a new user if doesn't exist
+        const newUser = await createUser({
+            email,
+            password: crypto.randomBytes(16).toString('hex'),
+            name: email.split('@')[0]
+        });
+        // Remove password from created user for passwordless
+        delete newUser.password;
+    }
+
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+
+    magicLinks.set(token, {
+        email,
+        expiresAt,
+        used: false
+    });
+
+    const baseUrl = process.env.BASE_URL || 'http://localhost:4321';
+    const magicLink = `${baseUrl}/api/auth/magic-link?token=${token}`;
+
+    // Simulate sending email (in real app, use email service)
+    console.log(`Magic Link enviado para ${email}: ${magicLink}`);
+
+    return { success: true, message: 'Link mágico enviado' };
+};
+
+// Verify magic link token
+export const verifyMagicLink = (token) => {
+    const linkData = magicLinks.get(token);
+    if (!linkData) return null;
+
+    if (linkData.used || linkData.expiresAt < new Date()) {
+        magicLinks.delete(token);
+        return null;
+    }
+
+    linkData.used = true;
+    const user = findUserByEmail(linkData.email);
+    return user;
+};
+
+// Generate WhatsApp link
+export const sendWhatsAppMagicLink = async (phone) => {
+    // Mock user creation for phone
+    const user = users.find(u => u.phone === phone);
+    if (!user) {
+        const newUser = {
+            id: users.length + 1,
+            phone,
+            email: `${phone}@whatsapp.getnexo.com`, // temporary email
+            role: 'customer',
+            name: `Cliente ${phone}`,
+            permissions: ['customer.view'],
+            createdAt: new Date().toISOString()
+        };
+        users.push(newUser);
+    }
+
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+
+    magicLinks.set(token, {
+        phone,
+        expiresAt,
+        used: false
+    });
+
+    const baseUrl = process.env.BASE_URL || 'http://localhost:4321';
+    const magicLink = `${baseUrl}/api/auth/whatsapp-link?token=${token}`;
+
+    // Simulate WhatsApp message
+    console.log(`WhatsApp Link enviado para ${phone}: ${magicLink}`);
+
+    return { success: true, message: 'Link WhatsApp enviado' };
+};
+
+// Generate QR Code data
+export const generateQRCode = async (email) => {
+    const user = findUserByEmail(email);
+    if (!user) {
+        await createUser({
+            email,
+            password: crypto.randomBytes(16).toString('hex'),
+            name: email.split('@')[0]
+        });
+    }
+
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+
+    magicLinks.set(token, {
+        email,
+        expiresAt,
+        used: false
+    });
+
+    const baseUrl = process.env.BASE_URL || 'http://localhost:4321';
+    const qrData = `${baseUrl}/api/auth/qr-link?token=${token}`;
+
+    return qrData;
 };

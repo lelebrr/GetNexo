@@ -1,0 +1,89 @@
+---
+import ClientLayout from '../../layouts/ClientLayout.astro';
+import Timeline from '../../components/cliente/Timeline.jsx';
+---
+
+<ClientLayout title="Hub do Cliente - GetNexo">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Timeline Principal -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">Timeline Unificada</h2>
+                <Timeline client:load />
+            </div>
+        </div>
+
+        <!-- Sidebar com ações rápidas -->
+        <div class="space-y-6">
+            <!-- Pontos e Cupons -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-medium mb-3">Pontos & Cupons</h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <span>Saldo de Pontos:</span>
+                        <span class="font-semibold text-green-600">1.250 pts</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Faltam para Ouro:</span>
+                        <span class="font-semibold">750 pts</span>
+                    </div>
+                    <button class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
+                        Ver Cupons
+                    </button>
+                </div>
+            </div>
+
+            <!-- Lista de Desejos -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-medium mb-3">Lista de Desejos</h3>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span>iPhone 15 Pro</span>
+                        <span class="text-sm text-red-600">Preço caiu!</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span>MacBook Air M3</span>
+                        <span class="text-sm text-gray-500">R$ 8.999</span>
+                    </div>
+                </div>
+                <button class="w-full mt-3 bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700">
+                    Ver Lista Completa
+                </button>
+            </div>
+
+            <!-- Mini Store -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-medium mb-3">Reordenar Produtos</h3>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span>Café Premium</span>
+                        <button class="bg-green-600 text-white px-3 py-1 rounded text-sm">Reordenar</button>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span>Shampoo Anticaspa</span>
+                        <button class="bg-green-600 text-white px-3 py-1 rounded text-sm">Reordenar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Troféus -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-medium mb-3">Seus Troféus</h3>
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-yellow-400 rounded-full mx-auto mb-1 flex items-center justify-center">🏆</div>
+                        <span class="text-xs">Cliente VIP</span>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-blue-400 rounded-full mx-auto mb-1 flex items-center justify-center">⭐</div>
+                        <span class="text-xs">5 anos</span>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-purple-400 rounded-full mx-auto mb-1 flex items-center justify-center">💎</div>
+                        <span class="text-xs">Tech Lover</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ClientLayout>

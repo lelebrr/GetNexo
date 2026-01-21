@@ -1,390 +1,143 @@
 ---
 import ClientLayout from '../../../../layouts/ClientLayout.astro';
+import TicketList from '../../../../components/tickets/TicketList.jsx';
+import TicketForm from '../../../../components/tickets/TicketForm.jsx';
 ---
 
 <ClientLayout title="Tickets de Suporte - GetNexo Pro">
+    <div class="min-h-screen bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {/* Header */}
+            <div class="text-center mb-12">
+                <div class="inline-block p-8 bg-gradient-to-r from-blue-50 to-green-50 rounded-2xl border border-blue-100">
+                    <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent mb-4">
+                        🎫 Sistema de Tickets
+                    </h1>
+                    <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                        Gerencie todos os seus tickets de suporte com ferramentas avançadas de organização,
+                        automação e acompanhamento em tempo real.
+                    </p>
+                </div>
+            </div>
+
+            {/* Barra de Ações */}
+            <div class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">Tickets de Suporte</h2>
+                    <p class="text-gray-600 mt-1">Acompanhe e resolva suas solicitações</p>
+                </div>
+                <div class="flex gap-3">
+                    <button
+                        id="create-ticket-btn"
+                        class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 font-medium"
+                    >
+                        <span>➕</span>
+                        Novo Ticket
+                    </button>
+                    <button
+                        class="px-6 py-3 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 font-medium"
+                    >
+                        <span>📊</span>
+                        Relatórios
+                    </button>
+                </div>
+            </div>
+
+            {/* Lista de Tickets */}
+            <TicketList client:load />
+
+            {/* Modal de Criação/Edição (inicialmente oculto) */}
+            <div id="ticket-modal" class="hidden">
+                <TicketForm
+                    client:load
+                    onClose={() => {
+                        document.getElementById('ticket-modal').classList.add('hidden');
+                    }}
+                    onSuccess={(ticket) => {
+                        console.log('Ticket criado/atualizado:', ticket);
+                        // Recarregar lista ou redirecionar
+                        window.location.reload();
+                    }}
+                />
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Script para controlar o modal de criação
+        document.getElementById('create-ticket-btn').addEventListener('click', () => {
+            document.getElementById('ticket-modal').classList.remove('hidden');
+        });
+
+        // Verificar se há parâmetros de URL para edição
+        const urlParams = new URLSearchParams(window.location.search);
+        const editId = urlParams.get('edit');
+        if (editId) {
+            // Lógica para carregar ticket para edição
+            console.log('Editar ticket:', editId);
+        }
+    </script>
+
     <style>
-        .tickets-header {
-            text-align: center;
-            margin-bottom: 3rem;
-            padding: 2rem;
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1));
-            border-radius: 16px;
-            border: 1px solid rgba(0, 212, 255, 0.2);
+        /* Estilos adicionais para responsividade e acessibilidade */
+        .bg-gradient-to-r {
+            background-size: 200% 200%;
+            animation: gradient-shift 3s ease infinite;
         }
 
-        .tickets-header h1 {
-            font-size: 3rem;
-            font-weight: 900;
-            color: #00d4ff;
-            margin: 0;
-            background: linear-gradient(90deg, #00d4ff, #00ff9d);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
 
-        .tickets-header p {
-            color: #94a3b8;
-            font-size: 1.2rem;
-            margin: 1rem 0 0 0;
+        /* Foco acessível */
+        button:focus-visible,
+        input:focus-visible,
+        select:focus-visible,
+        textarea:focus-visible {
+            outline: 2px solid #3b82f6;
+            outline-offset: 2px;
         }
 
-        .tickets-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
+        /* Animações suaves */
+        .transition-colors {
+            transition-property: color, background-color, border-color;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
         }
 
-        .tickets-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 2rem;
-        }
-
-        .ticket-card {
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 2rem;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .ticket-card:hover {
-            border-color: rgba(0, 212, 255, 0.3);
-            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .ticket-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .ticket-icon {
-            font-size: 2rem;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 212, 255, 0.1);
-            border-radius: 12px;
-        }
-
-        .ticket-title {
-            color: white;
-            font-size: 1.2rem;
-            font-weight: 700;
-        }
-
-        .ticket-status {
-            margin-left: auto;
-            font-size: 0.8rem;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-weight: 600;
-        }
-
-        .status-open { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
-        .status-pending { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
-        .status-resolved { background: rgba(0, 255, 157, 0.2); color: #00ff9d; }
-
-        .ticket-desc {
-            color: #94a3b8;
-            font-size: 0.9rem;
-            line-height: 1.5;
-            margin-bottom: 1rem;
-        }
-
-        .ticket-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.8rem;
-            color: #64748b;
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 0.9rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #00d4ff, #00ff9d);
-            color: black;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
-        }
-
-        .btn-outline {
-            background: rgba(255, 255, 255, 0.05);
-            color: #94a3b8;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .btn-outline:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: #94a3b8;
-            grid-column: 1 / -1;
-        }
-
-        .empty-state h3 {
-            color: #00d4ff;
-            margin-bottom: 1rem;
-        }
-
-        .filters-section {
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .filters-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .filter-label {
-            color: #94a3b8;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        .filter-select {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 0.75rem;
-            color: white;
-            font-size: 0.9rem;
-        }
-
-        .filter-select:focus {
-            outline: none;
-            border-color: #00d4ff;
-        }
-
-        @media (max-width: 768px) {
-            .tickets-grid {
-                grid-template-columns: 1fr;
+        /* Responsividade para tablets */
+        @media (max-width: 1024px) {
+            .max-w-7xl {
+                max-width: 100%;
+                padding-left: 1rem;
+                padding-right: 1rem;
             }
+        }
 
-            .tickets-actions {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: stretch;
-            }
-
-            .tickets-header h1 {
+        /* Responsividade para mobile */
+        @media (max-width: 640px) {
+            .text-4xl {
                 font-size: 2rem;
             }
 
-            .filters-grid {
-                grid-template-columns: 1fr;
+            .p-8 {
+                padding: 1.5rem;
             }
 
-            .ticket-meta {
+            .flex-col.sm\\:flex-row {
                 flex-direction: column;
-                gap: 0.5rem;
-                align-items: flex-start;
+                align-items: stretch;
+            }
+
+            .gap-3 {
+                gap: 0.75rem;
+            }
+
+            .px-6.py-3 {
+                padding: 0.75rem 1rem;
+                font-size: 0.875rem;
             }
         }
     </style>
-
-    <div style="padding: 2rem; max-width: 1400px; margin: 0 auto;">
-
-        <!-- Header -->
-        <div class="tickets-header">
-            <h1>🎫 Meus Tickets</h1>
-            <p>Acompanhe e gerencie todos os seus tickets de suporte</p>
-        </div>
-
-        <!-- Filters -->
-        <div class="filters-section">
-            <div class="filters-grid">
-                <div class="filter-group">
-                    <label class="filter-label">Status</label>
-                    <select class="filter-select" id="status-filter">
-                        <option value="all" selected>Todos os status</option>
-                        <option value="open">Abertos</option>
-                        <option value="pending">Pendentes</option>
-                        <option value="resolved">Resolvidos</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label">Prioridade</label>
-                    <select class="filter-select" id="priority-filter">
-                        <option value="all" selected>Todas as prioridades</option>
-                        <option value="low">Baixa</option>
-                        <option value="medium">Média</option>
-                        <option value="high">Alta</option>
-                        <option value="urgent">Urgente</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label">Período</label>
-                    <select class="filter-select" id="period-filter">
-                        <option value="all" selected>Todo período</option>
-                        <option value="week">Esta semana</option>
-                        <option value="month">Este mês</option>
-                        <option value="quarter">Este trimestre</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <!-- Actions -->
-        <div class="tickets-actions">
-            <div>
-                <h2 style="color: white; margin: 0;">Tickets Abertos</h2>
-                <p style="color: #94a3b8; margin: 0.5rem 0 0 0;">Total de tickets: <span id="total-tickets">0</span></p>
-            </div>
-            <a href="/dashboard/suporte/contato" class="btn btn-primary">Novo Ticket</a>
-        </div>
-
-        <!-- Tickets Grid -->
-        <div class="tickets-grid" id="tickets-grid">
-            <!-- Tickets will be loaded here -->
-        </div>
-
-    </div>
-
-    <script is:inline>
-        async function loadTickets() {
-            try {
-                const token = localStorage.getItem('token');
-                const res = await fetch(`${API_URL}/api/support/tickets`, {
-                    headers: { 'Authorization': token }
-                });
-                const tickets = await res.json();
-                renderTickets(tickets);
-            } catch (e) {
-                console.error('Error loading tickets, using mock data', e);
-                loadMockTickets();
-            }
-        }
-
-        function renderTickets(tickets) {
-            const grid = document.getElementById('tickets-grid');
-            const total = document.getElementById('total-tickets');
-
-            total.textContent = tickets.length;
-
-            if (tickets.length === 0) {
-                grid.innerHTML = `
-                    <div class="empty-state">
-                        <h3>🎉 Nenhum ticket aberto</h3>
-                        <p>Todos os seus tickets foram resolvidos! <a href="/dashboard/suporte/contato" style="color: #00d4ff;">Precisa de ajuda?</a></p>
-                    </div>
-                `;
-                return;
-            }
-
-            grid.innerHTML = tickets.map(ticket => `
-                <div class="ticket-card" onclick="openTicket('${ticket.id}')">
-                    <div class="ticket-header">
-                        <div class="ticket-icon">${ticket.icon}</div>
-                        <div class="ticket-title">${ticket.title}</div>
-                        <div class="ticket-status status-${ticket.status}">${getStatusText(ticket.status)}</div>
-                    </div>
-                    <div class="ticket-desc">${ticket.description}</div>
-                    <div class="ticket-meta">
-                        <div>ID: #${ticket.id}</div>
-                        <div>Prioridade: ${getPriorityText(ticket.priority)}</div>
-                        <div>Atualizado: ${ticket.updatedAt}</div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function getStatusText(status) {
-            const statuses = {
-                'open': 'Aberto',
-                'pending': 'Pendente',
-                'resolved': 'Resolvido'
-            };
-            return statuses[status] || 'Aberto';
-        }
-
-        function getPriorityText(priority) {
-            const priorities = {
-                'low': 'Baixa',
-                'medium': 'Média',
-                'high': 'Alta',
-                'urgent': 'Urgente'
-            };
-            return priorities[priority] || 'Média';
-        }
-
-        function loadMockTickets() {
-            const mockTickets = [
-                {
-                    id: 'TK-2026-001',
-                    title: 'Problema com SEO Automation',
-                    description: 'O serviço de SEO não está otimizando as páginas conforme esperado.',
-                    status: 'open',
-                    priority: 'high',
-                    updatedAt: '2h atrás',
-                    icon: '🔍'
-                },
-                {
-                    id: 'TK-2026-002',
-                    title: 'Erro no Analytics Dashboard',
-                    description: 'Os gráficos não estão carregando corretamente no painel.',
-                    status: 'pending',
-                    priority: 'medium',
-                    updatedAt: '1d atrás',
-                    icon: '📊'
-                },
-                {
-                    id: 'TK-2025-045',
-                    title: 'Dúvida sobre faturamento',
-                    description: 'Questão sobre cobrança recorrente do plano Professional.',
-                    status: 'resolved',
-                    priority: 'low',
-                    updatedAt: '5d atrás',
-                    icon: '💰'
-                }
-            ];
-
-            renderTickets(mockTickets);
-        }
-
-        function openTicket(ticketId) {
-            window.location.href = `/dashboard/suporte/tickets/${ticketId}`;
-        }
-
-        // Initialize
-        loadTickets();
-    </script>
 </ClientLayout>

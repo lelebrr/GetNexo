@@ -1,0 +1,393 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Configuração de Rastreamento - Magic Map">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">🗺️ Configuração - Magic Map</h1>
+                    <p class="text-gray-600 mt-1">Configure o rastreamento de usuários e privacidade GDPR</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                        <span class="text-sm text-gray-600">Sistema Ativo</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulário de Configuração -->
+        <form id="tracking-config-form" class="space-y-6">
+            <!-- Configurações Gerais -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">⚙️ Configurações Gerais</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Rastreamento Ativado
+                        </label>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="tracking_enabled" class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                    </div>
+
+                    <div>
+                        <label for="data_retention_days" class="block text-sm font-medium text-gray-700 mb-2">
+                            Retenção de Dados (dias)
+                        </label>
+                        <input type="number" id="data_retention_days" min="30" max="3650" value="90"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <div>
+                        <label for="sampling_rate" class="block text-sm font-medium text-gray-700 mb-2">
+                            Taxa de Amostragem (0-1)
+                        </label>
+                        <input type="number" id="sampling_rate" min="0" max="1" step="0.1" value="1.0"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <p class="text-xs text-gray-500 mt-1">1.0 = todos os usuários, 0.1 = 10% dos usuários</p>
+                    </div>
+
+                    <div>
+                        <label for="inactivity_threshold" class="block text-sm font-medium text-gray-700 mb-2">
+                            Limite de Inatividade (segundos)
+                        </label>
+                        <input type="number" id="inactivity_threshold" min="60" max="3600" value="300"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Privacidade GDPR -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">🔒 Privacidade GDPR</h2>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">GDPR Obrigatório</label>
+                            <p class="text-xs text-gray-500">Exige consentimento explícito dos usuários</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="gdpr_required" class="sr-only peer" checked>
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Anonimizar IP</label>
+                            <p class="text-xs text-gray-500">Remove os últimos octetos do endereço IP</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="anonymize_ip" class="sr-only peer" checked>
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Consentimento de Cookies</label>
+                            <p class="text-xs text-gray-500">Exige aceitação de cookies de rastreamento</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="cookie_consent_required" class="sr-only peer" checked>
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tipos de Eventos -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">📊 Tipos de Eventos</h2>
+                <p class="text-sm text-gray-600 mb-4">Selecione quais eventos serão rastreados</p>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" id="event_click" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <span class="text-sm">Cliques</span>
+                    </label>
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" id="event_scroll" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <span class="text-sm">Scroll</span>
+                    </label>
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" id="event_mouse_move" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <span class="text-sm">Movimento Mouse</span>
+                    </label>
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" id="event_page_view" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <span class="text-sm">Visualização de Página</span>
+                    </label>
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" id="event_form_submit" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <span class="text-sm">Envio de Formulário</span>
+                    </label>
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" id="event_form_focus" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <span class="text-sm">Foco em Formulário</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Páginas Excluídas -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">🚫 Páginas Excluídas</h2>
+                <p class="text-sm text-gray-600 mb-4">URLs que não serão rastreadas (uma por linha)</p>
+                <textarea
+                    id="blocked_pages"
+                    rows="4"
+                    placeholder="/admin/*&#10;/login&#10;/checkout"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                ></textarea>
+            </div>
+
+            <!-- Países Bloqueados -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">🌍 Países Bloqueados</h2>
+                <p class="text-sm text-gray-600 mb-4">Códigos de países ISO que não terão rastreamento (separados por vírgula)</p>
+                <input
+                    type="text"
+                    id="blocked_countries"
+                    placeholder="CN,RU,KP"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+            </div>
+
+            <!-- Alertas e Notificações -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">🚨 Alertas e Notificações</h2>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Alertas de Inatividade</label>
+                            <p class="text-xs text-gray-500">Notifica quando usuários ficam inativos por muito tempo</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="alerts_enabled" class="sr-only peer" checked>
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Tempo Real Ativado</label>
+                            <p class="text-xs text-gray-500">Atualiza Magic Map em tempo real</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="real_time_enabled" class="sr-only peer" checked>
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botões de Ação -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex justify-between items-center">
+                    <button type="button" id="reset-config" class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        🔄 Resetar para Padrões
+                    </button>
+                    <div class="flex gap-3">
+                        <button type="button" id="test-config" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            🧪 Testar Configuração
+                        </button>
+                        <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                            💾 Salvar Configurações
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- Status do Sistema -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">📈 Status do Sistema</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="text-center p-4 bg-blue-50 rounded-lg">
+                    <div id="active-sessions" class="text-2xl font-bold text-blue-600">--</div>
+                    <div class="text-sm text-blue-800">Sessões Ativas</div>
+                </div>
+                <div class="text-center p-4 bg-green-50 rounded-lg">
+                    <div id="events-today" class="text-2xl font-bold text-green-600">--</div>
+                    <div class="text-sm text-green-800">Eventos Hoje</div>
+                </div>
+                <div class="text-center p-4 bg-purple-50 rounded-lg">
+                    <div id="data-size" class="text-2xl font-bold text-purple-600">--</div>
+                    <div class="text-sm text-purple-800">MB Armazenados</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</AdminLayout>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        loadConfiguration();
+        updateSystemStats();
+
+        // Event listeners
+        document.getElementById('tracking-config-form').addEventListener('submit', saveConfiguration);
+        document.getElementById('reset-config').addEventListener('click', resetConfiguration);
+        document.getElementById('test-config').addEventListener('click', testConfiguration);
+
+        // Atualizar stats a cada 30 segundos
+        setInterval(updateSystemStats, 30000);
+    });
+
+    async function loadConfiguration() {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Usuário não autenticado');
+                return;
+            }
+
+            const response = await fetch('/api/tracking/privacy/config', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const config = await response.json();
+
+                // Preencher formulário
+                document.getElementById('tracking_enabled').checked = config.tracking_enabled || false;
+                document.getElementById('gdpr_required').checked = config.gdpr_required !== false;
+                document.getElementById('anonymize_ip').checked = config.anonymize_ip !== false;
+                document.getElementById('cookie_consent_required').checked = config.cookie_consent_required !== false;
+                document.getElementById('alerts_enabled').checked = config.alerts_enabled !== false;
+                document.getElementById('real_time_enabled').checked = config.real_time_enabled !== false;
+
+                document.getElementById('data_retention_days').value = config.data_retention_days || 90;
+                document.getElementById('sampling_rate').value = config.sampling_rate || 1.0;
+                document.getElementById('inactivity_threshold').value = config.inactivity_threshold || 300;
+
+                document.getElementById('blocked_pages').value = (config.blocked_pages || []).join('\n');
+                document.getElementById('blocked_countries').value = (config.blocked_countries || []).join(',');
+
+                // Eventos
+                const allowedEvents = config.allowed_event_types || [];
+                ['click', 'scroll', 'mouse_move', 'page_view', 'form_submit', 'form_focus'].forEach(eventType => {
+                    document.getElementById(`event_${eventType}`).checked = allowedEvents.includes(eventType);
+                });
+            }
+        } catch (error) {
+            console.error('Erro ao carregar configuração:', error);
+        }
+    }
+
+    async function saveConfiguration(e) {
+        e.preventDefault();
+
+        const config = {
+            tracking_enabled: document.getElementById('tracking_enabled').checked,
+            gdpr_required: document.getElementById('gdpr_required').checked,
+            anonymize_ip: document.getElementById('anonymize_ip').checked,
+            cookie_consent_required: document.getElementById('cookie_consent_required').checked,
+            alerts_enabled: document.getElementById('alerts_enabled').checked,
+            real_time_enabled: document.getElementById('real_time_enabled').checked,
+            data_retention_days: parseInt(document.getElementById('data_retention_days').value),
+            sampling_rate: parseFloat(document.getElementById('sampling_rate').value),
+            inactivity_threshold: parseInt(document.getElementById('inactivity_threshold').value),
+            blocked_pages: document.getElementById('blocked_pages').value.split('\n').filter(p => p.trim()),
+            blocked_countries: document.getElementById('blocked_countries').value.split(',').filter(c => c.trim()),
+            allowed_event_types: ['click', 'scroll', 'mouse_move', 'page_view', 'form_submit', 'form_focus']
+                .filter(eventType => document.getElementById(`event_${eventType}`).checked)
+        };
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('/api/tracking/privacy/config', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(config)
+            });
+
+            if (response.ok) {
+                alert('Configuração salva com sucesso!');
+            } else {
+                throw new Error('Erro ao salvar configuração');
+            }
+        } catch (error) {
+            console.error('Erro ao salvar configuração:', error);
+            alert('Erro ao salvar configuração');
+        }
+    }
+
+    async function resetConfiguration() {
+        if (!confirm('Tem certeza que deseja resetar todas as configurações para os padrões?')) {
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('/api/tracking/privacy/config', {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                alert('Configuração resetada com sucesso!');
+                loadConfiguration();
+            } else {
+                throw new Error('Erro ao resetar configuração');
+            }
+        } catch (error) {
+            console.error('Erro ao resetar configuração:', error);
+            alert('Erro ao resetar configuração');
+        }
+    }
+
+    async function testConfiguration() {
+        alert('Funcionalidade de teste será implementada em breve!');
+    }
+
+    async function updateSystemStats() {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('/api/tracking/analytics?range=1d', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('active-sessions').textContent = data.overview.active_sessions;
+                document.getElementById('events-today').textContent = data.overview.total_events;
+                document.getElementById('data-size').textContent = '~50'; // Placeholder
+            }
+        } catch (error) {
+            console.error('Erro ao atualizar stats:', error);
+        }
+    }
+</script>
+
+<style>
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
+    input[type="checkbox"]:focus + div {
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+    }
+</style>

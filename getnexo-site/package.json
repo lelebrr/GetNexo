@@ -9,6 +9,9 @@
         "start": "node ./dist/server/entry.mjs",
         "build": "astro build",
         "preview": "node ./dist/server/entry.mjs",
+        "test": "jest",
+        "test:watch": "jest --watch",
+        "test:coverage": "jest --coverage",
         "test:perf": "npx lighthouse-ci --url=https://jetnexo.com.br --budget=performance:100,accessibility:100,seo:100",
         "test:load": "artillery run load-test.yml",
         "test:load:quick": "artillery quick --count 10 --num 5 http://localhost:4321/"
@@ -26,6 +29,7 @@
         "@nanostores/react": "^1.0.0",
         "@simplewebauthn/browser": "^13.2.2",
         "@simplewebauthn/server": "^13.2.2",
+        "apexcharts": "^5.3.6",
         "artillery": "^2.0.21",
         "astro": "^5.16.11",
         "aws-sdk": "^1.18.0",
@@ -51,6 +55,7 @@
         "prom-client": "^15.1.3",
         "qrcode": "^1.5.4",
         "react": "^18.2.0",
+        "react-apexcharts": "^1.9.0",
         "react-dom": "^18.2.0",
         "react-leaflet": "^4.2.1",
         "sharp": "^0.34.5",
@@ -62,7 +67,13 @@
         "winston": "^3.19.0"
     },
     "devDependencies": {
+        "@testing-library/jest-dom": "^6.9.1",
+        "@testing-library/react": "^16.3.2",
+        "@testing-library/user-event": "^14.6.1",
         "@types/jest": "^30.0.0",
-        "jest": "^30.2.0"
+        "cross-env": "^10.1.0",
+        "jest": "^30.2.0",
+        "jest-environment-jsdom": "^30.2.0",
+        "supertest": "^7.2.2"
     }
 }

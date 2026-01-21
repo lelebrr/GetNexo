@@ -27,8 +27,9 @@ const nonce = Astro.locals.nonce;
 			<nav class="menu">
 				<div class="category">MAIN</div>
 				<a href="/admin" class="active"><span class="icon">📊</span> Dashboard</a>
-				<a href="/admin?tab=content"><span class="icon">📝</span> Conteúdo</a>
-				<a href="/ara"><span class="icon">🤖</span> IA (Ara/Kira)</a>
+				<a href="/admin/blog"><span class="icon">📝</span> Blog / Conteúdo</a>
+				<a href="/admin/domains"><span class="icon">🌐</span> Domínios</a>
+				<a href="/ara"><span class="icon">🤖</span> IA (Ara)</a>
 				
 				<div class="category">GROWTH</div>
 				<a href="/admin?tab=strategy"><span class="icon">⚔️</span> Estratégia</a>
@@ -96,12 +97,15 @@ const nonce = Astro.locals.nonce;
 
 <style is:global>
 	:root {
-		--bg: #050505;
-		--sidebar: #0A0A0A;
-		--border: #222;
-		--accent: #FF0033;
-		--text: #eee;
+		--bg: #030303;
+		--sidebar: #080808;
+		--border: #1a1a1a;
+		--accent: #00f7ff; /* Neon Blue */
+		--gold: #ffc400; /* Cyber Gold */
+		--void: #050505;
+		--text: #e0e0e0;
 		--text-muted: #666;
+		--neon-glow: 0 0 10px rgba(0, 247, 255, 0.3);
 	}
 
 	* { box-sizing: border-box; margin: 0; padding: 0; }
@@ -115,91 +119,110 @@ const nonce = Astro.locals.nonce;
 		overflow: hidden;
 	}
 
-	/* Sidebar */
+	/* Sidebar Customization */
 	.sidebar {
-		width: 250px;
+		width: 260px;
 		background: var(--sidebar);
 		border-right: 1px solid var(--border);
 		display: flex;
 		flex-direction: column;
 		padding: 1.5rem;
+		box-shadow: 5px 0 30px rgba(0,0,0,0.5);
+		z-index: 100;
 	}
 
 	.logo {
 		font-family: 'JetBrains Mono', monospace;
 		font-weight: 800;
-		font-size: 1.5rem;
+		font-size: 1.6rem;
 		margin-bottom: 3rem;
 		letter-spacing: -1px;
+		color: var(--gold);
+		text-shadow: 0 0 15px rgba(255, 196, 0, 0.2);
 	}
 	
-	.dot { color: var(--accent); }
+	.dot { color: var(--accent); text-shadow: 0 0 15px var(--accent); }
 
 	.menu {
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
+		gap: 0.3rem;
 		flex: 1;
+		overflow-y: auto;
 	}
 
 	.category {
-		font-size: 0.7rem;
-		color: var(--text-muted);
-		font-weight: bold;
-		margin-top: 1.5rem;
+		font-size: 0.65rem;
+		color: var(--gold);
+		font-weight: 800;
+		margin-top: 1.8rem;
 		margin-bottom: 0.5rem;
-		letter-spacing: 1px;
+		letter-spacing: 2px;
+		opacity: 0.6;
 	}
 
 	.menu a {
-		color: #999;
+		color: #888;
 		text-decoration: none;
-		padding: 0.75rem 1rem;
-		border-radius: 6px;
-		font-size: 0.9rem;
-		transition: 0.2s;
+		padding: 0.8rem 1rem;
+		border-radius: 4px;
+		font-size: 0.85rem;
+		transition: 0.3s;
 		display: flex;
 		align-items: center;
+		border-left: 2px solid transparent;
+		font-family: 'JetBrains Mono', monospace;
 	}
 
 	.menu a:hover, .menu a.active {
-		background: #151515;
+		background: rgba(0, 247, 255, 0.05);
 		color: white;
 		border-left: 2px solid var(--accent);
+		text-shadow: 0 0 10px rgba(255,255,255,0.3);
 	}
 
-	.logout { color: #555 !important; margin-top: auto; }
-	.logout:hover { color: #ff4444 !important; }
+	.logout { 
+		color: #555 !important; 
+		margin-top: 2rem;
+		border-top: 1px solid var(--border);
+		padding-top: 1rem !important;
+	}
+	.logout:hover { color: #ff3333 !important; border-left-color: #ff3333 !important; }
 
 	.user-profile {
 		display: flex;
 		align-items: center;
 		gap: 1rem;
-		padding-top: 1.5rem;
-		border-top: 1px solid var(--border);
+		padding: 1rem;
+		margin-top: 1rem;
+		background: rgba(255,255,255,0.02);
+		border-radius: 12px;
+		border: 1px solid var(--border);
 	}
 
 	.avatar {
-		width: 35px;
-		height: 35px;
-		background: #222;
-		border-radius: 50%;
+		width: 32px;
+		height: 32px;
+		background: linear-gradient(135deg, var(--accent), var(--gold));
+		border-radius: 4px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		font-weight: bold;
-		color: white;
+		color: black;
+		font-size: 0.8rem;
 	}
 
 	.info { display: flex; flex-direction: column; }
-	.name { font-size: 0.9rem; font-weight: 600; }
-	.role { font-size: 0.7rem; color: var(--text-muted); }
+	.name { font-size: 0.85rem; font-weight: 700; color: white; }
+	.role { font-size: 0.65rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
 
 	/* Main Content */
 	.content {
 		flex: 1;
 		display: flex;
 		flex-direction: column;
+		background: radial-gradient(circle at 50% 50%, #050505 0%, #000 100%);
 	}
 
 	header {
@@ -208,38 +231,83 @@ const nonce = Astro.locals.nonce;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding: 0 2rem;
+		padding: 0 2.5rem;
+		background: rgba(5,5,5,0.8);
+		backdrop-filter: blur(10px);
 	}
 
-	h1 { font-size: 1.2rem; }
+	header h1 { 
+		font-size: 1.1rem; 
+		font-family: 'JetBrains Mono', monospace;
+		color: var(--gold);
+		text-transform: uppercase;
+		letter-spacing: 1px;
+	}
 
 	.header-actions {
 		display: flex;
 		align-items: center;
-		gap: 1.5rem;
+		gap: 2rem;
 		font-family: 'JetBrains Mono', monospace;
-		font-size: 0.8rem;
+		font-size: 0.75rem;
 	}
 
 	.status-indicator {
 		display: flex;
 		align-items: center;
-		gap: 0.5rem;
-		color: #0f0;
+		gap: 0.6rem;
+		color: var(--accent);
+		font-weight: bold;
 	}
 	
 	.status-indicator::before {
 		content: '';
-		width: 8px;
-		height: 8px;
-		background: #0f0;
+		width: 6px;
+		height: 6px;
+		background: var(--accent);
 		border-radius: 50%;
-		box-shadow: 0 0 10px #0f0;
+		box-shadow: 0 0 10px var(--accent);
+		animation: pulse 2s infinite;
+	}
+
+	@keyframes pulse {
+		0% { opacity: 1; transform: scale(1); }
+		50% { opacity: 0.5; transform: scale(1.2); }
+		100% { opacity: 1; transform: scale(1); }
 	}
 
 	.scroll-area {
 		flex: 1;
 		overflow-y: auto;
-		padding: 2rem;
+		padding: 2.5rem;
+		scrollbar-width: thin;
+		scrollbar-color: var(--border) transparent;
 	}
+
+	.scroll-area::-webkit-scrollbar { width: 6px; }
+	.scroll-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+	/* Cyberpunk Card Component Utility */
+	.cyber-card {
+		background: rgba(10, 10, 10, 0.6);
+		border: 1px solid var(--border);
+		border-radius: 8px;
+		padding: 1.5rem;
+		position: relative;
+		overflow: hidden;
+		transition: 0.3s;
+	}
+	.cyber-card:hover {
+		border-color: var(--accent);
+		box-shadow: 0 0 20px rgba(0, 247, 255, 0.1);
+	}
+	.cyber-card::before {
+		content: '';
+		position: absolute;
+		top: 0; left: 0; width: 100%; height: 2px;
+		background: linear-gradient(90deg, transparent, var(--accent), transparent);
+		transform: translateX(-100%);
+		transition: 0.5s;
+	}
+	.cyber-card:hover::before { transform: translateX(100%); }
 </style>

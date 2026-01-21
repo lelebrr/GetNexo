@@ -72,6 +72,20 @@ export const onRequest = async (context, next) => {
     const clientIP = context.request.headers.get('x-forwarded-for') ||
         context.request.headers.get('x-real-ip') || 'unknown';
 
+    // 1. Language Redirection for Root
+    if (endpoint === '/' || endpoint === '') {
+        const acceptLang = context.request.headers.get('accept-language') || '';
+        let targetLang = 'pt';
+        if (acceptLang.includes('es')) targetLang = 'es';
+        else if (acceptLang.includes('fr')) targetLang = 'fr';
+        else if (acceptLang.includes('en')) targetLang = 'en';
+
+        // Portuguese stays at root, others redirect to their prefix
+        if (targetLang !== 'pt') {
+            return context.redirect(`/${targetLang}/`);
+        }
+    }
+
     // Log de request
     logger.info(`Request: ${method} ${endpoint}`, {
         method,
@@ -114,6 +128,13 @@ export const onRequest = async (context, next) => {
     // Generate Nonce for CSP
     const nonce = crypto.randomBytes(16).toString('base64');
     context.locals.nonce = nonce;
+
+    // Detect client_id for white-label
+    const clientId = context.request.headers.get('x-client-id') ||
+        context.url.searchParams.get('client_id') ||
+        context.cookies?.get('client_id') ||
+        'default';
+    context.locals.clientId = clientId;
 
     // Check authentication for protected routes
     const requestUrl = new URL(context.request.url);

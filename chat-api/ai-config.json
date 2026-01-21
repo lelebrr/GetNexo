@@ -1,7 +1,135 @@
 {
     "activeAI": "deepseek",
-    "deepseekKey": "sk-1a3b6c5c91c349c2adc90fddc2b7bf27",
-    "geminiKey": "",
-    "openRouterKey": "",
-    "grokKey": ""
+    "trainingMode": false,
+    "training": {
+        "enabled": false,
+        "autoFeedback": true,
+        "simulatedScenarios": true,
+        "generateReports": true
+    },
+    "routing": {
+        "enabled": true,
+        "economicMode": true,
+        "fallbackEnabled": true,
+        "maxRetries": 2,
+        "timeoutMs": 15000
+    },
+    "providers": {
+        "deepseek": {
+            "enabled": true,
+            "priority": 1,
+            "key": "sk-1a3b6c5c91c349c2adc90fddc2b7bf27",
+            "baseUrl": "https://api.deepseek.com",
+            "models": {
+                "deepseek-chat": {
+                    "costPer1kInput": 0.0001,
+                    "costPer1kOutput": 0.0001,
+                    "maxTokens": 32768
+                }
+            },
+            "limits": {
+                "dailyTokens": 20000,
+                "monthlyTokens": 500000,
+                "requestsPerMinute": 60
+            }
+        },
+        "groq": {
+            "enabled": true,
+            "priority": 2,
+            "key": "",
+            "baseUrl": "https://api.groq.com/openai/v1",
+            "models": {
+                "llama3-70b-8192": {
+                    "costPer1kInput": 0.002,
+                    "costPer1kOutput": 0.002,
+                    "maxTokens": 8192
+                }
+            },
+            "limits": {
+                "dailyTokens": 5000,
+                "monthlyTokens": 100000,
+                "requestsPerMinute": 30
+            }
+        },
+        "mistral": {
+            "enabled": true,
+            "priority": 3,
+            "key": "",
+            "baseUrl": "https://api.mistral.ai/v1",
+            "models": {
+                "mistral-large-latest": {
+                    "costPer1kInput": 0.003,
+                    "costPer1kOutput": 0.009,
+                    "maxTokens": 32000
+                }
+            },
+            "limits": {
+                "dailyTokens": 5000,
+                "monthlyTokens": 100000,
+                "requestsPerMinute": 10
+            }
+        },
+        "gemini": {
+            "enabled": true,
+            "priority": 4,
+            "key": "",
+            "baseUrl": "https://generativelanguage.googleapis.com/v1beta",
+            "models": {
+                "gemini-2.0-flash-exp": {
+                    "costPer1kInput": 0.00001875,
+                    "costPer1kOutput": 0.000075,
+                    "maxTokens": 1048576
+                }
+            },
+            "limits": {
+                "dailyTokens": 15000,
+                "monthlyTokens": 1000000,
+                "requestsPerMinute": 15
+            }
+        },
+        "claude": {
+            "enabled": true,
+            "priority": 5,
+            "key": "",
+            "baseUrl": "https://api.anthropic.com/v1",
+            "models": {
+                "claude-3-haiku-20240307": {
+                    "costPer1kInput": 0.00025,
+                    "costPer1kOutput": 0.00125,
+                    "maxTokens": 200000
+                }
+            },
+            "limits": {
+                "dailyTokens": 50000,
+                "monthlyTokens": 1000000,
+                "requestsPerMinute": 50
+            }
+        },
+        "gpt": {
+            "enabled": true,
+            "priority": 6,
+            "key": "",
+            "baseUrl": "https://api.openai.com/v1",
+            "models": {
+                "gpt-3.5-turbo": {
+                    "costPer1kInput": 0.0015,
+                    "costPer1kOutput": 0.002,
+                    "maxTokens": 16385
+                }
+            },
+            "limits": {
+                "dailyTokens": 100000,
+                "monthlyTokens": 3000000,
+                "requestsPerMinute": 3500
+            }
+        }
+    },
+    "analytics": {
+        "enabled": true,
+        "redisHost": "localhost",
+        "redisPort": 6379,
+        "metricsRetentionDays": 30
+    },
+    "industry": "ecommerce",
+    "leadName": "GetNexo Assistant"
 }

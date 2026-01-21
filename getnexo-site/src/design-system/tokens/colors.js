@@ -1,0 +1,234 @@
+/**
+ * Design System - Tokens de Cores
+ * WCAG 2.2 AA+ compliant
+ */
+
+export const colors = {
+    // Core Colors - Brand
+    primary: {
+        50: '#eff6ff',
+        100: '#dbeafe',
+        200: '#bfdbfe',
+        300: '#93c5fd',
+        400: '#60a5fa',
+        500: '#3b82f6',
+        600: '#2563eb',
+        700: '#1d4ed8',
+        800: '#1e40af',
+        900: '#1e3a8a',
+        DEFAULT: '#3b82f6',
+    },
+
+    secondary: {
+        50: '#f5f3ff',
+        100: '#ede9fe',
+        200: '#ddd6fe',
+        300: '#c4b5fd',
+        400: '#a78bfa',
+        500: '#8b5cf6',
+        600: '#7c3aed',
+        700: '#6d28d9',
+        800: '#5b21b6',
+        900: '#4c1d95',
+        DEFAULT: '#8b5cf6',
+    },
+
+    accent: {
+        50: '#ecfdf5',
+        100: '#d1fae5',
+        200: '#a7f3d0',
+        300: '#6ee7b7',
+        400: '#34d399',
+        500: '#10b981',
+        600: '#059669',
+        700: '#047857',
+        800: '#065f46',
+        900: '#064e3b',
+        DEFAULT: '#10b981',
+    },
+
+    // Semantic Colors
+    success: {
+        50: '#f0fdf4',
+        100: '#dcfce7',
+        200: '#bbf7d0',
+        300: '#86efac',
+        400: '#4ade80',
+        500: '#22c55e',
+        600: '#16a34a',
+        700: '#15803d',
+        800: '#166534',
+        900: '#14532d',
+        DEFAULT: '#22c55e',
+    },
+
+    warning: {
+        50: '#fffbeb',
+        100: '#fef3c7',
+        200: '#fde68a',
+        300: '#fcd34d',
+        400: '#fbbf24',
+        500: '#f59e0b',
+        600: '#d97706',
+        700: '#b45309',
+        800: '#92400e',
+        900: '#78350f',
+        DEFAULT: '#f59e0b',
+    },
+
+    error: {
+        50: '#fef2f2',
+        100: '#fee2e2',
+        200: '#fecaca',
+        300: '#fca5a5',
+        400: '#f87171',
+        500: '#ef4444',
+        600: '#dc2626',
+        700: '#b91c1c',
+        800: '#991b1b',
+        900: '#7f1d1d',
+        DEFAULT: '#ef4444',
+    },
+
+    info: {
+        50: '#eff6ff',
+        100: '#dbeafe',
+        200: '#bfdbfe',
+        300: '#93c5fd',
+        400: '#60a5fa',
+        500: '#3b82f6',
+        600: '#2563eb',
+        700: '#1d4ed8',
+        800: '#1e40af',
+        900: '#1e3a8a',
+        DEFAULT: '#3b82f6',
+    },
+
+    // Neutral Colors - Light Mode
+    neutral: {
+        50: '#fafafa',
+        100: '#f4f4f5',
+        200: '#e4e4e7',
+        300: '#d4d4d8',
+        400: '#a1a1aa',
+        500: '#71717a',
+        600: '#52525b',
+        700: '#3f3f46',
+        800: '#27272a',
+        900: '#18181b',
+        DEFAULT: '#71717a',
+    },
+
+    // Light Mode Backgrounds
+    background: {
+        primary: '#ffffff',
+        secondary: '#fafafa',
+        tertiary: '#f4f4f5',
+        inverse: '#18181b',
+    },
+
+    // Light Mode Text
+    text: {
+        primary: '#18181b',
+        secondary: '#52525b',
+        tertiary: '#71717a',
+        inverse: '#ffffff',
+        disabled: '#a1a1aa',
+    },
+
+    // Light Mode Borders
+    border: {
+        light: '#e4e4e7',
+        DEFAULT: '#d4d4d8',
+        dark: '#a1a1aa',
+    },
+
+    // Dark Mode Colors
+    dark: {
+        background: {
+            primary: '#09090b',
+            secondary: '#18181b',
+            tertiary: '#27272a',
+            inverse: '#ffffff',
+        },
+
+        text: {
+            primary: '#fafafa',
+            secondary: '#d4d4d8',
+            tertiary: '#a1a1aa',
+            inverse: '#18181b',
+            disabled: '#52525b',
+        },
+
+        border: {
+            light: '#27272a',
+            DEFAULT: '#3f3f46',
+            dark: '#52525b',
+        },
+
+        neutral: {
+            50: '#18181b',
+            100: '#27272a',
+            200: '#3f3f46',
+            300: '#52525b',
+            400: '#71717a',
+            500: '#a1a1aa',
+            600: '#d4d4d8',
+            700: '#e4e4e7',
+            800: '#f4f4f5',
+            900: '#fafafa',
+        },
+    },
+
+    // Focus & Accessibility
+    focus: {
+        ring: '#3b82f6',
+        ringOffset: '#ffffff',
+        ringOffsetDark: '#09090b',
+    },
+
+    // Overlay
+    overlay: {
+        light: 'rgba(0, 0, 0, 0.1)',
+        medium: 'rgba(0, 0, 0, 0.3)',
+        dark: 'rgba(0, 0, 0, 0.5)',
+        lightDark: 'rgba(255, 255, 255, 0.1)',
+        mediumDark: 'rgba(255, 255, 255, 0.3)',
+        darkDark: 'rgba(255, 255, 255, 0.5)',
+    },
+
+    // Gradients
+    gradients: {
+        primary: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
+        secondary: 'linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)',
+        accent: 'linear-gradient(135deg, #10b981 0%, #3b82f6 100%)',
+        dark: 'linear-gradient(135deg, #18181b 0%, #27272a 100%)',
+    },
+};
+
+export const getColor = (path, theme = 'light') => {
+    const keys = path.split('.');
+    let value = theme === 'dark' ? colors.dark : colors;
+
+    for (const key of keys) {
+        if (value && value[key] !== undefined) {
+            value = value[key];
+        } else {
+            return null;
+        }
+    }
+
+    return value;
+};
+
+export const getContrastColor = (bgColor) => {
+    // Simple contrast calculation for accessibility
+    const hex = bgColor.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+    return luminance > 0.5 ? '#18181b' : '#fafafa';
+};

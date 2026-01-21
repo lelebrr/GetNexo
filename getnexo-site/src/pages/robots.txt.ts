@@ -1,19 +1,21 @@
 
 const robotsTxt = `
 User-agent: *
-Allow: /
-
-# Disallow admin and private areas
 Disallow: /admin/
-Disallow: /dashboard/
+Disallow: /private/
 Disallow: /api/
-Disallow: /404
+Disallow: /dashboard/
+Allow: /es/
+Allow: /fr/
+Allow: /en/
+Allow: /blog/
+Allow: /sitemap-*.xml
 
-# Host
-Host: https://getnexo.com.br
-
-# Sitemap
-Sitemap: https://getnexo.com.br/sitemap.xml
+# Sitemaps
+Sitemap: https://getnexo.com.br/pt/sitemap.xml
+Sitemap: https://getnexo.com.br/en/sitemap.xml
+Sitemap: https://getnexo.com.br/es/sitemap.xml
+Sitemap: https://getnexo.com.br/fr/sitemap.xml
 `.trim();
 
 export const GET = () => {

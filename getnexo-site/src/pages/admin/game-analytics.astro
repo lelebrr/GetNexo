@@ -1,0 +1,16 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import GameAnalyticsDashboard from '../../components/analytics/GameAnalyticsDashboard.jsx';
+---
+
+<AdminLayout title="Analytics dos Minigames">
+    <div class="game-analytics">
+        <GameAnalyticsDashboard client:load />
+    </div>
+</AdminLayout>
+
+<style>
+    .game-analytics {
+        min-height: calc(100vh - 200px);
+    }
+</style>

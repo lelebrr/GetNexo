@@ -4,6 +4,9 @@ const title = "GetNexo: A Melhor Plataforma de IA para Vendas no WhatsApp | API 
 const description = "Scale suas vendas 24h por dia com a IA mais avançada para WhatsApp. API Oficial Meta, PIX Nativo, Recuperação de Carrinhos e Automação de Altíssima Conversão.";
 const keywords = "melhor plataforma whatsapp vendas, ia para whatsapp, api whatsapp oficial, automação de vendas whatsapp, recuperar carrinho whatsapp, pix no whatsapp, getnexo ia";
 
+const lang = 'pt';
+const { default: t } = await import(`../i18n/pt.json`);
+
 const homeSchema = {
   "@context": "https://schema.org",
   "@graph": [
@@ -71,13 +74,13 @@ const homeSchema = {
   <section class="hero-split">
     <div class="hero-content">
       <div class="hero-badge reveal">A revolução das vendas chegou 🚀</div>
-      <h1 class="hero-title reveal">A IA que <span class="text-gradient">Vende Sozinha</span> no seu WhatsApp</h1>
+      <h1 class="hero-title reveal" set:html={t.hero.title.replace('Vende Sozinha', '<span class="text-gradient">Vende Sozinha</span>')}></h1>
       <p class="hero-subtitle reveal">
-        A única plataforma brasileira 100% Oficial Meta com PIX nativo, recuperação de carrinhos e IA generativa que converte leads em lucro, 24h por dia.
+        {t.hero.subtitle}
       </p>
       <div class="hero-ctas reveal">
-        <a href="/criar-bot" class="btn-primary-glow">Começar Gratuitamente</a>
-        <button onclick="abrirModalDemo()" class="btn-outline">Ver Demo IA →</button>
+        <a href={`/${lang}/criar-bot`} class="btn-primary-glow">{t.hero.cta_primary}</a>
+        <button onclick="abrirModalDemo()" class="btn-outline">{t.hero.cta_secondary} →</button>
       </div>
       <div class="hero-trust reveal">
         <span>✅ API Oficial Meta</span>

@@ -1,0 +1,46 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Templates de Vendas">
+    <div id="sales-templates-root" class="min-h-screen bg-gray-50">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <!-- Loading state -->
+            <div id="loading-state" class="flex items-center justify-center min-h-[400px]">
+                <div class="text-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                    <p class="mt-4 text-gray-600">Carregando templates...</p>
+                </div>
+            </div>
+
+            <!-- Main content -->
+            <div id="main-content" class="hidden">
+                <!-- Content will be rendered here by React -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        import React from 'react';
+        import { createRoot } from 'react-dom/client';
+        import SalesTemplatesManagement from '../components/sales/SalesTemplatesManagement.jsx';
+
+        const container = document.getElementById('sales-templates-root');
+        const loadingState = document.getElementById('loading-state');
+        const mainContent = document.getElementById('main-content');
+
+        // Check authentication
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/admin/login';
+        } else {
+            // Hide loading and show main content
+            loadingState.style.display = 'none';
+            mainContent.style.display = 'block';
+
+            // Render React component
+            const root = createRoot(mainContent);
+            root.render(React.createElement(SalesTemplatesManagement));
+        }
+    </script>
+</AdminLayout>

@@ -1,8 +1,5 @@
 ---
-const { title = "OmniNexo Enterprise" } = Astro.props;
-// Mock session for now (or integrate with real auth if available via cookies)
-const session = { user: { name: 'Admin', role: 'owner' } }; 
-const nonce = Astro.locals.nonce;
+const { title = "Admin Access | GetNexo" } = Astro.props;
 ---
 <!doctype html>
 <html lang="pt-BR">
@@ -10,62 +7,43 @@ const nonce = Astro.locals.nonce;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style is:global>
         :root { 
-            --primary: #00d4ff; 
-            --success: #00ff9d; 
-            --dark: #0a0e17; 
-            --gray: #1e293b; 
-            --light: #e2e8f0; 
-            --text: #94a3b8; 
+            --primary: #00f7ff; 
+            --gold: #ffc400; 
+            --dark: #030303; 
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; background: var(--dark); color: var(--light); line-height: 1.7; overflow-x: hidden; }
-        .glow { text-shadow: 0 0 20px rgba(0,212,255,0.5); }
-        .btn-cta { 
-            background: linear-gradient(90deg, var(--primary), var(--success)); 
-            color: black; 
-            padding: 0.8rem 2rem; 
-            border-radius: 50px; 
-            font-weight: 800; 
-            text-decoration: none; 
-            display: inline-block;
-            transition: transform 0.2s;
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--dark); 
+            color: #fff; 
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(0, 247, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(255, 196, 0, 0.05) 0%, transparent 50%);
         }
-        .btn-cta:hover { transform: scale(1.05); }
-        input, textarea, select {
-            background: rgba(0,0,0,0.3);
-            border: 1px solid #333;
-            color: white;
-            border-radius: 8px;
-        }
-        input:focus, textarea:focus {
-            border-color: var(--primary);
-            outline: none;
+
+        /* Scanline effect */
+        body::before {
+            content: " ";
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
-    <header style="background:rgba(10,14,23,0.9); backdrop-filter:blur(10px); padding:1rem 2rem; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(0,212,255,0.1); position:sticky; top:0; z-index:100;">
-        <div style="font-weight:800; font-size:1.5rem; color:white;">
-            Omni<span style="color:var(--primary)">Nexo</span> <span style="font-size:0.7rem; border:1px solid #333; padding:2px 6px; border-radius:4px; opacity:0.7;">ENTERPRISE</span>
-        </div>
-        <div style="display:flex; align-items:center; gap:1rem;">
-            {session ? (
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <div style="width:30px; height:30px; background:linear-gradient(45deg, var(--primary), var(--success)); border-radius:50%;"></div>
-                    <span>{session.user.name}</span>
-                    <a href="/logout" style="font-size:0.8rem; color:#666; text-decoration:none;">(Sair)</a>
-                </div>
-            ) : (
-                <a href="/login" class="btn-cta">Login</a>
-            )}
-        </div>
-    </header>
-    
-    <main style="min-height: calc(100vh - 80px);">
-        <slot />
-    </main>
+    <slot />
 </body>
 </html>

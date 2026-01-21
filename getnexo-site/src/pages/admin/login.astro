@@ -1,449 +1,118 @@
 ---
-import Layout from '../../layouts/Layout.astro';
+import LoginLayout from '../../layouts/LoginLayout.astro';
 ---
-
-<Layout title="Login Admin | GetNexo">
-    <div class="login-container">
-        <div class="glass-panel login-card">
-            <div class="logo-area">
-                <div class="logo-icon">N</div>
-                <h1>Get<span>Nexo</span></h1>
+<LoginLayout title="Admin Login | GetNexo">
+    <div class="login-box cyber-card">
+        <div class="logo">NEXUS<span class="dot">.</span></div>
+        <h2>Access Terminal</h2>
+        <p class="subtitle">Enter credentials to initialize session</p>
+        
+        <form id="login-form">
+            <div class="input-group">
+                <label>Identifier</label>
+                <input type="text" id="username" placeholder="Username" required />
+            </div>
+            <div class="input-group">
+                <label>Security Key</label>
+                <input type="password" id="password" placeholder="••••••••" required />
             </div>
             
-            <p class="subtitle">Acesse seu centro de comando</p>
-
-            <form id="login-form">
-                <div class="input-group">
-                    <label>E-mail</label>
-                    <input type="email" id="email" required placeholder="admin@getnexo.local" />
-                </div>
-                
-                <div class="input-group">
-                    <label>Senha</label>
-                    <input type="password" id="password" required placeholder="••••••••" />
-                </div>
-
-                <!-- 2FA Hidden Field -->
-                <div class="input-group" id="2fa-container" style="display:none; animation: fadeIn 0.5s;">
-                    <label style="color:#00ff9d;">Código 2FA</label>
-                    <input type="text" id="2fa-code" placeholder="000 000" style="text-align:center; letter-spacing:4px; font-weight:800; border-color:#00ff9d;" />
-                </div>
-
-                <!-- LGPD Consent -->
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:1.5rem; text-align:left;">
-                    <input type="checkbox" id="lgpd-consent" style="width:20px; height:20px;" />
-                    <label for="lgpd-consent" style="font-size:0.8rem; font-weight:400; color:#64748b; margin:0;">
-                        Aceito os <a href="#" style="color:#00d4ff;">Termos de Uso</a> e concordo com o processamento de dados conforme a LGPD.
-                    </label>
-                </div>
-
-                <div id="error-msg" class="error-msg"></div>
-
-                <button type="submit" id="btn-login">
-                    <span class="btn-text">Entrar no Sistema</span>
-                </button>
-            </form>
-
-            <div class="footer-links">
-                <a href="/">← Voltar ao site</a>
-                <a href="/suporte">Esqueci a senha</a>
-            </div>
-        </div>
-
-        <!-- Welcome Animation Overlay -->
-        <div id="welcome-overlay" class="welcome-overlay">
-            <div class="welcome-content">
-                <div class="welcome-glow"></div>
-                <div id="welcome-text" class="welcome-text">USER</div>
-                <div class="loading-bar">
-                    <div class="loading-progress"></div>
-                </div>
-            </div>
-        </div>
+            <button type="submit" class="glow-btn">Initialize Connection</button>
+            <p id="error-msg" class="error-msg"></p>
+        </form>
     </div>
-</Layout>
+
+    <script>
+        import { login } from './auth.js';
+
+        const form = document.getElementById('login-form');
+        const errorMsg = document.getElementById('error-msg');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+
+            const result = await login(user, pass);
+            if (result.success) {
+                window.location.href = '/admin';
+            } else {
+                errorMsg.innerText = result.error;
+                errorMsg.classList.add('show');
+            }
+        });
+    </script>
+</LoginLayout>
 
 <style>
-    .login-container {
-        min-height: 90vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: radial-gradient(circle at center, #111827 0%, #030712 100%);
-    }
-
-    .login-card {
+    .login-box {
         width: 100%;
-        max-width: 420px;
-        padding: 3rem 2.5rem;
-        border-radius: 24px;
-        border: 1px solid rgba(0, 212, 255, 0.1);
-        text-align: center;
-    }
-
-    .logo-area {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
-
-    .logo-icon {
-        width: 50px;
-        height: 50px;
-        background: linear-gradient(135deg, #00d4ff, #00ff9d);
+        max-width: 400px;
+        padding: 3rem;
+        background: rgba(5, 5, 5, 0.9);
+        border: 1px solid #1a1a1a;
         border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 900;
-        color: black;
-        font-size: 1.5rem;
-        box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+        text-align: center;
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
     }
 
-    h1 {
-        margin: 0;
-        font-size: 2rem;
+    .logo {
+        font-family: 'JetBrains Mono', monospace;
         font-weight: 800;
-        color: white;
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        color: #ffc400;
     }
+    .dot { color: #00f7ff; }
 
-    h1 span { color: #00ff9d; }
+    h2 { font-size: 1.2rem; color: #fff; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 2px; }
+    .subtitle { font-size: 0.8rem; color: #666; margin-bottom: 2rem; }
 
-    .subtitle {
-        color: #94a3b8;
-        margin-bottom: 2.5rem;
-    }
-
-    .input-group {
-        text-align: left;
-        margin-bottom: 1.5rem;
-    }
-
-    label {
-        display: block;
-        color: #e5e7eb;
-        font-size: 0.9rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-    }
-
-    input {
+    .input-group { text-align: left; margin-bottom: 1.5rem; }
+    .input-group label { display: block; font-size: 0.7rem; color: #00f7ff; text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 1px; }
+    .input-group input {
         width: 100%;
+        background: #080808;
+        border: 1px solid #222;
         padding: 0.8rem 1rem;
-        background: rgba(15, 23, 42, 0.6);
-        border: 1px solid #334155;
-        border-radius: 10px;
-        color: white;
-        font-size: 1rem;
+        border-radius: 4px;
+        color: #fff;
+        font-family: 'JetBrains Mono', monospace;
         transition: 0.3s;
     }
+    .input-group input:focus { border-color: #00f7ff; outline: none; box-shadow: 0 0 10px rgba(0, 247, 255, 0.2); }
 
-    input:focus {
-        border-color: #00d4ff;
-        outline: none;
-        box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
-    }
-
-    button {
+    .glow-btn {
         width: 100%;
+        background: transparent;
+        border: 1px solid #00f7ff;
+        color: #00f7ff;
         padding: 1rem;
-        background: #00d4ff;
-        color: #030712;
+        border-radius: 4px;
         font-weight: 800;
-        font-size: 1rem;
-        border: none;
-        border-radius: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
         cursor: pointer;
         transition: 0.3s;
-        box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
         margin-top: 1rem;
     }
-
-    button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0, 212, 255, 0.4);
+    .glow-btn:hover {
+        background: #00f7ff;
+        color: #000;
+        box-shadow: 0 0 20px rgba(0, 247, 255, 0.4);
     }
 
-    .error-msg {
-        color: #f87171;
-        font-size: 0.85rem;
-        margin-bottom: 1rem;
-        min-height: 1.2rem;
-    }
+    .error-msg { font-size: 0.8rem; color: #ff3333; margin-top: 1rem; display: none; }
+    .error-msg.show { display: block; }
 
-    .footer-links {
-        margin-top: 2rem;
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.85rem;
-    }
-
-    .footer-links a {
-        color: #64748b;
-        text-decoration: none;
-        transition: 0.2s;
-    }
-
-    .footer-links a:hover { color: #00d4ff; }
-
-    /* Welcome Animation Styles */
-    .welcome-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(circle, rgba(0, 212, 255, 0.1) 0%, rgba(0, 255, 157, 0.05) 100%);
-        backdrop-filter: blur(10px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.5s ease;
-    }
-
-    .welcome-overlay.active {
-        opacity: 1;
-        visibility: visible;
-    }
-
-    .welcome-content {
-        text-align: center;
-        animation: welcomeBounce 0.8s ease;
+    .cyber-card {
         position: relative;
-        z-index: 2;
-    }
-
-    .welcome-text {
-        font-size: 4rem;
-        font-weight: 900;
-        background: linear-gradient(45deg, #00d4ff, #00ff9d, #ff6b35);
-        background-size: 200% 200%;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        animation: gradientShift 2s ease infinite, textGlow 1s ease;
-        text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
-        margin-bottom: 1rem;
-        letter-spacing: 0.2em;
-    }
-
-    .welcome-glow {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 200px;
-        height: 200px;
-        background: radial-gradient(circle, rgba(0, 212, 255, 0.3) 0%, rgba(0, 255, 157, 0.2) 50%, transparent 70%);
-        border-radius: 50%;
-        animation: glowPulse 2s ease-in-out infinite;
-        z-index: 1;
-    }
-
-    .loading-bar {
-        width: 200px;
-        height: 4px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 2px;
-        margin: 2rem auto 0;
         overflow: hidden;
-        position: relative;
     }
-
-    .loading-progress {
-        height: 100%;
-        background: linear-gradient(90deg, #00d4ff, #00ff9d);
-        border-radius: 2px;
-        animation: loadingProgress 2.3s ease-out;
-    }
-
-    @keyframes welcomeBounce {
-        0% { transform: scale(0.3); opacity: 0; }
-        50% { transform: scale(1.1); }
-        70% { transform: scale(0.9); }
-        100% { transform: scale(1); opacity: 1; }
-    }
-
-    @keyframes gradientShift {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-
-    @keyframes textGlow {
-        0% { text-shadow: 0 0 5px rgba(0, 212, 255, 0.2); }
-        50% { text-shadow: 0 0 30px rgba(0, 212, 255, 0.8), 0 0 40px rgba(0, 255, 157, 0.4); }
-        100% { text-shadow: 0 0 5px rgba(0, 212, 255, 0.2); }
-    }
-
-    @keyframes fadeInUp {
-        0% { transform: translateY(30px); opacity: 0; }
-        100% { transform: translateY(0); opacity: 1; }
-    }
-
-    @keyframes particleExplosion {
-        0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-        100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
-    }
-
-    @keyframes glowPulse {
-        0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
-        50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.6; }
-    }
-
-    @keyframes loadingProgress {
-        0% { width: 0%; }
-        100% { width: 100%; }
+    .cyber-card::after {
+        content: '';
+        position: absolute;
+        top: 0; right: 0; width: 40px; height: 40px;
+        background: linear-gradient(45deg, transparent 50%, #ffc400 50%);
     }
 </style>
-
-<script is:inline>
-    const API = window.location.hostname === 'localhost'
-      ? 'http://localhost:8080'
-      : 'https://api.getnexo.com.br';
-    const form = document.getElementById('login-form');
-    const errorDiv = document.getElementById('error-msg');
-    const btn = document.getElementById('btn-login');
-
-    // 2FA STATE
-    let pending2FA = false;
-
-    form.onsubmit = async (e) => {
-        e.preventDefault();
-        errorDiv.innerText = '';
-
-        // LGPD Check
-        const lgpd = document.getElementById('lgpd-consent');
-        if (!lgpd.checked) {
-            errorDiv.innerText = 'Você deve aceitar os termos e LGPD.';
-            return;
-        }
-
-        btn.disabled = true;
-        btn.innerText = pending2FA ? 'Verificando 2FA...' : 'Autenticando...';
-
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const code = document.getElementById('2fa-code')?.value;
-
-        try {
-            const body = { email, password };
-            if (code) body.code = code;
-
-            const res = await fetch(`${API}/api/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-            });
-
-            if (!res.ok) throw new Error('Falha na autenticação');
-
-            const data = await res.json();
-
-            if (res.ok) {
-                // Check if 2FA Challenge
-                if (data.requires2fa) {
-                    pending2FA = true;
-                    document.getElementById('2fa-container').style.display = 'block';
-                    document.getElementById('email').disabled = true;
-                    document.getElementById('password').disabled = true;
-                    document.getElementById('btn-login').innerText = 'Validar Token 2FA';
-                    document.getElementById('2fa-code').focus();
-                    errorDiv.innerText = 'Digite o código do Google Authenticator.';
-                    errorDiv.style.color = '#00ff9d';
-                } else {
-                    // Success - Show welcome animation
-                    localStorage.setItem('omnichat_token', data.token);
-                    localStorage.setItem('adminUser', JSON.stringify(data.user));
-
-                    // Determine user type and show animation
-                    const userRole = data.user.role || data.user.type || 'user';
-                    showWelcomeAnimation(userRole);
-                }
-            } else {
-                errorDiv.innerText = data.error || 'Erro ao fazer login.';
-                errorDiv.style.color = '#f87171';
-            }
-        } catch (err) {
-            errorDiv.innerText = 'Falha na conexão com o servidor.';
-            errorDiv.style.color = '#f87171';
-        } finally {
-            btn.disabled = false;
-            if (!pending2FA) btn.innerText = 'Entrar no Sistema';
-        }
-    };
-
-    // Welcome Animation Function
-    function showWelcomeAnimation(userRole) {
-        const overlay = document.getElementById('welcome-overlay');
-        const welcomeText = document.getElementById('welcome-text');
-
-        // Determine animation text based on role
-        let animationText = 'USER';
-        let redirectUrl = '/dashboard';
-
-        if (userRole === 'admin' || userRole === 'superadmin' || userRole === 'administrator') {
-            animationText = 'ADMIN';
-            redirectUrl = '/admin';
-        } else if (userRole === 'partner' || userRole === 'reseller' || userRole === 'revendedor') {
-            animationText = 'PARTNERS';
-            redirectUrl = '/revenda/dash';
-        }
-
-        // Set animation text
-        welcomeText.textContent = animationText;
-
-        // Show overlay
-        overlay.classList.add('active');
-
-        // Add explosion effect
-        createExplosionEffect();
-
-        // Redirect after animation
-        setTimeout(() => {
-            window.location.href = redirectUrl;
-        }, 2500);
-    }
-
-    // Create explosion effect
-    function createExplosionEffect() {
-        const overlay = document.getElementById('welcome-overlay');
-        const particles = 20;
-
-        for (let i = 0; i < particles; i++) {
-            setTimeout(() => {
-                const particle = document.createElement('div');
-                particle.style.cssText = `
-                    position: absolute;
-                    width: 8px;
-                    height: 8px;
-                    background: ${i % 2 === 0 ? '#00d4ff' : '#00ff9d'};
-                    border-radius: 50%;
-                    pointer-events: none;
-                    animation: particleExplosion 1.5s ease-out forwards;
-                    left: 50%;
-                    top: 50%;
-                    transform: translate(-50%, -50%);
-                `;
-
-                // Random direction
-                const angle = (Math.PI * 2 * i) / particles;
-                const distance = 150 + Math.random() * 100;
-
-                particle.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
-                particle.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
-
-                overlay.appendChild(particle);
-
-                // Remove particle after animation
-                setTimeout(() => particle.remove(), 1500);
-            }, i * 50);
-        }
-    }
-</script>

@@ -1,0 +1,194 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Domain Management">
+    <div class="domains-header">
+        <div class="stats-row">
+            <div class="stat-box cyber-card">
+                <span class="label">Total de Requisições</span>
+                <span class="val">1.7M</span>
+            </div>
+            <div class="stat-box cyber-card">
+                <span class="label">Tempo Médio Resposta</span>
+                <span class="val">142ms</span>
+            </div>
+            <div class="stat-box cyber-card">
+                <span class="label">Disponibilidade</span>
+                <span class="val success">99.98%</span>
+            </div>
+        </div>
+        <button class="btn-glow">Configurar Novo Domínio</button>
+    </div>
+
+    <div class="domains-grid">
+        <!-- Main Domain Card -->
+        <div class="cyber-card domain-card active">
+            <div class="domain-header">
+                <div class="title-area">
+                    <span class="status-dot online"></span>
+                    <h3>getnexo.com.br</h3>
+                </div>
+                <span class="badge">PRODUÇÃO</span>
+            </div>
+            
+            <div class="domain-info">
+                <div class="info-item">
+                    <span>IP do Servidor:</span>
+                    <code>142.251.32.46</code>
+                </div>
+                <div class="info-item">
+                    <span>SSL Status:</span>
+                    <span class="status-ok">Expira em 182 dias</span>
+                </div>
+            </div>
+
+            <div class="domain-toggles">
+                <div class="toggle-item">
+                    <span>Habilitar IA</span>
+                    <div class="switch active"></div>
+                </div>
+                <div class="toggle-item">
+                    <span>Analytics</span>
+                    <div class="switch active"></div>
+                </div>
+                <div class="toggle-item">
+                    <span>Firewall WAF</span>
+                    <div class="switch active"></div>
+                </div>
+            </div>
+
+            <div class="domain-actions">
+                <button class="btn-outline-sm">Logs</button>
+                <button class="btn-outline-sm">DNS</button>
+                <button class="btn-outline-sm danger">Desativar</button>
+            </div>
+        </div>
+
+        <!-- Subdomain Card -->
+        <div class="cyber-card domain-card">
+            <div class="domain-header">
+                <div class="title-area">
+                    <span class="status-dot online"></span>
+                    <h3>app.getnexo.cloud</h3>
+                </div>
+                <span class="badge">WHIELABEL</span>
+            </div>
+            
+            <div class="domain-info">
+                <div class="info-item">
+                    <span>IP do Servidor:</span>
+                    <code>142.251.32.48</code>
+                </div>
+                <div class="info-item">
+                    <span>SSL Status:</span>
+                    <span class="status-ok">Auto-renovado</span>
+                </div>
+            </div>
+
+            <div class="domain-toggles">
+                <div class="toggle-item">
+                    <span>Habilitar IA</span>
+                    <div class="switch active"></div>
+                </div>
+                <div class="toggle-item">
+                    <span>Analytics</span>
+                    <div class="switch active"></div>
+                </div>
+                <div class="toggle-item">
+                    <span>Firewall WAF</span>
+                    <div class="switch"></div>
+                </div>
+            </div>
+
+            <div class="domain-actions">
+                <button class="btn-outline-sm">Logs</button>
+                <button class="btn-outline-sm">DNS</button>
+                <button class="btn-outline-sm danger">Desativar</button>
+            </div>
+        </div>
+    </div>
+</AdminLayout>
+
+<style>
+    .domains-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2.5rem; gap: 2rem; }
+    .stats-row { display: flex; gap: 1.5rem; flex: 1; }
+    .stat-box { flex: 1; padding: 1.2rem !important; }
+    .stat-box .label { font-size: 0.65rem; color: #666; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 0.5rem; }
+    .stat-box .val { font-size: 1.2rem; font-weight: 800; color: #fff; font-family: 'JetBrains Mono', monospace; }
+    .val.success { color: #00ff9d; }
+
+    .btn-glow {
+        background: #00f7ff;
+        color: #000;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 0 15px rgba(0, 247, 255, 0.4);
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+    }
+
+    .domains-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .domain-card { padding: 2rem !important; }
+    .domain-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .title-area { display: flex; align-items: center; gap: 0.8rem; }
+    .title-area h3 { font-size: 1.1rem; color: #fff; }
+    
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .status-dot.online { background: #00ff9d; box-shadow: 0 0 10px #00ff9d; }
+
+    .badge { font-size: 0.6rem; background: rgba(255, 196, 0, 0.1); color: #ffc400; padding: 2px 8px; border-radius: 4px; font-weight: 800; }
+
+    .domain-info { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid #1a1a1a; }
+    .info-item { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.5rem; }
+    .info-item code { color: #00f7ff; }
+    .status-ok { color: #00ff9d; }
+
+    .domain-toggles { display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 2rem; }
+    .toggle-item { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #888; }
+    
+    .switch {
+        width: 32px;
+        height: 16px;
+        background: #222;
+        border-radius: 10px;
+        position: relative;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .switch::after {
+        content: '';
+        position: absolute;
+        top: 2px; left: 2px; width: 12px; height: 12px;
+        background: #555;
+        border-radius: 50%;
+        transition: 0.3s;
+    }
+    .switch.active { background: rgba(0, 247, 255, 0.3); }
+    .switch.active::after { left: calc(100% - 14px); background: #00f7ff; box-shadow: 0 0 10px #00f7ff; }
+
+    .domain-actions { display: flex; gap: 0.8rem; }
+    .btn-outline-sm {
+        flex: 1;
+        background: none;
+        border: 1px solid #333;
+        color: #888;
+        padding: 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: 0.3s;
+        font-weight: 700;
+    }
+    .btn-outline-sm:hover { border-color: #00f7ff; color: #00f7ff; }
+    .btn-outline-sm.danger:hover { border-color: #ff3333; color: #ff3333; }
+</style>

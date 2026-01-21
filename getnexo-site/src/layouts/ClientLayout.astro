@@ -1,426 +1,65 @@
 ---
 export interface Props {
-	title: string;
+    title: string;
 }
 
 const { title } = Astro.props;
 ---
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content="Dashboard do Cliente GetNexo - Gerencie seus projetos e serviços">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
+    <head>
+        <meta charset="utf-8" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="generator" content={Astro.generator} />
+        <title>{title}</title>
+    </head>
+    <body class="bg-gray-50 text-gray-900">
+        <header class="bg-white shadow-sm border-b">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-4">
+                    <div class="flex items-center">
+                        <h1 class="text-2xl font-bold text-gray-900">Portal do Cliente</h1>
+                    </div>
+                    <nav class="flex space-x-4">
+                        <a href="/cliente/hub" class="text-gray-600 hover:text-gray-900">Hub</a>
+                        <a href="/cliente/chamados" class="text-gray-600 hover:text-gray-900">Chamados</a>
+                        <a href="/cliente/compras" class="text-gray-600 hover:text-gray-900">Compras</a>
+                        <a href="/cliente/pontos" class="text-gray-600 hover:text-gray-900">Pontos</a>
+                        <button class="text-gray-600 hover:text-gray-900">Sair</button>
+                    </nav>
+                </div>
+            </div>
+        </header>
 
-		<!-- Fonts -->
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <slot />
+        </main>
 
-		<!-- Styles -->
-		<style>
-			* {
-				box-sizing: border-box;
-				margin: 0;
-				padding: 0;
-			}
+        <!-- Ghost Mode Button -->
+        <button id="ghost-support" class="fixed bottom-4 right-4 w-6 h-6 bg-gray-400 rounded opacity-0 transition-opacity duration-300"
+                title="Suporte">
+            ?
+        </button>
 
-			body {
-				font-family: 'JetBrains Mono', monospace;
-				background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-				color: white;
-				min-height: 100vh;
-				line-height: 1.6;
-				-webkit-font-smoothing: antialiased;
-				-moz-osx-font-smoothing: grayscale;
-			}
+        <style>
+            #ghost-support:hover {
+                opacity: 1 !important;
+            }
+        </style>
 
-			/* Client-specific navbar */
-			.client-nav {
-				background: rgba(15, 23, 42, 0.95);
-				backdrop-filter: blur(20px);
-				border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-				padding: 1rem 2rem;
-				position: fixed;
-				top: 0;
-				left: 0;
-				right: 0;
-				z-index: 1000;
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-			}
-
-			.nav-brand {
-				display: flex;
-				align-items: center;
-				gap: 1rem;
-				font-size: 1.5rem;
-				font-weight: 700;
-				color: #00d4ff;
-			}
-
-			.nav-brand img {
-				width: 40px;
-				height: 40px;
-				border-radius: 8px;
-			}
-
-			.nav-links {
-				display: flex;
-				gap: 2rem;
-				align-items: center;
-			}
-
-			.nav-link {
-				color: #94a3b8;
-				text-decoration: none;
-				font-weight: 600;
-				transition: color 0.3s ease;
-				padding: 0.5rem 1rem;
-				border-radius: 8px;
-			}
-
-			.nav-link:hover,
-			.nav-link.active {
-				color: #00d4ff;
-				background: rgba(0, 212, 255, 0.1);
-			}
-
-			.user-menu {
-				display: flex;
-				align-items: center;
-				gap: 1rem;
-			}
-
-			.notification-badge {
-				background: #f59e0b;
-				color: black;
-				border-radius: 50%;
-				width: 20px;
-				height: 20px;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				font-size: 0.7rem;
-				font-weight: 700;
-				position: relative;
-				top: -8px;
-				right: -8px;
-			}
-
-			.user-avatar {
-				width: 40px;
-				height: 40px;
-				border-radius: 50%;
-				border: 2px solid #00d4ff;
-				cursor: pointer;
-			}
-
-			.user-dropdown {
-				position: absolute;
-				top: 100%;
-				right: 0;
-				background: rgba(15, 23, 42, 0.95);
-				border: 1px solid rgba(255, 255, 255, 0.1);
-				border-radius: 8px;
-				min-width: 150px;
-				padding: 0.5rem 0;
-				box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-				display: none;
-				z-index: 1000;
-			}
-
-			.user-dropdown.show {
-				display: block;
-			}
-
-			.dropdown-item {
-				display: flex;
-				align-items: center;
-				gap: 0.75rem;
-				padding: 0.75rem 1rem;
-				color: #cbd5e1;
-				text-decoration: none;
-				cursor: pointer;
-				transition: all 0.2s ease;
-			}
-
-			.dropdown-item:hover {
-				background: rgba(255, 255, 255, 0.05);
-				color: #00d4ff;
-			}
-
-			/* Sidebar */
-			.client-sidebar {
-				position: fixed;
-				left: 0;
-				top: 80px;
-				width: 280px;
-				height: calc(100vh - 80px);
-				background: rgba(15, 23, 42, 0.95);
-				backdrop-filter: blur(20px);
-				border-right: 1px solid rgba(255, 255, 255, 0.1);
-				padding: 2rem 1.5rem;
-				overflow-y: auto;
-			}
-
-			.sidebar-section {
-				margin-bottom: 2rem;
-			}
-
-			.sidebar-title {
-				color: #94a3b8;
-				font-size: 0.8rem;
-				font-weight: 600;
-				text-transform: uppercase;
-				letter-spacing: 0.5px;
-				margin-bottom: 1rem;
-			}
-
-			.sidebar-link {
-				display: flex;
-				align-items: center;
-				gap: 1rem;
-				padding: 0.75rem 1rem;
-				color: #cbd5e1;
-				text-decoration: none;
-				border-radius: 8px;
-				transition: all 0.3s ease;
-				margin-bottom: 0.25rem;
-			}
-
-			.sidebar-link:hover,
-			.sidebar-link.active {
-				background: rgba(0, 212, 255, 0.1);
-				color: #00d4ff;
-			}
-
-			.sidebar-link.active {
-				background: rgba(0, 212, 255, 0.2);
-				color: #00d4ff;
-				border-left: 3px solid #00d4ff;
-			}
-
-			.sidebar-icon {
-				font-size: 1.2rem;
-				width: 20px;
-				text-align: center;
-			}
-
-			/* Main content */
-			.main-content {
-				margin-left: 280px;
-				margin-top: 80px;
-				min-height: calc(100vh - 80px);
-				background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-			}
-
-			/* Mobile responsiveness */
-			@media (max-width: 1024px) {
-				.client-sidebar {
-					transform: translateX(-100%);
-					transition: transform 0.3s ease;
-				}
-
-				.client-sidebar.open {
-					transform: translateX(0);
-				}
-
-				.main-content {
-					margin-left: 0;
-				}
-
-				.mobile-menu-btn {
-					display: block;
-				}
-			}
-
-			.mobile-menu-btn {
-				display: none;
-				background: none;
-				border: none;
-				color: #00d4ff;
-				font-size: 1.5rem;
-				cursor: pointer;
-			}
-
-			/* Loading animation */
-			@keyframes pulse {
-				0%, 100% { opacity: 1; }
-				50% { opacity: 0.5; }
-			}
-
-			.loading {
-				animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-			}
-		</style>
-	</head>
-	<body>
-		<!-- Navigation -->
-		<nav class="client-nav">
-			<div class="nav-brand">
-				<button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
-				<img src="/assets/scarcity_engine.js" alt="GetNexo" style="display: none;">
-				<span>🚀 GetNexo Pro</span>
-			</div>
-
-			<div class="nav-links">
-				<a href="/dashboard" class="nav-link active">Dashboard</a>
-				<a href="/dashboard/projetos" class="nav-link">Projetos</a>
-				<a href="/dashboard/servicos" class="nav-link">Serviços</a>
-				<a href="/dashboard/suporte" class="nav-link">Suporte</a>
-			</div>
-
-			<div class="user-menu">
-				<div style="position: relative;">
-					<span class="notification-badge">2</span>
-					<span style="font-size: 1.2rem; cursor: pointer;">🔔</span>
-				</div>
-				<img src="https://ui-avatars.com/api/?name=Cliente&background=00d4ff&color=000" alt="Avatar" class="user-avatar" onclick="toggleUserMenu()">
-				<div id="user-dropdown" class="user-dropdown">
-					<div class="dropdown-item" onclick="logout()">
-						<span>🚪</span> Sair
-					</div>
-				</div>
-			</div>
-		</nav>
-
-		<!-- Sidebar -->
-		<aside class="client-sidebar" id="sidebar">
-			<!-- Overview -->
-			<div class="sidebar-section">
-				<div class="sidebar-title">Visão Geral</div>
-				<a href="/dashboard" class="sidebar-link active">
-					<span class="sidebar-icon">📊</span>
-					Dashboard
-				</a>
-				<a href="/dashboard/analytics" class="sidebar-link">
-					<span class="sidebar-icon">📈</span>
-					Analytics
-				</a>
-				<a href="/dashboard/relatorios" class="sidebar-link">
-					<span class="sidebar-icon">📋</span>
-					Relatórios
-				</a>
-			</div>
-
-			<!-- Projects -->
-			<div class="sidebar-section">
-				<div class="sidebar-title">Projetos</div>
-				<a href="/dashboard/projetos" class="sidebar-link">
-					<span class="sidebar-icon">📁</span>
-					Meus Projetos
-				</a>
-				<a href="/dashboard/projetos/novo" class="sidebar-link">
-					<span class="sidebar-icon">➕</span>
-					Novo Projeto
-				</a>
-				<a href="/dashboard/projetos/templates" class="sidebar-link">
-					<span class="sidebar-icon">🎨</span>
-					Templates
-				</a>
-			</div>
-
-			<!-- Services -->
-			<div class="sidebar-section">
-				<div class="sidebar-title">Serviços</div>
-				<a href="/dashboard/servicos" class="sidebar-link">
-					<span class="sidebar-icon">⚙️</span>
-					Serviços Ativos
-				</a>
-				<a href="/dashboard/servicos/loja" class="sidebar-link">
-					<span class="sidebar-icon">🛒</span>
-					Loja de Serviços
-				</a>
-				<a href="/dashboard/servicos/historico" class="sidebar-link">
-					<span class="sidebar-icon">📚</span>
-					Histórico
-				</a>
-			</div>
-
-			<!-- Account -->
-			<div class="sidebar-section">
-				<div class="sidebar-title">Conta</div>
-				<a href="/dashboard/perfil" class="sidebar-link">
-					<span class="sidebar-icon">👤</span>
-					Perfil
-				</a>
-				<a href="/dashboard/faturas" class="sidebar-link">
-					<span class="sidebar-icon">💳</span>
-					Faturas
-				</a>
-				<a href="/dashboard/configuracoes" class="sidebar-link">
-					<span class="sidebar-icon">⚙️</span>
-					Configurações
-				</a>
-			</div>
-
-			<!-- Support -->
-			<div class="sidebar-section">
-				<div class="sidebar-title">Suporte</div>
-				<a href="/dashboard/suporte" class="sidebar-link">
-					<span class="sidebar-icon">🆘</span>
-					Central de Ajuda
-				</a>
-				<a href="/dashboard/suporte/tickets" class="sidebar-link">
-					<span class="sidebar-icon">🎫</span>
-					Meus Tickets
-				</a>
-				<a href="/dashboard/suporte/contato" class="sidebar-link">
-					<span class="sidebar-icon">📞</span>
-					Contato
-				</a>
-			</div>
-		</aside>
-
-		<!-- Main Content -->
-		<main class="main-content">
-			<slot />
-		</main>
-
-		<!-- Scripts -->
-		<script>
-			function toggleSidebar() {
-				const sidebar = document.getElementById('sidebar');
-				sidebar.classList.toggle('open');
-			}
-
-			function toggleUserMenu() {
-				const dropdown = document.getElementById('user-dropdown');
-				dropdown.classList.toggle('show');
-			}
-
-			function logout() {
-				localStorage.removeItem('token');
-				localStorage.removeItem('user');
-				window.location.href = '/login';
-			}
-
-			// Close dropdown when clicking outside
-			document.addEventListener('click', (e) => {
-				const dropdown = document.getElementById('user-dropdown');
-				const avatar = document.querySelector('.user-avatar');
-				if (dropdown && avatar && !dropdown.contains(e.target) && !avatar.contains(e.target)) {
-					dropdown.classList.remove('show');
-				}
-			});
-
-			// Close sidebar on mobile when clicking outside
-			document.addEventListener('click', (e) => {
-				const sidebar = document.getElementById('sidebar');
-				const menuBtn = document.querySelector('.mobile-menu-btn');
-
-				if (window.innerWidth <= 1024 &&
-					!sidebar.contains(e.target) &&
-					!menuBtn.contains(e.target)) {
-					sidebar.classList.remove('open');
-				}
-			});
-		</script>
-	</body>
+        <script>
+            // Ghost mode: show button briefly then hide
+            const ghostBtn = document.getElementById('ghost-support');
+            if (ghostBtn) {
+                setTimeout(() => {
+                    ghostBtn.style.opacity = '1';
+                    setTimeout(() => {
+                        ghostBtn.style.opacity = '0';
+                    }, 3000);
+                }, 2000);
+            }
+        </script>
+    </body>
 </html>

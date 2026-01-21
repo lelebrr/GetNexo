@@ -1,0 +1,110 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import pt from '../../i18n/pt.json';
+import en from '../../i18n/en.json';
+import es from '../../i18n/es.json';
+import fr from '../../i18n/fr.json';
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'pt' } },
+    { params: { lang: 'en' } },
+    { params: { lang: 'es' } },
+    { params: { lang: 'fr' } },
+  ];
+}
+
+const { lang } = Astro.params;
+const translations = { pt, en, es, fr };
+const t = translations[lang];
+
+const pageTitle = `${t.blog.title} | GetNexo`;
+const pageDescription = t.blog.subtitle;
+
+// Mock posts - ideally these would come from a localized collection
+const posts = [
+  {
+    slug: "campanhas",
+    title: lang === 'pt' ? "15 Campanhas Click to WhatsApp que Convertem 300%+" : (lang === 'en' ? "15 Click to WhatsApp Campaigns that Convert 300%+" : "15 Campañas Click to WhatsApp que convierten 300%+"),
+    category: "Ads & Performance",
+    date: "Jan 2026",
+    excerpt: t.hero.subtitle.substring(0, 100) + "...",
+    featured: true
+  },
+  // Add more mock localized posts or fetch from collection
+];
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <div class="blog-index-page">
+    <header class="blog-header">
+      <div class="custom-container">
+        <span class="header-badge animate-fade-in">{t.blog.badge}</span>
+        <h1 class="hero-title animate-title">{t.blog.title.split(' ')[0]} <span class="text-gradient">{t.blog.title.split(' ')[1] || ''}</span></h1>
+        <p class="hero-subtitle animate-fade-in delay-200">
+          {t.blog.subtitle}
+        </p>
+      </div>
+    </header>
+
+    <main class="blog-main">
+      <div class="custom-container">
+        <div class="blog-grid">
+          {posts.map(post => (
+            <article class:list={["blog-card glass-panel", { "featured": post.featured }]}>
+              <div class="card-content">
+                <div class="card-meta">
+                  <span class="card-category">{post.category}</span>
+                  <span class="card-date">{post.date}</span>
+                </div>
+                <h2><a href={`/${lang}/blog/${post.slug}`}>{post.title}</a></h2>
+                <p>{post.excerpt}</p>
+                <a href={`/${lang}/blog/${post.slug}`} class="read-more">
+                  {t.blog.read_more} 
+                  <span class="arrow">→</span>
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <section class="newsletter-section glass-panel">
+          <div class="newsletter-content">
+             <h3>{t.blog.newsletter_title}</h3>
+             <p>{t.blog.newsletter_subtitle}</p>
+             <form class="newsletter-form">
+                <input type="email" placeholder={t.blog.placeholder_email} required />
+                <button type="submit" class="btn-primary-glow">{t.blog.newsletter_button}</button>
+             </form>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</Layout>
+
+<style>
+  .blog-index-page { background: #030712; min-height: 100vh; padding-bottom: 8rem; }
+  .custom-container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+  .blog-header { padding: 10rem 0 6rem; text-align: center; background: radial-gradient(circle at top center, rgba(0, 212, 255, 0.1), transparent 70%); }
+  .header-badge { background: rgba(0, 212, 255, 0.1); color: #00d4ff; border: 1px solid rgba(0, 212, 255, 0.2); padding: 0.5rem 1.2rem; border-radius: 50px; font-size: 0.85rem; font-weight: 700; display: inline-block; margin-bottom: 2rem; }
+  .hero-title { font-size: 4rem; font-weight: 800; margin-bottom: 1.5rem; letter-spacing: -1.5px; }
+  .hero-subtitle { font-size: 1.35rem; color: #94a3b8; max-width: 700px; margin: 0 auto; line-height: 1.6; }
+  .blog-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 2rem; margin-top: -2rem; }
+  .blog-card { padding: 2.5rem; display: flex; flex-direction: column; justify-content: space-between; transition: 0.4s; height: 100%; border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; background: rgba(255,255,255,0.02); }
+  .blog-card:hover { transform: translateY(-8px); border-color: #00d4ff; box-shadow: 0 20px 40px rgba(0, 212, 255, 0.1); }
+  .card-meta { display: flex; justify-content: space-between; margin-bottom: 1.5rem; }
+  .card-category { font-size: 0.75rem; font-weight: 800; color: #00ff9d; }
+  .card-date { font-size: 0.8rem; color: #64748b; }
+  .blog-card h2 { font-size: 1.6rem; font-weight: 800; margin-bottom: 1rem; }
+  .blog-card h2 a { color: white; text-decoration: none; }
+  .blog-card p { color: #94a3b8; font-size: 1rem; margin-bottom: 2rem; }
+  .read-more { display: inline-flex; align-items: center; gap: 0.5rem; color: #fff; font-weight: 700; text-decoration: none; }
+  .read-more:hover { color: #00ff9d; }
+  .newsletter-section { margin-top: 6rem; padding: 5rem 3rem; text-align: center; border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; }
+  .newsletter-content h3 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; }
+  .newsletter-content p { color: #94a3b8; margin-bottom: 2.5rem; }
+  .newsletter-form { display: flex; max-width: 500px; margin: 0 auto; gap: 1rem; }
+  .newsletter-form input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 1rem; border-radius: 12px; color: white; }
+  .btn-primary-glow { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1rem 2rem; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; }
+</style>

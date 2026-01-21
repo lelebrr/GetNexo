@@ -1,0 +1,101 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Blog Management">
+    <div class="blog-header">
+        <div class="search-bar">
+            <input type="text" placeholder="Buscar posts..." />
+        </div>
+        <a href="/admin/blog/edit" class="btn-glow">Criar Novo Post</a>
+    </div>
+
+    <div class="cyber-card blog-list">
+        <table>
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Idioma</th>
+                    <th>Status</th>
+                    <th>Data</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="primary">A Revolução da IA no WhatsApp</td>
+                    <td><span class="flag">🇧🇷 PT</span></td>
+                    <td><span class="status published">Publicado</span></td>
+                    <td>21/01/2026</td>
+                    <td>
+                        <div class="actions">
+                            <a href="/admin/blog/edit" title="Editar" style="text-decoration:none;">✏️</a>
+                            <button title="Excluir" class="delete">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="primary">The Future of Customer Support</td>
+                    <td><span class="flag">🇺🇸 EN</span></td>
+                    <td><span class="status draft">Rascunho</span></td>
+                    <td>20/01/2026</td>
+                    <td>
+                        <div class="actions">
+                            <a href="/admin/blog/edit" title="Editar" style="text-decoration:none;">✏️</a>
+                            <button title="Excluir" class="delete">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</AdminLayout>
+
+<style>
+    .blog-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+        gap: 2rem;
+    }
+
+    .search-bar { flex: 1; }
+    .search-bar input {
+        width: 100%;
+        background: #080808;
+        border: 1px solid #222;
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px;
+        color: #fff;
+    }
+
+    .btn-glow {
+        background: #00f7ff;
+        color: #000;
+        border: none;
+        padding: 0.8rem 2rem;
+        border-radius: 8px;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 0 15px rgba(0, 247, 255, 0.4);
+    }
+
+    .blog-list { padding: 0 !important; overflow-x: auto; }
+    
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; padding: 1.2rem; border-bottom: 1px solid #1a1a1a; font-size: 0.7rem; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+    td { padding: 1.2rem; border-bottom: 1px solid #1a1a1a; font-size: 0.85rem; }
+    
+    tr:hover td { background: rgba(0, 247, 255, 0.02); }
+    
+    .primary { color: #fff; font-weight: 600; }
+    .flag { font-size: 0.8rem; color: #888; }
+    
+    .status { font-size: 0.65rem; padding: 4px 8px; border-radius: 4px; font-weight: 800; }
+    .status.published { background: rgba(0, 255, 157, 0.1); color: #00ff9d; }
+    .status.draft { background: rgba(255, 255, 255, 0.1); color: #888; }
+
+    .actions { display: flex; gap: 0.8rem; }
+    .actions button { background: none; border: none; cursor: pointer; font-size: 1.1rem; filter: grayscale(1); transition: 0.3s; }
+    .actions button:hover { filter: grayscale(0); transform: scale(1.2); }
+</style>

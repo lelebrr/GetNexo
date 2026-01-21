@@ -1,0 +1,155 @@
+---
+import ClientLayout from '../../../layouts/ClientLayout.astro';
+import AnalyticsDashboard from '../../../components/analytics/AnalyticsDashboard.jsx';
+import MagicMap from '../../../components/analytics/MagicMap.jsx';
+import HeatmapChart from '../../../components/analytics/HeatmapChart.jsx';
+---
+
+<ClientLayout title="Dashboard Analytics Avançado - GetNexo Pro">
+    <div class="min-h-screen bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {/* Header */}
+            <div class="text-center mb-12">
+                <div class="inline-block p-8 bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl border border-purple-100">
+                    <h1 class="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-4">
+                        📊 Dashboard Analytics Avançado
+                    </h1>
+                    <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                        Monitore o desempenho completo do seu suporte com métricas avançadas,
+                        gráficos interativos e insights em tempo real.
+                    </p>
+                </div>
+            </div>
+
+            {/* Controles de Período */}
+            <div class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">Analytics de Suporte</h2>
+                    <p class="text-gray-600 mt-1">Dados atualizados em tempo real</p>
+                </div>
+                <div class="flex gap-3">
+                    <select
+                        id="time-range-select"
+                        class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    >
+                        <option value="7d">Últimos 7 dias</option>
+                        <option value="30d" selected>Últimos 30 dias</option>
+                        <option value="90d">Últimos 90 dias</option>
+                        <option value="1y">Último ano</option>
+                    </select>
+                    <button
+                        id="refresh-btn"
+                        class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2 font-medium"
+                    >
+                        <span>🔄</span>
+                        Atualizar
+                    </button>
+                </div>
+            </div>
+
+            {/* Magic Map - Tempo Real */}
+            <div class="mb-8">
+                <MagicMap client:load />
+            </div>
+
+            {/* Heatmaps */}
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <HeatmapChart
+                    pageUrl="/"
+                    dateRange="7d"
+                    heatmapType="click"
+                    title="Heatmap de Cliques - Home"
+                    client:load
+                />
+                <HeatmapChart
+                    pageUrl="/precos"
+                    dateRange="7d"
+                    heatmapType="attention"
+                    title="Heatmap de Atenção - Preços"
+                    client:load
+                />
+            </div>
+
+            {/* Dashboard Analytics */}
+            <AnalyticsDashboard client:load />
+        </div>
+    </div>
+
+    <script>
+        // Script para controlar os controles de período
+        document.getElementById('time-range-select').addEventListener('change', (e) => {
+            // Disparar evento para atualizar o dashboard
+            const event = new CustomEvent('timeRangeChanged', {
+                detail: { range: e.target.value }
+            });
+            window.dispatchEvent(event);
+        });
+
+        document.getElementById('refresh-btn').addEventListener('click', () => {
+            // Disparar evento para recarregar dados
+            const event = new CustomEvent('refreshAnalytics');
+            window.dispatchEvent(event);
+        });
+    </script>
+
+    <style>
+        /* Estilos adicionais para responsividade e acessibilidade */
+        .bg-gradient-to-r {
+            background-size: 200% 200%;
+            animation: gradient-shift 3s ease infinite;
+        }
+
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Foco acessível */
+        button:focus-visible,
+        select:focus-visible {
+            outline: 2px solid #8b5cf6;
+            outline-offset: 2px;
+        }
+
+        /* Animações suaves */
+        .transition-colors {
+            transition-property: color, background-color, border-color;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+
+        /* Responsividade para tablets */
+        @media (max-width: 1024px) {
+            .max-w-7xl {
+                max-width: 100%;
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+        }
+
+        /* Responsividade para mobile */
+        @media (max-width: 640px) {
+            .text-4xl {
+                font-size: 2rem;
+            }
+
+            .p-8 {
+                padding: 1.5rem;
+            }
+
+            .flex-col.sm\\:flex-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .gap-3 {
+                gap: 0.75rem;
+            }
+
+            .px-6.py-2 {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+</ClientLayout>

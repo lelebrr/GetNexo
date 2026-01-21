@@ -1,0 +1,37 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import DashboardConfig from '../../components/admin/DashboardConfig.jsx';
+---
+
+<AdminLayout title="Configuração do Dashboard Analytics - Admin GetNexo Pro">
+    <div class="min-h-screen bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {/* Header */}
+            <div class="text-center mb-8">
+                <div class="inline-block p-6 bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl border border-red-100">
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent mb-2">
+                        ⚙️ Configuração do Dashboard
+                    </h1>
+                    <p class="text-gray-600 text-sm">
+                        Personalize quais gráficos mostrar e em que ordem no dashboard analytics
+                    </p>
+                </div>
+            </div>
+
+            {/* Componente de configuração */}
+            <DashboardConfig client:load />
+        </div>
+    </div>
+
+    <style>
+        .bg-gradient-to-r {
+            background-size: 200% 200%;
+            animation: gradient-shift 3s ease infinite;
+        }
+
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+    </style>
+</AdminLayout>

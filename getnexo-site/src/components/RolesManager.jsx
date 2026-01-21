@@ -10,9 +10,47 @@ const RolesManager = () => {
     const [error, setError] = useState('');
 
     // Form state for new role
-    const [newRole, setNewRole] = useState({ name: '', description: '', permissions: [] });
+    const [newRole, setNewRole] = useState({ name: '', description: '', rbac_level: '', permissions: [] });
 
     const API_URL = import.meta.env.PUBLIC_API_URL || 'https://api.getnexo.com.br';
+
+    const rbacLevels = useMemo(() => ({
+        'super_admin': [
+            'crud_tickets', 'manage_users', 'configure_whitelabel', 'view_reports', 'manage_templates', 'access_audit', 'configure_smtp',
+            'manage_channels', 'configure_ai', 'manage_automation', 'view_analytics', 'manage_tags', 'handle_subtickets', 'manage_cost_timer',
+            'access_audit_trail', 'manage_reminders', 'manage_hr_feedback', 'configure_domain', 'manage_attachments', 'transfer_tickets',
+            'pause_sla', 'merge_duplicates', 'manage_agent_folders', 'digital_signature'
+        ],
+        'admin': [
+            'crud_tickets', 'manage_users', 'configure_whitelabel', 'view_reports', 'manage_templates', 'access_audit', 'configure_smtp',
+            'manage_channels', 'configure_ai', 'manage_automation', 'view_analytics', 'manage_tags', 'handle_subtickets', 'manage_cost_timer',
+            'access_audit_trail', 'manage_reminders', 'manage_hr_feedback', 'manage_attachments', 'transfer_tickets', 'pause_sla', 'merge_duplicates',
+            'manage_agent_folders', 'digital_signature'
+        ],
+        'manager': [
+            'crud_tickets', 'manage_users', 'view_reports', 'manage_templates', 'view_analytics', 'manage_tags', 'handle_subtickets',
+            'manage_cost_timer', 'access_audit_trail', 'manage_reminders', 'manage_hr_feedback', 'manage_attachments', 'transfer_tickets',
+            'pause_sla', 'merge_duplicates', 'manage_agent_folders', 'digital_signature'
+        ],
+        'agent': [
+            'crud_tickets', 'manage_templates', 'manage_tags', 'handle_subtickets', 'manage_cost_timer', 'manage_reminders',
+            'manage_attachments', 'transfer_tickets', 'pause_sla', 'merge_duplicates', 'manage_agent_folders', 'digital_signature'
+        ],
+        'editor': [
+            'manage_templates', 'manage_tags', 'manage_reminders', 'manage_attachments'
+        ],
+        'viewer': [
+            'view_reports', 'view_analytics'
+        ],
+        'client_admin': [
+            'crud_tickets', 'manage_users', 'configure_whitelabel', 'view_reports', 'manage_templates', 'manage_tags', 'handle_subtickets',
+            'manage_cost_timer', 'manage_reminders', 'manage_attachments', 'transfer_tickets', 'pause_sla', 'merge_duplicates',
+            'manage_agent_folders', 'digital_signature'
+        ],
+        'client_user': [
+            'crud_tickets', 'manage_templates', 'manage_tags', 'handle_subtickets', 'manage_attachments', 'transfer_tickets'
+        ]
+    }), []);
 
     useEffect(() => {
         fetchData();
@@ -41,13 +79,21 @@ const RolesManager = () => {
         }
     };
 
+    const handleRbacLevelChange = (level) => {
+        setNewRole(prev => ({
+            ...prev,
+            rbac_level: level,
+            permissions: level ? rbacLevels[level] || [] : []
+        }));
+    };
+
     const handleCreateRole = async (e) => {
         e.preventDefault();
         try {
             const token = localStorage.getItem('omnichat_token');
             const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
             await axios.post(`${API_URL}/api/roles`, newRole, { headers });
-            setNewRole({ name: '', description: '', permissions: [] });
+            setNewRole({ name: '', description: '', rbac_level: '', permissions: [] });
             fetchData();
         } catch (error) {
             alert('Erro ao criar esfera: ' + (error.response?.data?.error || error.message));
@@ -76,9 +122,10 @@ const RolesManager = () => {
     };
 
     const availablePermissions = [
-        'conversations.view', 'conversations.manage',
-        'contacts.manage', 'reports.view',
-        'store.manage', 'ai.config', 'system.admin'
+        'crud_tickets', 'manage_users', 'configure_whitelabel', 'view_reports', 'manage_templates', 'access_audit', 'configure_smtp',
+        'manage_channels', 'configure_ai', 'manage_automation', 'view_analytics', 'manage_tags', 'handle_subtickets', 'manage_cost_timer',
+        'access_audit_trail', 'manage_reminders', 'manage_hr_feedback', 'configure_domain', 'manage_attachments', 'transfer_tickets',
+        'pause_sla', 'merge_duplicates', 'manage_agent_folders', 'digital_signature'
     ];
 
     if (loading && roles.length === 0) {
@@ -103,8 +150,8 @@ const RolesManager = () => {
                         key={v.id}
                         onClick={() => setView(v.id)}
                         className={`px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center gap-2 ${view === v.id
-                                ? 'bg-gradient-to-r from-[#00d4ff] to-[#00ff9d] text-black shadow-lg shadow-cyan-500/20'
-                                : 'text-gray-500 hover:text-white'
+                            ? 'bg-gradient-to-r from-[#00d4ff] to-[#00ff9d] text-black shadow-lg shadow-cyan-500/20'
+                            : 'text-gray-500 hover:text-white'
                             }`}
                     >
                         <span>{v.icon}</span> {v.label}
@@ -136,6 +183,24 @@ const RolesManager = () => {
                                     />
                                 </div>
                                 <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-[#00d4ff] uppercase tracking-widest">Nível RBAC Base</label>
+                                    <select
+                                        className="w-full bg-white/5 border border-white/10 p-4 rounded-xl text-white outline-none focus:border-[#00d4ff] font-bold"
+                                        value={newRole.rbac_level}
+                                        onChange={e => handleRbacLevelChange(e.target.value)}
+                                    >
+                                        <option value="">Escolher nível base (opcional)</option>
+                                        <option value="super_admin">Super Admin - Acesso Total</option>
+                                        <option value="admin">Admin - Maioria das Funcionalidades</option>
+                                        <option value="manager">Manager - Gerenciamento de Equipe</option>
+                                        <option value="agent">Agent - Suporte</option>
+                                        <option value="editor">Editor - Conteúdo</option>
+                                        <option value="viewer">Viewer - Somente Leitura</option>
+                                        <option value="client_admin">Client Admin - Admin do Cliente</option>
+                                        <option value="client_user">Client User - Acesso Limitado</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-2">
                                     <label className="text-[10px] font-black text-[#00d4ff] uppercase tracking-widest">Descrição Tática</label>
                                     <textarea
                                         className="w-full bg-white/5 border border-white/10 p-4 rounded-xl text-white outline-none focus:border-[#00d4ff] h-24 font-medium resize-none"
@@ -146,16 +211,18 @@ const RolesManager = () => {
                                 </div>
 
                                 <div className="space-y-4">
-                                    <label className="text-[10px] font-black text-[#00d4ff] uppercase tracking-widest block">Permissões Habilitadas</label>
-                                    <div className="grid grid-cols-1 gap-2">
+                                    <label className="text-[10px] font-black text-[#00d4ff] uppercase tracking-widest block">
+                                        Permissões Habilitadas {newRole.rbac_level && `(Baseado em: ${newRole.rbac_level.replace('_', ' ').toUpperCase()})`}
+                                    </label>
+                                    <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto">
                                         {availablePermissions.map(p => (
                                             <button
                                                 key={p}
                                                 type="button"
                                                 onClick={() => togglePermission(p)}
                                                 className={`p-3 rounded-lg border text-left flex items-center justify-between transition-all ${newRole.permissions.includes(p)
-                                                        ? 'bg-[#00d4ff]/10 border-[#00d4ff]/30 text-[#00d4ff]'
-                                                        : 'bg-white/5 border-white/5 text-gray-500 hover:border-white/20'
+                                                    ? 'bg-[#00d4ff]/10 border-[#00d4ff]/30 text-[#00d4ff]'
+                                                    : 'bg-white/5 border-white/5 text-gray-500 hover:border-white/20'
                                                     }`}
                                             >
                                                 <span className="text-[10px] font-black uppercase tracking-widest">{p}</span>
@@ -235,8 +302,8 @@ const RolesManager = () => {
                                         <td className="p-6 text-gray-400 font-mono text-xs">{u.email}</td>
                                         <td className="p-6">
                                             <span className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border ${u.role_name === 'Admin'
-                                                    ? 'bg-purple-500/10 text-purple-400 border-purple-500/20'
-                                                    : 'bg-cyan-500/10 text-[#00d4ff] border-cyan-500/20'
+                                                ? 'bg-purple-500/10 text-purple-400 border-purple-500/20'
+                                                : 'bg-cyan-500/10 text-[#00d4ff] border-cyan-500/20'
                                                 }`}>
                                                 {u.role_name || 'Agente Base'}
                                             </span>

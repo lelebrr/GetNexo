@@ -1,0 +1,17 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { DesignSystemConfigWithProviders } from '../../design-system/admin/DesignSystemConfig';
+---
+
+<AdminLayout title="Design System - Configuração">
+  <div class="design-system-admin">
+    <DesignSystemConfigWithProviders client:load />
+  </div>
+</AdminLayout>
+
+<style>
+  .design-system-admin {
+    min-height: 100vh;
+    background: var(--bg-primary, #ffffff);
+  }
+</style>

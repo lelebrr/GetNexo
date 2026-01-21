@@ -1,0 +1,48 @@
+/* Template base para white-label CSS */
+
+:root {
+    --wl-primary:
+        /*PRIMARY_COLOR*/
+    ;
+    --wl-secondary:
+        /*SECONDARY_COLOR*/
+    ;
+    --wl-accent:
+        /*ACCENT_COLOR*/
+    ;
+    --wl-background:
+        /*BACKGROUND_COLOR*/
+    ;
+}
+
+/* Estilos base do layout */
+body {
+    background-color: var(--wl-background) !important;
+}
+
+/*CUSTOM_CSS*/
+
+/* Estilos específicos para elementos white-label */
+.logo-text {
+    color: var(--wl-primary) !important;
+}
+
+.btn-primary {
+    background-color: var(--wl-primary) !important;
+    border-color: var(--wl-primary) !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--wl-secondary) !important;
+}
+
+.text-gradient {
+    background: linear-gradient(90deg, var(--wl-primary), var(--wl-accent)) !important;
+    background-clip: text !important;
+    -webkit-background-clip: text !important;
+    color: transparent !important;
+}
+
+/*BACKGROUND_STYLES*/
+
+/*LOGO_STYLES*/
