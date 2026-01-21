@@ -1,0 +1,123 @@
+version: '3.8'
+
+services:
+  # --- Frontend (GetNexo Site & Admin) ---
+  frontend:
+    build: ./getnexo-site
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./getnexo-site:/app
+    ports:
+      - "3000:4321" # Internally exposed on 3000 (mapped to Astro's 4321)
+    environment:
+      - VITE_API_URL=https://api.getnexo.com.br
+      - NODE_ENV=production
+      - HOST=0.0.0.0
+      - PORT=4321
+    command: npm run start
+
+  # --- Backend (Chat API & Multi-IA) ---
+  backend:
+    build: ./chat-api
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./chat-api:/app
+      - ./omninchat.db:/app/omninchat.db
+      - /app/node_modules
+    ports:
+      - "8080:3006" # API Port
+    depends_on:
+      - db
+      - redis
+      - evolution
+    environment:
+      - NODE_ENV=production
+      - PORT=3006
+      - DATABASE_URL=postgres://getnexo:${POSTGRES_PASSWORD}@db:5432/getnexo_db
+      - REDIS_URL=redis://redis:6379
+      - EVOLUTION_URL=http://evolution:8080
+      - EVOLUTION_API_KEY=${EVOLUTION_API_KEY}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      # Grok/DeepSeek keys would go here
+    command: node server.js
+
+  # --- Database (PostgreSQL) ---
+  db:
+    image: postgres:15-alpine
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: getnexo
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: getnexo_db
+
+  # --- Redis (Cache & Queue) ---
+  redis:
+    image: redis:alpine
+    restart: always
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+
+  # --- Evolution API (WhatsApp) ---
+  evolution:
+    image: atendai/evolution-api:v2.1.1
+    restart: always
+    ports:
+      - "3002:8080"
+    depends_on:
+      - db
+      - redis
+    environment:
+      - AUTHENTICATION_API_KEY=${EVOLUTION_API_KEY}
+      - DATABASE_PROVIDER=postgresql
+      - DATABASE_CONNECTION_URI=postgresql://getnexo:${POSTGRES_PASSWORD}@db:5432/getnexo_db
+      - REDIS_ENABLED=true
+      - REDIS_URI=redis://redis:6379
+      - SERVER_URL=http://localhost:3002
+
+  # --- n8n (Workflow Automation) ---
+  n8n:
+    image: n8nio/n8n
+    restart: always
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_HOST=n8n.getnexo.com.br
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=https
+      - NODE_ENV=production
+      - WEBHOOK_URL=https://n8n.getnexo.com.br/
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+  # --- Nginx (Reverse Proxy) ---
+  nginx:
+    image: nginx:latest
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - frontend
+      - backend
+      - n8n
+
+  # --- Cloudflared (Tunnel - Optional but recommended) ---
+  cloudflared:
+    image: cloudflare/cloudflared
+    restart: always
+    command: tunnel run
+    network_mode: host
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARED_TOKEN}
+
+volumes:
+  postgres_data:
+  redis_data:
+  n8n_data:
