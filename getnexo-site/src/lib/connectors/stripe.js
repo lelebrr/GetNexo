@@ -1,14 +1,12 @@
 // Stripe Payment Gateway Connector
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || 'sk_test_mock';
 
-export class StripeConnector {
-    private apiKey: string;
-
-    constructor(apiKey: string = STRIPE_SECRET_KEY) {
+class StripeConnector {
+    constructor(apiKey = STRIPE_SECRET_KEY) {
         this.apiKey = apiKey;
     }
 
-    async createPaymentIntent(amount: number, currency: string = 'brl') {
+    async createPaymentIntent(amount, currency = 'brl') {
         // Mock implementation - replace with real Stripe API call
         const paymentIntent = {
             id: `pi_mock_${Date.now()}`,
@@ -21,7 +19,7 @@ export class StripeConnector {
         return paymentIntent;
     }
 
-    async confirmPayment(paymentIntentId: string) {
+    async confirmPayment(paymentIntentId) {
         // Mock implementation
         return {
             id: paymentIntentId,
@@ -29,7 +27,7 @@ export class StripeConnector {
         };
     }
 
-    async createCustomer(email: string, name: string) {
+    async createCustomer(email, name) {
         // Mock implementation
         return {
             id: `cus_mock_${Date.now()}`,
@@ -39,7 +37,7 @@ export class StripeConnector {
         };
     }
 
-    async getPaymentMethods(customerId: string) {
+    async getPaymentMethods(customerId) {
         // Mock implementation
         return [
             {
@@ -52,4 +50,17 @@ export class StripeConnector {
             }
         ];
     }
+
+    // Methods for integration with AdvancedArchitectureEngine
+    initialize(apiKey) {
+        this.apiKey = apiKey;
+        console.log('💳 Stripe Connector initialized');
+    }
+
+    getStats() {
+        return { status: 'ready', mode: 'test' };
+    }
 }
+
+const stripeConnector = new StripeConnector();
+module.exports = stripeConnector;

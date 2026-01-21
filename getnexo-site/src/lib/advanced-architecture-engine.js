@@ -27,31 +27,101 @@ const cicdPipelinesEngine = require('./cicd-pipelines-engine');
 const infrastructureAsCodeEngine = require('./infrastructure-as-code-engine');
 const cloudServicesSimulatorEngine = require('./cloud-services-simulator-engine');
 
+// Engines de Resiliência e Automação
+const advancedSelfHealing = require('./advanced-self-healing');
+const failoverTestingEngine = require('./failover-testing-engine');
+const chaosEngineering = require('./chaos-engineering');
+const gameDayEngine = require('./game-day-engine');
+const capacityPlanningEngine = require('./capacity-planning-engine');
+const intelligentLoadBalancer = require('./intelligent-load-balancer');
+const automatedRunbooks = require('./automated-runbooks');
+const backupTestingEngine = require('./backup-testing-engine');
+const autoScaling = require('./automation/auto-scaling');
+const autoRollback = require('./automation/auto-rollback');
+const autoRestart = require('./automation/auto-restart');
+
+// Engines de Monitoramento
+const advancedAlerts = require('./advanced-alerts');
+const resilienceDashboard = require('./resilience-dashboard');
+const kpis = require('./kpis');
+const metrics = require('./metrics');
+const logger = require('./logger');
+const onCallRotation = require('./on-call-rotation');
+
+// Engines de Segurança e Integração
+const auth = require('./auth');
+const permissions = require('./permissions');
+const webauthn = require('./webauthn');
+const erpConnector = require('./connectors/erp');
+const stripeConnector = require('./connectors/stripe');
+
+// Engines de Infraestrutura
+const kubernetesOrchestrationEngine = require('./kubernetes-orchestration-engine');
+const loadTestingEngine = require('./load-testing-engine');
+
 class AdvancedArchitectureEngine {
     constructor() {
+        // Helper para normalizar engines (lidar com ESM default e garantir instância)
+        const normalize = (engine) => {
+            const e = engine.default || engine;
+            return typeof e === 'function' ? new e() : e;
+        };
+
         this.engines = {
-            eventDriven: eventDrivenEngine,
-            messageQueue: messageQueueEngine,
-            cqrs: cqrsEngine,
-            ddd: dddEngine,
-            microservices: microservicesEngine,
-            apiGateway: apiGatewayEngine,
-            serviceDiscovery: serviceDiscoveryEngine,
-            circuitBreaker: circuitBreakerEngine,
-            bulkhead: bulkheadEngine,
-            rateLimiting: rateLimitingEngine,
-            caching: cachingEngine,
-            databaseSharding: databaseShardingEngine,
+            eventDriven: normalize(eventDrivenEngine),
+            messageQueue: normalize(messageQueueEngine),
+            cqrs: normalize(cqrsEngine),
+            ddd: normalize(dddEngine),
+            microservices: normalize(microservicesEngine),
+            apiGateway: normalize(apiGatewayEngine),
+            serviceDiscovery: normalize(serviceDiscoveryEngine),
+            circuitBreaker: normalize(circuitBreakerEngine),
+            bulkhead: normalize(bulkheadEngine),
+            rateLimiting: normalize(rateLimitingEngine),
+            caching: normalize(cachingEngine),
+            databaseSharding: normalize(databaseShardingEngine),
             // Novos engines
-            etlDataPipelines: etlDataPipelinesEngine,
-            dataArchitecture: dataArchitectureEngine,
-            olapDataMining: olapDataMiningEngine,
-            mlModels: mlModelsEngine,
-            abTestingFeatureFlags: abTestingFeatureFlagsEngine,
-            canaryBlueGreen: canaryBlueGreenEngine,
-            cicdPipelines: cicdPipelinesEngine,
-            infrastructureAsCode: infrastructureAsCodeEngine,
-            cloudServicesSimulator: cloudServicesSimulatorEngine
+            etlDataPipelines: normalize(etlDataPipelinesEngine),
+            dataArchitecture: normalize(dataArchitectureEngine),
+            olapDataMining: normalize(olapDataMiningEngine),
+            mlModels: normalize(mlModelsEngine),
+            abTestingFeatureFlags: normalize(abTestingFeatureFlagsEngine),
+            canaryBlueGreen: normalize(canaryBlueGreenEngine),
+            cicdPipelines: normalize(cicdPipelinesEngine),
+            infrastructureAsCode: normalize(infrastructureAsCodeEngine),
+            cloudServicesSimulator: normalize(cloudServicesSimulatorEngine),
+
+            // Resiliência e Automação
+            advancedSelfHealing: normalize(advancedSelfHealing),
+            failoverTesting: normalize(failoverTestingEngine),
+            chaosEngineering: normalize(chaosEngineering),
+            gameDay: normalize(gameDayEngine),
+            capacityPlanning: normalize(capacityPlanningEngine),
+            intelligentLoadBalancer: normalize(intelligentLoadBalancer),
+            automatedRunbooks: normalize(automatedRunbooks),
+            backupTesting: normalize(backupTestingEngine),
+            autoScaling: normalize(autoScaling),
+            autoRollback: normalize(autoRollback),
+            autoRestart: normalize(autoRestart),
+
+            // Monitoramento
+            advancedAlerts: normalize(advancedAlerts),
+            resilienceDashboard: normalize(resilienceDashboard),
+            kpis: normalize(kpis),
+            metrics: normalize(metrics),
+            logger: normalize(logger),
+            onCallRotation: normalize(onCallRotation),
+
+            // Segurança e Integração
+            auth: normalize(auth),
+            permissions: normalize(permissions),
+            webauthn: normalize(webauthn),
+            erpConnector: normalize(erpConnector),
+            stripeConnector: normalize(stripeConnector),
+
+            // Infraestrutura
+            kubernetesOrchestration: normalize(kubernetesOrchestrationEngine),
+            loadTesting: normalize(loadTestingEngine)
         };
 
         this.orchestrations = new Map(); // Cenários de orquestração
@@ -167,6 +237,126 @@ class AdvancedArchitectureEngine {
         // 21. Configurar Cloud Services Simulator
         if (config.cloudServicesSimulator) {
             this.setupCloudServicesSimulator(config.cloudServicesSimulator);
+        }
+
+        // 22. Configurar Advanced Self-Healing
+        if (config.advancedSelfHealing) {
+            this.setupAdvancedSelfHealing(config.advancedSelfHealing);
+        }
+
+        // 23. Configurar Failover Testing
+        if (config.failoverTesting) {
+            this.setupFailoverTesting(config.failoverTesting);
+        }
+
+        // 24. Configurar Chaos Engineering
+        if (config.chaosEngineering) {
+            this.setupChaosEngineering(config.chaosEngineering);
+        }
+
+        // 25. Configurar Game Day
+        if (config.gameDay) {
+            this.setupGameDay(config.gameDay);
+        }
+
+        // 26. Configurar Capacity Planning
+        if (config.capacityPlanning) {
+            this.setupCapacityPlanning(config.capacityPlanning);
+        }
+
+        // 27. Configurar Intelligent Load Balancer
+        if (config.intelligentLoadBalancer) {
+            this.setupIntelligentLoadBalancer(config.intelligentLoadBalancer);
+        }
+
+        // 28. Configurar Automated Runbooks
+        if (config.automatedRunbooks) {
+            this.setupAutomatedRunbooks(config.automatedRunbooks);
+        }
+
+        // 29. Configurar Backup Testing
+        if (config.backupTesting) {
+            this.setupBackupTesting(config.backupTesting);
+        }
+
+        // 30. Configurar Auto Scaling
+        if (config.autoScaling) {
+            this.setupAutoScaling(config.autoScaling);
+        }
+
+        // 31. Configurar Auto Rollback
+        if (config.autoRollback) {
+            this.setupAutoRollback(config.autoRollback);
+        }
+
+        // 32. Configurar Auto Restart
+        if (config.autoRestart) {
+            this.setupAutoRestart(config.autoRestart);
+        }
+
+        // 33. Configurar Advanced Alerts
+        if (config.advancedAlerts) {
+            this.setupAdvancedAlerts(config.advancedAlerts);
+        }
+
+        // 34. Configurar Resilience Dashboard
+        if (config.resilienceDashboard) {
+            this.setupResilienceDashboard(config.resilienceDashboard);
+        }
+
+        // 35. Configurar KPIs
+        if (config.kpis) {
+            this.setupKPIs(config.kpis);
+        }
+
+        // 36. Configurar Metrics
+        if (config.metrics) {
+            this.setupMetrics(config.metrics);
+        }
+
+        // 37. Configurar Logger
+        if (config.logger) {
+            this.setupLogger(config.logger);
+        }
+
+        // 38. Configurar On-Call Rotation
+        if (config.onCallRotation) {
+            this.setupOnCallRotation(config.onCallRotation);
+        }
+
+        // 39. Configurar Auth
+        if (config.auth) {
+            this.setupAuth(config.auth);
+        }
+
+        // 40. Configurar Permissions
+        if (config.permissions) {
+            this.setupPermissions(config.permissions);
+        }
+
+        // 41. Configurar WebAuthn
+        if (config.webauthn) {
+            this.setupWebAuthn(config.webauthn);
+        }
+
+        // 42. Configurar ERP Connector
+        if (config.erpConnector) {
+            this.setupERPConnector(config.erpConnector);
+        }
+
+        // 43. Configurar Stripe Connector
+        if (config.stripeConnector) {
+            this.setupStripeConnector(config.stripeConnector);
+        }
+
+        // 44. Configurar Kubernetes Orchestration
+        if (config.kubernetesOrchestration) {
+            this.setupKubernetesOrchestration(config.kubernetesOrchestration);
+        }
+
+        // 45. Configurar Load Testing
+        if (config.loadTesting) {
+            this.setupLoadTesting(config.loadTesting);
         }
 
         console.log('Advanced Architecture Engine initialized successfully');
@@ -698,8 +888,268 @@ class AdvancedArchitectureEngine {
     setupCloudServicesSimulator(config) {
         // A configuração inicial pode ser mínima, pois o simulador
         // cria recursos sob demanda
-
         console.log('Cloud Services Simulator configured');
+    }
+
+    /**
+     * Configura Advanced Self-Healing
+     */
+    setupAdvancedSelfHealing(config) {
+        if (config.models) {
+            for (const [modelId, modelConfig] of Object.entries(config.models)) {
+                this.engines.advancedSelfHealing.registerModel(modelId, modelConfig);
+            }
+        }
+        console.log('Advanced Self-Healing configured');
+    }
+
+    /**
+     * Configura Failover Testing
+     */
+    setupFailoverTesting(config) {
+        if (config.scenarios) {
+            for (const [scenarioId, scenarioConfig] of Object.entries(config.scenarios)) {
+                this.engines.failoverTesting.createScenario(scenarioId, scenarioConfig);
+            }
+        }
+        console.log('Failover Testing configured');
+    }
+
+    /**
+     * Configura Chaos Engineering
+     */
+    setupChaosEngineering(config) {
+        if (config.experiments) {
+            for (const [experimentId, experimentConfig] of Object.entries(config.experiments)) {
+                this.engines.chaosEngineering.createExperiment(experimentId, experimentConfig);
+            }
+        }
+        console.log('Chaos Engineering configured');
+    }
+
+    /**
+     * Configura Game Day
+     */
+    setupGameDay(config) {
+        if (config.drills) {
+            for (const [drillId, drillConfig] of Object.entries(config.drills)) {
+                this.engines.gameDay.createDrill(drillId, drillConfig);
+            }
+        }
+        console.log('Game Day configured');
+    }
+
+    /**
+     * Configura Capacity Planning
+     */
+    setupCapacityPlanning(config) {
+        if (config) {
+            Object.assign(this.engines.capacityPlanning.config, config);
+        }
+        console.log('Capacity Planning configured');
+    }
+
+    /**
+     * Configura Intelligent Load Balancer
+     */
+    /**
+     * Configura Intelligent Load Balancer
+     */
+    setupIntelligentLoadBalancer(config) {
+        if (config) {
+            Object.assign(this.engines.intelligentLoadBalancer.config, config);
+        }
+        console.log('Intelligent Load Balancer configured');
+    }
+
+    /**
+     * Configura Automated Runbooks
+     */
+    setupAutomatedRunbooks(config) {
+        // Runbooks são carregados automaticamente via JSON
+        console.log('Automated Runbooks configured');
+    }
+
+    /**
+     * Configura Backup Testing
+     */
+    setupBackupTesting(config) {
+        if (config.jobs && this.engines.backupTesting.createJob) {
+            for (const [jobId, jobConfig] of Object.entries(config.jobs)) {
+                this.engines.backupTesting.createJob(jobId, jobConfig);
+            }
+        }
+        console.log('Backup Testing configured');
+    }
+
+    /**
+     * Configura Auto Scaling
+     */
+    setupAutoScaling(config) {
+        if (config.groups && this.engines.autoScaling.createScalingGroup) {
+            for (const [groupId, groupConfig] of Object.entries(config.groups)) {
+                this.engines.autoScaling.createScalingGroup(groupId, groupConfig);
+            }
+        }
+        console.log('Auto Scaling configured');
+    }
+
+    /**
+     * Configura Auto Rollback
+     */
+    setupAutoRollback(config) {
+        if (config.policies && this.engines.autoRollback.registerPolicy) {
+            for (const [policyId, policyConfig] of Object.entries(config.policies)) {
+                this.engines.autoRollback.registerPolicy(policyId, policyConfig);
+            }
+        }
+        console.log('Auto Rollback configured');
+    }
+
+    /**
+     * Configura Auto Restart
+     */
+    setupAutoRestart(config) {
+        if (config.strategies && this.engines.autoRestart.registerStrategy) {
+            for (const [strategyId, strategyConfig] of Object.entries(config.strategies)) {
+                this.engines.autoRestart.registerStrategy(strategyId, strategyConfig);
+            }
+        }
+        console.log('Auto Restart configured');
+    }
+
+    /**
+     * Configura Advanced Alerts
+     */
+    setupAdvancedAlerts(config) {
+        if (config.rules && this.engines.advancedAlerts.createRule) {
+            for (const [ruleId, ruleConfig] of Object.entries(config.rules)) {
+                this.engines.advancedAlerts.createRule(ruleId, ruleConfig);
+            }
+        }
+        console.log('Advanced Alerts configured');
+    }
+
+    /**
+     * Configura Resilience Dashboard
+     */
+    setupResilienceDashboard(config) {
+        if (config.widgets && this.engines.resilienceDashboard.addWidget) {
+            for (const [widgetId, widgetConfig] of Object.entries(config.widgets)) {
+                this.engines.resilienceDashboard.addWidget(widgetId, widgetConfig);
+            }
+        }
+        console.log('Resilience Dashboard configured');
+    }
+
+    /**
+     * Configura KPIs
+     */
+    setupKPIs(config) {
+        // KPIs são baseados em dados de negócio estáticos ou dinâmicos
+        console.log('KPIs configured');
+    }
+
+    /**
+     * Configura Metrics
+     */
+    setupMetrics(config) {
+        // Métricas usam prom-client e registro global
+        console.log('Metrics configured');
+    }
+
+    /**
+     * Configura Logger
+     */
+    setupLogger(config) {
+        if (config.level) {
+            this.engines.logger.level = config.level;
+        }
+        console.log('Logger configured');
+    }
+
+    /**
+     * Configura On-Call Rotation
+     */
+    setupOnCallRotation(config) {
+        if (config.rotations && this.engines.onCallRotation.createRotation) {
+            for (const [rotationId, rotationConfig] of Object.entries(config.rotations)) {
+                this.engines.onCallRotation.createRotation(rotationId, rotationConfig);
+            }
+        }
+        console.log('On-Call Rotation configured');
+    }
+
+    /**
+     * Configura Auth
+     */
+    setupAuth(config) {
+        // Multi-provider auth configurado via env vars
+        console.log('Auth configured');
+    }
+
+    /**
+     * Configura Permissions
+     */
+    setupPermissions(config) {
+        // Roles definidas estaticamente
+        console.log('Permissions configured');
+    }
+
+    /**
+     * Configura WebAuthn
+     */
+    setupWebAuthn(config) {
+        if (config.relyingParty && this.engines.webauthn.configureRP) {
+            this.engines.webauthn.configureRP(config.relyingParty);
+        }
+        console.log('WebAuthn configured');
+    }
+
+    /**
+     * Configura ERP Connector
+     */
+    setupERPConnector(config) {
+        if (config.connections) {
+            for (const [connId, connConfig] of Object.entries(config.connections)) {
+                this.engines.erpConnector.connect(connId, connConfig);
+            }
+        }
+        console.log('ERP Connector configured');
+    }
+
+    /**
+     * Configura Stripe Connector
+     */
+    setupStripeConnector(config) {
+        if (config.apiKey) {
+            this.engines.stripeConnector.initialize(config.apiKey);
+        }
+        console.log('Stripe Connector configured');
+    }
+
+    /**
+     * Configura Kubernetes Orchestration
+     */
+    setupKubernetesOrchestration(config) {
+        if (config.clusters) {
+            for (const [clusterId, clusterConfig] of Object.entries(config.clusters)) {
+                this.engines.kubernetesOrchestration.registerCluster(clusterId, clusterConfig);
+            }
+        }
+        console.log('Kubernetes Orchestration configured');
+    }
+
+    /**
+     * Configura Load Testing
+     */
+    setupLoadTesting(config) {
+        if (config.plans) {
+            for (const [planId, planConfig] of Object.entries(config.plans)) {
+                this.engines.loadTesting.createPlan(planId, planConfig);
+            }
+        }
+        console.log('Load Testing configured');
     }
 
     /**
@@ -883,30 +1333,19 @@ class AdvancedArchitectureEngine {
      * Obtém estatísticas completas da arquitetura
      */
     getArchitectureStats() {
-        return {
-            eventDriven: this.engines.eventDriven.getStats(),
-            messageQueue: this.engines.messageQueue.getStats(),
-            cqrs: this.engines.cqrs.getStats(),
-            ddd: this.engines.ddd.getStats(),
-            microservices: this.engines.microservices.getStats(),
-            apiGateway: this.engines.apiGateway.getStats(),
-            serviceDiscovery: this.engines.serviceDiscovery.getStats(),
-            circuitBreaker: this.engines.circuitBreaker.getStats(),
-            bulkhead: this.engines.bulkhead.getStats(),
-            rateLimiting: this.engines.rateLimiting.getStats(),
-            caching: this.engines.caching.getStats(),
-            databaseSharding: this.engines.databaseSharding.getStats(),
-            etlDataPipelines: this.engines.etlDataPipelines.getStats(),
-            dataArchitecture: this.engines.dataArchitecture.getStats(),
-            olapDataMining: this.engines.olapDataMining.getStats(),
-            mlModels: this.engines.mlModels.getStats(),
-            abTestingFeatureFlags: this.engines.abTestingFeatureFlags.getStats(),
-            canaryBlueGreen: this.engines.canaryBlueGreen.getStats(),
-            cicdPipelines: this.engines.cicdPipelines.getStats(),
-            infrastructureAsCode: this.engines.infrastructureAsCode.getStats(),
-            cloudServicesSimulator: this.engines.cloudServicesSimulator.getStats(),
+        const stats = {
             operations: Object.fromEntries(this.monitoring)
         };
+
+        for (const [name, engine] of Object.entries(this.engines)) {
+            if (engine.getStats) {
+                stats[name] = engine.getStats();
+            } else {
+                stats[name] = { status: 'active' };
+            }
+        }
+
+        return stats;
     }
 
     /**
@@ -915,32 +1354,17 @@ class AdvancedArchitectureEngine {
     async healthCheck() {
         const results = {};
 
-        try {
-            results.databaseSharding = await this.engines.databaseSharding.healthCheck();
-        } catch (error) {
-            results.databaseSharding = { error: error.message };
+        for (const [name, engine] of Object.entries(this.engines)) {
+            try {
+                if (engine.healthCheck) {
+                    results[name] = await engine.healthCheck();
+                } else {
+                    results[name] = { status: 'healthy' };
+                }
+            } catch (error) {
+                results[name] = { status: 'unhealthy', error: error.message };
+            }
         }
-
-        results.eventDriven = { status: 'healthy' };
-        results.messageQueue = { status: 'healthy' };
-        results.cqrs = { status: 'healthy' };
-        results.ddd = { status: 'healthy' };
-        results.microservices = { status: 'healthy' };
-        results.apiGateway = { status: 'healthy' };
-        results.serviceDiscovery = { status: 'healthy' };
-        results.circuitBreaker = { status: 'healthy' };
-        results.bulkhead = { status: 'healthy' };
-        results.rateLimiting = { status: 'healthy' };
-        results.caching = { status: 'healthy' };
-        results.etlDataPipelines = { status: 'healthy' };
-        results.dataArchitecture = { status: 'healthy' };
-        results.olapDataMining = { status: 'healthy' };
-        results.mlModels = { status: 'healthy' };
-        results.abTestingFeatureFlags = { status: 'healthy' };
-        results.canaryBlueGreen = { status: 'healthy' };
-        results.cicdPipelines = { status: 'healthy' };
-        results.infrastructureAsCode = { status: 'healthy' };
-        results.cloudServicesSimulator = { status: 'healthy' };
 
         return results;
     }

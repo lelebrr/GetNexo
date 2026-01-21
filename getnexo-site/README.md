@@ -158,6 +158,16 @@ npm run test:load
 - **[Contribuição](docs/CONTRIBUTING.md)** - Como contribuir
 - **[Testes](docs/TESTING.md)** - Estratégia de testes
 
+### Integração AWS (GetNexo v1.0)
+- **[CI/CD](docs/aws-cicd.md)** - CodeCommit, CodeBuild, CodeDeploy, CodePipeline, Cloud9
+- **[Compute](docs/aws-compute.md)** - EC2, Lambda, API Gateway, AppSync, Amplify, Cognito, ECS, EKS, Fargate
+- **[Storage](docs/aws-storage.md)** - EBS, EFS, FSx, Storage Gateway, Backup, Disaster Recovery, Snow Family
+- **[Security](docs/aws-security.md)** - IAM, STS, Organizations, Control Tower, Config, Trusted Advisor
+- **[Billing](docs/aws-billing.md)** - Marketplace, Cost Explorer, Budgets, Savings Plans, Reserved Instances
+- **[Management](docs/aws-management.md)** - Systems Manager, OpsWorks, Elastic Beanstalk, CloudFormation
+- **[Messaging](docs/aws-messaging.md)** - SES, SNS, SQS, EventBridge
+- **[Monitoring](docs/aws-monitoring.md)** - CloudWatch, X-Ray
+
 ## 🔧 Configuração
 
 ### Variáveis de Ambiente (.env)
