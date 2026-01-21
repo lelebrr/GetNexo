@@ -6,7 +6,9 @@
                 elderlyMode: false,
                 cognitiveMode: false,
                 highContrast: false,
-                largeFont: false
+                largeFont: false,
+                zoomMode: false,
+                reducedMotion: false
             };
             this.init();
         }
@@ -30,11 +32,13 @@
         }
 
         syncCheckboxes() {
-            const fields = ['elderly-mode', 'cognitive-mode', 'high-contrast', 'large-font'];
+            const fields = ['elderly-mode', 'cognitive-mode', 'high-contrast', 'large-font', 'zoom-mode', 'reduced-motion'];
             fields.forEach(id => {
                 const el = document.getElementById(id);
+                const slider = el?.nextElementSibling;
                 const stateKey = id.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
                 if (el) el.checked = this.state[stateKey];
+                if (slider) slider.setAttribute('aria-checked', this.state[stateKey].toString());
             });
         }
 
@@ -65,7 +69,7 @@
                 }
             });
 
-            ['elderly-mode', 'cognitive-mode', 'high-contrast', 'large-font'].forEach(id => {
+            ['elderly-mode', 'cognitive-mode', 'high-contrast', 'large-font', 'zoom-mode', 'reduced-motion'].forEach(id => {
                 document.getElementById(id)?.addEventListener('change', (e) => {
                     const stateKey = id.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
                     this.toggleMode(stateKey, e.target.checked);
@@ -130,10 +134,12 @@
             b.classList.toggle('a11y-cognitive', this.state.cognitiveMode);
             b.classList.toggle('a11y-high-contrast', this.state.highContrast);
             b.classList.toggle('a11y-large-font', this.state.largeFont);
+            b.classList.toggle('a11y-zoom', this.state.zoomMode);
+            b.classList.toggle('a11y-reduced-motion', this.state.reducedMotion);
         }
 
         reset() {
-            this.state = { elderlyMode: false, cognitiveMode: false, highContrast: false, largeFont: false };
+            this.state = { elderlyMode: false, cognitiveMode: false, highContrast: false, largeFont: false, zoomMode: false, reducedMotion: false };
             this.syncCheckboxes();
             this.saveState();
             this.applyState();

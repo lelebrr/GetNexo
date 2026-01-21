@@ -128,6 +128,13 @@ export const onRequest = async (context, next) => {
 
     if (isProtected) {
         const authHeader = context.request.headers.get('Authorization');
+        const acceptHeader = context.request.headers.get('Accept') || '';
+
+        // If it's a browser navigation (HTML) and no token, redirect to login
+        if ((!authHeader || !authHeader.startsWith('Bearer ')) && acceptHeader.includes('text/html')) {
+            return context.redirect('/admin/login');
+        }
+
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
             logger.warn(`Authentication failed: Token não fornecido`, {
                 endpoint,

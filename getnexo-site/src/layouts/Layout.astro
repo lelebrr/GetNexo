@@ -729,6 +729,9 @@ const nonce = Astro.locals.nonce;
   <!-- Global Effects & Interactivity -->
   <script is:inline src="/scripts/layout-effects.js" defer></script>
 
+  <!-- PWA Install Prompt -->
+  <script is:inline src="/custom/js/pwa-install.js" defer></script>
+
   <!-- GetNexo Custom Widget -->
   <script is:inline data-cfasync="false" nonce={nonce}>
     (function(d,t) {

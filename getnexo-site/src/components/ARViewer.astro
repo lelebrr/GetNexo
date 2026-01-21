@@ -256,17 +256,47 @@ const {
     }
 
     async loadModel() {
-      // Simple geometric model as fallback
+      try {
+        // Try to load GLTF model
+        const loader = new THREE.GLTFLoader();
+        loader.load(
+          '{modelUrl}', // This will be replaced by Astro
+          (gltf) => {
+            this.model = gltf.scene;
+            this.model.scale.set(1, 1, 1);
+            this.scene.add(this.model);
+            console.log('GLTF model loaded successfully');
+          },
+          (progress) => {
+            console.log('Model loading progress:', progress);
+          },
+          (error) => {
+            console.error('Error loading GLTF model:', error);
+            this.loadFallbackModel();
+          }
+        );
+      } catch (error) {
+        console.error('GLTF loader not available, using fallback');
+        this.loadFallbackModel();
+      }
+    }
+
+    loadFallbackModel() {
+      // Enhanced geometric model as fallback
       const geometry = new THREE.BoxGeometry(1, 1, 1);
       const material = new THREE.MeshPhongMaterial({
         color: 0x00d4ff,
         transparent: true,
-        opacity: 0.8
+        opacity: 0.8,
+        emissive: 0x002244
       });
       this.model = new THREE.Mesh(geometry, material);
       this.scene.add(this.model);
 
-      // Add GetNexo branding
+      // Add animated particles for visual interest
+      this.addParticles();
+
+      // Add GetNexo branding with better visuals
       const textGeometry = new THREE.PlaneGeometry(2, 0.5);
       const textMaterial = new THREE.MeshBasicMaterial({
         color: 0x00ff9d,
@@ -276,6 +306,29 @@ const {
       const textMesh = new THREE.Mesh(textGeometry, textMaterial);
       textMesh.position.set(0, -1.5, 0);
       this.scene.add(textMesh);
+    }
+
+    addParticles() {
+      const particleGeometry = new THREE.BufferGeometry();
+      const particleCount = 50;
+      const positions = new Float32Array(particleCount * 3);
+
+      for (let i = 0; i < particleCount * 3; i++) {
+        positions[i] = (Math.random() - 0.5) * 4;
+      }
+
+      particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+      const particleMaterial = new THREE.PointsMaterial({
+        color: 0x00d4ff,
+        size: 0.05,
+        transparent: true,
+        opacity: 0.6
+      });
+
+      const particles = new THREE.Points(particleGeometry, particleMaterial);
+      this.scene.add(particles);
+      this.particles = particles;
     }
 
     setupControls() {
@@ -294,8 +347,18 @@ const {
 
     animate() {
       if (this.model) {
-        this.model.rotation.x += 0.01;
-        this.model.rotation.y += 0.01;
+        this.model.rotation.x += 0.005;
+        this.model.rotation.y += 0.005;
+      }
+
+      // Animate particles
+      if (this.particles) {
+        this.particles.rotation.y += 0.002;
+        const positions = this.particles.geometry.attributes.position.array;
+        for (let i = 0; i < positions.length; i += 3) {
+          positions[i + 1] += Math.sin(Date.now() * 0.001 + i) * 0.001; // Floating effect
+        }
+        this.particles.geometry.attributes.position.needsUpdate = true;
       }
 
       this.renderer.render(this.scene, this.camera);
@@ -332,10 +395,22 @@ const {
     if (typeof THREE === 'undefined') {
       const script = document.createElement('script');
       script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
-      script.onload = () => new ARViewer();
+      script.onload = () => loadGLTFLoader();
       document.head.appendChild(script);
+    } else {
+      loadGLTFLoader();
+    }
+  });
+
+  function loadGLTFLoader() {
+    // Load GLTFLoader
+    if (typeof THREE.GLTFLoader === 'undefined') {
+      const gltfScript = document.createElement('script');
+      gltfScript.src = 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js';
+      gltfScript.onload = () => new ARViewer();
+      document.head.appendChild(gltfScript);
     } else {
       new ARViewer();
     }
-  });
+  }
 </script>

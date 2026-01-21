@@ -186,7 +186,7 @@ import Layout from '../../layouts/Layout.astro';
         const res = await fetch(`${API_URL}/api/products`);
         const products = await res.json();
         const list = document.getElementById('products-list');
-        
+
         if (products.length === 0) {
           list.innerHTML = '<li style="color:#64748b; text-align:center; padding:2rem;">Nenhum produto cadastrado</li>';
         } else {
@@ -197,10 +197,152 @@ import Layout from '../../layouts/Layout.astro';
             </li>
           `).join('');
         }
-        
+
         document.getElementById('total-products').textContent = products.length;
       } catch (e) {
         console.error('Error loading products:', e);
+      }
+    }
+
+    // Load Configs
+    async function loadConfigs() {
+      try {
+        const token = localStorage.getItem('adminToken');
+        const res = await fetch(`${API_URL}/api/config?type=global`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        const list = document.getElementById('configs-list');
+
+        if (!data.configs || !data.configs.global || Object.keys(data.configs.global).length === 0) {
+          list.innerHTML = '<p style="color:#64748b; text-align:center;">Nenhuma configuração global encontrada</p>';
+        } else {
+          list.innerHTML = Object.entries(data.configs.global).map(([key, config]) => `
+            <div style="padding:8px 0; border-bottom:1px solid #1e293b; display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <span style="color:white; font-weight:600;">${key}</span>
+                <div style="color:#64748b; font-size:0.8rem;">${config.description || 'Sem descrição'}</div>
+              </div>
+              <div>
+                <span style="color:#00ff9d; font-size:0.9rem;">${JSON.stringify(config.value)}</span>
+                <button style="margin-left:0.5rem; background:#374151; color:white; border:none; padding:2px 6px; border-radius:4px; cursor:pointer;" onclick="editConfig('${key}')">Editar</button>
+                <button style="margin-left:0.5rem; background:#dc2626; color:white; border:none; padding:2px 6px; border-radius:4px; cursor:pointer;" onclick="deleteConfig('${key}')">Deletar</button>
+              </div>
+            </div>
+          `).join('');
+        }
+      } catch (e) {
+        console.error('Error loading configs:', e);
+        document.getElementById('configs-list').innerHTML = '<p style="color:#f87171; text-align:center;">Erro ao carregar configurações</p>';
+      }
+    }
+
+    // Show Add Config Modal (simple prompt)
+    window.showAddConfigModal = function() {
+      const key = prompt('Digite a chave da configuração:');
+      if (!key) return;
+      const valueStr = prompt('Digite o valor (JSON válido):');
+      if (!valueStr) return;
+      let value;
+      try {
+        value = JSON.parse(valueStr);
+      } catch (e) {
+        alert('Valor inválido. Deve ser JSON válido.');
+        return;
+      }
+      const description = prompt('Digite a descrição (opcional):') || '';
+
+      addConfig(key, value, description);
+    };
+
+    // Add Config
+    async function addConfig(key, value, description) {
+      try {
+        const token = localStorage.getItem('adminToken');
+        const res = await fetch(`${API_URL}/api/config`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ key, value, type: 'global', description })
+        });
+        if (res.ok) {
+          loadConfigs();
+        } else {
+          const error = await res.json();
+          alert('Erro: ' + error.error);
+        }
+      } catch (e) {
+        console.error('Error adding config:', e);
+        alert('Erro ao adicionar configuração');
+      }
+    }
+
+    // Edit Config
+    window.editConfig = function(key) {
+      const valueStr = prompt('Digite o novo valor (JSON válido):');
+      if (!valueStr) return;
+      let value;
+      try {
+        value = JSON.parse(valueStr);
+      } catch (e) {
+        alert('Valor inválido. Deve ser JSON válido.');
+        return;
+      }
+      const description = prompt('Digite a nova descrição:') || '';
+
+      updateConfig(key, value, description);
+    };
+
+    // Update Config
+    async function updateConfig(key, value, description) {
+      try {
+        const token = localStorage.getItem('adminToken');
+        const res = await fetch(`${API_URL}/api/config`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ key, value, type: 'global', description })
+        });
+        if (res.ok) {
+          loadConfigs();
+        } else {
+          const error = await res.json();
+          alert('Erro: ' + error.error);
+        }
+      } catch (e) {
+        console.error('Error updating config:', e);
+        alert('Erro ao atualizar configuração');
+      }
+    }
+
+    // Delete Config
+    window.deleteConfig = function(key) {
+      if (!confirm(`Tem certeza que deseja deletar a configuração "${key}"?`)) return;
+
+      deleteConfigAPI(key);
+    };
+
+    // Delete Config API
+    async function deleteConfigAPI(key) {
+      try {
+        const token = localStorage.getItem('adminToken');
+        const res = await fetch(`${API_URL}/api/config?type=global&key=${key}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          loadConfigs();
+        } else {
+          const error = await res.json();
+          alert('Erro: ' + error.error);
+        }
+      } catch (e) {
+        console.error('Error deleting config:', e);
+        alert('Erro ao deletar configuração');
       }
     }
     
@@ -261,9 +403,20 @@ import Layout from '../../layouts/Layout.astro';
       const token = localStorage.getItem('adminToken');
       if (token) {
         try {
-          const email = atob(token);
-          document.getElementById('user-info').innerHTML = `Bem-vindo, <strong style="color:white;">${email}</strong>`;
-        } catch {
+          // Decode JWT Payload (Header.Payload.Signature)
+          const base64Url = token.split('.')[1];
+          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+          const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+              return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+          }).join(''));
+
+          const payload = JSON.parse(jsonPayload);
+          // Try to get email or name or sub
+          const displayName = payload.email || payload.name || payload.sub || 'Admin';
+          
+          document.getElementById('user-info').innerHTML = `Bem-vindo, <strong style="color:white;">${displayName}</strong>`;
+        } catch (e) {
+          console.error('Token decode error:', e);
           document.getElementById('user-info').textContent = 'Admin';
         }
       } else {
@@ -335,6 +488,7 @@ import Layout from '../../layouts/Layout.astro';
     loadStats();
     loadContacts();
     loadProducts();
+    loadConfigs();
 
     // Auto refresh every 30 seconds
     setInterval(() => {

@@ -80,6 +80,37 @@ const { nonce } = Astro.props;
                 <label class="switch-label" for="large-font">
                     <span class="label-text">
                         <span class="icon">🔤</span> Fonte Aumentada
+                     </span>
+                     <input type="checkbox" id="large-font" class="a11y-switch">
+                     <span class="slider"></span>
+                 </label>
+             </div>
+
+             <!-- Zoom da Página -->
+             <div class="control-group">
+                 <label class="switch-label" for="zoom-mode">
+                     <span class="label-text">
+                         <span class="icon">🔍</span> Zoom da Página
+                     </span>
+                     <span class="description" id="zoom-desc">Aumenta o zoom geral para melhor visualização</span>
+                     <input type="checkbox" id="zoom-mode" class="a11y-switch" aria-describedby="zoom-desc">
+                     <span class="slider" role="switch" aria-checked="false"></span>
+                 </label>
+             </div>
+
+             <!-- Movimento Reduzido (WCAG) -->
+             <div class="control-group">
+                 <label class="switch-label" for="reduced-motion">
+                     <span class="label-text">
+                         <span class="icon">⏸️</span> Movimento Reduzido
+                     </span>
+                     <span class="description" id="motion-desc">Reduz animações para evitar desconforto</span>
+                     <input type="checkbox" id="reduced-motion" class="a11y-switch" aria-describedby="motion-desc">
+                     <span class="slider" role="switch" aria-checked="false"></span>
+                 </label>
+             </div>
+
+             <button id="a11y-reset" class="reset-btn">
                     </span>
                     <input type="checkbox" id="large-font" class="a11y-switch">
                     <span class="slider"></span>
@@ -134,6 +165,7 @@ const { nonce } = Astro.props;
         bottom: 70px;
         left: 0;
         width: 320px;
+        max-width: calc(100vw - 40px);
         background: #1a1a1a;
         color: #fff;
         border-radius: 16px;
@@ -141,6 +173,24 @@ const { nonce } = Astro.props;
         border: 1px solid #333;
         overflow: hidden;
         animation: slideUp 0.3s ease;
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 480px) {
+        .a11y-menu {
+            width: calc(100vw - 20px);
+            bottom: 60px;
+            left: 10px;
+            right: 10px;
+        }
+
+        .a11y-controls {
+            padding: 15px;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
     }
 
     .a11y-menu.hidden {

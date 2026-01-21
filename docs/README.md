@@ -48,8 +48,11 @@ Security implementations and legal standards.
 
 ---
 
-## 📄 Other References
-- [Changelog](CHANGELOG.md)
-- [Manual do Admin](MANUAL_DO_ADMIN.md)
+## ✨ [New Features Implemented](CHANGELOG.md)
+Latest implementations including ML API, AR enhancements, gamification, chat rooms, and video calls.
+- [Complete Changelog](CHANGELOG.md)
 - [User Features Guide](features/USER_FEATURES.md)
+
+## 📄 Other References
+- [Manual do Admin](MANUAL_DO_ADMIN.md)
 - [Verification Matrix](VERIFICATION_MATRIX.md)

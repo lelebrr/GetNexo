@@ -1,8 +1,8 @@
-# GetNexo v1.0 🚀
+# GetNexo v1.0+ 🚀
 
 **Plataforma de Automação de Vendas & Atendimento via WhatsApp com IA.**
 
-GetNexo é uma solução completa "All-in-One" que transforma seu WhatsApp em uma máquina de vendas autônoma. Oferecemos infraestrutura robusta, PIX nativo e IA generativa para conversão de leads.
+GetNexo é uma solução completa "All-in-One" que transforma seu WhatsApp em uma máquina de vendas autônoma. Oferecemos infraestrutura robusta, PIX nativo, IA generativa, Realidade Aumentada, Machine Learning integrado, jogos interativos e muito mais para conversão máxima de leads.
 
 ---
 

@@ -32,36 +32,84 @@
             if (p.x > canvas.width || p.x < 0) p.speedX *= -1;
             if (p.y > canvas.height || p.y < 0) p.speedY *= -1;
 
+            // Mouse interaction
             if (mouse.x) {
                 let dx = mouse.x - p.x;
                 let dy = mouse.y - p.y;
                 let dist = Math.sqrt(dx * dx + dy * dy);
                 if (dist < mouse.radius) {
                     let force = (mouse.radius - dist) / mouse.radius;
-                    p.x -= dx * force * 0.01;
-                    p.y -= dy * force * 0.01;
+                    let angle = Math.atan2(dy, dx);
+                    p.x -= Math.cos(angle) * force * 2;
+                    p.y -= Math.sin(angle) * force * 2;
                 }
             }
 
+            // Render
             ctx.fillStyle = p.color;
             ctx.beginPath();
             ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
             ctx.fill();
 
+            // Connections
             for (let j = i + 1; j < particles.length; j++) {
                 let p2 = particles[j];
                 let dx = p.x - p2.x;
                 let dy = p.y - p2.y;
                 let dist = Math.sqrt(dx * dx + dy * dy);
                 if (dist < 100) {
-                    ctx.strokeStyle = `rgba(0, 255, 157, ${0.1 * (1 - dist / 100)})`;
-                    ctx.lineWidth = 0.5;
+                    ctx.strokeStyle = `rgba(0, 255, 157, ${0.15 * (1 - dist / 100)})`; // Increased opacity
+                    ctx.lineWidth = 0.6;
                     ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
                 }
             }
         });
+
+        // Render Explosions
+        explosions.forEach((exp, idx) => {
+            exp.particles.forEach((p) => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.alpha -= 0.02;
+                if (p.alpha <= 0) return;
+
+                ctx.fillStyle = `rgba(${p.color}, ${p.alpha})`;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            exp.particles = exp.particles.filter(p => p.alpha > 0);
+            if (exp.particles.length === 0) explosions.splice(idx, 1);
+        });
+
         requestAnimationFrame(animateNeural);
     }
+
+    let explosions = [];
+    window.createExplosion = (x, y) => {
+        const particleCount = 30;
+        const newParticles = [];
+        const colors = ['0, 212, 255', '0, 255, 157', '255, 255, 255'];
+
+        for (let i = 0; i < particleCount; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const velocity = Math.random() * 5 + 2;
+            newParticles.push({
+                x: x,
+                y: y,
+                vx: Math.cos(angle) * velocity,
+                vy: Math.sin(angle) * velocity,
+                size: Math.random() * 3 + 1,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                alpha: 1
+            });
+        }
+        explosions.push({ particles: newParticles });
+    };
+
+    window.addEventListener('click', (e) => {
+        window.createExplosion(e.clientX, e.clientY);
+    });
 
     window.addEventListener('mousemove', e => { mouse.x = e.x; mouse.y = e.y; });
     window.addEventListener('resize', initNeural);
@@ -257,5 +305,48 @@
         }
     }
     new PerformanceOptimizer();
+
+    // Language Switcher Logic
+    const langBtn = document.getElementById('lang-btn');
+    const langDropdown = document.getElementById('lang-dropdown');
+    const currentLangFlag = document.getElementById('current-lang-flag');
+    const currentLangCode = document.getElementById('current-lang-code');
+
+    if (langBtn && langDropdown) {
+        langBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            langDropdown.classList.toggle('active');
+        });
+
+        document.addEventListener('click', () => {
+            langDropdown.classList.remove('active');
+        });
+
+        document.querySelectorAll('.lang-option').forEach(opt => {
+            opt.addEventListener('click', (e) => {
+                e.preventDefault();
+                const lang = opt.dataset.lang;
+                const flag = opt.textContent.split(' ')[0];
+
+                // Update UI
+                currentLangFlag.textContent = flag;
+                currentLangCode.textContent = lang.split('-')[0].toUpperCase();
+
+                // Here you would implement actual translation logic
+                // For now, we just update the UI
+                localStorage.setItem('getnexo-lang', lang);
+            });
+        });
+
+        // Init from storage
+        const savedLang = localStorage.getItem('getnexo-lang');
+        if (savedLang) {
+            const opt = document.querySelector(`.lang-option[data-lang="${savedLang}"]`);
+            if (opt) {
+                currentLangFlag.textContent = opt.textContent.split(' ')[0];
+                currentLangCode.textContent = savedLang.split('-')[0].toUpperCase();
+            }
+        }
+    }
 
 })();

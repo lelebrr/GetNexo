@@ -58,6 +58,7 @@ const CACHE_STRATEGIES = {
 
 const CRITICAL_ASSETS = [
     '/',
+    '/offline.html',
     '/favicon.svg',
     '/scripts/performance/neural-bg.js',
     '/scripts/performance/ui-features.js'
@@ -88,30 +89,7 @@ self.addEventListener('activate', (event) => {
     self.clients.claim();
 });
 
-self.addEventListener('fetch', (event) => {
-    const { request } = event;
-    if (request.method !== 'GET') return;
 
-    const url = new URL(request.url);
-    if (!url.protocol.startsWith('http')) return;
-
-    // Estratégia baseada no tipo de recurso
-    if (url.pathname.match(/\.(js|css)$/)) {
-        event.respondWith(CACHE_STRATEGIES.cacheFirst(request, CACHE_NAMES.static));
-    } else if (url.pathname.match(/\.(png|jpg|jpeg|gif|svg|webp|avif)$/)) {
-        event.respondWith(CACHE_STRATEGIES.cacheFirst(request, CACHE_NAMES.images));
-    } else if (url.pathname.match(/\.(woff|woff2|ttf)$/)) {
-        event.respondWith(CACHE_STRATEGIES.cacheFirst(request, CACHE_NAMES.fonts));
-    } else if (url.pathname.includes('/api/') && !url.pathname.includes('/stream/')) {
-        // Cache API responses por 5 minutos (stale-while-revalidate)
-        event.respondWith(CACHE_STRATEGIES.staleWhileRevalidate(request, CACHE_NAMES.api));
-    } else if (url.pathname.includes('/neural') || url.pathname.includes('neural-bg')) {
-        event.respondWith(CACHE_STRATEGIES.cacheFirst(request, CACHE_NAMES.neural));
-    } else {
-        // Páginas: network-first
-        event.respondWith(CACHE_STRATEGIES.networkFirst(request, CACHE_NAMES.static));
-    }
-});
 
 // Cache inteligente para animações neurais
 self.addEventListener('message', (event) => {
@@ -195,6 +173,66 @@ self.addEventListener('notificationclick', (event) => {
     } else {
         event.waitUntil(
             clients.openWindow('/')
+        );
+    }
+});
+
+// Notificações de atualização do Service Worker
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
+});
+
+// Detectar nova versão e notificar clientes
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then(cacheNames => {
+            return Promise.all(
+                cacheNames.map(cacheName => {
+                    if (!Object.values(CACHE_NAMES).includes(cacheName)) {
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        }).then(() => {
+            // Notificar todos os clientes sobre a nova versão
+            return self.clients.matchAll().then(clients => {
+                clients.forEach(client => {
+                    client.postMessage({ type: 'UPDATE_AVAILABLE' });
+                });
+            });
+        })
+    );
+    self.clients.claim();
+});
+
+// Fallback offline para páginas
+self.addEventListener('fetch', (event) => {
+    const { request } = event;
+    if (request.method !== 'GET') return;
+
+    const url = new URL(request.url);
+    if (!url.protocol.startsWith('http')) return;
+
+    // Estratégia baseada no tipo de recurso
+    if (url.pathname.match(/\.(js|css)$/)) {
+        event.respondWith(CACHE_STRATEGIES.cacheFirst(request, CACHE_NAMES.static));
+    } else if (url.pathname.match(/\.(png|jpg|jpeg|gif|svg|webp|avif)$/)) {
+        event.respondWith(CACHE_STRATEGIES.cacheFirst(request, CACHE_NAMES.images));
+    } else if (url.pathname.match(/\.(woff|woff2|ttf)$/)) {
+        event.respondWith(CACHE_STRATEGIES.cacheFirst(request, CACHE_NAMES.fonts));
+    } else if (url.pathname.includes('/api/') && !url.pathname.includes('/stream/')) {
+        // Cache API responses por 5 minutos (stale-while-revalidate)
+        event.respondWith(CACHE_STRATEGIES.staleWhileRevalidate(request, CACHE_NAMES.api));
+    } else if (url.pathname.includes('/neural') || url.pathname.includes('neural-bg')) {
+        event.respondWith(CACHE_STRATEGIES.cacheFirst(request, CACHE_NAMES.neural));
+    } else {
+        // Páginas: network-first com fallback offline
+        event.respondWith(
+            CACHE_STRATEGIES.networkFirst(request, CACHE_NAMES.static).catch(() => {
+                return caches.match('/offline.html') || fetch('/offline.html');
+            })
         );
     }
 });

@@ -21,6 +21,21 @@ O painel administrativo do GetNexo permite o gerenciamento completo da plataform
 - O site reflete em tempo real as alterações no código (graças ao modo Development ativo no Docker).
 - Edições em `src/pages/produtos/*.astro` são visíveis imediatamente após salvar.
 
+### APIs e Configurações
+- **API de Configuração**: `/api/config` - Gerencie configurações globais e por usuário
+- **API de ML**: `/api/ml` - Monitore e teste modelos de machine learning
+- **API de Backup**: `/api/backup` - Faça backup e restauração de dados
+
+### Gamificação e Usuários
+- **Dashboard de Gamificação**: Acompanhe pontos, níveis e conquistas dos usuários
+- **Sistema de Pontos**: Configure regras de pontuação automática
+- **Leaderboard**: Monitore rankings e torneios
+
+### Chat e Comunicação
+- **Salas de Chat**: Gerencie salas de chat multi-usuário
+- **Videochamadas**: Monitore sessões de videochamada
+- **Bot de Chat**: Configure respostas automáticas e integração com IA
+
 ## 4. Solução de Problemas Comuns
 - **Conteúdo Desatualizado**: Se o site parecer "velho", verifique se o container está rodando: `docker logs -f getnexo-frontend-1`.
 - **Erro de Login**: Limpe o Cache/LocalStorage se tiver problemas de permissão.
