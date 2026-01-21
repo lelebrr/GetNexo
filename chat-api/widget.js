@@ -339,6 +339,7 @@
         const input = document.getElementById('getnexo-input');
         const sendBtn = document.getElementById('getnexo-send');
         const closeBtn = document.getElementById('getnexo-close');
+        const micBtn = document.getElementById('getnexo-mic');
 
         const toggleChat = () => {
             const isOpen = chatWindow.classList.contains('open');
@@ -358,6 +359,62 @@
         if (config.autoOpen) {
             setTimeout(toggleChat, 2000);
         }
+
+        // Voice Recognition Support
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = null;
+        let isListening = false;
+
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'pt-BR';
+
+            recognition.onstart = () => {
+                isListening = true;
+                micBtn.style.background = '#ef4444';
+                micBtn.style.boxShadow = '0 0 15px #ef4444';
+                input.placeholder = 'Ouvindo...';
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[event.results.length - 1][0].transcript;
+                input.value = transcript;
+                sendMessage();
+            };
+
+            recognition.onend = () => {
+                isListening = false;
+                micBtn.style.background = '#334155';
+                micBtn.style.boxShadow = 'none';
+                input.placeholder = 'Digite sua dúvida...';
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                isListening = false;
+                micBtn.style.background = '#334155';
+                micBtn.style.boxShadow = 'none';
+                input.placeholder = 'Erro na voz. Tente digitar.';
+            };
+        }
+
+        micBtn.onclick = () => {
+            if (!recognition) {
+                alert('Seu navegador não suporta reconhecimento de voz.');
+                return;
+            }
+            if (isListening) {
+                recognition.stop();
+            } else {
+                try {
+                    recognition.start();
+                } catch (e) {
+                    console.error('Recognition already started or error:', e);
+                }
+            }
+        };
 
         // Send Logic
         const sendMessage = async () => {

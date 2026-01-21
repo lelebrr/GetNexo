@@ -159,12 +159,35 @@ const {
 </style>
 
 <script>
+  // @ts-ignore
+  declare const THREE: any;
+
+  declare global {
+    interface Window {
+      openFallbackView: () => void;
+    }
+    interface Navigator {
+      xr: any;
+    }
+    interface XRSystem {
+      isSessionSupported: (mode: string) => Promise<boolean>;
+    }
+  }
+
   class ARViewer {
+    scene: any;
+    camera: any;
+    renderer: any;
+    model: any;
+    particles: any;
+    isARSupported: boolean;
+
     constructor() {
       this.scene = null;
       this.camera = null;
       this.renderer = null;
       this.model = null;
+      this.particles = null;
       this.isARSupported = false;
 
       this.init();
@@ -240,16 +263,16 @@ const {
       this.renderer.xr.setSession(session);
 
       // Hide fallback, show canvas
-      document.querySelector('.ar-fallback').style.display = 'none';
-      document.getElementById('ar-canvas').style.display = 'block';
+      (document.querySelector('.ar-fallback') as HTMLElement).style.display = 'none';
+      (document.getElementById('ar-canvas') as HTMLElement).style.display = 'block';
 
       this.animate();
     }
 
     enterSimulatedAR() {
       // Fallback: show 3D model in regular view
-      document.querySelector('.ar-fallback').style.display = 'none';
-      document.getElementById('ar-canvas').style.display = 'block';
+      (document.querySelector('.ar-fallback') as HTMLElement).style.display = 'none';
+      (document.getElementById('ar-canvas') as HTMLElement).style.display = 'block';
 
       this.camera.position.z = 5;
       this.animate();
@@ -261,16 +284,16 @@ const {
         const loader = new THREE.GLTFLoader();
         loader.load(
           '{modelUrl}', // This will be replaced by Astro
-          (gltf) => {
+          (gltf: any) => {
             this.model = gltf.scene;
             this.model.scale.set(1, 1, 1);
             this.scene.add(this.model);
             console.log('GLTF model loaded successfully');
           },
-          (progress) => {
+          (progress: any) => {
             console.log('Model loading progress:', progress);
           },
-          (error) => {
+          (error: any) => {
             console.error('Error loading GLTF model:', error);
             this.loadFallbackModel();
           }
@@ -376,10 +399,12 @@ const {
   // Global function for fallback
   window.openFallbackView = function() {
     const viewer = document.getElementById('ar-viewer');
-    const fallback = viewer.querySelector('.ar-fallback');
+    const fallback = viewer?.querySelector('.ar-fallback');
+
+    if (!viewer || !fallback) return;
 
     // Show simulated 3D view
-    fallback.innerHTML = `
+    (fallback as HTMLElement).innerHTML = `
       <div style="text-align: center;">
         <h3>Visualização 3D Simulada</h3>
         <p>O GetNexo em realidade aumentada</p>

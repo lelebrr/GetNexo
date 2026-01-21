@@ -1,0 +1,191 @@
+---
+/**
+ * BackgroundAnimated.astro
+ * Especialista: Dark Futurist Cyberpunk Performance Background
+ * Foco: LCP < 800ms, TBT m\u00EDnimo, Estilo GetNexo Dark.
+ */
+---
+
+<div class="cyber-bg-container fixed inset-0 z-[-1] overflow-hidden bg-[#000000] pointer-events-none" aria-hidden="true">
+  <!-- Canvas para part\u00EDculas neon -->
+  <canvas id="cyber-particles" class="absolute inset-0 w-full h-full opacity-0 transition-opacity duration-1000"></canvas>
+  
+  <!-- Overlay de Scanlines (CRT Style) -->
+  <div class="scanlines absolute inset-0 pointer-events-none opacity-[0.03]"></div>
+  
+  <!-- Neon Glow Suave -->
+  <div class="glow-overlay absolute inset-0 pointer-events-none">
+    <div class="glow-point glow-blue"></div>
+    <div class="glow-point glow-gold"></div>
+  </div>
+</div>
+
+<style>
+  .cyber-bg-container {
+    background: #000000;
+  }
+
+  /* Scanlines CRT effect */
+  .scanlines {
+    background: linear-gradient(
+      to bottom,
+      transparent 50%,
+      rgba(0, 0, 0, 0.5) 51%,
+      transparent 100%
+    );
+    background-size: 100% 4px;
+    animation: scanline 10s linear infinite;
+  }
+
+  @keyframes scanline {
+    from { background-position: 0 0; }
+    to { background-position: 0 100%; }
+  }
+
+  /* Neon Glow Effects */
+  .glow-overlay {
+    background: radial-gradient(circle at 50% 50%, rgba(0, 247, 255, 0.05) 0%, transparent 70%);
+  }
+
+  .glow-point {
+    position: absolute;
+    width: 60vw;
+    height: 60vw;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.15;
+    mix-blend-mode: screen;
+    animation: glowFloat 20s ease-in-out infinite alternate;
+  }
+
+  .glow-blue {
+    top: -10%;
+    left: -10%;
+    background: radial-gradient(circle, #00F7FF 0%, transparent 70%);
+  }
+
+  .glow-gold {
+    bottom: -10%;
+    right: -10%;
+    background: radial-gradient(circle, #FFD500 0%, transparent 70%);
+    animation-delay: -10s;
+  }
+
+  @keyframes glowFloat {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(5%, 5%) scale(1.1); }
+  }
+
+  canvas.ready {
+    opacity: 1;
+  }
+</style>
+
+<script>
+  // Particle System Minimalista p/ Performance Extrema
+  class ParticleSystem {
+    canvas: HTMLCanvasElement | null;
+    ctx: CanvasRenderingContext2D | null;
+    particles: any[];
+    colors: string[];
+    width: number;
+    height: number;
+    maxParticles: number;
+
+    constructor(canvasId: string) {
+      this.canvas = document.getElementById(canvasId) as HTMLCanvasElement | null;
+      this.ctx = null;
+      this.particles = [];
+      this.colors = ['#00F7FF', '#FFD500', '#00B2A9'];
+      this.width = 0;
+      this.height = 0;
+      this.maxParticles = 0;
+
+      if (!this.canvas) return;
+      this.ctx = this.canvas.getContext('2d', { alpha: false });
+      this.resize();
+      this.init();
+      
+      // Delay de in\u00EDcio para zero impacto no LCP
+      setTimeout(() => {
+        this.canvas.classList.add('ready');
+        this.animate();
+      }, 1000);
+
+      window.addEventListener('resize', () => this.resize());
+    }
+
+    resize() {
+      this.width = window.innerWidth;
+      this.height = window.innerHeight;
+      if (this.canvas) {
+        this.canvas.width = this.width;
+        this.canvas.height = this.height;
+      }
+      // Reduz part\u00EDculas em mobile para manter 60fps
+      this.maxParticles = this.width < 768 ? 40 : 80;
+    }
+
+    init() {
+      if (!this.ctx) return;
+      this.particles = [];
+      for (let i = 0; i < this.maxParticles; i++) {
+        this.particles.push(this.createParticle());
+      }
+    }
+
+    createParticle() {
+      return {
+        x: Math.random() * this.width,
+        y: Math.random() * this.height,
+        size: Math.random() * 1.5 + 0.5,
+        color: this.colors[Math.floor(Math.random() * this.colors.length)],
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        opacity: Math.random() * 0.5 + 0.2
+      };
+    }
+
+    animate() {
+      if (!this.ctx) return;
+
+      // Limpeza com Void Black absoluto
+      this.ctx.fillStyle = '#000000';
+      this.ctx.fillRect(0, 0, this.width, this.height);
+
+      this.particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Wrap around
+        if (p.x < 0) p.x = this.width;
+        if (p.x > this.width) p.x = 0;
+        if (p.y < 0) p.y = this.height;
+        if (p.y > this.height) p.y = 0;
+
+        // Desenho ultra-leve
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        this.ctx.fillStyle = p.color;
+        this.ctx.globalAlpha = p.opacity;
+        this.ctx.fill();
+
+        // Brilho sutil (glow) apenas em desktop p/ performance
+        if (this.width > 768) {
+           this.ctx.shadowBlur = 4;
+           this.ctx.shadowColor = p.color;
+        }
+      });
+
+      this.ctx.globalAlpha = 1;
+      this.ctx.shadowBlur = 0;
+
+      requestAnimationFrame(() => this.animate());
+    }
+  }
+
+  // Inicializa apenas no client
+  if (typeof window !== 'undefined') {
+    new ParticleSystem('cyber-particles');
+  }
+</script>

@@ -1,0 +1,354 @@
+---
+import ClientLayout from '../../layouts/ClientLayout.astro';
+---
+
+<ClientLayout title="Atividade - GetNexo Pro">
+    <style>
+        .activity-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1));
+            border-radius: 16px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .activity-header h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #00d4ff;
+            margin: 0;
+            background: linear-gradient(90deg, #00d4ff, #00ff9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .activity-header p {
+            color: #94a3b8;
+            font-size: 1.2rem;
+            margin: 1rem 0 0 0;
+        }
+
+        .activity-filters {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .filter-select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        .activity-timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timeline-item {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.1);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -15px;
+            top: 2rem;
+            width: 10px;
+            height: 10px;
+            background: #00d4ff;
+            border-radius: 50%;
+            border: 3px solid rgba(15, 23, 42, 0.8);
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .activity-icon {
+            font-size: 1.5rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        }
+
+        .activity-content h4 {
+            color: white;
+            margin: 0 0 0.25rem 0;
+            font-size: 1rem;
+        }
+
+        .activity-content p {
+            color: #94a3b8;
+            margin: 0;
+            font-size: 0.85rem;
+        }
+
+        .activity-time {
+            color: #64748b;
+            font-size: 0.8rem;
+            margin-left: auto;
+        }
+
+        .activity-type {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .type-project { background: rgba(0, 212, 255, 0.2); color: #00d4ff; }
+        .type-service { background: rgba(0, 255, 157, 0.2); color: #00ff9d; }
+        .type-system { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 0.8rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #00ff9d);
+            color: black;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #94a3b8;
+        }
+
+        .empty-state h3 {
+            color: #00d4ff;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .activity-header h1 {
+                font-size: 2rem;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .activity-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .activity-time {
+                margin-left: 0;
+                margin-top: 0.5rem;
+            }
+        }
+    </style>
+
+    <div style="padding: 2rem; max-width: 1000px; margin: 0 auto;">
+
+        <!-- Header -->
+        <div class="activity-header">
+            <h1>📈 Atividade Recente</h1>
+            <p>Acompanhe todas as ações e eventos do seu painel</p>
+        </div>
+
+        <!-- Filters -->
+        <div class="activity-filters">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Tipo</label>
+                    <select class="filter-select" id="type-filter">
+                        <option value="all" selected>Todas as atividades</option>
+                        <option value="project">Projetos</option>
+                        <option value="service">Serviços</option>
+                        <option value="system">Sistema</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Período</label>
+                    <select class="filter-select" id="period-filter">
+                        <option value="today">Hoje</option>
+                        <option value="week" selected>Esta semana</option>
+                        <option value="month">Este mês</option>
+                        <option value="all">Todo período</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <button class="btn btn-primary" onclick="applyFilters()">Aplicar Filtros</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="activity-timeline" id="activity-timeline">
+            <!-- Activity items will be loaded here -->
+        </div>
+
+    </div>
+
+    <script is:inline>
+        async function loadActivity() {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch(`${API_URL}/api/activity`, {
+                    headers: { 'Authorization': token }
+                });
+                const activities = await res.json();
+                renderActivity(activities);
+            } catch (e) {
+                console.error('Error loading activity, using mock data', e);
+                loadMockActivity();
+            }
+        }
+
+        function renderActivity(activities) {
+            const timeline = document.getElementById('activity-timeline');
+
+            if (activities.length === 0) {
+                timeline.innerHTML = `
+                    <div class="empty-state">
+                        <h3>📭 Nenhuma atividade</h3>
+                        <p>Não há atividades recentes para exibir.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            timeline.innerHTML = activities.map(activity => `
+                <div class="timeline-item">
+                    <div class="activity-type type-${activity.type}">${activity.type}</div>
+                    <div class="activity-item">
+                        <div class="activity-icon">${activity.icon}</div>
+                        <div class="activity-content">
+                            <h4>${activity.title}</h4>
+                            <p>${activity.description}</p>
+                        </div>
+                        <div class="activity-time">${activity.time}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadMockActivity() {
+            const mockActivities = [
+                {
+                    id: '1',
+                    title: 'Novo projeto criado',
+                    description: 'Projeto "Landing Page E-commerce" foi iniciado com sucesso',
+                    type: 'project',
+                    icon: '📁',
+                    time: '2 horas atrás'
+                },
+                {
+                    id: '2',
+                    title: 'Serviço ativado',
+                    description: 'SEO Automation Pro foi ativado e está funcionando',
+                    type: 'service',
+                    icon: '⚙️',
+                    time: '5 horas atrás'
+                },
+                {
+                    id: '3',
+                    title: 'Pagamento processado',
+                    description: 'Fatura de janeiro foi paga com sucesso',
+                    type: 'system',
+                    icon: '💰',
+                    time: '1 dia atrás'
+                },
+                {
+                    id: '4',
+                    title: 'Template usado',
+                    description: 'Template "E-commerce React" foi usado para criar um novo projeto',
+                    type: 'project',
+                    icon: '📋',
+                    time: '2 dias atrás'
+                },
+                {
+                    id: '5',
+                    title: 'Serviço parado',
+                    description: 'Analytics Pro foi temporariamente pausado',
+                    type: 'service',
+                    icon: '⏸️',
+                    time: '3 dias atrás'
+                }
+            ];
+
+            renderActivity(mockActivities);
+        }
+
+        function applyFilters() {
+            const type = document.getElementById('type-filter').value;
+            const period = document.getElementById('period-filter').value;
+
+            console.log('Aplicando filtros:', { type, period });
+            // Reload activity with filters
+            loadActivity();
+        }
+
+        // Initialize
+        loadActivity();
+    </script>
+</ClientLayout>

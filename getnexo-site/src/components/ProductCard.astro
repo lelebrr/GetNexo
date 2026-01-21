@@ -1,24 +1,39 @@
 ---
 // Produto vindo do JSON
-export let produto = {};
+interface Produto {
+  imagens?: string[];
+  imagem?: string;
+  nome: string;
+  preco: number;
+  quartos?: number;
+  area?: number;
+  cpu?: string;
+  cor?: string;
+  '360'?: string;
+  video?: string;
+  audio?: string;
+  voz?: boolean;
+}
+
+export let produto: Partial<Produto> = {};
 ---
 
 <div class="product-card bg-void-black border border-neon-blue rounded-lg p-4 m-2 max-w-sm">
   {#if produto.imagens}
     <!-- Carrossel de imagens -->
     <div class="carousel relative overflow-hidden rounded">
-      {#each produto.imagens as img, i}
-        <img src={img} alt={produto.nome} class="w-full h-48 object-cover {i === 0 ? '' : 'hidden'}" />
+      {#each (produto.imagens || []) as img, i}
+        <img src={img} alt={produto.nome || ''} class="w-full h-48 object-cover {i === 0 ? '' : 'hidden'}" />
       {/each}
       <button class="prev absolute left-0 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2"><</button>
       <button class="next absolute right-0 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2">></button>
     </div>
   {#else if produto.imagem}
-    <img src={produto.imagem} alt={produto.nome} class="w-full h-48 object-cover rounded" />
+    <img src={produto.imagem} alt={produto.nome || ''} class="w-full h-48 object-cover rounded" />
   {/if}
 
-  <h3 class="text-cyber-gold font-bold text-xl mt-2">{produto.nome}</h3>
-  <p class="text-matrix-green font-bold text-lg">R$ {produto.preco.toLocaleString()}</p>
+  <h3 class="text-cyber-gold font-bold text-xl mt-2">{produto.nome || 'Produto'}</h3>
+  <p class="text-matrix-green font-bold text-lg">R$ {(produto.preco || 0).toLocaleString()}</p>
 
   {#if produto.quartos}
     <p class="text-white">{produto.quartos} quartos • {produto.area}m²</p>

@@ -1,0 +1,403 @@
+---
+import ClientLayout from '../../../../layouts/ClientLayout.astro';
+---
+
+<ClientLayout title="Templates - GetNexo Pro">
+    <style>
+        .templates-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1));
+            border-radius: 16px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .templates-header h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #00d4ff;
+            margin: 0;
+            background: linear-gradient(90deg, #00d4ff, #00ff9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .templates-header p {
+            color: #94a3b8;
+            font-size: 1.2rem;
+            margin: 1rem 0 0 0;
+        }
+
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .template-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .template-card:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .template-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .template-icon {
+            font-size: 2rem;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 12px;
+        }
+
+        .template-title {
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .template-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .meta-item {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .template-desc {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .template-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-tag {
+            background: rgba(0, 212, 255, 0.1);
+            color: #00d4ff;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .template-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 0.8rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #00ff9d);
+            color: black;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .filters-section {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .filter-select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #94a3b8;
+            grid-column: 1 / -1;
+        }
+
+        .empty-state h3 {
+            color: #00d4ff;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .templates-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .templates-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+
+    <div style="padding: 2rem; max-width: 1400px; margin: 0 auto;">
+
+        <!-- Header -->
+        <div class="templates-header">
+            <h1>📋 Templates de Projetos</h1>
+            <p>Escolha um template pré-configurado para acelerar o desenvolvimento</p>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-section">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Categoria</label>
+                    <select class="filter-select" id="category-filter">
+                        <option value="all" selected>Todas as categorias</option>
+                        <option value="web">Web</option>
+                        <option value="mobile">Mobile</option>
+                        <option value="ecommerce">E-commerce</option>
+                        <option value="dashboard">Dashboard</option>
+                        <option value="api">API</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Tecnologia</label>
+                    <select class="filter-select" id="tech-filter">
+                        <option value="all" selected>Todas as tecnologias</option>
+                        <option value="react">React</option>
+                        <option value="vue">Vue.js</option>
+                        <option value="angular">Angular</option>
+                        <option value="node">Node.js</option>
+                        <option value="python">Python</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <button class="btn btn-primary" onclick="applyFilters()">Aplicar Filtros</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Templates Grid -->
+        <div class="templates-grid" id="templates-grid">
+            <!-- Templates will be loaded here -->
+        </div>
+
+    </div>
+
+    <script is:inline>
+        async function loadTemplates() {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch(`${API_URL}/api/project-templates`, {
+                    headers: { 'Authorization': token }
+                });
+                const templates = await res.json();
+                renderTemplates(templates);
+            } catch (e) {
+                console.error('Error loading templates, using mock data', e);
+                loadMockTemplates();
+            }
+        }
+
+        function renderTemplates(templates) {
+            const grid = document.getElementById('templates-grid');
+
+            if (templates.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <h3>🚀 Novos templates em breve</h3>
+                        <p>Estamos trabalhando em mais templates para você.</p>
+                        <a href="/dashboard/projetos/novo" class="btn btn-primary" style="margin-top: 1rem;">Criar Projeto Personalizado</a>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = templates.map(template => `
+                <div class="template-card">
+                    <div class="template-header">
+                        <div class="template-icon">${template.icon}</div>
+                        <div class="template-title">${template.name}</div>
+                    </div>
+                    <div class="template-meta">
+                        <div class="meta-item">⭐ ${template.rating || 4.5}</div>
+                        <div class="meta-item">📦 ${template.installs || 0} instalações</div>
+                        <div class="meta-item">⏱️ ${template.setupTime || '5 min'}</div>
+                    </div>
+                    <div class="template-desc">${template.description}</div>
+                    <div class="template-features">
+                        ${template.features.map(feature => `<span class="feature-tag">${feature}</span>`).join('')}
+                    </div>
+                    <div class="template-actions">
+                        <button class="btn btn-outline" onclick="previewTemplate('${template.id}')">Prévia</button>
+                        <button class="btn btn-primary" onclick="useTemplate('${template.id}')">Usar Template</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadMockTemplates() {
+            const mockTemplates = [
+                {
+                    id: 'ecommerce-react',
+                    name: 'E-commerce React',
+                    description: 'Loja online completa com React, Stripe e painel administrativo',
+                    icon: '🛍️',
+                    rating: 4.8,
+                    installs: 1250,
+                    setupTime: '10 min',
+                    features: ['React', 'Stripe', 'Admin Panel', 'Responsive']
+                },
+                {
+                    id: 'blog-nextjs',
+                    name: 'Blog Next.js',
+                    description: 'Plataforma de blogging moderna com Next.js e MDX',
+                    icon: '📝',
+                    rating: 4.6,
+                    installs: 890,
+                    setupTime: '8 min',
+                    features: ['Next.js', 'MDX', 'SEO', 'Dark Mode']
+                },
+                {
+                    id: 'dashboard-vue',
+                    name: 'Dashboard Vue.js',
+                    description: 'Painel administrativo com Vue.js, Chart.js e autenticação',
+                    icon: '📊',
+                    rating: 4.7,
+                    installs: 756,
+                    setupTime: '12 min',
+                    features: ['Vue.js', 'Chart.js', 'Auth', 'API']
+                },
+                {
+                    id: 'api-node',
+                    name: 'API REST Node.js',
+                    description: 'API backend robusta com Express, JWT e documentação',
+                    icon: '🔌',
+                    rating: 4.9,
+                    installs: 2100,
+                    setupTime: '15 min',
+                    features: ['Express', 'JWT', 'Swagger', 'PostgreSQL']
+                },
+                {
+                    id: 'landing-tailwind',
+                    name: 'Landing Page',
+                    description: 'Página de captura otimizada com Tailwind CSS',
+                    icon: '🎯',
+                    rating: 4.5,
+                    installs: 1450,
+                    setupTime: '5 min',
+                    features: ['Tailwind', 'Responsive', 'SEO', 'Fast']
+                },
+                {
+                    id: 'mobile-react-native',
+                    name: 'App Mobile React Native',
+                    description: 'Aplicativo móvel cross-platform com React Native',
+                    icon: '📱',
+                    rating: 4.4,
+                    installs: 634,
+                    setupTime: '20 min',
+                    features: ['React Native', 'Expo', 'iOS', 'Android']
+                }
+            ];
+
+            renderTemplates(mockTemplates);
+        }
+
+        function previewTemplate(templateId) {
+            window.open(`/templates/${templateId}/preview`, '_blank');
+        }
+
+        function useTemplate(templateId) {
+            window.location.href = `/dashboard/projetos/novo?template=${templateId}`;
+        }
+
+        function applyFilters() {
+            const category = document.getElementById('category-filter').value;
+            const tech = document.getElementById('tech-filter').value;
+
+            console.log('Aplicando filtros:', { category, tech });
+            // Reload templates with filters
+            loadTemplates();
+        }
+
+        // Initialize
+        loadTemplates();
+    </script>
+</ClientLayout>

@@ -1,0 +1,813 @@
+---
+import ClientLayout from '../../../layouts/ClientLayout.astro';
+---
+
+<ClientLayout title="Projetos - GetNexo Pro">
+    <style>
+        .projects-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1));
+            border-radius: 16px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .projects-header h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #00d4ff;
+            margin: 0;
+            background: linear-gradient(90deg, #00d4ff, #00ff9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .projects-header p {
+            color: #94a3b8;
+            font-size: 1.2rem;
+            margin: 1rem 0 0 0;
+        }
+
+        .projects-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .filters-tools-section {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .filter-select,
+        .search-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .filter-select:focus,
+        .search-input:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        .tools-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .view-options {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .view-btn {
+            padding: 0.5rem;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .view-btn.active {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: #00d4ff;
+            color: #00d4ff;
+        }
+
+        .bulk-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .bulk-actions.hidden {
+            display: none;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .projects-list {
+            display: none;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .project-row {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .project-row:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.1);
+        }
+
+        .project-row-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .project-checkbox {
+            margin: 0;
+        }
+
+        .list-view-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 120px;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .project-actions {
+            display: flex;
+            gap: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .project-card:hover .project-actions,
+        .project-row:hover .project-actions {
+            opacity: 1;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .page-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .page-btn.active {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: #00d4ff;
+            color: #00d4ff;
+        }
+
+        .page-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .project-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .project-card:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .project-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .project-icon {
+            font-size: 2rem;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 12px;
+        }
+
+        .project-title {
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .project-status {
+            margin-left: auto;
+            font-size: 0.8rem;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .status-active { background: rgba(0, 255, 157, 0.2); color: #00ff9d; }
+        .status-paused { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+        .status-completed { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+
+        .project-desc {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .project-metrics {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .metric {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .metric strong {
+            color: #00d4ff;
+        }
+
+        .project-progress {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #00ff9d);
+            border-radius: 4px;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #00ff9d);
+            color: black;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #94a3b8;
+        }
+
+        .empty-state h3 {
+            color: #00d4ff;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .projects-actions {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+
+            .projects-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+
+    <div style="padding: 2rem; max-width: 1400px; margin: 0 auto;">
+
+        <!-- Header -->
+        <div class="projects-header">
+            <h1>📁 Meus Projetos</h1>
+            <p>Gerencie e acompanhe todos os seus projetos em um só lugar</p>
+        </div>
+
+        <!-- Filters and Tools -->
+        <div class="filters-tools-section">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Buscar Projetos</label>
+                    <input type="text" class="search-input" id="search-input" placeholder="Digite para buscar...">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Status</label>
+                    <select class="filter-select" id="status-filter">
+                        <option value="all" selected>Todos os status</option>
+                        <option value="active">Ativos</option>
+                        <option value="paused">Pausados</option>
+                        <option value="completed">Concluídos</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Categoria</label>
+                    <select class="filter-select" id="category-filter">
+                        <option value="all" selected>Todas as categorias</option>
+                        <option value="web">Web</option>
+                        <option value="mobile">Mobile</option>
+                        <option value="desktop">Desktop</option>
+                        <option value="api">API</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Ordenar por</label>
+                    <select class="filter-select" id="sort-filter">
+                        <option value="name" selected>Nome</option>
+                        <option value="date">Data de criação</option>
+                        <option value="progress">Progresso</option>
+                        <option value="deadline">Prazo</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="tools-row">
+                <div class="bulk-actions hidden" id="bulk-actions">
+                    <span style="color: #94a3b8; font-size: 0.9rem;"><span id="selected-count">0</span> selecionados</span>
+                    <button class="btn btn-outline" onclick="bulkAction('pause')">Pausar</button>
+                    <button class="btn btn-outline" onclick="bulkAction('delete')">Excluir</button>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div class="view-options">
+                        <button class="view-btn active" onclick="setView('grid')" title="Visualização em grade">⊞</button>
+                        <button class="view-btn" onclick="setView('list')" title="Visualização em lista">☰</button>
+                    </div>
+                    <div>
+                        <h2 style="color: white; margin: 0;">Projetos Ativos</h2>
+                        <p style="color: #94a3b8; margin: 0.5rem 0 0 0;">Total de projetos: <span id="total-projects">0</span></p>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem;">
+                    <a href="/dashboard/projetos/templates" class="btn btn-outline">Templates</a>
+                    <a href="/dashboard/projetos/novo" class="btn btn-primary">Novo Projeto</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Projects Grid -->
+        <div class="projects-grid" id="projects-grid">
+            <!-- Projects will be loaded here -->
+        </div>
+
+        <!-- Projects List (hidden by default) -->
+        <div class="projects-list" id="projects-list">
+            <!-- Projects list will be loaded here -->
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" id="pagination">
+            <!-- Pagination will be loaded here -->
+        </div>
+
+    </div>
+
+    <script is:inline>
+        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '/api-proxy';
+
+        let allProjects = [];
+        let filteredProjects = [];
+        let currentView = 'grid';
+        let currentPage = 1;
+        const itemsPerPage = 9;
+        let selectedProjects = new Set();
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Search
+            document.getElementById('search-input').addEventListener('input', debounce(filterProjects, 300));
+
+            // Filters
+            document.getElementById('status-filter').addEventListener('change', filterProjects);
+            document.getElementById('category-filter').addEventListener('change', filterProjects);
+            document.getElementById('sort-filter').addEventListener('change', sortProjects);
+
+            // Initialize
+            loadProjects();
+        });
+
+        async function loadProjects() {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch(`${API_URL}/api/projects`, {
+                    headers: { 'Authorization': token }
+                });
+                allProjects = await res.json();
+                filteredProjects = [...allProjects];
+                renderProjects();
+                renderPagination();
+            } catch (e) {
+                console.error('Error loading projects, using mock data', e);
+                loadMockProjects();
+            }
+        }
+
+        function renderProjects() {
+            const total = document.getElementById('total-projects');
+            total.textContent = filteredProjects.length;
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const projectsToShow = filteredProjects.slice(startIndex, endIndex);
+
+            if (currentView === 'grid') {
+                renderGridView(projectsToShow);
+            } else {
+                renderListView(projectsToShow);
+            }
+
+            if (filteredProjects.length === 0) {
+                const emptyMessage = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <h3>🔍 Nenhum projeto encontrado</h3>
+                        <p>Não foram encontrados projetos com os filtros aplicados.</p>
+                        <button class="btn btn-outline" onclick="clearFilters()" style="margin-top: 1rem;">Limpar Filtros</button>
+                    </div>
+                `;
+                document.getElementById('projects-grid').innerHTML = emptyMessage;
+                document.getElementById('projects-list').innerHTML = '';
+            }
+        }
+
+        function renderGridView(projects) {
+            const grid = document.getElementById('projects-grid');
+            const list = document.getElementById('projects-list');
+
+            grid.style.display = 'grid';
+            list.style.display = 'none';
+
+            grid.innerHTML = projects.map(project => `
+                <div class="project-card" onclick="handleCardClick(event, '${project.id}')">
+                    <div class="project-header">
+                        <input type="checkbox" class="project-checkbox" onchange="toggleProjectSelection('${project.id}')" ${selectedProjects.has(project.id) ? 'checked' : ''}>
+                        <div class="project-icon">${project.icon || '📁'}</div>
+                        <div class="project-title">${project.name}</div>
+                        <div class="project-status status-${project.status}">${getStatusText(project.status)}</div>
+                    </div>
+                    <div class="project-desc">${project.description}</div>
+                    <div class="project-metrics">
+                        <div class="metric">Progresso: <strong>${project.progress || 0}%</strong></div>
+                        <div class="metric">Tarefas: <strong>${project.tasks || 0}</strong></div>
+                        <div class="metric">Prazo: <strong>${project.deadline || 'N/A'}</strong></div>
+                    </div>
+                    <div class="project-progress">
+                        <div class="progress-bar" style="width: ${project.progress || 0}%"></div>
+                    </div>
+                    <div class="project-actions">
+                        <button class="btn btn-outline" onclick="editProject('${project.id}')">Editar</button>
+                        <button class="btn btn-outline" onclick="duplicateProject('${project.id}')">Duplicar</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderListView(projects) {
+            const grid = document.getElementById('projects-grid');
+            const list = document.getElementById('projects-list');
+
+            grid.style.display = 'none';
+            list.style.display = 'flex';
+
+            list.innerHTML = projects.map(project => `
+                <div class="project-row" onclick="handleCardClick(event, '${project.id}')">
+                    <div class="list-view-grid">
+                        <div class="project-row-header">
+                            <input type="checkbox" class="project-checkbox" onchange="toggleProjectSelection('${project.id}')" ${selectedProjects.has(project.id) ? 'checked' : ''}>
+                            <div class="project-icon" style="margin-right: 1rem;">${project.icon || '📁'}</div>
+                            <div>
+                                <div class="project-title">${project.name}</div>
+                                <div style="color: #94a3b8; font-size: 0.8rem; margin-top: 0.25rem;">${project.description}</div>
+                            </div>
+                        </div>
+                        <div class="project-status status-${project.status}">${getStatusText(project.status)}</div>
+                        <div style="color: #94a3b8;">${project.progress || 0}% concluído</div>
+                        <div style="color: #94a3b8;">${project.deadline || 'N/A'}</div>
+                        <div class="project-actions">
+                            <button class="btn btn-outline" onclick="editProject('${project.id}')">✏️</button>
+                            <button class="btn btn-outline" onclick="duplicateProject('${project.id}')">📋</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderPagination() {
+            const totalPages = Math.ceil(filteredProjects.length / itemsPerPage);
+            const pagination = document.getElementById('pagination');
+
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+
+            let paginationHTML = '';
+
+            // Previous button
+            paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>‹</button>`;
+
+            // Page numbers
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, currentPage + 2);
+
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+            }
+
+            // Next button
+            paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>›</button>`;
+
+            pagination.innerHTML = paginationHTML;
+        }
+
+        function filterProjects() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const statusFilter = document.getElementById('status-filter').value;
+            const categoryFilter = document.getElementById('category-filter').value;
+
+            filteredProjects = allProjects.filter(project => {
+                const matchesSearch = project.name.toLowerCase().includes(searchTerm) ||
+                                    project.description.toLowerCase().includes(searchTerm);
+                const matchesStatus = statusFilter === 'all' || project.status === statusFilter;
+                const matchesCategory = categoryFilter === 'all' || project.category === categoryFilter;
+
+                return matchesSearch && matchesStatus && matchesCategory;
+            });
+
+            currentPage = 1;
+            sortProjects();
+        }
+
+        function sortProjects() {
+            const sortBy = document.getElementById('sort-filter').value;
+
+            filteredProjects.sort((a, b) => {
+                switch (sortBy) {
+                    case 'name':
+                        return a.name.localeCompare(b.name);
+                    case 'date':
+                        return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+                    case 'progress':
+                        return (b.progress || 0) - (a.progress || 0);
+                    case 'deadline':
+                        if (!a.deadline && !b.deadline) return 0;
+                        if (!a.deadline) return 1;
+                        if (!b.deadline) return -1;
+                        return new Date(a.deadline) - new Date(b.deadline);
+                    default:
+                        return 0;
+                }
+            });
+
+            renderProjects();
+            renderPagination();
+        }
+
+        function setView(view) {
+            currentView = view;
+            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderProjects();
+        }
+
+        function toggleProjectSelection(projectId) {
+            if (selectedProjects.has(projectId)) {
+                selectedProjects.delete(projectId);
+            } else {
+                selectedProjects.add(projectId);
+            }
+            updateBulkActions();
+        }
+
+        function updateBulkActions() {
+            const bulkActions = document.getElementById('bulk-actions');
+            const selectedCount = document.getElementById('selected-count');
+
+            selectedCount.textContent = selectedProjects.size;
+
+            if (selectedProjects.size > 0) {
+                bulkActions.classList.remove('hidden');
+            } else {
+                bulkActions.classList.add('hidden');
+            }
+        }
+
+        function bulkAction(action) {
+            if (selectedProjects.size === 0) return;
+
+            const confirmMessage = action === 'delete'
+                ? `Tem certeza que deseja excluir ${selectedProjects.size} projeto(s)?`
+                : `Tem certeza que deseja pausar ${selectedProjects.size} projeto(s)?`;
+
+            if (confirm(confirmMessage)) {
+                alert(`${action === 'delete' ? 'Excluídos' : 'Pausados'} com sucesso!`);
+                selectedProjects.clear();
+                updateBulkActions();
+                loadProjects();
+            }
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            renderProjects();
+            renderPagination();
+        }
+
+        function handleCardClick(event, projectId) {
+            // Don't navigate if clicking on checkbox, button, or if multiple selection is active
+            if (event.target.type === 'checkbox' ||
+                event.target.classList.contains('btn') ||
+                selectedProjects.size > 0) {
+                return;
+            }
+            openProject(projectId);
+        }
+
+        function clearFilters() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('status-filter').value = 'all';
+            document.getElementById('category-filter').value = 'all';
+            filterProjects();
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function getStatusText(status) {
+            const statuses = {
+                'active': 'Ativo',
+                'paused': 'Pausado',
+                'completed': 'Concluído'
+            };
+            return statuses[status] || 'Ativo';
+        }
+
+        function loadMockProjects() {
+            allProjects = [
+                {
+                    id: '1',
+                    name: 'Landing Page E-commerce',
+                    description: 'Criação de landing page para novo produto de moda',
+                    status: 'active',
+                    progress: 65,
+                    tasks: 12,
+                    deadline: '15 Dez 2026',
+                    category: 'web',
+                    createdAt: '2026-01-01',
+                    icon: '🛍️'
+                },
+                {
+                    id: '2',
+                    name: 'App Mobile Restaurante',
+                    description: 'Desenvolvimento de app para delivery de comida',
+                    status: 'paused',
+                    progress: 30,
+                    tasks: 8,
+                    deadline: '22 Jan 2027',
+                    category: 'mobile',
+                    createdAt: '2026-01-05',
+                    icon: '🍽️'
+                },
+                {
+                    id: '3',
+                    name: 'Sistema de Gestão',
+                    description: 'Implementação de ERP para empresa de construção',
+                    status: 'completed',
+                    progress: 100,
+                    tasks: 25,
+                    deadline: '30 Nov 2026',
+                    category: 'web',
+                    createdAt: '2026-01-10',
+                    icon: '🏗️'
+                },
+                {
+                    id: '4',
+                    name: 'API de Pagamentos',
+                    description: 'Desenvolvimento de API REST para processamento de pagamentos',
+                    status: 'active',
+                    progress: 80,
+                    tasks: 15,
+                    deadline: '10 Fev 2027',
+                    category: 'api',
+                    createdAt: '2026-01-15',
+                    icon: '💳'
+                },
+                {
+                    id: '5',
+                    name: 'Aplicativo Desktop',
+                    description: 'Software desktop para gestão de projetos',
+                    status: 'paused',
+                    progress: 45,
+                    tasks: 20,
+                    deadline: '05 Mar 2027',
+                    category: 'desktop',
+                    createdAt: '2026-01-20',
+                    icon: '💻'
+                }
+            ];
+
+            filteredProjects = [...allProjects];
+            renderProjects();
+            renderPagination();
+        }
+
+        function openProject(projectId) {
+            window.location.href = `/dashboard/projetos/${projectId}`;
+        }
+
+        function editProject(projectId) {
+            window.location.href = `/dashboard/projetos/${projectId}/editar`;
+        }
+
+        function duplicateProject(projectId) {
+            const project = allProjects.find(p => p.id === projectId);
+            if (project) {
+                alert(`Projeto "${project.name}" duplicado com sucesso!`);
+                loadProjects();
+            }
+        }
+    </script>
+</ClientLayout>

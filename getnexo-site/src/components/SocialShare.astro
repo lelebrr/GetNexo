@@ -1,5 +1,11 @@
 ---
 // Social Share component
+declare global {
+  interface Window {
+    gtag: any;
+    copyToClipboard: () => void;
+  }
+}
 export interface Props {
   url?: string;
   title?: string;
@@ -265,7 +271,7 @@ const encodedDescription = encodeURIComponent(description);
 
         // Send to analytics
         if (window.gtag) {
-          gtag('event', 'share', {
+          window.gtag('event', 'share', {
             method: platform,
             content_type: 'page',
             item_id: window.location.pathname
@@ -275,11 +281,11 @@ const encodedDescription = encodeURIComponent(description);
         // Show success feedback
         const originalText = button.innerHTML;
         button.innerHTML = '<span class="share-icon">✅</span> Compartilhado!';
-        button.style.background = 'var(--success)';
+        (button as HTMLElement).style.background = 'var(--success)';
 
         setTimeout(() => {
           button.innerHTML = originalText;
-          button.style.background = '';
+          (button as HTMLElement).style.background = '';
         }, 1500);
       });
     });

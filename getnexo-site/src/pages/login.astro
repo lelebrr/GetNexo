@@ -260,39 +260,28 @@ import ClientLayout from '../layouts/ClientLayout.astro';
         <div class="demo-accounts">
             <h3>👤 Clique para preencher automaticamente:</h3>
 
-            <div class="demo-account" onclick="fillDemo('admin')">
+            <div class="demo-account" onclick="(function(){const demoAccounts={admin:{email:'admin@getnexo.local',password:'admin123'},reseller:{email:'revendedor@getnexo.com',password:'reseller123'},client:{email:'cliente@getnexo.com',password:'cliente123'}};const account=demoAccounts.admin;if(account){document.getElementById('email').value=account.email;document.getElementById('password').value=account.password;}})()">
                 <div class="demo-label">Admin</div>
                 <div class="demo-creds">admin@getnexo.local</div>
             </div>
 
-            <div class="demo-account" onclick="fillDemo('reseller')">
+            <div class="demo-account" onclick="(function(){const demoAccounts={admin:{email:'admin@getnexo.local',password:'admin123'},reseller:{email:'revendedor@getnexo.com',password:'reseller123'},client:{email:'cliente@getnexo.com',password:'cliente123'}};const account=demoAccounts.reseller;if(account){document.getElementById('email').value=account.email;document.getElementById('password').value=account.password;}})()">
                 <div class="demo-label">Revendedor</div>
                 <div class="demo-creds">revendedor@getnexo.com</div>
             </div>
 
-            <div class="demo-account" onclick="fillDemo('client')">
+            <div class="demo-account" onclick="(function(){const demoAccounts={admin:{email:'admin@getnexo.local',password:'admin123'},reseller:{email:'revendedor@getnexo.com',password:'reseller123'},client:{email:'cliente@getnexo.com',password:'cliente123'}};const account=demoAccounts.client;if(account){document.getElementById('email').value=account.email;document.getElementById('password').value=account.password;}})()">
                 <div class="demo-label">Cliente</div>
                 <div class="demo-creds">cliente@getnexo.com</div>
             </div>
         </div>
     </div>
 
+    <!-- Fill Demo Script -->
+    <script is:inline src="/fillDemo.js"></script>
+
     <script>
-        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '/api-proxy';
-
-        const demoAccounts = {
-            admin: { email: 'lelebrr@gmail.com', password: '@Marlboro123#' },
-            reseller: { email: 'revendedor@getnexo.com', password: 'reseller123' },
-            client: { email: 'cliente@getnexo.com', password: 'cliente123' }
-        };
-
-        function fillDemo(type) {
-            const account = demoAccounts[type];
-            if (account) {
-                document.getElementById('email').value = account.email;
-                document.getElementById('password').value = account.password;
-            }
-        }
+        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:8080' : '/api';
 
         async function login(email, password) {
             try {
@@ -399,8 +388,10 @@ import ClientLayout from '../layouts/ClientLayout.astro';
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+            const emailElement = document.getElementById('email') as HTMLInputElement;
+            const email = emailElement?.value;
+            const passwordElement = document.getElementById('password') as HTMLInputElement;
+            const password = passwordElement?.value;
 
             if (!email || !password) {
                 showMessage('error', 'Preencha todos os campos');

@@ -1,0 +1,464 @@
+---
+import ClientLayout from '../../../../layouts/ClientLayout.astro';
+---
+
+<ClientLayout title="Contato e Suporte - GetNexo Pro">
+    <style>
+        .contact-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1));
+            border-radius: 16px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .contact-header h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #00d4ff;
+            margin: 0;
+            background: linear-gradient(90deg, #00d4ff, #00ff9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .contact-header p {
+            color: #94a3b8;
+            font-size: 1.2rem;
+            margin: 1rem 0 0 0;
+        }
+
+        .contact-form {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-section h3 {
+            color: #00d4ff;
+            margin: 0 0 1rem 0;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: white;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .file-upload {
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .file-upload:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .file-upload-icon {
+            font-size: 3rem;
+            color: #94a3b8;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .file-upload-text {
+            color: #94a3b8;
+            margin: 0;
+        }
+
+        .file-upload-subtext {
+            color: #64748b;
+            font-size: 0.8rem;
+            margin: 0.5rem 0 0 0;
+        }
+
+        .uploaded-files {
+            margin-top: 1rem;
+        }
+
+        .uploaded-file {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .uploaded-file-name {
+            flex: 1;
+            color: white;
+        }
+
+        .uploaded-file-remove {
+            color: #ef4444;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .contact-info {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .contact-info h4 {
+            color: #00d4ff;
+            margin: 0 0 1rem 0;
+            font-size: 1rem;
+        }
+
+        .contact-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .contact-method {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+        }
+
+        .contact-method-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .contact-method-content h5 {
+            color: white;
+            margin: 0 0 0.25rem 0;
+            font-size: 0.9rem;
+        }
+
+        .contact-method-content p {
+            color: #94a3b8;
+            margin: 0;
+            font-size: 0.8rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #00ff9d);
+            color: black;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .required {
+            color: #ef4444;
+        }
+
+        .help-text {
+            color: #64748b;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-methods {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .contact-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+
+    <div style="padding: 2rem; max-width: 1000px; margin: 0 auto;">
+
+        <!-- Header -->
+        <div class="contact-header">
+            <h1>📞 Contato e Suporte</h1>
+            <p>Precisa de ajuda? Entre em contato conosco</p>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="contact-info">
+            <h4>💬 Canais de Atendimento</h4>
+            <div class="contact-methods">
+                <div class="contact-method">
+                    <div class="contact-method-icon">💬</div>
+                    <div class="contact-method-content">
+                        <h5>Chat Online</h5>
+                        <p>Atendimento instantâneo 24/7</p>
+                    </div>
+                </div>
+                <div class="contact-method">
+                    <div class="contact-method-icon">📧</div>
+                    <div class="contact-method-content">
+                        <h5>Email</h5>
+                    <p>Resposta em até 2h úteis</p>
+                    </div>
+                </div>
+                <div class="contact-method">
+                    <div class="contact-method-icon">📱</div>
+                    <div class="contact-method-content">
+                        <h5>WhatsApp</h5>
+                        <p>Atendimento prioritário</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Form -->
+        <form class="contact-form" id="contact-form">
+
+            <!-- Basic Information -->
+            <div class="form-section">
+                <h3>👤 Informações Básicas</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Nome <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="contact-name" required>
+                        <div class="help-text">Seu nome completo</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email <span class="required">*</span></label>
+                        <input type="email" class="form-input" id="contact-email" required>
+                        <div class="help-text">Email para resposta</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Issue Details -->
+            <div class="form-section">
+                <h3>🎯 Detalhes do Problema</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Assunto <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="contact-subject" placeholder="Breve descrição do problema" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Categoria</label>
+                        <select class="form-select" id="contact-category">
+                            <option value="technical">Problema Técnico</option>
+                            <option value="billing">Faturamento</option>
+                            <option value="feature">Nova Funcionalidade</option>
+                            <option value="account">Conta</option>
+                            <option value="other">Outro</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descrição <span class="required">*</span></label>
+                    <textarea class="form-textarea" id="contact-description" placeholder="Descreva detalhadamente o seu problema ou dúvida..." required></textarea>
+                    <div class="help-text">Quanto mais detalhes você fornecer, mais rápido conseguimos ajudar</div>
+                </div>
+            </div>
+
+            <!-- File Upload -->
+            <div class="form-section">
+                <h3>📎 Anexos (Opcional)</h3>
+                <div class="file-upload" onclick="document.getElementById('file-input').click()">
+                    <span class="file-upload-icon">📎</span>
+                    <p class="file-upload-text">Clique para anexar arquivos</p>
+                    <p class="file-upload-subtext">PNG, JPG, PDF, DOC até 10MB cada</p>
+                </div>
+                <input type="file" id="file-input" multiple style="display: none;" onchange="handleFileUpload()">
+                <div class="uploaded-files" id="uploaded-files"></div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <a href="/dashboard/suporte/tickets" class="btn btn-outline">Ver Meus Tickets</a>
+                <button type="submit" class="btn btn-primary">Enviar Mensagem</button>
+            </div>
+
+        </form>
+
+    </div>
+
+    <script is:inline>
+        let uploadedFiles = [];
+
+        document.getElementById('contact-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('contact-name').value;
+            const email = document.getElementById('contact-email').value;
+            const subject = document.getElementById('contact-subject').value;
+            const category = document.getElementById('contact-category').value;
+            const description = document.getElementById('contact-description').value;
+
+            if (!name || !email || !subject || !description) {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+                return;
+            }
+
+            const contactData = {
+                name,
+                email,
+                subject,
+                category,
+                description,
+                attachments: uploadedFiles
+            };
+
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch(`${API_URL}/api/support/contact`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    },
+                    body: JSON.stringify(contactData)
+                });
+
+                if (res.ok) {
+                    alert('Mensagem enviada com sucesso! Entraremos em contato em breve.');
+                    window.location.href = '/dashboard/suporte/tickets';
+                } else {
+                    throw new Error('Erro ao enviar mensagem');
+                }
+            } catch (error) {
+                console.error('Error sending message:', error);
+                alert('Erro ao enviar mensagem. Tente novamente.');
+            }
+        });
+
+        function handleFileUpload() {
+            const files = document.getElementById('file-input').files;
+            const uploadedFilesDiv = document.getElementById('uploaded-files');
+
+            for (let file of files) {
+                if (file.size > 10 * 1024 * 1024) { // 10MB
+                    alert(`Arquivo ${file.name} é muito grande. Máximo 10MB.`);
+                    continue;
+                }
+
+                uploadedFiles.push(file);
+                const fileDiv = document.createElement('div');
+                fileDiv.className = 'uploaded-file';
+                fileDiv.innerHTML = `
+                    <span class="uploaded-file-name">${file.name}</span>
+                    <span class="uploaded-file-remove" onclick="removeFile('${file.name}')">✕</span>
+                `;
+                uploadedFilesDiv.appendChild(fileDiv);
+            }
+        }
+
+        function removeFile(fileName) {
+            uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
+            const uploadedFilesDiv = document.getElementById('uploaded-files');
+            uploadedFilesDiv.innerHTML = uploadedFiles.map(file => `
+                <div class="uploaded-file">
+                    <span class="uploaded-file-name">${file.name}</span>
+                    <span class="uploaded-file-remove" onclick="removeFile('${file.name}')">✕</span>
+                </div>
+            `).join('');
+        }
+    </script>
+</ClientLayout>

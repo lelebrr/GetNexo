@@ -1,0 +1,873 @@
+---
+import ClientLayout from '../../../layouts/ClientLayout.astro';
+---
+
+<ClientLayout title="Serviços - GetNexo Pro">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        .services-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1));
+            border-radius: 16px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .services-header h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #00d4ff;
+            margin: 0;
+            background: linear-gradient(90deg, #00d4ff, #00ff9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .services-header p {
+            color: #94a3b8;
+            font-size: 1.2rem;
+            margin: 1rem 0 0 0;
+        }
+
+        .services-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .service-card:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .service-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .service-icon {
+            font-size: 2rem;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 12px;
+        }
+
+        .service-title {
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .service-status {
+            margin-left: auto;
+            font-size: 0.8rem;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .status-active { background: rgba(0, 255, 157, 0.2); color: #00ff9d; }
+        .status-inactive { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .status-paused { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+
+        .service-desc {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .service-metrics {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .metric {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .metric strong {
+            color: #00d4ff;
+        }
+
+        .service-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 0.8rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #00ff9d);
+            color: black;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #94a3b8;
+            grid-column: 1 / -1;
+        }
+
+        .empty-state h3 {
+            color: #00d4ff;
+            margin-bottom: 1rem;
+        }
+
+        .metrics-dashboard {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+
+        .metric-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .metric-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .metric-title {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #00d4ff;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-desc {
+            color: #64748b;
+            font-size: 0.8rem;
+        }
+
+        .usage-chart-section {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .chart-container {
+            height: 250px;
+            position: relative;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 12px;
+            padding: 0.5rem;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #94a3b8;
+            position: relative;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #00d4ff, #00ff9d);
+            color: black;
+            font-weight: 600;
+        }
+
+        .tab-count {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .analytics-content {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .analytics-card {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .analytics-card h4 {
+            color: #00d4ff;
+            margin: 0 0 1rem 0;
+            font-size: 1.1rem;
+        }
+
+        .performance-item,
+        .recommendation-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .performance-metrics {
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .performance-metrics .metric {
+            display: block;
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .performance-metrics .metric strong {
+            color: #00d4ff;
+        }
+
+        @media (max-width: 768px) {
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .services-actions {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+
+            .services-header h1 {
+                font-size: 2rem;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    <div style="padding: 2rem; max-width: 1400px; margin: 0 auto;">
+
+        <!-- Header -->
+        <div class="services-header">
+            <h1>⚙️ Meus Serviços</h1>
+            <p>Gerencie e monitore todos os seus serviços ativos</p>
+        </div>
+
+        <!-- Service Metrics Dashboard -->
+        <div class="metrics-dashboard">
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon">⚙️</div>
+                        <div class="metric-title">Serviços Ativos</div>
+                    </div>
+                    <div class="metric-value" id="active-services-count">0</div>
+                    <div class="metric-desc">
+                        <span class="change-positive">↗️ +2</span> este mês
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon">💰</div>
+                        <div class="metric-title">Gasto Mensal</div>
+                    </div>
+                    <div class="metric-value" id="monthly-spend">R$ 0</div>
+                    <div class="metric-desc">
+                        <span class="change-negative">↗️ +8%</span> vs mês anterior
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon">📈</div>
+                        <div class="metric-title">Uso Médio</div>
+                    </div>
+                    <div class="metric-value" id="average-usage">0%</div>
+                    <div class="metric-desc">
+                        <span class="change-positive">↗️ +5%</span> vs semana anterior
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon">⏱️</div>
+                        <div class="metric-title">Uptime Médio</div>
+                    </div>
+                    <div class="metric-value" id="average-uptime">99.9%</div>
+                    <div class="metric-desc">
+                        <span class="change-positive">↗️ +0.1%</span> este mês
+                    </div>
+                </div>
+            </div>
+
+            <!-- Usage Chart -->
+            <div class="usage-chart-section">
+                <div class="chart-header">
+                    <h3>Uso de Serviços - Últimos 7 dias</h3>
+                    <select id="usage-period" onchange="updateUsageChart()">
+                        <option value="7">7 dias</option>
+                        <option value="30">30 dias</option>
+                        <option value="90">90 dias</option>
+                    </select>
+                </div>
+                <div class="chart-container">
+                    <canvas id="servicesUsageChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('active')">Ativos <span class="tab-count" id="active-tab-count">(0)</span></div>
+            <div class="tab" onclick="showTab('available')">Disponíveis <span class="tab-count" id="available-tab-count">(0)</span></div>
+            <div class="tab" onclick="showTab('history')">Histórico <span class="tab-count" id="history-tab-count">(0)</span></div>
+            <div class="tab" onclick="showTab('analytics')">Analytics</div>
+        </div>
+
+        <!-- Actions -->
+        <div class="services-actions">
+            <div>
+                <h2 style="color: white; margin: 0;" id="current-tab-title">Serviços Ativos</h2>
+                <p style="color: #94a3b8; margin: 0.5rem 0 0 0;">Total de serviços: <span id="total-services">0</span></p>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <a href="/dashboard/servicos/loja" class="btn btn-outline">Loja de Serviços</a>
+                <a href="/dashboard/servicos/historico" class="btn btn-primary" id="history-btn">Ver Histórico</a>
+            </div>
+        </div>
+
+        <!-- Services Grid -->
+        <div class="services-grid" id="services-grid">
+            <!-- Services will be loaded here -->
+        </div>
+
+        <!-- Analytics Tab Content (hidden by default) -->
+        <div class="analytics-content" id="analytics-content" style="display: none;">
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <h4>📊 Performance por Serviço</h4>
+                    <div class="performance-list" id="performance-list">
+                        <!-- Performance metrics will be loaded here -->
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <h4>💡 Recomendações</h4>
+                    <div class="recommendations-list" id="recommendations-list">
+                        <!-- Recommendations will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script is:inline>
+        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '/api-proxy';
+        let currentTab = 'active';
+        let servicesUsageChart;
+
+        // Load all service data
+        async function loadServicesData() {
+            try {
+                const token = localStorage.getItem('token');
+
+                // Load metrics
+                const metricsRes = await fetch(`${API_URL}/api/services/metrics`, {
+                    headers: { 'Authorization': token }
+                });
+                const metrics = await metricsRes.json();
+                updateMetrics(metrics);
+
+                // Load services for current tab
+                await loadServices(currentTab);
+
+                // Load usage chart
+                loadUsageChart();
+
+            } catch (e) {
+                console.error('Error loading services data, using mock data', e);
+                loadMockServicesData();
+            }
+        }
+
+        async function loadServices(tab = 'active') {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch(`${API_URL}/api/services?tab=${tab}`, {
+                    headers: { 'Authorization': token }
+                });
+                const services = await res.json();
+                renderServices(services, tab);
+                updateTabCounts(services, tab);
+            } catch (e) {
+                console.error('Error loading services, using mock data', e);
+                loadMockServices(tab);
+            }
+        }
+
+        function updateMetrics(metrics) {
+            document.getElementById('active-services-count').textContent = metrics.activeServices || 0;
+            document.getElementById('monthly-spend').textContent = 'R$ ' + (metrics.monthlySpend || 0).toFixed(2).replace('.', ',');
+            document.getElementById('average-usage').textContent = (metrics.averageUsage || 0) + '%';
+            document.getElementById('average-uptime').textContent = (metrics.averageUptime || 99.9) + '%';
+        }
+
+        function loadUsageChart() {
+            const ctx = document.getElementById('servicesUsageChart').getContext('2d');
+
+            if (servicesUsageChart) {
+                servicesUsageChart.destroy();
+            }
+
+            const labels = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+            const data = [65, 72, 68, 75, 82, 78, 85];
+
+            servicesUsageChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Uso Médio (%)',
+                        data: data,
+                        borderColor: '#00d4ff',
+                        backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: '#00d4ff',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#94a3b8' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#94a3b8' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderServices(services, tab) {
+            const grid = document.getElementById('services-grid');
+            const total = document.getElementById('total-services');
+            const title = document.getElementById('current-tab-title');
+
+            total.textContent = services.length;
+
+            // Update title
+            const titles = {
+                'active': 'Serviços Ativos',
+                'available': 'Serviços Disponíveis',
+                'history': 'Histórico de Serviços',
+                'analytics': 'Analytics de Serviços'
+            };
+            title.textContent = titles[tab] || 'Serviços';
+
+            if (tab === 'analytics') {
+                showAnalyticsContent();
+                return;
+            }
+
+            hideAnalyticsContent();
+
+            if (services.length === 0) {
+                let emptyMessage = '';
+                if (tab === 'active') {
+                    emptyMessage = `
+                        <h3>🚀 Explore nossos serviços</h3>
+                        <p>Você ainda não tem serviços ativos. Que tal conhecer nossas opções?</p>
+                        <a href="/dashboard/servicos/loja" class="btn btn-primary" style="margin-top: 1rem;">Ir para Loja</a>
+                    `;
+                } else if (tab === 'available') {
+                    emptyMessage = `
+                        <h3>📦 Serviços disponíveis</h3>
+                        <p>Carregando serviços disponíveis...</p>
+                    `;
+                } else {
+                    emptyMessage = `
+                        <h3>📚 Histórico vazio</h3>
+                        <p>Você ainda não utilizou nenhum serviço.</p>
+                    `;
+                }
+
+                grid.innerHTML = `<div class="empty-state">${emptyMessage}</div>`;
+                return;
+            }
+
+            grid.innerHTML = services.map(service => `
+                <div class="service-card">
+                    <div class="service-header">
+                        <div class="service-icon">${service.icon || '⚙️'}</div>
+                        <div class="service-title">${service.name}</div>
+                        <div class="service-status status-${service.status}">${getStatusText(service.status)}</div>
+                    </div>
+                    <div class="service-desc">${service.description}</div>
+                    <div class="service-metrics">
+                        <div class="metric">Uso: <strong>${service.usage || 0}%</strong></div>
+                        <div class="metric">Custo: <strong>R$ ${service.cost || 0}</strong></div>
+                        <div class="metric">${tab === 'history' ? 'Período' : 'Desde'}: <strong>${service.period || service.since || 'N/A'}</strong></div>
+                        ${tab === 'active' ? `<div class="metric">Uptime: <strong>${service.uptime || 99.9}%</strong></div>` : ''}
+                    </div>
+                    <div class="service-actions">
+                        ${tab === 'active' ? `
+                            <button class="btn btn-outline" onclick="configureService('${service.id}')">Configurar</button>
+                            <button class="btn btn-outline" onclick="viewLogs('${service.id}')">Logs</button>
+                            <button class="btn btn-danger" onclick="stopService('${service.id}')">Parar</button>
+                        ` : tab === 'available' ? `
+                            <button class="btn btn-primary" onclick="activateService('${service.id}')">Ativar</button>
+                            <button class="btn btn-outline" onclick="viewDetails('${service.id}')">Detalhes</button>
+                        ` : `
+                            <button class="btn btn-outline" onclick="viewServiceHistory('${service.id}')">Detalhes</button>
+                            <button class="btn btn-outline" onclick="reactivateService('${service.id}')">Reativar</button>
+                        `}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateTabCounts(services, tab) {
+            const counts = {
+                active: services.filter(s => s.status === 'active').length,
+                available: services.filter(s => s.status === 'available').length,
+                history: services.filter(s => s.status === 'completed').length
+            };
+
+            document.getElementById('active-tab-count').textContent = `(${counts.active})`;
+            document.getElementById('available-tab-count').textContent = `(${counts.available})`;
+            document.getElementById('history-tab-count').textContent = `(${counts.history})`;
+        }
+
+        function showAnalyticsContent() {
+            const grid = document.getElementById('services-grid');
+            const analytics = document.getElementById('analytics-content');
+
+            grid.style.display = 'none';
+            analytics.style.display = 'block';
+
+            // Load analytics data
+            loadPerformanceMetrics();
+            loadRecommendations();
+        }
+
+        function hideAnalyticsContent() {
+            const grid = document.getElementById('services-grid');
+            const analytics = document.getElementById('analytics-content');
+
+            grid.style.display = 'grid';
+            analytics.style.display = 'none';
+        }
+
+        function loadPerformanceMetrics() {
+            const performanceList = document.getElementById('performance-list');
+            const mockPerformance = [
+                { name: 'SEO Automation', usage: 85, uptime: 99.8, responseTime: 245 },
+                { name: 'Analytics Pro', usage: 72, uptime: 99.9, responseTime: 189 },
+                { name: 'Chatbot IA', usage: 45, uptime: 99.7, responseTime: 312 }
+            ];
+
+            performanceList.innerHTML = mockPerformance.map(item => `
+                <div class="performance-item">
+                    <div class="service-icon">${item.name === 'SEO Automation' ? '🔍' : item.name === 'Analytics Pro' ? '📊' : '🤖'}</div>
+                    <div>
+                        <div style="color: white; font-weight: 600;">${item.name}</div>
+                        <div style="color: #94a3b8; font-size: 0.8rem;">Performance metrics</div>
+                    </div>
+                    <div class="performance-metrics">
+                        <div class="metric">Uso: <strong>${item.usage}%</strong></div>
+                        <div class="metric">Uptime: <strong>${item.uptime}%</strong></div>
+                        <div class="metric">Resp: <strong>${item.responseTime}ms</strong></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadRecommendations() {
+            const recommendationsList = document.getElementById('recommendations-list');
+            const mockRecommendations = [
+                { icon: '⚡', title: 'Otimizar SEO Automation', desc: 'Uso abaixo do ideal, considere ajustar configurações' },
+                { icon: '💰', title: 'Plano Chatbot', desc: 'Upgrade pode melhorar performance em 40%' },
+                { icon: '🔧', title: 'Manutenção Analytics', desc: 'Atualização disponível para melhor estabilidade' }
+            ];
+
+            recommendationsList.innerHTML = mockRecommendations.map(rec => `
+                <div class="recommendation-item">
+                    <div class="service-icon">${rec.icon}</div>
+                    <div>
+                        <div style="color: white; font-weight: 600;">${rec.title}</div>
+                        <div style="color: #94a3b8; font-size: 0.8rem;">${rec.desc}</div>
+                    </div>
+                    <button class="btn btn-outline" style="margin-left: auto;">Aplicar</button>
+                </div>
+            `).join('');
+        }
+
+        function getStatusText(status) {
+            const statuses = {
+                'active': 'Ativo',
+                'inactive': 'Inativo',
+                'paused': 'Pausado',
+                'available': 'Disponível',
+                'completed': 'Concluído'
+            };
+            return statuses[status] || 'Ativo';
+        }
+
+        function loadMockServicesData() {
+            updateMetrics({
+                activeServices: 3,
+                monthlySpend: 247,
+                averageUsage: 67,
+                averageUptime: 99.8
+            });
+
+            loadUsageChart();
+            loadMockServices('active');
+        }
+
+        function loadMockServices(tab) {
+            let mockServices = [];
+
+            if (tab === 'active') {
+                mockServices = [
+                    {
+                        id: '1',
+                        name: 'SEO Automation',
+                        description: 'Otimização automática de SEO para seus sites',
+                        status: 'active',
+                        usage: 85,
+                        cost: 99,
+                        since: 'Jan 2026',
+                        uptime: 99.8,
+                        icon: '🔍'
+                    },
+                    {
+                        id: '2',
+                        name: 'Analytics Pro',
+                        description: 'Relatórios avançados de analytics',
+                        status: 'active',
+                        usage: 72,
+                        cost: 149,
+                        since: 'Dez 2025',
+                        uptime: 99.9,
+                        icon: '📊'
+                    }
+                ];
+            } else if (tab === 'available') {
+                mockServices = [
+                    {
+                        id: '3',
+                        name: 'Chatbot IA',
+                        description: 'Assistente virtual inteligente para atendimento',
+                        status: 'available',
+                        cost: 79,
+                        icon: '🤖'
+                    },
+                    {
+                        id: '4',
+                        name: 'Email Marketing',
+                        description: 'Campanhas de email automatizadas',
+                        status: 'available',
+                        cost: 59,
+                        icon: '📧'
+                    }
+                ];
+            } else {
+                mockServices = [
+                    {
+                        id: '5',
+                        name: 'Backup Cloud',
+                        description: 'Serviço de backup em nuvem',
+                        status: 'completed',
+                        cost: 29,
+                        period: 'Nov-Dez 2025',
+                        icon: '☁️'
+                    }
+                ];
+            }
+
+            renderServices(mockServices, tab);
+            updateTabCounts(mockServices, tab);
+        }
+
+        function showTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const historyBtn = document.getElementById('history-btn');
+            if (tab === 'history') {
+                historyBtn.style.display = 'none';
+            } else {
+                historyBtn.style.display = 'inline-block';
+            }
+
+            loadServices(tab);
+        }
+
+        function updateUsageChart() {
+            // Refresh usage chart with new period
+            loadUsageChart();
+        }
+
+        function configureService(serviceId) {
+            window.location.href = `/dashboard/servicos/${serviceId}/config`;
+        }
+
+        function viewLogs(serviceId) {
+            window.open(`/dashboard/servicos/${serviceId}/logs`, '_blank');
+        }
+
+        function stopService(serviceId) {
+            if (confirm('Tem certeza que deseja parar este serviço?')) {
+                alert('Serviço parado com sucesso!');
+                loadServices(currentTab);
+            }
+        }
+
+        function activateService(serviceId) {
+            alert('Serviço ativado com sucesso!');
+            loadServices(currentTab);
+        }
+
+        function viewDetails(serviceId) {
+            window.location.href = `/dashboard/servicos/loja/${serviceId}`;
+        }
+
+        function viewServiceHistory(serviceId) {
+            window.location.href = `/dashboard/servicos/historico/${serviceId}`;
+        }
+
+        function reactivateService(serviceId) {
+            if (confirm('Deseja reativar este serviço?')) {
+                alert('Serviço reativado com sucesso!');
+                loadServices(currentTab);
+            }
+        }
+
+        // Initialize
+        loadServicesData();
+    </script>
+</ClientLayout>

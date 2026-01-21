@@ -779,9 +779,10 @@ import Layout from '../../layouts/Layout.astro';
     async function loadStats() {
       try {
         const res = await fetch(`${API_URL}/api/relatorio`);
+        if (!res.ok) throw new Error('Failed to fetch stats');
         const data = await res.json();
-        
-        document.getElementById('stat-vendas').textContent = 
+
+        document.getElementById('stat-vendas').textContent =
           'R$ ' + (data.totalVendas || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
         document.getElementById('stat-pedidos').textContent = data.pedidos || 0;
         document.getElementById('stat-conversas').textContent = data.conversas || 0;
@@ -789,14 +790,16 @@ import Layout from '../../layouts/Layout.astro';
         console.error('Error loading stats:', e);
         document.getElementById('stat-vendas').textContent = 'Erro';
       }
-      
+
       // Load coupons count
       try {
         const cRes = await fetch(`${API_URL}/api/coupons`);
+        if (!cRes.ok) throw new Error('Failed to fetch coupons');
         const coupons = await cRes.json();
         const active = coupons.filter(c => c.active).length;
         document.getElementById('stat-cupons').textContent = active;
       } catch (e) {
+        console.error('Error loading coupons:', e);
         document.getElementById('stat-cupons').textContent = '0';
       }
     }
@@ -805,9 +808,10 @@ import Layout from '../../layouts/Layout.astro';
     async function loadContacts() {
       try {
         const res = await fetch(`${API_URL}/contacts`);
+        if (!res.ok) throw new Error('Failed to fetch contacts');
         const contacts = await res.json();
         const list = document.getElementById('contacts-list');
-        
+
         if (contacts.length === 0) {
           list.innerHTML = '<li style="color:#64748b; text-align:center; padding:2rem;">Nenhum contato ainda</li>';
         } else {
@@ -818,7 +822,7 @@ import Layout from '../../layouts/Layout.astro';
             </li>
           `).join('');
         }
-        
+
         document.getElementById('total-contacts').textContent = contacts.length;
       } catch (e) {
         console.error('Error loading contacts:', e);
@@ -829,6 +833,7 @@ import Layout from '../../layouts/Layout.astro';
     async function loadProducts() {
       try {
         const res = await fetch(`${API_URL}/api/products`);
+        if (!res.ok) throw new Error('Failed to fetch products');
         const products = await res.json();
         const list = document.getElementById('products-list');
 
@@ -856,6 +861,7 @@ import Layout from '../../layouts/Layout.astro';
         const res = await fetch(`${API_URL}/api/config?type=global`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
+        if (!res.ok) throw new Error('Failed to fetch configs');
         const data = await res.json();
         const list = document.getElementById('configs-list');
 
@@ -915,8 +921,7 @@ import Layout from '../../layouts/Layout.astro';
         if (res.ok) {
           loadConfigs();
         } else {
-          const error = await res.json();
-          alert('Erro: ' + error.error);
+          alert('Erro ao adicionar configuração: ' + res.status);
         }
       } catch (e) {
         console.error('Error adding config:', e);
@@ -955,8 +960,7 @@ import Layout from '../../layouts/Layout.astro';
         if (res.ok) {
           loadConfigs();
         } else {
-          const error = await res.json();
-          alert('Erro: ' + error.error);
+          alert('Erro ao atualizar configuração: ' + res.status);
         }
       } catch (e) {
         console.error('Error updating config:', e);
@@ -982,8 +986,7 @@ import Layout from '../../layouts/Layout.astro';
         if (res.ok) {
           loadConfigs();
         } else {
-          const error = await res.json();
-          alert('Erro: ' + error.error);
+          alert('Erro ao deletar configuração: ' + res.status);
         }
       } catch (e) {
         console.error('Error deleting config:', e);

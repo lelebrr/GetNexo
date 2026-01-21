@@ -1,0 +1,297 @@
+---
+import ClientLayout from '../../../../layouts/ClientLayout.astro';
+---
+
+<ClientLayout title="Histórico de Serviços - GetNexo Pro">
+    <style>
+        .history-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1));
+            border-radius: 16px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .history-header h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #00d4ff;
+            margin: 0;
+            background: linear-gradient(90deg, #00d4ff, #00ff9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .history-header p {
+            color: #94a3b8;
+            font-size: 1.2rem;
+            margin: 1rem 0 0 0;
+        }
+
+        .history-timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timeline-item {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -15px;
+            top: 2rem;
+            width: 10px;
+            height: 10px;
+            background: #00d4ff;
+            border-radius: 50%;
+            border: 3px solid rgba(15, 23, 42, 0.8);
+        }
+
+        .timeline-item.completed::before {
+            background: #00ff9d;
+        }
+
+        .timeline-item.failed::before {
+            background: #ef4444;
+        }
+
+        .service-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .service-icon {
+            font-size: 2rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 12px;
+        }
+
+        .service-title {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .service-status {
+            margin-left: auto;
+            font-size: 0.8rem;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .status-completed { background: rgba(0, 255, 157, 0.2); color: #00ff9d; }
+        .status-failed { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .status-active { background: rgba(0, 212, 255, 0.2); color: #00d4ff; }
+
+        .service-period {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .service-desc {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .service-metrics {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .metric {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .metric strong {
+            color: #00d4ff;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 0.8rem;
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #94a3b8;
+        }
+
+        .empty-state h3 {
+            color: #00d4ff;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .history-header h1 {
+                font-size: 2rem;
+            }
+
+            .service-metrics {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+
+    <div style="padding: 2rem; max-width: 1000px; margin: 0 auto;">
+
+        <!-- Header -->
+        <div class="history-header">
+            <h1>📚 Histórico de Serviços</h1>
+            <p>Acompanhe todos os serviços que você já utilizou</p>
+        </div>
+
+        <!-- Timeline -->
+        <div class="history-timeline" id="history-timeline">
+            <!-- History items will be loaded here -->
+        </div>
+
+    </div>
+
+    <script is:inline>
+        async function loadServiceHistory() {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch(`${API_URL}/api/services/history`, {
+                    headers: { 'Authorization': token }
+                });
+                const history = await res.json();
+                renderHistory(history);
+            } catch (e) {
+                console.error('Error loading history, using mock data', e);
+                loadMockHistory();
+            }
+        }
+
+        function renderHistory(history) {
+            const timeline = document.getElementById('history-timeline');
+
+            if (history.length === 0) {
+                timeline.innerHTML = `
+                    <div class="empty-state">
+                        <h3>📭 Histórico vazio</h3>
+                        <p>Você ainda não utilizou nenhum serviço. <a href="/dashboard/servicos/loja" style="color: #00d4ff;">Explore nossa loja</a></p>
+                    </div>
+                `;
+                return;
+            }
+
+            timeline.innerHTML = history.map(item => `
+                <div class="timeline-item ${item.status}">
+                    <div class="service-header">
+                        <div class="service-icon">${item.icon}</div>
+                        <div class="service-title">${item.name}</div>
+                        <div class="service-status status-${item.status}">${getStatusText(item.status)}</div>
+                    </div>
+                    <div class="service-period">${item.period}</div>
+                    <div class="service-desc">${item.description}</div>
+                    <div class="service-metrics">
+                        <div class="metric">Custo: <strong>R$ ${item.cost}</strong></div>
+                        <div class="metric">Uso: <strong>${item.usage || 0}%</strong></div>
+                        <div class="metric">Duração: <strong>${item.duration}</strong></div>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn btn-outline" onclick="viewDetails('${item.id}')">Ver Detalhes</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getStatusText(status) {
+            const statuses = {
+                'completed': 'Concluído',
+                'failed': 'Falhou',
+                'active': 'Ativo'
+            };
+            return statuses[status] || 'Ativo';
+        }
+
+        function loadMockHistory() {
+            const mockHistory = [
+                {
+                    id: '1',
+                    name: 'SEO Automation Pro',
+                    description: 'Serviço de otimização automática de SEO',
+                    status: 'completed',
+                    period: 'Janeiro 2026',
+                    cost: 99,
+                    usage: 85,
+                    duration: '30 dias',
+                    icon: '🔍'
+                },
+                {
+                    id: '2',
+                    name: 'Analytics Pro',
+                    description: 'Relatórios avançados de analytics',
+                    status: 'completed',
+                    period: 'Dezembro 2025',
+                    cost: 149,
+                    usage: 92,
+                    duration: '45 dias',
+                    icon: '📊'
+                },
+                {
+                    id: '3',
+                    name: 'Chatbot IA Plus',
+                    description: 'Assistente virtual inteligente',
+                    status: 'failed',
+                    period: 'Novembro 2025',
+                    cost: 79,
+                    usage: 23,
+                    duration: '7 dias',
+                    icon: '🤖'
+                }
+            ];
+
+            renderHistory(mockHistory);
+        }
+
+        function viewDetails(serviceId) {
+            window.location.href = `/dashboard/servicos/historico/${serviceId}`;
+        }
+
+        // Initialize
+        loadServiceHistory();
+    </script>
+</ClientLayout>

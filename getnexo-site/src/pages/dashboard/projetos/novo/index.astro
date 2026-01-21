@@ -1,0 +1,567 @@
+---
+import ClientLayout from '../../../../layouts/ClientLayout.astro';
+---
+
+<ClientLayout title="Novo Projeto - GetNexo Pro">
+    <style>
+        .new-project-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1));
+            border-radius: 16px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .new-project-header h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #00d4ff;
+            margin: 0;
+            background: linear-gradient(90deg, #00d4ff, #00ff9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .new-project-header p {
+            color: #94a3b8;
+            font-size: 1.2rem;
+            margin: 1rem 0 0 0;
+        }
+
+        .project-form {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-section h3 {
+            color: #00d4ff;
+            margin: 0 0 1rem 0;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: white;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .template-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .template-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .template-card:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .template-card.selected {
+            border-color: #00d4ff;
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .template-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .template-icon {
+            font-size: 2rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 12px;
+        }
+
+        .template-title {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .template-desc {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .feature-item input[type="checkbox"] {
+            margin: 0;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #00ff9d);
+            color: black;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .required {
+            color: #ef4444;
+        }
+
+        .help-text {
+            color: #64748b;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 12px;
+            padding: 0.5rem;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #94a3b8;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #00d4ff, #00ff9d);
+            color: black;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .template-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .new-project-header h1 {
+                font-size: 2rem;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    <div style="padding: 2rem; max-width: 1200px; margin: 0 auto;">
+
+        <!-- Header -->
+        <div class="new-project-header">
+            <h1>🚀 Criar Novo Projeto</h1>
+            <p>Inicie seu projeto do zero ou use um template pré-configurado</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('template')">Usar Template</div>
+            <div class="tab" onclick="showTab('custom')">Projeto Personalizado</div>
+        </div>
+
+        <form class="project-form" id="project-form">
+
+            <!-- Template Tab -->
+            <div class="tab-content active" id="template-tab">
+                <div class="form-section">
+                    <h3>📋 Escolha um Template</h3>
+                    <div class="template-cards" id="template-cards">
+                        <!-- Templates will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custom Project Tab -->
+            <div class="tab-content" id="custom-tab">
+                <div class="form-section">
+                    <h3>📝 Informações Básicas</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Nome do Projeto <span class="required">*</span></label>
+                            <input type="text" class="form-input" id="project-name" required>
+                            <div class="help-text">Escolha um nome descritivo para seu projeto</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Categoria</label>
+                            <select class="form-select" id="project-category">
+                                <option value="web">Web</option>
+                                <option value="mobile">Mobile</option>
+                                <option value="desktop">Desktop</option>
+                                <option value="api">API</option>
+                                <option value="other">Outro</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Descrição <span class="required">*</span></label>
+                        <textarea class="form-textarea" id="project-description" placeholder="Descreva seu projeto..." required></textarea>
+                        <div class="help-text">Forneça uma descrição detalhada do que o projeto irá fazer</div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>⚙️ Configurações Técnicas</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Tecnologia Principal</label>
+                            <select class="form-select" id="project-tech">
+                                <option value="react">React</option>
+                                <option value="vue">Vue.js</option>
+                                <option value="angular">Angular</option>
+                                <option value="node">Node.js</option>
+                                <option value="python">Python</option>
+                                <option value="php">PHP</option>
+                                <option value="other">Outro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Prazo Estimado</label>
+                            <select class="form-select" id="project-deadline">
+                                <option value="1-week">1 semana</option>
+                                <option value="2-weeks">2 semanas</option>
+                                <option value="1-month" selected>1 mês</option>
+                                <option value="3-months">3 meses</option>
+                                <option value="6-months">6 meses</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>🎯 Funcionalidades</h3>
+                    <div class="features-grid">
+                        <label class="feature-item">
+                            <input type="checkbox" name="features" value="auth"> Autenticação de usuários
+                        </label>
+                        <label class="feature-item">
+                            <input type="checkbox" name="features" value="dashboard"> Dashboard administrativo
+                        </label>
+                        <label class="feature-item">
+                            <input type="checkbox" name="features" value="api"> API REST
+                        </label>
+                        <label class="feature-item">
+                            <input type="checkbox" name="features" value="database"> Banco de dados
+                        </label>
+                        <label class="feature-item">
+                            <input type="checkbox" name="features" value="notifications"> Notificações
+                        </label>
+                        <label class="feature-item">
+                            <input type="checkbox" name="features" value="analytics"> Analytics
+                        </label>
+                        <label class="feature-item">
+                            <input type="checkbox" name="features" value="payments"> Pagamentos
+                        </label>
+                        <label class="feature-item">
+                            <input type="checkbox" name="features" value="mobile"> Responsivo para mobile
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <a href="/dashboard/projetos" class="btn btn-outline">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Criar Projeto</button>
+            </div>
+
+        </form>
+
+    </div>
+
+    <script is:inline>
+        let selectedTemplate = null;
+
+        async function loadTemplates() {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch(`${API_URL}/api/project-templates`, {
+                    headers: { 'Authorization': token }
+                });
+                const templates = await res.json();
+                renderTemplates(templates);
+            } catch (e) {
+                console.error('Error loading templates, using mock data', e);
+                loadMockTemplates();
+            }
+        }
+
+        function renderTemplates(templates) {
+            const container = document.getElementById('template-cards');
+
+            container.innerHTML = templates.map(template => `
+                <div class="template-card" onclick="selectTemplate('${template.id}')">
+                    <div class="template-header">
+                        <div class="template-icon">${template.icon}</div>
+                        <div class="template-title">${template.name}</div>
+                    </div>
+                    <div class="template-desc">${template.description}</div>
+                </div>
+            `).join('');
+        }
+
+        function loadMockTemplates() {
+            const mockTemplates = [
+                {
+                    id: 'ecommerce',
+                    name: 'E-commerce',
+                    description: 'Loja online completa com catálogo, carrinho e pagamentos',
+                    icon: '🛍️'
+                },
+                {
+                    id: 'blog',
+                    name: 'Blog',
+                    description: 'Plataforma de blogging com CMS integrado',
+                    icon: '📝'
+                },
+                {
+                    id: 'dashboard',
+                    name: 'Dashboard',
+                    description: 'Painel administrativo com gráficos e métricas',
+                    icon: '📊'
+                },
+                {
+                    id: 'landing',
+                    name: 'Landing Page',
+                    description: 'Página de captura otimizada para conversões',
+                    icon: '🎯'
+                },
+                {
+                    id: 'api',
+                    name: 'API Backend',
+                    description: 'API RESTful com autenticação e documentação',
+                    icon: '🔌'
+                },
+                {
+                    id: 'mobile',
+                    name: 'App Mobile',
+                    description: 'Aplicativo híbrido React Native',
+                    icon: '📱'
+                }
+            ];
+
+            renderTemplates(mockTemplates);
+        }
+
+        function showTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(tab + '-tab').classList.add('active');
+        }
+
+        function selectTemplate(templateId) {
+            selectedTemplate = templateId;
+
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            event.currentTarget.classList.add('selected');
+        }
+
+        document.getElementById('project-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const currentTab = document.querySelector('.tab.active').textContent.includes('Template') ? 'template' : 'custom';
+
+            let projectData;
+
+            if (currentTab === 'template') {
+                if (!selectedTemplate) {
+                    alert('Por favor, selecione um template.');
+                    return;
+                }
+                projectData = { templateId: selectedTemplate };
+            } else {
+                const name = document.getElementById('project-name').value;
+                const description = document.getElementById('project-description').value;
+                const category = document.getElementById('project-category').value;
+                const tech = document.getElementById('project-tech').value;
+                const deadline = document.getElementById('project-deadline').value;
+
+                if (!name || !description) {
+                    alert('Por favor, preencha todos os campos obrigatórios.');
+                    return;
+                }
+
+                const features = Array.from(document.querySelectorAll('input[name="features"]:checked')).map(cb => cb.value);
+
+                projectData = {
+                    name,
+                    description,
+                    category,
+                    tech,
+                    deadline,
+                    features
+                };
+            }
+
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch(`${API_URL}/api/projects`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    },
+                    body: JSON.stringify(projectData)
+                });
+
+                if (res.ok) {
+                    alert('Projeto criado com sucesso!');
+                    window.location.href = '/dashboard/projetos';
+                } else {
+                    throw new Error('Erro ao criar projeto');
+                }
+            } catch (error) {
+                console.error('Error creating project:', error);
+                alert('Erro ao criar projeto. Tente novamente.');
+            }
+        });
+
+        // Initialize
+        loadTemplates();
+    </script>
+</ClientLayout>

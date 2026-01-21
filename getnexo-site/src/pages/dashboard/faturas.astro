@@ -1,0 +1,518 @@
+---
+import ClientLayout from '../../layouts/ClientLayout.astro';
+---
+
+<ClientLayout title="Faturas - GetNexo Pro">
+    <style>
+        .bills-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1));
+            border-radius: 16px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .bills-header h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #00d4ff;
+            margin: 0;
+            background: linear-gradient(90deg, #00d4ff, #00ff9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .bills-header p {
+            color: #94a3b8;
+            font-size: 1.2rem;
+            margin: 1rem 0 0 0;
+        }
+
+        .bills-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .summary-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .summary-card:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .summary-icon {
+            font-size: 2rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        }
+
+        .summary-title {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .summary-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #00d4ff;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-desc {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .bills-table {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .table-header h3 {
+            color: #00d4ff;
+            margin: 0;
+            font-size: 1.3rem;
+        }
+
+        .bills-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .bill-item {
+            display: grid;
+            grid-template-columns: 1fr 150px 120px 120px 100px;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        .bill-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .bill-item:last-child {
+            border-bottom: none;
+        }
+
+        .bill-info h4 {
+            color: white;
+            margin: 0 0 0.25rem 0;
+            font-size: 1rem;
+        }
+
+        .bill-info p {
+            color: #94a3b8;
+            margin: 0;
+            font-size: 0.85rem;
+        }
+
+        .bill-amount {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #00d4ff;
+        }
+
+        .bill-status {
+            font-size: 0.8rem;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .status-paid { background: rgba(0, 255, 157, 0.2); color: #00ff9d; }
+        .status-pending { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+        .status-overdue { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+
+        .bill-date {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .bill-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 0.8rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #00ff9d);
+            color: black;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #94a3b8;
+        }
+
+        .empty-state h3 {
+            color: #00d4ff;
+            margin-bottom: 1rem;
+        }
+
+        .filters-section {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .filter-select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        @media (max-width: 768px) {
+            .bills-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .bill-item {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .bills-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+
+    <div style="padding: 2rem; max-width: 1400px; margin: 0 auto;">
+
+        <!-- Header -->
+        <div class="bills-header">
+            <h1>💰 Minhas Faturas</h1>
+            <p>Acompanhe e gerencie todos os seus pagamentos</p>
+        </div>
+
+        <!-- Summary -->
+        <div class="bills-summary">
+            <div class="summary-card">
+                <div class="summary-header">
+                    <div class="summary-icon">💰</div>
+                    <div class="summary-title">Total em Aberto</div>
+                </div>
+                <div class="summary-value" id="total-open">R$ 0</div>
+                <div class="summary-desc">
+                    Faturas pendentes de pagamento
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-header">
+                    <div class="summary-icon">✅</div>
+                    <div class="summary-title">Pago este Mês</div>
+                </div>
+                <div class="summary-value" id="paid-month">R$ 0</div>
+                <div class="summary-desc">
+                    Total pago no mês atual
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-header">
+                    <div class="summary-icon">📊</div>
+                    <div class="summary-title">Próximo Vencimento</div>
+                </div>
+                <div class="summary-value" id="next-due">N/A</div>
+                <div class="summary-desc">
+                    Data do próximo pagamento
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-header">
+                    <div class="summary-icon">📈</div>
+                    <div class="summary-title">Média Mensal</div>
+                </div>
+                <div class="summary-value" id="monthly-avg">R$ 0</div>
+                <div class="summary-desc">
+                    Gasto médio por mês
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-section">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Status</label>
+                    <select class="filter-select" id="status-filter">
+                        <option value="all" selected>Todas as faturas</option>
+                        <option value="paid">Pagas</option>
+                        <option value="pending">Pendentes</option>
+                        <option value="overdue">Vencidas</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Período</label>
+                    <select class="filter-select" id="period-filter">
+                        <option value="all" selected>Todos os períodos</option>
+                        <option value="current-month">Mês atual</option>
+                        <option value="last-month">Mês passado</option>
+                        <option value="last-3-months">Últimos 3 meses</option>
+                        <option value="last-year">Último ano</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <button class="btn btn-primary" onclick="applyFilters()">Aplicar Filtros</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bills Table -->
+        <div class="bills-table">
+            <div class="table-header">
+                <h3>Faturas Recentes</h3>
+                <button class="btn btn-outline" onclick="exportBills()">Exportar</button>
+            </div>
+            <div class="bills-list" id="bills-list">
+                <!-- Bills will be loaded here -->
+            </div>
+        </div>
+
+    </div>
+
+    <script is:inline>
+        async function loadBills() {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch(`${API_URL}/api/bills`, {
+                    headers: { 'Authorization': token }
+                });
+                const bills = await res.json();
+                renderBills(bills);
+                updateSummary(bills);
+            } catch (e) {
+                console.error('Error loading bills, using mock data', e);
+                loadMockBills();
+            }
+        }
+
+        function renderBills(bills) {
+            const billsList = document.getElementById('bills-list');
+
+            if (bills.length === 0) {
+                billsList.innerHTML = `
+                    <div class="empty-state">
+                        <h3>📭 Nenhuma fatura encontrada</h3>
+                        <p>Não há faturas para exibir com os filtros atuais.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            billsList.innerHTML = bills.map(bill => `
+                <div class="bill-item">
+                    <div class="bill-info">
+                        <h4>${bill.description}</h4>
+                        <p>ID: ${bill.id} • ${bill.period}</p>
+                    </div>
+                    <div class="bill-amount">R$ ${bill.amount}</div>
+                    <div class="bill-date">${bill.dueDate}</div>
+                    <div class="bill-status status-${bill.status}">${getStatusText(bill.status)}</div>
+                    <div class="bill-actions">
+                        ${bill.status === 'pending' ? `
+                            <button class="btn btn-primary" onclick="payBill('${bill.id}')">Pagar</button>
+                        ` : bill.status === 'paid' ? `
+                            <button class="btn btn-outline" onclick="downloadBill('${bill.id}')">Baixar</button>
+                        ` : `
+                            <button class="btn btn-danger" onclick="payBill('${bill.id}')">Pagar Agora</button>
+                        `}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateSummary(bills) {
+            const totalOpen = bills.filter(b => b.status === 'pending' || b.status === 'overdue')
+                                   .reduce((sum, b) => sum + b.amount, 0);
+            const paidMonth = bills.filter(b => b.status === 'paid' && b.period.includes('2026'))
+                                   .reduce((sum, b) => sum + b.amount, 0);
+            const nextDue = bills.filter(b => b.status === 'pending')
+                                 .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))[0]?.dueDate || 'N/A';
+            const monthlyAvg = bills.length > 0 ? bills.reduce((sum, b) => sum + b.amount, 0) / bills.length : 0;
+
+            document.getElementById('total-open').textContent = 'R$ ' + totalOpen.toFixed(2).replace('.', ',');
+            document.getElementById('paid-month').textContent = 'R$ ' + paidMonth.toFixed(2).replace('.', ',');
+            document.getElementById('next-due').textContent = nextDue;
+            document.getElementById('monthly-avg').textContent = 'R$ ' + monthlyAvg.toFixed(2).replace('.', ',');
+        }
+
+        function getStatusText(status) {
+            const statuses = {
+                'paid': 'Paga',
+                'pending': 'Pendente',
+                'overdue': 'Vencida'
+            };
+            return statuses[status] || 'Pendente';
+        }
+
+        function loadMockBills() {
+            const mockBills = [
+                {
+                    id: 'FAT-2026-001',
+                    description: 'Plano Professional - Janeiro 2026',
+                    period: 'Janeiro 2026',
+                    amount: 99.00,
+                    dueDate: '15/01/2026',
+                    status: 'paid'
+                },
+                {
+                    id: 'FAT-2026-002',
+                    description: 'SEO Automation Pro',
+                    period: 'Janeiro 2026',
+                    amount: 149.00,
+                    dueDate: '20/01/2026',
+                    status: 'pending'
+                },
+                {
+                    id: 'FAT-2025-012',
+                    description: 'Plano Professional - Dezembro 2025',
+                    period: 'Dezembro 2025',
+                    amount: 99.00,
+                    dueDate: '15/12/2025',
+                    status: 'paid'
+                },
+                {
+                    id: 'FAT-2025-011',
+                    description: 'Analytics Pro',
+                    period: 'Dezembro 2025',
+                    amount: 79.00,
+                    dueDate: '18/12/2025',
+                    status: 'overdue'
+                }
+            ];
+
+            renderBills(mockBills);
+            updateSummary(mockBills);
+        }
+
+        function payBill(billId) {
+            if (confirm('Deseja proceder com o pagamento desta fatura?')) {
+                alert('Redirecionando para gateway de pagamento...');
+                // Implement payment logic
+            }
+        }
+
+        function downloadBill(billId) {
+            alert('Download da fatura em PDF será iniciado.');
+            // Implement download logic
+        }
+
+        function applyFilters() {
+            const status = document.getElementById('status-filter').value;
+            const period = document.getElementById('period-filter').value;
+
+            console.log('Aplicando filtros:', { status, period });
+            // Reload bills with filters
+            loadBills();
+        }
+
+        function exportBills() {
+            alert('Funcionalidade de exportação será implementada em breve.');
+        }
+
+        // Initialize
+        loadBills();
+    </script>
+</ClientLayout>

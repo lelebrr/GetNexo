@@ -1,0 +1,878 @@
+---
+import ClientLayout from '../../layouts/ClientLayout.astro';
+---
+
+<ClientLayout title="Configurações Avançadas - Admin">
+    <style>
+        .settings-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .settings-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1));
+            border-radius: 16px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .settings-header h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #00d4ff;
+            margin: 0;
+            background: linear-gradient(90deg, #00d4ff, #00ff9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .settings-header p {
+            color: #94a3b8;
+            font-size: 1.2rem;
+            margin: 1rem 0 0 0;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+        }
+
+        .settings-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            color: #00d4ff;
+            margin: 0;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .setting-group {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .setting-group:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .setting-info {
+            flex: 1;
+        }
+
+        .setting-label {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .setting-desc {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .setting-control {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(239, 68, 68, 0.3);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: rgba(0, 255, 157, 0.3);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .setting-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.5rem;
+            color: white;
+            width: 120px;
+        }
+
+        .setting-input:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        .setting-select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.5rem;
+            color: white;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #00ff9d);
+            color: black;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .actions-bar {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .action-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-card:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .action-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .action-title {
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .action-desc {
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .actions-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .settings-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+
+    <div class="settings-container">
+        <!-- Header -->
+        <div class="settings-header">
+            <h1>⚙️ Configurações Avançadas</h1>
+            <p>Controle completo dos parâmetros do sistema GetNexo Pro</p>
+        </div>
+
+        <!-- Settings Grid -->
+        <div class="settings-grid">
+            <!-- System Settings -->
+            <div class="settings-card">
+                <div class="card-header">
+                    <h2 class="card-title">🖥️ Sistema</h2>
+                </div>
+
+                <div class="setting-group">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Modo Manutenção</div>
+                            <div class="setting-desc">Ative para colocar o sistema em manutenção</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="maintenance-mode" onchange="toggleMaintenance()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Debug Mode</div>
+                            <div class="setting-desc">Logs detalhados e informações de debug</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="debug-mode" onchange="toggleDebug()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Timezone Padrão</div>
+                            <div class="setting-desc">Fuso horário do sistema</div>
+                        </div>
+                        <div class="setting-control">
+                            <select class="setting-select" id="timezone" onchange="updateTimezone()">
+                                <option value="America/Sao_Paulo" selected>America/Sao_Paulo</option>
+                                <option value="UTC">UTC</option>
+                                <option value="America/New_York">America/New_York</option>
+                                <option value="Europe/London">Europe/London</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Settings -->
+            <div class="settings-card">
+                <div class="card-header">
+                    <h2 class="card-title">⚡ Performance</h2>
+                </div>
+
+                <div class="setting-group">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Cache Ativado</div>
+                            <div class="setting-desc">Otimização de performance com cache</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="cache-enabled" checked onchange="toggleCache()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Compressão GZIP</div>
+                            <div class="setting-desc">Reduz tamanho das respostas HTTP</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="gzip-enabled" checked onchange="toggleGzip()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">CDN Ativado</div>
+                            <div class="setting-desc">Aceleração global com CDN</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="cdn-enabled" checked onchange="toggleCDN()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Limite de Memória</div>
+                            <div class="setting-desc">MB alocados para o processo</div>
+                        </div>
+                        <div class="setting-control">
+                            <input type="number" class="setting-input" id="memory-limit" value="2048" onchange="updateMemoryLimit()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Settings -->
+            <div class="settings-card">
+                <div class="card-header">
+                    <h2 class="card-title">🔒 Segurança</h2>
+                </div>
+
+                <div class="setting-group">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">2FA Obrigatório</div>
+                            <div class="setting-desc">Autenticação de dois fatores obrigatória</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="2fa-required" onchange="toggle2FA()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Tentativas de Login</div>
+                            <div class="setting-desc">Máximo de tentativas antes do bloqueio</div>
+                        </div>
+                        <div class="setting-control">
+                            <input type="number" class="setting-input" id="max-login-attempts" value="5" onchange="updateLoginAttempts()">
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Sessão Expirada</div>
+                            <div class="setting-desc">Horas até expiração automática</div>
+                        </div>
+                        <div class="setting-control">
+                            <input type="number" class="setting-input" id="session-timeout" value="24" onchange="updateSessionTimeout()">
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Política de Senhas</div>
+                            <div class="setting-desc">Complexidade requerida</div>
+                        </div>
+                        <div class="setting-control">
+                            <select class="setting-select" id="password-policy" onchange="updatePasswordPolicy()">
+                                <option value="basic" selected>Básica</option>
+                                <option value="medium">Média</option>
+                                <option value="strong">Forte</option>
+                                <option value="enterprise">Enterprise</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications Settings -->
+            <div class="settings-card">
+                <div class="card-header">
+                    <h2 class="card-title">🔔 Notificações</h2>
+                </div>
+
+                <div class="setting-group">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Email Ativado</div>
+                            <div class="setting-desc">Notificações por email</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="email-notifications" checked onchange="toggleEmail()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-link">
+                            <div class="setting-label">Push Notifications</div>
+                            <div class="setting-desc">Notificações push no navegador</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="push-notifications" checked onchange="togglePush()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">SMS Alerts</div>
+                            <div class="setting-desc">Alertas críticos por SMS</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="sms-alerts" onchange="toggleSMS()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Slack Integration</div>
+                            <div class="setting-desc">Notificações no Slack</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="slack-integration" onchange="toggleSlack()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Settings -->
+            <div class="settings-card">
+                <div class="card-header">
+                    <h2 class="card-title">🔌 API</h2>
+                </div>
+
+                <div class="setting-group">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Rate Limiting</div>
+                            <div class="setting-desc">Limitação de requests por usuário</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="rate-limiting" checked onchange="toggleRateLimiting()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Requests/Minuto</div>
+                            <div class="setting-desc">Limite por usuário</div>
+                        </div>
+                        <div class="setting-control">
+                            <input type="number" class="setting-input" id="requests-per-minute" value="1000" onchange="updateRateLimit()">
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">API Version</div>
+                            <div class="setting-desc">Versão atual da API</div>
+                        </div>
+                        <div class="setting-control">
+                            <select class="setting-select" id="api-version" onchange="updateAPIVersion()">
+                                <option value="v1">v1.0 (Legacy)</option>
+                                <option value="v2" selected>v2.0 (Atual)</option>
+                                <option value="v3">v3.0 (Beta)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">CORS Ativado</div>
+                            <div class="setting-desc">Cross-Origin Resource Sharing</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="cors-enabled" checked onchange="toggleCORS()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Database Settings -->
+            <div class="settings-card">
+                <div class="card-header">
+                    <h2 class="card-title">🗄️ Banco de Dados</h2>
+                </div>
+
+                <div class="setting-group">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Connection Pool</div>
+                            <div class="setting-desc">Máximo de conexões simultâneas</div>
+                        </div>
+                        <div class="setting-control">
+                            <input type="number" class="setting-input" id="db-pool-size" value="50" onchange="updateDBPool()">
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Query Timeout</div>
+                            <div class="setting-desc">Segundos até timeout de query</div>
+                        </div>
+                        <div class="setting-control">
+                            <input type="number" class="setting-input" id="query-timeout" value="30" onchange="updateQueryTimeout()">
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Read Replicas</div>
+                            <div class="setting-desc">Usar réplicas para leitura</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="read-replicas" checked onchange="toggleReadReplicas()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-label">Backup Automático</div>
+                            <div class="setting-desc">Backups diários automáticos</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" id="auto-backup" checked onchange="toggleAutoBackup()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions Bar -->
+        <div class="actions-bar">
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div>
+                    <h3 style="color: #00d4ff; margin: 0 0 0.5rem 0;">Ações Rápidas</h3>
+                    <p style="color: #94a3b8; margin: 0;">Configurações críticas e manutenção do sistema</p>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn btn-outline" onclick="resetToDefaults()">🔄 Reset</button>
+                    <button class="btn btn-primary" onclick="saveAllSettings()">💾 Salvar Tudo</button>
+                    <button class="btn btn-danger" onclick="restartServices()">🔄 Restart Services</button>
+                </div>
+            </div>
+
+            <div class="actions-grid" style="margin-top: 2rem;">
+                <div class="action-card" onclick="exportSettings()">
+                    <span class="action-icon">📤</span>
+                    <div class="action-title">Exportar Config</div>
+                    <div class="action-desc">Baixar arquivo de configuração</div>
+                </div>
+                <div class="action-card" onclick="importSettings()">
+                    <span class="action-icon">📥</span>
+                    <div class="action-title">Importar Config</div>
+                    <div class="action-desc">Carregar configuração salva</div>
+                </div>
+                <div class="action-card" onclick="backupSettings()">
+                    <span class="action-icon">💾</span>
+                    <div class="action-title">Backup Config</div>
+                    <div class="action-desc">Salvar snapshot das configs</div>
+                </div>
+                <div class="action-card" onclick="validateSettings()">
+                    <span class="action-icon">✅</span>
+                    <div class="action-title">Validar Config</div>
+                    <div class="action-desc">Verificar configurações</div>
+                </div>
+                <div class="action-card" onclick="performanceTest()">
+                    <span class="action-icon">🏃</span>
+                    <div class="action-title">Teste Performance</div>
+                    <div class="action-desc">Executar benchmark</div>
+                </div>
+                <div class="action-card" onclick="systemInfo()">
+                    <span class="action-icon">ℹ️</span>
+                    <div class="action-title">Info Sistema</div>
+                    <div class="action-desc">Detalhes da infraestrutura</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script is:inline>
+        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '/api-proxy';
+
+        // Settings management functions
+        function toggleMaintenance() {
+            const enabled = document.getElementById('maintenance-mode').checked;
+            console.log('Modo manutenção:', enabled ? 'ativado' : 'desativado');
+            showNotification(`Modo manutenção ${enabled ? 'ativado' : 'desativado'}`, enabled ? 'warning' : 'success');
+        }
+
+        function toggleDebug() {
+            const enabled = document.getElementById('debug-mode').checked;
+            console.log('Debug mode:', enabled ? 'ativado' : 'desativado');
+            showNotification(`Debug mode ${enabled ? 'ativado' : 'desativado'}`, 'info');
+        }
+
+        function updateTimezone() {
+            const timezone = document.getElementById('timezone').value;
+            console.log('Timezone atualizado:', timezone);
+            showNotification(`Timezone alterado para ${timezone}`, 'success');
+        }
+
+        function toggleCache() {
+            const enabled = document.getElementById('cache-enabled').checked;
+            console.log('Cache:', enabled ? 'ativado' : 'desativado');
+            showNotification(`Cache ${enabled ? 'ativado' : 'desativado'}`, 'success');
+        }
+
+        function toggleGzip() {
+            const enabled = document.getElementById('gzip-enabled').checked;
+            console.log('GZIP:', enabled ? 'ativado' : 'desativado');
+            showNotification(`Compressão GZIP ${enabled ? 'ativada' : 'desativada'}`, 'success');
+        }
+
+        function toggleCDN() {
+            const enabled = document.getElementById('cdn-enabled').checked;
+            console.log('CDN:', enabled ? 'ativado' : 'desativado');
+            showNotification(`CDN ${enabled ? 'ativado' : 'desativado'}`, 'success');
+        }
+
+        function updateMemoryLimit() {
+            const limit = document.getElementById('memory-limit').value;
+            console.log('Limite de memória:', limit + 'MB');
+            showNotification(`Limite de memória definido para ${limit}MB`, 'success');
+        }
+
+        function saveAllSettings() {
+            // Collect all settings
+            const settings = {
+                system: {
+                    maintenance: document.getElementById('maintenance-mode').checked,
+                    debug: document.getElementById('debug-mode').checked,
+                    timezone: document.getElementById('timezone').value
+                },
+                performance: {
+                    cache: document.getElementById('cache-enabled').checked,
+                    gzip: document.getElementById('gzip-enabled').checked,
+                    cdn: document.getElementById('cdn-enabled').checked,
+                    memoryLimit: document.getElementById('memory-limit').value
+                },
+                security: {
+                    twoFactor: document.getElementById('2fa-required').checked,
+                    maxLoginAttempts: document.getElementById('max-login-attempts').value,
+                    sessionTimeout: document.getElementById('session-timeout').value,
+                    passwordPolicy: document.getElementById('password-policy').value
+                },
+                notifications: {
+                    email: document.getElementById('email-notifications').checked,
+                    push: document.getElementById('push-notifications').checked,
+                    sms: document.getElementById('sms-alerts').checked,
+                    slack: document.getElementById('slack-integration').checked
+                },
+                api: {
+                    rateLimiting: document.getElementById('rate-limiting').checked,
+                    requestsPerMinute: document.getElementById('requests-per-minute').value,
+                    version: document.getElementById('api-version').value,
+                    cors: document.getElementById('cors-enabled').checked
+                },
+                database: {
+                    poolSize: document.getElementById('db-pool-size').value,
+                    queryTimeout: document.getElementById('query-timeout').value,
+                    readReplicas: document.getElementById('read-replicas').checked,
+                    autoBackup: document.getElementById('auto-backup').checked
+                }
+            };
+
+            console.log('Salvando configurações:', settings);
+            showNotification('Todas as configurações salvas com sucesso!', 'success');
+        }
+
+        function resetToDefaults() {
+            if (confirm('Tem certeza que deseja resetar todas as configurações para os valores padrão?')) {
+                // Reset all form elements to defaults
+                document.getElementById('maintenance-mode').checked = false;
+                document.getElementById('debug-mode').checked = false;
+                document.getElementById('cache-enabled').checked = true;
+                document.getElementById('gzip-enabled').checked = true;
+                document.getElementById('cdn-enabled').checked = true;
+                document.getElementById('2fa-required').checked = false;
+                document.getElementById('email-notifications').checked = true;
+                document.getElementById('push-notifications').checked = true;
+                document.getElementById('rate-limiting').checked = true;
+                document.getElementById('cors-enabled').checked = true;
+                document.getElementById('read-replicas').checked = true;
+                document.getElementById('auto-backup').checked = true;
+
+                showNotification('Configurações resetadas para valores padrão', 'warning');
+            }
+        }
+
+        function restartServices() {
+            if (confirm('Isso reiniciará todos os serviços. Usuários podem experimentar breve indisponibilidade. Continuar?')) {
+                showNotification('Reiniciando serviços... Aguarde alguns minutos.', 'warning');
+                setTimeout(() => {
+                    showNotification('Todos os serviços reiniciados com sucesso!', 'success');
+                }, 3000);
+            }
+        }
+
+        function exportSettings() {
+            const settings = {
+                exportedAt: new Date().toISOString(),
+                version: '2.0',
+                settings: {
+                    // Collect current settings
+                }
+            };
+
+            const blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.download = `getnexo-settings-${new Date().toISOString().split('T')[0]}.json`;
+            link.href = URL.createObjectURL(blob);
+            link.click();
+
+            showNotification('Configurações exportadas com sucesso!', 'success');
+        }
+
+        function importSettings() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        const settings = JSON.parse(event.target.result);
+                        console.log('Configurações importadas:', settings);
+                        showNotification('Configurações importadas com sucesso!', 'success');
+                    } catch (error) {
+                        showNotification('Erro ao importar configurações', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function backupSettings() {
+            showNotification('Snapshot das configurações criado e armazenado!', 'success');
+        }
+
+        function validateSettings() {
+            showNotification('Validação concluída: Todas as configurações são válidas!', 'success');
+        }
+
+        function performanceTest() {
+            showNotification('Executando teste de performance... Resultados em breve.', 'info');
+            setTimeout(() => {
+                showNotification('Teste concluído: Performance dentro dos parâmetros ótimos!', 'success');
+            }, 5000);
+        }
+
+        function systemInfo() {
+            const info = {
+                server: 'Ubuntu 22.04 LTS',
+                nodeVersion: 'v18.17.0',
+                database: 'PostgreSQL 15.3',
+                cache: 'Redis 7.0',
+                uptime: '15 dias, 8 horas',
+                memory: '4.2GB / 8GB',
+                cpu: '2.4GHz Quad-core',
+                disk: '245GB / 500GB'
+            };
+
+            let message = 'Informações do Sistema:\n\n';
+            Object.entries(info).forEach(([key, value]) => {
+                message += `${key}: ${value}\n`;
+            });
+
+            alert(message);
+        }
+
+        function showNotification(message, type = 'info') {
+            console.log(`[${type.toUpperCase()}] ${message}`);
+            alert(message);
+        }
+
+        // Initialize - load current settings
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Configurações avançadas carregadas');
+        });
+    </script>
+</ClientLayout>

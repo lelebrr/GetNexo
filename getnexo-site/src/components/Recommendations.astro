@@ -1,9 +1,9 @@
 ---
-import Recommendations from './Recommendations.jsx';
+import RecommendationsComponent from './Recommendations.jsx';
 
 const { type = 'popular', category = null, limit = 6 } = Astro.props;
 ---
 
 <div class="recommendations-section">
-  <Recommendations type={type} category={category} limit={limit} client:load />
+  <RecommendationsComponent type={type} category={category} limit={limit} client:load />
 </div>

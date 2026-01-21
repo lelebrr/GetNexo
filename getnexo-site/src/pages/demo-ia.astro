@@ -1,4 +1,19 @@
 ---
+declare global {
+  interface Window {
+    sendMessage: () => void;
+    handleKeyPress: (event: any) => void;
+    mostrarProduto: (categoria: any, index: number) => void;
+    fecharModal: () => void;
+    fechar360: () => void;
+    preencherMensagem: (texto: string) => void;
+    iniciarVozChat: () => void;
+    abrir360: (caminho: string) => void;
+  }
+
+  var webkitSpeechRecognition: any;
+}
+
 import Layout from '../layouts/Layout.astro';
 import ProductCard from '../components/ProductCard.astro';
 
@@ -359,12 +374,12 @@ try {
     // Enviar mensagem
     async function sendMessage() {
       const input = document.getElementById('chat-input');
-      const message = input.value.trim();
+      const message = (input as HTMLInputElement).value.trim();
       if (!message) return;
 
       // Adicionar mensagem do usuário
       addMessage(message, 'user');
-      input.value = '';
+      (input as HTMLInputElement).value = '';
 
       // Simular processamento
       addMessage('🤖 Analisando sua solicitação com IA...', 'bot');
@@ -546,7 +561,8 @@ Tente uma dessas opções acima! 🚀`, 'bot');
 
       recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
-        document.getElementById('chat-input').value = transcript;
+        const inputElement = document.getElementById('chat-input') as HTMLInputElement;
+        if (inputElement) inputElement.value = transcript;
 
         // Reset button
         button.textContent = '🎤 Voz';

@@ -1,375 +1,547 @@
 ---
-const { nonce } = Astro.props;
+// Componente de Controles de Acessibilidade WCAG AA
+export interface Props {
+  showPanel?: boolean;
+}
+
+const { showPanel = true } = Astro.props;
 ---
 
-<div class="accessibility-panel-wrapper">
-    <button 
-        id="a11y-toggle" 
-        class="a11y-float-btn" 
-        aria-label="Abrir menu de acessibilidade" 
-        aria-expanded="false" 
-        aria-controls="a11y-menu"
-        title="Opções de Acessibilidade"
-    >
-        <span class="icon">♿</span>
-    </button>
-
-    <div id="a11y-menu" class="a11y-menu hidden" role="dialog" aria-label="Opções de Acessibilidade">
-        <div class="a11y-header">
-            <h3>Acessibilidade</h3>
-            <button id="a11y-close" class="close-btn" aria-label="Fechar menu">&times;</button>
-        </div>
-
-    <div class="a11y-controls">
-            <!-- Support Section (New) -->
-            <div class="support-group">
-                <p class="section-title">Como quer começar?</p>
-                <div class="support-actions">
-                    <button id="btn-a11y-chat" class="support-btn" title="Digitar">
-                        <span class="btn-icon">⌨️</span> Digitar
-                    </button>
-                    <button id="btn-a11y-voice" class="support-btn" title="Falar">
-                        <span class="btn-icon">🎙️</span> Falar
-                    </button>
-                </div>
-                <!-- Voice Feedback -->
-                 <div id="a11y-voice-feedback" class="voice-feedback hidden">
-                    <span class="pulse-dot"></span> Ouvindo...
-                </div>
-            </div>
-
-            <div class="divider"></div>
-
-            <!-- Modo Idoso (CIDA) -->
-            <div class="control-group">
-                <label class="switch-label" for="elderly-mode">
-                    <span class="label-text">
-                        <span class="icon">👴</span> Modo Idoso (CIDA)
-                    </span>
-                    <span class="description">Alto contraste e textos claros</span>
-                    <input type="checkbox" id="elderly-mode" class="a11y-switch">
-                    <span class="slider"></span>
-                </label>
-            </div>
-
-            <!-- Suporte Cognitivo (PAL) -->
-            <div class="control-group">
-                <label class="switch-label" for="cognitive-mode">
-                    <span class="label-text">
-                        <span class="icon">🧠</span> Suporte Cognitivo
-                    </span>
-                    <span class="description">Foco e simplificação visual</span>
-                    <input type="checkbox" id="cognitive-mode" class="a11y-switch">
-                    <span class="slider"></span>
-                </label>
-            </div>
-
-            <!-- Alto Contraste (WCAG) -->
-            <div class="control-group">
-                <label class="switch-label" for="high-contrast">
-                    <span class="label-text">
-                        <span class="icon">🌓</span> Alto Contraste
-                    </span>
-                    <input type="checkbox" id="high-contrast" class="a11y-switch">
-                    <span class="slider"></span>
-                </label>
-            </div>
-
-            <!-- Fonte Grande (WCAG) -->
-            <div class="control-group">
-                <label class="switch-label" for="large-font">
-                    <span class="label-text">
-                        <span class="icon">🔤</span> Fonte Aumentada
-                     </span>
-                     <input type="checkbox" id="large-font" class="a11y-switch">
-                     <span class="slider"></span>
-                 </label>
-             </div>
-
-             <!-- Zoom da Página -->
-             <div class="control-group">
-                 <label class="switch-label" for="zoom-mode">
-                     <span class="label-text">
-                         <span class="icon">🔍</span> Zoom da Página
-                     </span>
-                     <span class="description" id="zoom-desc">Aumenta o zoom geral para melhor visualização</span>
-                     <input type="checkbox" id="zoom-mode" class="a11y-switch" aria-describedby="zoom-desc">
-                     <span class="slider" role="switch" aria-checked="false"></span>
-                 </label>
-             </div>
-
-             <!-- Movimento Reduzido (WCAG) -->
-             <div class="control-group">
-                 <label class="switch-label" for="reduced-motion">
-                     <span class="label-text">
-                         <span class="icon">⏸️</span> Movimento Reduzido
-                     </span>
-                     <span class="description" id="motion-desc">Reduz animações para evitar desconforto</span>
-                     <input type="checkbox" id="reduced-motion" class="a11y-switch" aria-describedby="motion-desc">
-                     <span class="slider" role="switch" aria-checked="false"></span>
-                 </label>
-             </div>
-
-             <button id="a11y-reset" class="reset-btn">
-                    </span>
-                    <input type="checkbox" id="large-font" class="a11y-switch">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            
-            <button id="a11y-reset" class="reset-btn">
-                ↺ Restaurar Padrões
-            </button>
-        </div>
+{showPanel && (
+  <div id="accessibility-panel" class="accessibility-panel fixed bottom-4 left-4 z-50 bg-white rounded-lg shadow-xl border-2 border-blue-200 p-3 max-w-xs">
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="text-sm font-semibold text-gray-800 flex items-center">
+        <span class="text-blue-600 mr-2">♿</span>
+        Acessibilidade
+      </h3>
+      <button
+        id="accessibility-toggle"
+        class="text-gray-500 hover:text-gray-700 text-xl leading-none"
+        aria-label="Fechar painel de acessibilidade"
+        onclick="toggleAccessibilityPanel()"
+      >
+        ×
+      </button>
     </div>
-</div>
 
-<script is:inline src="/scripts/performance/a11y-manager.js" defer data-cfasync="false" nonce={nonce}></script>
+    <div class="space-y-3">
+      <!-- Controle de Zoom -->
+      <div class="flex items-center justify-between">
+        <label for="zoom-control" class="text-xs text-gray-700 flex items-center">
+          <span class="mr-2">🔍</span>
+          Zoom da Página
+        </label>
+        <div class="flex items-center space-x-2">
+          <button
+            onclick="changeZoom(-0.1)"
+            class="px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 rounded"
+            aria-label="Diminuir zoom"
+          >
+            -
+          </button>
+          <span id="zoom-level" class="text-xs font-mono min-w-[3rem] text-center">100%</span>
+          <button
+            onclick="changeZoom(0.1)"
+            class="px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 rounded"
+            aria-label="Aumentar zoom"
+          >
+            +
+          </button>
+        </div>
+      </div>
 
+      <!-- Movimento Reduzido -->
+      <div class="flex items-center justify-between">
+        <label for="motion-control" class="text-xs text-gray-700 flex items-center">
+          <span class="mr-2">🌊</span>
+          Movimento Reduzido
+        </label>
+        <button
+          id="motion-toggle"
+          onclick="toggleReducedMotion()"
+          class="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          role="switch"
+          aria-checked="false"
+          aria-label="Ativar movimento reduzido"
+        >
+          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-1"></span>
+        </button>
+      </div>
+
+      <!-- Alto Contraste -->
+      <div class="flex items-center justify-between">
+        <label for="contrast-control" class="text-xs text-gray-700 flex items-center">
+          <span class="mr-2">🌓</span>
+          Alto Contraste
+        </label>
+        <button
+          id="contrast-toggle"
+          onclick="toggleHighContrast()"
+          class="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          role="switch"
+          aria-checked="false"
+          aria-label="Ativar alto contraste"
+        >
+          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-1"></span>
+        </button>
+      </div>
+
+      <!-- Leitor de Tela -->
+      <div class="flex items-center justify-between">
+        <label for="screen-reader-control" class="text-xs text-gray-700 flex items-center">
+          <span class="mr-2">📢</span>
+          Leitor de Tela
+        </label>
+        <button
+          onclick="toggleScreenReader()"
+          class="px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+          aria-label="Ativar assistente de voz"
+        >
+          Ativar
+        </button>
+      </div>
+
+      <!-- Navegação por Teclado -->
+      <div class="flex items-center justify-between">
+        <label for="keyboard-nav-control" class="text-xs text-gray-700 flex items-center">
+          <span class="mr-2">⌨️</span>
+          Navegação por Teclado
+        </label>
+        <button
+          id="keyboard-nav-toggle"
+          onclick="toggleKeyboardNavigation()"
+          class="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          role="switch"
+          aria-checked="false"
+          aria-label="Ativar navegação por teclado"
+        >
+          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-1"></span>
+        </button>
+      </div>
+
+      <!-- Reset -->
+      <button
+        onclick="resetAccessibility()"
+        class="w-full py-2 px-3 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+        aria-label="Resetar todas as configurações de acessibilidade"
+      >
+        🔄 Resetar Configurações
+      </button>
+    </div>
+
+    <!-- Skip Link -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-blue-600 text-white px-4 py-2 rounded z-50"
+      onkeydown="handleSkipLink(event)"
+    >
+      Pular para conteúdo principal
+    </a>
+  </div>
+)}
+
+<!-- Accessibility Styles -->
 <style>
-    .accessibility-panel-wrapper {
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        z-index: 9999;
-        font-family: 'Inter', sans-serif;
-    }
+  .accessibility-panel {
+    font-family: system-ui, -apple-system, sans-serif;
+  }
 
-    .a11y-float-btn {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: #00d4ff;
-        border: 2px solid #fff;
-        color: #000;
-        font-size: 24px;
-        cursor: pointer;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        transition: transform 0.2s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+  /* High Contrast Mode */
+  .high-contrast {
+    filter: contrast(150%);
+  }
 
-    .a11y-float-btn:hover {
-        transform: scale(1.1);
-    }
-    
-    .a11y-float-btn:focus-visible {
-        outline: 3px solid #fff;
-        outline-offset: 2px;
-    }
+  .high-contrast * {
+    border-color: #000 !important;
+  }
 
-    .a11y-menu {
-        position: absolute;
-        bottom: 70px;
-        left: 0;
-        width: 320px;
-        max-width: calc(100vw - 40px);
-        background: #1a1a1a;
-        color: #fff;
-        border-radius: 16px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-        border: 1px solid #333;
-        overflow: hidden;
-        animation: slideUp 0.3s ease;
+  /* Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
     }
+  }
 
-    /* Mobile adjustments */
-    @media (max-width: 480px) {
-        .a11y-menu {
-            width: calc(100vw - 20px);
-            bottom: 60px;
-            left: 10px;
-            right: 10px;
-        }
+  .reduced-motion * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 
-        .a11y-controls {
-            padding: 15px;
-        }
+  /* Focus Styles for Keyboard Navigation */
+  .keyboard-navigation *:focus {
+    outline: 3px solid #007acc !important;
+    outline-offset: 2px !important;
+  }
 
-        .control-group {
-            margin-bottom: 15px;
-        }
-    }
+  /* Screen Reader Only */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
 
-    .a11y-menu.hidden {
-        display: none;
-    }
-
-    .a11y-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15px 20px;
-        background: #000;
-        border-bottom: 1px solid #333;
-    }
-
-    .a11y-header h3 {
-        margin: 0;
-        font-size: 16px;
-        font-weight: 600;
-    }
-
-    .close-btn {
-        background: none;
-        border: none;
-        color: #fff;
-        font-size: 24px;
-        cursor: pointer;
-        padding: 0 5px;
-    }
-
-    .a11y-controls {
-        padding: 20px;
-    }
-
-    .control-group {
-        margin-bottom: 20px;
-    }
-
-    .switch-label {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        cursor: pointer;
-        flex-wrap: wrap;
-    }
-
-    .label-text {
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    
-    .description {
-        width: 100%;
-        font-size: 0.8rem;
-        color: #999;
-        margin-top: 4px;
-        margin-left: 28px;
-    }
-
-    /* Custom Switch */
-    .a11y-switch {
-        display: none;
-    }
-
-    .slider {
-        width: 44px;
-        height: 24px;
-        background-color: #333;
-        border-radius: 34px;
-        position: relative;
-        transition: 0.3s;
-    }
-
-    .slider:before {
-        content: "";
-        position: absolute;
-        width: 18px;
-        height: 18px;
-        left: 3px;
-        bottom: 3px;
-        background-color: #fff;
-        border-radius: 50%;
-        transition: 0.3s;
-    }
-
-    .a11y-switch:checked + .slider {
-        background-color: #00d4ff;
-    }
-
-    .a11y-switch:checked + .slider:before {
-        transform: translateX(20px);
-    }
-    
-    .a11y-switch:focus-visible + .slider {
-        outline: 2px solid #fff;
-        outline-offset: 2px;
-    }
-
-    .reset-btn {
-        width: 100%;
-        padding: 10px;
-        background: #333;
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 500;
-        margin-top: 10px;
-        transition: background 0.2s;
-    }
-
-    .reset-btn:hover {
-        background: #444;
-    }
-
-    @keyframes slideUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    /* High Contrast overrides for panel */
-    :global(body.a11y-high-contrast) .a11y-float-btn,
-    :global(body.a11y-elderly) .a11y-float-btn {
-        background: #000;
-        color: #fff;
-        border: 2px solid #fff;
-    }
-
-    /* Support Styles */
-    .support-group { margin-bottom: 20px; }
-    .section-title { font-size: 0.85rem; color: #999; margin-bottom: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-    
-    .support-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    
-    .support-btn {
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.1);
-        color: #fff;
-        padding: 12px;
-        border-radius: 10px;
-        cursor: pointer;
-        font-size: 0.9rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        transition: 0.2s;
-    }
-    
-    .support-btn:hover {
-        background: rgba(0, 212, 255, 0.1);
-        border-color: #00d4ff;
-        color: #00d4ff;
-    }
-
-    .voice-feedback {
-        margin-top: 10px;
-        background: rgba(0, 255, 157, 0.1);
-        color: #00ff9d;
-        padding: 8px;
-        border-radius: 6px;
-        font-size: 0.85rem;
-        text-align: center;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-    }
-    
-    .voice-feedback.hidden { display: none; }
-    
-    .pulse-dot {
-        width: 8px; height: 8px; background: #00ff9d; border-radius: 50%;
-        animation: pulse 1.5s infinite;
-    }
-    
-    @keyframes pulse { 0% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.4); } 100% { opacity: 0.5; transform: scale(1); } }
-
-    .divider { height: 1px; background: rgba(255,255,255,0.1); margin: 20px 0; }
+  .sr-only.focus:not-sr-only {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: inherit;
+    margin: inherit;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
 </style>
+
+<!-- Accessibility JavaScript -->
+<script>
+  // Accessibility State
+  let accessibilityState = {
+    zoom: 1,
+    reducedMotion: false,
+    highContrast: false,
+    keyboardNavigation: false,
+    screenReader: false
+  };
+
+  // Load saved preferences
+  function loadAccessibilityPreferences() {
+    const saved = localStorage.getItem('accessibility-preferences');
+    if (saved) {
+      accessibilityState = { ...accessibilityState, ...JSON.parse(saved) };
+      applyAccessibilitySettings();
+      updateUI();
+    }
+
+    // Check system preferences
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      accessibilityState.reducedMotion = true;
+    }
+  }
+
+  // Save preferences
+  function saveAccessibilityPreferences() {
+    localStorage.setItem('accessibility-preferences', JSON.stringify(accessibilityState));
+  }
+
+  // Apply all settings
+  function applyAccessibilitySettings() {
+    const body = document.body;
+
+    // Zoom
+    body.style.zoom = accessibilityState.zoom;
+    body.style.transform = `scale(${accessibilityState.zoom})`;
+    body.style.transformOrigin = 'top left';
+
+    // Reduced Motion
+    if (accessibilityState.reducedMotion) {
+      body.classList.add('reduced-motion');
+    } else {
+      body.classList.remove('reduced-motion');
+    }
+
+    // High Contrast
+    if (accessibilityState.highContrast) {
+      body.classList.add('high-contrast');
+    } else {
+      body.classList.remove('high-contrast');
+    }
+
+    // Keyboard Navigation
+    if (accessibilityState.keyboardNavigation) {
+      body.classList.add('keyboard-navigation');
+    } else {
+      body.classList.remove('keyboard-navigation');
+    }
+  }
+
+  // Update UI elements
+  function updateUI() {
+    // Update zoom level
+    const zoomLevel = document.getElementById('zoom-level');
+    if (zoomLevel) {
+      zoomLevel.textContent = Math.round(accessibilityState.zoom * 100) + '%';
+    }
+
+    // Update toggles
+    updateToggle('motion-toggle', accessibilityState.reducedMotion);
+    updateToggle('contrast-toggle', accessibilityState.highContrast);
+    updateToggle('keyboard-nav-toggle', accessibilityState.keyboardNavigation);
+  }
+
+  function updateToggle(toggleId, state) {
+    const toggle = document.getElementById(toggleId);
+    if (toggle) {
+      const span = toggle.querySelector('span');
+      if (state) {
+        toggle.classList.remove('bg-gray-200');
+        toggle.classList.add('bg-blue-600');
+        span.classList.add('translate-x-6');
+        toggle.setAttribute('aria-checked', 'true');
+      } else {
+        toggle.classList.remove('bg-blue-600');
+        toggle.classList.add('bg-gray-200');
+        span.classList.remove('translate-x-6');
+        span.classList.add('translate-x-1');
+        toggle.setAttribute('aria-checked', 'false');
+      }
+    }
+  }
+
+  // Control Functions
+  function changeZoom(delta) {
+    accessibilityState.zoom = Math.max(0.5, Math.min(2, accessibilityState.zoom + delta));
+    applyAccessibilitySettings();
+    updateUI();
+    saveAccessibilityPreferences();
+
+    // Announce change for screen readers
+    announceChange(`Zoom alterado para ${Math.round(accessibilityState.zoom * 100)}%`);
+  }
+
+  function toggleReducedMotion() {
+    accessibilityState.reducedMotion = !accessibilityState.reducedMotion;
+    applyAccessibilitySettings();
+    updateUI();
+    saveAccessibilityPreferences();
+
+    announceChange(accessibilityState.reducedMotion ? 'Movimento reduzido ativado' : 'Movimento reduzido desativado');
+  }
+
+  function toggleHighContrast() {
+    accessibilityState.highContrast = !accessibilityState.highContrast;
+    applyAccessibilitySettings();
+    updateUI();
+    saveAccessibilityPreferences();
+
+    announceChange(accessibilityState.highContrast ? 'Alto contraste ativado' : 'Alto contraste desativado');
+  }
+
+  function toggleKeyboardNavigation() {
+    accessibilityState.keyboardNavigation = !accessibilityState.keyboardNavigation;
+    applyAccessibilitySettings();
+    updateUI();
+    saveAccessibilityPreferences();
+
+    announceChange(accessibilityState.keyboardNavigation ? 'Navegação por teclado ativada' : 'Navegação por teclado desativada');
+  }
+
+  function toggleScreenReader() {
+    accessibilityState.screenReader = !accessibilityState.screenReader;
+
+    if (accessibilityState.screenReader) {
+      startScreenReader();
+      announceChange('Assistente de voz ativado');
+    } else {
+      stopScreenReader();
+      announceChange('Assistente de voz desativado');
+    }
+
+    saveAccessibilityPreferences();
+  }
+
+  function resetAccessibility() {
+    accessibilityState = {
+      zoom: 1,
+      reducedMotion: false,
+      highContrast: false,
+      keyboardNavigation: false,
+      screenReader: false
+    };
+
+    applyAccessibilitySettings();
+    updateUI();
+    saveAccessibilityPreferences();
+
+    announceChange('Configurações de acessibilidade resetadas');
+  }
+
+  function toggleAccessibilityPanel() {
+    const panel = document.getElementById('accessibility-panel');
+    if (panel) {
+      panel.classList.toggle('hidden');
+    }
+  }
+
+  // Screen Reader Functions
+  let speechSynthesis = null;
+  let currentSpeech = null;
+
+  function startScreenReader() {
+    if ('speechSynthesis' in window) {
+      speechSynthesis = window.speechSynthesis;
+
+      // Add click listeners to announce interactive elements
+      document.addEventListener('click', handleElementAnnouncement);
+      document.addEventListener('focus', handleElementAnnouncement);
+
+      announceChange('Assistente de voz iniciado. Clique em elementos para ouvi-los.');
+    } else {
+      announceChange('Seu navegador não suporta síntese de voz.');
+    }
+  }
+
+  function stopScreenReader() {
+    if (speechSynthesis) {
+      speechSynthesis.cancel();
+    }
+    document.removeEventListener('click', handleElementAnnouncement);
+    document.removeEventListener('focus', handleElementAnnouncement);
+  }
+
+  function handleElementAnnouncement(event) {
+    const element = event.target;
+    let textToSpeak = '';
+
+    // Get accessible text
+    if (element.getAttribute('aria-label')) {
+      textToSpeak = element.getAttribute('aria-label');
+    } else if (element.textContent) {
+      textToSpeak = element.textContent.trim();
+    } else if (element.getAttribute('alt')) {
+      textToSpeak = element.getAttribute('alt');
+    } else if (element.tagName === 'BUTTON') {
+      textToSpeak = 'Botão';
+    } else if (element.tagName === 'INPUT') {
+      textToSpeak = `${element.getAttribute('type') || 'campo de entrada'} ${element.getAttribute('placeholder') || ''}`;
+    }
+
+    if (textToSpeak) {
+      speakText(textToSpeak);
+    }
+  }
+
+  function speakText(text) {
+    if (speechSynthesis) {
+      // Cancel previous speech
+      if (currentSpeech) {
+        speechSynthesis.cancel();
+      }
+
+      currentSpeech = new SpeechSynthesisUtterance(text);
+      currentSpeech.lang = 'pt-BR'; // Portuguese
+
+      speechSynthesis.speak(currentSpeech);
+    }
+  }
+
+  function announceChange(message) {
+    if (accessibilityState.screenReader) {
+      speakText(message);
+    }
+
+    // Also show as toast notification for visual feedback
+    showToast(message);
+  }
+
+  function showToast(message) {
+    // Simple toast implementation
+    const toast = document.createElement('div');
+    toast.className = 'fixed top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 max-w-xs';
+    toast.textContent = message;
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+      toast.remove();
+    }, 3000);
+  }
+
+  // Skip Link Handler
+  function handleSkipLink(event) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      const mainContent = document.getElementById('main-content');
+      if (mainContent) {
+        mainContent.focus();
+        mainContent.scrollIntoView();
+      }
+    }
+  }
+
+  // ARIA Live Region for announcements
+  function createAriaLiveRegion() {
+    const liveRegion = document.createElement('div');
+    liveRegion.setAttribute('aria-live', 'polite');
+    liveRegion.setAttribute('aria-atomic', 'true');
+    liveRegion.className = 'sr-only';
+    liveRegion.id = 'accessibility-announcements';
+    document.body.appendChild(liveRegion);
+  }
+
+  // Keyboard Navigation Enhancements
+  function enhanceKeyboardNavigation() {
+    // Add visible focus indicators
+    const style = document.createElement('style');
+    style.textContent = `
+      .keyboard-navigation *:focus {
+        outline: 3px solid #007acc !important;
+        outline-offset: 2px !important;
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Handle Tab navigation
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Tab') {
+        document.body.classList.add('keyboard-navigation');
+      }
+    });
+
+    // Reset on mouse usage
+    document.addEventListener('mousedown', function() {
+      document.body.classList.remove('keyboard-navigation');
+    });
+  }
+
+  // Initialize
+  document.addEventListener('DOMContentLoaded', function() {
+    loadAccessibilityPreferences();
+    createAriaLiveRegion();
+    enhanceKeyboardNavigation();
+
+    // Add keyboard shortcuts
+    document.addEventListener('keydown', function(event) {
+      // Alt+A to toggle accessibility panel
+      if (event.altKey && event.key === 'a') {
+        event.preventDefault();
+        toggleAccessibilityPanel();
+      }
+
+      // Ctrl+Plus/Ctrl+Minus for zoom
+      if (event.ctrlKey) {
+        if (event.key === '=') {
+          event.preventDefault();
+          changeZoom(0.1);
+        } else if (event.key === '-') {
+          event.preventDefault();
+          changeZoom(-0.1);
+        } else if (event.key === '0') {
+          event.preventDefault();
+          accessibilityState.zoom = 1;
+          applyAccessibilitySettings();
+          updateUI();
+          saveAccessibilityPreferences();
+        }
+      }
+    });
+  });
+
+  // Export functions to global scope for inline onclick handlers
+  window.toggleAccessibilityPanel = toggleAccessibilityPanel;
+  window.changeZoom = changeZoom;
+  window.toggleReducedMotion = toggleReducedMotion;
+  window.toggleHighContrast = toggleHighContrast;
+  window.toggleKeyboardNavigation = toggleKeyboardNavigation;
+  window.toggleScreenReader = toggleScreenReader;
+  window.resetAccessibility = resetAccessibility;
+  window.handleSkipLink = handleSkipLink;
+</script>

@@ -1,0 +1,520 @@
+---
+import ClientLayout from '../../../../layouts/ClientLayout.astro';
+---
+
+<ClientLayout title="Loja de Serviços - GetNexo Pro">
+    <style>
+        .store-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1));
+            border-radius: 16px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .store-header h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #00d4ff;
+            margin: 0;
+            background: linear-gradient(90deg, #00d4ff, #00ff9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .store-header p {
+            color: #94a3b8;
+            font-size: 1.2rem;
+            margin: 1rem 0 0 0;
+        }
+
+        .categories-section {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .category-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .category-card:hover,
+        .category-card.active {
+            border-color: rgba(0, 212, 255, 0.3);
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .category-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .category-title {
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .category-desc {
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .service-card:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .service-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .service-icon {
+            font-size: 2rem;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 12px;
+        }
+
+        .service-title {
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .service-price {
+            margin-left: auto;
+            color: #00ff9d;
+            font-size: 1.2rem;
+            font-weight: 900;
+        }
+
+        .service-desc {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .service-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-tag {
+            background: rgba(0, 212, 255, 0.1);
+            color: #00d4ff;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .service-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stars {
+            color: #fbbf24;
+            font-size: 0.9rem;
+        }
+
+        .rating-text {
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+
+        .service-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 0.8rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #00ff9d);
+            color: black;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: linear-gradient(135deg, #ff6b6b, #ffa726);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .service-card.popular {
+            position: relative;
+            border-color: rgba(255, 107, 107, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #94a3b8;
+            grid-column: 1 / -1;
+        }
+
+        .empty-state h3 {
+            color: #00d4ff;
+            margin-bottom: 1rem;
+        }
+
+        .search-section {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        @media (max-width: 768px) {
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .store-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+
+    <div style="padding: 2rem; max-width: 1400px; margin: 0 auto;">
+
+        <!-- Header -->
+        <div class="store-header">
+            <h1>🛒 Loja de Serviços</h1>
+            <p>Descubra e adquira serviços para impulsionar seus projetos</p>
+        </div>
+
+        <!-- Search -->
+        <div class="search-section">
+            <input type="text" class="search-input" placeholder="Buscar serviços..." id="search-input" onkeyup="filterServices()">
+        </div>
+
+        <!-- Categories -->
+        <div class="categories-section">
+            <h2 style="color: white; margin: 0 0 1rem 0; font-size: 1.2rem;">📂 Categorias</h2>
+            <div class="categories-grid">
+                <div class="category-card active" onclick="filterByCategory('all')">
+                    <span class="category-icon">🌟</span>
+                    <div class="category-title">Todos</div>
+                    <div class="category-desc">Todos os serviços</div>
+                </div>
+                <div class="category-card" onclick="filterByCategory('marketing')">
+                    <span class="category-icon">📢</span>
+                    <div class="category-title">Marketing</div>
+                    <div class="category-desc">Automação e growth</div>
+                </div>
+                <div class="category-card" onclick="filterByCategory('development')">
+                    <span class="category-icon">💻</span>
+                    <div class="category-title">Desenvolvimento</div>
+                    <div class="category-desc">APIs e integrações</div>
+                </div>
+                <div class="category-card" onclick="filterByCategory('analytics')">
+                    <span class="category-icon">📊</span>
+                    <div class="category-title">Analytics</div>
+                    <div class="category-desc">Dados e relatórios</div>
+                </div>
+                <div class="category-card" onclick="filterByCategory('communication')">
+                    <span class="category-icon">💬</span>
+                    <div class="category-title">Comunicação</div>
+                    <div class="category-desc">Chat e messaging</div>
+                </div>
+                <div class="category-card" onclick="filterByCategory('automation')">
+                    <span class="category-icon">🤖</span>
+                    <div class="category-title">Automação</div>
+                    <div class="category-desc">Workflows inteligentes</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Services Grid -->
+        <div class="services-grid" id="services-grid">
+            <!-- Services will be loaded here -->
+        </div>
+
+    </div>
+
+    <script is:inline>
+        let allServices = [];
+        let currentCategory = 'all';
+
+        async function loadServices() {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch(`${API_URL}/api/services/store`, {
+                    headers: { 'Authorization': token }
+                });
+                const services = await res.json();
+                allServices = services;
+                renderServices(services);
+            } catch (e) {
+                console.error('Error loading services, using mock data', e);
+                loadMockServices();
+            }
+        }
+
+        function renderServices(services) {
+            const grid = document.getElementById('services-grid');
+
+            if (services.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <h3>🔍 Nenhum serviço encontrado</h3>
+                        <p>Tente ajustar os filtros de busca.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = services.map(service => `
+                <div class="service-card ${service.popular ? 'popular' : ''}">
+                    ${service.popular ? '<div class="popular-badge">Popular</div>' : ''}
+                    <div class="service-header">
+                        <div class="service-icon">${service.icon}</div>
+                        <div class="service-title">${service.name}</div>
+                        <div class="service-price">R$ ${service.price}</div>
+                    </div>
+                    <div class="service-desc">${service.description}</div>
+                    <div class="service-rating">
+                        <div class="stars">${'⭐'.repeat(Math.floor(service.rating))}</div>
+                        <div class="rating-text">${service.rating} (${service.reviews} avaliações)</div>
+                    </div>
+                    <div class="service-features">
+                        ${service.features.map(feature => `<span class="feature-tag">${feature}</span>`).join('')}
+                    </div>
+                    <div class="service-actions">
+                        <button class="btn btn-outline" onclick="viewServiceDetails('${service.id}')">Detalhes</button>
+                        <button class="btn btn-primary" onclick="purchaseService('${service.id}')">Adquirir</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadMockServices() {
+            const mockServices = [
+                {
+                    id: 'seo-automation',
+                    name: 'SEO Automation Pro',
+                    description: 'Otimização automática de SEO para seus sites com IA avançada',
+                    price: 99,
+                    rating: 4.8,
+                    reviews: 234,
+                    category: 'marketing',
+                    icon: '🔍',
+                    popular: true,
+                    features: ['IA Avançada', 'Relatórios', '24/7', 'Suporte']
+                },
+                {
+                    id: 'chatbot-ai',
+                    name: 'Chatbot IA Plus',
+                    description: 'Assistente virtual inteligente para atendimento ao cliente',
+                    price: 149,
+                    rating: 4.6,
+                    reviews: 189,
+                    category: 'communication',
+                    icon: '🤖',
+                    features: ['IA Conversacional', 'Multi-idiomas', 'Integração WhatsApp', 'Analytics']
+                },
+                {
+                    id: 'analytics-pro',
+                    name: 'Analytics Pro',
+                    description: 'Relatórios avançados de analytics com dashboards customizáveis',
+                    price: 79,
+                    rating: 4.7,
+                    reviews: 312,
+                    category: 'analytics',
+                    icon: '📊',
+                    features: ['Dashboards', 'Real-time', 'Export', 'API']
+                },
+                {
+                    id: 'api-gateway',
+                    name: 'API Gateway Premium',
+                    description: 'Gateway de API com rate limiting, caching e segurança',
+                    price: 199,
+                    rating: 4.9,
+                    reviews: 156,
+                    category: 'development',
+                    icon: '🔌',
+                    features: ['Rate Limiting', 'Caching', 'Security', 'Monitoring']
+                },
+                {
+                    id: 'workflow-automation',
+                    name: 'Workflow Automation',
+                    description: 'Automatização de processos empresariais com workflows visuais',
+                    price: 129,
+                    rating: 4.5,
+                    reviews: 98,
+                    category: 'automation',
+                    icon: '⚙️',
+                    features: ['Visual Builder', 'Integrações', 'Triggers', 'Templates']
+                },
+                {
+                    id: 'email-marketing',
+                    name: 'Email Marketing Pro',
+                    description: 'Campanhas de email automatizadas com segmentação avançada',
+                    price: 89,
+                    rating: 4.4,
+                    reviews: 267,
+                    category: 'marketing',
+                    icon: '📧',
+                    features: ['Templates', 'Segmentação', 'A/B Testing', 'Automation']
+                }
+            ];
+
+            allServices = mockServices;
+            renderServices(mockServices);
+        }
+
+        function filterByCategory(category) {
+            currentCategory = category;
+
+            // Update active category
+            document.querySelectorAll('.category-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            applyFilters();
+        }
+
+        function filterServices() {
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+
+            let filtered = allServices;
+
+            // Filter by category
+            if (currentCategory !== 'all') {
+                filtered = filtered.filter(service => service.category === currentCategory);
+            }
+
+            // Filter by search term
+            if (searchTerm) {
+                filtered = filtered.filter(service =>
+                    service.name.toLowerCase().includes(searchTerm) ||
+                    service.description.toLowerCase().includes(searchTerm) ||
+                    service.features.some(feature => feature.toLowerCase().includes(searchTerm))
+                );
+            }
+
+            renderServices(filtered);
+        }
+
+        function viewServiceDetails(serviceId) {
+            window.location.href = `/dashboard/servicos/loja/${serviceId}`;
+        }
+
+        function purchaseService(serviceId) {
+            if (confirm('Deseja adquirir este serviço?')) {
+                alert('Serviço adquirido com sucesso! Você será redirecionado para configuração.');
+                window.location.href = '/dashboard/servicos';
+            }
+        }
+
+        // Initialize
+        loadServices();
+    </script>
+</ClientLayout>

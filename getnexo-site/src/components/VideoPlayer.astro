@@ -1,5 +1,11 @@
 ---
 // VideoPlayer component with streaming support
+declare global {
+  var Hls: any;
+  interface Navigator {
+    connection: any;
+  }
+}
 export interface Props {
   src: string;
   poster?: string;

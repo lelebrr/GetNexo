@@ -1,0 +1,1047 @@
+---
+import ClientLayout from '../../layouts/ClientLayout.astro';
+---
+
+<ClientLayout title="Analytics - GetNexo Pro">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        .analytics-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1));
+            border-radius: 16px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .analytics-header h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #00d4ff;
+            margin: 0;
+            background: linear-gradient(90deg, #00d4ff, #00ff9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .alerts-list {
+            padding: 1rem 0;
+        }
+
+        .alert-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .alert-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .alert-item.warning { border-left: 4px solid #fbbf24; }
+        .alert-item.danger { border-left: 4px solid #ef4444; }
+        .alert-item.success { border-left: 4px solid #00ff9d; }
+        .alert-item.info { border-left: 4px solid #00d4ff; }
+
+        .alert-icon {
+            font-size: 1.5rem;
+        }
+
+        .alert-content h4 {
+            margin: 0 0 0.25rem 0;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .alert-content p {
+            margin: 0;
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+
+        .alert-time {
+            margin-left: auto;
+            color: #64748b;
+            font-size: 0.8rem;
+        }
+
+        .analytics-header p {
+            color: #94a3b8;
+            font-size: 1.2rem;
+            margin: 1rem 0 0 0;
+        }
+
+        .filters-section {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .filter-select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        }
+
+        .stat-title {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #00d4ff;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-desc {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .change-positive {
+            color: #00ff9d;
+            font-weight: 600;
+        }
+
+        .change-negative {
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        .charts-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .chart-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .chart-header h3 {
+            color: #00d4ff;
+            margin: 0;
+            font-size: 1.3rem;
+        }
+
+        .chart-legend {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .legend-item {
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .legend-item.active {
+            color: #00d4ff;
+            font-weight: 600;
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+
+        .detailed-metrics {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .metrics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .metrics-header h3 {
+            color: #00d4ff;
+            margin: 0;
+            font-size: 1.3rem;
+        }
+
+        .metrics-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .metrics-table th,
+        .metrics-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .metrics-table th {
+            color: #94a3b8;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metrics-table td {
+            color: white;
+        }
+
+        .metric-trend {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .trend-up { color: #00ff9d; }
+        .trend-down { color: #ef4444; }
+        .trend-neutral { color: #fbbf24; }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #00ff9d);
+            color: black;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-overview {
+                grid-template-columns: 1fr;
+            }
+
+            .analytics-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+
+    <div style="padding: 2rem; max-width: 1400px; margin: 0 auto;">
+
+        <!-- Header -->
+        <div class="analytics-header">
+            <h1>📊 Analytics Avançado</h1>
+            <p>Monitore o desempenho dos seus projetos e serviços em tempo real</p>
+        </div>
+
+        <!-- Advanced Filters & Tools -->
+        <div class="filters-section">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Período</label>
+                    <select class="filter-select" id="period-filter">
+                        <option value="1h">Última hora</option>
+                        <option value="24h">Últimas 24h</option>
+                        <option value="7d">Últimos 7 dias</option>
+                        <option value="30d" selected>Últimos 30 dias</option>
+                        <option value="90d">Últimos 90 dias</option>
+                        <option value="1y">Último ano</option>
+                        <option value="custom">Personalizado</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Data Inicial</label>
+                    <input type="date" class="filter-select" id="start-date" disabled>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Data Final</label>
+                    <input type="date" class="filter-select" id="end-date" disabled>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Projeto</label>
+                    <select class="filter-select" id="project-filter">
+                        <option value="all" selected>Todos os projetos</option>
+                        <option value="web">Projetos Web</option>
+                        <option value="mobile">Projetos Mobile</option>
+                        <option value="desktop">Projetos Desktop</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Serviço</label>
+                    <select class="filter-select" id="service-filter">
+                        <option value="all" selected>Todos os serviços</option>
+                        <option value="seo">SEO</option>
+                        <option value="analytics">Analytics</option>
+                        <option value="chatbot">Chatbot</option>
+                        <option value="email">Email</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Métrica</label>
+                    <select class="filter-select" id="metric-filter">
+                        <option value="all" selected>Todas as métricas</option>
+                        <option value="performance">Performance</option>
+                        <option value="usage">Uso</option>
+                        <option value="revenue">Receita</option>
+                        <option value="engagement">Engajamento</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
+                <div class="alert-settings">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; color: #94a3b8; font-size: 0.9rem;">
+                        <input type="checkbox" id="enable-alerts" checked>
+                        Alertas inteligentes ativados
+                    </label>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn btn-outline" onclick="saveReport()">Salvar Relatório</button>
+                    <button class="btn btn-outline" onclick="scheduleReport()">Agendar Relatório</button>
+                    <button class="btn btn-primary" onclick="applyFilters()">Aplicar Filtros</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="stats-overview">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-title">Usuários Ativos</div>
+                </div>
+                <div class="stat-value" id="active-users">0</div>
+                <div class="stat-desc">
+                    <span class="change-positive">↗️ +12%</span> vs período anterior
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-title">Conversões</div>
+                </div>
+                <div class="stat-value" id="conversions">0%</div>
+                <div class="stat-desc">
+                    <span class="change-positive">↗️ +8%</span> vs período anterior
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-title">Receita</div>
+                </div>
+                <div class="stat-value" id="revenue">R$ 0</div>
+                <div class="stat-desc">
+                    <span class="change-negative">↘️ -3%</span> vs período anterior
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-title">Performance</div>
+                </div>
+                <div class="stat-value" id="performance">0ms</div>
+                <div class="stat-desc">
+                    Tempo médio de resposta
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Uso por Serviço</h3>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <select id="service-usage-period" onchange="updateServiceUsageChart()">
+                            <option value="7">7 dias</option>
+                            <option value="30" selected>30 dias</option>
+                            <option value="90">90 dias</option>
+                        </select>
+                        <button class="btn btn-outline" onclick="exportChart('serviceUsageChart')">📊</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="serviceUsageChart" width="400" height="250"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Receita Mensal</h3>
+                    <div class="chart-legend">
+                        <span class="legend-item active">💰 Receita</span>
+                        <span class="legend-item">📊 Projeção</span>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="revenueChart" width="400" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Charts Section -->
+        <div class="charts-section">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Engajamento por Hora</h3>
+                    <select id="engagement-period" onchange="updateEngagementChart()">
+                        <option value="24h" selected>24h</option>
+                        <option value="7d">7 dias</option>
+                        <option value="30d">30 dias</option>
+                    </select>
+                </div>
+                <div class="chart-container">
+                    <canvas id="engagementChart" width="400" height="250"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Performance vs Meta</h3>
+                    <div class="chart-legend">
+                        <span class="legend-item active">🎯 Meta</span>
+                        <span class="legend-item">📈 Realizado</span>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="performanceChart" width="400" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trends & Alerts Section -->
+        <div class="charts-section">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Tendências de Crescimento</h3>
+                    <div class="chart-legend">
+                        <span class="legend-item active">📈 Crescimento</span>
+                        <span class="legend-item">📉 Declínio</span>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="trendsChart" width="400" height="250"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Alertas Inteligentes</h3>
+                    <button class="btn btn-outline" onclick="configureAlerts()">⚙️ Configurar</button>
+                </div>
+                <div class="alerts-list" id="alerts-list">
+                    <!-- Alerts will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Metrics -->
+        <div class="detailed-metrics">
+            <div class="metrics-header">
+                <h3>Métricas Detalhadas</h3>
+                <button class="btn btn-outline" onclick="exportMetrics()">Exportar Dados</button>
+            </div>
+            <table class="metrics-table">
+                <thead>
+                    <tr>
+                        <th>Métrica</th>
+                        <th>Valor Atual</th>
+                        <th>Variação</th>
+                        <th>Tendência</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="metrics-table-body">
+                    <!-- Metrics rows will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <script is:inline>
+        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '/api-proxy';
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Period filter change
+            document.getElementById('period-filter').addEventListener('change', function() {
+                const isCustom = this.value === 'custom';
+                document.getElementById('start-date').disabled = !isCustom;
+                document.getElementById('end-date').disabled = !isCustom;
+            });
+        });
+
+        // Load analytics data
+        async function loadAnalyticsData() {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch(`${API_URL}/api/analytics`, {
+                    headers: { 'Authorization': token }
+                });
+                const data = await res.json();
+
+                updateStats(data);
+                loadCharts(data);
+                loadDetailedMetrics(data.detailedMetrics || []);
+                loadAlerts(data.alerts || []);
+
+            } catch (e) {
+                console.error('API Error, using fallback', e);
+                loadMockAnalytics();
+            }
+        }
+
+        function updateStats(data) {
+            document.getElementById('active-users').textContent = data.activeUsers || 0;
+            document.getElementById('conversions').textContent = (data.conversions || 0) + '%';
+            document.getElementById('revenue').textContent = 'R$ ' + (data.revenue || 0).toLocaleString('pt-BR');
+            document.getElementById('performance').textContent = (data.performance || 0) + 'ms';
+        }
+
+        function loadCharts(data) {
+            // Service Usage Chart
+            const serviceCtx = document.getElementById('serviceUsageChart').getContext('2d');
+            const serviceData = data.serviceUsage || [45, 52, 38, 61, 35, 48];
+
+            new Chart(serviceCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['SEO', 'Analytics', 'Chatbot', 'Email', 'Backup', 'API'],
+                    datasets: [{
+                        label: 'Uso (%)',
+                        data: serviceData,
+                        backgroundColor: 'rgba(0, 212, 255, 0.6)',
+                        borderColor: '#00d4ff',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#94a3b8' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#94a3b8' }
+                        }
+                    }
+                }
+            });
+
+            // Revenue Chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            const revenueLabels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'];
+            const revenueData = data.revenueData || [1200, 1350, 1180, 1420, 1580, 1620];
+            const projectionData = data.projectionData || [1400, 1520, 1680, 1750, 1820, 1900];
+
+            new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: revenueLabels,
+                    datasets: [{
+                        label: 'Receita Real',
+                        data: revenueData,
+                        borderColor: '#00d4ff',
+                        backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Projeção',
+                        data: projectionData,
+                        borderColor: '#00ff9d',
+                        backgroundColor: 'rgba(0, 255, 157, 0.1)',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#94a3b8' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#94a3b8' }
+                        }
+                    }
+                }
+            });
+
+            // Engagement Chart
+            const engagementCtx = document.getElementById('engagementChart').getContext('2d');
+            const engagementLabels = ['00h', '04h', '08h', '12h', '16h', '20h'];
+            const engagementData = data.engagementData || [12, 8, 45, 78, 65, 32];
+
+            new Chart(engagementCtx, {
+                type: 'line',
+                data: {
+                    labels: engagementLabels,
+                    datasets: [{
+                        label: 'Engajamento',
+                        data: engagementData,
+                        borderColor: '#00ff9d',
+                        backgroundColor: 'rgba(0, 255, 157, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: '#00ff9d',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#94a3b8' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#94a3b8' }
+                        }
+                    }
+                }
+            });
+
+            // Performance Chart
+            const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+            const performanceData = data.performanceData || {
+                labels: ['SEO', 'Analytics', 'Chatbot', 'Email', 'Backup'],
+                meta: [85, 90, 75, 80, 95],
+                real: [78, 88, 82, 76, 92]
+            };
+
+            new Chart(performanceCtx, {
+                type: 'radar',
+                data: {
+                    labels: performanceData.labels,
+                    datasets: [{
+                        label: 'Meta',
+                        data: performanceData.meta,
+                        borderColor: '#00d4ff',
+                        backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#00d4ff',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }, {
+                        label: 'Realizado',
+                        data: performanceData.real,
+                        borderColor: '#00ff9d',
+                        backgroundColor: 'rgba(0, 255, 157, 0.1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#00ff9d',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        r: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#94a3b8' },
+                            pointLabels: { color: '#94a3b8' }
+                        }
+                    }
+                }
+            });
+
+            // Trends Chart
+            const trendsCtx = document.getElementById('trendsChart').getContext('2d');
+            const trendsLabels = ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4', 'Sem 5', 'Sem 6'];
+            const growthData = data.growthData || [2, 5, 3, 8, 12, 15];
+            const declineData = data.declineData || [-1, -2, -0.5, -3, -1, -2];
+
+            new Chart(trendsCtx, {
+                type: 'bar',
+                data: {
+                    labels: trendsLabels,
+                    datasets: [{
+                        label: 'Crescimento',
+                        data: growthData,
+                        backgroundColor: 'rgba(0, 255, 157, 0.6)',
+                        borderColor: '#00ff9d',
+                        borderWidth: 1
+                    }, {
+                        label: 'Declínio',
+                        data: declineData,
+                        backgroundColor: 'rgba(239, 68, 68, 0.6)',
+                        borderColor: '#ef4444',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#94a3b8' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#94a3b8' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function loadAlerts(alerts) {
+            const alertsList = document.getElementById('alerts-list');
+
+            if (alerts.length === 0) {
+                alertsList.innerHTML = '<p style="color: #94a3b8; text-align: center; padding: 2rem;">Nenhum alerta ativo</p>';
+                return;
+            }
+
+            alertsList.innerHTML = alerts.map(alert => `
+                <div class="alert-item ${alert.type}">
+                    <div class="alert-icon">${alert.icon}</div>
+                    <div class="alert-content">
+                        <h4>${alert.title}</h4>
+                        <p>${alert.message}</p>
+                    </div>
+                    <div class="alert-time">${alert.time}</div>
+                </div>
+            `).join('');
+        }
+
+        function loadDetailedMetrics(metrics) {
+            const tbody = document.getElementById('metrics-table-body');
+
+            if (metrics.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: #94a3b8;">Nenhuma métrica detalhada disponível</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = metrics.map(metric => `
+                <tr>
+                    <td>${metric.name}</td>
+                    <td>${metric.currentValue}</td>
+                    <td>
+                        <span class="metric-trend ${metric.trendClass}">
+                            ${metric.changeIcon} ${metric.changeValue}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="metric-trend ${metric.trendClass}">
+                            ${metric.trendIcon}
+                        </span>
+                    </td>
+                    <td>
+                        <span style="color: ${metric.statusColor}; font-weight: 600;">
+                            ${metric.status}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadMockAnalytics() {
+            updateStats({
+                activeUsers: 1247,
+                conversions: 23.5,
+                revenue: 8750,
+                performance: 145
+            });
+
+            loadCharts({});
+            loadDetailedMetrics([
+                {
+                    name: 'Tempo de Carregamento',
+                    currentValue: '1.2s',
+                    changeValue: '-0.3s',
+                    changeIcon: '↘️',
+                    trendIcon: '📉',
+                    trendClass: 'trend-up',
+                    status: 'Bom',
+                    statusColor: '#00ff9d'
+                },
+                {
+                    name: 'Taxa de Erro',
+                    currentValue: '0.5%',
+                    changeValue: '+0.1%',
+                    changeIcon: '↗️',
+                    trendIcon: '📈',
+                    trendClass: 'trend-down',
+                    status: 'Atenção',
+                    statusColor: '#fbbf24'
+                },
+                {
+                    name: 'Satisfação do Usuário',
+                    currentValue: '4.8/5',
+                    changeValue: '+0.2',
+                    changeIcon: '↗️',
+                    trendIcon: '📈',
+                    trendClass: 'trend-up',
+                    status: 'Excelente',
+                    statusColor: '#00ff9d'
+                }
+            ]);
+
+            loadAlerts([
+                {
+                    type: 'warning',
+                    icon: '⚠️',
+                    title: 'Uso de CPU elevado',
+                    message: 'O servidor está com 85% de uso de CPU',
+                    time: '5 min atrás'
+                },
+                {
+                    type: 'success',
+                    icon: '🎯',
+                    title: 'Meta de conversões atingida',
+                    message: 'Meta mensal de conversões foi superada em 15%',
+                    time: '2h atrás'
+                },
+                {
+                    type: 'info',
+                    icon: '📊',
+                    title: 'Novo recorde de usuários',
+                    message: '1.247 usuários ativos simultâneos',
+                    time: '1d atrás'
+                }
+            ]);
+        }
+
+        function applyFilters() {
+            const period = document.getElementById('period-filter').value;
+            const startDate = document.getElementById('start-date').value;
+            const endDate = document.getElementById('end-date').value;
+            const project = document.getElementById('project-filter').value;
+            const service = document.getElementById('service-filter').value;
+            const metric = document.getElementById('metric-filter').value;
+
+            console.log('Aplicando filtros:', { period, startDate, endDate, project, service, metric });
+
+            // Reload data with filters
+            loadAnalyticsData();
+        }
+
+        function updateServiceUsageChart() {
+            // Refresh service usage chart with new period
+            loadAnalyticsData();
+        }
+
+        function updateEngagementChart() {
+            // Refresh engagement chart with new period
+            loadAnalyticsData();
+        }
+
+        function exportChart(chartId) {
+            const canvas = document.getElementById(chartId);
+            const link = document.createElement('a');
+            link.download = `${chartId}-export.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        function exportMetrics() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                metrics: [],
+                filters: {
+                    period: document.getElementById('period-filter').value,
+                    project: document.getElementById('project-filter').value,
+                    service: document.getElementById('service-filter').value,
+                    metric: document.getElementById('metric-filter').value
+                }
+            };
+
+            // Add current metrics data
+            const tbody = document.getElementById('metrics-table-body');
+            const rows = tbody.querySelectorAll('tr');
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                data.metrics.push({
+                    name: cells[0].textContent,
+                    currentValue: cells[1].textContent,
+                    change: cells[2].textContent,
+                    status: cells[4].textContent
+                });
+            });
+
+            // Create and download JSON file
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.download = `analytics-export-${new Date().toISOString().split('T')[0]}.json`;
+            link.href = URL.createObjectURL(blob);
+            link.click();
+        }
+
+        function saveReport() {
+            const reportName = prompt('Nome do relatório:');
+            if (reportName) {
+                const report = {
+                    name: reportName,
+                    filters: {
+                        period: document.getElementById('period-filter').value,
+                        project: document.getElementById('project-filter').value,
+                        service: document.getElementById('service-filter').value,
+                        metric: document.getElementById('metric-filter').value
+                    },
+                    createdAt: new Date().toISOString()
+                };
+
+                // Save to localStorage (in real app, this would be saved to backend)
+                const savedReports = JSON.parse(localStorage.getItem('savedReports') || '[]');
+                savedReports.push(report);
+                localStorage.setItem('savedReports', JSON.stringify(savedReports));
+
+                alert(`Relatório "${reportName}" salvo com sucesso!`);
+            }
+        }
+
+        function scheduleReport() {
+            const frequency = prompt('Frequência do relatório (diário/semanal/mensal):');
+            if (frequency) {
+                alert(`Relatório agendado para envio ${frequency}. Você receberá por email.`);
+            }
+        }
+
+        function configureAlerts() {
+            alert('Configuração de alertas: Em breve você poderá personalizar quais métricas monitorar e quando receber notificações.');
+        }
+
+        // Initialize
+        loadAnalyticsData();
+    </script>
+</ClientLayout>

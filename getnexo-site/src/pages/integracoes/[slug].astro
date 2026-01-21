@@ -58,12 +58,12 @@ const keywords = `integração ${name} whatsapp, api whatsapp ${name}, bot whats
 <script>
   function toggleHighContrast() {
     document.body.classList.toggle("high-contrast");
-    localStorage.setItem("highContrast", document.body.classList.contains("high-contrast"));
+    localStorage.setItem("highContrast", document.body.classList.contains("high-contrast").toString());
   }
   
   function toggleFontSize() {
     document.body.classList.toggle("large-font");
-    localStorage.setItem("largeFont", document.body.classList.contains("large-font"));
+    localStorage.setItem("largeFont", document.body.classList.contains("large-font").toString());
   }
   
   function resetAccessibility() {
@@ -76,12 +76,12 @@ const keywords = `integração ${name} whatsapp, api whatsapp ${name}, bot whats
   
   function toggleElderlyMode() {
     document.body.classList.toggle("high-contrast-elderly");
-    localStorage.setItem("elderlyMode", document.body.classList.contains("high-contrast-elderly"));
+    localStorage.setItem("elderlyMode", document.body.classList.contains("high-contrast-elderly").toString());
   }
   
   function toggleCognitiveSupport() {
     document.body.classList.toggle("cognitive-support");
-    localStorage.setItem("cognitiveSupport", document.body.classList.contains("cognitive-support"));
+    localStorage.setItem("cognitiveSupport", document.body.classList.contains("cognitive-support").toString());
   }
   
   // Load saved preferences
