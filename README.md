@@ -2,63 +2,49 @@
 
 **Plataforma de Automação de Vendas & Atendimento via WhatsApp com IA.**
 
-GetNexo é uma solução completa "All-in-One" que transforma seu WhatsApp em uma máquina de vendas autônoma. Diferente de soluções tradicionais, o GetNexo oferece uma infraestrutura robusta, PIX nativo, e uma IA generativa treinada para converter leads em clientes.
+GetNexo é uma solução completa "All-in-One" que transforma seu WhatsApp em uma máquina de vendas autônoma. Oferecemos infraestrutura robusta, PIX nativo e IA generativa para conversão de leads.
 
-## 🌟 Funcionalidades Principais
+---
 
-### 🤖 Automação & IA
--   **IA Generativa**: Respostas humanizadas baseadas no seu contexto.
--   **Flow Editor**: Criador de fluxos "Arrastar-e-Soltar" com persistência.
--   **Forge**: Gerador automático de plugins para WordPress/Shopify.
+## 📖 Documentação Centralizada
 
-### 💰 Vendas & Loja
--   **Loja Integrada (`/loja`)**: Catálogo de produtos e checkout.
--   **PIX Nativo**: Geração automática de QR Code e validação via Webhook.
--   **Recuperação de Carrinho**: Automação para recuperar vendas perdidas.
+Toda a documentação do projeto foi centralizada na pasta **[`docs/`](docs/)**. Utilize os links abaixo para acessar as seções principais:
 
-### 👥 Gestão Completa
--   **Painel do Usuário**: Gestão de domínios, faturas e stats.
--   **Painel de Revenda**: Crie sub-contas, gerencie equipes (Admin/Editor/Viewer) e distribua códigos de desconto.
--   **Admin Master**: Controle total sobre roles, usuários e sistema.
+### 🚀 [Guia de Início Rápido](docs/development/GETTING_STARTED.md)
+Aprenda a configurar o ambiente local, instalar dependências e rodar o sistema pela primeira vez.
 
-## 🚀 Como Iniciar
+### 🏗️ [Arquitetura & Engines](docs/architecture/ARCHITECTURE_ENGINES.md)
+Explore os 40+ engines especializados que compõem a inteligência e resiliência da plataforma.
 
-### Desenvolvimento Local
+### ☁️ [Infraestrutura Cloud](docs/cloud/aws/)
+Detalhes sobre a integração com provedores de nuvem (**AWS**, Azure, GCP).
 
-1.  **Requisitos**: Node.js 18+, Docker (opcional para N8N/Evolution).
-2.  **Instalação**:
-    ```bash
-    git clone https://github.com/lelebrr/GetNexo.git
-    cd GetNexo
-    npm install
-    ```
-3.  **Rodar Backend e Frontend**:
-    ```bash
-    # Terminal 1 (Backend)
-    cd chat-api && npm run dev
-    
-    # Terminal 2 (Frontend)
-    cd getnexo-site && npm run dev
-    ```
+### 🔗 [Integrações](docs/integrations/)
+Como conectar o GetNexo a serviços externos como Omnichat, Stripe e ERPs.
 
-### Deploy (Produção)
+---
 
-O projeto é otimizado para **Docker Compose**:
+## 🏗️ Estrutura do Repositório
+
+- **[`docs/`](docs/)**: Central de documentação (Técnica, Business, Marketing).
+- **[`getnexo-site/`](getnexo-site/)**: Frontend desenvolvido em Astro & React.
+- **[`chat-api/`](chat-api/)**: Backend robusto em Node.js com SQLite/PostgreSQL.
+
+---
+
+## 🚀 Como Rodar (Docker Compose)
+
+O projeto é otimizado para deploy imediato via Docker:
 
 ```bash
 docker-compose up -d --build
 ```
 
-Isso subirá:
--   `getnexo-site` (Frontend Astro) na porta 4321
--   `chat-api` (Backend Node.js) na porta 3000
+Para mais detalhes sobre desenvolvimento local, consulte o **[Getting Started](docs/development/GETTING_STARTED.md)**.
 
-## 📂 Estrutura do Projeto
-
--   `/getnexo-site`: Frontend Astro (SSR/Static).
--   `/chat-api`: Backend Node.js (SQLite + Express).
--   `/docs`: Documentação técnica e manuais.
+---
 
 ## 📄 Licença
 
 Proprietário: **GetNexo**. Todos os direitos reservados.
+Para mais informações, consulte a **[Central de Documentação](docs/README.md)**.

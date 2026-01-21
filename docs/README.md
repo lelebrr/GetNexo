@@ -1,33 +1,55 @@
-# GetNexo Documentation
+# GetNexo Documentation Portal Index
 
-Welcome to the GetNexo documentation. This directory contains all technical, business, and compliance documentation for the GetNexo platform.
+Welcome to the central GetNexo documentation. This directory is the single source of truth for technical, business, and operational information.
 
-## Structure
+---
 
-### 📁 [Technical Reference](technical_reference/)
-Core technical specifications, architecture, and manuals.
-- **Architecture**: System design and SaaS structure.
-- **Security**: Security implementation and roadmap.
-- **Integrations**: E-commerce and external service integrations.
-
-### 📁 [Branding](branding/)
-Visual identity and brand guidelines.
-- **Brand Guidelines**: The visual and neural bible of GetNexo.
-
-### 📁 [Business](business/)
-Business strategy, inventory, and confidential dossiers.
-- **Master Inventory**: Full list of assets.
-- **Secret Dossier**: Internal strategy documents.
-
-### 📁 [Planning](planning/)
-Feature planning, benchmarks, and roadmaps.
-
-### 📁 [Marketing](marketing/)
-Copywriting, ad scripts, and marketing materials.
-
-### 📁 [Compliance](compliance/)
-Legal certifications and accessibility standards.
-
-## Quick Links
-- [Project Overview](technical_reference/01_PROJECT_OVERVIEW.md)
+## 🚀 [Development & Setup](development/GETTING_STARTED.md)
+Start here to set up your environment and run the platform.
+- [Getting Started Guide](development/GETTING_STARTED.md)
 - [Deployment Guide](technical_reference/06_DEPLOYMENT.md)
+- [Configuration Reference](technical_reference/03_CONFIGURATION.md)
+
+## 🏗️ [Architecture & Engines](architecture/ARCHITECTURE_ENGINES.md)
+Deep dive into the specialized engines and system design.
+- [Advanced Architecture Engines](architecture/ARCHITECTURE_ENGINES.md)
+- [System Architecture Review](planning/SYSTEM_ARCHITECTURE_REVIEW.md)
+- [SaaS Architecture](planning/SAAS_ARCHITECTURE.md)
+- [Scalability Strategy](SCALABILITY.md)
+
+## ☁️ [Cloud Infrastructure](cloud/aws/)
+Cloud provider specific configurations and monitoring.
+- **AWS**: [Compute](cloud/aws/COMPUTE.md), [Storage](cloud/aws/STORAGE.md), [Security](cloud/aws/SECURITY.md), [Monitoring](cloud/aws/MONITORING.md), [Billing](cloud/aws/BILLING.md)
+- **Azure/GCP**: *Coming Soon*
+
+## 🔗 [Integrations](integrations/)
+External services and third-party connectors.
+- [Omnichat Integration](integrations/OMNICHAT.md)
+- [E-commerce APIs](references/ECOMMERCE_API.md)
+- [Payment Gateways](references/PAYMENT_API.md)
+- [ERP Connectors](references/ERP_API.md)
+
+## 🎨 [Branding & Design](branding/)
+Visual identity and neuro-design guidelines.
+- [Brand Guidelines](branding/BRAND_GUIDELINES.md)
+- [Visual & Neural Bible](branding/GETNEXO%20–%20BÍBLIA%20VISUAL%20E%20NEURAL.md)
+
+## 💼 [Business & Planning](business/)
+Strategy, market analysis, and product roadmap.
+- [Master Inventory](business/MASTER_INVENTORY.md)
+- [Secret Dossier](business/SECRET_DOSSIER.md)
+- [Feature Wishlist](planning/FEATURE_WISHLIST.md)
+- [Competitive Benchmark](planning/COMPETITOR_BENCHMARK.md)
+
+## 🛡️ [Security & Compliance](security/)
+Security implementations and legal standards.
+- [Security Roadmap](security/ROADMAP_SEGURANCA.md)
+- [Accessibility Certifications](compliance/ACCESSIBILITY_CERTIFICATIONS.md)
+
+---
+
+## 📄 Other References
+- [Changelog](CHANGELOG.md)
+- [Manual do Admin](MANUAL_DO_ADMIN.md)
+- [User Features Guide](features/USER_FEATURES.md)
+- [Verification Matrix](VERIFICATION_MATRIX.md)
