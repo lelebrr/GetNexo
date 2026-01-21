@@ -54,6 +54,9 @@ const permissions = require('./permissions');
 const webauthn = require('./webauthn');
 const erpConnector = require('./connectors/erp');
 const stripeConnector = require('./connectors/stripe');
+const awsConnector = require('./connectors/aws');
+const azureConnector = require('./connectors/azure');
+const gcpConnector = require('./connectors/gcp');
 
 // Engines de Infraestrutura
 const kubernetesOrchestrationEngine = require('./kubernetes-orchestration-engine');
@@ -116,8 +119,11 @@ class AdvancedArchitectureEngine {
             auth: normalize(auth),
             permissions: normalize(permissions),
             webauthn: normalize(webauthn),
-            erpConnector: normalize(erpConnector),
-            stripeConnector: normalize(stripeConnector),
+            erp: normalize(erpConnector),
+            stripe: normalize(stripeConnector),
+            aws: normalize(awsConnector),
+            azure: normalize(azureConnector),
+            gcp: normalize(gcpConnector),
 
             // Infraestrutura
             kubernetesOrchestration: normalize(kubernetesOrchestrationEngine),
@@ -357,6 +363,11 @@ class AdvancedArchitectureEngine {
         // 45. Configurar Load Testing
         if (config.loadTesting) {
             this.setupLoadTesting(config.loadTesting);
+        }
+
+        // 46. Configurar Cloud Connectors
+        if (config.cloudConnectors) {
+            this.setupCloudConnectors(config.cloudConnectors);
         }
 
         console.log('Advanced Architecture Engine initialized successfully');
@@ -1107,12 +1118,28 @@ class AdvancedArchitectureEngine {
     }
 
     /**
-     * Configura ERP Connector
+     * Configura conectores de nuvem
+     */
+    setupCloudConnectors(config) {
+        if (config.aws && this.engines.aws.initialize) {
+            this.engines.aws.initialize(config.aws);
+        }
+        if (config.azure && this.engines.azure.initialize) {
+            this.engines.azure.initialize(config.azure);
+        }
+        if (config.gcp && this.engines.gcp.initialize) {
+            this.engines.gcp.initialize(config.gcp);
+        }
+        console.log('Cloud Connectors configured');
+    }
+
+    /**
+     * Configura o conector ERP
      */
     setupERPConnector(config) {
         if (config.connections) {
             for (const [connId, connConfig] of Object.entries(config.connections)) {
-                this.engines.erpConnector.connect(connId, connConfig);
+                this.engines.erp.connect(connId, connConfig);
             }
         }
         console.log('ERP Connector configured');
@@ -1123,7 +1150,7 @@ class AdvancedArchitectureEngine {
      */
     setupStripeConnector(config) {
         if (config.apiKey) {
-            this.engines.stripeConnector.initialize(config.apiKey);
+            this.engines.stripe.initialize(config.apiKey);
         }
         console.log('Stripe Connector configured');
     }
@@ -1159,149 +1186,105 @@ class AdvancedArchitectureEngine {
         const startTime = Date.now();
 
         try {
-            // Aplicar rate limiting
+            // 1. Aplicar rate limiting
             if (context.rateLimit) {
                 const rateLimitResult = await this.engines.rateLimiting.checkLimit(context.rateLimit.key, context.rateLimit.config);
                 if (!rateLimitResult.allowed) {
-                    throw new Error('Rate limit exceeded');
+                    throw new Error(`Rate limit exceeded: ${rateLimitResult.message}`);
                 }
             }
 
-            // Aplicar circuit breaker
-            if (context.circuitBreaker) {
-                return await this.engines.circuitBreaker.executeWithRetry(
-                    context.circuitBreaker.key,
-                    async () => {
-                        // Aplicar bulkhead
-                        if (context.bulkhead) {
-                            return await this.engines.bulkhead.execute(
-                                context.bulkhead.key,
-                                async () => {
-                                    // Verificar cache
-                                    if (context.cache) {
-                                        const cached = await this.engines.caching.get(context.cache.key, context.cache.layers);
-                                        if (cached !== null) {
-                                            return cached;
-                                        }
-                                    }
+            // 2. Simular detecção de anomalias com ML (opcional)
+            if (context.anomalyDetection) {
+                const prediction = await this.engines.mlModels.predict('anomaly-detector', context.operationData);
+                if (prediction.anomaly) {
+                    console.warn('⚠️ Anomaly detected by ML Engine - triggered automated runbook');
+                    await this.engines.automatedRunbooks.executeRunbook({ ruleId: 'anomaly_detected', title: 'ML Anomaly' }, context.operationData);
+                }
+            }
 
-                                    // Executar operação principal
-                                    let result;
-                                    if (operation.type === 'command') {
-                                        result = await this.engines.cqrs.executeCommand(operation);
-                                    } else if (operation.type === 'query') {
-                                        result = await this.engines.cqrs.executeQuery(operation);
-                                    } else if (operation.type === 'api') {
-                                        result = await this.engines.apiGateway.processRequest(operation);
-                                    } else if (operation.type === 'database') {
-                                        result = await this.engines.databaseSharding.executeQuery(operation.query, operation.options);
-                                    } else {
-                                        result = await operation.fn();
-                                    }
-
-                                    // Cache result se aplicável
-                                    if (context.cache && result !== undefined) {
-                                        await this.engines.caching.set(context.cache.key, result, { layers: context.cache.layers });
-                                    }
-
-                                    return result;
-                                },
-                                context.bulkhead.config
-                            );
-                        } else {
-                            // Sem bulkhead
-                            if (context.cache) {
-                                const cached = await this.engines.caching.get(context.cache.key, context.cache.layers);
-                                if (cached !== null) {
-                                    return cached;
-                                }
-                            }
-
-                            let result;
-                            if (operation.type === 'command') {
-                                result = await this.engines.cqrs.executeCommand(operation);
-                            } else if (operation.type === 'query') {
-                                result = await this.engines.cqrs.executeQuery(operation);
-                            } else if (operation.type === 'api') {
-                                result = await this.engines.apiGateway.processRequest(operation);
-                            } else if (operation.type === 'database') {
-                                result = await this.engines.databaseSharding.executeQuery(operation.query, operation.options);
-                            } else {
-                                result = await operation.fn();
-                            }
-
-                            if (context.cache && result !== undefined) {
-                                await this.engines.caching.set(context.cache.key, result, { layers: context.cache.layers });
-                            }
-
-                            return result;
-                        }
-                    },
-                    context.circuitBreaker.config
-                );
-            } else {
-                // Sem circuit breaker
-                if (context.bulkhead) {
-                    return await this.engines.bulkhead.execute(
-                        context.bulkhead.key,
-                        async () => {
-                            if (context.cache) {
-                                const cached = await this.engines.caching.get(context.cache.key, context.cache.layers);
-                                if (cached !== null) {
-                                    return cached;
-                                }
-                            }
-
-                            let result;
-                            if (operation.type === 'command') {
-                                result = await this.engines.cqrs.executeCommand(operation);
-                            } else if (operation.type === 'query') {
-                                result = await this.engines.cqrs.executeQuery(operation);
-                            } else if (operation.type === 'api') {
-                                result = await this.engines.apiGateway.processRequest(operation);
-                            } else if (operation.type === 'database') {
-                                result = await this.engines.databaseSharding.executeQuery(operation.query, operation.options);
-                            } else {
-                                result = await operation.fn();
-                            }
-
-                            if (context.cache && result !== undefined) {
-                                await this.engines.caching.set(context.cache.key, result, { layers: context.cache.layers });
-                            }
-
-                            return result;
-                        },
-                        context.bulkhead.config
-                    );
-                } else {
-                    // Operação simples
+            // 3. Orquestrar execução com Circuit Breaker, Bulkhead e Cache
+            const executeWithResilience = async () => {
+                const resilienceWrapper = async () => {
+                    // Verificar cache primeiro (Layer 1)
                     if (context.cache) {
                         const cached = await this.engines.caching.get(context.cache.key, context.cache.layers);
-                        if (cached !== null) {
-                            return cached;
-                        }
+                        if (cached !== null) return cached;
                     }
 
+                    // Resolver endereço via Service Discovery se for API
+                    if (operation.type === 'api' && operation.serviceName) {
+                        const service = await this.engines.serviceDiscovery.discover(operation.serviceName);
+                        operation.url = `${service.protocol}://${service.host}:${service.port}${operation.path}`;
+                    }
+
+                    // Executar operação principal
                     let result;
-                    if (operation.type === 'command') {
-                        result = await this.engines.cqrs.executeCommand(operation);
-                    } else if (operation.type === 'query') {
-                        result = await this.engines.cqrs.executeQuery(operation);
-                    } else if (operation.type === 'api') {
-                        result = await this.engines.apiGateway.processRequest(operation);
-                    } else if (operation.type === 'database') {
-                        result = await this.engines.databaseSharding.executeQuery(operation.query, operation.options);
-                    } else {
-                        result = await operation.fn();
+                    switch (operation.type) {
+                        case 'command':
+                            result = await this.engines.cqrs.executeCommand(operation);
+                            break;
+                        case 'query':
+                            result = await this.engines.cqrs.executeQuery(operation);
+                            break;
+                        case 'api':
+                            result = await this.engines.apiGateway.processRequest(operation);
+                            break;
+                        case 'database':
+                            result = await this.engines.databaseSharding.executeQuery(operation.query, operation.options);
+                            break;
+                        case 'cloud':
+                            const provider = operation.provider || 'aws';
+                            if (this.engines[provider]) {
+                                result = await this.engines[provider][operation.method](...(operation.args || []));
+                            } else {
+                                throw new Error(`Cloud provider ${provider} not found`);
+                            }
+                            break;
+                        default:
+                            result = await operation.fn();
                     }
 
+                    // Cache result se aplicável
                     if (context.cache && result !== undefined) {
                         await this.engines.caching.set(context.cache.key, result, { layers: context.cache.layers });
                     }
 
                     return result;
+                };
+
+                // Aplicar Circuit Breaker se configurado
+                if (context.circuitBreaker) {
+                    return await this.engines.circuitBreaker.execute(
+                        context.circuitBreaker.key,
+                        async () => {
+                            // Aplicar Bulkhead se configurado
+                            if (context.bulkhead) {
+                                return await this.engines.bulkhead.execute(
+                                    context.bulkhead.key,
+                                    resilienceWrapper,
+                                    context.bulkhead.config
+                                );
+                            }
+                            return await resilienceWrapper();
+                        },
+                        context.circuitBreaker.config
+                    );
                 }
-            }
+
+                // Apenas Bulkhead se configurado
+                if (context.bulkhead) {
+                    return await this.engines.bulkhead.execute(
+                        context.bulkhead.key,
+                        resilienceWrapper,
+                        context.bulkhead.config
+                    );
+                }
+
+                return await resilienceWrapper();
+            };
+
+            return await executeWithResilience();
         } finally {
             // Registrar métricas
             const executionTime = Date.now() - startTime;

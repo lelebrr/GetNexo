@@ -145,28 +145,110 @@ npm test
 npm run test:load
 ```
 
-## 📖 Documentação
+## 📖 Documentação Completa
 
-### Para Usuários
-- **[Recursos de Usuário](docs/USER_FEATURES.md)** - Guia completo de funcionalidades
-- **[Primeiros Passos](docs/GETTING_STARTED.md)** - Tutorial inicial
-- **[FAQ](docs/FAQ.md)** - Perguntas frequentes
+### 🎯 Visão Geral
+- **[README Principal](docs/README.md)** - Visão geral da documentação
+- **[Recursos de Usuário](getnexo-site/docs/USER_FEATURES.md)** - Guia completo de funcionalidades
+- **[Manual do Admin](docs/MANUAL_DO_ADMIN.md)** - Administração da plataforma
+- **[Escalabilidade](docs/SCALABILITY.md)** - Estratégias de escala
+- **[SEO Completo](docs/SEO_COMPLETO_DOCUMENTATION.md)** - Otimização para motores de busca
+- **[Matriz de Verificação](docs/VERIFICATION_MATRIX.md)** - Checklist de qualidade
 
-### Para Desenvolvedores
-- **[Arquitetura](docs/ARCHITECTURE.md)** - Diagramas e decisões técnicas
-- **[APIs](docs/API_REFERENCE.md)** - Documentação completa das APIs
-- **[Contribuição](docs/CONTRIBUTING.md)** - Como contribuir
-- **[Testes](docs/TESTING.md)** - Estratégia de testes
+### 🏗️ Arquitetura e Desenvolvimento
+- **[Arquitetura Técnica](docs/technical_reference/01_PROJECT_OVERVIEW.md)** - Visão geral do projeto
+- **[Arquitetura do Sistema](docs/technical_reference/02_ARCHITECTURE.md)** - Diagramas e componentes
+- **[Configuração](docs/technical_reference/03_CONFIGURATION.md)** - Configurações técnicas
+- **[Implementação de Segurança](docs/technical_reference/04_SECURITY_IMPL.md)** - Segurança técnica
+- **[Performance](docs/technical_reference/05_PERFORMANCE_IMPL.md)** - Otimizações de performance
+- **[Deployment](docs/technical_reference/06_DEPLOYMENT.md)** - Estratégias de deploy
+- **[Operações](docs/technical_reference/07_OPERATIONS.md)** - Operações e manutenção
+- **[Referências Técnicas](docs/technical_reference/08_REFERENCES.md)** - Referências completas
 
-### Integração AWS (GetNexo v1.0)
-- **[CI/CD](docs/aws-cicd.md)** - CodeCommit, CodeBuild, CodeDeploy, CodePipeline, Cloud9
-- **[Compute](docs/aws-compute.md)** - EC2, Lambda, API Gateway, AppSync, Amplify, Cognito, ECS, EKS, Fargate
-- **[Storage](docs/aws-storage.md)** - EBS, EFS, FSx, Storage Gateway, Backup, Disaster Recovery, Snow Family
-- **[Security](docs/aws-security.md)** - IAM, STS, Organizations, Control Tower, Config, Trusted Advisor
-- **[Billing](docs/aws-billing.md)** - Marketplace, Cost Explorer, Budgets, Savings Plans, Reserved Instances
-- **[Management](docs/aws-management.md)** - Systems Manager, OpsWorks, Elastic Beanstalk, CloudFormation
-- **[Messaging](docs/aws-messaging.md)** - SES, SNS, SQS, EventBridge
-- **[Monitoring](docs/aws-monitoring.md)** - CloudWatch, X-Ray
+### 🎨 Branding e Design
+- **[Diretrizes de Branding](docs/branding/BRAND_GUIDELINES.md)** - Identidade visual
+- **[Bíblia Visual GetNexo](docs/branding/GETNEXO – BÍBLIA VISUAL E NEURAL.md)** - Guia visual completo
+- **[Assets de Branding](docs/assets/branding.css)** - Recursos visuais
+
+### 💼 Business e Estratégia
+- **[Inventário Master](docs/business/MASTER_INVENTORY.md)** - Inventário completo
+- **[Dossiê Secreto](docs/business/SECRET_DOSSIER.md)** - Estratégia confidencial
+
+### 🏢 Enterprise
+- **[Detalhes de Implementação](docs/enterprise/ENTERPRISE_IMPLEMENTATION_DETAILS.md)** - Implementação enterprise
+- **[Manual Enterprise](docs/enterprise/ENTERPRISE_MANUAL.md)** - Guia enterprise completo
+
+### 📈 Marketing e Vendas
+- **[Pacote de Campanha](docs/marketing/CAMPAIGN_BUNDLE.md)** - Estratégias de marketing
+- **[Copywriting Ads](docs/marketing/COPYWRITING_ADS.md)** - Textos publicitários
+- **[Ebook GetNexo Way](docs/marketing/EBOOK_GETNEXO_WAY.md)** - Conteúdo educativo
+- **[Post Reddit](docs/marketing/launch_day/reddit_post.txt)** - Conteúdo de lançamento
+- **[Twitter Thread](docs/marketing/launch_day/twitter_thread.txt)** - Thread de lançamento
+- **[WhatsApp Blast](docs/marketing/launch_day/whatsapp_blast.txt)** - Mensagem de lançamento
+
+### 📋 Planejamento
+- **[Painel de Roteamento IA](docs/planning/AI_ROUTING_PANEL.md)** - IA e roteamento
+- **[Estratégia de Marca](docs/planning/BRAND_STRATEGY.md)** - Estratégia de branding
+- **[Benchmark de Concorrentes](docs/planning/COMPETITOR_BENCHMARK.md)** - Análise competitiva
+- **[Portal do Cliente](docs/planning/CUSTOMER_PORTAL_HUB.md)** - Hub do cliente
+- **[Analytics Dashboard](docs/planning/DASHBOARD_ANALYTICS.md)** - Dashboards analíticos
+- **[Monitoramento de Erros](docs/planning/ERROR_MONITORING.md)** - Estratégia de erros
+- **[Wishlist de Features](docs/planning/FEATURE_WISHLIST.md)** - Roadmap de features
+- **[Ajustes de Infraestrutura](docs/planning/INFRASTRUCTURE_TWEAKS_AND_TUNING.md)** - Otimizações infra
+- **[Checklist de Lançamento](docs/planning/LAUNCH_CHECKLIST.md)** - Preparação de lançamento
+- **[Stack Leve](docs/planning/LIGHTWEIGHT_STACK_REF.md)** - Arquitetura leve
+- **[Integração E-commerce](docs/planning/LOGISTICS_ECOMMERCE_INTEGRATION.md)** - Integrações logísticas
+- **[Estratégia Omnichannel](docs/planning/OMNICHANNEL_STRATEGY.md)** - Estratégia omnichannel
+- **[Performance Tuning](docs/planning/PERFORMANCE_TUNING_ADVANCED.md)** - Otimizações avançadas
+- **[Modelo de Preços](docs/planning/PRICING_SCALING_MODEL.md)** - Estratégia de preços
+- **[Otimização de Recursos](docs/planning/RESOURCE_OPTIMIZATION_STRATEGY.md)** - Recursos otimizados
+- **[Arquitetura SaaS](docs/planning/SAAS_ARCHITECTURE.md)** - Arquitetura SaaS
+- **[Gamificação Vendas](docs/planning/SALES_GAMIFICATION_ENGAGEMENT.md)** - Gamificação vendas
+- **[Hardening Segurança](docs/planning/SECURITY_HARDENING_PARANOID.md)** - Segurança máxima
+- **[Licenciamento Segurança](docs/planning/SECURITY_LICENSING.md)** - Licenciamento segurança
+- **[Revisão Arquitetura](docs/planning/SYSTEM_ARCHITECTURE_REVIEW.md)** - Revisão arquitetural
+- **[Sistema de Tickets](docs/planning/TICKET_MANAGEMENT_SYSTEM.md)** - Gerenciamento tickets
+- **[Sistema Design UX/UI](docs/planning/UX_UI_DESIGN_SYSTEM.md)** - Sistema de design
+- **[Customização White Label](docs/planning/WHITE_LABEL_CUSTOMIZATION.md)** - White label
+
+### 🔗 Referências de API
+- **[API CRM](docs/references/CRM_API.md)** - Integração CRM
+- **[API E-commerce](docs/references/ECOMMERCE_API.md)** - Integração e-commerce
+- **[API ERP](docs/references/ERP_API.md)** - Integração ERP
+- **[API Logística](docs/references/LOGISTICS_API.md)** - Integração logística
+- **[API Pagamento](docs/references/PAYMENT_API.md)** - Integração pagamentos
+
+### 🔐 Segurança
+- **[Segurança Geral](docs/security/SECURITY.md)** - Estratégia de segurança
+- **[Roadmap Segurança](docs/security/ROADMAP_SEGURANCA.md)** - Plano de segurança
+- **[Perfil AppArmor](docs/security/n8n-apparmor.profile)** - Configuração AppArmor
+
+### ⚖️ Compliance e Acessibilidade
+- **[Certificações Acessibilidade](docs/compliance/ACCESSIBILITY_CERTIFICATIONS.md)** - Conformidade acessibilidade
+
+### 📄 Contratos e Legal
+- **[NFT GetNexo](docs/contracts/GetNexoNFT.sol)** - Contrato NFT
+- **[NexoLoyalty](docs/contracts/NexoLoyalty.sol)** - Contrato Loyalty
+
+### 🔧 Workflows Técnicos
+- **[Workflows JSON](docs/workflows/)** - Workflows automatizados (28 arquivos)
+
+### ☁️ Integração AWS (GetNexo v1.0)
+- **[CI/CD](getnexo-site/docs/aws-cicd.md)** - CodeCommit, CodeBuild, CodeDeploy, CodePipeline, Cloud9
+- **[Compute](getnexo-site/docs/aws-compute.md)** - EC2, Lambda, API Gateway, AppSync, Amplify, Cognito, ECS, EKS, Fargate
+- **[Storage](getnexo-site/docs/aws-storage.md)** - EBS, EFS, FSx, Storage Gateway, Backup, Disaster Recovery, Snow Family
+- **[Security](getnexo-site/docs/aws-security.md)** - IAM, STS, Organizations, Control Tower, Config, Trusted Advisor
+- **[Billing](getnexo-site/docs/aws-billing.md)** - Marketplace, Cost Explorer, Budgets, Savings Plans, Reserved Instances
+- **[Management](getnexo-site/docs/aws-management.md)** - Systems Manager, OpsWorks, Elastic Beanstalk, CloudFormation
+- **[Messaging](getnexo-site/docs/aws-messaging.md)** - SES, SNS, SQS, EventBridge
+- **[Monitoring](getnexo-site/docs/aws-monitoring.md)** - CloudWatch, X-Ray
+
+### 📊 Documentação Técnica Adicional
+- **[Admin Spec](docs/technical_reference/ADMIN_SPEC.md)** - Especificações admin
+- **[Domínio Cloudflare](docs/technical_reference/DOMINIO_CLOUDFLARE.md)** - Configuração domínio
+- **[Integrações E-commerce](docs/technical_reference/ECOMMERCE_INTEGRATIONS.md)** - Integrações e-commerce
+- **[NexoGuard Prompts](docs/technical_reference/NEXOGUARD_PROMPTS.md)** - Prompts IA
+- **[SEO Spec](docs/technical_reference/SEO_SPEC.md)** - Especificações SEO
 
 ## 🔧 Configuração
 

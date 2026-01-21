@@ -130,18 +130,27 @@ Esta plataforma implementa **mais de 200 funcionalidades** distribuídas em 40+ 
 #### 36. Service Discovery Engine (`service-discovery-engine.js`)
 **Funcionalidades:** Registro dinâmico serviços, health checks, DNS/service mesh integration, multi-datacenter.
 
-#### 37. ERP Connector (`connectors/erp.ts`)
+#### 37. ERP Connector (`connectors/erp.js`)
 **Funcionalidades:** Integração ERP systems, data synchronization, real-time updates, error handling, transformation rules.
 
-#### 38. Stripe Connector (`connectors/stripe.ts`)
+#### 38. Stripe Connector (`connectors/stripe.js`)
 **Funcionalidades:** Payment processing, subscription management, webhooks handling, reconciliation automática, reporting.
+
+#### 39. AWS Connector (`connectors/aws.js`)
+**Funcionalidades:** Gestão de recursos AWS (EC2, S3, RDS, Lambda), CloudWatch metrics, suporte a simulação e SDK real.
+
+#### 40. Azure Connector (`connectors/azure.js`)
+**Funcionalidades:** Gestão de recursos Azure (VMs, Storage, SQL), Azure Monitor, suporte a simulação e SDK real.
+
+#### 41. GCP Connector (`connectors/gcp.js`)
+**Funcionalidades:** Gestão de recursos GCP (Compute, Storage, SQL), Stackdriver monitoring, suporte a simulação e SDK real.
 
 ### 🏗️ Engines de Infraestrutura
 
-#### 39. Kubernetes Orchestration Engine (`kubernetes-orchestration-engine.js`)
+#### 42. Kubernetes Orchestration Engine (`kubernetes-orchestration-engine.js`)
 **Funcionalidades:** Gestão completa K8s, deployments/statefulsets, configmaps/secrets, RBAC, monitoring integration.
 
-#### 40. Load Testing Engine (`load-testing-engine.js`)
+#### 43. Load Testing Engine (`load-testing-engine.js`)
 **Funcionalidades:** Testes carga distribuídos, cenários customizáveis, análise performance, relatórios detalhados, integração CI/CD.
 
 ## Arquitetura dos Engines
@@ -206,6 +215,35 @@ const activeIncidents = window.AutomatedRunbooks.getActiveIncidents();
 
 // Resolução manual
 window.AutomatedRunbooks.resolveIncident(incidentId, resolution);
+```
+
+#### Intelligent Orchestration (AdvancedArchitectureEngine)
+```javascript
+// Execução resiliente com ML-Anomaly Detection, Health Checks, Rate Limiting e Fallbacks
+const result = await AdvancedArchitectureEngine.executeOperation(
+  {
+    type: 'cloud',
+    provider: 'aws',
+    method: 'createInstance',
+    args: ['my-instance', { instanceType: 't3.medium' }]
+  },
+  {
+    rateLimit: { key: 'user-123' },
+    anomalyDetection: true
+  }
+);
+```
+
+#### Cloud Connectors API
+```javascript
+// AWS
+await AdvancedArchitectureEngine.engines.aws.createInstance('id', config);
+
+// Azure
+await AdvancedArchitectureEngine.engines.azure.createVirtualMachine('name', config);
+
+// GCP
+await AdvancedArchitectureEngine.engines.gcp.createInstance('name', config);
 ```
 
 ## Guias de Uso
@@ -536,9 +574,27 @@ Logs seguem formato consistente:
 ### Próximos Passos para Produção Real
 
 #### Fase 1: Integração com Cloud Providers (1-2 meses)
-- [ ] AWS Integration (EC2, S3, RDS, Lambda)
-- [ ] Azure Integration (VMs, Functions, Cosmos DB)
-- [ ] GCP Integration (Compute Engine, Cloud Functions, BigQuery)
+
+##### AWS Services Integration - GetNexo v1.0
+- [ ] **CI/CD Services**: CodeCommit, CodeBuild, CodeDeploy, CodePipeline, Cloud9
+- [ ] **Compute Services**: EC2, Lambda, API Gateway, AppSync, Amplify, Cognito, ECS, EKS, Fargate
+- [ ] **Storage Services**: EBS, EFS, FSx, Storage Gateway, Backup, Disaster Recovery, Snow Family
+- [ ] **Security & Governance**: IAM, STS, Organizations, Control Tower, Config, Trusted Advisor
+- [ ] **Billing & Cost**: Marketplace, Cost Explorer, Budgets, Savings Plans, Reserved Instances
+- [ ] **Management**: Systems Manager, OpsWorks, Elastic Beanstalk, CloudFormation
+- [ ] **Messaging**: SES, SNS, SQS, EventBridge
+- [ ] **Monitoring**: CloudWatch, X-Ray
+
+##### Azure Integration
+- [ ] Azure VMs, Functions, Cosmos DB
+- [ ] Azure Storage, AKS, App Service
+- [ ] Azure Monitor, Security Center
+
+##### GCP Integration
+- [ ] Compute Engine, Cloud Functions, BigQuery
+- [ ] Cloud Storage, GKE, App Engine
+- [ ] Cloud Monitoring, Security Command Center
+
 - [ ] Multi-cloud deployment automation
 - [ ] Cost optimization automática
 
