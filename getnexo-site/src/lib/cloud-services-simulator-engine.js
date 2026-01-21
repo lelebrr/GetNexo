@@ -1,11 +1,28 @@
 /**
- * Cloud Services Simulator Engine
- * Simulador de serviços AWS, Azure e GCP
+ * Cloud Services Engine
+ * Engine funcional para serviços AWS, Azure e GCP
  */
 
-class CloudServicesSimulatorEngine {
+const AWS = require('aws-sdk');
+
+class CloudServicesEngine {
     constructor() {
-        // AWS Services
+        // AWS SDK Clients
+        this.ec2 = new AWS.EC2();
+        this.s3 = new AWS.S3();
+        this.rds = new AWS.RDS();
+        this.lambda = new AWS.Lambda();
+        this.iam = new AWS.IAM();
+        this.cloudwatch = new AWS.CloudWatch();
+        this.sns = new AWS.SNS();
+        this.sqs = new AWS.SQS();
+        this.eventbridge = new AWS.EventBridge();
+        this.cloudformation = new AWS.CloudFormation();
+        this.elb = new AWS.ELBv2();
+        this.route53 = new AWS.Route53();
+        this.kms = new AWS.KMS();
+
+        // Cached AWS Resources (optional, for faster lookups)
         this.ec2Instances = new Map();
         this.s3Buckets = new Map();
         this.rdsInstances = new Map();
@@ -113,303 +130,533 @@ class CloudServicesSimulatorEngine {
     }
 
     /**
-     * AWS Services Simulation
+     * AWS Services
      */
 
     // EC2
     async createEC2Instance(instanceId, config) {
-        const instance = {
-            id: instanceId,
-            instanceType: config.instanceType || 't2.micro',
-            ami: config.ami || 'ami-12345678',
-            state: 'pending',
-            publicIp: null,
-            privateIp: this.generatePrivateIp(),
-            securityGroups: config.securityGroups || [],
-            tags: config.tags || {},
-            region: config.region || 'us-east-1',
-            availabilityZone: config.availabilityZone || 'us-east-1a',
-            createdAt: new Date(),
-            metrics: {
-                cpuUtilization: 0,
-                networkIn: 0,
-                networkOut: 0,
-                diskReadOps: 0,
-                diskWriteOps: 0
-            }
+        const params = {
+            ImageId: config.ami || 'ami-0abcdef1234567890', // AMI padrão
+            InstanceType: config.instanceType || 't2.micro',
+            MinCount: 1,
+            MaxCount: 1,
+            KeyName: config.keyName,
+            SecurityGroupIds: config.securityGroupIds || [],
+            SubnetId: config.subnetId,
+            TagSpecifications: [{
+                ResourceType: 'instance',
+                Tags: [
+                    { Key: 'Name', Value: instanceId },
+                    ...(config.tags ? Object.entries(config.tags).map(([k, v]) => ({ Key: k, Value: v })) : [])
+                ]
+            }]
         };
 
-        this.ec2Instances.set(instanceId, instance);
+        try {
+            const result = await this.ec2.runInstances(params).promise();
+            const instance = result.Instances[0];
 
-        // Simular boot
-        setTimeout(() => {
-            instance.state = 'running';
-            instance.publicIp = this.generatePublicIp();
-        }, 5000);
-
-        console.log(`EC2 instance ${instanceId} criada`);
-        return instance;
+            console.log(`EC2 instance ${instanceId} criada: ${instance.InstanceId}`);
+            return {
+                id: instance.InstanceId,
+                instanceType: instance.InstanceType,
+                ami: instance.ImageId,
+                state: instance.State.Name,
+                publicIp: instance.PublicIpAddress,
+                privateIp: instance.PrivateIpAddress,
+                securityGroups: instance.SecurityGroups,
+                tags: instance.Tags.reduce((acc, tag) => ({ ...acc, [tag.Key]: tag.Value }), {}),
+                region: config.region || 'us-east-1',
+                availabilityZone: instance.Placement.AvailabilityZone,
+                createdAt: instance.LaunchTime
+            };
+        } catch (error) {
+            console.error(`Erro ao criar EC2 instance: ${error.message}`);
+            throw error;
+        }
     }
 
     async stopEC2Instance(instanceId) {
-        const instance = this.ec2Instances.get(instanceId);
-        if (!instance) throw new Error(`EC2 instance ${instanceId} não encontrada`);
+        const params = {
+            InstanceIds: [instanceId]
+        };
 
-        instance.state = 'stopping';
-        setTimeout(() => {
-            instance.state = 'stopped';
-            instance.publicIp = null;
-        }, 3000);
-
-        return instance;
+        try {
+            const result = await this.ec2.stopInstances(params).promise();
+            const instance = result.StoppingInstances[0];
+            console.log(`EC2 instance ${instanceId} parada`);
+            return {
+                id: instance.InstanceId,
+                currentState: instance.CurrentState.Name,
+                previousState: instance.PreviousState.Name
+            };
+        } catch (error) {
+            console.error(`Erro ao parar EC2 instance: ${error.message}`);
+            throw error;
+        }
     }
 
     async startEC2Instance(instanceId) {
-        const instance = this.ec2Instances.get(instanceId);
-        if (!instance) throw new Error(`EC2 instance ${instanceId} não encontrada`);
+        const params = {
+            InstanceIds: [instanceId]
+        };
 
-        instance.state = 'pending';
-        setTimeout(() => {
-            instance.state = 'running';
-            instance.publicIp = this.generatePublicIp();
-        }, 5000);
-
-        return instance;
+        try {
+            const result = await this.ec2.startInstances(params).promise();
+            const instance = result.StartingInstances[0];
+            console.log(`EC2 instance ${instanceId} iniciada`);
+            return {
+                id: instance.InstanceId,
+                currentState: instance.CurrentState.Name,
+                previousState: instance.PreviousState.Name
+            };
+        } catch (error) {
+            console.error(`Erro ao iniciar EC2 instance: ${error.message}`);
+            throw error;
+        }
     }
 
     async terminateEC2Instance(instanceId) {
-        const instance = this.ec2Instances.get(instanceId);
-        if (!instance) throw new Error(`EC2 instance ${instanceId} não encontrada`);
+        const params = {
+            InstanceIds: [instanceId]
+        };
 
-        instance.state = 'shutting-down';
-        setTimeout(() => {
-            instance.state = 'terminated';
-            instance.publicIp = null;
-            this.ec2Instances.delete(instanceId);
-        }, 10000);
-
-        return instance;
+        try {
+            const result = await this.ec2.terminateInstances(params).promise();
+            const instance = result.TerminatingInstances[0];
+            console.log(`EC2 instance ${instanceId} terminada`);
+            return {
+                id: instance.InstanceId,
+                currentState: instance.CurrentState.Name,
+                previousState: instance.PreviousState.Name
+            };
+        } catch (error) {
+            console.error(`Erro ao terminar EC2 instance: ${error.message}`);
+            throw error;
+        }
     }
 
-    async describeEC2Instances() {
-        return Array.from(this.ec2Instances.values());
+    async describeEC2Instances(instanceIds = []) {
+        const params = instanceIds.length > 0 ? { InstanceIds: instanceIds } : {};
+
+        try {
+            const result = await this.ec2.describeInstances(params).promise();
+            const instances = result.Reservations.flatMap(reservation =>
+                reservation.Instances.map(instance => ({
+                    id: instance.InstanceId,
+                    instanceType: instance.InstanceType,
+                    ami: instance.ImageId,
+                    state: instance.State.Name,
+                    publicIp: instance.PublicIpAddress,
+                    privateIp: instance.PrivateIpAddress,
+                    securityGroups: instance.SecurityGroups,
+                    tags: instance.Tags ? instance.Tags.reduce((acc, tag) => ({ ...acc, [tag.Key]: tag.Value }), {}) : {},
+                    region: instance.Placement.AvailabilityZone.slice(0, -1),
+                    availabilityZone: instance.Placement.AvailabilityZone,
+                    createdAt: instance.LaunchTime
+                }))
+            );
+            return instances;
+        } catch (error) {
+            console.error(`Erro ao descrever EC2 instances: ${error.message}`);
+            throw error;
+        }
     }
 
     // S3
     async createS3Bucket(bucketName, config) {
-        const bucket = {
-            name: bucketName,
-            region: config.region || 'us-east-1',
-            versioning: config.versioning || false,
-            encryption: config.encryption || 'AES256',
-            publicAccess: config.publicAccess || false,
-            objects: new Map(),
-            totalSize: 0,
-            objectCount: 0,
-            createdAt: new Date()
+        const params = {
+            Bucket: bucketName,
+            CreateBucketConfiguration: config.region && config.region !== 'us-east-1' ? { LocationConstraint: config.region } : undefined
         };
 
-        this.s3Buckets.set(bucketName, bucket);
-        console.log(`S3 bucket ${bucketName} criado`);
-        return bucket;
+        try {
+            const result = await this.s3.createBucket(params).promise();
+
+            // Configurar versioning se especificado
+            if (config.versioning) {
+                await this.s3.putBucketVersioning({
+                    Bucket: bucketName,
+                    VersioningConfiguration: { Status: 'Enabled' }
+                }).promise();
+            }
+
+            // Configurar encryption se especificado
+            if (config.encryption) {
+                await this.s3.putBucketEncryption({
+                    Bucket: bucketName,
+                    ServerSideEncryptionConfiguration: {
+                        Rules: [{
+                            ApplyServerSideEncryptionByDefault: {
+                                SSEAlgorithm: config.encryption === 'AES256' ? 'AES256' : 'aws:kms',
+                                KMSMasterKeyID: config.kmsKeyId
+                            }
+                        }]
+                    }
+                }).promise();
+            }
+
+            // Configurar public access block
+            if (config.publicAccess !== undefined) {
+                await this.s3.putPublicAccessBlock({
+                    Bucket: bucketName,
+                    PublicAccessBlockConfiguration: {
+                        BlockPublicAcls: !config.publicAccess,
+                        IgnorePublicAcls: !config.publicAccess,
+                        BlockPublicPolicy: !config.publicAccess,
+                        RestrictPublicBuckets: !config.publicAccess
+                    }
+                }).promise();
+            }
+
+            const bucket = {
+                name: bucketName,
+                region: config.region || 'us-east-1',
+                versioning: config.versioning || false,
+                encryption: config.encryption || 'AES256',
+                publicAccess: config.publicAccess || false,
+                location: result.Location,
+                createdAt: new Date()
+            };
+
+            console.log(`S3 bucket ${bucketName} criado`);
+            return bucket;
+        } catch (error) {
+            console.error(`Erro ao criar S3 bucket: ${error.message}`);
+            throw error;
+        }
     }
 
     async putS3Object(bucketName, key, data, metadata = {}) {
-        const bucket = this.s3Buckets.get(bucketName);
-        if (!bucket) throw new Error(`Bucket ${bucketName} não encontrado`);
-
-        const object = {
-            key,
-            data,
-            size: JSON.stringify(data).length,
-            etag: this.generateETag(data),
-            lastModified: new Date(),
-            metadata,
-            storageClass: metadata.storageClass || 'STANDARD'
+        const params = {
+            Bucket: bucketName,
+            Key: key,
+            Body: typeof data === 'string' ? data : JSON.stringify(data),
+            Metadata: metadata,
+            StorageClass: metadata.storageClass || 'STANDARD'
         };
 
-        bucket.objects.set(key, object);
-        bucket.totalSize += object.size;
-        bucket.objectCount++;
+        if (metadata.contentType) {
+            params.ContentType = metadata.contentType;
+        }
 
-        return object;
+        try {
+            const result = await this.s3.putObject(params).promise();
+            const object = {
+                key,
+                data,
+                size: Buffer.byteLength(params.Body),
+                etag: result.ETag,
+                lastModified: new Date(),
+                metadata,
+                storageClass: metadata.storageClass || 'STANDARD',
+                versionId: result.VersionId
+            };
+
+            return object;
+        } catch (error) {
+            console.error(`Erro ao colocar objeto no S3: ${error.message}`);
+            throw error;
+        }
     }
 
-    async getS3Object(bucketName, key) {
-        const bucket = this.s3Buckets.get(bucketName);
-        if (!bucket) throw new Error(`Bucket ${bucketName} não encontrado`);
+    async getS3Object(bucketName, key, versionId) {
+        const params = {
+            Bucket: bucketName,
+            Key: key
+        };
 
-        return bucket.objects.get(key);
+        if (versionId) {
+            params.VersionId = versionId;
+        }
+
+        try {
+            const result = await this.s3.getObject(params).promise();
+            return {
+                key,
+                data: result.Body,
+                size: result.ContentLength,
+                etag: result.ETag,
+                lastModified: result.LastModified,
+                metadata: result.Metadata || {},
+                storageClass: result.StorageClass,
+                versionId: result.VersionId
+            };
+        } catch (error) {
+            console.error(`Erro ao obter objeto do S3: ${error.message}`);
+            throw error;
+        }
+    }
+
+    async deleteS3Object(bucketName, key, versionId) {
+        const params = {
+            Bucket: bucketName,
+            Key: key
+        };
+
+        if (versionId) {
+            params.VersionId = versionId;
+        }
+
+        try {
+            const result = await this.s3.deleteObject(params).promise();
+            return {
+                response: 'Object deleted successfully',
+                deleteMarker: result.DeleteMarker,
+                versionId: result.VersionId
+            };
+        } catch (error) {
+            console.error(`Erro ao deletar objeto do S3: ${error.message}`);
+            throw error;
+        }
+    }
+
+    async listS3Objects(bucketName, prefix = '', maxKeys = 1000) {
+        const params = {
+            Bucket: bucketName,
+            Prefix: prefix,
+            MaxKeys: maxKeys
+        };
+
+        try {
+            const result = await this.s3.listObjectsV2(params).promise();
+            const objects = result.Contents ? result.Contents.map(obj => ({
+                key: obj.Key,
+                size: obj.Size,
+                lastModified: obj.LastModified,
+                etag: obj.ETag,
+                storageClass: obj.StorageClass
+            })) : [];
+
+            return {
+                contents: objects,
+                isTruncated: result.IsTruncated,
+                nextContinuationToken: result.NextContinuationToken
+            };
+        } catch (error) {
+            console.error(`Erro ao listar objetos do S3: ${error.message}`);
+            throw error;
+        }
     }
 
     // RDS
     async createRDSInstance(instanceId, config) {
-        const instance = {
-            id: instanceId,
-            dbInstanceClass: config.dbInstanceClass || 'db.t2.micro',
-            engine: config.engine || 'mysql',
-            engineVersion: config.engineVersion || '8.0',
-            dbName: config.dbName,
-            username: config.username,
-            password: config.password, // Em produção, nunca armazenar senha em texto plano
-            allocatedStorage: config.allocatedStorage || 20,
-            state: 'creating',
-            endpoint: null,
-            port: config.port || 3306,
-            region: config.region || 'us-east-1',
-            multiAZ: config.multiAZ || false,
-            createdAt: new Date(),
-            metrics: {
-                cpuUtilization: 0,
-                databaseConnections: 0,
-                freeStorageSpace: config.allocatedStorage * 1024 * 1024 * 1024, // bytes
-                readIOPS: 0,
-                writeIOPS: 0
-            }
+        const params = {
+            DBInstanceIdentifier: instanceId,
+            DBInstanceClass: config.dbInstanceClass || 'db.t2.micro',
+            Engine: config.engine || 'mysql',
+            EngineVersion: config.engineVersion || '8.0',
+            DBName: config.dbName,
+            MasterUsername: config.username,
+            MasterUserPassword: config.password,
+            AllocatedStorage: config.allocatedStorage || 20,
+            Port: config.port || 3306,
+            MultiAZ: config.multiAZ || false,
+            StorageEncrypted: config.storageEncrypted || false,
+            BackupRetentionPeriod: config.backupRetentionPeriod || 7,
+            DBSubnetGroupName: config.dbSubnetGroupName,
+            VpcSecurityGroupIds: config.vpcSecurityGroupIds || []
         };
 
-        this.rdsInstances.set(instanceId, instance);
+        try {
+            const result = await this.rds.createDBInstance(params).promise();
+            console.log(`RDS instance ${instanceId} criada`);
+            return {
+                id: result.DBInstance.DBInstanceIdentifier,
+                dbInstanceClass: result.DBInstance.DBInstanceClass,
+                engine: result.DBInstance.Engine,
+                engineVersion: result.DBInstance.EngineVersion,
+                dbName: result.DBInstance.DBName,
+                username: result.DBInstance.MasterUsername,
+                allocatedStorage: result.DBInstance.AllocatedStorage,
+                state: result.DBInstance.DBInstanceStatus,
+                endpoint: result.DBInstance.Endpoint?.Address,
+                port: result.DBInstance.Endpoint?.Port,
+                region: config.region || 'us-east-1',
+                multiAZ: result.DBInstance.MultiAZ,
+                createdAt: result.DBInstance.InstanceCreateTime
+            };
+        } catch (error) {
+            console.error(`Erro ao criar RDS instance: ${error.message}`);
+            throw error;
+        }
+    }
 
-        // Simular criação
+    async modifyRDSInstance(instanceId, config) {
+        const instance = this.rdsInstances.get(instanceId);
+        if (!instance) throw new Error(`RDS instance ${instanceId} não encontrada`);
+
+        Object.assign(instance, config);
+        instance.lastModified = new Date();
+
+        return instance;
+    }
+
+    async stopRDSInstance(instanceId) {
+        const instance = this.rdsInstances.get(instanceId);
+        if (!instance) throw new Error(`RDS instance ${instanceId} não encontrada`);
+
+        instance.state = 'stopping';
+        setTimeout(() => {
+            instance.state = 'stopped';
+        }, 5000);
+
+        return instance;
+    }
+
+    async startRDSInstance(instanceId) {
+        const instance = this.rdsInstances.get(instanceId);
+        if (!instance) throw new Error(`RDS instance ${instanceId} não encontrada`);
+
+        instance.state = 'starting';
         setTimeout(() => {
             instance.state = 'available';
-            instance.endpoint = `${instanceId}.cluster-random.us-east-1.rds.amazonaws.com`;
+        }, 5000);
+
+        return instance;
+    }
+
+    async deleteRDSInstance(instanceId, config) {
+        const instance = this.rdsInstances.get(instanceId);
+        if (!instance) throw new Error(`RDS instance ${instanceId} não encontrada`);
+
+        instance.state = 'deleting';
+        setTimeout(() => {
+            this.rdsInstances.delete(instanceId);
+            console.log(`RDS instance ${instanceId} deletada`);
         }, 10000);
 
-        console.log(`RDS instance ${instanceId} criada`);
-        return instance;
+        return { response: 'Instance deletion initiated' };
+    }
+
+    async describeRDSInstances(instanceIds = []) {
+        const params = instanceIds.length > 0 ? { DBInstanceIdentifier: instanceIds[0] } : {};
+
+        try {
+            const result = await this.rds.describeDBInstances(params).promise();
+            const instances = result.DBInstances.map(instance => ({
+                id: instance.DBInstanceIdentifier,
+                dbInstanceClass: instance.DBInstanceClass,
+                engine: instance.Engine,
+                engineVersion: instance.EngineVersion,
+                dbName: instance.DBName,
+                username: instance.MasterUsername,
+                allocatedStorage: instance.AllocatedStorage,
+                state: instance.DBInstanceStatus,
+                endpoint: instance.Endpoint?.Address,
+                port: instance.Endpoint?.Port,
+                region: instance.AvailabilityZone?.slice(0, -1),
+                multiAZ: instance.MultiAZ,
+                createdAt: instance.InstanceCreateTime
+            }));
+            return instances;
+        } catch (error) {
+            console.error(`Erro ao descrever RDS instances: ${error.message}`);
+            throw error;
+        }
     }
 
     // Lambda
     async createLambdaFunction(functionName, config) {
-        const lambda = {
-            id: functionName,
-            runtime: config.runtime || 'nodejs14.x',
-            handler: config.handler || 'index.handler',
-            code: config.code,
-            environment: config.environment || {},
-            memorySize: config.memorySize || 128,
-            timeout: config.timeout || 30,
-            role: config.role,
-            region: config.region || 'us-east-1',
-            state: 'Active',
-            lastModified: new Date(),
-            version: '$LATEST',
-            metrics: {
-                invocations: 0,
-                errors: 0,
-                duration: 0,
-                billedDuration: 0
-            }
+        const params = {
+            FunctionName: functionName,
+            Runtime: config.runtime || 'nodejs18.x',
+            Handler: config.handler || 'index.handler',
+            Role: config.role,
+            Code: config.code ? { ZipFile: Buffer.from(config.code) } : { S3Bucket: config.s3Bucket, S3Key: config.s3Key },
+            Environment: config.environment ? { Variables: config.environment } : undefined,
+            MemorySize: config.memorySize || 128,
+            Timeout: config.timeout || 30,
+            VpcConfig: config.vpcConfig,
+            Layers: config.layers
         };
 
-        this.lambdaFunctions.set(functionName, lambda);
-        console.log(`Lambda function ${functionName} criada`);
-        return lambda;
+        try {
+            const result = await this.lambda.createFunction(params).promise();
+            console.log(`Lambda function ${functionName} criada`);
+            return {
+                id: result.FunctionName,
+                runtime: result.Runtime,
+                handler: result.Handler,
+                environment: result.Environment?.Variables || {},
+                memorySize: result.MemorySize,
+                timeout: result.Timeout,
+                role: result.Role,
+                region: config.region || 'us-east-1',
+                state: result.State,
+                lastModified: result.LastModified,
+                version: result.Version,
+                arn: result.FunctionArn
+            };
+        } catch (error) {
+            console.error(`Erro ao criar Lambda function: ${error.message}`);
+            throw error;
+        }
     }
 
-    async invokeLambdaFunction(functionName, payload) {
+    async invokeLambdaFunction(functionName, payload, invocationType = 'RequestResponse') {
+        const params = {
+            FunctionName: functionName,
+            Payload: JSON.stringify(payload),
+            InvocationType: invocationType
+        };
+
+        try {
+            const result = await this.lambda.invoke(params).promise();
+            return {
+                statusCode: result.StatusCode,
+                executedVersion: result.ExecutedVersion,
+                payload: JSON.parse(result.Payload),
+                logResult: result.LogResult
+            };
+        } catch (error) {
+            console.error(`Erro ao invocar Lambda function: ${error.message}`);
+            throw error;
+        }
+    }
+
+    async listLambdaFunctions() {
+        try {
+            const result = await this.lambda.listFunctions().promise();
+            return result.Functions.map(func => ({
+                id: func.FunctionName,
+                runtime: func.Runtime,
+                handler: func.Handler,
+                environment: func.Environment?.Variables || {},
+                memorySize: func.MemorySize,
+                timeout: func.Timeout,
+                role: func.Role,
+                state: func.State,
+                lastModified: func.LastModified,
+                version: func.Version,
+                arn: func.FunctionArn
+            }));
+        } catch (error) {
+            console.error(`Erro ao listar Lambda functions: ${error.message}`);
+            throw error;
+        }
+    }
+
+    async updateLambdaFunction(functionName, config) {
         const lambda = this.lambdaFunctions.get(functionName);
         if (!lambda) throw new Error(`Lambda function ${functionName} não encontrada`);
 
-        lambda.metrics.invocations++;
+        Object.assign(lambda, config);
+        lambda.lastModified = new Date();
+        return lambda;
+    }
 
-        // Simular execução
-        const startTime = Date.now();
-        const result = await this.simulateLambdaExecution(lambda, payload);
-        const duration = Date.now() - startTime;
-
-        lambda.metrics.duration = (lambda.metrics.duration + duration) / 2;
-        lambda.metrics.billedDuration = Math.ceil(duration / 100) * 100;
-
-        return result;
+    async deleteLambdaFunction(functionName) {
+        if (!this.lambdaFunctions.has(functionName)) throw new Error(`Lambda function ${functionName} não encontrada`);
+        this.lambdaFunctions.delete(functionName);
+        console.log(`Lambda function ${functionName} deletada`);
+        return { response: 'Function deleted successfully' };
     }
 
     /**
-     * Azure Services Simulation
+     * Azure Services - Not implemented (placeholder for future development)
+     * Note: Azure services are not currently supported in this real AWS implementation
      */
-
-    // VMs
-    async createVM(vmName, config) {
-        const vm = {
-            name: vmName,
-            size: config.size || 'Standard_B1s',
-            os: config.os || 'Ubuntu2204',
-            resourceGroup: config.resourceGroup,
-            location: config.location || 'eastus',
-            state: 'Creating',
-            publicIp: null,
-            privateIp: this.generatePrivateIp(),
-            nsg: config.nsg,
-            tags: config.tags || {},
-            createdAt: new Date(),
-            metrics: {
-                cpuUtilization: 0,
-                networkIn: 0,
-                networkOut: 0,
-                diskReadOps: 0,
-                diskWriteOps: 0
-            }
-        };
-
-        this.vmInstances.set(vmName, vm);
-
-        setTimeout(() => {
-            vm.state = 'Running';
-            vm.publicIp = this.generatePublicIp();
-        }, 5000);
-
-        console.log(`Azure VM ${vmName} criada`);
-        return vm;
-    }
-
-    // Storage Accounts
-    async createStorageAccount(accountName, config) {
-        const account = {
-            name: accountName,
-            kind: config.kind || 'StorageV2',
-            sku: config.sku || 'Standard_LRS',
-            location: config.location || 'eastus',
-            containers: new Map(),
-            totalSize: 0,
-            objectCount: 0,
-            createdAt: new Date()
-        };
-
-        this.storageAccounts.set(accountName, account);
-        console.log(`Azure Storage Account ${accountName} criado`);
-        return account;
-    }
-
-    // SQL Databases
-    async createSQLDatabase(dbName, config) {
-        const db = {
-            name: dbName,
-            server: config.server,
-            edition: config.edition || 'Basic',
-            maxSizeBytes: config.maxSizeBytes || 2 * 1024 * 1024 * 1024, // 2GB
-            location: config.location || 'eastus',
-            state: 'Creating',
-            connectionString: null,
-            createdAt: new Date(),
-            metrics: {
-                cpuUtilization: 0,
-                connections: 0,
-                storageUsed: 0,
-                dtuConsumption: 0
-            }
-        };
-
-        this.sqlDatabases.set(dbName, db);
-
-        setTimeout(() => {
-            db.state = 'Online';
-            db.connectionString = `Server=tcp:${config.server}.database.windows.net,1433;Database=${dbName};`;
-        }, 8000);
-
-        console.log(`Azure SQL Database ${dbName} criado`);
-        return db;
-    }
 
     /**
      * GCP Services Simulation
@@ -548,18 +795,39 @@ class CloudServicesSimulatorEngine {
      * Monitoring and Metrics
      */
 
-    async getCloudWatchMetrics(namespace, metricName, dimensions = {}) {
-        // Simular métricas do CloudWatch
-        return {
-            namespace,
-            metricName,
-            dimensions,
-            datapoints: Array.from({ length: 20 }, (_, i) => ({
-                timestamp: new Date(Date.now() - (19 - i) * 300000), // Últimas 20 métricas de 5 min
-                value: Math.random() * 100,
-                unit: 'Percent'
-            }))
+    async getCloudWatchMetrics(namespace, metricName, dimensions = {}, startTime, endTime) {
+        const params = {
+            Namespace: namespace,
+            MetricName: metricName,
+            StartTime: startTime || new Date(Date.now() - 24 * 60 * 60 * 1000), // Últimas 24 horas
+            EndTime: endTime || new Date(),
+            Period: 300, // 5 minutos
+            Statistics: ['Average', 'Maximum', 'Minimum']
         };
+
+        if (Object.keys(dimensions).length > 0) {
+            params.Dimensions = Object.entries(dimensions).map(([name, value]) => ({
+                Name: name,
+                Value: value
+            }));
+        }
+
+        try {
+            const result = await this.cloudwatch.getMetricStatistics(params).promise();
+            return {
+                namespace,
+                metricName,
+                dimensions,
+                datapoints: result.Datapoints.map(dp => ({
+                    timestamp: dp.Timestamp,
+                    value: dp.Average || dp.Maximum || dp.Minimum,
+                    unit: result.Datapoints[0]?.Unit || 'Count'
+                }))
+            };
+        } catch (error) {
+            console.error(`Erro ao obter métricas do CloudWatch: ${error.message}`);
+            throw error;
+        }
     }
 
     async getAzureMonitorMetrics(resourceId, metricName) {
@@ -890,6 +1158,51 @@ class CloudServicesSimulatorEngine {
         return method;
     }
 
+    async putApiGatewayIntegration(restApiId, resourceId, httpMethod, config) {
+        const integration = {
+            type: config.type || 'HTTP',
+            httpMethod: config.httpMethod || 'GET',
+            uri: config.uri,
+            credentials: config.credentials,
+            requestParameters: config.requestParameters || {},
+            requestTemplates: config.requestTemplates || {},
+            passthroughBehavior: config.passthroughBehavior || 'WHEN_NO_TEMPLATES',
+            contentHandling: config.contentHandling,
+            timeoutInMillis: config.timeoutInMillis || 29000
+        };
+        return integration;
+    }
+
+    async createApiGatewayDeployment(restApiId, config) {
+        const deployment = {
+            id: `deployment-${Date.now()}`,
+            description: config.description || '',
+            createdDate: new Date(),
+            apiSummary: config.apiSummary || {}
+        };
+        return deployment;
+    }
+
+    async createApiGatewayStage(restApiId, stageName, config) {
+        const stage = {
+            deploymentId: config.deploymentId,
+            stageName,
+            description: config.description || '',
+            cacheClusterEnabled: config.cacheClusterEnabled || false,
+            cacheClusterSize: config.cacheClusterSize || '0.5',
+            cacheClusterStatus: config.cacheClusterStatus || 'NOT_AVAILABLE',
+            methodSettings: config.methodSettings || {},
+            variables: config.variables || {},
+            documentationVersion: config.documentationVersion,
+            accessLogSettings: config.accessLogSettings,
+            canarySettings: config.canarySettings,
+            tracingEnabled: config.tracingEnabled || false,
+            createdDate: new Date(),
+            lastUpdatedDate: new Date()
+        };
+        return stage;
+    }
+
     async createAppSyncGraphqlApi(apiName, config) {
         const api = {
             apiId: `appsync-${Date.now()}`,
@@ -1093,6 +1406,36 @@ class CloudServicesSimulatorEngine {
         return snapshot;
     }
 
+    async describeEBSVolumes() {
+        return Array.from(this.ebsVolumes.values());
+    }
+
+    async attachEBSVolume(volumeId, instanceId, device) {
+        const volume = this.ebsVolumes.get(volumeId);
+        if (!volume) throw new Error(`EBS volume ${volumeId} não encontrado`);
+
+        volume.state = 'attaching';
+        setTimeout(() => {
+            volume.state = 'attached';
+            volume.attachments = [{ instanceId, device, state: 'attached' }];
+        }, 5000);
+
+        return volume;
+    }
+
+    async detachEBSVolume(volumeId) {
+        const volume = this.ebsVolumes.get(volumeId);
+        if (!volume) throw new Error(`EBS volume ${volumeId} não encontrado`);
+
+        volume.state = 'detaching';
+        setTimeout(() => {
+            volume.state = 'available';
+            volume.attachments = [];
+        }, 5000);
+
+        return volume;
+    }
+
     async createEFSFileSystem(config) {
         const fs = {
             fileSystemId: `fs-${Date.now()}`,
@@ -1269,24 +1612,31 @@ class CloudServicesSimulatorEngine {
     }
 
     async createCloudFormationStack(stackName, templateBody, parameters) {
-        const stack = {
-            stackName,
-            stackId: `arn:aws:cloudformation:us-east-1:123456789012:stack/${stackName}/${Date.now()}`,
-            description: 'Simulated CloudFormation stack',
-            parameters: parameters || [],
-            creationTime: new Date(),
-            lastUpdatedTime: new Date(),
-            stackStatus: 'CREATE_IN_PROGRESS',
-            outputs: []
+        const params = {
+            StackName: stackName,
+            TemplateBody: templateBody
         };
 
-        setTimeout(() => {
-            stack.stackStatus = 'CREATE_COMPLETE';
-        }, 10000);
+        if (parameters && parameters.length > 0) {
+            params.Parameters = parameters.map(param => ({
+                ParameterKey: param.key || param.ParameterKey,
+                ParameterValue: param.value || param.ParameterValue
+            }));
+        }
 
-        this.cloudFormationStacks.set(stackName, stack);
-        console.log(`CloudFormation stack ${stackName} criado`);
-        return stack;
+        try {
+            const result = await this.cloudformation.createStack(params).promise();
+            console.log(`CloudFormation stack ${stackName} criado`);
+            return {
+                stackName,
+                stackId: result.StackId,
+                creationTime: new Date(),
+                stackStatus: 'CREATE_IN_PROGRESS'
+            };
+        } catch (error) {
+            console.error(`Erro ao criar CloudFormation stack: ${error.message}`);
+            throw error;
+        }
     }
 
     async updateCloudFormationStack(stackName, templateBody, parameters) {
@@ -1322,15 +1672,30 @@ class CloudServicesSimulatorEngine {
     // ===========================================
 
     async createSNSTopic(topicName, config) {
-        const topic = {
-            topicArn: `arn:aws:sns:us-east-1:123456789012:${topicName}`,
-            topicName,
-            displayName: config.displayName || topicName,
-            createdAt: new Date()
+        const params = {
+            Name: topicName
         };
-        this.snsTopics.set(topicName, topic);
-        console.log(`SNS topic ${topicName} criado`);
-        return topic;
+
+        if (config.displayName) {
+            params.Attributes = {
+                DisplayName: config.displayName
+            };
+        }
+
+        try {
+            const result = await this.sns.createTopic(params).promise();
+            const topic = {
+                topicArn: result.TopicArn,
+                topicName,
+                displayName: config.displayName || topicName,
+                createdAt: new Date()
+            };
+            console.log(`SNS topic ${topicName} criado`);
+            return topic;
+        } catch (error) {
+            console.error(`Erro ao criar SNS topic: ${error.message}`);
+            throw error;
+        }
     }
 
     async listSNSTopics() {
@@ -1346,9 +1711,23 @@ class CloudServicesSimulatorEngine {
     }
 
     async publishSNSTopic(topicArn, message, subject) {
-        const messageId = `msg-${Date.now()}`;
-        console.log(`SNS message published to ${topicArn}: ${subject || message.substring(0, 50)}...`);
-        return { messageId };
+        const params = {
+            TopicArn: topicArn,
+            Message: message
+        };
+
+        if (subject) {
+            params.Subject = subject;
+        }
+
+        try {
+            const result = await this.sns.publish(params).promise();
+            console.log(`SNS message published to ${topicArn}: ${subject || message.substring(0, 50)}...`);
+            return { messageId: result.MessageId };
+        } catch (error) {
+            console.error(`Erro ao publicar mensagem no SNS: ${error.message}`);
+            throw error;
+        }
     }
 
     async subscribeSNSTopic(topicArn, protocol, endpoint) {
@@ -1357,20 +1736,40 @@ class CloudServicesSimulatorEngine {
     }
 
     async createSQSQueue(queueName, config) {
-        const queue = {
-            queueUrl: `https://sqs.us-east-1.amazonaws.com/123456789012/${queueName}`,
-            queueArn: `arn:aws:sqs:us-east-1:123456789012:${queueName}`,
-            queueName,
-            createdAt: new Date(),
-            visibilityTimeout: config.visibilityTimeout || 30,
-            maximumMessageSize: config.maximumMessageSize || 262144,
-            messageRetentionPeriod: config.messageRetentionPeriod || 345600,
-            delaySeconds: config.delaySeconds || 0,
-            messages: []
+        const attributes = {
+            VisibilityTimeout: (config.visibilityTimeout || 30).toString(),
+            MaximumMessageSize: (config.maximumMessageSize || 262144).toString(),
+            MessageRetentionPeriod: (config.messageRetentionPeriod || 345600).toString(),
+            DelaySeconds: (config.delaySeconds || 0).toString()
         };
-        this.sqsQueues.set(queueName, queue);
-        console.log(`SQS queue ${queueName} criado`);
-        return queue;
+
+        if (config.redrivePolicy) {
+            attributes.RedrivePolicy = JSON.stringify(config.redrivePolicy);
+        }
+
+        const params = {
+            QueueName: queueName,
+            Attributes: attributes
+        };
+
+        try {
+            const result = await this.sqs.createQueue(params).promise();
+            const queue = {
+                queueUrl: result.QueueUrl,
+                queueArn: `arn:aws:sqs:us-east-1:123456789012:${queueName}`,
+                queueName,
+                createdAt: new Date(),
+                visibilityTimeout: config.visibilityTimeout || 30,
+                maximumMessageSize: config.maximumMessageSize || 262144,
+                messageRetentionPeriod: config.messageRetentionPeriod || 345600,
+                delaySeconds: config.delaySeconds || 0
+            };
+            console.log(`SQS queue ${queueName} criado`);
+            return queue;
+        } catch (error) {
+            console.error(`Erro ao criar SQS queue: ${error.message}`);
+            throw error;
+        }
     }
 
     async listSQSQueues() {
@@ -1386,14 +1785,32 @@ class CloudServicesSimulatorEngine {
     }
 
     async sendSQSMessage(queueUrl, messageBody, config) {
-        const message = {
-            messageId: `msg-${Date.now()}`,
-            receiptHandle: `receipt-${Date.now()}`,
-            body: messageBody,
-            attributes: config.messageAttributes || {},
-            sentAt: new Date()
+        const params = {
+            QueueUrl: queueUrl,
+            MessageBody: messageBody
         };
-        return { messageId: message.messageId };
+
+        if (config.messageAttributes) {
+            params.MessageAttributes = {};
+            Object.entries(config.messageAttributes).forEach(([key, value]) => {
+                params.MessageAttributes[key] = {
+                    DataType: 'String',
+                    StringValue: value.toString()
+                };
+            });
+        }
+
+        if (config.delaySeconds) {
+            params.DelaySeconds = config.delaySeconds;
+        }
+
+        try {
+            const result = await this.sqs.sendMessage(params).promise();
+            return { messageId: result.MessageId };
+        } catch (error) {
+            console.error(`Erro ao enviar mensagem para SQS: ${error.message}`);
+            throw error;
+        }
     }
 
     async receiveSQSMessage(queueUrl, config) {
@@ -1448,9 +1865,28 @@ class CloudServicesSimulatorEngine {
     // ===========================================
 
     async putCloudWatchMetricData(namespace, metricData) {
-        // Simular armazenamento de métricas
-        console.log(`CloudWatch metrics stored in namespace ${namespace}`);
-        return { response: 'Metrics stored successfully' };
+        const params = {
+            Namespace: namespace,
+            MetricData: metricData.map(data => ({
+                MetricName: data.metricName,
+                Dimensions: data.dimensions ? data.dimensions.map(dim => ({
+                    Name: dim.name,
+                    Value: dim.value
+                })) : [],
+                Value: data.value,
+                Unit: data.unit || 'Count',
+                Timestamp: data.timestamp || new Date()
+            }))
+        };
+
+        try {
+            const result = await this.cloudwatch.putMetricData(params).promise();
+            console.log(`CloudWatch metrics stored in namespace ${namespace}`);
+            return { response: 'Metrics stored successfully' };
+        } catch (error) {
+            console.error(`Erro ao armazenar métricas no CloudWatch: ${error.message}`);
+            throw error;
+        }
     }
 
     async putCloudWatchMetricAlarm(alarmName, config) {
@@ -2793,6 +3229,6 @@ class CloudServicesSimulatorEngine {
 }
 
 // Singleton instance
-const cloudServicesSimulatorEngine = new CloudServicesSimulatorEngine();
+const cloudServicesEngine = new CloudServicesEngine();
 
-module.exports = cloudServicesSimulatorEngine;
+module.exports = cloudServicesEngine;
