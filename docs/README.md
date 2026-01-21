@@ -5,7 +5,7 @@
 ![Documentation](https://img.shields.io/badge/Documentation-Up%20to%20Date-brightgreen?style=for-the-badge&logo=read-the-docs&logoColor=white)
 ![Coverage](https://img.shields.io/badge/Coverage-100%25-success?style=for-the-badge)
 ![Language](https://img.shields.io/badge/Language-Portuguese%20%7C%20English-blue?style=for-the-badge)
-![Last Updated](https://img.shields.io/badge/Last%20Updated-Jan%202026%20(Updated%202026--01--21)-orange?style=for-the-badge)
+![Last Updated](https://img.shields.io/badge/Last%20Updated-Jan%202026%20(Updated%202026--01--21%201.2.0)-orange?style=for-the-badge)
 
 </div>
 
@@ -58,7 +58,7 @@ Security implementations and legal standards.
 ---
 
 ## ✨ [New Features Implemented](CHANGELOG.md)
-Latest implementations including ML API, AR enhancements, gamification, chat rooms, and video calls.
+Latest implementations v1.2.0 including ML API, Interactive Game, AR enhancements, Sentiment Analysis, Accessibility Controls, PWA, and Configuration API.
 - [Complete Changelog](CHANGELOG.md)
 - [User Features Guide](features/USER_FEATURES.md)
 

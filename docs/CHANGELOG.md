@@ -13,6 +13,30 @@ Todas as mudanças significativas neste projeto serão documentadas neste arquiv
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-01-21
+
+### ✨ Adicionado
+- **API de Machine Learning**: Endpoint `/api/ml` com engine ML integrada para predições avançadas
+- **Jogo Interativo Completo**: Componente de jogo de clique com timer, pontuação, recordes e animações
+- **Realidade Aumentada Aprimorada**: Suporte completo a carregamento GLTF, partículas animadas e modelos 3D
+- **Análise de Sentimentos Aprimorada**: Suporte a emojis, frases compostas e integração no chatbot
+- **Controles de Acessibilidade Refinados**: Zoom de página, movimento reduzido, ARIA completo e conformidade WCAG AA
+- **PWA Completa**: Prompt de instalação, página offline dedicada e notificações de atualização
+- **API de Configuração REST**: Endpoint completo para gerenciamento de configurações com validação e cache
+- **Chatbot Inteligente Integrado**: Frontend conectado ao backend com análise de sentimentos
+
+### 🔧 Alterado
+- **Server.js Otimizado**: Código completamente reescrito, organizado e sem duplicações ou erros de sintaxe
+- **Performance Melhorada**: Cache inteligente implementado em todas as camadas da aplicação
+- **Estrutura de Arquivos Limpa**: Todos os arquivos organizados seguindo melhores práticas
+
+### 🐛 Corrigido
+- **Sintaxe do Server.js**: Corrigidos todos os erros de sintaxe e estrutura malformada
+- **Duplicações Removidas**: Eliminadas funções e comentários duplicados
+- **Estrutura Limpa**: Código reescrito seguindo melhores práticas de organização
+
+---
+
 ## [1.1.0] - 2026-01-21
 
 ### ✨ Adicionado
