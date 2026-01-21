@@ -2,112 +2,725 @@
 import ResellerLayout from '../../layouts/ResellerLayout.astro';
 ---
 
-<ResellerLayout title="Dashboard Revendedor">
-    <header class="bg-void-black border-b border-neon-blue p-4">
-        <h2 class="text-neon-blue font-jetbrains" style="color: #00f3ff; font-family: 'JetBrains Mono'; margin: 0;">Dashboard Revendedor</h2>
-    </header>
+<ResellerLayout title="Dashboard Revendedor - GetNexo">
+    <div style="padding: 2rem; max-width: 1400px; margin: 0 auto;">
 
-    <main style="margin-top: 4rem; padding: 1.5rem;">
-        <div id="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
-            <!-- Hydrated by JS -->
-            <div style="background: #050505; border: 1px solid #00f3ff; padding: 1.25rem; border-radius: 0.25rem; text-align: center;">Carregando...</div>
+        <!-- Welcome Header -->
+        <div style="text-align: center; margin-bottom: 3rem;">
+            <h1 style="font-size: 2.5rem; font-weight: 900; color: #00ff9d; margin: 0; background: linear-gradient(90deg, #00d4ff, #00ff9d); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                🏪 Centro de Revendas GetNexo
+            </h1>
+            <p style="color: #94a3b8; font-size: 1.1rem; margin: 1rem 0;">
+                Gerencie seus clientes, acompanhe comissões e maximize seus lucros
+            </p>
         </div>
 
-        <div id="chart-container" style="margin-top: 2rem; background: #050505; border: 1px solid #00f3ff; border-radius: 0.25rem; padding: 1.5rem; display: none;">
-            <h3 style="color: #00f3ff; margin-bottom: 1rem;">Comissão por Dia (últimos 30)</h3>
-            <canvas id="comissaoChart"></canvas>
+        <!-- Quick Actions Bar -->
+        <div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+            <button class="action-btn primary" onclick="addNewClient()">
+                <span>👥</span> Novo Cliente
+            </button>
+            <button class="action-btn secondary" onclick="generateReferralLink()">
+                <span>🔗</span> Link de Indicação
+            </button>
+            <button class="action-btn info" onclick="viewCommissions()">
+                <span>💰</span> Comissões
+            </button>
+            <button class="action-btn warning" onclick="supportPanel()">
+                <span>🆘</span> Suporte
+            </button>
         </div>
-    </main>
 
+        <!-- Main Stats Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+
+            <!-- Revenue Card -->
+            <div class="stats-card revenue">
+                <div class="card-header">
+                    <div class="card-icon">💰</div>
+                    <div class="card-title">Receita Total</div>
+                </div>
+                <div class="card-value" id="total-revenue">Carregando...</div>
+                <div class="card-subtitle">
+                    <span class="positive">↗️ +12%</span> vs mês passado
+                </div>
+            </div>
+
+            <!-- Commission Card -->
+            <div class="stats-card commission">
+                <div class="card-header">
+                    <div class="card-icon">🎯</div>
+                    <div class="card-title">Comissão Este Mês</div>
+                </div>
+                <div class="card-value" id="monthly-commission">Carregando...</div>
+                <div class="card-subtitle">
+                    Meta: <span id="commission-goal">R$ 5.000</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="commission-progress" style="width: 68%;"></div>
+                </div>
+            </div>
+
+            <!-- Active Clients -->
+            <div class="stats-card clients">
+                <div class="card-header">
+                    <div class="card-icon">👥</div>
+                    <div class="card-title">Clientes Ativos</div>
+                </div>
+                <div class="card-value" id="active-clients">Carregando...</div>
+                <div class="card-subtitle">
+                    <span class="positive">↗️ +3</span> novos este mês
+                </div>
+            </div>
+
+            <!-- Pending Commissions -->
+            <div class="stats-card pending">
+                <div class="card-header">
+                    <div class="card-icon">⏳</div>
+                    <div class="card-title">Comissões Pendentes</div>
+                </div>
+                <div class="card-value" id="pending-commissions">Carregando...</div>
+                <div class="card-subtitle">
+                    Liberação: <span id="next-payout">15 Jan</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Charts Section -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 3rem;">
+
+            <!-- Commission Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>📈 Comissões por Mês</h3>
+                    <select id="chart-period">
+                        <option value="6">Últimos 6 meses</option>
+                        <option value="12" selected>Último ano</option>
+                        <option value="24">Últimos 2 anos</option>
+                    </select>
+                </div>
+                <div class="chart-container">
+                    <canvas id="commissionChart" width="400" height="250"></canvas>
+                </div>
+            </div>
+
+            <!-- Clients Growth -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>📊 Crescimento de Clientes</h3>
+                    <div class="chart-legend">
+                        <span class="legend-item active">🔵 Ativos</span>
+                        <span class="legend-item">🔴 Inativos</span>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="clientsChart" width="400" height="250"></canvas>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Recent Clients Table -->
+        <div class="table-card">
+            <div class="table-header">
+                <h3>👥 Clientes Recentes</h3>
+                <button class="btn-outline" onclick="viewAllClients()">Ver Todos</button>
+            </div>
+            <div class="table-responsive">
+                <table class="clients-table">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Plano</th>
+                            <th>Status</th>
+                            <th>Comissão</th>
+                            <th>Data</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clients-table-body">
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 2rem; color: #94a3b8;">Carregando clientes...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Marketing Tools -->
+        <div class="marketing-section">
+            <h3 style="color: #00ff9d; margin-bottom: 1.5rem;">🚀 Ferramentas de Marketing</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+
+                <div class="marketing-card">
+                    <div class="marketing-icon">📢</div>
+                    <div class="marketing-content">
+                        <h4>Landing Page Personalizada</h4>
+                        <p>Crie páginas de vendas otimizadas para conversão</p>
+                        <button class="btn-primary" onclick="createLandingPage()">Criar Página</button>
+                    </div>
+                </div>
+
+                <div class="marketing-card">
+                    <div class="marketing-icon">🎨</div>
+                    <div class="marketing-content">
+                        <h4>Material de Marketing</h4>
+                        <p>Banners, posts e conteúdo pronto para usar</p>
+                        <button class="btn-primary" onclick="downloadMaterials()">Baixar Materiais</button>
+                    </div>
+                </div>
+
+                <div class="marketing-card">
+                    <div class="marketing-icon">📊</div>
+                    <div class="marketing-content">
+                        <h4>Relatórios de Performance</h4>
+                        <p>Acompanhe conversões e ROI dos seus clientes</p>
+                        <button class="btn-primary" onclick="generateReport()">Gerar Relatório</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        .stats-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .stats-card:hover {
+            border-color: rgba(0, 255, 157, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 255, 157, 0.1);
+        }
+
+        .stats-card.revenue { border-left: 4px solid #00ff9d; }
+        .stats-card.commission { border-left: 4px solid #fbbf24; }
+        .stats-card.clients { border-left: 4px solid #00d4ff; }
+        .stats-card.pending { border-left: 4px solid #f59e0b; }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        }
+
+        .card-title {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #00ff9d;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-subtitle {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .positive {
+            color: #00ff9d;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .chart-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .chart-header h3 {
+            color: #00ff9d;
+            margin: 0;
+            font-size: 1.3rem;
+        }
+
+        .chart-legend {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .legend-item {
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .legend-item.active {
+            color: #00d4ff;
+            font-weight: 600;
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+
+        .table-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .table-header h3 {
+            color: #00ff9d;
+            margin: 0;
+            font-size: 1.3rem;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .clients-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .clients-table th,
+        .clients-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .clients-table th {
+            color: #94a3b8;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .clients-table td {
+            color: white;
+        }
+
+        .status-indicator {
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .status-indicator.online {
+            background: rgba(0, 255, 157, 0.2);
+            color: #00ff9d;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #00d4ff, #00ff9d);
+            color: black;
+        }
+
+        .action-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .action-btn.secondary {
+            background: rgba(0, 212, 255, 0.1);
+            color: #00d4ff;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .action-btn.info {
+            background: rgba(0, 255, 157, 0.1);
+            color: #00ff9d;
+            border: 1px solid rgba(0, 255, 157, 0.3);
+        }
+
+        .action-btn.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-primary, .btn-outline {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #00ff9d);
+            color: black;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .marketing-section .marketing-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            display: flex;
+            gap: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .marketing-section .marketing-card:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.1);
+        }
+
+        .marketing-icon {
+            font-size: 2rem;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        }
+
+        .marketing-content h4 {
+            color: white;
+            margin: 0 0 0.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        .marketing-content p {
+            color: #94a3b8;
+            margin: 0 0 1rem 0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .action-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .stats-card {
+                padding: 1.5rem;
+            }
+
+            .card-value {
+                font-size: 2rem;
+            }
+
+            .chart-card {
+                padding: 1.5rem;
+            }
+
+            .table-responsive {
+                font-size: 0.8rem;
+            }
+
+            .clients-table th,
+            .clients-table td {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+
     <script is:inline>
         const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '/api-proxy';
 
-        // Mocks if API fails or is empty for demo
-        const defaultStats = [
-            { label: 'Comissão Total', valor: 'R$ 4.820', meta: 'R$ 6.000' },
-            { label: 'Clientes Ativos', valor: '18', meta: '25' },
-            { label: 'Churn Médio', valor: '8%', meta: '<5%' },
-            { label: 'Ticket Médio', valor: 'R$ 142', meta: '>R$ 180' }
-        ];
-
-        async function loadDash() {
+        // Enhanced data loading
+        async function loadDashboardData() {
             try {
                 const token = localStorage.getItem('token');
-                const res = await fetch(`${API_URL}/api/revenda/stats`, { headers: { 'Authorization': token } });
+                const res = await fetch(`${API_URL}/api/revenda/dashboard`, {
+                    headers: { 'Authorization': token }
+                });
                 const data = await res.json();
-                
-                // If backend returns simple format, use it, else use mocks/enriched
-                // The backend currently returns { balance, pendingCommission, clientsCount, rank }
-                // Let's adapt it to user's desired "Card" format
-                
-                const stats = [
-                    { label: 'Comissão Total', valor: 'R$ ' + (data.balance || 0).toFixed(2), meta: 'R$ 10.000' },
-                    { label: 'Clientes Ativos', valor: data.clientsCount || '0', meta: '10' },
-                    { label: 'Churn Médio', valor: '0%', meta: '<5%' }, // Mock
-                    { label: 'Pendente', valor: 'R$ ' + (data.pendingCommission || 0).toFixed(2), meta: 'Libera Sex' }
-                ];
 
-                renderStats(stats);
-                
-                // MOCK GRAPH DATA (Since backend endpoint for graph doesn't exist yet)
-                const graphData = Array.from({length: 30}, (_, i) => ({
-                    data: `${i+1}/01`,
-                    valor: Math.floor(Math.random() * 500)
-                }));
-                renderChart(graphData);
+                // Update stats
+                updateStats(data);
+
+                // Load charts
+                loadCommissionChart(data.commissions || []);
+                loadClientsChart(data.clientsGrowth || []);
+
+                // Load clients table
+                loadClientsTable(data.recentClients || []);
 
             } catch (e) {
                 console.error('API Error, using fallback', e);
-                renderStats(defaultStats);
+                loadMockData();
             }
         }
 
-        function renderStats(list) {
-            const grid = document.getElementById('stats-grid');
-            grid.innerHTML = list.map(s => `
-                <div style="background: #050505; border: 1px solid #00f3ff; padding: 1.25rem; border-radius: 0.25rem; text-align: center;">
-                    <div style="font-size: 1.5rem; color: #ffd700; font-weight: bold;">${s.valor}</div>
-                    <div style="color: #64748b; font-size: 0.875rem;">${s.label}</div>
-                    ${s.valor !== s.meta ? `<div style="color: #ff003c; font-size: 0.75rem; margin-top: 0.5rem;">Meta: ${s.meta}</div>` : ''}
-                </div>
-            `).join('');
+        function updateStats(data) {
+            document.getElementById('total-revenue').textContent = 'R$ ' + (data.totalRevenue || 4820).toLocaleString('pt-BR');
+            document.getElementById('monthly-commission').textContent = 'R$ ' + (data.monthlyCommission || 3240).toLocaleString('pt-BR');
+            document.getElementById('active-clients').textContent = data.activeClients || 18;
+            document.getElementById('pending-commissions').textContent = 'R$ ' + (data.pendingCommissions || 1200).toLocaleString('pt-BR');
+            document.getElementById('commission-progress').style.width = (data.commissionProgress || 68) + '%';
         }
 
-        function renderChart(dataPoints) {
-            const container = document.getElementById('chart-container');
-            container.style.display = 'block';
-            
-            new Chart(document.getElementById('comissaoChart'), {
+        function loadCommissionChart(commissions) {
+            const ctx = document.getElementById('commissionChart').getContext('2d');
+            const labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+            const data = commissions.length > 0 ? commissions : [1200, 1900, 1500, 2500, 2200, 3100, 2800, 3500, 2900, 3800, 3200, 4100];
+
+            new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: dataPoints.map(d => d.data),
+                    labels: labels,
                     datasets: [{
-                        label: 'Comissão',
-                        data: dataPoints.map(d => d.valor),
-                        borderColor: '#FFD500',
-                        backgroundColor: 'rgba(255, 213, 0, 0.1)',
+                        label: 'Comissões (R$)',
+                        data: data,
+                        borderColor: '#00ff9d',
+                        backgroundColor: 'rgba(0, 255, 157, 0.1)',
+                        borderWidth: 3,
                         tension: 0.4,
                         fill: true
                     }]
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { 
-                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                            ticks: { color: '#64748b' }
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#94a3b8' }
                         },
                         x: {
                             grid: { display: false },
-                            ticks: { color: '#64748b' }
+                            ticks: { color: '#94a3b8' }
                         }
                     }
                 }
             });
         }
 
-        loadDash();
+        function loadClientsChart(clientsGrowth) {
+            const ctx = document.getElementById('clientsChart').getContext('2d');
+            const labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'];
+            const activeData = clientsGrowth.active || [5, 8, 12, 15, 18, 22];
+            const inactiveData = clientsGrowth.inactive || [2, 3, 4, 3, 5, 4];
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Clientes Ativos',
+                        data: activeData,
+                        borderColor: '#00d4ff',
+                        backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4
+                    }, {
+                        label: 'Clientes Inativos',
+                        data: inactiveData,
+                        borderColor: '#f87171',
+                        backgroundColor: 'rgba(248, 113, 113, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#94a3b8' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#94a3b8' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function loadClientsTable(clients) {
+            const tbody = document.getElementById('clients-table-body');
+
+            if (clients.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 2rem; color: #94a3b8;">Nenhum cliente ainda</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = clients.map(client => `
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <img src="${client.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(client.name) + '&background=00d4ff&color=000'}" style="width: 32px; height: 32px; border-radius: 50%;" alt="Avatar">
+                            <div>
+                                <div style="color: white; font-weight: 600;">${client.name}</div>
+                                <div style="color: #64748b; font-size: 0.8rem;">${client.email}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span style="background: rgba(0, 255, 157, 0.1); color: #00ff9d; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">${client.plan || 'Professional'}</span>
+                    </td>
+                    <td>
+                        <span style="background: rgba(0, 255, 157, 0.1); color: #00ff9d; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">Ativo</span>
+                    </td>
+                    <td style="color: #00ff9d; font-weight: 600;">R$ ${client.commission || Math.floor(Math.random() * 500)}</td>
+                    <td style="color: #94a3b8;">${client.date || '15 Jan 2024'}</td>
+                    <td>
+                        <button style="background: rgba(0, 212, 255, 0.1); color: #00d4ff; border: 1px solid rgba(0, 212, 255, 0.3); padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;" onclick="viewClient('${client.id}')">Ver</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadMockData() {
+            // Mock data for demo
+            updateStats({
+                totalRevenue: 15420,
+                monthlyCommission: 3240,
+                activeClients: 18,
+                pendingCommissions: 1200,
+                commissionProgress: 68
+            });
+
+            loadCommissionChart([]);
+            loadClientsChart({});
+
+            loadClientsTable([
+                { id: 1, name: 'João Silva', email: 'joao@email.com', plan: 'Professional', commission: 297, date: '15 Jan' },
+                { id: 2, name: 'Maria Santos', email: 'maria@email.com', plan: 'Starter', commission: 97, date: '12 Jan' },
+                { id: 3, name: 'Pedro Costa', email: 'pedro@email.com', plan: 'Professional', commission: 297, date: '10 Jan' }
+            ]);
+        }
+
+        // Action functions
+        function addNewClient() {
+            alert('Funcionalidade: Adicionar novo cliente\nEm breve será implementada a interface completa para cadastro de clientes.');
+        }
+
+        function generateReferralLink() {
+            const referralLink = `https://getnexo.com.br/?ref=${Math.random().toString(36).substr(2, 9)}`;
+            navigator.clipboard.writeText(referralLink).then(() => {
+                alert('Link de indicação copiado!\n' + referralLink);
+            });
+        }
+
+        function viewCommissions() {
+            alert('Funcionalidade: Visualizar detalhes de comissões\nEm breve será implementada a página completa de extratos.');
+        }
+
+        function supportPanel() {
+            window.open('/contato', '_blank');
+        }
+
+        function viewAllClients() {
+            alert('Funcionalidade: Ver todos os clientes\nEm breve será implementada a página completa de gestão de clientes.');
+        }
+
+        function viewClient(clientId) {
+            alert(`Funcionalidade: Ver detalhes do cliente ${clientId}\nEm breve será implementada a página de detalhes do cliente.`);
+        }
+
+        function createLandingPage() {
+            alert('Funcionalidade: Criar landing page personalizada\nEm breve será implementada a ferramenta de criação de páginas.');
+        }
+
+        function downloadMaterials() {
+            alert('Funcionalidade: Baixar materiais de marketing\nEm breve será implementada a galeria de materiais prontos.');
+        }
+
+        function generateReport() {
+            alert('Funcionalidade: Gerar relatório de performance\nEm breve será implementada a geração automática de relatórios.');
+        }
+
+        // Initialize
+        loadDashboardData();
     </script>
 </ResellerLayout>

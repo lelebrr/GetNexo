@@ -1,7 +1,7 @@
-const nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer';
 
 // Configuração do transporte de email
-const emailTransporter = nodemailer.createTransport({
+export const emailTransporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'smtp.gmail.com',
     port: process.env.SMTP_PORT || 587,
     secure: false,
@@ -12,7 +12,7 @@ const emailTransporter = nodemailer.createTransport({
 });
 
 // Thresholds para alertas automáticos
-const ALERT_THRESHOLDS = {
+export const ALERT_THRESHOLDS = {
     highResponseTime: 5000, // 5 segundos
     errorRate: 0.05, // 5% de erro
     memoryUsage: 0.8, // 80% de uso de memória
@@ -25,7 +25,7 @@ const ALERT_THRESHOLDS = {
 const activeAlerts = new Map();
 
 // Função principal para verificar e enviar alertas
-async function checkAndSendAlerts(metrics, kpis, io) {
+export async function checkAndSendAlerts(metrics, kpis, io) {
     const alerts = [];
 
     // Verificar performance do sistema
@@ -96,7 +96,7 @@ async function checkAndSendAlerts(metrics, kpis, io) {
 }
 
 // Enviar alerta por email e WebSocket
-async function sendAlert(alert, io) {
+export async function sendAlert(alert, io) {
     try {
         // Log do alerta
         console.warn(`ALERT: ${alert.title} - ${alert.message}`, {
@@ -152,7 +152,7 @@ async function sendPushNotification(alert) {
 }
 
 // Alerta manual para admins
-async function sendManualAlert(title, message, level = 'info', io) {
+export async function sendManualAlert(title, message, level = 'info', io) {
     const alert = {
         type: 'manual',
         level,
@@ -165,7 +165,7 @@ async function sendManualAlert(title, message, level = 'info', io) {
 }
 
 // Verificar alertas periodicamente
-function startAlertMonitoring(io) {
+export function startAlertMonitoring(io) {
     setInterval(async () => {
         try {
             // Simular coleta de métricas (em produção, usar dados reais)
@@ -188,7 +188,7 @@ function startAlertMonitoring(io) {
     }, 300000); // A cada 5 minutos
 }
 
-module.exports = {
+export default {
     checkAndSendAlerts,
     sendManualAlert,
     sendAlert,

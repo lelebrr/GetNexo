@@ -143,9 +143,10 @@ const { dashboardData } = Astro.props || {};
   </div>
 </Layout>
 
-<script>
-  import Chart from 'chart.js/auto';
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<script>
   let revenueChart, usersChart;
 
   async function loadDashboardData() {

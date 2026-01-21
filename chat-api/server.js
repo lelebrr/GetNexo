@@ -918,7 +918,14 @@ try {
 // Migration: Add columns to client_domains
 try { db.exec("ALTER TABLE client_domains ADD COLUMN expires_at TIMESTAMP;"); } catch (e) { }
 try { db.exec("ALTER TABLE client_domains ADD COLUMN used_code TEXT;"); } catch (e) { }
+try { db.exec("ALTER TABLE client_domains ADD COLUMN plan_id INTEGER;"); } catch (e) { }
 try { db.exec("ALTER TABLE commissions ADD COLUMN type TEXT DEFAULT 'NOVA_CONTA';"); } catch (e) { }
+
+// Migration: Add reseller columns to users
+try { db.exec("ALTER TABLE users ADD COLUMN is_reseller BOOLEAN DEFAULT 0;"); } catch (e) { }
+try { db.exec("ALTER TABLE users ADD COLUMN balance REAL DEFAULT 0.0;"); } catch (e) { }
+try { db.exec("ALTER TABLE users ADD COLUMN parent_id INTEGER DEFAULT 0;"); } catch (e) { }
+try { db.exec("ALTER TABLE users ADD COLUMN code TEXT UNIQUE;"); } catch (e) { }
 
 
 // --- AUTH & ADMIN INIT ---
@@ -944,6 +951,83 @@ try {
     }
 } catch (e) {
     console.error('[AUTH] Admin setup error:', e.message);
+}
+
+// --- SAMPLE PRODUCTS FOR DASHBOARDS ---
+try {
+    // Check if products exist, if not add sample ones
+    const productCount = db.prepare('SELECT COUNT(*) as count FROM products').get().count;
+    if (productCount === 0) {
+        const sampleProducts = [
+            { name: 'SEO Automation', price: 99, description: 'Otimização automática de SEO para seus sites', stock: 999 },
+            { name: 'Analytics Pro', price: 149, description: 'Relatórios avançados de analytics e insights', stock: 999 },
+            { name: 'Chat Bot IA', price: 199, description: 'Chatbot inteligente com IA para atendimento', stock: 999 },
+            { name: 'Social Media Manager', price: 79, description: 'Gestão automatizada de redes sociais', stock: 999 },
+            { name: 'Email Marketing Pro', price: 129, description: 'Campanhas de email marketing automatizadas', stock: 999 }
+        ];
+
+        const insertProduct = db.prepare('INSERT INTO products (name, price, description, stock) VALUES (?, ?, ?, ?)');
+        for (const product of sampleProducts) {
+            insertProduct.run(product.name, product.price, product.description, product.stock);
+        }
+        console.log('[INIT] Sample products added');
+    }
+} catch (e) {
+    console.error('[INIT] Sample products error:', e.message);
+}
+
+// --- SAMPLE RESELLER SETUP ---
+try {
+    // Create a sample reseller if none exists
+    const resellerCount = db.prepare('SELECT COUNT(*) as count FROM users WHERE email = ?').get('revendedor@getnexo.com').count;
+    if (resellerCount === 0) {
+        const resellerPass = bcrypt.hashSync('reseller123', 10);
+        const resellerId = db.prepare('INSERT INTO users (email, password, role_id, is_reseller, balance, code) VALUES (?, ?, ?, ?, ?, ?)').run(
+            'revendedor@getnexo.com', resellerPass, 2, 1, 1500.00, 'RVD-REVEN123'
+        );
+
+        // Add some sample commissions for demo
+        const sampleCommissions = [
+            { client_id: 1, amount: 519.40, type: 'NOVA_CONTA', description: 'Comissão Novo Cliente - site1.com' },
+            { client_id: 2, amount: 459.60, type: 'NOVA_CONTA', description: 'Comissão Novo Cliente - loja2.com' },
+            { client_id: 3, amount: 97, type: 'RECORRENTE', description: 'Comissão Mensal - cliente3.com' }
+        ];
+
+        const insertCommission = db.prepare('INSERT INTO commissions (reseller_id, client_id, amount, type, description, status) VALUES (?, ?, ?, ?, ?, ?)');
+        for (const comm of sampleCommissions) {
+            insertCommission.run(resellerId.lastInsertRowid, comm.client_id, comm.amount, comm.type, comm.description, 'paid');
+        }
+        console.log('[INIT] Sample reseller and commissions added');
+    }
+} catch (e) {
+    console.error('[INIT] Sample reseller error:', e.message);
+}
+
+// --- SAMPLE CLIENT SETUP ---
+try {
+    // Create a sample client if none exists
+    const clientCount = db.prepare('SELECT COUNT(*) as count FROM users WHERE email = ?').get('cliente@getnexo.com').count;
+    if (clientCount === 0) {
+        const clientPass = bcrypt.hashSync('cliente123', 10);
+        const clientId = db.prepare('INSERT INTO users (email, password, role_id) VALUES (?, ?, ?)').run(
+            'cliente@getnexo.com', clientPass, 1
+        );
+
+        // Add some sample domains for the client
+        const sampleDomains = [
+            { domain: 'cliente1.com', platform: 'woocommerce', status: 'active' },
+            { domain: 'loja2.com.br', platform: 'shopify', status: 'trial' },
+            { domain: 'site3.net', platform: 'tray', status: 'active' }
+        ];
+
+        const insertDomain = db.prepare('INSERT INTO client_domains (user_id, domain, platform, status, created_at) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)');
+        for (const domain of sampleDomains) {
+            insertDomain.run(clientId.lastInsertRowid, domain.domain, domain.platform, domain.status);
+        }
+        console.log('[INIT] Sample client and domains added');
+    }
+} catch (e) {
+    console.error('[INIT] Sample client error:', e.message);
 }
 
 app.use(cors());
@@ -3855,6 +3939,181 @@ app.post('/api/voice/session', authenticate, (req, res) => {
             mode: 'stub',
             message: 'Gemini Live Voice integration is ready for configuration.',
             wss_url: 'wss://api.getnexo.com.br/voice/stream' // Placeholder
+        });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// --- DASHBOARD APIs ---
+
+// Client Dashboard API
+app.get('/api/dashboard', authenticate, (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        // Get user stats
+        const user = db.prepare('SELECT * FROM users WHERE id = ?').get(userId);
+
+        // Get active projects (mock for now - in real app this would be project table)
+        const activeProjects = db.prepare('SELECT COUNT(*) as count FROM client_domains WHERE user_id = ? AND status IN (?, ?)').get(userId, 'trial', 'active').count || 0;
+
+        // Get active services (based on client_domains)
+        const activeServices = db.prepare('SELECT COUNT(*) as count FROM client_domains WHERE user_id = ? AND status = ?').get(userId, 'active').count || 0;
+
+        // Get monthly spend (mock calculation)
+        const monthlySpend = activeServices * 99; // R$99 per service
+
+        // Get success rate (mock)
+        const successRate = Math.floor(Math.random() * 40) + 60; // 60-100%
+
+        // Get commission progress (mock for clients)
+        const commissionProgress = 0; // Clients don't get commissions
+
+        // Get recent activity (mock)
+        const recentActivity = [
+            { icon: '📁', title: 'Novo projeto criado', description: 'Projeto "Landing Page IA" foi iniciado', time: '2h atrás', type: 'project' },
+            { icon: '⚙️', title: 'Serviço ativado', description: 'SEO Automation foi habilitado', time: '1d atrás', type: 'service' },
+            { icon: '💰', title: 'Pagamento processado', description: 'Fatura de janeiro paga com sucesso', time: '3d atrás', type: 'billing' }
+        ];
+
+        // Get active services with details (mock for now)
+        const activeServicesList = [
+            { name: 'SEO Automation', description: 'Otimização automática de SEO para seus sites', status: 'active', usage: 85, cost: 99, icon: '🔍' },
+            { name: 'Analytics Pro', description: 'Relatórios avançados de analytics', status: 'active', usage: 72, cost: 149, icon: '📊' },
+            { name: 'Chat Bot IA', description: 'Chatbot inteligente com IA', status: 'active', usage: 43, cost: 199, icon: '🤖' }
+        ].slice(0, activeServices); // Limit based on actual count
+
+        // Charts data
+        const usageData = Array.from({ length: 7 }, (_, i) => Math.floor(Math.random() * 100));
+        const projectsStatus = {
+            andamento: Math.floor(activeProjects * 0.6),
+            planejado: Math.floor(activeProjects * 0.3),
+            concluido: Math.floor(activeProjects * 0.1)
+        };
+
+        res.json({
+            activeProjects: activeProjects,
+            activeServices: activeServicesList,
+            monthlySpend: monthlySpend,
+            successRate: successRate,
+            commissionProgress: commissionProgress,
+            recentActivity: recentActivity,
+            usageData: usageData,
+            projectsStatus: projectsStatus,
+            user: {
+                email: user.email,
+                balance: user.balance || 0
+            }
+        });
+    } catch (e) {
+        console.error('[DASHBOARD] Client Error:', e);
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Reseller Dashboard API (Enhanced)
+app.get('/api/revenda/dashboard', authenticate, (req, res) => {
+    try {
+        const user = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
+        if (!user || !user.is_reseller) return res.status(403).json({ error: 'Not a reseller' });
+
+        // Enhanced reseller stats
+        const totalRevenue = db.prepare('SELECT SUM(amount) as total FROM commissions WHERE reseller_id = ? AND status = ?').get(req.user.id, 'paid').total || 0;
+        const monthlyCommission = db.prepare(`
+            SELECT SUM(amount) as total FROM commissions
+            WHERE reseller_id = ? AND status = ? AND created_at >= date('now', '-30 days')
+        `).get(req.user.id, 'paid').total || 0;
+
+        const activeClients = db.prepare('SELECT COUNT(DISTINCT client_id) as count FROM commissions WHERE reseller_id = ?').get(req.user.id).count || 0;
+        const pendingCommissions = db.prepare('SELECT SUM(amount) as total FROM commissions WHERE reseller_id = ? AND status = ?').get(req.user.id, 'pending').total || 0;
+
+        // Commission progress (towards monthly goal)
+        const monthlyGoal = 5000; // R$5000 goal
+        const commissionProgress = Math.min(Math.round((monthlyCommission / monthlyGoal) * 100), 100);
+
+        // Recent clients
+        const recentClients = db.prepare(`
+            SELECT u.email, cd.domain, cd.platform, c.amount, c.created_at
+            FROM commissions c
+            JOIN users u ON c.client_id = u.id
+            LEFT JOIN client_domains cd ON cd.user_id = u.id
+            WHERE c.reseller_id = ? AND c.status = 'paid'
+            ORDER BY c.created_at DESC
+            LIMIT 5
+        `).all(req.user.id).map(client => ({
+            id: client.client_id,
+            name: client.email.split('@')[0],
+            email: client.email,
+            plan: cd.platform || 'Professional',
+            commission: client.amount,
+            date: new Date(client.created_at).toLocaleDateString('pt-BR')
+        }));
+
+        // Commission chart data (last 12 months)
+        const commissionChart = [];
+        for (let i = 11; i >= 0; i--) {
+            const date = new Date();
+            date.setMonth(date.getMonth() - i);
+            const monthStart = date.toISOString().substring(0, 7) + '-01';
+            const monthEnd = date.toISOString().substring(0, 7) + '-31';
+
+            const monthCommission = db.prepare(`
+                SELECT SUM(amount) as total FROM commissions
+                WHERE reseller_id = ? AND status = ? AND created_at BETWEEN ? AND ?
+            `).get(req.user.id, 'paid', monthStart, monthEnd).total || 0;
+
+            commissionChart.push(monthCommission);
+        }
+
+        // Clients growth chart (mock for now)
+        const clientsGrowth = {
+            active: Array.from({ length: 6 }, () => Math.floor(Math.random() * 20) + 10),
+            inactive: Array.from({ length: 6 }, () => Math.floor(Math.random() * 5))
+        };
+
+        res.json({
+            totalRevenue: totalRevenue,
+            monthlyCommission: monthlyCommission,
+            activeClients: activeClients,
+            pendingCommissions: pendingCommissions,
+            commissionProgress: commissionProgress,
+            nextPayout: '15 Jan 2024', // Mock
+            recentClients: recentClients,
+            commissionChart: commissionChart,
+            clientsGrowth: clientsGrowth,
+            code: user.code
+        });
+    } catch (e) {
+        console.error('[RESELLER DASHBOARD] Error:', e);
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Enhanced Revenda Stats API
+app.get('/api/revenda/stats', authenticate, (req, res) => {
+    try {
+        const user = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
+        if (!user || !user.is_reseller) return res.status(403).json({ error: 'Not a reseller' });
+
+        // Enhanced stats with real data
+        const clientsCount = db.prepare('SELECT COUNT(DISTINCT client_id) as count FROM commissions WHERE reseller_id = ?').get(req.user.id).count || 0;
+        const pending = db.prepare('SELECT SUM(amount) as total FROM commissions WHERE reseller_id = ? AND status = ?').get(req.user.id, 'pending').total || 0;
+        const totalBalance = db.prepare('SELECT SUM(amount) as total FROM commissions WHERE reseller_id = ? AND status = ?').get(req.user.id, 'paid').total || 0;
+
+        // Ensure code exists
+        if (!user.code) {
+            const newCode = 'RVD-' + user.email.split('@')[0].toUpperCase().substring(0, 4) + req.user.id;
+            db.prepare('UPDATE users SET code = ? WHERE id = ?').run(newCode, req.user.id);
+            user.code = newCode;
+        }
+
+        res.json({
+            balance: totalBalance,
+            pendingCommission: pending,
+            clientsCount: clientsCount,
+            rank: 'Elite', // Mock rank system
+            code: user.code
         });
     } catch (e) {
         res.status(500).json({ error: e.message });

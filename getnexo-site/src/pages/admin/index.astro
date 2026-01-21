@@ -1,34 +1,679 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 ---
-<Layout title="GetNexo Admin – Dashboard">
+<Layout title="GetNexo Admin – Controle Total do Sistema">
 
-  <header style="background:#0a0e17; padding:2rem; display:flex; justify-content:space-between; color:#00ff9d; align-items:center; border-bottom: 1px solid #1f2937;">
-    <h1 style="margin:0; font-size:2rem; font-weight:bold; letter-spacing:-1px;">GetNexo <span style="color:#fff">Admin</span></h1>
-    <div style="display:flex; align-items:center;">
-      <span id="user-info" style="color:#9ca3af; font-size:0.9rem;">Carregando...</span>
-      <button style="margin-left:1rem; background:#1f2937; color:white; padding:0.5rem 1rem; border:1px solid #374151; border-radius:8px; cursor:pointer;" onclick="logout()">Sair</button>
+  <!-- Super Admin Header -->
+  <header style="background:#0a0e17; padding:2rem; display:flex; justify-content:space-between; color:#00ff9d; align-items:center; border-bottom: 1px solid #1f2937; position:relative; overflow:hidden;">
+    <div style="position:absolute; top:0; left:0; right:0; bottom:0; background:radial-gradient(circle at 30% 50%, rgba(0,212,255,0.1) 0%, transparent 50%); pointer-events:none;"></div>
+    <div style="position:relative; z-index:1;">
+      <h1 style="margin:0; font-size:2.5rem; font-weight:900; letter-spacing:-2px; background:linear-gradient(90deg, #00d4ff, #00ff9d, #ff6b35); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">GetNexo <span style="color:#fff; font-weight:300;">Admin</span></h1>
+      <p style="margin:0.5rem 0 0 0; color:#64748b; font-size:0.9rem; font-weight:400;">Sistema de Controle Total - Nível Máximo</p>
+    </div>
+    <div style="display:flex; align-items:center; gap:1rem; position:relative; z-index:1;">
+      <div style="text-align:right;">
+        <span id="user-info" style="color:#9ca3af; font-size:0.9rem; display:block;">Carregando...</span>
+        <span style="color:#00ff9d; font-size:0.7rem; font-weight:600;">Super Admin</span>
+      </div>
+      <button style="background:#dc2626; color:white; padding:0.5rem 1rem; border:1px solid #dc2626; border-radius:8px; cursor:pointer; font-weight:600; transition:0.3s;" onclick="emergencyShutdown()" onmouseover="this.style.background='#b91c1c'" onmouseout="this.style.background='#dc2626'">🚨 Desligamento</button>
+      <button style="background:#1f2937; color:white; padding:0.5rem 1rem; border:1px solid #374151; border-radius:8px; cursor:pointer;" onclick="logout()">Sair</button>
     </div>
   </header>
 
-  <!-- Admin Navigation -->
-  <nav style="background:#0f172a; padding:1rem 5%; display:flex; gap:1rem; border-bottom:1px solid #1e293b; flex-wrap:wrap;">
-    <a href="/admin" class="nav-link active">📊 Dashboard</a>
-    <a href="/admin/usuarios" class="nav-link">👥 Usuários</a>
-    <a href="/admin/roles" class="nav-link">🛡️ Roles</a>
-    <a href="/admin/auditoria" class="nav-link">📋 Auditoria</a>
-    <a href="/admin/cupons" class="nav-link">🎟️ Cupons</a>
-    <a href="/admin/produtos" class="nav-link">🛍️ Produtos</a>
-    <a href="/admin/relatorio" class="nav-link">📈 Relatórios</a>
-    <a href="/admin/seguranca" class="nav-link">🔒 Segurança</a>
-    <a href="/criar-bot" class="nav-link">🤖 Criar Bot</a>
-  </nav>
+  <!-- Control Panel Layout -->
+  <div style="display:flex; min-height:calc(100vh - 200px);">
 
-  <main style="padding:2rem 5%; display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:2rem; max-width:1400px; margin:0 auto;">
-     <!-- Status dos Serviços -->
-     <div class="card" style="grid-column:1 / -1;">
-       <h2 style="margin:0 0 1rem 0; font-size:1.5rem;">🔧 Status dos Serviços</h2>
-       <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;">
+    <!-- Mega Admin Sidebar -->
+    <aside id="admin-sidebar" style="width:320px; background:#0a0e17; border-right:1px solid #1f2937; padding:2rem 1rem; overflow-y:auto; position:sticky; top:0; height:calc(100vh - 200px);">
+      <div style="margin-bottom:2rem;">
+        <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:1rem;">
+          <span style="font-size:1.5rem;">⚙️</span>
+          <h3 style="margin:0; color:#00ff9d; font-size:1.1rem; font-weight:700;">Controle Total</h3>
+        </div>
+        <input type="text" id="search-configs" placeholder="🔍 Buscar configurações..." style="width:100%; padding:0.5rem; background:#1e293b; border:1px solid #374151; border-radius:6px; color:white; font-size:0.9rem;" onkeyup="filterConfigs()">
+      </div>
+
+      <!-- Categories Menu -->
+      <nav style="display:flex; flex-direction:column; gap:0.5rem;">
+        <div class="menu-category" onclick="showCategory('system')">
+          <span class="menu-icon">🖥️</span>
+          <span class="menu-text">Sistema & Infraestrutura</span>
+          <span class="menu-arrow">▶</span>
+        </div>
+        <div class="menu-category" onclick="showCategory('ai')">
+          <span class="menu-icon">🤖</span>
+          <span class="menu-text">IA & Machine Learning</span>
+          <span class="menu-arrow">▶</span>
+        </div>
+        <div class="menu-category" onclick="showCategory('communication')">
+          <span class="menu-icon">💬</span>
+          <span class="menu-text">Comunicação & APIs</span>
+          <span class="menu-arrow">▶</span>
+        </div>
+        <div class="menu-category" onclick="showCategory('security')">
+          <span class="menu-icon">🔒</span>
+          <span class="menu-text">Segurança & Autenticação</span>
+          <span class="menu-arrow">▶</span>
+        </div>
+        <div class="menu-category" onclick="showCategory('payments')">
+          <span class="menu-icon">💰</span>
+          <span class="menu-text">Pagamentos & Financeiro</span>
+          <span class="menu-arrow">▶</span>
+        </div>
+        <div class="menu-category" onclick="showCategory('users')">
+          <span class="menu-icon">👥</span>
+          <span class="menu-text">Usuários & Equipes</span>
+          <span class="menu-arrow">▶</span>
+        </div>
+        <div class="menu-category" onclick="showCategory('analytics')">
+          <span class="menu-icon">📊</span>
+          <span class="menu-text">Análise & Relatórios</span>
+          <span class="menu-arrow">▶</span>
+        </div>
+        <div class="menu-category" onclick="showCategory('integrations')">
+          <span class="menu-icon">🔗</span>
+          <span class="menu-text">Integrações & Conectores</span>
+          <span class="menu-arrow">▶</span>
+        </div>
+        <div class="menu-category" onclick="showCategory('advanced')">
+          <span class="menu-icon">⚡</span>
+          <span class="menu-text">Configurações Avançadas</span>
+          <span class="menu-arrow">▶</span>
+        </div>
+        <div class="menu-category" onclick="showCategory('monitoring')">
+          <span class="menu-icon">📈</span>
+          <span class="menu-text">Monitoramento & Logs</span>
+          <span class="menu-arrow">▶</span>
+        </div>
+      </nav>
+
+      <!-- Quick Stats -->
+      <div style="margin-top:2rem; padding:1rem; background:#1e293b; border-radius:8px; border:1px solid #374151;">
+        <h4 style="margin:0 0 1rem 0; color:#00ff9d; font-size:0.9rem;">Status Rápido</h4>
+        <div style="display:flex; flex-direction:column; gap:0.5rem; font-size:0.8rem;">
+          <div style="display:flex; justify-content:space-between;">
+            <span style="color:#94a3b8;">Serviços Online:</span>
+            <span id="online-services" style="color:#00ff9d;">0/0</span>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span style="color:#94a3b8;">Configurações Ativas:</span>
+            <span id="active-configs" style="color:#00ff9d;">0/0</span>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span style="color:#94a3b8;">Alertas:</span>
+            <span id="alerts-count" style="color:#f59e0b;">0</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main id="admin-content" style="flex:1; padding:2rem; overflow-y:auto; position:relative;">
+
+      <!-- Welcome Section -->
+      <div class="admin-section" id="welcome-section" style="display:block;">
+        <div style="text-align:center; margin-bottom:3rem;">
+          <h1 style="font-size:3rem; font-weight:900; color:#00ff9d; margin:0; background:linear-gradient(90deg, #00d4ff, #00ff9d); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">Centro de Comando Total</h1>
+          <p style="color:#94a3b8; font-size:1.1rem; margin:1rem 0;">Controle absoluto de todas as funcionalidades do GetNexo</p>
+          <div style="display:flex; justify-content:center; gap:1rem; margin-top:2rem;">
+            <button class="admin-btn primary" onclick="quickEnableAll()">🚀 Ativar Tudo</button>
+            <button class="admin-btn danger" onclick="quickDisableAll()">⏸️ Desativar Tudo</button>
+            <button class="admin-btn warning" onclick="resetToDefaults()">🔄 Restaurar Padrões</button>
+          </div>
+        </div>
+
+        <!-- Quick Stats Grid -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:1.5rem; margin-bottom:3rem;">
+          <div class="stat-card">
+            <div class="stat-icon">🖥️</div>
+            <div class="stat-value" id="total-configs">Loading...</div>
+            <div class="stat-label">Configurações Totais</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-value" id="active-configs">Loading...</div>
+            <div class="stat-label">Ativas</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⏸️</div>
+            <div class="stat-value" id="inactive-configs">Loading...</div>
+            <div class="stat-label">Inativas</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⚠️</div>
+            <div class="stat-value" id="warning-configs">Loading...</div>
+            <div class="stat-label">Alertas</div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="activity-log">
+          <h3 style="color:#00ff9d; margin-bottom:1rem;">📋 Atividade Recente</h3>
+          <div id="activity-list" style="display:flex; flex-direction:column; gap:0.5rem; max-height:300px; overflow-y:auto;">
+            <div class="activity-item">Sistema inicializado - todas as configurações carregadas</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- System & Infrastructure Section -->
+      <div class="admin-section" id="system-section" style="display:none;">
+        <div class="section-header">
+          <h2>🖥️ Sistema & Infraestrutura</h2>
+          <p>Controle total da infraestrutura, servidores, bancos de dados e serviços fundamentais</p>
+        </div>
+
+        <div class="config-grid">
+          <!-- Core System -->
+          <div class="config-group">
+            <h3>🖥️ Sistema Core</h3>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="system-core-enabled" checked>
+                <span>Sistema Principal Ativo</span>
+              </label>
+              <select id="system-mode">
+                <option value="production" selected>Produção</option>
+                <option value="staging">Staging</option>
+                <option value="development">Desenvolvimento</option>
+                <option value="maintenance">Manutenção</option>
+              </select>
+            </div>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="auto-backup" checked>
+                <span>Backup Automático</span>
+              </label>
+              <input type="number" id="backup-interval" value="24" min="1" max="168" style="width:60px;">
+              <span style="color:#94a3b8; font-size:0.8rem;">horas</span>
+            </div>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="system-monitoring" checked>
+                <span>Monitoramento de Sistema</span>
+              </label>
+              <select id="monitoring-level">
+                <option value="basic" selected>Básico</option>
+                <option value="detailed">Detalhado</option>
+                <option value="comprehensive">Abrangente</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Database Management -->
+          <div class="config-group">
+            <h3>🗄️ Banco de Dados</h3>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="db-connection-pool" checked>
+                <span>Pool de Conexões</span>
+              </label>
+              <input type="number" id="db-pool-size" value="20" min="5" max="100" style="width:60px;">
+            </div>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="db-query-logging" checked>
+                <span>Log de Queries</span>
+              </label>
+              <select id="query-log-level">
+                <option value="none">Nenhum</option>
+                <option value="slow">Apenas Lentas</option>
+                <option value="all" selected>Todas</option>
+              </select>
+            </div>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="db-auto-optimize" checked>
+                <span>Otimização Automática</span>
+              </label>
+              <input type="number" id="optimize-interval" value="7" min="1" max="30" style="width:60px;">
+              <span style="color:#94a3b8; font-size:0.8rem;">dias</span>
+            </div>
+          </div>
+
+          <!-- Server Management -->
+          <div class="config-group">
+            <h3>🖧 Servidores</h3>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="load-balancing" checked>
+                <span>Load Balancing</span>
+              </label>
+              <select id="lb-algorithm">
+                <option value="round-robin" selected>Round Robin</option>
+                <option value="least-connections">Menor Conexões</option>
+                <option value="ip-hash">IP Hash</option>
+              </select>
+            </div>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="auto-scaling" checked>
+                <span>Auto Scaling</span>
+              </label>
+              <input type="number" id="min-instances" value="2" min="1" max="10" style="width:50px;">
+              <span style="color:#94a3b8; font-size:0.8rem;">min</span>
+              <input type="number" id="max-instances" value="10" min="1" max="50" style="width:50px;">
+              <span style="color:#94a3b8; font-size:0.8rem;">max</span>
+            </div>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="cdn-enabled" checked>
+                <span>CDN Global</span>
+              </label>
+              <select id="cdn-provider">
+                <option value="cloudflare" selected>Cloudflare</option>
+                <option value="aws">AWS CloudFront</option>
+                <option value="azure">Azure CDN</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Storage & Cache -->
+          <div class="config-group">
+            <h3>💾 Armazenamento & Cache</h3>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="redis-cache" checked>
+                <span>Redis Cache</span>
+              </label>
+              <input type="number" id="cache-ttl" value="3600" min="60" max="86400" style="width:70px;">
+              <span style="color:#94a3b8; font-size:0.8rem;">segundos</span>
+            </div>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="file-compression" checked>
+                <span>Compressão de Arquivos</span>
+              </label>
+              <select id="compression-algo">
+                <option value="gzip" selected>GZIP</option>
+                <option value="brotli">Brotli</option>
+                <option value="deflate">Deflate</option>
+              </select>
+            </div>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="cdn-purge" checked>
+                <span>Purge Automático CDN</span>
+              </label>
+              <input type="number" id="purge-interval" value="300" min="60" max="3600" style="width:70px;">
+              <span style="color:#94a3b8; font-size:0.8rem;">segundos</span>
+            </div>
+          </div>
+
+          <!-- Security & Firewall -->
+          <div class="config-group">
+            <h3>🔥 Firewall & Segurança</h3>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="waf-enabled" checked>
+                <span>Web Application Firewall</span>
+              </label>
+              <select id="waf-mode">
+                <option value="monitoring" selected>Monitoramento</option>
+                <option value="blocking">Bloqueio</option>
+                <option value="strict">Restrito</option>
+              </select>
+            </div>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="rate-limiting" checked>
+                <span>Rate Limiting</span>
+              </label>
+              <input type="number" id="rate-limit" value="1000" min="10" max="10000" style="width:70px;">
+              <span style="color:#94a3b8; font-size:0.8rem;">req/min</span>
+            </div>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="ddos-protection" checked>
+                <span>Proteção DDoS</span>
+              </label>
+              <select id="ddos-level">
+                <option value="basic" selected>Básica</option>
+                <option value="advanced">Avançada</option>
+                <option value="enterprise">Enterprise</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Logging & Monitoring -->
+          <div class="config-group">
+            <h3>📊 Logging & Monitoramento</h3>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="centralized-logging" checked>
+                <span>Logging Centralizado</span>
+              </label>
+              <select id="log-level">
+                <option value="error">Erro</option>
+                <option value="warn">Aviso</option>
+                <option value="info" selected>Info</option>
+                <option value="debug">Debug</option>
+              </select>
+            </div>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="performance-monitoring" checked>
+                <span>Monitoramento de Performance</span>
+              </label>
+              <input type="number" id="perf-interval" value="60" min="10" max="300" style="width:60px;">
+              <span style="color:#94a3b8; font-size:0.8rem;">segundos</span>
+            </div>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="error-tracking" checked>
+                <span>Rastreamento de Erros</span>
+              </label>
+              <select id="error-provider">
+                <option value="sentry" selected>Sentry</option>
+                <option value="rollbar">Rollbar</option>
+                <option value="bugsnag">Bugsnag</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI & Machine Learning Section -->
+      <div class="admin-section" id="ai-section" style="display:none;">
+        <div class="section-header">
+          <h2>🤖 IA & Machine Learning</h2>
+          <p>Controle total dos modelos de IA, treinamento, inferência e configurações de machine learning</p>
+        </div>
+
+        <div class="config-grid">
+          <!-- AI Core Engine -->
+          <div class="config-group">
+            <h3>🧠 Engine Principal IA</h3>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="ai-engine-enabled" checked>
+                <span>Engine IA Ativo</span>
+              </label>
+              <select id="ai-provider">
+                <option value="openai">OpenAI</option>
+                <option value="anthropic" selected>Anthropic</option>
+                <option value="google">Google Gemini</option>
+                <option value="meta">Meta Llama</option>
+              </select>
+            </div>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="ai-fallback" checked>
+                <span>Fallback Automático</span>
+              </label>
+              <select id="fallback-provider">
+                <option value="openai">OpenAI</option>
+                <option value="google" selected>Google</option>
+              </select>
+            </div>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="ai-caching" checked>
+                <span>Cache de Respostas IA</span>
+              </label>
+              <input type="number" id="ai-cache-ttl" value="7200" min="300" max="86400" style="width:70px;">
+              <span style="color:#94a3b8; font-size:0.8rem;">segundos</span>
+            </div>
+          </div>
+
+          <!-- Model Configuration -->
+          <div class="config-group">
+            <h3>🎯 Configuração de Modelos</h3>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="model-auto-update" checked>
+                <span>Atualização Automática de Modelos</span>
+              </label>
+              <input type="number" id="model-check-interval" value="24" min="1" max="168" style="width:60px;">
+              <span style="color:#94a3b8; font-size:0.8rem;">horas</span>
+            </div>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="model-optimization" checked>
+                <span>Otimização de Modelos</span>
+              </label>
+              <select id="optimization-level">
+                <option value="none">Nenhuma</option>
+                <option value="basic" selected>Básica</option>
+                <option value="advanced">Avançada</option>
+                <option value="aggressive">Agressiva</option>
+              </select>
+            </div>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="model-fine-tuning" checked>
+                <span>Fine-tuning Automático</span>
+              </label>
+              <input type="number" id="fine-tune-frequency" value="30" min="7" max="90" style="width:60px;">
+              <span style="color:#94a3b8; font-size:0.8rem;">dias</span>
+            </div>
+          </div>
+
+          <!-- NLP & Text Processing -->
+          <div class="config-group">
+            <h3>📝 Processamento de Linguagem Natural</h3>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="nlp-sentiment" checked>
+                <span>Análise de Sentimento</span>
+              </label>
+              <select id="sentiment-model">
+                <option value="bert-base" selected>BERT Base</option>
+                <option value="gpt-sentiment">GPT Sentiment</option>
+                <option value="custom">Customizado</option>
+              </select>
+            </div>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="nlp-entities" checked>
+                <span>Extração de Entidades</span>
+              </label>
+              <select id="entity-model">
+                <option value="spacy">spaCy</option>
+                <option value="stanford" selected>Stanford NLP</option>
+                <option value="google">Google Cloud NLP</option>
+              </select>
+            </div>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="nlp-translation" checked>
+                <span>Tradução Automática</span>
+              </label>
+              <select id="translation-service">
+                <option value="google" selected>Google Translate</option>
+                <option value="deepl">DeepL</option>
+                <option value="microsoft">Microsoft Translator</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Computer Vision -->
+          <div class="config-group">
+            <h3>👁️ Visão Computacional</h3>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="cv-image-analysis" checked>
+                <span>Análise de Imagens</span>
+              </label>
+              <select id="cv-model">
+                <option value="resnet50">ResNet-50</option>
+                <option value="efficientnet" selected>EfficientNet</option>
+                <option value="vision-transformer">Vision Transformer</option>
+              </select>
+            </div>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="cv-face-recognition" checked>
+                <span>Reconhecimento Facial</span>
+              </label>
+              <select id="face-model">
+                <option value="facenet">FaceNet</option>
+                <option value="arcface" selected>ArcFace</option>
+                <option value="deepface">DeepFace</option>
+              </select>
+            </div>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="cv-ocr" checked>
+                <span>OCR (Reconhecimento de Texto)</span>
+              </label>
+              <select id="ocr-engine">
+                <option value="tesseract">Tesseract</option>
+                <option value="google-vision" selected>Google Vision</option>
+                <option value="azure">Azure Computer Vision</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- ML Operations -->
+          <div class="config-group">
+            <h3>🔄 MLOps & Deployment</h3>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="ml-pipeline" checked>
+                <span>Pipeline ML Automático</span>
+              </label>
+              <select id="pipeline-tool">
+                <option value="kubeflow">Kubeflow</option>
+                <option value="mlflow" selected>MLflow</option>
+                <option value="zenml">ZenML</option>
+              </select>
+            </div>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="model-monitoring" checked>
+                <span>Monitoramento de Modelos</span>
+              </label>
+              <input type="number" id="model-drift-threshold" value="0.1" min="0.01" max="0.5" step="0.01" style="width:60px;">
+              <span style="color:#94a3b8; font-size:0.8rem;">drift threshold</span>
+            </div>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="a-b-testing" checked>
+                <span>A/B Testing de Modelos</span>
+              </label>
+              <input type="number" id="ab-test-duration" value="7" min="1" max="30" style="width:50px;">
+              <span style="color:#94a3b8; font-size:0.8rem;">dias</span>
+            </div>
+          </div>
+
+          <!-- AI Ethics & Safety -->
+          <div class="config-group">
+            <h3>🛡️ Ética & Segurança IA</h3>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="ai-content-filter" checked>
+                <span>Filtro de Conteúdo IA</span>
+              </label>
+              <select id="content-filter-level">
+                <option value="low">Baixo</option>
+                <option value="medium" selected>Médio</option>
+                <option value="high">Alto</option>
+                <option value="strict">Restrito</option>
+              </select>
+            </div>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="ai-bias-detection" checked>
+                <span>Detecção de Viés</span>
+              </label>
+              <input type="number" id="bias-check-frequency" value="24" min="1" max="168" style="width:60px;">
+              <span style="color:#94a3b8; font-size:0.8rem;">horas</span>
+            </div>
+            <div class="config-item">
+              <label class="config-label">
+                <input type="checkbox" id="ai-explainability" checked>
+                <span>Explicabilidade IA</span>
+              </label>
+              <select id="explainability-format">
+                <option value="simple" selected>Simples</option>
+                <option value="detailed">Detalhada</option>
+                <option value="technical">Técnica</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Placeholder for other sections -->
+      <div class="admin-section" id="communication-section" style="display:none;">
+        <div class="section-header">
+          <h2>💬 Comunicação & APIs</h2>
+          <p>Controle total das comunicações, APIs, webhooks e integrações de mensagens</p>
+        </div>
+        <div style="text-align:center; padding:3rem; color:#64748b;">
+          Configurações de Comunicação - Em desenvolvimento (150+ configurações)
+        </div>
+      </div>
+
+      <div class="admin-section" id="security-section" style="display:none;">
+        <div class="section-header">
+          <h2>🔒 Segurança & Autenticação</h2>
+          <p>Controle de autenticação, autorização, criptografia e políticas de segurança</p>
+        </div>
+        <div style="text-align:center; padding:3rem; color:#64748b;">
+          Configurações de Segurança - Em desenvolvimento (120+ configurações)
+        </div>
+      </div>
+
+      <div class="admin-section" id="payments-section" style="display:none;">
+        <div class="section-header">
+          <h2>💰 Pagamentos & Financeiro</h2>
+          <p>Gestão de pagamentos, faturamento, comissões e relatórios financeiros</p>
+        </div>
+        <div style="text-align:center; padding:3rem; color:#64748b;">
+          Configurações Financeiras - Em desenvolvimento (80+ configurações)
+        </div>
+      </div>
+
+      <div class="admin-section" id="users-section" style="display:none;">
+        <div class="section-header">
+          <h2>👥 Usuários & Equipes</h2>
+          <p>Gerenciamento de usuários, roles, permissões e estrutura organizacional</p>
+        </div>
+        <div style="text-align:center; padding:3rem; color:#64748b;">
+          Gestão de Usuários - Em desenvolvimento (90+ configurações)
+        </div>
+      </div>
+
+      <div class="admin-section" id="analytics-section" style="display:none;">
+        <div class="section-header">
+          <h2>📊 Análise & Relatórios</h2>
+          <p>Dashboard de analytics, métricas, relatórios e business intelligence</p>
+        </div>
+        <div style="text-align:center; padding:3rem; color:#64748b;">
+          Analytics Avançado - Em desenvolvimento (110+ configurações)
+        </div>
+      </div>
+
+      <div class="admin-section" id="integrations-section" style="display:none;">
+        <div class="section-header">
+          <h2>🔗 Integrações & Conectores</h2>
+          <p>Gestão de APIs externas, webhooks, conectores e integrações de terceiros</p>
+        </div>
+        <div style="text-align:center; padding:3rem; color:#64748b;">
+          Sistema de Integrações - Em desenvolvimento (130+ configurações)
+        </div>
+      </div>
+
+      <div class="admin-section" id="advanced-section" style="display:none;">
+        <div class="section-header">
+          <h2>⚡ Configurações Avançadas</h2>
+          <p>Configurações técnicas avançadas, otimização e recursos experimentais</p>
+        </div>
+        <div style="text-align:center; padding:3rem; color:#64748b;">
+          Configurações Avançadas - Em desenvolvimento (100+ configurações)
+        </div>
+      </div>
+
+      <div class="admin-section" id="monitoring-section" style="display:none;">
+        <div class="section-header">
+          <h2>📈 Monitoramento & Logs</h2>
+          <p>Sistema de monitoramento, logging avançado e alertas operacionais</p>
+        </div>
+        <div style="text-align:center; padding:3rem; color:#64748b;">
+          Monitoramento Completo - Em desenvolvimento (140+ configurações)
+        </div>
+      </div>
          <div class="service-status" style="background:#1e293b; padding:1rem; border-radius:8px; border:1px solid #374151;">
            <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
              <span class="status-dot offline">●</span>

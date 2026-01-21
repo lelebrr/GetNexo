@@ -1,198 +1,743 @@
 ---
-import DashboardLayout from '../../layouts/DashboardLayout.astro';
+import ClientLayout from '../../layouts/ClientLayout.astro';
 ---
 
-<DashboardLayout title="Início | OmniNexo">
-    <div style="display:flex; flex-direction:column; gap:2rem;">
-        
-        <!-- Welcome & Upsell Row -->
-        <div style="display:grid; grid-template-columns: 2fr 1fr; gap:1.5rem;">
-            <div class="glass-panel" style="padding:2rem; background:linear-gradient(90deg, rgba(0,212,255,0.1), rgba(0,255,157,0.05)); display:flex; flex-direction:column; justify-content:center;">
-                <h1 style="font-size:1.8rem; font-weight:800; color:white; margin:0 0 0.5rem;">Painel de Comando</h1>
-                <p style="color:#94a3b8; margin:0; font-size:1rem;">O sistema está operando com <span style="color:var(--neon-green); font-weight:700;">alta eficiência</span>. Ara monitorando 24 fluxos.</p>
+<ClientLayout title="Dashboard - GetNexo Pro">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        .welcome-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1));
+            border-radius: 16px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .welcome-header h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #00d4ff;
+            margin: 0;
+            background: linear-gradient(90deg, #00d4ff, #00ff9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .welcome-header p {
+            color: #94a3b8;
+            font-size: 1.2rem;
+            margin: 1rem 0 0 0;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .action-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .action-card:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .action-card.primary {
+            border-left: 4px solid #00d4ff;
+        }
+
+        .action-card.success {
+            border-left: 4px solid #00ff9d;
+        }
+
+        .action-card.warning {
+            border-left: 4px solid #fbbf24;
+        }
+
+        .action-card.danger {
+            border-left: 4px solid #ef4444;
+        }
+
+        .action-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .action-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-desc {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        }
+
+        .stat-title {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #00d4ff;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-desc {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .change-positive {
+            color: #00ff9d;
+            font-weight: 600;
+        }
+
+        .change-negative {
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        .charts-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .chart-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .chart-header h3 {
+            color: #00d4ff;
+            margin: 0;
+            font-size: 1.3rem;
+        }
+
+        .chart-legend {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .legend-item {
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .legend-item.active {
+            color: #00d4ff;
+            font-weight: 600;
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+
+        .recent-activity {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .activity-header h3 {
+            color: #00d4ff;
+            margin: 0;
+            font-size: 1.3rem;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background 0.3s ease;
+        }
+
+        .activity-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .activity-content h4 {
+            color: white;
+            margin: 0 0 0.25rem 0;
+            font-size: 1rem;
+        }
+
+        .activity-content p {
+            color: #94a3b8;
+            margin: 0;
+            font-size: 0.85rem;
+        }
+
+        .activity-time {
+            color: #64748b;
+            font-size: 0.8rem;
+            margin-left: auto;
+        }
+
+        .services-section {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .services-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .services-header h3 {
+            color: #00d4ff;
+            margin: 0;
+            font-size: 1.3rem;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .service-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .service-card:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.1);
+        }
+
+        .service-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .service-icon {
+            font-size: 2rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 12px;
+        }
+
+        .service-title {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .service-status {
+            margin-left: auto;
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: rgba(0, 255, 157, 0.2);
+            color: #00ff9d;
+        }
+
+        .status-inactive {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .service-desc {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .service-metrics {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .metric {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .metric strong {
+            color: #00d4ff;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #00ff9d);
+            color: black;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .welcome-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+
+    <div style="padding: 2rem; max-width: 1400px; margin: 0 auto;">
+
+        <!-- Welcome Header -->
+        <div class="welcome-header">
+            <h1>🚀 Bem-vindo ao GetNexo Pro</h1>
+            <p>Gerencie seus projetos, monitore serviços e maximize sua produtividade</p>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <div class="action-card primary" onclick="createNewProject()">
+                <span class="action-icon">📁</span>
+                <div class="action-title">Novo Projeto</div>
+                <div class="action-desc">Comece um novo projeto do zero</div>
             </div>
-            
-            <div class="glass-panel" style="padding:1.5rem; border:1px solid rgba(234, 179, 8, 0.3); background:rgba(234, 179, 8, 0.05); display:flex; align-items:center; justify-content:space-between;">
-                <div>
-                    <div style="font-size:0.75rem; font-weight:800; color:#fbbf24; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Meta Mensal</div>
-                    <div style="font-size:1.4rem; font-weight:900; color:white;">68% Atingida</div>
-                    <div style="font-size:0.8rem; color:#fbbf24;">Faltam R$ 5.200,00 🎯</div>
-                </div>
-                <button style="background:#fbbf24; color:black; font-weight:800; border:none; padding:8px 16px; border-radius:8px; cursor:pointer;" onclick="accelerateGoal()">Acelerar 🚀</button>
+            <div class="action-card success" onclick="exploreServices()">
+                <span class="action-icon">🛒</span>
+                <div class="action-title">Explorar Serviços</div>
+                <div class="action-desc">Descubra novos serviços disponíveis</div>
+            </div>
+            <div class="action-card warning" onclick="viewAnalytics()">
+                <span class="action-icon">📊</span>
+                <div class="action-title">Ver Analytics</div>
+                <div class="action-desc">Acompanhe seu desempenho</div>
+            </div>
+            <div class="action-card danger" onclick="getSupport()">
+                <span class="action-icon">🆘</span>
+                <div class="action-title">Suporte</div>
+                <div class="action-desc">Precisa de ajuda? Estamos aqui</div>
             </div>
         </div>
 
-        <!-- Real Metrics Grid -->
-        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:1.5rem;">
-            
-            <div class="glass-panel" style="padding:1.5rem; border-left:4px solid var(--neon-blue);">
-                <div style="color:#64748b; font-size:0.75rem; font-weight:800; text-transform:uppercase; letter-spacing:1px;">Vendas (Hoje)</div>
-                <div id="stat-sales" style="font-size:2rem; font-weight:900; color:white; margin:0.5rem 0;">R$ 0,00</div>
-                <div style="color:var(--neon-blue); font-size:0.8rem; font-weight:700;">Calculando...</div>
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">📁</div>
+                    <div class="stat-title">Projetos Ativos</div>
+                </div>
+                <div class="stat-value" id="active-projects">0</div>
+                <div class="stat-desc">
+                    <span class="change-positive">↗️ +2</span> este mês
+                </div>
             </div>
 
-            <div class="glass-panel" style="padding:1.5rem; border-left:4px solid var(--neon-green);">
-                <div style="color:#64748b; font-size:0.75rem; font-weight:800; text-transform:uppercase; letter-spacing:1px;">Conversão IA</div>
-                <div style="font-size:2rem; font-weight:900; color:white; margin:0.5rem 0;">18.4%</div>
-                <div style="color:var(--neon-green); font-size:0.8rem; font-weight:700;">↑ 2.1% vs ontem</div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">⚙️</div>
+                    <div class="stat-title">Serviços Ativos</div>
+                </div>
+                <div class="stat-value" id="active-services">0</div>
+                <div class="stat-desc">
+                    <span class="change-positive">↗️ +1</span> esta semana
+                </div>
             </div>
 
-            <div class="glass-panel" style="padding:1.5rem; border-left:4px solid #a78bfa;">
-                <div style="color:#64748b; font-size:0.75rem; font-weight:800; text-transform:uppercase; letter-spacing:1px;">Ticket Médio</div>
-                <div style="font-size:2rem; font-weight:900; color:white; margin:0.5rem 0;">R$ 142,00</div>
-                <div style="color:#a78bfa; font-size:0.8rem; font-weight:700;">Estável</div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-title">Gastos Mensais</div>
+                </div>
+                <div class="stat-value" id="monthly-spend">R$ 0</div>
+                <div class="stat-desc">
+                    <span class="change-negative">↗️ +15%</span> vs mês anterior
+                </div>
             </div>
 
-            <div class="glass-panel" style="padding:1.5rem; border-left:4px solid #f472b6;">
-                <div style="color:#64748b; font-size:0.75rem; font-weight:800; text-transform:uppercase; letter-spacing:1px;">Resgates (Carrinho)</div>
-                <div style="font-size:2rem; font-weight:900; color:white; margin:0.5rem 0;">R$ 890</div>
-                <div style="color:#f472b6; font-size:0.8rem; font-weight:700;">Automatizado</div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-title">Taxa de Sucesso</div>
+                </div>
+                <div class="stat-value" id="success-rate">0%</div>
+                <div class="stat-desc">
+                    Baseado em projetos concluídos
+                </div>
             </div>
-
         </div>
 
-        <!-- Main Chart & Activity -->
-        <div style="display:grid; grid-template-columns: 2fr 1fr; gap:1.5rem;">
-            
-            <!-- Chart Section -->
-            <div class="glass-panel" style="padding:2rem;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-                    <div>
-                        <h3 style="margin:0; font-size:1.2rem; font-weight:800; color:white;">Performance de Vendas</h3>
-                        <p style="margin:0; font-size:0.8rem; color:#64748b;">Últimos 7 dias</p>
-                    </div>
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Uso de Serviços (30 dias)</h3>
+                    <select id="usage-period">
+                        <option value="7">Últimos 7 dias</option>
+                        <option value="30" selected>Últimos 30 dias</option>
+                        <option value="90">Últimos 90 dias</option>
+                    </select>
                 </div>
-                <div style="height:350px;">
-                    <canvas id="salesChart"></canvas>
+                <div class="chart-container">
+                    <canvas id="usageChart" width="400" height="250"></canvas>
                 </div>
             </div>
 
-            <!-- Alerts & Upsell -->
-            <div style="display:flex; flex-direction:column; gap:1.5rem;">
-                
-                <div class="glass-panel" style="padding:1.5rem; background:rgba(0,0,0,0.3);">
-                    <h3 style="margin:0 0 1rem; font-size:1rem; font-weight:800; color:white;">Alertas do Sistema</h3>
-                    
-                    <div style="display:flex; gap:10px; margin-bottom:1rem;">
-                        <span style="font-size:1.2rem;">🟢</span>
-                        <div>
-                            <div style="font-size:0.85rem; font-weight:700; color:white;">WhatsApp API</div>
-                            <div style="font-size:0.75rem; color:#64748b;">Conectado e operante</div>
-                        </div>
-                    </div>
-
-                    <div style="display:flex; gap:10px;">
-                        <span style="font-size:1.2rem;">🔵</span>
-                        <div>
-                            <div style="font-size:0.85rem; font-weight:700; color:white;">Integração Bling</div>
-                            <div style="font-size:0.75rem; color:#64748b;">Sincronizado há 5min</div>
-                        </div>
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Projetos por Status</h3>
+                    <div class="chart-legend">
+                        <span class="legend-item active">🔵 Em Andamento</span>
+                        <span class="legend-item">🟡 Planejado</span>
+                        <span class="legend-item">🟢 Concluído</span>
                     </div>
                 </div>
-
-                <div class="glass-panel" style="padding:1.5rem; text-align:center; background:linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 0, 0, 0)); border-color:var(--neon-blue);">
-                    <h3 style="margin:0 0 0.5rem; font-size:1.1rem; font-weight:800; color:white;">🚀 Plano Enterprise</h3>
-                    <p style="font-size:0.85rem; color:#94a3b8; margin-bottom:1rem;">Desbloqueie IA ilimitada e suporte prioritário 24/7.</p>
-                    <button style="width:100%; padding:10px; background:var(--neon-blue); color:black; font-weight:800; border:none; border-radius:8px; cursor:pointer; transition:0.3s; box-shadow:0 0 15px rgba(0,212,255,0.3);" onclick="upgradePlan()">
-                        Fazer Upgrade Agora
-                    </button>
+                <div class="chart-container">
+                    <canvas id="projectsChart" width="400" height="250"></canvas>
                 </div>
+            </div>
+        </div>
 
+        <!-- Recent Activity -->
+        <div class="recent-activity">
+            <div class="activity-header">
+                <h3>Atividade Recente</h3>
+                <a href="/dashboard/atividade" class="btn btn-outline">Ver Tudo</a>
+            </div>
+            <div id="activity-list">
+                <!-- Activity items will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Services Overview -->
+        <div class="services-section">
+            <div class="services-header">
+                <h3>Serviços Ativos</h3>
+                <a href="/dashboard/servicos" class="btn btn-primary">Gerenciar Serviços</a>
+            </div>
+            <div class="services-grid" id="services-grid">
+                <!-- Service cards will be loaded here -->
             </div>
         </div>
 
     </div>
 
-    <!-- Chart.js -->
-    <script>
-        import { notificationCount, systemAlerts } from '../../stores/dashboardStore';
-
-        // Worker Initialization
-        const worker = new Worker('/workers/analytics.worker.js');
-
-        worker.onmessage = (e) => {
-            const { type, data } = e.data;
-            if (type === 'METRICS_RESULT') {
-                // Update UI with heavy calc results without blocking main thread
-                // console.log('Worker Result:', data);
-                // Update elements if they exist (mock update for now)
-                const salesEl = document.getElementById('stat-sales');
-                if(salesEl && data.roi) {
-                     // Adding a visual indicator that Worker calculated this
-                    salesEl.title = `ROI: ${data.roi}% (Calc via WebWorker)`;
-                }
-            }
-        };
-
-        // Trigger Worker
-        worker.postMessage({ 
-            type: 'CALC_METRICS', 
-            data: { sales: [1200, 1900, 1500, 2500], prevSales: 5000 } 
-        });
-
-        // Store Subscriptions for Alerts
-        systemAlerts.subscribe(alerts => {
-            const el = document.getElementById('card-evolution-status');
-            if(el) {
-                el.innerText = `STATUS: ${alerts.whatsapp === 'online' ? 'OPERANTE' : 'OFFLINE'}`;
-                el.style.color = alerts.whatsapp === 'online' ? 'white' : '#ef4444';
-            }
-        });
-
-        // Auth Header Helper
-        window.getAuthHeader = () => {
-            const token = localStorage.getItem('omnichat_token');
-            return token ? { 'Authorization': `Bearer ${token}` } : {};
-        };
-        
-        // ... (Chart Code remains similar, simplified for brevity in this update) ...
-    </script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script is:inline>
-        // Separate inline script for Chart.js init to avoid scope issues with import
-        const ctx = document.getElementById('salesChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
-                datasets: [{
-                    label: 'Vendas (R$)',
-                    data: [1200, 1900, 1500, 2500, 2200, 3100, 2800],
-                    borderColor: '#00d4ff',
-                    backgroundColor: 'rgba(0, 212, 255, 0.1)',
-                    borderWidth: 3,
-                    tension: 0.4,
-                    fill: true
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display:false } }, scales: { x:{display:false}, y:{grid:{color:'rgba(255,255,255,0.05)'}} } }
-        });
+        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '/api-proxy';
 
-        // Legacy Fetch logic (kept for compatibility, can be refactored to Store later)
-        async function fetchStats() {
+        // Load dashboard data
+        async function loadDashboardData() {
             try {
-                const API = 'https://api.getnexo.com.br';
-                const res = await fetch(`${API}/api/relatorio`, { headers: window.getAuthHeader() }).catch(()=>null);
-                if(res && res.ok) {
-                   const data = await res.json();
-                   if(data && data.totalVendas) {
-                       document.getElementById('stat-sales').innerText = 'R$ ' + data.totalVendas.toLocaleString('pt-BR');
-                   }
+                const token = localStorage.getItem('token');
+                const res = await fetch(`${API_URL}/api/dashboard`, {
+                    headers: { 'Authorization': token }
+                });
+                const data = await res.json();
+
+                updateStats(data);
+                loadCharts(data);
+                loadActivity(data.recentActivity || []);
+                loadServices(data.activeServices || []);
+
+            } catch (e) {
+                console.error('API Error, using fallback', e);
+                loadMockData();
+            }
+        }
+
+        function updateStats(data) {
+            document.getElementById('active-projects').textContent = data.activeProjects || 0;
+            document.getElementById('active-services').textContent = data.activeServices?.length || 0;
+            document.getElementById('monthly-spend').textContent = 'R$ ' + (data.monthlySpend || 0).toLocaleString('pt-BR');
+            document.getElementById('success-rate').textContent = (data.successRate || 0) + '%';
+        }
+
+        function loadCharts(data) {
+            // Usage Chart
+            const usageCtx = document.getElementById('usageChart').getContext('2d');
+            const usageLabels = ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'];
+            const usageData = data.usageData || [45, 52, 38, 61];
+
+            new Chart(usageCtx, {
+                type: 'line',
+                data: {
+                    labels: usageLabels,
+                    datasets: [{
+                        label: 'Uso (%)',
+                        data: usageData,
+                        borderColor: '#00d4ff',
+                        backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#94a3b8' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#94a3b8' }
+                        }
+                    }
                 }
-            } catch(e) {}
+            });
+
+            // Projects Chart
+            const projectsCtx = document.getElementById('projectsChart').getContext('2d');
+            const projectsData = data.projectsStatus || {
+                andamento: 5,
+                planejado: 3,
+                concluido: 12
+            };
+
+            new Chart(projectsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Em Andamento', 'Planejado', 'Concluído'],
+                    datasets: [{
+                        data: [projectsData.andamento, projectsData.planejado, projectsData.concluido],
+                        backgroundColor: ['#00d4ff', '#fbbf24', '#00ff9d'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
         }
 
-        // Button Actions
-        function accelerateGoal() {
-            alert('🚀 Iniciando aceleração da meta! Campanhas automáticas ativadas.');
-            // In real implementation: POST to /api/campaigns/boost
+        function loadActivity(activities) {
+            const activityList = document.getElementById('activity-list');
+
+            if (activities.length === 0) {
+                activityList.innerHTML = '<div style="text-align: center; padding: 2rem; color: #94a3b8;">Nenhuma atividade recente</div>';
+                return;
+            }
+
+            activityList.innerHTML = activities.map(activity => `
+                <div class="activity-item">
+                    <div class="activity-icon">${activity.icon || '📝'}</div>
+                    <div class="activity-content">
+                        <h4>${activity.title}</h4>
+                        <p>${activity.description}</p>
+                    </div>
+                    <div class="activity-time">${activity.time || 'há pouco'}</div>
+                </div>
+            `).join('');
         }
 
-        function upgradePlan() {
-            window.location.href = '/precos';
+        function loadServices(services) {
+            const servicesGrid = document.getElementById('services-grid');
+
+            if (services.length === 0) {
+                servicesGrid.innerHTML = '<div style="text-align: center; padding: 2rem; color: #94a3b8; grid-column: 1 / -1;">Nenhum serviço ativo</div>';
+                return;
+            }
+
+            servicesGrid.innerHTML = services.map(service => `
+                <div class="service-card">
+                    <div class="service-header">
+                        <div class="service-icon">${service.icon || '⚙️'}</div>
+                        <div class="service-title">${service.name}</div>
+                        <div class="service-status status-${service.status || 'active'}">${service.status === 'active' ? 'Ativo' : 'Inativo'}</div>
+                    </div>
+                    <div class="service-desc">${service.description}</div>
+                    <div class="service-metrics">
+                        <div class="metric">Uso: <strong>${service.usage || 0}%</strong></div>
+                        <div class="metric">Custo: <strong>R$ ${service.cost || 0}</strong></div>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        fetchStats();
+        function loadMockData() {
+            updateStats({
+                activeProjects: 5,
+                activeServices: [],
+                monthlySpend: 299,
+                successRate: 87
+            });
+
+            loadCharts({});
+            loadActivity([
+                { icon: '📁', title: 'Novo projeto criado', description: 'Projeto "Landing Page" foi iniciado', time: '2h atrás' },
+                { icon: '⚙️', title: 'Serviço ativado', description: 'SEO Automation foi habilitado', time: '1d atrás' },
+                { icon: '💰', title: 'Pagamento processado', description: 'Fatura de janeiro paga com sucesso', time: '3d atrás' }
+            ]);
+
+            loadServices([
+                { name: 'SEO Automation', description: 'Otimização automática de SEO para seus sites', status: 'active', usage: 85, cost: 99, icon: '🔍' },
+                { name: 'Analytics Pro', description: 'Relatórios avançados de analytics', status: 'active', usage: 72, cost: 149, icon: '📊' }
+            ]);
+        }
+
+        // Action functions
+        function createNewProject() {
+            alert('Funcionalidade: Criar novo projeto\nEm breve será implementada a interface completa para criação de projetos.');
+        }
+
+        function exploreServices() {
+            window.location.href = '/dashboard/servicos/loja';
+        }
+
+        function viewAnalytics() {
+            window.location.href = '/dashboard/analytics';
+        }
+
+        function getSupport() {
+            window.location.href = '/dashboard/suporte';
+        }
+
+        // Initialize
+        loadDashboardData();
     </script>
-</DashboardLayout>
+</ClientLayout>

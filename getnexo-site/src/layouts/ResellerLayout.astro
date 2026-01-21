@@ -1,158 +1,426 @@
 ---
+export interface Props {
+	title: string;
+}
+
 const { title } = Astro.props;
-const nonce = Astro.locals.nonce;
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{title} | GetNexo Partner</title>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <style is:global>
-        :root {
-            --void-black: #050505;
-            --neon-blue: #00f3ff;
-            --cyber-gold: #ffd700;
-            --matrix-green: #00ff41;
-            --urgency-red: #ff003c;
-            --muted: #64748b;
-        }
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Dashboard do Revendedor GetNexo - Gerencie seus clientes e maximize seus lucros">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
 
-        body {
-            background-color: var(--void-black);
-            color: #fff;
-            font-family: 'JetBrains Mono', monospace;
-            margin: 0;
-            display: flex;
-            height: 100vh;
-        }
+		<!-- Fonts -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 
-        .sidebar {
-            width: 250px;
-            border-right: 1px solid var(--cyber-gold);
-            padding: 2rem 1rem;
-            display: flex;
-            flex-direction: column;
-        }
+		<!-- Styles -->
+		<style>
+			* {
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+			}
 
-        .brand {
-            font-size: 1.2rem;
-            color: var(--cyber-gold);
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-            margin-bottom: 3rem;
-            text-transform: uppercase;
-            font-weight: bold;
-        }
+			body {
+				font-family: 'JetBrains Mono', monospace;
+				background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+				color: white;
+				min-height: 100vh;
+				line-height: 1.6;
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale;
+			}
 
-        .nav-item {
-            display: block;
-            padding: 1rem;
-            color: var(--muted);
-            text-decoration: none;
-            border: 1px solid transparent;
-            margin-bottom: 0.5rem;
-            transition: 0.3s;
-        }
+			/* Reseller-specific navbar */
+			.reseller-nav {
+				background: rgba(15, 23, 42, 0.95);
+				backdrop-filter: blur(20px);
+				border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+				padding: 1rem 2rem;
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				z-index: 1000;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
 
-        .nav-item:hover, .nav-item.active {
-            color: var(--void-black);
-            background: var(--cyber-gold);
-            box-shadow: 0 0 15px var(--cyber-gold);
-            border-color: var(--cyber-gold);
-            font-weight: bold;
-        }
+			.nav-brand {
+				display: flex;
+				align-items: center;
+				gap: 1rem;
+				font-size: 1.5rem;
+				font-weight: 700;
+				color: #00ff9d;
+			}
 
-        .main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+			.nav-brand img {
+				width: 40px;
+				height: 40px;
+				border-radius: 8px;
+			}
 
-        .header {
-            height: 80px;
-            border-bottom: 1px solid var(--neon-blue);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 2rem;
-            background: rgba(0, 243, 255, 0.02);
-        }
+			.nav-links {
+				display: flex;
+				gap: 2rem;
+				align-items: center;
+			}
 
-        .balance-badge {
-            border: 1px solid var(--matrix-green);
-            color: var(--matrix-green);
-            padding: 0.5rem 1rem;
-            box-shadow: 0 0 10px rgba(0,255,65,0.2);
-            font-weight: bold;
-        }
+			.nav-link {
+				color: #94a3b8;
+				text-decoration: none;
+				font-weight: 600;
+				transition: color 0.3s ease;
+				padding: 0.5rem 1rem;
+				border-radius: 8px;
+			}
 
-        .content {
-            flex: 1;
-            padding: 2rem;
-            overflow-y: auto;
-        }
+			.nav-link:hover,
+			.nav-link.active {
+				color: #00ff9d;
+				background: rgba(0, 255, 157, 0.1);
+			}
 
-        /* Utils */
-        .text-cyber-gold { color: var(--cyber-gold); }
-        .text-neon-blue { color: var(--neon-blue); }
-        .bg-void-black { background: var(--void-black); }
-        .border-neon-blue { border-color: var(--neon-blue); }
-        .border-matrix-green { border-color: var(--matrix-green); }
-        .text-muted { color: var(--muted); }
-        .text-urgency-red { color: var(--urgency-red); }
-    </style>
-</head>
-<body>
+			.user-menu {
+				display: flex;
+				align-items: center;
+				gap: 1rem;
+			}
 
-    <aside class="sidebar">
-        <div class="brand">GETNEXO // PARTNER</div>
-        <nav>
-            <a href="/revenda/dash" class="nav-item">DASHBOARD</a>
-            <a href="/revenda/clientes" class="nav-item">CLIENTES</a>
-            <a href="/revenda/equipe" class="nav-item">EQUIPE</a>
-            <a href="/revenda/codigos" class="nav-item">CÓDIGOS</a>
-            <a href="/revenda/gerar" class="nav-item">GERAR PLUGIN [+]</a>
-            <a href="/revenda/comissoes" class="nav-item">COMISSÕES</a>
-            <a href="/revenda/material" class="nav-item">MATERIAL</a>
-        </nav>
-    </aside>
+			.user-avatar {
+				width: 40px;
+				height: 40px;
+				border-radius: 50%;
+				border: 2px solid #00ff9d;
+				cursor: pointer;
+			}
 
-    <div class="main">
-        <header class="header">
-            <div>
-                <span class="text-cyber-gold">STATUS: ELITE REVENDEDOR</span>
-            </div>
-            <div style="display:flex; gap:1rem; align-items:center;">
-                <div class="balance-badge">SALDO: R$ 1.247,00</div>
-                <button onclick="logout()" style="background:none; border:1px solid #333; color:#666; padding:0.5rem; cursor:pointer;">SAIR</button>
-            </div>
-        </header>
-        <div class="content">
-            <slot />
-        </div>
-    </div>
+			.user-dropdown {
+				position: absolute;
+				top: 100%;
+				right: 0;
+				background: rgba(15, 23, 42, 0.95);
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				border-radius: 8px;
+				min-width: 150px;
+				padding: 0.5rem 0;
+				box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+				display: none;
+				z-index: 1000;
+			}
 
-<script is:inline nonce={nonce}>
-    const path = window.location.pathname;
-    document.querySelectorAll('.nav-item').forEach(el => {
-        if(el.getAttribute('href') === path) el.classList.add('active');
-    });
+			.user-dropdown.show {
+				display: block;
+			}
 
-    function logout() {
-        if(confirm('Encerrar sessão??')) {
-            localStorage.removeItem('token');
-            window.location.href = '/login';
-        }
-    }
+			.dropdown-item {
+				display: flex;
+				align-items: center;
+				gap: 0.75rem;
+				padding: 0.75rem 1rem;
+				color: #cbd5e1;
+				text-decoration: none;
+				cursor: pointer;
+				transition: all 0.2s ease;
+			}
 
-    // Auth Guard
-    if (!localStorage.getItem('token')) {
-        window.location.href = '/login';
-    }
-</script>
+			.dropdown-item:hover {
+				background: rgba(255, 255, 255, 0.05);
+				color: #00ff9d;
+			}
 
-</body>
+			.notification-badge {
+				background: #f59e0b;
+				color: black;
+				border-radius: 50%;
+				width: 20px;
+				height: 20px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 0.7rem;
+				font-weight: 700;
+				position: relative;
+				top: -8px;
+				right: -8px;
+			}
+
+			/* Sidebar */
+			.reseller-sidebar {
+				position: fixed;
+				left: 0;
+				top: 80px;
+				width: 280px;
+				height: calc(100vh - 80px);
+				background: rgba(15, 23, 42, 0.95);
+				backdrop-filter: blur(20px);
+				border-right: 1px solid rgba(255, 255, 255, 0.1);
+				padding: 2rem 1.5rem;
+				overflow-y: auto;
+			}
+
+			.sidebar-section {
+				margin-bottom: 2rem;
+			}
+
+			.sidebar-title {
+				color: #94a3b8;
+				font-size: 0.8rem;
+				font-weight: 600;
+				text-transform: uppercase;
+				letter-spacing: 0.5px;
+				margin-bottom: 1rem;
+			}
+
+			.sidebar-link {
+				display: flex;
+				align-items: center;
+				gap: 1rem;
+				padding: 0.75rem 1rem;
+				color: #cbd5e1;
+				text-decoration: none;
+				border-radius: 8px;
+				transition: all 0.3s ease;
+				margin-bottom: 0.25rem;
+			}
+
+			.sidebar-link:hover,
+			.sidebar-link.active {
+				background: rgba(0, 255, 157, 0.1);
+				color: #00ff9d;
+			}
+
+			.sidebar-link.active {
+				background: rgba(0, 212, 255, 0.2);
+				color: #00d4ff;
+				border-left: 3px solid #00d4ff;
+			}
+
+			.sidebar-icon {
+				font-size: 1.2rem;
+				width: 20px;
+				text-align: center;
+			}
+
+			/* Main content */
+			.main-content {
+				margin-left: 280px;
+				margin-top: 80px;
+				min-height: calc(100vh - 80px);
+				background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+			}
+
+			/* Mobile responsiveness */
+			@media (max-width: 1024px) {
+				.reseller-sidebar {
+					transform: translateX(-100%);
+					transition: transform 0.3s ease;
+				}
+
+				.reseller-sidebar.open {
+					transform: translateX(0);
+				}
+
+				.main-content {
+					margin-left: 0;
+				}
+
+				.mobile-menu-btn {
+					display: block;
+				}
+			}
+
+			.mobile-menu-btn {
+				display: none;
+				background: none;
+				border: none;
+				color: #00ff9d;
+				font-size: 1.5rem;
+				cursor: pointer;
+			}
+
+			/* Loading animation */
+			@keyframes pulse {
+				0%, 100% { opacity: 1; }
+				50% { opacity: 0.5; }
+			}
+
+			.loading {
+				animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+			}
+		</style>
+	</head>
+	<body>
+		<!-- Navigation -->
+		<nav class="reseller-nav">
+			<div class="nav-brand">
+				<button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+				<img src="/assets/scarcity_engine.js" alt="GetNexo" style="display: none;">
+				<span>🏪 GetNexo Revendas</span>
+			</div>
+
+			<div class="nav-links">
+				<a href="/revenda/dash" class="nav-link active">Dashboard</a>
+				<a href="/revenda/clientes" class="nav-link">Clientes</a>
+				<a href="/revenda/comissoes" class="nav-link">Comissões</a>
+				<a href="/revenda/marketing" class="nav-link">Marketing</a>
+			</div>
+
+			<div class="user-menu">
+				<div style="position: relative;">
+					<span class="notification-badge">3</span>
+					<span style="font-size: 1.2rem; cursor: pointer;">🔔</span>
+				</div>
+				<img src="https://ui-avatars.com/api/?name=Revendedor&background=00ff9d&color=000" alt="Avatar" class="user-avatar" onclick="toggleUserMenu()">
+				<div id="user-dropdown" class="user-dropdown">
+					<div class="dropdown-item" onclick="logout()">
+						<span>🚪</span> Sair
+					</div>
+				</div>
+			</div>
+		</nav>
+
+		<!-- Sidebar -->
+		<aside class="reseller-sidebar" id="sidebar">
+			<!-- Overview -->
+			<div class="sidebar-section">
+				<div class="sidebar-title">Visão Geral</div>
+				<a href="/revenda/dash" class="sidebar-link active">
+					<span class="sidebar-icon">📊</span>
+					Dashboard
+				</a>
+				<a href="/revenda/analytics" class="sidebar-link">
+					<span class="sidebar-icon">📈</span>
+					Analytics
+				</a>
+				<a href="/revenda/relatorios" class="sidebar-link">
+					<span class="sidebar-icon">📋</span>
+					Relatórios
+				</a>
+			</div>
+
+			<!-- Client Management -->
+			<div class="sidebar-section">
+				<div class="sidebar-title">Clientes</div>
+				<a href="/revenda/clientes" class="sidebar-link">
+					<span class="sidebar-icon">👥</span>
+					Todos os Clientes
+				</a>
+				<a href="/revenda/clientes/novo" class="sidebar-link">
+					<span class="sidebar-icon">➕</span>
+					Novo Cliente
+				</a>
+				<a href="/revenda/clientes/ativos" class="sidebar-link">
+					<span class="sidebar-icon">✅</span>
+					Clientes Ativos
+				</a>
+				<a href="/revenda/clientes/inativos" class="sidebar-link">
+					<span class="sidebar-icon">⏸️</span>
+					Inativos
+				</a>
+			</div>
+
+			<!-- Commissions -->
+			<div class="sidebar-section">
+				<div class="sidebar-title">Financeiro</div>
+				<a href="/revenda/comissoes" class="sidebar-link">
+					<span class="sidebar-icon">💰</span>
+					Comissões
+				</a>
+				<a href="/revenda/pagamentos" class="sidebar-link">
+					<span class="sidebar-icon">💳</span>
+					Pagamentos
+				</a>
+				<a href="/revenda/extratos" class="sidebar-link">
+					<span class="sidebar-icon">📄</span>
+					Extratos
+				</a>
+			</div>
+
+			<!-- Marketing Tools -->
+			<div class="sidebar-section">
+				<div class="sidebar-title">Marketing</div>
+				<a href="/revenda/marketing/links" class="sidebar-link">
+					<span class="sidebar-icon">🔗</span>
+					Links de Indicação
+				</a>
+				<a href="/revenda/marketing/materiais" class="sidebar-link">
+					<span class="sidebar-icon">🎨</span>
+					Materiais
+				</a>
+				<a href="/revenda/marketing/landing" class="sidebar-link">
+					<span class="sidebar-icon">📄</span>
+					Landing Pages
+				</a>
+			</div>
+
+			<!-- Support -->
+			<div class="sidebar-section">
+				<div class="sidebar-title">Suporte</div>
+				<a href="/revenda/suporte" class="sidebar-link">
+					<span class="sidebar-icon">🆘</span>
+					Central de Ajuda
+				</a>
+				<a href="/revenda/contato" class="sidebar-link">
+					<span class="sidebar-icon">📞</span>
+					Contato
+				</a>
+			</div>
+		</aside>
+
+		<!-- Main Content -->
+		<main class="main-content">
+			<slot />
+		</main>
+
+		<!-- Scripts -->
+		<script>
+			function toggleSidebar() {
+				const sidebar = document.getElementById('sidebar');
+				sidebar.classList.toggle('open');
+			}
+
+			function toggleUserMenu() {
+				const dropdown = document.getElementById('user-dropdown');
+				dropdown.classList.toggle('show');
+			}
+
+			function logout() {
+				localStorage.removeItem('token');
+				localStorage.removeItem('user');
+				window.location.href = '/login';
+			}
+
+			// Close dropdown when clicking outside
+			document.addEventListener('click', (e) => {
+				const dropdown = document.getElementById('user-dropdown');
+				const avatar = document.querySelector('.user-avatar');
+				if (dropdown && avatar && !dropdown.contains(e.target) && !avatar.contains(e.target)) {
+					dropdown.classList.remove('show');
+				}
+			});
+
+			// Close sidebar on mobile when clicking outside
+			document.addEventListener('click', (e) => {
+				const sidebar = document.getElementById('sidebar');
+				const menuBtn = document.querySelector('.mobile-menu-btn');
+
+				if (window.innerWidth <= 1024 &&
+					!sidebar.contains(e.target) &&
+					!menuBtn.contains(e.target)) {
+					sidebar.classList.remove('open');
+				}
+			});
+		</script>
+	</body>
 </html>

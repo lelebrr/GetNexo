@@ -235,24 +235,61 @@
     }
 
     // Haptic UI Soundscape
-    const playSound = (freq = 440, duration = 0.1) => {
-        try {
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            oscillator.frequency.value = freq;
-            gainNode.gain.setValueAtTime(0.02, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
-            oscillator.start();
-            oscillator.stop(audioCtx.currentTime + duration);
-        } catch (e) { }
+    let audioCtx = null;
+    const getAudioContext = () => {
+        if (!audioCtx) {
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            } catch (e) {
+                console.warn('AudioContext not supported');
+                return null;
+            }
+        }
+        return audioCtx;
     };
 
+    const playSound = (freq = 440, duration = 0.1) => {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+
+        try {
+            // Resume context if suspended (required after user gesture)
+            if (ctx.state === 'suspended') {
+                ctx.resume().then(() => {
+                    createSound(ctx, freq, duration);
+                });
+            } else {
+                createSound(ctx, freq, duration);
+            }
+        } catch (e) {
+            console.warn('Audio playback failed:', e.message);
+        }
+    };
+
+    const createSound = (ctx, freq, duration) => {
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+        oscillator.frequency.value = freq;
+        gainNode.gain.setValueAtTime(0.02, ctx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+        oscillator.start();
+        oscillator.stop(ctx.currentTime + duration);
+    };
+
+    // Só tocar som após interação do usuário
+    let userInteracted = false;
+    document.addEventListener('click', () => { userInteracted = true; }, { once: true });
+    document.addEventListener('keydown', () => { userInteracted = true; }, { once: true });
+
     document.querySelectorAll('a, button').forEach(el => {
-        el.addEventListener('mouseenter', () => playSound(1200, 0.05));
-        el.addEventListener('click', () => playSound(800, 0.2));
+        el.addEventListener('mouseenter', () => {
+            if (userInteracted) playSound(1200, 0.05);
+        });
+        el.addEventListener('click', () => {
+            if (userInteracted) playSound(800, 0.2);
+        });
     });
 
     // Page Transition Effect
@@ -315,7 +352,7 @@
     if (langBtn && langDropdown) {
         langBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            langDropdown.classList.toggle('active');
+            langDropdown.classList.toggle('show');
         });
 
         document.addEventListener('click', () => {
@@ -326,15 +363,18 @@
             opt.addEventListener('click', (e) => {
                 e.preventDefault();
                 const lang = opt.dataset.lang;
-                const flag = opt.textContent.split(' ')[0];
+                const img = opt.querySelector('img');
 
                 // Update UI
-                currentLangFlag.textContent = flag;
+                if (img) currentLangFlag.src = img.src;
                 currentLangCode.textContent = lang.split('-')[0].toUpperCase();
 
                 // Here you would implement actual translation logic
                 // For now, we just update the UI
                 localStorage.setItem('getnexo-lang', lang);
+
+                // Reload page to apply changes (simulated for now)
+                location.reload();
             });
         });
 
@@ -343,7 +383,8 @@
         if (savedLang) {
             const opt = document.querySelector(`.lang-option[data-lang="${savedLang}"]`);
             if (opt) {
-                currentLangFlag.textContent = opt.textContent.split(' ')[0];
+                const img = opt.querySelector('img');
+                if (img) currentLangFlag.src = img.src;
                 currentLangCode.textContent = savedLang.split('-')[0].toUpperCase();
             }
         }

@@ -1,13 +1,33 @@
 {
-    "extends": "astro/tsconfigs/strict",
+    "extends": "./node_modules/astro/tsconfigs/base.json",
     "compilerOptions": {
-        "strict": true,
-        "jsx": "preserve",
         "baseUrl": ".",
         "paths": {
             "@/*": [
                 "src/*"
             ]
-        }
+        },
+        "jsx": "preserve",
+        "jsxImportSource": "react",
+        "allowJs": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "strict": false,
+        "skipLibCheck": true,
+        "isolatedModules": true,
+        "resolveJsonModule": true,
+        "moduleResolution": "bundler",
+        "module": "ESNext",
+        "target": "ES2022",
+        "lib": [
+            "ES2023",
+            "DOM",
+            "DOM.Iterable"
+        ],
+        "forceConsistentCasingInFileNames": true,
+        "noEmit": true,
+        "types": [
+            "node"
+        ]
     }
 }

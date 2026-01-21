@@ -2,7 +2,7 @@
  * Multi-Layer Caching Engine (Redis, Memcached)
  * Implementa cache hierárquico com invalidação e estratégias avançadas
  */
-class CachingEngine {
+export class CachingEngine {
     constructor() {
         this.layers = new Map(); // Camadas de cache
         this.strategies = new Map(); // Estratégias de cache
@@ -419,4 +419,4 @@ class CachingEngine {
 // Singleton instance
 const cachingEngine = new CachingEngine();
 
-module.exports = cachingEngine;
+export default cachingEngine;

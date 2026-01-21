@@ -1,333 +1,422 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import ClientLayout from '../layouts/ClientLayout.astro';
 ---
 
-<Layout title="Login | GetNexo">
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - GetNexo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #00d4ff;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #cbd5e1;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: #64748b;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: linear-gradient(135deg, #00d4ff, #00ff9d);
+            border: none;
+            border-radius: 8px;
+            color: black;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 1.5rem 0;
+            position: relative;
+            color: #64748b;
+            font-size: 0.8rem;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .divider span {
+            background: rgba(15, 23, 42, 0.9);
+            padding: 0 1rem;
+        }
+
+        .demo-accounts {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .demo-accounts h3 {
+            color: #00ff9d;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .demo-account {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 6px;
+            margin-bottom: 0.25rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .demo-account:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .demo-account:last-child {
+            margin-bottom: 0;
+        }
+
+        .demo-label {
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .demo-creds {
+            font-size: 0.8rem;
+            color: #00d4ff;
+            font-weight: 500;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .success-message {
+            background: rgba(0, 255, 157, 0.1);
+            border: 1px solid rgba(0, 255, 157, 0.2);
+            color: #00ff9d;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #00d4ff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 1.5rem;
+                margin: 10px;
+            }
+
+            .login-header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
     <div class="login-container">
-        <div class="glass-panel login-card">
-            <div class="logo-area">
-                <div class="logo-icon">N</div>
-                <h1>Get<span>Nexo</span></h1>
+        <div class="login-header">
+            <h1>🚀 GetNexo</h1>
+            <p>Acesse sua conta</p>
+        </div>
+
+        <div id="error-message" class="error-message"></div>
+        <div id="success-message" class="success-message"></div>
+
+        <form id="login-form">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="seu@email.com" required>
             </div>
 
-            <p class="subtitle">Acesse sua conta</p>
-
-            <div class="login-options">
-                <div class="option-card" onclick="redirectToLogin('user')">
-                    <div class="option-icon">👤</div>
-                    <h3>Usuário</h3>
-                    <p>Dashboard de usuário e configurações pessoais</p>
-                </div>
-
-                <div class="option-card" onclick="redirectToLogin('partner')">
-                    <div class="option-icon">🤝</div>
-                    <h3>Parceiro/Revendedor</h3>
-                    <p>Painel de revendas e gestão de clientes</p>
-                </div>
-
-                <div class="option-card admin-option" onclick="redirectToLogin('admin')">
-                    <div class="option-icon">⚙️</div>
-                    <h3>Administrador</h3>
-                    <p>Centro de controle e configurações do sistema</p>
-                </div>
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input type="password" id="password" name="password" placeholder="••••••••" required>
             </div>
 
-            <div class="alternative-login">
-                <p>Ou faça login com:</p>
-                <div class="social-login">
-                    <button class="social-btn google-btn" onclick="loginWithGoogle()">
-                        <svg width="18" height="18" viewBox="0 0 24 24">
-                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                        </svg>
-                        Google
-                    </button>
-                    <button class="social-btn github-btn" onclick="loginWithGitHub()">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                        </svg>
-                        GitHub
-                    </button>
-                </div>
+            <button type="submit" class="login-btn" id="login-btn">
+                Entrar
+            </button>
+        </form>
+
+        <div class="divider">
+            <span>Contas de Demonstração</span>
+        </div>
+
+        <div class="demo-accounts">
+            <h3>👤 Clique para preencher automaticamente:</h3>
+
+            <div class="demo-account" onclick="fillDemo('admin')">
+                <div class="demo-label">Admin</div>
+                <div class="demo-creds">admin@getnexo.local</div>
             </div>
 
-            <div class="login-footer">
-                <p>Ainda não tem conta? <a href="/criar-bot">Criar gratuitamente</a></p>
+            <div class="demo-account" onclick="fillDemo('reseller')">
+                <div class="demo-label">Revendedor</div>
+                <div class="demo-creds">revendedor@getnexo.com</div>
+            </div>
+
+            <div class="demo-account" onclick="fillDemo('client')">
+                <div class="demo-label">Cliente</div>
+                <div class="demo-creds">cliente@getnexo.com</div>
             </div>
         </div>
     </div>
-</Layout>
 
-<style>
-    .login-container {
-        min-height: 90vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: radial-gradient(circle at center, #111827 0%, #030712 100%);
-        padding: 2rem;
-    }
+    <script>
+        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '/api-proxy';
 
-    .login-card {
-        width: 100%;
-        max-width: 480px;
-        padding: 3rem 2.5rem;
-        border-radius: 24px;
-        border: 1px solid rgba(0, 212, 255, 0.1);
-        text-align: center;
-        position: relative;
-        overflow: hidden;
-    }
+        const demoAccounts = {
+            admin: { email: 'lelebrr@gmail.com', password: '@Marlboro123#' },
+            reseller: { email: 'revendedor@getnexo.com', password: 'reseller123' },
+            client: { email: 'cliente@getnexo.com', password: 'cliente123' }
+        };
 
-    .login-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, #00d4ff, transparent);
-        animation: scanLine 3s linear infinite;
-    }
-
-    @keyframes scanLine {
-        0% { left: -100%; }
-        100% { left: 100%; }
-    }
-
-    .logo-area {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
-
-    .logo-icon {
-        width: 50px;
-        height: 50px;
-        background: linear-gradient(135deg, #00d4ff, #00ff9d);
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 900;
-        color: black;
-        font-size: 1.5rem;
-        box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
-    }
-
-    h1 {
-        margin: 0;
-        font-size: 2rem;
-        font-weight: 800;
-        color: white;
-    }
-
-    h1 span { color: #00ff9d; }
-
-    .subtitle {
-        color: #94a3b8;
-        margin-bottom: 3rem;
-        font-size: 1.1rem;
-    }
-
-    .login-options {
-        display: grid;
-        gap: 1.5rem;
-        margin-bottom: 3rem;
-    }
-
-    .option-card {
-        background: rgba(15, 23, 42, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 16px;
-        padding: 2rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-align: center;
-    }
-
-    .option-card:hover {
-        transform: translateY(-5px);
-        border-color: rgba(0, 212, 255, 0.3);
-        box-shadow: 0 10px 30px rgba(0, 212, 255, 0.1);
-    }
-
-    .option-card.admin-option {
-        background: rgba(0, 212, 255, 0.05);
-        border-color: rgba(0, 212, 255, 0.2);
-    }
-
-    .option-icon {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-    }
-
-    .option-card h3 {
-        color: white;
-        font-size: 1.3rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-    }
-
-    .option-card p {
-        color: #94a3b8;
-        font-size: 0.9rem;
-        line-height: 1.5;
-        margin: 0;
-    }
-
-    .alternative-login {
-        margin-bottom: 2rem;
-    }
-
-    .alternative-login p {
-        color: #64748b;
-        font-size: 0.9rem;
-        margin-bottom: 1rem;
-    }
-
-    .social-login {
-        display: flex;
-        gap: 1rem;
-        justify-content: center;
-    }
-
-    .social-btn {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.8rem 1.5rem;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 10px;
-        background: rgba(255, 255, 255, 0.05);
-        color: white;
-        font-size: 0.9rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .social-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0, 212, 255, 0.2);
-    }
-
-    .google-btn:hover {
-        border-color: #4285F4;
-        box-shadow: 0 5px 15px rgba(66, 133, 244, 0.3);
-    }
-
-    .github-btn:hover {
-        border-color: #333;
-        box-shadow: 0 5px 15px rgba(51, 51, 51, 0.3);
-    }
-
-    .login-footer {
-        padding-top: 2rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .login-footer p {
-        color: #64748b;
-        font-size: 0.9rem;
-        margin: 0;
-    }
-
-    .login-footer a {
-        color: #00d4ff;
-        text-decoration: none;
-        font-weight: 600;
-    }
-
-    .login-footer a:hover {
-        text-decoration: underline;
-    }
-
-    @media (max-width: 768px) {
-        .login-container {
-            padding: 1rem;
+        function fillDemo(type) {
+            const account = demoAccounts[type];
+            if (account) {
+                document.getElementById('email').value = account.email;
+                document.getElementById('password').value = account.password;
+            }
         }
 
-        .login-card {
-            padding: 2rem 1.5rem;
+        async function login(email, password) {
+            try {
+                const response = await fetch(`${API_URL}/api/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.token) {
+                    // Store token
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+
+                    // Show success message
+                    showMessage('success', 'Login realizado com sucesso! Redirecionando...');
+
+                    // Redirect based on user type
+                    setTimeout(() => {
+                        if (data.user.email === 'lelebrr@gmail.com') {
+                            window.location.href = '/admin';
+                        } else if (data.user.email === 'revendedor@getnexo.com') {
+                            window.location.href = '/revenda/dash';
+                        } else {
+                            window.location.href = '/dashboard';
+                        }
+                    }, 1500);
+
+                    return true;
+                } else {
+                    throw new Error(data.error || 'Erro no login');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                throw error;
+            }
         }
 
-        .login-options {
-            gap: 1rem;
+        function showMessage(type, message) {
+            const errorDiv = document.getElementById('error-message');
+            const successDiv = document.getElementById('success-message');
+
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+
+            if (type === 'error') {
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+            } else if (type === 'success') {
+                successDiv.textContent = message;
+                successDiv.style.display = 'block';
+            }
         }
 
-        .option-card {
-            padding: 1.5rem;
+        function setLoading(loading) {
+            const btn = document.getElementById('login-btn');
+            const form = document.getElementById('login-form');
+
+            if (loading) {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="loading"></span>Entrando...';
+                // Disable form inputs
+                form.querySelectorAll('input').forEach(input => input.disabled = true);
+            } else {
+                btn.disabled = false;
+                btn.textContent = 'Entrar';
+                // Enable form inputs
+                form.querySelectorAll('input').forEach(input => input.disabled = false);
+            }
         }
 
-        .social-login {
-            flex-direction: column;
-        }
-
-        .social-btn {
-            justify-content: center;
-        }
-    }
-</style>
-
-<script is:inline>
-    function redirectToLogin(userType) {
-        const currentUrl = new URL(window.location.href);
-        const params = new URLSearchParams(currentUrl.search);
-
-        // Adicionar tipo de usuário aos parâmetros
-        params.set('type', userType);
-
-        // Redirecionar baseado no tipo
-        switch(userType) {
-            case 'admin':
-                window.location.href = `/admin/login?${params.toString()}`;
-                break;
-            case 'partner':
-                // Por enquanto redireciona para o dashboard de revenda existente
-                window.location.href = `/revenda/dash?${params.toString()}`;
-                break;
-            case 'user':
-            default:
-                // Por enquanto redireciona para o dashboard principal
-                window.location.href = `/dashboard?${params.toString()}`;
-                break;
-        }
-    }
-
-    function loginWithGoogle() {
-        // Redirecionar para autenticação Google
-        window.location.href = '/api/auth/google';
-    }
-
-    function loginWithGitHub() {
-        // Redirecionar para autenticação GitHub
-        window.location.href = '/api/auth/github';
-    }
-
-    // Verificar se há parâmetros na URL e redirecionar automaticamente
-    document.addEventListener('DOMContentLoaded', () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const userType = urlParams.get('type');
-
-        if (userType && ['admin', 'partner', 'user'].includes(userType)) {
-            redirectToLogin(userType);
-        }
-
-        // Adicionar efeito de hover nos cards
-        const cards = document.querySelectorAll('.option-card');
-        cards.forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                card.style.transform = 'translateY(-8px) scale(1.02)';
-            });
-
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'translateY(0) scale(1)';
-            });
+        // Check if already logged in
+        window.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                // Verify token is still valid
+                fetch(`${API_URL}/api/dashboard`, {
+                    headers: { 'Authorization': token }
+                }).then(response => {
+                    if (response.ok) {
+                        // Token is valid, redirect to dashboard
+                        const user = JSON.parse(localStorage.getItem('user') || '{}');
+                        if (user.email === 'lelebrr@gmail.com') {
+                            window.location.href = '/admin';
+                        } else if (user.email === 'revendedor@getnexo.com') {
+                            window.location.href = '/revenda/dash';
+                        } else {
+                            window.location.href = '/dashboard';
+                        }
+                    }
+                }).catch(() => {
+                    // Token invalid, stay on login page
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                });
+            }
         });
-    });
-</script>
+
+        // Handle form submission
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) {
+                showMessage('error', 'Preencha todos os campos');
+                return;
+            }
+
+            setLoading(true);
+            showMessage('error', ''); // Clear previous errors
+
+            try {
+                await login(email, password);
+            } catch (error) {
+                showMessage('error', error.message || 'Erro ao fazer login. Verifique suas credenciais.');
+                setLoading(false);
+            }
+        });
+    </script>
+</body>
+</html>

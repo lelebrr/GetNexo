@@ -3,7 +3,7 @@
  * Motores para diversos tipos de modelos de Machine Learning
  */
 
-class MLModelsEngine {
+export class MLModelsEngine {
     constructor() {
         this.models = new Map();
         this.recommendationModels = new Map();
@@ -19,6 +19,8 @@ class MLModelsEngine {
         this.modelVersions = new Map();
         this.experiments = new Map();
     }
+    // ... [rest of file is handled by target matching, but I need to do this carefully]
+
 
     /**
      * Cria modelo de Machine Learning
@@ -706,4 +708,4 @@ class MLModelsEngine {
 // Singleton instance
 const mlModelsEngine = new MLModelsEngine();
 
-module.exports = mlModelsEngine;
+export default mlModelsEngine;

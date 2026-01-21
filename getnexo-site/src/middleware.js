@@ -217,7 +217,7 @@ export const onRequest = async (context, next) => {
     // - whitelists getnexo domains for API and Widget loading
     const csp = [
         "default-src 'self'",
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.cloudflare.com static.cloudflareinsights.com https://api.getnexo.com.br https://*.getnexo.com.br; object-src 'none'; base-uri 'none';",
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.cloudflare.com static.cloudflareinsights.com https://cdn.jsdelivr.net https://api.getnexo.com.br https://*.getnexo.com.br; object-src 'none'; base-uri 'none';",
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
         "img-src * data:",
         "font-src 'self' https://fonts.gstatic.com",

@@ -1,0 +1,234 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+---
+
+<DashboardLayout title="Configurações | OmniNexo">
+    <div style="display:flex; flex-direction:column; gap:2rem;">
+
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h1 style="font-size:1.8rem; font-weight:800; color:white; margin:0;">Configurações</h1>
+            <button style="background:var(--neon-blue); color:black; font-weight:800; border:none; padding:10px 20px; border-radius:8px; cursor:pointer;">
+                Salvar Alterações
+            </button>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:2rem;">
+
+            <!-- General Settings -->
+            <div class="glass-panel" style="padding:2rem;">
+                <h3 style="color:white; font-size:1.3rem; margin:0 0 2rem;">Configurações Gerais</h3>
+
+                <div style="display:flex; flex-direction:column; gap:1.5rem;">
+
+                    <div>
+                        <label style="display:block; color:#e5e7eb; font-size:0.9rem; font-weight:600; margin-bottom:0.5rem;">Idioma</label>
+                        <select style="width:100%; padding:0.8rem; background:rgba(15,23,42,0.6); border:1px solid #334155; border-radius:8px; color:white;">
+                            <option value="pt-BR" selected>Português (Brasil)</option>
+                            <option value="en-US">English (US)</option>
+                            <option value="es-ES">Español</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label style="display:block; color:#e5e7eb; font-size:0.9rem; font-weight:600; margin-bottom:0.5rem;">Fuso Horário</label>
+                        <select style="width:100%; padding:0.8rem; background:rgba(15,23,42,0.6); border:1px solid #334155; border-radius:8px; color:white;">
+                            <option value="America/Sao_Paulo" selected>America/São Paulo (GMT-3)</option>
+                            <option value="America/New_York">America/New York (GMT-5)</option>
+                            <option value="Europe/London">Europe/London (GMT+0)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label style="display:block; color:#e5e7eb; font-size:0.9rem; font-weight:600; margin-bottom:0.5rem;">Formato de Data</label>
+                        <select style="width:100%; padding:0.8rem; background:rgba(15,23,42,0.6); border:1px solid #334155; border-radius:8px; color:white;">
+                            <option value="DD/MM/YYYY" selected>DD/MM/YYYY</option>
+                            <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                            <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Notification Settings -->
+            <div class="glass-panel" style="padding:2rem;">
+                <h3 style="color:white; font-size:1.3rem; margin:0 0 2rem;">Notificações</h3>
+
+                <div style="display:flex; flex-direction:column; gap:1.5rem;">
+
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <div style="color:white; font-weight:600;">E-mail</div>
+                            <div style="color:#94a3b8; font-size:0.8rem;">Receber notificações por e-mail</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <div style="color:white; font-weight:600;">Push Notifications</div>
+                            <div style="color:#94a3b8; font-size:0.8rem;">Notificações no navegador</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <div style="color:white; font-weight:600;">Relatórios Semanais</div>
+                            <div style="color:#94a3b8; font-size:0.8rem;">Relatórios de performance</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- API & Integrations -->
+        <div class="glass-panel" style="padding:2rem;">
+            <h3 style="color:white; font-size:1.3rem; margin:0 0 2rem;">API & Integrações</h3>
+
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:1.5rem;">
+
+                <div style="padding:1.5rem; border:1px solid rgba(255,255,255,0.1); border-radius:12px;">
+                    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+                        <span style="font-size:1.5rem;">🔑</span>
+                        <div>
+                            <h4 style="color:white; margin:0; font-size:1rem;">Chave API</h4>
+                            <p style="color:#94a3b8; margin:0; font-size:0.8rem;">Gerencie sua chave de API</p>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:0.5rem;">
+                        <input type="text" value="sk-*****************************" readonly style="flex:1; padding:0.5rem; background:rgba(15,23,42,0.6); border:1px solid #334155; border-radius:6px; color:#94a3b8; font-size:0.8rem;" />
+                        <button style="background:var(--neon-blue); color:black; border:none; padding:0.5rem 1rem; border-radius:6px; cursor:pointer;">
+                            🔄
+                        </button>
+                    </div>
+                </div>
+
+                <div style="padding:1.5rem; border:1px solid rgba(255,255,255,0.1); border-radius:12px;">
+                    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+                        <span style="font-size:1.5rem;">🔗</span>
+                        <div>
+                            <h4 style="color:white; margin:0; font-size:1rem;">Webhooks</h4>
+                            <p style="color:#94a3b8; margin:0; font-size:0.8rem;">Configure webhooks para eventos</p>
+                        </div>
+                    </div>
+                    <button style="width:100%; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:white; padding:0.5rem; border-radius:6px; cursor:pointer;">
+                        Configurar Webhooks
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="glass-panel" style="padding:2rem; border:1px solid #dc2626;">
+            <h3 style="color:#dc2626; font-size:1.3rem; margin:0 0 2rem;">Zona de Perigo</h3>
+
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:1.5rem;">
+
+                <div style="padding:1.5rem; border:1px solid rgba(220,38,38,0.3); border-radius:12px; background:rgba(220,38,38,0.05);">
+                    <h4 style="color:#dc2626; margin:0 0 1rem; font-size:1rem;">Excluir Conta</h4>
+                    <p style="color:#94a3b8; margin:0 0 1rem; font-size:0.8rem;">
+                        Esta ação não pode ser desfeita. Todos os dados serão permanentemente removidos.
+                    </p>
+                    <button style="background:#dc2626; color:white; border:none; padding:0.5rem 1rem; border-radius:6px; cursor:pointer; font-weight:600;">
+                        Excluir Conta
+                    </button>
+                </div>
+
+                <div style="padding:1.5rem; border:1px solid rgba(234,179,8,0.3); border-radius:12px; background:rgba(234,179,8,0.05);">
+                    <h4 style="color:#fbbf24; margin:0 0 1rem; font-size:1rem;">Exportar Dados</h4>
+                    <p style="color:#94a3b8; margin:0 0 1rem; font-size:0.8rem;">
+                        Baixe todos os seus dados em formato JSON.
+                    </p>
+                    <button style="background:#fbbf24; color:black; border:none; padding:0.5rem 1rem; border-radius:6px; cursor:pointer; font-weight:600;">
+                        Exportar Dados
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <style>
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #334155;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--neon-blue);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+    </style>
+
+    <script is:inline>
+        // Settings page interactions
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add form validation and save functionality
+            const saveBtn = document.querySelector('button[style*="background:var(--neon-blue)"]');
+            if(saveBtn) {
+                saveBtn.addEventListener('click', () => {
+                    alert('Configurações salvas com sucesso!');
+                });
+            }
+
+            // Handle switches
+            const switches = document.querySelectorAll('.switch input');
+            switches.forEach(switchEl => {
+                switchEl.addEventListener('change', (e) => {
+                    const setting = e.target.closest('.switch').previousElementSibling.querySelector('div:first-child').textContent;
+                    console.log(`${setting}: ${e.target.checked ? 'Ativado' : 'Desativado'}`);
+                });
+            });
+        });
+    </script>
+</DashboardLayout>

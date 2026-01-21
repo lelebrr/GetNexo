@@ -1,0 +1,601 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ProductCard from '../components/ProductCard.astro';
+
+// Carregar produtos
+const produtosResponse = await fetch('http://localhost:4321/demo/produtos.json');
+let produtos = {};
+try {
+  produtos = await produtosResponse.json();
+} catch (e) {
+  console.error('Erro ao carregar produtos:', e);
+}
+---
+
+<Layout title="Demo IA GetNexo - Assistente Inteligente">
+  <div class="min-h-screen bg-gradient-to-br from-void-black via-matrix-black to-neon-blue/10">
+    <!-- Header -->
+    <header class="border-b border-neon-blue/30 bg-void-black/80 backdrop-blur">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-4xl font-bold text-cyber-gold font-jetbrains">Demo IA GetNexo</h1>
+            <p class="text-neon-blue mt-2">Assistente inteligente com catálogo de produtos integrado</p>
+          </div>
+          <div class="text-right">
+            <div class="text-matrix-green text-sm">Status: Online</div>
+            <div class="text-neon-blue text-xs mt-1">IA Gemini + Catalogo JSON</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <!-- Chat Interface -->
+        <div class="lg:col-span-2">
+          <div class="bg-void-black/90 border border-neon-blue/50 rounded-2xl p-6 h-[600px] flex flex-col">
+            <div class="flex items-center mb-4">
+              <div class="w-3 h-3 bg-matrix-green rounded-full mr-3"></div>
+              <h2 class="text-xl text-cyber-gold font-jetbrains">Assistente IA</h2>
+            </div>
+
+            <!-- Chat Messages -->
+            <div id="chat-messages" class="flex-1 overflow-y-auto mb-4 space-y-4">
+              <!-- Mensagem inicial -->
+              <div class="flex justify-start">
+                <div class="bg-neon-blue/20 border border-neon-blue/50 rounded-2xl px-4 py-3 max-w-md">
+                  <p class="text-white text-sm">🚀 <strong>Olá! Bem-vindo à Demo IA do GetNexo!</strong></p>
+                  <p class="text-gray-300 text-xs mt-2">Eu sou um assistente inteligente capaz de:</p>
+                  <ul class="text-xs text-neon-blue mt-1 space-y-1">
+                    <li>• 💬 Conversar naturalmente sobre produtos</li>
+                    <li>• 🔍 Buscar itens em catálogo JSON</li>
+                    <li>• 🛒 Mostrar cards interativos com preços</li>
+                    <li>• 🔄 Exibir visualizações 360° dos produtos</li>
+                    <li>• 🤖 Usar IA para entender suas necessidades</li>
+                  </ul>
+                  <p class="text-cyber-gold text-xs mt-2 font-medium">💡 Teste comigo! Experimente dizer:</p>
+                  <div class="flex flex-wrap gap-1 mt-2">
+                    <button onclick="preencherMensagem('Quero um tênis branco tamanho 40')" class="bg-matrix-green/20 hover:bg-matrix-green/30 text-matrix-green text-xs px-2 py-1 rounded border border-matrix-green/30">Quero um tênis branco</button>
+                    <button onclick="preencherMensagem('Tem algum carro preto?')" class="bg-cyber-gold/20 hover:bg-cyber-gold/30 text-cyber-gold text-xs px-2 py-1 rounded border border-cyber-gold/30">Tem carro preto?</button>
+                    <button onclick="preencherMensagem('Procurando um PC gamer')" class="bg-neon-blue/20 hover:bg-neon-blue/30 text-neon-blue text-xs px-2 py-1 rounded border border-neon-blue/30">PC gamer barato</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Dicas Interativas -->
+              <div class="flex justify-start">
+                <div class="bg-void-black border border-matrix-green/50 rounded-2xl px-4 py-3 max-w-sm">
+                  <p class="text-matrix-green text-sm font-medium">🎯 Funcionalidades que você pode testar:</p>
+                  <div class="grid grid-cols-2 gap-2 mt-2 text-xs">
+                    <div class="bg-matrix-black/50 p-2 rounded">
+                      <span class="text-cyber-gold">🏠 Imóveis:</span><br/>
+                      <span class="text-gray-300">"Apartamento 2 quartos" ou "Casa em Moema"</span>
+                    </div>
+                    <div class="bg-matrix-black/50 p-2 rounded">
+                      <span class="text-cyber-gold">🚗 Carros:</span><br/>
+                      <span class="text-gray-300">"Onix branco" ou "HR-V preto"</span>
+                    </div>
+                    <div class="bg-matrix-black/50 p-2 rounded">
+                      <span class="text-cyber-gold">🛒 Peças:</span><br/>
+                      <span class="text-gray-300">"Filtro Civic" ou "Pastilhas freio"</span>
+                    </div>
+                    <div class="bg-matrix-black/50 p-2 rounded">
+                      <span class="text-cyber-gold">💻 Tech:</span><br/>
+                      <span class="text-gray-300">"iPhone 15" ou "RTX 4060"</span>
+                    </div>
+                    <div class="bg-matrix-black/50 p-2 rounded">
+                      <span class="text-cyber-gold">👟 Moda:</span><br/>
+                      <span class="text-gray-300">"Tênis Nike" ou "Jaqueta North"</span>
+                    </div>
+                    <div class="bg-matrix-black/50 p-2 rounded">
+                      <span class="text-cyber-gold">🍕 Comida:</span><br/>
+                      <span class="text-gray-300">"Pizza vegana" ou "Hambúrguer"</span>
+                    </div>
+                  </div>
+                  <p class="text-xs text-gray-400 mt-2">✨ A IA entende contexto e mostra produtos relevantes automaticamente!</p>
+                </div>
+              </div>
+
+              <!-- Status da IA -->
+              <div class="flex justify-start">
+                <div class="bg-gradient-to-r from-matrix-green/20 to-cyber-gold/20 border border-matrix-green/50 rounded-2xl px-4 py-3 max-w-xs">
+                  <div class="flex items-center space-x-2">
+                    <div class="w-2 h-2 bg-matrix-green rounded-full animate-pulse"></div>
+                    <p class="text-matrix-green text-xs font-medium">IA Online - Processando 25 produtos</p>
+                  </div>
+                  <p class="text-gray-300 text-xs mt-1">🔗 Conectado ao catálogo JSON em tempo real</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Chat Input -->
+            <div class="border-t border-neon-blue/30 pt-4">
+              <div class="flex space-x-3">
+                <input
+                  id="chat-input"
+                  type="text"
+                  placeholder="Digite sua pergunta sobre produtos..."
+                  class="flex-1 bg-matrix-black border border-neon-blue/50 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-cyber-gold"
+                  onkeydown="handleKeyPress(event)"
+                />
+                <button
+                  onclick="sendMessage()"
+                  class="bg-cyber-gold hover:bg-yellow-400 text-black px-6 py-3 rounded-xl font-medium transition-colors"
+                >
+                  📤 Enviar
+                </button>
+                <button
+                  onclick="iniciarVozChat()"
+                  class="bg-green-600 hover:bg-green-500 text-white px-6 py-3 rounded-xl font-medium transition-colors"
+                  id="voice-chat-btn"
+                  title="Falar em vez de digitar"
+                >
+                  🎤 Voz
+                </button>
+              </div>
+              <p class="text-xs text-gray-400 mt-2 text-center">💡 Experimente falar clicando no botão 🎤 ou digitando suas perguntas!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Showcase Interativo -->
+        <div class="space-y-6">
+          <div class="bg-void-black/90 border border-neon-blue/50 rounded-2xl p-6">
+            <h3 class="text-lg text-cyber-gold font-jetbrains mb-4">🎯 Produtos em Destaque</h3>
+            <p class="text-gray-400 text-sm mb-4">Clique para testar a busca inteligente!</p>
+            <div class="grid grid-cols-1 gap-4">
+
+              <!-- Produto Destaque 1 - Com Multimídia Completa -->
+              <div class="border border-matrix-green/30 rounded-lg p-4 bg-matrix-black/50 hover:bg-matrix-green/10 transition-colors cursor-pointer"
+                   onclick="mostrarProduto('carro', 0)">
+                <div class="flex items-center space-x-3">
+                  <div class="w-16 h-16 bg-gray-600 rounded flex items-center justify-center">
+                    <span class="text-2xl">🚗</span>
+                  </div>
+                  <div class="flex-1">
+                    <h4 class="text-cyber-gold text-sm font-medium">Cruze RS Turbo 2026</h4>
+                    <p class="text-neon-blue text-xs">Preto • R$ 129.990</p>
+                    <div class="flex items-center mt-1 flex-wrap gap-1">
+                      <span class="bg-red-600 text-white text-xs px-1 py-0.5 rounded">🎥 Vídeo</span>
+                      <span class="bg-purple-600 text-white text-xs px-1 py-0.5 rounded">🔊 Áudio</span>
+                      <span class="bg-blue-600 text-white text-xs px-1 py-0.5 rounded">🔄 360°</span>
+                      <span class="bg-green-600 text-white text-xs px-1 py-0.5 rounded">🎤 Voz</span>
+                      <span class="text-xs text-gray-400 ml-1">• Carros</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Produto Destaque 2 - Com Carrossel -->
+              <div class="border border-cyber-gold/30 rounded-lg p-4 bg-matrix-black/50 hover:bg-cyber-gold/10 transition-colors cursor-pointer"
+                   onclick="mostrarProduto('celular', 0)">
+                <div class="flex items-center space-x-3">
+                  <div class="w-16 h-16 bg-gray-600 rounded flex items-center justify-center">
+                    <span class="text-2xl">📱</span>
+                  </div>
+                  <div class="flex-1">
+                    <h4 class="text-cyber-gold text-sm font-medium">iPhone 15 128GB</h4>
+                    <p class="text-neon-blue text-xs">Azul • R$ 4.299</p>
+                    <div class="flex items-center mt-1 flex-wrap gap-1">
+                      <span class="bg-yellow-600 text-white text-xs px-1 py-0.5 rounded">📸 3 fotos</span>
+                      <span class="bg-red-600 text-white text-xs px-1 py-0.5 rounded">🎥 Vídeo</span>
+                      <span class="bg-blue-600 text-white text-xs px-1 py-0.5 rounded">🔄 360°</span>
+                      <span class="bg-green-600 text-white text-xs px-1 py-0.5 rounded">🎤 Voz</span>
+                      <span class="text-xs text-gray-400 ml-1">• Celulares</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Produto Destaque 3 - Básico -->
+              <div class="border border-neon-blue/30 rounded-lg p-4 bg-matrix-black/50 hover:bg-neon-blue/10 transition-colors cursor-pointer"
+                   onclick="mostrarProduto('computador', 0)">
+                <div class="flex items-center space-x-3">
+                  <div class="w-16 h-16 bg-gray-600 rounded flex items-center justify-center">
+                    <span class="text-2xl">💻</span>
+                  </div>
+                  <div class="flex-1">
+                    <h4 class="text-cyber-gold text-sm font-medium">PC Warrior i5 12ª</h4>
+                    <p class="text-neon-blue text-xs">RTX 3060 • R$ 4.990</p>
+                    <div class="flex items-center mt-1">
+                      <span class="text-gray-400 text-xs">Produto básico sem multimídia</span>
+                      <span class="text-xs text-gray-400 ml-2">• Computadores</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Produto Destaque 4 - Com 360° -->
+              <div class="border border-purple-600/30 rounded-lg p-4 bg-matrix-black/50 hover:bg-purple-600/10 transition-colors cursor-pointer"
+                   onclick="mostrarProduto('imobiliaria', 0)">
+                <div class="flex items-center space-x-3">
+                  <div class="w-16 h-16 bg-gray-600 rounded flex items-center justify-center">
+                    <span class="text-2xl">🏠</span>
+                  </div>
+                  <div class="flex-1">
+                    <h4 class="text-cyber-gold text-sm font-medium">Apê Moema 901</h4>
+                    <p class="text-neon-blue text-xs">2 quartos • R$ 780.000</p>
+                    <div class="flex items-center mt-1">
+                      <span class="bg-blue-600 text-white text-xs px-1 py-0.5 rounded">🔄 Tour 360°</span>
+                      <span class="text-xs text-gray-400 ml-2">• Imóveis</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Sugestões rápidas -->
+            <div class="mt-6 pt-4 border-t border-neon-blue/30">
+              <p class="text-gray-400 text-sm mb-3">💡 Sugestões rápidas para testar:</p>
+              <div class="grid grid-cols-2 gap-2">
+                <button onclick="preencherMensagem('apartamento 2 quartos')"
+                        class="bg-matrix-green/20 hover:bg-matrix-green/30 text-matrix-green text-xs px-3 py-2 rounded border border-matrix-green/30 transition-colors">
+                  🏠 Apartamento
+                </button>
+                <button onclick="preencherMensagem('PC gamer barato')"
+                        class="bg-cyber-gold/20 hover:bg-cyber-gold/30 text-cyber-gold text-xs px-3 py-2 rounded border border-cyber-gold/30 transition-colors">
+                  💻 PC Gamer
+                </button>
+                <button onclick="preencherMensagem('pizza vegana')"
+                        class="bg-neon-blue/20 hover:bg-neon-blue/30 text-neon-blue text-xs px-3 py-2 rounded border border-neon-blue/30 transition-colors">
+                  🍕 Pizza
+                </button>
+                <button onclick="preencherMensagem('filtro civic')"
+                        class="bg-matrix-green/20 hover:bg-matrix-green/30 text-matrix-green text-xs px-3 py-2 rounded border border-matrix-green/30 transition-colors">
+                  🔧 Peça Auto
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div class="bg-void-black/90 border border-neon-blue/50 rounded-2xl p-6">
+            <h3 class="text-lg text-cyber-gold font-jetbrains mb-4">Estatísticas Demo</h3>
+            <div class="space-y-2 text-sm">
+              <div class="flex justify-between">
+                <span class="text-gray-400">Produtos no catálogo:</span>
+                <span class="text-matrix-green" id="product-count">25</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-400">Categorias:</span>
+                <span class="text-matrix-green">6</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-400">Produtos com 360°:</span>
+                <span class="text-matrix-green">8</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal para produto -->
+  <div id="product-modal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center">
+    <div class="bg-void-black border border-neon-blue rounded-2xl p-6 max-w-md w-full mx-4">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl text-cyber-gold font-jetbrains">Produto Encontrado</h3>
+        <button onclick="fecharModal()" class="text-neon-blue text-2xl hover:text-white">×</button>
+      </div>
+      <div id="product-content"></div>
+    </div>
+  </div>
+
+  <!-- Modal 360° -->
+  <div id="360-modal" class="fixed inset-0 bg-black hidden z-50">
+    <div class="relative w-full h-full">
+      <button
+        onclick="fechar360()"
+        class="absolute top-4 right-4 bg-black/50 text-white text-2xl w-12 h-12 rounded-full hover:bg-black/70 z-10"
+      >
+        ×
+      </button>
+      <div id="pannellum-viewer" class="w-full h-full"></div>
+    </div>
+  </div>
+
+  <script>
+    let produtosData = {};
+    let currentProduct = null;
+
+    // Carregar produtos
+    async function loadProdutos() {
+      try {
+        const response = await fetch('/demo/produtos.json');
+        produtosData = await response.json();
+
+        // Contar produtos
+        let total = 0;
+        Object.values(produtosData).forEach(categoria => {
+          total += categoria.length;
+        });
+        document.getElementById('product-count').textContent = total;
+      } catch (e) {
+        console.error('Erro ao carregar produtos:', e);
+      }
+    }
+
+    // Buscar produto por palavras-chave
+    function buscarProduto(query) {
+      const termos = query.toLowerCase().split(' ');
+      let melhorMatch = null;
+      let melhorScore = 0;
+
+      // Procurar em todas as categorias
+      for (const [categoria, produtos] of Object.entries(produtosData)) {
+        produtos.forEach((produto, index) => {
+          let score = 0;
+          const nome = produto.nome.toLowerCase();
+          const descricao = JSON.stringify(produto).toLowerCase();
+
+          // Verificar cada termo
+          termos.forEach(termo => {
+            if (nome.includes(termo)) score += 3;
+            if (descricao.includes(termo)) score += 1;
+          });
+
+          if (score > melhorScore) {
+            melhorScore = score;
+            melhorMatch = { categoria, index, produto };
+          }
+        });
+      }
+
+      return melhorMatch;
+    }
+
+    // Preencher mensagem automaticamente
+    function preencherMensagem(texto) {
+      document.getElementById('chat-input').value = texto;
+      sendMessage();
+    }
+
+    // Enviar mensagem
+    async function sendMessage() {
+      const input = document.getElementById('chat-input');
+      const message = input.value.trim();
+      if (!message) return;
+
+      // Adicionar mensagem do usuário
+      addMessage(message, 'user');
+      input.value = '';
+
+      // Simular processamento
+      addMessage('🤖 Analisando sua solicitação com IA...', 'bot');
+
+      setTimeout(() => {
+        const resultado = buscarProduto(message);
+
+        if (resultado) {
+          const { produto, categoria } = resultado;
+
+          // Resposta educativa mostrando funcionalidades
+          let resposta = `🎯 **Produto encontrado na categoria "${categoria.toUpperCase()}"!**
+
+**${produto.nome}**
+${produto.cor ? `🎨 Cor: ${produto.cor}` : ''}
+${produto.tamanho ? `📏 Tamanho: ${produto.tamanho}` : ''}
+${produto.cpu ? `🖥️ CPU: ${produto.cpu}` : ''}
+${produto.ram ? `💾 RAM: ${produto.ram}GB` : ''}
+${produto.quartos !== undefined ? `🏠 Quartos: ${produto.quartos}` : ''}
+${produto.area ? `📐 Área: ${produto.area}m²` : ''}
+
+💰 **Preço: R$ ${produto.preco.toLocaleString('pt-BR')}**
+
+✨ **Funcionalidades demonstradas:**
+• 🔍 Busca inteligente por palavras-chave
+• 📊 Exibição de dados estruturados do JSON
+• 🎨 Interface responsiva com design cyberpunk
+${produto['360'] ? '• 🔄 Suporte a visualização 360°' : ''}`;
+
+          // Remover mensagem de processamento
+          removeLastMessage();
+
+          // Adicionar resposta educativa
+          addMessage(resposta, 'bot');
+
+          // Mostrar funcionalidades adicionais
+          setTimeout(() => {
+            addMessage(`💡 **Como funciona:**
+1. 📝 Você digitou: "${message}"
+2. 🧠 IA analisou e encontrou match em: ${categoria}
+3. 📄 Dados carregados do arquivo JSON local
+4. 🎯 Produto exibido com todas as informações
+
+Quer testar outras categorias? Tente "apartamento", "celular", ou "pizza"! 🍕`, 'bot');
+          }, 500);
+
+          // Mostrar produto
+          setTimeout(() => {
+            mostrarProduto(categoria, resultado.index);
+          }, 2000);
+
+        } else {
+          removeLastMessage();
+
+          // Resposta educativa quando não encontra
+          addMessage(`🤔 Não encontrei produtos específicos para "${message}".
+
+**📚 Categorias disponíveis no JSON:**
+• 🏠 Imóveis (apartamento, casa, cobertura)
+• 🚗 Carros (Cruze, Onix, HR-V, Corolla)
+• 🔧 Peças Auto (filtros, pastilhas, óleo)
+• 💻 Computadores (PC gamer, notebook, SSD)
+• 📱 Celulares (iPhone, Galaxy, Redmi)
+• 👟 Moda (tênis, camisetas, jaquetas)
+
+**🎯 Dicas para testar:**
+• Seja específico: "tênis branco" ou "carro preto"
+• Use sinônimos: "apartamento" = "apê"
+• Pergunte por características: "PC gamer barato"
+
+Tente uma dessas opções acima! 🚀`, 'bot');
+        }
+      }, 1200);
+    }
+
+    function addMessage(text, sender) {
+      const messagesDiv = document.getElementById('chat-messages');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+
+      const bubbleClass = sender === 'user'
+        ? 'bg-cyber-gold text-black'
+        : 'bg-neon-blue/20 border border-neon-blue/50 text-white';
+
+      messageDiv.innerHTML = `
+        <div class="${bubbleClass} rounded-2xl px-4 py-3 max-w-xs">
+          <p class="text-sm whitespace-pre-line">${text}</p>
+        </div>
+      `;
+
+      messagesDiv.appendChild(messageDiv);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    function removeLastMessage() {
+      const messagesDiv = document.getElementById('chat-messages');
+      const lastMessage = messagesDiv.lastElementChild;
+      if (lastMessage) {
+        lastMessage.remove();
+      }
+    }
+
+    function handleKeyPress(event) {
+      if (event.key === 'Enter') {
+        sendMessage();
+      }
+    }
+
+    function mostrarProduto(categoria, index) {
+      const produto = produtosData[categoria][index];
+      currentProduct = produto;
+
+      const content = `
+        <img src="${produto.imagem}" alt="${produto.nome}" class="w-full h-48 object-cover rounded-lg mb-4" />
+        <h4 class="text-xl text-cyber-gold font-jetbrains mb-2">${produto.nome}</h4>
+        <div class="text-sm text-gray-300 mb-4">
+          ${produto.cor ? `<p>Cor: ${produto.cor}</p>` : ''}
+          ${produto.tamanho ? `<p>Tamanho: ${produto.tamanho}</p>` : ''}
+          ${produto.cpu ? `<p>CPU: ${produto.cpu}</p>` : ''}
+          ${produto.ram ? `<p>RAM: ${produto.ram}GB</p>` : ''}
+          ${produto.quartos !== undefined ? `<p>Quartos: ${produto.quartos}</p>` : ''}
+          ${produto.area ? `<p>Área: ${produto.area}m²</p>` : ''}
+        </div>
+        <p class="text-2xl text-matrix-green font-bold mb-4">R$ ${produto.preco.toLocaleString('pt-BR')}</p>
+        <div class="flex space-x-2">
+          ${produto['360'] ? `<button onclick="abrir360('${produto['360']}')" class="bg-neon-blue hover:bg-cyan-500 text-black px-4 py-2 rounded font-medium cursor-pointer">Girar 360°</button>` : ''}
+          <button onclick="alert('Produto adicionado ao carrinho!')" class="bg-cyber-gold hover:bg-yellow-400 text-black px-4 py-2 rounded font-medium cursor-pointer">Comprar Agora</button>
+        </div>
+      `;
+
+      document.getElementById('product-content').innerHTML = content;
+      document.getElementById('product-modal').classList.remove('hidden');
+    }
+
+    function fecharModal() {
+      document.getElementById('product-modal').classList.add('hidden');
+    }
+
+    // Função para abrir visualização 360°
+    window.abrir360 = function(caminho) {
+      document.getElementById('product-modal').classList.add('hidden');
+      document.getElementById('360-modal').classList.remove('hidden');
+
+      // Carregar Pannellum (simulado - em produção seria real)
+      const viewer = document.getElementById('pannellum-viewer');
+      viewer.innerHTML = `
+        <div class="flex items-center justify-center h-full">
+          <div class="text-center">
+            <div class="text-6xl mb-4">🔄</div>
+            <h3 class="text-2xl text-cyber-gold font-jetbrains mb-2">Visualização 360°</h3>
+            <p class="text-neon-blue mb-4">Em uma implementação real, aqui seria integrada a biblioteca Pannellum para visualização 360° do produto.</p>
+            <p class="text-gray-400 text-sm">Caminho: ${caminho}</p>
+            <button onclick="fechar360()" class="mt-4 bg-matrix-green text-black px-6 py-2 rounded font-medium">Fechar</button>
+          </div>
+        </div>
+      `;
+    };
+
+    function fechar360() {
+      document.getElementById('360-modal').classList.add('hidden');
+    }
+
+    // Função para voz no chat
+    window.iniciarVozChat = function() {
+      const button = document.getElementById('voice-chat-btn');
+
+      if (!('webkitSpeechRecognition' in window)) {
+        alert('Seu navegador não suporta reconhecimento de voz. Tente Chrome, Edge ou Safari.');
+        return;
+      }
+
+      const recognition = new webkitSpeechRecognition();
+      recognition.lang = 'pt-BR';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      button.textContent = '🎤 Ouvindo...';
+      button.classList.add('bg-red-600', 'animate-pulse');
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        document.getElementById('chat-input').value = transcript;
+
+        // Reset button
+        button.textContent = '🎤 Voz';
+        button.classList.remove('bg-red-600', 'animate-pulse');
+
+        // Envia automaticamente
+        sendMessage();
+
+        // Feedback visual
+        addMessage(`🎤 Você disse: "${transcript}"`, 'user');
+      };
+
+      recognition.onerror = (event) => {
+        console.error('Erro no reconhecimento de voz:', event.error);
+
+        button.textContent = '🎤 Voz';
+        button.classList.remove('bg-red-600', 'animate-pulse');
+
+        if (event.error === 'not-allowed') {
+          alert('Permissão para microfone negada. Permita o acesso ao microfone nas configurações do navegador.');
+        } else {
+          alert(`Erro no reconhecimento de voz: ${event.error}`);
+        }
+      };
+
+      recognition.onend = () => {
+        button.textContent = '🎤 Voz';
+        button.classList.remove('bg-red-600', 'animate-pulse');
+      };
+
+      try {
+        recognition.start();
+      } catch (e) {
+        alert('Erro ao iniciar reconhecimento de voz. Tente novamente.');
+        button.textContent = '🎤 Voz';
+        button.classList.remove('bg-red-600', 'animate-pulse');
+      }
+    };
+
+    // Inicializar
+    loadProdutos();
+
+    // Tornar funções globais
+    window.sendMessage = sendMessage;
+    window.handleKeyPress = handleKeyPress;
+    window.mostrarProduto = mostrarProduto;
+    window.fecharModal = fecharModal;
+    window.fechar360 = fechar360;
+    window.preencherMensagem = preencherMensagem;
+    window.iniciarVozChat = iniciarVozChat;
+  </script>
+</Layout>
