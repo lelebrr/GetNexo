@@ -7,6 +7,26 @@
             "use": "@vercel/astro"
         }
     ],
+    "headers": [
+        {
+            "source": "/scripts/(.*)",
+            "headers": [
+                {
+                    "key": "Cache-Control",
+                    "value": "public, max-age=31536000, immutable"
+                }
+            ]
+        },
+        {
+            "source": "/styles/(.*)",
+            "headers": [
+                {
+                    "key": "Cache-Control",
+                    "value": "public, max-age=31536000, immutable"
+                }
+            ]
+        }
+    ],
     "crons": [
         {
             "path": "/api/monitor/daily-report",
