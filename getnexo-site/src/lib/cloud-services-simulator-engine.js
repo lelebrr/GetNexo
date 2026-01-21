@@ -1,9 +1,12 @@
 /**
  * Cloud Services Engine
- * Engine funcional para serviços AWS, Azure e GCP
+ * Engine funcional para serviços AWS, Azure, GCP e Ubuntu
  */
 
 const AWS = require('aws-sdk');
+const { Client: PgClient } = require('pg');
+const mysql = require('mysql2');
+const axios = require('axios');
 
 class CloudServicesEngine {
     constructor(config = {}) {
@@ -18,7 +21,23 @@ class CloudServicesEngine {
             sns: config.awsServicesEnabled?.sns ?? true,
             sqs: config.awsServicesEnabled?.sqs ?? true,
             cloudformation: config.awsServicesEnabled?.cloudformation ?? true,
-            iam: config.awsServicesEnabled?.iam ?? true
+            iam: config.awsServicesEnabled?.iam ?? true,
+            codecommit: config.awsServicesEnabled?.codecommit ?? true,
+            codebuild: config.awsServicesEnabled?.codebuild ?? true,
+            codedeploy: config.awsServicesEnabled?.codedeploy ?? true,
+            codepipeline: config.awsServicesEnabled?.codepipeline ?? true,
+            cloud9: config.awsServicesEnabled?.cloud9 ?? true,
+            ecs: config.awsServicesEnabled?.ecs ?? true,
+            eks: config.awsServicesEnabled?.eks ?? true,
+            batch: config.awsServicesEnabled?.batch ?? true,
+            lightsail: config.awsServicesEnabled?.lightsail ?? true,
+            apigateway: config.awsServicesEnabled?.apigateway ?? true,
+            appsync: config.awsServicesEnabled?.appsync ?? true,
+            amplify: config.awsServicesEnabled?.amplify ?? true,
+            ssm: config.awsServicesEnabled?.ssm ?? true,
+            opsworks: config.awsServicesEnabled?.opsworks ?? true,
+            elasticbeanstalk: config.awsServicesEnabled?.elasticbeanstalk ?? true,
+            xray: config.awsServicesEnabled?.xray ?? true
         };
 
         // AWS SDK Clients - só inicializa se AWS estiver habilitado
@@ -42,6 +61,8 @@ class CloudServicesEngine {
                 this.codecommit = new AWS.CodeCommit();
                 this.codebuild = new AWS.CodeBuild();
                 this.codedeploy = new AWS.CodeDeploy();
+                this.codepipeline = new AWS.CodePipeline();
+                this.cloud9 = new AWS.Cloud9();
                 this.apigateway = new AWS.APIGateway();
                 this.appsync = new AWS.AppSync();
                 this.amplify = new AWS.Amplify();
@@ -87,6 +108,45 @@ class CloudServicesEngine {
             } catch (error) {
                 console.warn('Erro ao inicializar AWS SDK:', error.message);
                 this.awsEnabled = false;
+            }
+        }
+
+        // Ubuntu Services Configuration
+        this.ubuntuEnabled = config.ubuntuEnabled || !this.awsEnabled; // Habilitado por padrão se AWS desabilitado
+        this.ubuntuEndpoints = {
+            minio: config.minioEndpoint || 'http://localhost:9000',
+            postgres: config.postgresConfig || { host: 'localhost', port: 5432, database: 'postgres', user: 'postgres', password: '' },
+            mysql: config.mysqlConfig || { host: 'localhost', port: 3306, database: 'mysql', user: 'root', password: '' },
+            redis: config.redisEndpoint || 'redis://localhost:6379',
+            openfaas: config.openfaasEndpoint || 'http://localhost:8080',
+            prometheus: config.prometheusEndpoint || 'http://localhost:9090',
+            grafana: config.grafanaEndpoint || 'http://localhost:3000',
+            rabbitmq: config.rabbitmqEndpoint || 'amqp://localhost:5672',
+            elasticsearch: config.elasticsearchEndpoint || 'http://localhost:9200',
+            keycloak: config.keycloakEndpoint || 'http://localhost:8080',
+            vault: config.vaultEndpoint || 'http://localhost:8200'
+        };
+
+        // Ubuntu Services Clients - só inicializa se Ubuntu estiver habilitado
+        if (this.ubuntuEnabled) {
+            try {
+                this.minioS3 = new AWS.S3({
+                    endpoint: this.ubuntuEndpoints.minio,
+                    accessKeyId: 'minioadmin',
+                    secretAccessKey: 'minioadmin',
+                    s3ForcePathStyle: true,
+                    signatureVersion: 'v4'
+                });
+                this.pgClient = new PgClient(this.ubuntuEndpoints.postgres);
+                this.pgClient.connect().catch(err => console.warn('Erro ao conectar PostgreSQL:', err.message));
+                this.mysqlConnection = mysql.createConnection(this.ubuntuEndpoints.mysql);
+                this.mysqlConnection.connect((err) => {
+                    if (err) console.warn('Erro ao conectar MySQL:', err.message);
+                });
+                console.log('Clientes Ubuntu inicializados');
+            } catch (error) {
+                console.warn('Erro ao inicializar clientes Ubuntu:', error.message);
+                this.ubuntuEnabled = false;
             }
         }
 
@@ -408,65 +468,116 @@ class CloudServicesEngine {
 
     // S3
     async createS3Bucket(bucketName, config) {
-        const params = {
-            Bucket: bucketName,
-            CreateBucketConfiguration: config.region && config.region !== 'us-east-1' ? { LocationConstraint: config.region } : undefined
-        };
-
-        try {
-            const result = await this.s3.createBucket(params).promise();
-
-            // Configurar versioning se especificado
-            if (config.versioning) {
-                await this.s3.putBucketVersioning({
-                    Bucket: bucketName,
-                    VersioningConfiguration: { Status: 'Enabled' }
-                }).promise();
-            }
-
-            // Configurar encryption se especificado
-            if (config.encryption) {
-                await this.s3.putBucketEncryption({
-                    Bucket: bucketName,
-                    ServerSideEncryptionConfiguration: {
-                        Rules: [{
-                            ApplyServerSideEncryptionByDefault: {
-                                SSEAlgorithm: config.encryption === 'AES256' ? 'AES256' : 'aws:kms',
-                                KMSMasterKeyID: config.kmsKeyId
-                            }
-                        }]
-                    }
-                }).promise();
-            }
-
-            // Configurar public access block
-            if (config.publicAccess !== undefined) {
-                await this.s3.putPublicAccessBlock({
-                    Bucket: bucketName,
-                    PublicAccessBlockConfiguration: {
-                        BlockPublicAcls: !config.publicAccess,
-                        IgnorePublicAcls: !config.publicAccess,
-                        BlockPublicPolicy: !config.publicAccess,
-                        RestrictPublicBuckets: !config.publicAccess
-                    }
-                }).promise();
-            }
-
-            const bucket = {
-                name: bucketName,
-                region: config.region || 'us-east-1',
-                versioning: config.versioning || false,
-                encryption: config.encryption || 'AES256',
-                publicAccess: config.publicAccess || false,
-                location: result.Location,
-                createdAt: new Date()
+        if (this.ubuntuEnabled) {
+            // Usar MinIO
+            const params = {
+                Bucket: bucketName
+                // MinIO não precisa de CreateBucketConfiguration para região
             };
 
-            console.log(`S3 bucket ${bucketName} criado`);
-            return bucket;
-        } catch (error) {
-            console.error(`Erro ao criar S3 bucket: ${error.message}`);
-            throw error;
+            try {
+                const result = await this.minioS3.createBucket(params).promise();
+
+                // Configurar versioning se especificado
+                if (config.versioning) {
+                    await this.minioS3.putBucketVersioning({
+                        Bucket: bucketName,
+                        VersioningConfiguration: { Status: 'Enabled' }
+                    }).promise();
+                }
+
+                // Configurar public access block se especificado
+                if (config.publicAccess !== undefined) {
+                    await this.minioS3.putPublicAccessBlock({
+                        Bucket: bucketName,
+                        PublicAccessBlockConfiguration: {
+                            BlockPublicAcls: !config.publicAccess,
+                            IgnorePublicAcls: !config.publicAccess,
+                            BlockPublicPolicy: !config.publicAccess,
+                            RestrictPublicBuckets: !config.publicAccess
+                        }
+                    }).promise().catch(err => console.warn('Public access block not supported by MinIO:', err.message));
+                }
+
+                const bucket = {
+                    name: bucketName,
+                    region: config.region || 'us-east-1',
+                    versioning: config.versioning || false,
+                    encryption: 'AES256', // MinIO usa AES256 por padrão
+                    publicAccess: config.publicAccess || false,
+                    location: result.Location || `http://localhost:9000/${bucketName}`,
+                    createdAt: new Date(),
+                    simulated: false
+                };
+
+                console.log(`MinIO S3 bucket ${bucketName} criado`);
+                return bucket;
+            } catch (error) {
+                console.error(`Erro ao criar MinIO S3 bucket: ${error.message}`);
+                throw error;
+            }
+        } else {
+            // AWS ou simulação
+            const params = {
+                Bucket: bucketName,
+                CreateBucketConfiguration: config.region && config.region !== 'us-east-1' ? { LocationConstraint: config.region } : undefined
+            };
+
+            try {
+                const result = await this.s3.createBucket(params).promise();
+
+                // Configurar versioning se especificado
+                if (config.versioning) {
+                    await this.s3.putBucketVersioning({
+                        Bucket: bucketName,
+                        VersioningConfiguration: { Status: 'Enabled' }
+                    }).promise();
+                }
+
+                // Configurar encryption se especificado
+                if (config.encryption) {
+                    await this.s3.putBucketEncryption({
+                        Bucket: bucketName,
+                        ServerSideEncryptionConfiguration: {
+                            Rules: [{
+                                ApplyServerSideEncryptionByDefault: {
+                                    SSEAlgorithm: config.encryption === 'AES256' ? 'AES256' : 'aws:kms',
+                                    KMSMasterKeyID: config.kmsKeyId
+                                }
+                            }]
+                        }
+                    }).promise();
+                }
+
+                // Configurar public access block
+                if (config.publicAccess !== undefined) {
+                    await this.s3.putPublicAccessBlock({
+                        Bucket: bucketName,
+                        PublicAccessBlockConfiguration: {
+                            BlockPublicAcls: !config.publicAccess,
+                            IgnorePublicAcls: !config.publicAccess,
+                            BlockPublicPolicy: !config.publicAccess,
+                            RestrictPublicBuckets: !config.publicAccess
+                        }
+                    }).promise();
+                }
+
+                const bucket = {
+                    name: bucketName,
+                    region: config.region || 'us-east-1',
+                    versioning: config.versioning || false,
+                    encryption: config.encryption || 'AES256',
+                    publicAccess: config.publicAccess || false,
+                    location: result.Location,
+                    createdAt: new Date()
+                };
+
+                console.log(`S3 bucket ${bucketName} criado`);
+                return bucket;
+            } catch (error) {
+                console.error(`Erro ao criar S3 bucket: ${error.message}`);
+                throw error;
+            }
         }
     }
 
@@ -584,44 +695,74 @@ class CloudServicesEngine {
 
     // RDS
     async createRDSInstance(instanceId, config) {
-        const params = {
-            DBInstanceIdentifier: instanceId,
-            DBInstanceClass: config.dbInstanceClass || 'db.t2.micro',
-            Engine: config.engine || 'mysql',
-            EngineVersion: config.engineVersion || '8.0',
-            DBName: config.dbName,
-            MasterUsername: config.username,
-            MasterUserPassword: config.password,
-            AllocatedStorage: config.allocatedStorage || 20,
-            Port: config.port || 3306,
-            MultiAZ: config.multiAZ || false,
-            StorageEncrypted: config.storageEncrypted || false,
-            BackupRetentionPeriod: config.backupRetentionPeriod || 7,
-            DBSubnetGroupName: config.dbSubnetGroupName,
-            VpcSecurityGroupIds: config.vpcSecurityGroupIds || []
-        };
-
-        try {
-            const result = await this.rds.createDBInstance(params).promise();
-            console.log(`RDS instance ${instanceId} criada`);
-            return {
-                id: result.DBInstance.DBInstanceIdentifier,
-                dbInstanceClass: result.DBInstance.DBInstanceClass,
-                engine: result.DBInstance.Engine,
-                engineVersion: result.DBInstance.EngineVersion,
-                dbName: result.DBInstance.DBName,
-                username: result.DBInstance.MasterUsername,
-                allocatedStorage: result.DBInstance.AllocatedStorage,
-                state: result.DBInstance.DBInstanceStatus,
-                endpoint: result.DBInstance.Endpoint?.Address,
-                port: result.DBInstance.Endpoint?.Port,
-                region: config.region || 'us-east-1',
-                multiAZ: result.DBInstance.MultiAZ,
-                createdAt: result.DBInstance.InstanceCreateTime
+        if (this.ubuntuEnabled) {
+            // Usar PostgreSQL real
+            try {
+                await this.pgClient.query(`CREATE DATABASE ${config.dbName || instanceId}`);
+                const instance = {
+                    id: instanceId,
+                    dbInstanceClass: config.dbInstanceClass || 'db.t2.micro',
+                    engine: 'postgresql',
+                    engineVersion: '13',
+                    dbName: config.dbName || instanceId,
+                    username: this.ubuntuEndpoints.postgres.user,
+                    allocatedStorage: config.allocatedStorage || 20,
+                    state: 'available',
+                    endpoint: 'localhost',
+                    port: this.ubuntuEndpoints.postgres.port,
+                    region: 'local',
+                    multiAZ: false,
+                    createdAt: new Date(),
+                    simulated: false
+                };
+                console.log(`PostgreSQL database ${instanceId} criado`);
+                this.rdsInstances.set(instanceId, instance);
+                return instance;
+            } catch (error) {
+                console.error(`Erro ao criar PostgreSQL database: ${error.message}`);
+                throw error;
+            }
+        } else {
+            // AWS ou simulação
+            const params = {
+                DBInstanceIdentifier: instanceId,
+                DBInstanceClass: config.dbInstanceClass || 'db.t2.micro',
+                Engine: config.engine || 'mysql',
+                EngineVersion: config.engineVersion || '8.0',
+                DBName: config.dbName,
+                MasterUsername: config.username,
+                MasterUserPassword: config.password,
+                AllocatedStorage: config.allocatedStorage || 20,
+                Port: config.port || 3306,
+                MultiAZ: config.multiAZ || false,
+                StorageEncrypted: config.storageEncrypted || false,
+                BackupRetentionPeriod: config.backupRetentionPeriod || 7,
+                DBSubnetGroupName: config.dbSubnetGroupName,
+                VpcSecurityGroupIds: config.vpcSecurityGroupIds || []
             };
-        } catch (error) {
-            console.error(`Erro ao criar RDS instance: ${error.message}`);
-            throw error;
+
+            try {
+                const result = await this.rds.createDBInstance(params).promise();
+                console.log(`RDS instance ${instanceId} criada`);
+                return {
+                    id: result.DBInstance.DBInstanceIdentifier,
+                    dbInstanceClass: result.DBInstance.DBInstanceClass,
+                    engine: result.DBInstance.Engine,
+                    engineVersion: result.DBInstance.EngineVersion,
+                    dbName: result.DBInstance.DBName,
+                    username: result.DBInstance.MasterUsername,
+                    allocatedStorage: result.DBInstance.AllocatedStorage,
+                    state: result.DBInstance.DBInstanceStatus,
+                    endpoint: result.DBInstance.Endpoint?.Address,
+                    port: result.DBInstance.Endpoint?.Port,
+                    region: config.region || 'us-east-1',
+                    multiAZ: result.DBInstance.MultiAZ,
+                    createdAt: result.DBInstance.InstanceCreateTime
+                };
+            } catch (error) {
+                console.error(`Erro ao criar RDS instance: ${error.message}`);
+                throw error;
+            }
         }
     }
 
@@ -969,19 +1110,48 @@ class CloudServicesEngine {
     // ===========================================
 
     async createCodeCommitRepository(repoName, config) {
-        const repo = {
-            name: repoName,
-            description: config.description || '',
-            region: config.region || 'us-east-1',
-            arn: `arn:aws:codecommit:${config.region || 'us-east-1'}:${config.accountId || '123456789012'}:${repoName}`,
-            cloneUrlHttp: `https://git-codecommit.${config.region || 'us-east-1'}.amazonaws.com/v1/repos/${repoName}`,
-            cloneUrlSsh: `ssh://git-codecommit.${config.region || 'us-east-1'}.amazonaws.com/v1/repos/${repoName}`,
-            createdAt: new Date(),
-            lastModified: new Date()
-        };
-        this.codeCommitRepos.set(repoName, repo);
-        console.log(`CodeCommit repository ${repoName} criado`);
-        return repo;
+        if (this.isAWSEnabled('codecommit')) {
+            const params = {
+                repositoryName: repoName,
+                repositoryDescription: config.description || '',
+                tags: config.tags || []
+            };
+
+            try {
+                const result = await this.codecommit.createRepository(params).promise();
+                const repository = {
+                    name: result.repositoryMetadata.repositoryName,
+                    description: result.repositoryMetadata.repositoryDescription,
+                    region: config.region || 'us-east-1',
+                    arn: result.repositoryMetadata.repositoryArn,
+                    cloneUrlHttp: result.repositoryMetadata.cloneUrlHttp,
+                    cloneUrlSsh: result.repositoryMetadata.cloneUrlSsh,
+                    createdAt: result.repositoryMetadata.creationDate,
+                    lastModified: result.repositoryMetadata.lastModifiedDate
+                };
+                console.log(`CodeCommit repository ${repoName} criado`);
+                return repository;
+            } catch (error) {
+                console.error(`Erro ao criar CodeCommit repository: ${error.message}`);
+                throw error;
+            }
+        } else {
+            // Fallback para simulação
+            const repo = {
+                name: repoName,
+                description: config.description || '',
+                region: config.region || 'us-east-1',
+                arn: `arn:aws:codecommit:${config.region || 'us-east-1'}:${config.accountId || '123456789012'}:${repoName}`,
+                cloneUrlHttp: `https://git-codecommit.${config.region || 'us-east-1'}.amazonaws.com/v1/repos/${repoName}`,
+                cloneUrlSsh: `ssh://git-codecommit.${config.region || 'us-east-1'}.amazonaws.com/v1/repos/${repoName}`,
+                createdAt: new Date(),
+                lastModified: new Date(),
+                simulated: true
+            };
+            this.codeCommitRepos.set(repoName, repo);
+            console.log(`[SIMULAÇÃO] CodeCommit repository ${repoName} criado`);
+            return repo;
+        }
     }
 
     async listCodeCommitRepositories() {
@@ -989,23 +1159,60 @@ class CloudServicesEngine {
     }
 
     async createCodeBuildProject(projectName, config) {
-        const project = {
-            name: projectName,
-            description: config.description || '',
-            source: config.source || { type: 'CODECOMMIT', location: '' },
-            artifacts: config.artifacts || { type: 'NO_ARTIFACTS' },
-            environment: config.environment || {
-                type: 'LINUX_CONTAINER',
-                image: 'aws/codebuild/amazonlinux2-x86_64-standard:3.0',
-                computeType: 'BUILD_GENERAL1_SMALL'
-            },
-            serviceRole: config.serviceRole || 'arn:aws:iam::123456789012:role/CodeBuildServiceRole',
-            createdAt: new Date(),
-            lastModified: new Date()
-        };
-        this.codeBuildProjects.set(projectName, project);
-        console.log(`CodeBuild project ${projectName} criado`);
-        return project;
+        if (this.isAWSEnabled('codebuild')) {
+            const params = {
+                name: projectName,
+                description: config.description || '',
+                source: config.source || { type: 'CODECOMMIT', location: '' },
+                artifacts: config.artifacts || { type: 'NO_ARTIFACTS' },
+                environment: config.environment || {
+                    type: 'LINUX_CONTAINER',
+                    image: 'aws/codebuild/amazonlinux2-x86_64-standard:3.0',
+                    computeType: 'BUILD_GENERAL1_SMALL'
+                },
+                serviceRole: config.serviceRole || 'arn:aws:iam::123456789012:role/CodeBuildServiceRole'
+            };
+
+            try {
+                const result = await this.codebuild.createProject(params).promise();
+                const project = {
+                    name: result.project.name,
+                    description: result.project.description,
+                    source: result.project.source,
+                    artifacts: result.project.artifacts,
+                    environment: result.project.environment,
+                    serviceRole: result.project.serviceRole,
+                    createdAt: result.project.created,
+                    lastModified: result.project.lastModified
+                };
+                console.log(`CodeBuild project ${projectName} criado`);
+                this.codeBuildProjects.set(projectName, project);
+                return project;
+            } catch (error) {
+                console.error(`Erro ao criar CodeBuild project: ${error.message}`);
+                throw error;
+            }
+        } else {
+            // Fallback para simulação quando desabilitado
+            const project = {
+                name: projectName,
+                description: config.description || '',
+                source: config.source || { type: 'CODECOMMIT', location: '' },
+                artifacts: config.artifacts || { type: 'NO_ARTIFACTS' },
+                environment: config.environment || {
+                    type: 'LINUX_CONTAINER',
+                    image: 'aws/codebuild/amazonlinux2-x86_64-standard:3.0',
+                    computeType: 'BUILD_GENERAL1_SMALL'
+                },
+                serviceRole: config.serviceRole || 'arn:aws:iam::123456789012:role/CodeBuildServiceRole',
+                createdAt: new Date(),
+                lastModified: new Date(),
+                simulated: true
+            };
+            this.codeBuildProjects.set(projectName, project);
+            console.log(`[SIMULAÇÃO] CodeBuild project ${projectName} criado`);
+            return project;
+        }
     }
 
     async startCodeBuild(projectName, options) {
@@ -1032,130 +1239,393 @@ class CloudServicesEngine {
     }
 
     async createCodePipeline(pipelineName, config) {
-        const pipeline = {
-            pipelineName,
-            roleArn: config.roleArn || 'arn:aws:iam::123456789012:role/AWSCodePipelineServiceRole',
-            artifactStore: config.artifactStore || {
-                type: 'S3',
-                location: 'codepipeline-us-east-1-123456789012'
-            },
-            stages: config.stages || [],
-            created: new Date(),
-            updated: new Date()
-        };
-        this.codePipelines.set(pipelineName, pipeline);
-        console.log(`CodePipeline ${pipelineName} criado`);
-        return pipeline;
+        if (this.isAWSEnabled('codepipeline')) {
+            const params = {
+                pipeline: {
+                    name: pipelineName,
+                    roleArn: config.roleArn || 'arn:aws:iam::123456789012:role/AWSCodePipelineServiceRole',
+                    artifactStore: config.artifactStore || {
+                        type: 'S3',
+                        location: 'codepipeline-us-east-1-123456789012'
+                    },
+                    stages: config.stages || []
+                }
+            };
+
+            try {
+                const result = await this.codepipeline.createPipeline(params).promise();
+                const pipeline = {
+                    pipelineName: result.pipeline.name,
+                    roleArn: result.pipeline.roleArn,
+                    artifactStore: result.pipeline.artifactStore,
+                    stages: result.pipeline.stages,
+                    created: new Date(),
+                    updated: new Date()
+                };
+                console.log(`CodePipeline ${pipelineName} criado`);
+                this.codePipelines.set(pipelineName, pipeline);
+                return pipeline;
+            } catch (error) {
+                console.error(`Erro ao criar CodePipeline: ${error.message}`);
+                throw error;
+            }
+        } else {
+            // Fallback para simulação quando desabilitado
+            const pipeline = {
+                pipelineName,
+                roleArn: config.roleArn || 'arn:aws:iam::123456789012:role/AWSCodePipelineServiceRole',
+                artifactStore: config.artifactStore || {
+                    type: 'S3',
+                    location: 'codepipeline-us-east-1-123456789012'
+                },
+                stages: config.stages || [],
+                created: new Date(),
+                updated: new Date(),
+                simulated: true
+            };
+            this.codePipelines.set(pipelineName, pipeline);
+            console.log(`[SIMULAÇÃO] CodePipeline ${pipelineName} criado`);
+            return pipeline;
+        }
     }
 
     async startCodePipelineExecution(pipelineName) {
-        const pipeline = this.codePipelines.get(pipelineName);
-        if (!pipeline) throw new Error(`CodePipeline ${pipelineName} não encontrado`);
+        if (this.isAWSEnabled('codepipeline')) {
+            const params = {
+                name: pipelineName
+            };
 
-        const execution = {
-            pipelineExecutionId: `exec-${Date.now()}`,
-            pipelineName,
-            status: 'InProgress',
-            startTime: new Date()
-        };
+            try {
+                const result = await this.codepipeline.startPipelineExecution(params).promise();
+                const execution = {
+                    pipelineExecutionId: result.pipelineExecutionId,
+                    pipelineName,
+                    status: 'InProgress',
+                    startTime: new Date()
+                };
+                console.log(`CodePipeline execution ${result.pipelineExecutionId} iniciada`);
+                return execution;
+            } catch (error) {
+                console.error(`Erro ao iniciar CodePipeline execution: ${error.message}`);
+                throw error;
+            }
+        } else {
+            // Fallback para simulação quando desabilitado
+            const pipeline = this.codePipelines.get(pipelineName);
+            if (!pipeline) throw new Error(`CodePipeline ${pipelineName} não encontrado`);
 
-        setTimeout(() => {
-            execution.status = 'Succeeded';
-            execution.lastUpdateTime = new Date();
-        }, 60000);
+            const execution = {
+                pipelineExecutionId: `exec-${Date.now()}`,
+                pipelineName,
+                status: 'InProgress',
+                startTime: new Date(),
+                simulated: true
+            };
 
-        return execution;
+            setTimeout(() => {
+                execution.status = 'Succeeded';
+                execution.lastUpdateTime = new Date();
+            }, 60000);
+
+            console.log(`[SIMULAÇÃO] CodePipeline execution ${execution.pipelineExecutionId} iniciada`);
+            return execution;
+        }
     }
 
     async createCloud9Environment(envName, config) {
-        const environment = {
-            environmentId: `env-${Date.now()}`,
-            name: envName,
-            description: config.description || '',
-            type: config.type || 'ec2',
-            instanceType: config.instanceType || 't2.micro',
-            imageId: config.imageId || 'amazonlinux-2-x86_64',
-            ownerArn: config.ownerArn || 'arn:aws:iam::123456789012:user/test-user',
-            created: new Date()
-        };
-        this.cloud9Envs.set(envName, environment);
-        console.log(`Cloud9 environment ${envName} criado`);
-        return environment;
+        if (this.isAWSEnabled('cloud9')) {
+            const params = {
+                name: envName,
+                description: config.description || ''
+            };
+
+            if (config.instanceType) {
+                params.instanceType = config.instanceType;
+            }
+
+            if (config.imageId) {
+                params.imageId = config.imageId;
+            }
+
+            if (config.ownerArn) {
+                params.ownerArn = config.ownerArn;
+            }
+
+            try {
+                const result = await this.cloud9.createEnvironmentEC2(params).promise();
+                const environment = {
+                    environmentId: result.environmentId,
+                    name: envName,
+                    description: config.description || '',
+                    type: config.type || 'ec2',
+                    instanceType: config.instanceType || 't2.micro',
+                    imageId: config.imageId || 'amazonlinux-2-x86_64',
+                    ownerArn: config.ownerArn || 'arn:aws:iam::123456789012:user/test-user',
+                    created: new Date()
+                };
+                console.log(`Cloud9 environment ${envName} criado`);
+                this.cloud9Envs.set(envName, environment);
+                return environment;
+            } catch (error) {
+                console.error(`Erro ao criar Cloud9 environment: ${error.message}`);
+                throw error;
+            }
+        } else {
+            // Fallback para simulação quando desabilitado
+            const environment = {
+                environmentId: `env-${Date.now()}`,
+                name: envName,
+                description: config.description || '',
+                type: config.type || 'ec2',
+                instanceType: config.instanceType || 't2.micro',
+                imageId: config.imageId || 'amazonlinux-2-x86_64',
+                ownerArn: config.ownerArn || 'arn:aws:iam::123456789012:user/test-user',
+                created: new Date(),
+                simulated: true
+            };
+            this.cloud9Envs.set(envName, environment);
+            console.log(`[SIMULAÇÃO] Cloud9 environment ${envName} criado`);
+            return environment;
+        }
     }
 
     async createCodeDeployApplication(applicationName, config) {
-        const application = {
-            applicationId: `app-${Date.now()}`,
-            applicationName,
-            description: config.description || '',
-            computePlatform: config.computePlatform || 'Server',
-            linkedToGitHub: config.linkedToGitHub || false,
-            gitHubAccountName: config.gitHubAccountName || null,
-            createTime: new Date()
-        };
-        this.codeDeployApps.set(applicationName, application);
-        console.log(`CodeDeploy application ${applicationName} criado`);
-        return application;
+        if (this.isAWSEnabled('codedeploy')) {
+            const params = {
+                applicationName,
+                computePlatform: config.computePlatform || 'Server'
+            };
+
+            if (config.description) {
+                params.description = config.description;
+            }
+
+            try {
+                const result = await this.codedeploy.createApplication(params).promise();
+                const application = {
+                    applicationId: result.applicationId,
+                    applicationName: result.applicationName,
+                    description: config.description || '',
+                    computePlatform: config.computePlatform || 'Server',
+                    linkedToGitHub: config.linkedToGitHub || false,
+                    gitHubAccountName: config.gitHubAccountName || null,
+                    createTime: new Date()
+                };
+                console.log(`CodeDeploy application ${applicationName} criado`);
+                this.codeDeployApps.set(applicationName, application);
+                return application;
+            } catch (error) {
+                console.error(`Erro ao criar CodeDeploy application: ${error.message}`);
+                throw error;
+            }
+        } else {
+            // Fallback para simulação quando desabilitado
+            const application = {
+                applicationId: `app-${Date.now()}`,
+                applicationName,
+                description: config.description || '',
+                computePlatform: config.computePlatform || 'Server',
+                linkedToGitHub: config.linkedToGitHub || false,
+                gitHubAccountName: config.gitHubAccountName || null,
+                createTime: new Date(),
+                simulated: true
+            };
+            this.codeDeployApps.set(applicationName, application);
+            console.log(`[SIMULAÇÃO] CodeDeploy application ${applicationName} criado`);
+            return application;
+        }
     }
 
     async createCodeDeployDeploymentGroup(applicationName, deploymentGroupName, config) {
-        const deploymentGroup = {
-            applicationName,
-            deploymentGroupName,
-            deploymentGroupId: `dg-${Date.now()}`,
-            deploymentConfigName: config.deploymentConfigName || 'CodeDeployDefault.OneAtATime',
-            ec2TagFilters: config.ec2TagFilters || [],
-            onPremisesInstanceTagFilters: config.onPremisesInstanceTagFilters || [],
-            autoScalingGroups: config.autoScalingGroups || [],
-            serviceRoleArn: config.serviceRoleArn,
-            triggerConfigurations: config.triggerConfigurations || [],
-            alarmConfiguration: config.alarmConfiguration || {},
-            autoRollbackConfiguration: config.autoRollbackConfiguration || {},
-            outdatedInstancesStrategy: config.outdatedInstancesStrategy || 'UPDATE',
-            deploymentStyle: config.deploymentStyle || { deploymentType: 'IN_PLACE', deploymentOption: 'WITHOUT_TRAFFIC_CONTROL' },
-            blueGreenDeploymentConfiguration: config.blueGreenDeploymentConfiguration || {},
-            loadBalancerInfo: config.loadBalancerInfo || {},
-            lastSuccessfulDeployment: null,
-            lastAttemptedDeployment: null,
-            createTime: new Date()
-        };
-        return deploymentGroup;
+        if (this.isAWSEnabled('codedeploy')) {
+            const params = {
+                applicationName,
+                deploymentGroupName,
+                serviceRoleArn: config.serviceRoleArn
+            };
+
+            if (config.deploymentConfigName) {
+                params.deploymentConfigName = config.deploymentConfigName;
+            }
+
+            if (config.ec2TagFilters && config.ec2TagFilters.length > 0) {
+                params.ec2TagFilters = config.ec2TagFilters;
+            }
+
+            if (config.onPremisesInstanceTagFilters && config.onPremisesInstanceTagFilters.length > 0) {
+                params.onPremisesInstanceTagFilters = config.onPremisesInstanceTagFilters;
+            }
+
+            if (config.autoScalingGroups && config.autoScalingGroups.length > 0) {
+                params.autoScalingGroups = config.autoScalingGroups;
+            }
+
+            if (config.triggerConfigurations && config.triggerConfigurations.length > 0) {
+                params.triggerConfigurations = config.triggerConfigurations;
+            }
+
+            if (config.alarmConfiguration) {
+                params.alarmConfiguration = config.alarmConfiguration;
+            }
+
+            if (config.autoRollbackConfiguration) {
+                params.autoRollbackConfiguration = config.autoRollbackConfiguration;
+            }
+
+            if (config.outdatedInstancesStrategy) {
+                params.outdatedInstancesStrategy = config.outdatedInstancesStrategy;
+            }
+
+            if (config.deploymentStyle) {
+                params.deploymentStyle = config.deploymentStyle;
+            }
+
+            if (config.blueGreenDeploymentConfiguration) {
+                params.blueGreenDeploymentConfiguration = config.blueGreenDeploymentConfiguration;
+            }
+
+            if (config.loadBalancerInfo) {
+                params.loadBalancerInfo = config.loadBalancerInfo;
+            }
+
+            try {
+                const result = await this.codedeploy.createDeploymentGroup(params).promise();
+                const deploymentGroup = {
+                    applicationName,
+                    deploymentGroupName,
+                    deploymentGroupId: result.deploymentGroupId,
+                    deploymentConfigName: config.deploymentConfigName || 'CodeDeployDefault.OneAtATime',
+                    ec2TagFilters: config.ec2TagFilters || [],
+                    onPremisesInstanceTagFilters: config.onPremisesInstanceTagFilters || [],
+                    autoScalingGroups: config.autoScalingGroups || [],
+                    serviceRoleArn: config.serviceRoleArn,
+                    triggerConfigurations: config.triggerConfigurations || [],
+                    alarmConfiguration: config.alarmConfiguration || {},
+                    autoRollbackConfiguration: config.autoRollbackConfiguration || {},
+                    outdatedInstancesStrategy: config.outdatedInstancesStrategy || 'UPDATE',
+                    deploymentStyle: config.deploymentStyle || { deploymentType: 'IN_PLACE', deploymentOption: 'WITHOUT_TRAFFIC_CONTROL' },
+                    blueGreenDeploymentConfiguration: config.blueGreenDeploymentConfiguration || {},
+                    loadBalancerInfo: config.loadBalancerInfo || {},
+                    lastSuccessfulDeployment: null,
+                    lastAttemptedDeployment: null,
+                    createTime: new Date()
+                };
+                console.log(`CodeDeploy deployment group ${deploymentGroupName} criado`);
+                return deploymentGroup;
+            } catch (error) {
+                console.error(`Erro ao criar CodeDeploy deployment group: ${error.message}`);
+                throw error;
+            }
+        } else {
+            // Fallback para simulação quando desabilitado
+            const deploymentGroup = {
+                applicationName,
+                deploymentGroupName,
+                deploymentGroupId: `dg-${Date.now()}`,
+                deploymentConfigName: config.deploymentConfigName || 'CodeDeployDefault.OneAtATime',
+                ec2TagFilters: config.ec2TagFilters || [],
+                onPremisesInstanceTagFilters: config.onPremisesInstanceTagFilters || [],
+                autoScalingGroups: config.autoScalingGroups || [],
+                serviceRoleArn: config.serviceRoleArn,
+                triggerConfigurations: config.triggerConfigurations || [],
+                alarmConfiguration: config.alarmConfiguration || {},
+                autoRollbackConfiguration: config.autoRollbackConfiguration || {},
+                outdatedInstancesStrategy: config.outdatedInstancesStrategy || 'UPDATE',
+                deploymentStyle: config.deploymentStyle || { deploymentType: 'IN_PLACE', deploymentOption: 'WITHOUT_TRAFFIC_CONTROL' },
+                blueGreenDeploymentConfiguration: config.blueGreenDeploymentConfiguration || {},
+                loadBalancerInfo: config.loadBalancerInfo || {},
+                lastSuccessfulDeployment: null,
+                lastAttemptedDeployment: null,
+                createTime: new Date(),
+                simulated: true
+            };
+            console.log(`[SIMULAÇÃO] CodeDeploy deployment group ${deploymentGroupName} criado`);
+            return deploymentGroup;
+        }
     }
 
     async createCodeDeployDeployment(applicationName, deploymentGroupName, config) {
-        const deployment = {
-            deploymentId: `dep-${Date.now()}`,
-            applicationName,
-            deploymentGroupName,
-            deploymentConfigName: config.deploymentConfigName || 'CodeDeployDefault.OneAtATime',
-            revision: config.revision || { revisionType: 'AppSpecContent', appSpecContent: {} },
-            status: 'Created',
-            errorInformation: null,
-            createTime: new Date(),
-            startTime: null,
-            completeTime: null,
-            deploymentOverview: {
-                Pending: 0,
-                InProgress: 0,
-                Succeeded: 0,
-                Failed: 0,
-                Skipped: 0,
-                Ready: 0
+        if (this.isAWSEnabled('codedeploy')) {
+            const params = {
+                applicationName,
+                deploymentGroupName,
+                revision: config.revision || { revisionType: 'AppSpecContent', appSpecContent: {} }
+            };
+
+            if (config.deploymentConfigName) {
+                params.deploymentConfigName = config.deploymentConfigName;
             }
-        };
 
-        setTimeout(() => {
-            deployment.status = 'InProgress';
-            deployment.startTime = new Date();
-        }, 1000);
+            if (config.description) {
+                params.description = config.description;
+            }
 
-        setTimeout(() => {
-            deployment.status = 'Succeeded';
-            deployment.completeTime = new Date();
-            deployment.deploymentOverview.Succeeded = 1;
-        }, 30000);
+            try {
+                const result = await this.codedeploy.createDeployment(params).promise();
+                const deployment = {
+                    deploymentId: result.deploymentId,
+                    applicationName,
+                    deploymentGroupName,
+                    deploymentConfigName: config.deploymentConfigName || 'CodeDeployDefault.OneAtATime',
+                    revision: config.revision || { revisionType: 'AppSpecContent', appSpecContent: {} },
+                    status: 'Created',
+                    errorInformation: null,
+                    createTime: new Date(),
+                    startTime: null,
+                    completeTime: null,
+                    deploymentOverview: {
+                        Pending: 0,
+                        InProgress: 0,
+                        Succeeded: 0,
+                        Failed: 0,
+                        Skipped: 0,
+                        Ready: 0
+                    }
+                };
+                console.log(`CodeDeploy deployment ${result.deploymentId} criado`);
+                return deployment;
+            } catch (error) {
+                console.error(`Erro ao criar CodeDeploy deployment: ${error.message}`);
+                throw error;
+            }
+        } else {
+            // Fallback para simulação quando desabilitado
+            const deployment = {
+                deploymentId: `dep-${Date.now()}`,
+                applicationName,
+                deploymentGroupName,
+                deploymentConfigName: config.deploymentConfigName || 'CodeDeployDefault.OneAtATime',
+                revision: config.revision || { revisionType: 'AppSpecContent', appSpecContent: {} },
+                status: 'Created',
+                errorInformation: null,
+                createTime: new Date(),
+                startTime: null,
+                completeTime: null,
+                deploymentOverview: {
+                    Pending: 0,
+                    InProgress: 0,
+                    Succeeded: 0,
+                    Failed: 0,
+                    Skipped: 0,
+                    Ready: 0
+                },
+                simulated: true
+            };
 
-        return deployment;
+            setTimeout(() => {
+                deployment.status = 'InProgress';
+                deployment.startTime = new Date();
+            }, 1000);
+
+            setTimeout(() => {
+                deployment.status = 'Succeeded';
+                deployment.completeTime = new Date();
+                deployment.deploymentOverview.Succeeded = 1;
+            }, 30000);
+
+            console.log(`[SIMULAÇÃO] CodeDeploy deployment ${deployment.deploymentId} criado`);
+            return deployment;
+        }
     }
 
     // ===========================================
@@ -1163,245 +1633,1155 @@ class CloudServicesEngine {
     // ===========================================
 
     async createApiGatewayRestApi(apiName, config) {
-        const api = {
-            id: `api-${Date.now()}`,
-            name: apiName,
-            description: config.description || '',
-            endpointConfiguration: config.endpointConfiguration || { types: ['REGIONAL'] },
-            createdDate: new Date(),
-            resources: new Map()
-        };
-        this.apiGateway.set(apiName, api);
-        console.log(`API Gateway REST API ${apiName} criado`);
-        return api;
+        if (this.isAWSEnabled('apigateway')) {
+            const params = {
+                name: apiName
+            };
+
+            if (config.description) {
+                params.description = config.description;
+            }
+
+            if (config.endpointConfiguration) {
+                params.endpointConfiguration = config.endpointConfiguration;
+            }
+
+            if (config.apiKeySourceType) {
+                params.apiKeySourceType = config.apiKeySourceType;
+            }
+
+            try {
+                const result = await this.apigateway.createRestApi(params).promise();
+                const api = {
+                    id: result.id,
+                    name: result.name,
+                    description: result.description,
+                    endpointConfiguration: result.endpointConfiguration,
+                    createdDate: result.createdDate,
+                    resources: new Map(),
+                    simulated: false
+                };
+                this.apiGateway.set(apiName, api);
+                console.log(`API Gateway REST API ${apiName} criado`);
+                return api;
+            } catch (error) {
+                console.error(`Erro ao criar API Gateway REST API: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const api = {
+                id: `api-${Date.now()}`,
+                name: apiName,
+                description: config.description || '',
+                endpointConfiguration: config.endpointConfiguration || { types: ['REGIONAL'] },
+                createdDate: new Date(),
+                resources: new Map(),
+                simulated: true
+            };
+            this.apiGateway.set(apiName, api);
+            console.log(`[SIMULAÇÃO] API Gateway REST API ${apiName} criado`);
+            return api;
+        }
     }
 
     async createApiGatewayResource(restApiId, parentId, pathPart) {
-        const resource = {
-            id: `resource-${Date.now()}`,
-            parentId,
-            pathPart,
-            path: `/${pathPart}`,
-            resourceMethods: {}
-        };
-        return resource;
+        if (this.isAWSEnabled('apigateway')) {
+            const params = {
+                restApiId,
+                parentId,
+                pathPart
+            };
+
+            try {
+                const result = await this.apigateway.createResource(params).promise();
+                const resource = {
+                    id: result.id,
+                    parentId: result.parentId,
+                    pathPart: result.pathPart,
+                    path: result.path,
+                    resourceMethods: {},
+                    simulated: false
+                };
+                return resource;
+            } catch (error) {
+                console.error(`Erro ao criar API Gateway resource: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const resource = {
+                id: `resource-${Date.now()}`,
+                parentId,
+                pathPart,
+                path: `/${pathPart}`,
+                resourceMethods: {},
+                simulated: true
+            };
+            return resource;
+        }
     }
 
     async putApiGatewayMethod(restApiId, resourceId, httpMethod, config) {
-        const method = {
-            httpMethod,
-            authorizationType: config.authorizationType || 'NONE',
-            apiKeyRequired: config.apiKeyRequired || false,
-            methodResponses: {},
-            methodIntegration: {}
-        };
-        return method;
+        if (this.isAWSEnabled('apigateway')) {
+            const params = {
+                restApiId,
+                resourceId,
+                httpMethod,
+                authorizationType: config.authorizationType || 'NONE'
+            };
+
+            if (config.apiKeyRequired !== undefined) {
+                params.apiKeyRequired = config.apiKeyRequired;
+            }
+
+            if (config.requestParameters) {
+                params.requestParameters = config.requestParameters;
+            }
+
+            if (config.requestModels) {
+                params.requestModels = config.requestModels;
+            }
+
+            if (config.methodResponses) {
+                params.methodResponses = config.methodResponses;
+            }
+
+            try {
+                const result = await this.apigateway.putMethod(params).promise();
+                const method = {
+                    httpMethod: result.httpMethod,
+                    authorizationType: result.authorizationType,
+                    apiKeyRequired: result.apiKeyRequired,
+                    methodResponses: result.methodResponses || {},
+                    methodIntegration: {},
+                    simulated: false
+                };
+                return method;
+            } catch (error) {
+                console.error(`Erro ao criar API Gateway method: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const method = {
+                httpMethod,
+                authorizationType: config.authorizationType || 'NONE',
+                apiKeyRequired: config.apiKeyRequired || false,
+                methodResponses: {},
+                methodIntegration: {},
+                simulated: true
+            };
+            return method;
+        }
     }
 
     async putApiGatewayIntegration(restApiId, resourceId, httpMethod, config) {
-        const integration = {
-            type: config.type || 'HTTP',
-            httpMethod: config.httpMethod || 'GET',
-            uri: config.uri,
-            credentials: config.credentials,
-            requestParameters: config.requestParameters || {},
-            requestTemplates: config.requestTemplates || {},
-            passthroughBehavior: config.passthroughBehavior || 'WHEN_NO_TEMPLATES',
-            contentHandling: config.contentHandling,
-            timeoutInMillis: config.timeoutInMillis || 29000
-        };
-        return integration;
+        if (this.isAWSEnabled('apigateway')) {
+            const params = {
+                restApiId,
+                resourceId,
+                httpMethod,
+                type: config.type || 'HTTP',
+                integrationHttpMethod: config.httpMethod || 'GET'
+            };
+
+            if (config.uri) {
+                params.uri = config.uri;
+            }
+
+            if (config.credentials) {
+                params.credentials = config.credentials;
+            }
+
+            if (config.requestParameters) {
+                params.requestParameters = config.requestParameters;
+            }
+
+            if (config.requestTemplates) {
+                params.requestTemplates = config.requestTemplates;
+            }
+
+            if (config.passthroughBehavior) {
+                params.passthroughBehavior = config.passthroughBehavior;
+            }
+
+            if (config.contentHandling) {
+                params.contentHandling = config.contentHandling;
+            }
+
+            if (config.timeoutInMillis) {
+                params.timeoutInMillis = config.timeoutInMillis;
+            }
+
+            try {
+                const result = await this.apigateway.putIntegration(params).promise();
+                const integration = {
+                    type: result.type,
+                    httpMethod: result.httpMethod,
+                    uri: result.uri,
+                    credentials: result.credentials,
+                    requestParameters: result.requestParameters || {},
+                    requestTemplates: result.requestTemplates || {},
+                    passthroughBehavior: result.passthroughBehavior,
+                    contentHandling: result.contentHandling,
+                    timeoutInMillis: result.timeoutInMillis,
+                    simulated: false
+                };
+                return integration;
+            } catch (error) {
+                console.error(`Erro ao criar API Gateway integration: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const integration = {
+                type: config.type || 'HTTP',
+                httpMethod: config.httpMethod || 'GET',
+                uri: config.uri,
+                credentials: config.credentials,
+                requestParameters: config.requestParameters || {},
+                requestTemplates: config.requestTemplates || {},
+                passthroughBehavior: config.passthroughBehavior || 'WHEN_NO_TEMPLATES',
+                contentHandling: config.contentHandling,
+                timeoutInMillis: config.timeoutInMillis || 29000,
+                simulated: true
+            };
+            return integration;
+        }
     }
 
     async createApiGatewayDeployment(restApiId, config) {
-        const deployment = {
-            id: `deployment-${Date.now()}`,
-            description: config.description || '',
-            createdDate: new Date(),
-            apiSummary: config.apiSummary || {}
-        };
-        return deployment;
+        if (this.isAWSEnabled('apigateway')) {
+            const params = {
+                restApiId
+            };
+
+            if (config.stageName) {
+                params.stageName = config.stageName;
+            }
+
+            if (config.description) {
+                params.description = config.description;
+            }
+
+            if (config.stageDescription) {
+                params.stageDescription = config.stageDescription;
+            }
+
+            if (config.cacheClusterEnabled) {
+                params.cacheClusterEnabled = config.cacheClusterEnabled;
+            }
+
+            if (config.cacheClusterSize) {
+                params.cacheClusterSize = config.cacheClusterSize;
+            }
+
+            if (config.variables) {
+                params.variables = config.variables;
+            }
+
+            try {
+                const result = await this.apigateway.createDeployment(params).promise();
+                const deployment = {
+                    id: result.id,
+                    description: result.description || '',
+                    createdDate: result.createdDate,
+                    apiSummary: result.apiSummary || {},
+                    simulated: false
+                };
+                return deployment;
+            } catch (error) {
+                console.error(`Erro ao criar API Gateway deployment: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const deployment = {
+                id: `deployment-${Date.now()}`,
+                description: config.description || '',
+                createdDate: new Date(),
+                apiSummary: config.apiSummary || {},
+                simulated: true
+            };
+            return deployment;
+        }
     }
 
     async createApiGatewayStage(restApiId, stageName, config) {
-        const stage = {
-            deploymentId: config.deploymentId,
-            stageName,
-            description: config.description || '',
-            cacheClusterEnabled: config.cacheClusterEnabled || false,
-            cacheClusterSize: config.cacheClusterSize || '0.5',
-            cacheClusterStatus: config.cacheClusterStatus || 'NOT_AVAILABLE',
-            methodSettings: config.methodSettings || {},
-            variables: config.variables || {},
-            documentationVersion: config.documentationVersion,
-            accessLogSettings: config.accessLogSettings,
-            canarySettings: config.canarySettings,
-            tracingEnabled: config.tracingEnabled || false,
-            createdDate: new Date(),
-            lastUpdatedDate: new Date()
-        };
-        return stage;
+        if (this.isAWSEnabled('apigateway')) {
+            const params = {
+                restApiId,
+                stageName,
+                deploymentId: config.deploymentId
+            };
+
+            if (config.description) {
+                params.description = config.description;
+            }
+
+            if (config.cacheClusterEnabled !== undefined) {
+                params.cacheClusterEnabled = config.cacheClusterEnabled;
+            }
+
+            if (config.cacheClusterSize) {
+                params.cacheClusterSize = config.cacheClusterSize;
+            }
+
+            if (config.variables) {
+                params.variables = config.variables;
+            }
+
+            if (config.documentationVersion) {
+                params.documentationVersion = config.documentationVersion;
+            }
+
+            if (config.canarySettings) {
+                params.canarySettings = config.canarySettings;
+            }
+
+            if (config.tracingEnabled !== undefined) {
+                params.tracingEnabled = config.tracingEnabled;
+            }
+
+            if (config.tags) {
+                params.tags = config.tags;
+            }
+
+            try {
+                const result = await this.apigateway.createStage(params).promise();
+                const stage = {
+                    deploymentId: result.deploymentId,
+                    stageName: result.stageName,
+                    description: result.description || '',
+                    cacheClusterEnabled: result.cacheClusterEnabled || false,
+                    cacheClusterSize: result.cacheClusterSize || '0.5',
+                    cacheClusterStatus: result.cacheClusterStatus || 'NOT_AVAILABLE',
+                    methodSettings: result.methodSettings || {},
+                    variables: result.variables || {},
+                    documentationVersion: result.documentationVersion,
+                    accessLogSettings: result.accessLogSettings,
+                    canarySettings: result.canarySettings,
+                    tracingEnabled: result.tracingEnabled || false,
+                    createdDate: result.createdDate,
+                    lastUpdatedDate: result.lastUpdatedDate,
+                    simulated: false
+                };
+                return stage;
+            } catch (error) {
+                console.error(`Erro ao criar API Gateway stage: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const stage = {
+                deploymentId: config.deploymentId,
+                stageName,
+                description: config.description || '',
+                cacheClusterEnabled: config.cacheClusterEnabled || false,
+                cacheClusterSize: config.cacheClusterSize || '0.5',
+                cacheClusterStatus: config.cacheClusterStatus || 'NOT_AVAILABLE',
+                methodSettings: config.methodSettings || {},
+                variables: config.variables || {},
+                documentationVersion: config.documentationVersion,
+                accessLogSettings: config.accessLogSettings,
+                canarySettings: config.canarySettings,
+                tracingEnabled: config.tracingEnabled || false,
+                createdDate: new Date(),
+                lastUpdatedDate: new Date(),
+                simulated: true
+            };
+            return stage;
+        }
     }
 
     async createAppSyncGraphqlApi(apiName, config) {
-        const api = {
-            apiId: `appsync-${Date.now()}`,
-            name: apiName,
-            authenticationType: config.authenticationType || 'API_KEY',
-            uris: {
-                GRAPHQL: `https://appsync-api.us-east-1.amazonaws.com/graphql`
-            },
-            created: new Date()
-        };
-        this.appSyncApis.set(apiName, api);
-        console.log(`AppSync GraphQL API ${apiName} criado`);
-        return api;
+        if (this.isAWSEnabled('appsync')) {
+            const params = {
+                name: apiName,
+                authenticationType: config.authenticationType || 'API_KEY'
+            };
+
+            if (config.userPoolConfig) {
+                params.userPoolConfig = config.userPoolConfig;
+            }
+
+            if (config.openIDConnectConfig) {
+                params.openIDConnectConfig = config.openIDConnectConfig;
+            }
+
+            if (config.lambdaAuthorizerConfig) {
+                params.lambdaAuthorizerConfig = config.lambdaAuthorizerConfig;
+            }
+
+            if (config.xrayEnabled !== undefined) {
+                params.xrayEnabled = config.xrayEnabled;
+            }
+
+            if (config.logConfig) {
+                params.logConfig = config.logConfig;
+            }
+
+            if (config.additionalAuthenticationProviders) {
+                params.additionalAuthenticationProviders = config.additionalAuthenticationProviders;
+            }
+
+            if (config.tags) {
+                params.tags = config.tags;
+            }
+
+            try {
+                const result = await this.appsync.createGraphqlApi(params).promise();
+                const api = {
+                    apiId: result.graphqlApi.apiId,
+                    name: result.graphqlApi.name,
+                    authenticationType: result.graphqlApi.authenticationType,
+                    uris: result.graphqlApi.uris,
+                    created: result.graphqlApi.created,
+                    simulated: false
+                };
+                this.appSyncApis.set(apiName, api);
+                console.log(`AppSync GraphQL API ${apiName} criado`);
+                return api;
+            } catch (error) {
+                console.error(`Erro ao criar AppSync GraphQL API: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const api = {
+                apiId: `appsync-${Date.now()}`,
+                name: apiName,
+                authenticationType: config.authenticationType || 'API_KEY',
+                uris: {
+                    GRAPHQL: `https://appsync-api.us-east-1.amazonaws.com/graphql`
+                },
+                created: new Date(),
+                simulated: true
+            };
+            this.appSyncApis.set(apiName, api);
+            console.log(`[SIMULAÇÃO] AppSync GraphQL API ${apiName} criado`);
+            return api;
+        }
     }
 
     async createAppSyncResolver(apiId, typeName, fieldName, config) {
-        const resolver = {
-            typeName,
-            fieldName,
-            dataSourceName: config.dataSourceName,
-            resolverArn: `arn:aws:appsync:us-east-1:123456789012:apis/${apiId}/types/${typeName}/resolvers/${fieldName}`,
-            created: new Date()
-        };
-        return resolver;
+        if (this.isAWSEnabled('appsync')) {
+            const params = {
+                apiId,
+                typeName,
+                fieldName,
+                dataSourceName: config.dataSourceName
+            };
+
+            if (config.requestMappingTemplate) {
+                params.requestMappingTemplate = config.requestMappingTemplate;
+            }
+
+            if (config.responseMappingTemplate) {
+                params.responseMappingTemplate = config.responseMappingTemplate;
+            }
+
+            if (config.kind) {
+                params.kind = config.kind;
+            }
+
+            if (config.pipelineConfig) {
+                params.pipelineConfig = config.pipelineConfig;
+            }
+
+            if (config.syncConfig) {
+                params.syncConfig = config.syncConfig;
+            }
+
+            if (config.cachingConfig) {
+                params.cachingConfig = config.cachingConfig;
+            }
+
+            if (config.maxBatchSize) {
+                params.maxBatchSize = config.maxBatchSize;
+            }
+
+            try {
+                const result = await this.appsync.createResolver(params).promise();
+                const resolver = {
+                    typeName: result.resolver.typeName,
+                    fieldName: result.resolver.fieldName,
+                    dataSourceName: result.resolver.dataSourceName,
+                    resolverArn: result.resolver.resolverArn,
+                    created: result.resolver.created,
+                    simulated: false
+                };
+                return resolver;
+            } catch (error) {
+                console.error(`Erro ao criar AppSync resolver: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const resolver = {
+                typeName,
+                fieldName,
+                dataSourceName: config.dataSourceName,
+                resolverArn: `arn:aws:appsync:us-east-1:123456789012:apis/${apiId}/types/${typeName}/resolvers/${fieldName}`,
+                created: new Date(),
+                simulated: true
+            };
+            return resolver;
+        }
     }
 
     async createAmplifyApp(appName, config) {
-        const app = {
-            appId: `amplify-${Date.now()}`,
-            name: appName,
-            repository: config.repository || '',
-            platform: config.platform || 'WEB',
-            environmentVariables: config.environmentVariables || {},
-            defaultDomain: `${appName}.amplifyapp.com`,
-            createdAt: new Date(),
-            updatedAt: new Date()
-        };
-        this.amplifyApps.set(appName, app);
-        console.log(`Amplify app ${appName} criado`);
-        return app;
+        if (this.isAWSEnabled('amplify')) {
+            const params = {
+                name: appName
+            };
+
+            if (config.repository) {
+                params.repository = config.repository;
+            }
+
+            if (config.platform) {
+                params.platform = config.platform;
+            }
+
+            if (config.environmentVariables) {
+                params.environmentVariables = config.environmentVariables;
+            }
+
+            if (config.oauthToken) {
+                params.oauthToken = config.oauthToken;
+            }
+
+            if (config.accessToken) {
+                params.accessToken = config.accessToken;
+            }
+
+            if (config.buildSpec) {
+                params.buildSpec = config.buildSpec;
+            }
+
+            if (config.customRules) {
+                params.customRules = config.customRules;
+            }
+
+            if (config.tags) {
+                params.tags = config.tags;
+            }
+
+            if (config.description) {
+                params.description = config.description;
+            }
+
+            if (config.enableBranchAutoBuild !== undefined) {
+                params.enableBranchAutoBuild = config.enableBranchAutoBuild;
+            }
+
+            if (config.enableBranchAutoDeletion !== undefined) {
+                params.enableBranchAutoDeletion = config.enableBranchAutoDeletion;
+            }
+
+            if (config.enableBasicAuth !== undefined) {
+                params.enableBasicAuth = config.enableBasicAuth;
+            }
+
+            if (config.basicAuthCredentials) {
+                params.basicAuthCredentials = config.basicAuthCredentials;
+            }
+
+            if (config.customHeaders) {
+                params.customHeaders = config.customHeaders;
+            }
+
+            if (config.enableAutoBranchCreation !== undefined) {
+                params.enableAutoBranchCreation = config.enableAutoBranchCreation;
+            }
+
+            if (config.autoBranchCreationPatterns) {
+                params.autoBranchCreationPatterns = config.autoBranchCreationPatterns;
+            }
+
+            if (config.autoBranchCreationConfig) {
+                params.autoBranchCreationConfig = config.autoBranchCreationConfig;
+            }
+
+            try {
+                const result = await this.amplify.createApp(params).promise();
+                const app = {
+                    appId: result.app.appId,
+                    name: result.app.name,
+                    repository: result.app.repository || '',
+                    platform: result.app.platform || 'WEB',
+                    environmentVariables: result.app.environmentVariables || {},
+                    defaultDomain: result.app.defaultDomain,
+                    createdAt: result.app.createdAt,
+                    updatedAt: result.app.updatedAt,
+                    simulated: false
+                };
+                this.amplifyApps.set(appName, app);
+                console.log(`Amplify app ${appName} criado`);
+                return app;
+            } catch (error) {
+                console.error(`Erro ao criar Amplify app: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const app = {
+                appId: `amplify-${Date.now()}`,
+                name: appName,
+                repository: config.repository || '',
+                platform: config.platform || 'WEB',
+                environmentVariables: config.environmentVariables || {},
+                defaultDomain: `${appName}.amplifyapp.com`,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                simulated: true
+            };
+            this.amplifyApps.set(appName, app);
+            console.log(`[SIMULAÇÃO] Amplify app ${appName} criado`);
+            return app;
+        }
     }
 
     async createAmplifyBranch(appId, branchName, config) {
-        const branch = {
-            branchName,
-            displayName: config.displayName || branchName,
-            stage: config.stage || 'DEVELOPMENT',
-            activeJobId: null,
-            createdAt: new Date(),
-            updatedAt: new Date()
-        };
-        return branch;
+        if (this.isAWSEnabled('amplify')) {
+            const params = {
+                appId,
+                branchName
+            };
+
+            if (config.description) {
+                params.description = config.description;
+            }
+
+            if (config.stage) {
+                params.stage = config.stage;
+            }
+
+            if (config.framework) {
+                params.framework = config.framework;
+            }
+
+            if (config.enableAutoBuild !== undefined) {
+                params.enableAutoBuild = config.enableAutoBuild;
+            }
+
+            if (config.enableBasicAuth !== undefined) {
+                params.enableBasicAuth = config.enableBasicAuth;
+            }
+
+            if (config.basicAuthCredentials) {
+                params.basicAuthCredentials = config.basicAuthCredentials;
+            }
+
+            if (config.enablePerformanceMode !== undefined) {
+                params.enablePerformanceMode = config.enablePerformanceMode;
+            }
+
+            if (config.buildSpec) {
+                params.buildSpec = config.buildSpec;
+            }
+
+            if (config.enablePullRequestPreview !== undefined) {
+                params.enablePullRequestPreview = config.enablePullRequestPreview;
+            }
+
+            if (config.pullRequestEnvironmentName) {
+                params.pullRequestEnvironmentName = config.pullRequestEnvironmentName;
+            }
+
+            if (config.backendEnvironmentArn) {
+                params.backendEnvironmentArn = config.backendEnvironmentArn;
+            }
+
+            if (config.environmentVariables) {
+                params.environmentVariables = config.environmentVariables;
+            }
+
+            if (config.tags) {
+                params.tags = config.tags;
+            }
+
+            try {
+                const result = await this.amplify.createBranch(params).promise();
+                const branch = {
+                    branchName: result.branch.branchName,
+                    displayName: result.branch.displayName || branchName,
+                    stage: result.branch.stage || 'DEVELOPMENT',
+                    activeJobId: result.branch.activeJobId,
+                    createdAt: result.branch.createdAt,
+                    updatedAt: result.branch.updatedAt,
+                    simulated: false
+                };
+                return branch;
+            } catch (error) {
+                console.error(`Erro ao criar Amplify branch: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const branch = {
+                branchName,
+                displayName: config.displayName || branchName,
+                stage: config.stage || 'DEVELOPMENT',
+                activeJobId: null,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                simulated: true
+            };
+            return branch;
+        }
     }
 
     async createCognitoUserPool(poolName, config) {
-        const pool = {
-            id: `us-east-1_${Date.now()}`,
-            name: poolName,
-            policies: config.policies || {},
-            lambdaConfig: config.lambdaConfig || {},
-            autoVerifiedAttributes: config.autoVerifiedAttributes || [],
-            createdAt: new Date()
-        };
-        this.cognitoPools.set(poolName, pool);
-        console.log(`Cognito User Pool ${poolName} criado`);
-        return pool;
+        if (this.isAWSEnabled('cognito')) {
+            const params = {
+                PoolName: poolName,
+                Policies: config.policies,
+                LambdaConfig: config.lambdaConfig,
+                AutoVerifiedAttributes: config.autoVerifiedAttributes
+            };
+
+            try {
+                const result = await this.cognitoidentityprovider.createUserPool(params).promise();
+                const pool = {
+                    id: result.UserPool.Id,
+                    name: result.UserPool.Name,
+                    policies: result.UserPool.Policies || {},
+                    lambdaConfig: result.UserPool.LambdaConfig || {},
+                    autoVerifiedAttributes: result.UserPool.AutoVerifiedAttributes || [],
+                    createdAt: result.UserPool.CreationDate,
+                    simulated: false
+                };
+                this.cognitoPools.set(poolName, pool);
+                console.log(`Cognito User Pool ${poolName} criado`);
+                return pool;
+            } catch (error) {
+                console.error(`Erro ao criar Cognito User Pool: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const pool = {
+                id: `us-east-1_${Date.now()}`,
+                name: poolName,
+                policies: config.policies || {},
+                lambdaConfig: config.lambdaConfig || {},
+                autoVerifiedAttributes: config.autoVerifiedAttributes || [],
+                createdAt: new Date(),
+                simulated: true
+            };
+            this.cognitoPools.set(poolName, pool);
+            console.log(`[SIMULAÇÃO] Cognito User Pool ${poolName} criado`);
+            return pool;
+        }
     }
 
     async createCognitoIdentityPool(poolName, config) {
-        const pool = {
-            identityPoolId: `us-east-1:${Date.now()}`,
-            identityPoolName: poolName,
-            allowUnauthenticatedIdentities: config.allowUnauthenticatedIdentities || false,
-            createdAt: new Date()
-        };
-        return pool;
+        if (this.isAWSEnabled('cognito')) {
+            const params = {
+                IdentityPoolName: poolName,
+                AllowUnauthenticatedIdentities: config.allowUnauthenticatedIdentities || false
+            };
+
+            try {
+                const result = await this.cognitoidentity.createIdentityPool(params).promise();
+                const pool = {
+                    identityPoolId: result.IdentityPoolId,
+                    identityPoolName: result.IdentityPoolName,
+                    allowUnauthenticatedIdentities: result.AllowUnauthenticatedIdentities,
+                    createdAt: new Date(),
+                    simulated: false
+                };
+                return pool;
+            } catch (error) {
+                console.error(`Erro ao criar Cognito Identity Pool: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const pool = {
+                identityPoolId: `us-east-1:${Date.now()}`,
+                identityPoolName: poolName,
+                allowUnauthenticatedIdentities: config.allowUnauthenticatedIdentities || false,
+                createdAt: new Date(),
+                simulated: true
+            };
+            console.log(`[SIMULAÇÃO] Cognito Identity Pool ${poolName} criado`);
+            return pool;
+        }
     }
 
     async createECSCluster(clusterName, config) {
-        const cluster = {
-            clusterArn: `arn:aws:ecs:us-east-1:123456789012:cluster/${clusterName}`,
-            clusterName,
-            status: 'ACTIVE',
-            registeredContainerInstancesCount: 0,
-            runningTasksCount: 0,
-            pendingTasksCount: 0,
-            activeServicesCount: 0,
-            createdAt: new Date()
-        };
-        this.ecsClusters.set(clusterName, cluster);
-        console.log(`ECS cluster ${clusterName} criado`);
-        return cluster;
+        if (this.isAWSEnabled('ecs')) {
+            const params = {
+                clusterName
+            };
+
+            if (config.capacityProviders) {
+                params.capacityProviders = config.capacityProviders;
+            }
+
+            if (config.defaultCapacityProviderStrategy) {
+                params.defaultCapacityProviderStrategy = config.defaultCapacityProviderStrategy;
+            }
+
+            if (config.setting) {
+                params.setting = config.setting;
+            }
+
+            if (config.configuration) {
+                params.configuration = config.configuration;
+            }
+
+            if (config.serviceConnectDefaults) {
+                params.serviceConnectDefaults = config.serviceConnectDefaults;
+            }
+
+            try {
+                const result = await this.ecs.createCluster(params).promise();
+                console.log(`ECS cluster ${clusterName} criado`);
+                return {
+                    clusterArn: result.cluster.clusterArn,
+                    clusterName: result.cluster.clusterName,
+                    status: result.cluster.status,
+                    registeredContainerInstancesCount: result.cluster.registeredContainerInstancesCount,
+                    runningTasksCount: result.cluster.runningTasksCount,
+                    pendingTasksCount: result.cluster.pendingTasksCount,
+                    activeServicesCount: result.cluster.activeServicesCount,
+                    createdAt: result.cluster.createdAt,
+                    simulated: false
+                };
+            } catch (error) {
+                console.error(`Erro ao criar ECS cluster: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const cluster = {
+                clusterArn: `arn:aws:ecs:us-east-1:123456789012:cluster/${clusterName}`,
+                clusterName,
+                status: 'ACTIVE',
+                registeredContainerInstancesCount: 0,
+                runningTasksCount: 0,
+                pendingTasksCount: 0,
+                activeServicesCount: 0,
+                createdAt: new Date(),
+                simulated: true
+            };
+            this.ecsClusters.set(clusterName, cluster);
+            console.log(`[SIMULAÇÃO] ECS cluster ${clusterName} criado`);
+            return cluster;
+        }
     }
 
     async registerECSTaskDefinition(family, config) {
-        const taskDef = {
-            taskDefinitionArn: `arn:aws:ecs:us-east-1:123456789012:task-definition/${family}:${Date.now()}`,
-            family,
-            revision: 1,
-            status: 'ACTIVE',
-            containerDefinitions: config.containerDefinitions || [],
-            createdAt: new Date()
-        };
-        return taskDef;
+        if (this.isAWSEnabled('ecs')) {
+            const params = {
+                family,
+                containerDefinitions: config.containerDefinitions || []
+            };
+
+            if (config.taskRoleArn) {
+                params.taskRoleArn = config.taskRoleArn;
+            }
+
+            if (config.executionRoleArn) {
+                params.executionRoleArn = config.executionRoleArn;
+            }
+
+            if (config.networkMode) {
+                params.networkMode = config.networkMode;
+            }
+
+            if (config.volumes) {
+                params.volumes = config.volumes;
+            }
+
+            if (config.placementConstraints) {
+                params.placementConstraints = config.placementConstraints;
+            }
+
+            if (config.requiresCompatibilities) {
+                params.requiresCompatibilities = config.requiresCompatibilities;
+            }
+
+            if (config.cpu) {
+                params.cpu = config.cpu;
+            }
+
+            if (config.memory) {
+                params.memory = config.memory;
+            }
+
+            try {
+                const result = await this.ecs.registerTaskDefinition(params).promise();
+                console.log(`ECS task definition ${family} registrado`);
+                return {
+                    taskDefinitionArn: result.taskDefinition.taskDefinitionArn,
+                    family: result.taskDefinition.family,
+                    revision: result.taskDefinition.revision,
+                    status: result.taskDefinition.status,
+                    containerDefinitions: result.taskDefinition.containerDefinitions,
+                    createdAt: result.taskDefinition.registeredAt,
+                    simulated: false
+                };
+            } catch (error) {
+                console.error(`Erro ao registrar ECS task definition: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const taskDef = {
+                taskDefinitionArn: `arn:aws:ecs:us-east-1:123456789012:task-definition/${family}:${Date.now()}`,
+                family,
+                revision: 1,
+                status: 'ACTIVE',
+                containerDefinitions: config.containerDefinitions || [],
+                createdAt: new Date(),
+                simulated: true
+            };
+            console.log(`[SIMULAÇÃO] ECS task definition ${family} registrado`);
+            return taskDef;
+        }
     }
 
     async createECSService(clusterName, serviceName, config) {
-        const service = {
-            serviceArn: `arn:aws:ecs:us-east-1:123456789012:service/${clusterName}/${serviceName}`,
-            serviceName,
-            clusterArn: `arn:aws:ecs:us-east-1:123456789012:cluster/${clusterName}`,
-            loadBalancers: config.loadBalancers || [],
-            serviceRegistries: config.serviceRegistries || [],
-            status: 'ACTIVE',
-            desiredCount: config.desiredCount || 1,
-            runningCount: 0,
-            createdAt: new Date()
-        };
-        this.ecsServices.set(serviceName, service);
-        console.log(`ECS service ${serviceName} criado`);
-        return service;
+        if (this.isAWSEnabled('ecs')) {
+            const params = {
+                cluster: clusterName,
+                serviceName,
+                taskDefinition: config.taskDefinition,
+                desiredCount: config.desiredCount || 1
+            };
+
+            if (config.loadBalancers) {
+                params.loadBalancers = config.loadBalancers;
+            }
+
+            if (config.serviceRegistries) {
+                params.serviceRegistries = config.serviceRegistries;
+            }
+
+            if (config.launchType) {
+                params.launchType = config.launchType;
+            }
+
+            if (config.capacityProviderStrategy) {
+                params.capacityProviderStrategy = config.capacityProviderStrategy;
+            }
+
+            if (config.platformVersion) {
+                params.platformVersion = config.platformVersion;
+            }
+
+            if (config.networkConfiguration) {
+                params.networkConfiguration = config.networkConfiguration;
+            }
+
+            if (config.healthCheckGracePeriodSeconds) {
+                params.healthCheckGracePeriodSeconds = config.healthCheckGracePeriodSeconds;
+            }
+
+            if (config.schedulingStrategy) {
+                params.schedulingStrategy = config.schedulingStrategy;
+            }
+
+            if (config.deploymentConfiguration) {
+                params.deploymentConfiguration = config.deploymentConfiguration;
+            }
+
+            if (config.placementConstraints) {
+                params.placementConstraints = config.placementConstraints;
+            }
+
+            if (config.placementStrategy) {
+                params.placementStrategy = config.placementStrategy;
+            }
+
+            if (config.serviceConnectConfiguration) {
+                params.serviceConnectConfiguration = config.serviceConnectConfiguration;
+            }
+
+            if (config.tags) {
+                params.tags = config.tags;
+            }
+
+            try {
+                const result = await this.ecs.createService(params).promise();
+                console.log(`ECS service ${serviceName} criado`);
+                return {
+                    serviceArn: result.service.serviceArn,
+                    serviceName: result.service.serviceName,
+                    clusterArn: result.service.clusterArn,
+                    loadBalancers: result.service.loadBalancers,
+                    serviceRegistries: result.service.serviceRegistries,
+                    status: result.service.status,
+                    desiredCount: result.service.desiredCount,
+                    runningCount: result.service.runningCount,
+                    createdAt: result.service.createdAt,
+                    simulated: false
+                };
+            } catch (error) {
+                console.error(`Erro ao criar ECS service: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const service = {
+                serviceArn: `arn:aws:ecs:us-east-1:123456789012:service/${clusterName}/${serviceName}`,
+                serviceName,
+                clusterArn: `arn:aws:ecs:us-east-1:123456789012:cluster/${clusterName}`,
+                loadBalancers: config.loadBalancers || [],
+                serviceRegistries: config.serviceRegistries || [],
+                status: 'ACTIVE',
+                desiredCount: config.desiredCount || 1,
+                runningCount: 0,
+                createdAt: new Date(),
+                simulated: true
+            };
+            this.ecsServices.set(serviceName, service);
+            console.log(`[SIMULAÇÃO] ECS service ${serviceName} criado`);
+            return service;
+        }
     }
 
     async createEKSCluster(clusterName, config) {
-        const cluster = {
-            name: clusterName,
-            arn: `arn:aws:eks:us-east-1:123456789012:cluster/${clusterName}`,
-            createdAt: new Date(),
-            status: 'CREATING',
-            endpoint: null,
-            roleArn: config.roleArn,
-            resourcesVpcConfig: config.resourcesVpcConfig || {}
-        };
+        if (this.isAWSEnabled('eks')) {
+            const params = {
+                name: clusterName,
+                roleArn: config.roleArn,
+                resourcesVpcConfig: config.resourcesVpcConfig
+            };
 
-        // Simular criação
-        setTimeout(() => {
-            cluster.status = 'ACTIVE';
-            cluster.endpoint = `https://${clusterName}.eks.amazonaws.com`;
-        }, 10000);
+            if (config.version) {
+                params.version = config.version;
+            }
 
-        this.eksClusters.set(clusterName, cluster);
-        console.log(`EKS cluster ${clusterName} criado`);
-        return cluster;
+            if (config.kubernetesNetworkConfig) {
+                params.kubernetesNetworkConfig = config.kubernetesNetworkConfig;
+            }
+
+            if (config.logging) {
+                params.logging = config.logging;
+            }
+
+            if (config.clientRequestToken) {
+                params.clientRequestToken = config.clientRequestToken;
+            }
+
+            if (config.tags) {
+                params.tags = config.tags;
+            }
+
+            if (config.encryptionConfig) {
+                params.encryptionConfig = config.encryptionConfig;
+            }
+
+            try {
+                const result = await this.eks.createCluster(params).promise();
+                console.log(`EKS cluster ${clusterName} criado`);
+                return {
+                    name: result.cluster.name,
+                    arn: result.cluster.arn,
+                    createdAt: result.cluster.createdAt,
+                    status: result.cluster.status,
+                    endpoint: result.cluster.endpoint,
+                    roleArn: result.cluster.roleArn,
+                    resourcesVpcConfig: result.cluster.resourcesVpcConfig,
+                    simulated: false
+                };
+            } catch (error) {
+                console.error(`Erro ao criar EKS cluster: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const cluster = {
+                name: clusterName,
+                arn: `arn:aws:eks:us-east-1:123456789012:cluster/${clusterName}`,
+                createdAt: new Date(),
+                status: 'CREATING',
+                endpoint: null,
+                roleArn: config.roleArn,
+                resourcesVpcConfig: config.resourcesVpcConfig || {},
+                simulated: true
+            };
+
+            // Simular criação
+            setTimeout(() => {
+                cluster.status = 'ACTIVE';
+                cluster.endpoint = `https://${clusterName}.eks.amazonaws.com`;
+            }, 10000);
+
+            this.eksClusters.set(clusterName, cluster);
+            console.log(`[SIMULAÇÃO] EKS cluster ${clusterName} criado`);
+            return cluster;
+        }
     }
 
     async createEKSNodegroup(clusterName, nodegroupName, config) {
-        const nodegroup = {
-            nodegroupName,
-            clusterName,
-            status: 'CREATING',
-            scalingConfig: config.scalingConfig || { minSize: 1, maxSize: 10, desiredSize: 1 },
-            createdAt: new Date()
-        };
+        if (this.isAWSEnabled('eks')) {
+            const params = {
+                clusterName,
+                nodegroupName,
+                subnets: config.subnets,
+                nodeRole: config.nodeRole
+            };
 
-        setTimeout(() => {
-            nodegroup.status = 'ACTIVE';
-        }, 5000);
+            if (config.scalingConfig) {
+                params.scalingConfig = config.scalingConfig;
+            }
 
-        return nodegroup;
+            if (config.instanceTypes) {
+                params.instanceTypes = config.instanceTypes;
+            }
+
+            if (config.amiType) {
+                params.amiType = config.amiType;
+            }
+
+            if (config.remoteAccess) {
+                params.remoteAccess = config.remoteAccess;
+            }
+
+            if (config.nodegroupName) {
+                params.nodegroupName = config.nodegroupName;
+            }
+
+            if (config.labels) {
+                params.labels = config.labels;
+            }
+
+            if (config.clientRequestToken) {
+                params.clientRequestToken = config.clientRequestToken;
+            }
+
+            if (config.tags) {
+                params.tags = config.tags;
+            }
+
+            if (config.capacityType) {
+                params.capacityType = config.capacityType;
+            }
+
+            try {
+                const result = await this.eks.createNodegroup(params).promise();
+                console.log(`EKS nodegroup ${nodegroupName} criado`);
+                return {
+                    nodegroupName: result.nodegroup.nodegroupName,
+                    clusterName: result.nodegroup.clusterName,
+                    status: result.nodegroup.status,
+                    scalingConfig: result.nodegroup.scalingConfig,
+                    createdAt: result.nodegroup.createdAt,
+                    simulated: false
+                };
+            } catch (error) {
+                console.error(`Erro ao criar EKS nodegroup: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const nodegroup = {
+                nodegroupName,
+                clusterName,
+                status: 'CREATING',
+                scalingConfig: config.scalingConfig || { minSize: 1, maxSize: 10, desiredSize: 1 },
+                createdAt: new Date(),
+                simulated: true
+            };
+
+            setTimeout(() => {
+                nodegroup.status = 'ACTIVE';
+            }, 5000);
+
+            console.log(`[SIMULAÇÃO] EKS nodegroup ${nodegroupName} criado`);
+            return nodegroup;
+        }
     }
 
     // ===========================================
@@ -1409,148 +2789,431 @@ class CloudServicesEngine {
     // ===========================================
 
     async createEBSVolume(config) {
-        const volume = {
-            volumeId: `vol-${Date.now()}`,
-            size: config.size || 8,
-            volumeType: config.volumeType || 'gp2',
-            availabilityZone: config.availabilityZone || 'us-east-1a',
-            state: 'creating',
-            encrypted: config.encrypted || false,
-            createdAt: new Date()
-        };
+        if (this.isAWSEnabled('ec2')) {
+            const params = {
+                Size: config.size || 8,
+                VolumeType: config.volumeType || 'gp2',
+                AvailabilityZone: config.availabilityZone || 'us-east-1a'
+            };
 
-        setTimeout(() => {
-            volume.state = 'available';
-        }, 2000);
+            if (config.encrypted !== undefined) {
+                params.Encrypted = config.encrypted;
+            }
 
-        this.ebsVolumes.set(volume.volumeId, volume);
-        console.log(`EBS volume ${volume.volumeId} criado`);
-        return volume;
+            if (config.kmsKeyId) {
+                params.KmsKeyId = config.kmsKeyId;
+            }
+
+            if (config.iops) {
+                params.Iops = config.iops;
+            }
+
+            if (config.snapshotId) {
+                params.SnapshotId = config.snapshotId;
+            }
+
+            if (config.tags) {
+                params.TagSpecifications = [{
+                    ResourceType: 'volume',
+                    Tags: Object.entries(config.tags).map(([key, value]) => ({ Key: key, Value: value }))
+                }];
+            }
+
+            try {
+                const result = await this.ec2.createVolume(params).promise();
+                const volume = {
+                    volumeId: result.VolumeId,
+                    size: result.Size,
+                    volumeType: result.VolumeType,
+                    availabilityZone: result.AvailabilityZone,
+                    state: result.State,
+                    encrypted: result.Encrypted,
+                    createdAt: result.CreateTime,
+                    simulated: false
+                };
+                this.ebsVolumes.set(volume.volumeId, volume);
+                console.log(`EBS volume ${volume.volumeId} criado`);
+                return volume;
+            } catch (error) {
+                console.error(`Erro ao criar EBS volume: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const volume = {
+                volumeId: `vol-${Date.now()}`,
+                size: config.size || 8,
+                volumeType: config.volumeType || 'gp2',
+                availabilityZone: config.availabilityZone || 'us-east-1a',
+                state: 'creating',
+                encrypted: config.encrypted || false,
+                createdAt: new Date(),
+                simulated: true
+            };
+
+            setTimeout(() => {
+                volume.state = 'available';
+            }, 2000);
+
+            this.ebsVolumes.set(volume.volumeId, volume);
+            console.log(`[SIMULAÇÃO] EBS volume ${volume.volumeId} criado`);
+            return volume;
+        }
     }
 
     async createEBSSnapshot(volumeId, config) {
-        const snapshot = {
-            snapshotId: `snap-${Date.now()}`,
-            volumeId,
-            state: 'pending',
-            progress: '0%',
-            startTime: new Date(),
-            description: config.description || ''
-        };
+        if (this.isAWSEnabled('ec2')) {
+            const params = {
+                VolumeId: volumeId
+            };
 
-        setTimeout(() => {
-            snapshot.state = 'completed';
-            snapshot.progress = '100%';
-        }, 10000);
+            if (config.description) {
+                params.Description = config.description;
+            }
 
-        return snapshot;
+            if (config.tagSpecifications) {
+                params.TagSpecifications = config.tagSpecifications;
+            }
+
+            try {
+                const result = await this.ec2.createSnapshot(params).promise();
+                const snapshot = {
+                    snapshotId: result.SnapshotId,
+                    volumeId: result.VolumeId,
+                    state: result.State,
+                    progress: result.Progress || '0%',
+                    startTime: result.StartTime,
+                    description: result.Description || config.description || '',
+                    simulated: false
+                };
+                console.log(`EBS snapshot ${snapshot.snapshotId} criado`);
+                return snapshot;
+            } catch (error) {
+                console.error(`Erro ao criar EBS snapshot: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const snapshot = {
+                snapshotId: `snap-${Date.now()}`,
+                volumeId,
+                state: 'pending',
+                progress: '0%',
+                startTime: new Date(),
+                description: config.description || '',
+                simulated: true
+            };
+
+            setTimeout(() => {
+                snapshot.state = 'completed';
+                snapshot.progress = '100%';
+            }, 10000);
+
+            console.log(`[SIMULAÇÃO] EBS snapshot ${snapshot.snapshotId} criado`);
+            return snapshot;
+        }
     }
 
-    async describeEBSVolumes() {
-        return Array.from(this.ebsVolumes.values());
+    async describeEBSVolumes(volumeIds = []) {
+        if (this.isAWSEnabled('ec2')) {
+            const params = volumeIds.length > 0 ? { VolumeIds: volumeIds } : {};
+
+            try {
+                const result = await this.ec2.describeVolumes(params).promise();
+                const volumes = result.Volumes.map(volume => ({
+                    volumeId: volume.VolumeId,
+                    size: volume.Size,
+                    volumeType: volume.VolumeType,
+                    availabilityZone: volume.AvailabilityZone,
+                    state: volume.State,
+                    encrypted: volume.Encrypted,
+                    createdAt: volume.CreateTime,
+                    attachments: volume.Attachments || [],
+                    simulated: false
+                }));
+                return volumes;
+            } catch (error) {
+                console.error(`Erro ao descrever EBS volumes: ${error.message}`);
+                throw error;
+            }
+        } else {
+            return Array.from(this.ebsVolumes.values());
+        }
     }
 
     async attachEBSVolume(volumeId, instanceId, device) {
-        const volume = this.ebsVolumes.get(volumeId);
-        if (!volume) throw new Error(`EBS volume ${volumeId} não encontrado`);
+        if (this.isAWSEnabled('ec2')) {
+            const params = {
+                VolumeId: volumeId,
+                InstanceId: instanceId,
+                Device: device
+            };
 
-        volume.state = 'attaching';
-        setTimeout(() => {
-            volume.state = 'attached';
-            volume.attachments = [{ instanceId, device, state: 'attached' }];
-        }, 5000);
+            try {
+                const result = await this.ec2.attachVolume(params).promise();
+                const volume = {
+                    volumeId: result.VolumeId,
+                    instanceId: result.InstanceId,
+                    device: result.Device,
+                    state: result.State || 'attaching',
+                    attachTime: result.AttachTime,
+                    simulated: false
+                };
+                console.log(`EBS volume ${volumeId} anexado`);
+                return volume;
+            } catch (error) {
+                console.error(`Erro ao anexar EBS volume: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const volume = this.ebsVolumes.get(volumeId);
+            if (!volume) throw new Error(`EBS volume ${volumeId} não encontrado`);
 
-        return volume;
+            volume.state = 'attaching';
+            setTimeout(() => {
+                volume.state = 'attached';
+                volume.attachments = [{ instanceId, device, state: 'attached' }];
+            }, 5000);
+
+            console.log(`[SIMULAÇÃO] EBS volume ${volumeId} anexado`);
+            return volume;
+        }
     }
 
     async detachEBSVolume(volumeId) {
-        const volume = this.ebsVolumes.get(volumeId);
-        if (!volume) throw new Error(`EBS volume ${volumeId} não encontrado`);
+        if (this.isAWSEnabled('ec2')) {
+            const params = {
+                VolumeId: volumeId
+            };
 
-        volume.state = 'detaching';
-        setTimeout(() => {
-            volume.state = 'available';
-            volume.attachments = [];
-        }, 5000);
+            try {
+                const result = await this.ec2.detachVolume(params).promise();
+                const volume = {
+                    volumeId: result.VolumeId,
+                    instanceId: result.InstanceId,
+                    device: result.Device,
+                    state: result.State || 'detaching',
+                    attachTime: result.AttachTime,
+                    simulated: false
+                };
+                console.log(`EBS volume ${volumeId} desanexado`);
+                return volume;
+            } catch (error) {
+                console.error(`Erro ao desanexar EBS volume: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const volume = this.ebsVolumes.get(volumeId);
+            if (!volume) throw new Error(`EBS volume ${volumeId} não encontrado`);
 
-        return volume;
+            volume.state = 'detaching';
+            setTimeout(() => {
+                volume.state = 'available';
+                volume.attachments = [];
+            }, 5000);
+
+            console.log(`[SIMULAÇÃO] EBS volume ${volumeId} desanexado`);
+            return volume;
+        }
     }
 
     async createEFSFileSystem(config) {
-        const fs = {
-            fileSystemId: `fs-${Date.now()}`,
-            creationToken: config.creationToken || `token-${Date.now()}`,
-            fileSystemArn: `arn:aws:elasticfilesystem:us-east-1:123456789012:file-system/fs-${Date.now()}`,
-            creationTime: new Date(),
-            lifeCycleState: 'creating',
-            performanceMode: config.performanceMode || 'generalPurpose',
-            encrypted: config.encrypted || false
-        };
+        if (this.isAWSEnabled('efs')) {
+            const params = {};
 
-        setTimeout(() => {
-            fs.lifeCycleState = 'available';
-        }, 3000);
+            if (config.creationToken) {
+                params.CreationToken = config.creationToken;
+            }
 
-        this.efsSystems.set(fs.fileSystemId, fs);
-        console.log(`EFS file system ${fs.fileSystemId} criado`);
-        return fs;
+            if (config.performanceMode) {
+                params.PerformanceMode = config.performanceMode;
+            }
+
+            if (config.encrypted !== undefined) {
+                params.Encrypted = config.encrypted;
+            }
+
+            if (config.kmsKeyId) {
+                params.KmsKeyId = config.kmsKeyId;
+            }
+
+            try {
+                const result = await this.efs.createFileSystem(params).promise();
+                const fs = {
+                    fileSystemId: result.FileSystemId,
+                    creationToken: result.CreationToken,
+                    fileSystemArn: result.FileSystemArn,
+                    creationTime: result.CreationTime,
+                    lifeCycleState: result.LifeCycleState,
+                    performanceMode: result.PerformanceMode,
+                    encrypted: result.Encrypted,
+                    simulated: false
+                };
+                this.efsSystems.set(fs.fileSystemId, fs);
+                console.log(`EFS file system ${fs.fileSystemId} criado`);
+                return fs;
+            } catch (error) {
+                console.error(`Erro ao criar EFS file system: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const fs = {
+                fileSystemId: `fs-${Date.now()}`,
+                creationToken: config.creationToken || `token-${Date.now()}`,
+                fileSystemArn: `arn:aws:elasticfilesystem:us-east-1:123456789012:file-system/fs-${Date.now()}`,
+                creationTime: new Date(),
+                lifeCycleState: 'creating',
+                performanceMode: config.performanceMode || 'generalPurpose',
+                encrypted: config.encrypted || false,
+                simulated: true
+            };
+
+            setTimeout(() => {
+                fs.lifeCycleState = 'available';
+            }, 3000);
+
+            this.efsSystems.set(fs.fileSystemId, fs);
+            console.log(`[SIMULAÇÃO] EFS file system ${fs.fileSystemId} criado`);
+            return fs;
+        }
     }
 
     async createEFSMountTarget(fileSystemId, subnetId, config) {
-        const mountTarget = {
-            mountTargetId: `mt-${Date.now()}`,
-            fileSystemId,
-            subnetId,
-            ipAddress: this.generatePrivateIp(),
-            lifeCycleState: 'creating'
-        };
+        if (this.isAWSEnabled('efs')) {
+            const params = {
+                FileSystemId: fileSystemId,
+                SubnetId: subnetId
+            };
 
-        setTimeout(() => {
-            mountTarget.lifeCycleState = 'available';
-        }, 2000);
+            if (config.securityGroups) {
+                params.SecurityGroups = config.securityGroups;
+            }
 
-        return mountTarget;
+            if (config.ipAddress) {
+                params.IpAddress = config.ipAddress;
+            }
+
+            try {
+                const result = await this.efs.createMountTarget(params).promise();
+                const mountTarget = {
+                    mountTargetId: result.MountTargetId,
+                    fileSystemId: result.FileSystemId,
+                    subnetId: result.SubnetId,
+                    ipAddress: result.IpAddress,
+                    lifeCycleState: result.LifeCycleState,
+                    simulated: false
+                };
+                console.log(`EFS mount target ${mountTarget.mountTargetId} criado`);
+                return mountTarget;
+            } catch (error) {
+                console.error(`Erro ao criar EFS mount target: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const mountTarget = {
+                mountTargetId: `mt-${Date.now()}`,
+                fileSystemId,
+                subnetId,
+                ipAddress: this.generatePrivateIp(),
+                lifeCycleState: 'creating',
+                simulated: true
+            };
+
+            setTimeout(() => {
+                mountTarget.lifeCycleState = 'available';
+            }, 2000);
+
+            console.log(`[SIMULAÇÃO] EFS mount target ${mountTarget.mountTargetId} criado`);
+            return mountTarget;
+        }
     }
 
     async createFSxFileSystem(fsxType, config) {
-        let filesystem;
+        if (this.isAWSEnabled('fsx')) {
+            const params = {
+                FileSystemType: fsxType || 'LUSTRE'
+            };
 
-        if (fsxType === 'LUSTRE') {
-            filesystem = {
-                fileSystemId: `fs-${Date.now()}`,
-                fileSystemType: 'LUSTRE',
-                lifecycle: 'CREATING',
-                creationTime: new Date(),
-                storageCapacity: config.storageCapacity || 1200,
-                storageType: config.storageType || 'SSD',
-                throughputCapacity: config.throughputCapacity || 100
-            };
-        } else if (fsxType === 'WINDOWS') {
-            filesystem = {
-                fileSystemId: `fs-${Date.now()}`,
-                fileSystemType: 'WINDOWS',
-                lifecycle: 'CREATING',
-                creationTime: new Date(),
-                storageCapacity: config.storageCapacity || 300,
-                throughputCapacity: config.throughputCapacity || 8,
-                preferredSubnetId: config.preferredSubnetId
-            };
+            if (fsxType === 'LUSTRE') {
+                params.LustreConfiguration = {
+                    DeploymentType: config.deploymentType || 'PERSISTENT_1',
+                    PerUnitStorageThroughput: config.perUnitStorageThroughput || 50,
+                    StorageCapacity: config.storageCapacity || 1200
+                };
+            } else if (fsxType === 'WINDOWS') {
+                params.WindowsConfiguration = {
+                    ThroughputCapacity: config.throughputCapacity || 8,
+                    StorageCapacity: config.storageCapacity || 300,
+                    SubnetIds: config.subnetIds || [],
+                    PreferredSubnetId: config.preferredSubnetId
+                };
+            } else if (fsxType === 'ONTAP') {
+                params.OntapConfiguration = {
+                    DeploymentType: config.deploymentType || 'MULTI_AZ_1',
+                    StorageCapacity: config.storageCapacity || 1024,
+                    ThroughputCapacity: config.throughputCapacity || 128
+                };
+            }
+
+            try {
+                const result = await this.fsx.createFileSystem(params).promise();
+                const filesystem = {
+                    fileSystemId: result.FileSystem.FileSystemId,
+                    fileSystemType: result.FileSystem.FileSystemType,
+                    lifecycle: result.FileSystem.Lifecycle,
+                    creationTime: result.FileSystem.CreationTime,
+                    storageCapacity: result.FileSystem.StorageCapacity,
+                    throughputCapacity: result.FileSystem.ThroughputCapacity,
+                    simulated: false
+                };
+                this.fsxSystems.set(filesystem.fileSystemId, filesystem);
+                console.log(`FSx ${fsxType} file system criado: ${filesystem.fileSystemId}`);
+                return filesystem;
+            } catch (error) {
+                console.error(`Erro ao criar FSx file system: ${error.message}`);
+                throw error;
+            }
         } else {
-            filesystem = {
-                fileSystemId: `fs-${Date.now()}`,
-                fileSystemType: fsxType || 'ONTAP',
-                lifecycle: 'CREATING',
-                creationTime: new Date()
-            };
+            let filesystem;
+
+            if (fsxType === 'LUSTRE') {
+                filesystem = {
+                    fileSystemId: `fs-${Date.now()}`,
+                    fileSystemType: 'LUSTRE',
+                    lifecycle: 'CREATING',
+                    creationTime: new Date(),
+                    storageCapacity: config.storageCapacity || 1200,
+                    storageType: config.storageType || 'SSD',
+                    throughputCapacity: config.throughputCapacity || 100,
+                    simulated: true
+                };
+            } else if (fsxType === 'WINDOWS') {
+                filesystem = {
+                    fileSystemId: `fs-${Date.now()}`,
+                    fileSystemType: 'WINDOWS',
+                    lifecycle: 'CREATING',
+                    creationTime: new Date(),
+                    storageCapacity: config.storageCapacity || 300,
+                    throughputCapacity: config.throughputCapacity || 8,
+                    preferredSubnetId: config.preferredSubnetId,
+                    simulated: true
+                };
+            } else {
+                filesystem = {
+                    fileSystemId: `fs-${Date.now()}`,
+                    fileSystemType: fsxType || 'ONTAP',
+                    lifecycle: 'CREATING',
+                    creationTime: new Date(),
+                    simulated: true
+                };
+            }
+
+            setTimeout(() => {
+                filesystem.lifecycle = 'AVAILABLE';
+            }, 3000);
+
+            this.fsxSystems.set(filesystem.fileSystemId, filesystem);
+            console.log(`[SIMULAÇÃO] FSx ${fsxType} file system criado: ${filesystem.fileSystemId}`);
+            return filesystem;
         }
-
-        setTimeout(() => {
-            filesystem.lifecycle = 'AVAILABLE';
-        }, 3000);
-
-        this.fsxSystems.set(filesystem.fileSystemId, filesystem);
-        console.log(`FSx ${fsxType} file system criado: ${filesystem.fileSystemId}`);
-        return filesystem;
     }
 
     // ===========================================
@@ -1621,34 +3284,83 @@ class CloudServicesEngine {
     // ===========================================
 
     async sendSSMCommand(instanceIds, documentName, parameters) {
-        const command = {
-            commandId: `cmd-${Date.now()}`,
-            documentName,
-            instanceIds,
-            parameters,
-            status: 'Pending',
-            requestedDateTime: new Date()
-        };
+        if (this.isAWSEnabled('ssm')) {
+            const params = {
+                InstanceIds: instanceIds,
+                DocumentName: documentName,
+                Parameters: parameters
+            };
 
-        setTimeout(() => {
-            command.status = 'Success';
-        }, 5000);
+            try {
+                const result = await this.ssm.sendCommand(params).promise();
+                console.log(`SSM command enviado para ${instanceIds.length} instâncias`);
+                return {
+                    commandId: result.Command.CommandId,
+                    documentName: result.Command.DocumentName,
+                    instanceIds: result.Command.InstanceIds,
+                    parameters: result.Command.Parameters,
+                    status: result.Command.Status,
+                    requestedDateTime: result.Command.RequestedDateTime
+                };
+            } catch (error) {
+                console.error(`Erro ao enviar comando SSM: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const command = {
+                commandId: `cmd-${Date.now()}`,
+                documentName,
+                instanceIds,
+                parameters,
+                status: 'Pending',
+                requestedDateTime: new Date()
+            };
 
-        return command;
+            setTimeout(() => {
+                command.status = 'Success';
+            }, 5000);
+
+            return command;
+        }
     }
 
     async putSSMParameter(name, value, type, config) {
-        const parameter = {
-            name,
-            type: type || 'String',
-            value,
-            version: 1,
-            lastModifiedDate: new Date(),
-            arn: `arn:aws:ssm:us-east-1:123456789012:parameter/${name}`
-        };
-        this.ssmParameters.set(name, parameter);
-        console.log(`SSM parameter ${name} criado`);
-        return parameter;
+        if (this.isAWSEnabled('ssm')) {
+            const params = {
+                Name: name,
+                Value: value,
+                Type: type || 'String',
+                ...config
+            };
+
+            try {
+                const result = await this.ssm.putParameter(params).promise();
+                console.log(`SSM parameter ${name} criado`);
+                return {
+                    name: result.Parameter.Name,
+                    type: result.Parameter.Type,
+                    value: result.Parameter.Value,
+                    version: result.Parameter.Version,
+                    lastModifiedDate: result.Parameter.LastModifiedDate,
+                    arn: result.Parameter.ARN
+                };
+            } catch (error) {
+                console.error(`Erro ao criar parâmetro SSM: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const parameter = {
+                name,
+                type: type || 'String',
+                value,
+                version: 1,
+                lastModifiedDate: new Date(),
+                arn: `arn:aws:ssm:us-east-1:123456789012:parameter/${name}`
+            };
+            this.ssmParameters.set(name, parameter);
+            console.log(`[SIMULAÇÃO] SSM parameter ${name} criado`);
+            return parameter;
+        }
     }
 
     async createCloudFormationStack(stackName, templateBody, parameters) {
@@ -1873,31 +3585,100 @@ class CloudServicesEngine {
     }
 
     async createEventBridgeBus(name, config) {
-        const bus = {
-            name: name || 'default',
-            arn: `arn:aws:events:us-east-1:123456789012:event-bus/${name || 'default'}`,
-            description: config.description || '',
-            createdAt: new Date()
-        };
-        this.eventBridges.set(name || 'default', bus);
-        console.log(`EventBridge bus ${name || 'default'} criado`);
-        return bus;
+        if (this.isAWSEnabled('eventbridge')) {
+            const params = {
+                Name: name || 'default',
+                Description: config.description
+            };
+
+            try {
+                const result = await this.eventbridge.createEventBus(params).promise();
+                const bus = {
+                    name: result.Name,
+                    arn: result.Arn,
+                    description: result.Description,
+                    createdAt: new Date()
+                };
+                console.log(`EventBridge bus ${name || 'default'} criado`);
+                return bus;
+            } catch (error) {
+                console.error(`Erro ao criar EventBridge bus: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const bus = {
+                name: name || 'default',
+                arn: `arn:aws:events:us-east-1:123456789012:event-bus/${name || 'default'}`,
+                description: config.description || '',
+                createdAt: new Date()
+            };
+            this.eventBridges.set(name || 'default', bus);
+            console.log(`[SIMULAÇÃO] EventBridge bus ${name || 'default'} criado`);
+            return bus;
+        }
     }
 
     async putEventBridgeRule(name, eventPattern, state, description) {
-        const rule = {
-            name,
-            arn: `arn:aws:events:us-east-1:123456789012:rule/${name}`,
-            eventPattern: JSON.stringify(eventPattern),
-            state: state || 'ENABLED',
-            description: description || '',
-            createdAt: new Date()
-        };
-        return rule;
+        if (this.isAWSEnabled('eventbridge')) {
+            const params = {
+                Name: name,
+                EventPattern: JSON.stringify(eventPattern),
+                State: state || 'ENABLED',
+                Description: description
+            };
+
+            try {
+                const result = await this.eventbridge.putRule(params).promise();
+                const rule = {
+                    name: result.RuleArn.split('/').pop(),
+                    arn: result.RuleArn,
+                    eventPattern: JSON.stringify(eventPattern),
+                    state: state || 'ENABLED',
+                    description: description || '',
+                    createdAt: new Date()
+                };
+                return rule;
+            } catch (error) {
+                console.error(`Erro ao criar EventBridge rule: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const rule = {
+                name,
+                arn: `arn:aws:events:us-east-1:123456789012:rule/${name}`,
+                eventPattern: JSON.stringify(eventPattern),
+                state: state || 'ENABLED',
+                description: description || '',
+                createdAt: new Date()
+            };
+            return rule;
+        }
     }
 
     async putEventBridgeTargets(ruleName, targets) {
-        return { failedEntries: [], failedEntryCount: 0 };
+        if (this.isAWSEnabled('eventbridge')) {
+            const params = {
+                Rule: ruleName,
+                Targets: targets.map((target, index) => ({
+                    Id: target.Id || `target-${index + 1}`,
+                    Arn: target.Arn,
+                    ...target
+                }))
+            };
+
+            try {
+                const result = await this.eventbridge.putTargets(params).promise();
+                return {
+                    failedEntries: result.FailedEntries || [],
+                    failedEntryCount: result.FailedEntryCount || 0
+                };
+            } catch (error) {
+                console.error(`Erro ao adicionar targets ao EventBridge rule: ${error.message}`);
+                throw error;
+            }
+        } else {
+            return { failedEntries: [], failedEntryCount: 0 };
+        }
     }
 
     // ===========================================
@@ -1976,20 +3757,55 @@ class CloudServicesEngine {
     }
 
     async putXRayTraceSegments(segments) {
-        console.log(`X-Ray trace segments stored: ${segments.length} segments`);
-        return { response: 'Trace segments stored successfully' };
+        if (this.isAWSEnabled('xray')) {
+            const params = {
+                TraceSegmentDocuments: segments
+            };
+            try {
+                const result = await this.xray.putTraceSegments(params).promise();
+                console.log(`X-Ray trace segments stored: ${segments.length} segments`);
+                return { response: 'Trace segments stored successfully' };
+            } catch (error) {
+                console.error(`Erro ao armazenar segmentos de trace no X-Ray: ${error.message}`);
+                throw error;
+            }
+        } else {
+            console.log(`[SIMULAÇÃO] X-Ray trace segments stored: ${segments.length} segments`);
+            return { response: 'Trace segments stored successfully' };
+        }
     }
 
     async createXRayGroup(groupName, filterExpression) {
-        const group = {
-            groupName,
-            groupARN: `arn:aws:xray:us-east-1:123456789012:group/${groupName}`,
-            filterExpression: filterExpression || '',
-            createdAt: new Date()
-        };
-        this.xrayGroups.set(groupName, group);
-        console.log(`X-Ray group ${groupName} criado`);
-        return group;
+        if (this.isAWSEnabled('xray')) {
+            const params = {
+                GroupName: groupName,
+                FilterExpression: filterExpression || ''
+            };
+            try {
+                const result = await this.xray.createGroup(params).promise();
+                const group = {
+                    groupName: result.Group.GroupName,
+                    groupARN: result.Group.GroupARN,
+                    filterExpression: result.Group.FilterExpression,
+                    createdAt: new Date()
+                };
+                console.log(`X-Ray group ${groupName} criado`);
+                return group;
+            } catch (error) {
+                console.error(`Erro ao criar grupo X-Ray: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const group = {
+                groupName,
+                groupARN: `arn:aws:xray:us-east-1:123456789012:group/${groupName}`,
+                filterExpression: filterExpression || '',
+                createdAt: new Date()
+            };
+            this.xrayGroups.set(groupName, group);
+            console.log(`[SIMULAÇÃO] X-Ray group ${groupName} criado`);
+            return group;
+        }
     }
 
     // ===========================================
@@ -1997,32 +3813,84 @@ class CloudServicesEngine {
     // ===========================================
 
     async createOrganization(config) {
-        const organization = {
-            id: `o-${Date.now()}`,
-            arn: `arn:aws:organizations::123456789012:organization/o-${Date.now()}`,
-            featureSet: config.featureSet || 'ALL',
-            masterAccountId: config.masterAccountId || '123456789012',
-            masterAccountArn: `arn:aws:organizations::123456789012:account/o-${Date.now()}/123456789012`,
-            availablePolicyTypes: [
-                { type: 'SERVICE_CONTROL_POLICY', status: 'ENABLED' },
-                { type: 'TAG_POLICY', status: 'ENABLED' }
-            ],
-            created: new Date()
-        };
-        this.organizationsAccounts.set('root', organization);
-        console.log(`Organization criada`);
-        return organization;
+        if (this.isAWSEnabled('organizations')) {
+            const params = {
+                FeatureSet: config.featureSet || 'ALL'
+            };
+
+            try {
+                const result = await this.organizations.createOrganization(params).promise();
+                const organization = {
+                    id: result.Organization.Id,
+                    arn: result.Organization.Arn,
+                    featureSet: result.Organization.FeatureSet,
+                    masterAccountId: result.Organization.MasterAccountId,
+                    masterAccountArn: result.Organization.MasterAccountArn,
+                    availablePolicyTypes: result.Organization.AvailablePolicyTypes || [],
+                    created: new Date(),
+                    simulated: false
+                };
+                this.organizationsAccounts.set('root', organization);
+                console.log(`Organization criada`);
+                return organization;
+            } catch (error) {
+                console.error(`Erro ao criar Organization: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const organization = {
+                id: `o-${Date.now()}`,
+                arn: `arn:aws:organizations::123456789012:organization/o-${Date.now()}`,
+                featureSet: config.featureSet || 'ALL',
+                masterAccountId: config.masterAccountId || '123456789012',
+                masterAccountArn: `arn:aws:organizations::123456789012:account/o-${Date.now()}/123456789012`,
+                availablePolicyTypes: [
+                    { type: 'SERVICE_CONTROL_POLICY', status: 'ENABLED' },
+                    { type: 'TAG_POLICY', status: 'ENABLED' }
+                ],
+                created: new Date(),
+                simulated: true
+            };
+            this.organizationsAccounts.set('root', organization);
+            console.log(`[SIMULAÇÃO] Organization criada`);
+            return organization;
+        }
     }
 
     async createOrganizationalUnit(parentId, name, config) {
-        const ou = {
-            id: `ou-${Date.now()}`,
-            arn: `arn:aws:organizations::123456789012:ou/o-${Date.now()}/${parentId}/${this.organizationsAccounts.size}`,
-            name,
-            parentId,
-            created: new Date()
-        };
-        return ou;
+        if (this.isAWSEnabled('organizations')) {
+            const params = {
+                ParentId: parentId,
+                Name: name
+            };
+
+            try {
+                const result = await this.organizations.createOrganizationalUnit(params).promise();
+                const ou = {
+                    id: result.OrganizationalUnit.Id,
+                    arn: result.OrganizationalUnit.Arn,
+                    name: result.OrganizationalUnit.Name,
+                    parentId: parentId,
+                    created: new Date(),
+                    simulated: false
+                };
+                return ou;
+            } catch (error) {
+                console.error(`Erro ao criar Organizational Unit: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const ou = {
+                id: `ou-${Date.now()}`,
+                arn: `arn:aws:organizations::123456789012:ou/o-${Date.now()}/${parentId}/${this.organizationsAccounts.size}`,
+                name,
+                parentId,
+                created: new Date(),
+                simulated: true
+            };
+            console.log(`[SIMULAÇÃO] Organizational Unit ${name} criada`);
+            return ou;
+        }
     }
 
     async createControlTowerLandingZone(manifest) {
@@ -2128,49 +3996,137 @@ class CloudServicesEngine {
     }
 
     async createSavingsPlan(savingsPlanOfferingId, commitment, config) {
-        const savingsPlan = {
-            savingsPlanId: `savingsplan-${Date.now()}`,
-            savingsPlanArn: `arn:aws:savingsplans::123456789012:savingsplan/savingsplan-${Date.now()}`,
-            savingsPlanOfferingId,
-            description: config.description || 'Simulated Savings Plan',
-            commitment: commitment || '10.00',
-            upfrontPaymentAmount: config.upfrontPaymentAmount || '0',
-            recurringPaymentAmount: config.recurringPaymentAmount || '0',
-            termDurationInSeconds: config.termDurationInSeconds || 31536000, // 1 year
-            state: 'active',
-            paymentOption: config.paymentOption || 'No Upfront',
-            startTime: new Date(),
-            endTime: new Date(Date.now() + 31536000000), // 1 year from now
-            currency: 'USD'
-        };
-        this.savingsPlans.set(savingsPlan.savingsPlanId, savingsPlan);
-        console.log(`Savings Plan ${savingsPlan.savingsPlanId} criado`);
-        return savingsPlan;
+        if (this.isAWSEnabled('savingsplans')) {
+            const params = {
+                savingsPlanOfferingId,
+                commitment: commitment || '10.00'
+            };
+
+            if (config.clientToken) {
+                params.clientToken = config.clientToken;
+            }
+
+            if (config.purchaseTime) {
+                params.purchaseTime = config.purchaseTime;
+            }
+
+            if (config.tags) {
+                params.tags = config.tags;
+            }
+
+            try {
+                const result = await this.savingsplans.createSavingsPlan(params).promise();
+                console.log(`Savings Plan ${result.savingsPlanId} criado`);
+                return {
+                    savingsPlanId: result.savingsPlanId,
+                    savingsPlanArn: result.savingsPlanArn,
+                    savingsPlanOfferingId: result.savingsPlanOfferingId,
+                    description: config.description || '',
+                    commitment: result.commitment,
+                    upfrontPaymentAmount: result.upfrontPaymentAmount,
+                    recurringPaymentAmount: result.recurringPaymentAmount,
+                    termDurationInSeconds: result.termDurationInSeconds,
+                    state: result.state,
+                    paymentOption: result.paymentOption,
+                    startTime: result.startTime,
+                    endTime: result.endTime,
+                    currency: result.currency
+                };
+            } catch (error) {
+                console.error(`Erro ao criar Savings Plan: ${error.message}`);
+                throw error;
+            }
+        } else {
+            // Fallback para simulação quando desabilitado
+            console.log(`[SIMULAÇÃO] Savings Plans desabilitado, criando savings plan simulado`);
+            const savingsPlan = {
+                savingsPlanId: `savingsplan-${Date.now()}`,
+                savingsPlanArn: `arn:aws:savingsplans::123456789012:savingsplan/savingsplan-${Date.now()}`,
+                savingsPlanOfferingId,
+                description: config.description || 'Simulated Savings Plan',
+                commitment: commitment || '10.00',
+                upfrontPaymentAmount: config.upfrontPaymentAmount || '0',
+                recurringPaymentAmount: config.recurringPaymentAmount || '0',
+                termDurationInSeconds: config.termDurationInSeconds || 31536000, // 1 year
+                state: 'active',
+                paymentOption: config.paymentOption || 'No Upfront',
+                startTime: new Date(),
+                endTime: new Date(Date.now() + 31536000000), // 1 year from now
+                currency: 'USD'
+            };
+            this.savingsPlans.set(savingsPlan.savingsPlanId, savingsPlan);
+            console.log(`Savings Plan ${savingsPlan.savingsPlanId} criado`);
+            return savingsPlan;
+        }
     }
 
     async purchaseReservedInstances(reservedInstancesOfferingId, instanceCount, config) {
-        const ri = {
-            reservedInstancesId: `reserved-${Date.now()}`,
-            reservedInstancesArn: `arn:aws:ec2:us-east-1:123456789012:reserved-instances/reserved-${Date.now()}`,
-            instanceType: config.instanceType || 'm5.large',
-            availabilityZone: config.availabilityZone || 'us-east-1a',
-            start: new Date(),
-            end: new Date(Date.now() + 31536000000),
-            duration: 31536000,
-            instanceCount: instanceCount || 1,
-            productDescription: config.productDescription || 'Linux/UNIX',
-            state: 'active',
-            instanceTenancy: config.instanceTenancy || 'default',
-            currencyCode: 'USD',
-            offeringType: config.offeringType || 'Heavy Utilization',
-            recurringCharges: [{
-                amount: '0.00',
-                frequency: 'Hourly'
-            }]
-        };
-        this.reservedInstances.set(ri.reservedInstancesId, ri);
-        console.log(`Reserved Instance ${ri.reservedInstancesId} criado`);
-        return ri;
+        if (this.isAWSEnabled('ec2')) {
+            const params = {
+                ReservedInstancesOfferingId: reservedInstancesOfferingId,
+                InstanceCount: instanceCount || 1
+            };
+
+            if (config.clientToken) {
+                params.ClientToken = config.clientToken;
+            }
+
+            if (config.limitPrice) {
+                params.LimitPrice = config.limitPrice;
+            }
+
+            try {
+                const result = await this.ec2.purchaseReservedInstancesOffering(params).promise();
+                console.log(`Reserved Instance ${result.ReservedInstancesId} criado`);
+                return {
+                    reservedInstancesId: result.ReservedInstancesId,
+                    reservedInstancesArn: `arn:aws:ec2:us-east-1:123456789012:reserved-instances/${result.ReservedInstancesId}`,
+                    instanceType: config.instanceType || 'm5.large',
+                    availabilityZone: config.availabilityZone || 'us-east-1a',
+                    start: new Date(),
+                    end: new Date(Date.now() + 31536000000),
+                    duration: 31536000,
+                    instanceCount: instanceCount || 1,
+                    productDescription: config.productDescription || 'Linux/UNIX',
+                    state: 'active',
+                    instanceTenancy: config.instanceTenancy || 'default',
+                    currencyCode: 'USD',
+                    offeringType: config.offeringType || 'Heavy Utilization',
+                    recurringCharges: result.RecurringCharges || [{
+                        amount: '0.00',
+                        frequency: 'Hourly'
+                    }]
+                };
+            } catch (error) {
+                console.error(`Erro ao comprar Reserved Instance: ${error.message}`);
+                throw error;
+            }
+        } else {
+            // Fallback para simulação quando desabilitado
+            console.log(`[SIMULAÇÃO] EC2 desabilitado, criando reserved instance simulado`);
+            const ri = {
+                reservedInstancesId: `reserved-${Date.now()}`,
+                reservedInstancesArn: `arn:aws:ec2:us-east-1:123456789012:reserved-instances/reserved-${Date.now()}`,
+                instanceType: config.instanceType || 'm5.large',
+                availabilityZone: config.availabilityZone || 'us-east-1a',
+                start: new Date(),
+                end: new Date(Date.now() + 31536000000),
+                duration: 31536000,
+                instanceCount: instanceCount || 1,
+                productDescription: config.productDescription || 'Linux/UNIX',
+                state: 'active',
+                instanceTenancy: config.instanceTenancy || 'default',
+                currencyCode: 'USD',
+                offeringType: config.offeringType || 'Heavy Utilization',
+                recurringCharges: [{
+                    amount: '0.00',
+                    frequency: 'Hourly'
+                }]
+            };
+            this.reservedInstances.set(ri.reservedInstancesId, ri);
+            console.log(`Reserved Instance ${ri.reservedInstancesId} criado`);
+            return ri;
+        }
     }
 
     async requestSpotFleet(config) {
@@ -2199,42 +4155,146 @@ class CloudServicesEngine {
     }
 
     async createStorageGateway(gatewayName, gatewayTimezone, gatewayType, config) {
-        const gateway = {
-            gatewayId: `gateway-${Date.now()}`,
-            gatewayARN: `arn:aws:storagegateway:us-east-1:123456789012:gateway/gateway-${Date.now()}`,
-            gatewayName,
-            gatewayTimezone,
-            gatewayType: gatewayType || 'FILE_S3',
-            gatewayState: 'AVAILABLE',
-            created: new Date()
-        };
-        this.storageGateways.set(gatewayName, gateway);
-        console.log(`Storage Gateway ${gatewayName} criado`);
-        return gateway;
+        if (this.isAWSEnabled('storagegateway')) {
+            const params = {
+                GatewayName: gatewayName,
+                GatewayTimezone: gatewayTimezone,
+                GatewayType: gatewayType || 'FILE_S3'
+            };
+
+            if (config.gatewayRegion) {
+                params.GatewayRegion = config.gatewayRegion;
+            }
+
+            try {
+                // First activate the gateway
+                const result = await this.storagegateway.activateGateway(params).promise();
+                const gateway = {
+                    gatewayId: result.GatewayId,
+                    gatewayARN: result.GatewayARN,
+                    gatewayName: result.GatewayName,
+                    gatewayTimezone: result.GatewayTimezone,
+                    gatewayType: result.GatewayType,
+                    gatewayState: 'AVAILABLE',
+                    created: new Date(),
+                    simulated: false
+                };
+                this.storageGateways.set(gatewayName, gateway);
+                console.log(`Storage Gateway ${gatewayName} criado`);
+                return gateway;
+            } catch (error) {
+                console.error(`Erro ao criar Storage Gateway: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const gateway = {
+                gatewayId: `gateway-${Date.now()}`,
+                gatewayARN: `arn:aws:storagegateway:us-east-1:123456789012:gateway/gateway-${Date.now()}`,
+                gatewayName,
+                gatewayTimezone,
+                gatewayType: gatewayType || 'FILE_S3',
+                gatewayState: 'AVAILABLE',
+                created: new Date(),
+                simulated: true
+            };
+            this.storageGateways.set(gatewayName, gateway);
+            console.log(`[SIMULAÇÃO] Storage Gateway ${gatewayName} criado`);
+            return gateway;
+        }
     }
 
     async createBackupVault(vaultName, config) {
-        const vault = {
-            backupVaultName: vaultName,
-            backupVaultArn: `arn:aws:backup:us-east-1:123456789012:backup-vault:${vaultName}`,
-            encryptionKeyArn: config.encryptionKeyArn || 'arn:aws:kms:us-east-1:123456789012:key/default',
-            creationDate: new Date(),
-            numberOfRecoveryPoints: 0
-        };
-        this.backupVaults.set(vaultName, vault);
-        console.log(`Backup vault ${vaultName} criado`);
-        return vault;
+        if (this.isAWSEnabled('backup')) {
+            const params = {
+                BackupVaultName: vaultName
+            };
+
+            if (config.encryptionKeyArn) {
+                params.EncryptionKeyArn = config.encryptionKeyArn;
+            }
+
+            if (config.backupVaultTags) {
+                params.BackupVaultTags = config.backupVaultTags;
+            }
+
+            if (config.creatorRequestId) {
+                params.CreatorRequestId = config.creatorRequestId;
+            }
+
+            try {
+                const result = await this.backup.createBackupVault(params).promise();
+                const vault = {
+                    backupVaultName: result.BackupVaultName,
+                    backupVaultArn: result.BackupVaultArn,
+                    encryptionKeyArn: result.EncryptionKeyArn,
+                    creationDate: result.CreationDate,
+                    numberOfRecoveryPoints: result.NumberOfRecoveryPoints,
+                    simulated: false
+                };
+                this.backupVaults.set(vaultName, vault);
+                console.log(`Backup vault ${vaultName} criado`);
+                return vault;
+            } catch (error) {
+                console.error(`Erro ao criar backup vault: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const vault = {
+                backupVaultName: vaultName,
+                backupVaultArn: `arn:aws:backup:us-east-1:123456789012:backup-vault:${vaultName}`,
+                encryptionKeyArn: config.encryptionKeyArn || 'arn:aws:kms:us-east-1:123456789012:key/default',
+                creationDate: new Date(),
+                numberOfRecoveryPoints: 0,
+                simulated: true
+            };
+            this.backupVaults.set(vaultName, vault);
+            console.log(`[SIMULAÇÃO] Backup vault ${vaultName} criado`);
+            return vault;
+        }
     }
 
     async createBackupPlan(backupPlan, config) {
-        const plan = {
-            backupPlanId: `backup-plan-${Date.now()}`,
-            backupPlanArn: `arn:aws:backup:us-east-1:123456789012:backup-plan:backup-plan-${Date.now()}`,
-            backupPlan: backupPlan,
-            creationDate: new Date(),
-            versionId: '1'
-        };
-        return plan;
+        if (this.isAWSEnabled('backup')) {
+            const params = {
+                BackupPlan: backupPlan
+            };
+
+            if (config.creatorRequestId) {
+                params.CreatorRequestId = config.creatorRequestId;
+            }
+
+            if (config.backupPlanTags) {
+                params.BackupPlanTags = config.backupPlanTags;
+            }
+
+            try {
+                const result = await this.backup.createBackupPlan(params).promise();
+                const plan = {
+                    backupPlanId: result.BackupPlanId,
+                    backupPlanArn: result.BackupPlanArn,
+                    backupPlan: result.BackupPlan,
+                    creationDate: result.CreationDate,
+                    versionId: result.VersionId,
+                    simulated: false
+                };
+                console.log(`Backup plan criado`);
+                return plan;
+            } catch (error) {
+                console.error(`Erro ao criar backup plan: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const plan = {
+                backupPlanId: `backup-plan-${Date.now()}`,
+                backupPlanArn: `arn:aws:backup:us-east-1:123456789012:backup-plan:backup-plan-${Date.now()}`,
+                backupPlan: backupPlan,
+                creationDate: new Date(),
+                versionId: '1',
+                simulated: true
+            };
+            console.log(`[SIMULAÇÃO] Backup plan criado`);
+            return plan;
+        }
     }
 
     async createDisasterRecoveryPlan(planName, config) {
@@ -2377,69 +4437,166 @@ class CloudServicesEngine {
     }
 
     async createOpsWorksStack(stackName, config) {
-        const stack = {
-            stackId: `stack-${Date.now()}`,
-            name: stackName,
-            region: config.region || 'us-east-1',
-            vpcId: config.vpcId,
-            attributes: config.attributes || {},
-            serviceRoleArn: config.serviceRoleArn,
-            defaultInstanceProfileArn: config.defaultInstanceProfileArn,
-            defaultOs: config.defaultOs || 'Amazon Linux 2018.03',
-            hostnameTheme: config.hostnameTheme || 'Layer_Dependent',
-            defaultAvailabilityZone: config.defaultAvailabilityZone || 'us-east-1a',
-            defaultSubnetId: config.defaultSubnetId,
-            customJson: config.customJson || '{}',
-            configurationManager: config.configurationManager || { name: 'Chef', version: '12' },
-            chefConfiguration: config.chefConfiguration || {},
-            useCustomCookbooks: config.useCustomCookbooks || false,
-            useOpsworksSecurityGroups: config.useOpsworksSecurityGroups || true,
-            customCookbooksSource: config.customCookbooksSource || {},
-            defaultSshKeyName: config.defaultSshKeyName,
-            createdAt: new Date()
-        };
-        this.opsWorksStacks.set(stackName, stack);
-        console.log(`OpsWorks stack ${stackName} criado`);
-        return stack;
+        if (this.isAWSEnabled('opsworks')) {
+            const params = {
+                Name: stackName,
+                ...config
+            };
+
+            try {
+                const result = await this.opsworks.createStack(params).promise();
+                console.log(`OpsWorks stack ${stackName} criado`);
+                return {
+                    stackId: result.Stack.StackId,
+                    name: result.Stack.Name,
+                    region: result.Stack.Region,
+                    vpcId: result.Stack.VpcId,
+                    attributes: result.Stack.Attributes,
+                    serviceRoleArn: result.Stack.ServiceRoleArn,
+                    defaultInstanceProfileArn: result.Stack.DefaultInstanceProfileArn,
+                    defaultOs: result.Stack.DefaultOs,
+                    hostnameTheme: result.Stack.HostnameTheme,
+                    defaultAvailabilityZone: result.Stack.DefaultAvailabilityZone,
+                    defaultSubnetId: result.Stack.DefaultSubnetId,
+                    customJson: result.Stack.CustomJson,
+                    configurationManager: result.Stack.ConfigurationManager,
+                    chefConfiguration: result.Stack.ChefConfiguration,
+                    useCustomCookbooks: result.Stack.UseCustomCookbooks,
+                    useOpsworksSecurityGroups: result.Stack.UseOpsworksSecurityGroups,
+                    customCookbooksSource: result.Stack.CustomCookbooksSource,
+                    defaultSshKeyName: result.Stack.DefaultSshKeyName,
+                    createdAt: result.Stack.CreatedAt
+                };
+            } catch (error) {
+                console.error(`Erro ao criar OpsWorks stack: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const stack = {
+                stackId: `stack-${Date.now()}`,
+                name: stackName,
+                region: config.region || 'us-east-1',
+                vpcId: config.vpcId,
+                attributes: config.attributes || {},
+                serviceRoleArn: config.serviceRoleArn,
+                defaultInstanceProfileArn: config.defaultInstanceProfileArn,
+                defaultOs: config.defaultOs || 'Amazon Linux 2018.03',
+                hostnameTheme: config.hostnameTheme || 'Layer_Dependent',
+                defaultAvailabilityZone: config.defaultAvailabilityZone || 'us-east-1a',
+                defaultSubnetId: config.defaultSubnetId,
+                customJson: config.customJson || '{}',
+                configurationManager: config.configurationManager || { name: 'Chef', version: '12' },
+                chefConfiguration: config.chefConfiguration || {},
+                useCustomCookbooks: config.useCustomCookbooks || false,
+                useOpsworksSecurityGroups: config.useOpsworksSecurityGroups || true,
+                customCookbooksSource: config.customCookbooksSource || {},
+                defaultSshKeyName: config.defaultSshKeyName,
+                createdAt: new Date()
+            };
+            this.opsWorksStacks.set(stackName, stack);
+            console.log(`[SIMULAÇÃO] OpsWorks stack ${stackName} criado`);
+            return stack;
+        }
     }
 
     async createElasticBeanstalkApplication(appName, config) {
-        const app = {
-            ApplicationArn: `arn:aws:elasticbeanstalk:us-east-1:123456789012:application/${appName}`,
-            ApplicationName: appName,
-            Description: config.description || '',
-            DateCreated: new Date(),
-            DateUpdated: new Date(),
-            Versions: [],
-            ConfigurationTemplates: [],
-            ResourceLifecycleConfig: config.resourceLifecycleConfig || {}
-        };
-        this.elasticBeanstalkApps.set(appName, app);
-        console.log(`Elastic Beanstalk application ${appName} criado`);
-        return app;
+        if (this.isAWSEnabled('elasticbeanstalk')) {
+            const params = {
+                ApplicationName: appName,
+                ...config
+            };
+
+            try {
+                const result = await this.elasticbeanstalk.createApplication(params).promise();
+                console.log(`Elastic Beanstalk application ${appName} criado`);
+                return {
+                    ApplicationArn: result.Application.ApplicationArn,
+                    ApplicationName: result.Application.ApplicationName,
+                    Description: result.Application.Description,
+                    DateCreated: result.Application.DateCreated,
+                    DateUpdated: result.Application.DateUpdated,
+                    Versions: result.Application.Versions,
+                    ConfigurationTemplates: result.Application.ConfigurationTemplates,
+                    ResourceLifecycleConfig: result.Application.ResourceLifecycleConfig
+                };
+            } catch (error) {
+                console.error(`Erro ao criar Elastic Beanstalk application: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const app = {
+                ApplicationArn: `arn:aws:elasticbeanstalk:us-east-1:123456789012:application/${appName}`,
+                ApplicationName: appName,
+                Description: config.description || '',
+                DateCreated: new Date(),
+                DateUpdated: new Date(),
+                Versions: [],
+                ConfigurationTemplates: [],
+                ResourceLifecycleConfig: config.resourceLifecycleConfig || {}
+            };
+            this.elasticBeanstalkApps.set(appName, app);
+            console.log(`[SIMULAÇÃO] Elastic Beanstalk application ${appName} criado`);
+            return app;
+        }
     }
 
     async createElasticBeanstalkEnvironment(appName, envName, config) {
-        const env = {
-            EnvironmentArn: `arn:aws:elasticbeanstalk:us-east-1:123456789012:environment/${appName}/${envName}`,
-            EnvironmentName: envName,
-            ApplicationName: appName,
-            VersionLabel: config.versionLabel || 'v1',
-            SolutionStackName: config.solutionStackName || '64bit Amazon Linux 2 v3.3.11 running Node.js 14',
-            PlatformArn: config.platformArn,
-            Description: config.description || '',
-            EndpointURL: `http://${envName}.elasticbeanstalk.com`,
-            CNAME: `${envName}.elasticbeanstalk.com`,
-            DateCreated: new Date(),
-            DateUpdated: new Date(),
-            Status: 'Ready',
-            Health: 'Green',
-            HealthStatus: 'Ok',
-            EnvironmentLinks: config.environmentLinks || [],
-            Tier: config.tier || { Name: 'WebServer', Type: 'Standard', Version: '1.0' },
-            EnvironmentId: Date.now().toString()
-        };
-        return env;
+        if (this.isAWSEnabled('elasticbeanstalk')) {
+            const params = {
+                ApplicationName: appName,
+                EnvironmentName: envName,
+                ...config
+            };
+
+            try {
+                const result = await this.elasticbeanstalk.createEnvironment(params).promise();
+                console.log(`Elastic Beanstalk environment ${envName} criado`);
+                return {
+                    EnvironmentArn: result.Environment.EnvironmentArn,
+                    EnvironmentName: result.Environment.EnvironmentName,
+                    ApplicationName: result.Environment.ApplicationName,
+                    VersionLabel: result.Environment.VersionLabel,
+                    SolutionStackName: result.Environment.SolutionStackName,
+                    PlatformArn: result.Environment.PlatformArn,
+                    Description: result.Environment.Description,
+                    EndpointURL: result.Environment.EndpointURL,
+                    CNAME: result.Environment.CNAME,
+                    DateCreated: result.Environment.DateCreated,
+                    DateUpdated: result.Environment.DateUpdated,
+                    Status: result.Environment.Status,
+                    Health: result.Environment.Health,
+                    HealthStatus: result.Environment.HealthStatus,
+                    EnvironmentLinks: result.Environment.EnvironmentLinks,
+                    Tier: result.Environment.Tier,
+                    EnvironmentId: result.Environment.EnvironmentId
+                };
+            } catch (error) {
+                console.error(`Erro ao criar Elastic Beanstalk environment: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const env = {
+                EnvironmentArn: `arn:aws:elasticbeanstalk:us-east-1:123456789012:environment/${appName}/${envName}`,
+                EnvironmentName: envName,
+                ApplicationName: appName,
+                VersionLabel: config.versionLabel || 'v1',
+                SolutionStackName: config.solutionStackName || '64bit Amazon Linux 2 v3.3.11 running Node.js 14',
+                PlatformArn: config.platformArn,
+                Description: config.description || '',
+                EndpointURL: `http://${envName}.elasticbeanstalk.com`,
+                CNAME: `${envName}.elasticbeanstalk.com`,
+                DateCreated: new Date(),
+                DateUpdated: new Date(),
+                Status: 'Ready',
+                Health: 'Green',
+                HealthStatus: 'Ok',
+                EnvironmentLinks: config.environmentLinks || [],
+                Tier: config.tier || { Name: 'WebServer', Type: 'Standard', Version: '1.0' },
+                EnvironmentId: Date.now().toString()
+            };
+            console.log(`[SIMULAÇÃO] Elastic Beanstalk environment ${envName} criado`);
+            return env;
+        }
     }
 
     async createCodeStarProject(projectId, config) {
@@ -2501,24 +4658,106 @@ class CloudServicesEngine {
     }
 
     async runFargateTask(clusterName, taskDefinition, config) {
-        const task = {
-            taskArn: `arn:aws:ecs:us-east-1:123456789012:task/${clusterName}/${Date.now()}`,
-            clusterArn: `arn:aws:ecs:us-east-1:123456789012:cluster/${clusterName}`,
-            taskDefinitionArn: taskDefinition,
-            containerInstanceArn: null,
-            overrides: config.overrides || {},
-            lastStatus: 'RUNNING',
-            desiredStatus: 'RUNNING',
-            cpu: config.cpu || '256',
-            memory: config.memory || '512',
-            createdAt: new Date(),
-            startedAt: new Date(),
-            launchType: 'FARGATE',
-            platformVersion: config.platformVersion || '1.4.0'
-        };
-        this.fargateTasks.set(task.taskArn, task);
-        console.log(`Fargate task criado`);
-        return task;
+        if (this.isAWSEnabled('ecs')) {
+            const params = {
+                cluster: clusterName,
+                taskDefinition: taskDefinition,
+                launchType: 'FARGATE'
+            };
+
+            if (config.count) {
+                params.count = config.count;
+            }
+
+            if (config.overrides) {
+                params.overrides = config.overrides;
+            }
+
+            if (config.networkConfiguration) {
+                params.networkConfiguration = config.networkConfiguration;
+            }
+
+            if (config.capacityProviderStrategy) {
+                params.capacityProviderStrategy = config.capacityProviderStrategy;
+            }
+
+            if (config.platformVersion) {
+                params.platformVersion = config.platformVersion;
+            }
+
+            if (config.group) {
+                params.group = config.group;
+            }
+
+            if (config.placementConstraints) {
+                params.placementConstraints = config.placementConstraints;
+            }
+
+            if (config.placementStrategy) {
+                params.placementStrategy = config.placementStrategy;
+            }
+
+            if (config.serviceTags) {
+                params.serviceTags = config.serviceTags;
+            }
+
+            if (config.propogateTags) {
+                params.propogateTags = config.propogateTags;
+            }
+
+            if (config.referenceId) {
+                params.referenceId = config.referenceId;
+            }
+
+            if (config.enableLogging) {
+                params.enableLogging = config.enableLogging;
+            }
+
+            try {
+                const result = await this.ecs.runTask(params).promise();
+                console.log(`Fargate task criado`);
+                const task = result.tasks[0];
+                return {
+                    taskArn: task.taskArn,
+                    clusterArn: task.clusterArn,
+                    taskDefinitionArn: task.taskDefinitionArn,
+                    containerInstanceArn: task.containerInstanceArn,
+                    overrides: task.overrides,
+                    lastStatus: task.lastStatus,
+                    desiredStatus: task.desiredStatus,
+                    cpu: task.cpu,
+                    memory: task.memory,
+                    createdAt: task.createdAt,
+                    startedAt: task.startedAt,
+                    launchType: task.launchType,
+                    platformVersion: task.platformVersion,
+                    simulated: false
+                };
+            } catch (error) {
+                console.error(`Erro ao executar Fargate task: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const task = {
+                taskArn: `arn:aws:ecs:us-east-1:123456789012:task/${clusterName}/${Date.now()}`,
+                clusterArn: `arn:aws:ecs:us-east-1:123456789012:cluster/${clusterName}`,
+                taskDefinitionArn: taskDefinition,
+                containerInstanceArn: null,
+                overrides: config.overrides || {},
+                lastStatus: 'RUNNING',
+                desiredStatus: 'RUNNING',
+                cpu: config.cpu || '256',
+                memory: config.memory || '512',
+                createdAt: new Date(),
+                startedAt: new Date(),
+                launchType: 'FARGATE',
+                platformVersion: config.platformVersion || '1.4.0',
+                simulated: true
+            };
+            this.fargateTasks.set(task.taskArn, task);
+            console.log(`[SIMULAÇÃO] Fargate task criado`);
+            return task;
+        }
     }
 
     async createROSACluster(clusterName, config) {
@@ -2562,120 +4801,318 @@ class CloudServicesEngine {
     }
 
     async createStateMachine(stateMachineName, definition, config) {
-        const stateMachine = {
-            stateMachineArn: `arn:aws:states:us-east-1:123456789012:stateMachine:${stateMachineName}`,
-            name: stateMachineName,
-            definition: JSON.stringify(definition),
-            roleArn: config.roleArn,
-            type: config.type || 'STANDARD',
-            status: 'ACTIVE',
-            creationDate: new Date()
-        };
-        this.stepFunctions.set(stateMachineName, stateMachine);
-        console.log(`Step Function state machine ${stateMachineName} criado`);
-        return stateMachine;
+        if (this.isAWSEnabled('stepfunctions')) {
+            const params = {
+                name: stateMachineName,
+                definition: JSON.stringify(definition),
+                roleArn: config.roleArn,
+                type: config.type || 'STANDARD'
+            };
+
+            try {
+                const result = await this.stepfunctions.createStateMachine(params).promise();
+                const stateMachine = {
+                    stateMachineArn: result.stateMachineArn,
+                    name: stateMachineName,
+                    definition: JSON.stringify(definition),
+                    roleArn: config.roleArn,
+                    type: config.type || 'STANDARD',
+                    status: 'ACTIVE',
+                    creationDate: new Date()
+                };
+                console.log(`Step Function state machine ${stateMachineName} criado`);
+                return stateMachine;
+            } catch (error) {
+                console.error(`Erro ao criar Step Function state machine: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const stateMachine = {
+                stateMachineArn: `arn:aws:states:us-east-1:123456789012:stateMachine:${stateMachineName}`,
+                name: stateMachineName,
+                definition: JSON.stringify(definition),
+                roleArn: config.roleArn,
+                type: config.type || 'STANDARD',
+                status: 'ACTIVE',
+                creationDate: new Date()
+            };
+            this.stepFunctions.set(stateMachineName, stateMachine);
+            console.log(`[SIMULAÇÃO] Step Function state machine ${stateMachineName} criado`);
+            return stateMachine;
+        }
     }
 
     async startExecution(stateMachineArn, input) {
-        const execution = {
-            executionArn: `arn:aws:states:us-east-1:123456789012:execution:stateMachine:${stateMachineArn.split(':').pop()}:${Date.now()}`,
-            stateMachineArn,
-            name: `execution-${Date.now()}`,
-            status: 'RUNNING',
-            startDate: new Date(),
-            input: JSON.stringify(input)
-        };
-        return execution;
+        if (this.isAWSEnabled('stepfunctions')) {
+            const params = {
+                stateMachineArn,
+                input: JSON.stringify(input)
+            };
+
+            try {
+                const result = await this.stepfunctions.startExecution(params).promise();
+                const execution = {
+                    executionArn: result.executionArn,
+                    stateMachineArn,
+                    name: result.executionArn.split(':').pop(),
+                    status: 'RUNNING',
+                    startDate: new Date(),
+                    input: JSON.stringify(input)
+                };
+                return execution;
+            } catch (error) {
+                console.error(`Erro ao iniciar execução Step Function: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const execution = {
+                executionArn: `arn:aws:states:us-east-1:123456789012:execution:stateMachine:${stateMachineArn.split(':').pop()}:${Date.now()}`,
+                stateMachineArn,
+                name: `execution-${Date.now()}`,
+                status: 'RUNNING',
+                startDate: new Date(),
+                input: JSON.stringify(input)
+            };
+            return execution;
+        }
     }
 
     async submitBatchJob(jobName, jobQueue, jobDefinition, config) {
-        const job = {
-            jobArn: `arn:aws:batch:us-east-1:123456789012:job/${Date.now()}`,
-            jobName,
-            jobId: Date.now().toString(),
-            jobQueue,
-            jobDefinition,
-            status: 'SUBMITTED',
-            statusReason: 'Job submitted',
-            createdAt: new Date(),
-            startedAt: null,
-            stoppedAt: null,
-            dependsOn: config.dependsOn || [],
-            parameters: config.parameters || {},
-            container: {
-                image: config.container?.image || 'busybox',
-                vcpus: config.container?.vcpus || 1,
-                memory: config.container?.memory || 128,
-                command: config.container?.command || ['echo', 'hello world'],
-                jobRoleArn: config.container?.jobRoleArn,
-                executionRoleArn: config.container?.executionRoleArn
+        if (this.isAWSEnabled('batch')) {
+            const params = {
+                jobName,
+                jobQueue,
+                jobDefinition
+            };
+
+            if (config.arrayProperties) {
+                params.arrayProperties = config.arrayProperties;
             }
-        };
 
-        // Simulate job execution
-        setTimeout(() => {
-            job.status = 'RUNNING';
-            job.startedAt = new Date();
-        }, 2000);
+            if (config.dependsOn) {
+                params.dependsOn = config.dependsOn;
+            }
 
-        setTimeout(() => {
-            job.status = 'SUCCEEDED';
-            job.stoppedAt = new Date();
-        }, 10000);
+            if (config.parameters) {
+                params.parameters = config.parameters;
+            }
 
-        this.batchJobs.set(job.jobId, job);
-        console.log(`Batch job ${jobName} submetido`);
-        return job;
+            if (config.containerOverrides) {
+                params.containerOverrides = config.containerOverrides;
+            }
+
+            if (config.nodeOverrides) {
+                params.nodeOverrides = config.nodeOverrides;
+            }
+
+            if (config.retryStrategy) {
+                params.retryStrategy = config.retryStrategy;
+            }
+
+            if (config.timeout) {
+                params.timeout = config.timeout;
+            }
+
+            if (config.tags) {
+                params.tags = config.tags;
+            }
+
+            try {
+                const result = await this.batch.submitJob(params).promise();
+                console.log(`Batch job ${jobName} submetido`);
+                return {
+                    jobArn: result.jobArn,
+                    jobName: result.jobName,
+                    jobId: result.jobId,
+                    jobQueue: jobQueue,
+                    jobDefinition: jobDefinition,
+                    status: 'SUBMITTED',
+                    statusReason: 'Job submitted',
+                    createdAt: new Date(),
+                    startedAt: null,
+                    stoppedAt: null,
+                    dependsOn: config.dependsOn || [],
+                    parameters: config.parameters || {},
+                    container: config.containerOverrides || {},
+                    simulated: false
+                };
+            } catch (error) {
+                console.error(`Erro ao submeter Batch job: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const job = {
+                jobArn: `arn:aws:batch:us-east-1:123456789012:job/${Date.now()}`,
+                jobName,
+                jobId: Date.now().toString(),
+                jobQueue,
+                jobDefinition,
+                status: 'SUBMITTED',
+                statusReason: 'Job submitted',
+                createdAt: new Date(),
+                startedAt: null,
+                stoppedAt: null,
+                dependsOn: config.dependsOn || [],
+                parameters: config.parameters || {},
+                container: {
+                    image: config.container?.image || 'busybox',
+                    vcpus: config.container?.vcpus || 1,
+                    memory: config.container?.memory || 128,
+                    command: config.container?.command || ['echo', 'hello world'],
+                    jobRoleArn: config.container?.jobRoleArn,
+                    executionRoleArn: config.container?.executionRoleArn
+                },
+                simulated: true
+            };
+
+            // Simulate job execution
+            setTimeout(() => {
+                job.status = 'RUNNING';
+                job.startedAt = new Date();
+            }, 2000);
+
+            setTimeout(() => {
+                job.status = 'SUCCEEDED';
+                job.stoppedAt = new Date();
+            }, 10000);
+
+            this.batchJobs.set(job.jobId, job);
+            console.log(`[SIMULAÇÃO] Batch job ${jobName} submetido`);
+            return job;
+        }
     }
 
     async createLightsailInstance(instanceName, config) {
-        const instance = {
-            name: instanceName,
-            arn: `arn:aws:lightsail:us-east-1:123456789012:Instance/${instanceName}`,
-            supportCode: `support-${Date.now()}`,
-            createdAt: new Date(),
-            location: {
+        if (this.isAWSEnabled('lightsail')) {
+            const params = {
+                instanceNames: [instanceName],
                 availabilityZone: config.availabilityZone || 'us-east-1a',
-                regionName: config.regionName || 'us-east-1'
-            },
-            resourceType: 'Instance',
-            tags: config.tags || [],
-            blueprintId: config.blueprintId || 'amazon_linux_2',
-            blueprintName: 'Amazon Linux 2',
-            bundleId: config.bundleId || 'nano_2_0',
-            addOns: config.addOns || [],
-            isStaticIp: false,
-            privateIpAddress: this.generatePrivateIp(),
-            publicIpAddress: this.generatePublicIp(),
-            ipv6Addresses: [],
-            hardware: {
-                cpuCount: 1,
-                disks: [{
-                    name: 'Disk 1',
-                    path: '/',
-                    sizeInGb: 20,
-                    isSystemDisk: true
-                }],
-                ramSizeInGb: 0.5
-            },
-            networking: {
-                monthlyTransfer: { gbPerMonthAllocated: 512 },
-                ports: [{
-                    fromPort: 80,
-                    toPort: 80,
-                    protocol: 'tcp',
-                    accessFrom: 'Anywhere',
-                    accessType: 'public',
-                    commonName: '',
-                    accessDirection: 'inbound'
-                }]
-            },
-            state: { name: 'running', code: 16 },
-            username: 'ec2-user'
-        };
-        this.lightsailInstances.set(instanceName, instance);
-        console.log(`Lightsail instance ${instanceName} criado`);
-        return instance;
+                blueprintId: config.blueprintId || 'amazon_linux_2',
+                bundleId: config.bundleId || 'nano_2_0'
+            };
+
+            if (config.userData) {
+                params.userData = config.userData;
+            }
+
+            if (config.keyPairName) {
+                params.keyPairName = config.keyPairName;
+            }
+
+            if (config.tags) {
+                params.tags = config.tags;
+            }
+
+            if (config.addOns) {
+                params.addOns = config.addOns;
+            }
+
+            if (config.customImageName) {
+                params.customImageName = config.customImageName;
+            }
+
+            try {
+                const result = await this.lightsail.createInstances(params).promise();
+                console.log(`Lightsail instance ${instanceName} criado`);
+                return {
+                    name: instanceName,
+                    arn: `arn:aws:lightsail:us-east-1:123456789012:Instance/${instanceName}`,
+                    supportCode: `support-${Date.now()}`,
+                    createdAt: new Date(),
+                    location: {
+                        availabilityZone: config.availabilityZone || 'us-east-1a',
+                        regionName: config.regionName || 'us-east-1'
+                    },
+                    resourceType: 'Instance',
+                    tags: config.tags || [],
+                    blueprintId: config.blueprintId || 'amazon_linux_2',
+                    blueprintName: 'Amazon Linux 2',
+                    bundleId: config.bundleId || 'nano_2_0',
+                    addOns: config.addOns || [],
+                    isStaticIp: false,
+                    privateIpAddress: null, // Will be populated by AWS
+                    publicIpAddress: null, // Will be populated by AWS
+                    ipv6Addresses: [],
+                    hardware: {
+                        cpuCount: 1,
+                        disks: [{
+                            name: 'Disk 1',
+                            path: '/',
+                            sizeInGb: 20,
+                            isSystemDisk: true
+                        }],
+                        ramSizeInGb: 0.5
+                    },
+                    networking: {
+                        monthlyTransfer: { gbPerMonthAllocated: 512 },
+                        ports: [{
+                            fromPort: 80,
+                            toPort: 80,
+                            protocol: 'tcp',
+                            accessFrom: 'Anywhere',
+                            accessType: 'public',
+                            commonName: '',
+                            accessDirection: 'inbound'
+                        }]
+                    },
+                    state: { name: 'pending', code: 0 }, // AWS will set to running
+                    username: 'ec2-user',
+                    simulated: false
+                };
+            } catch (error) {
+                console.error(`Erro ao criar Lightsail instance: ${error.message}`);
+                throw error;
+            }
+        } else {
+            const instance = {
+                name: instanceName,
+                arn: `arn:aws:lightsail:us-east-1:123456789012:Instance/${instanceName}`,
+                supportCode: `support-${Date.now()}`,
+                createdAt: new Date(),
+                location: {
+                    availabilityZone: config.availabilityZone || 'us-east-1a',
+                    regionName: config.regionName || 'us-east-1'
+                },
+                resourceType: 'Instance',
+                tags: config.tags || [],
+                blueprintId: config.blueprintId || 'amazon_linux_2',
+                blueprintName: 'Amazon Linux 2',
+                bundleId: config.bundleId || 'nano_2_0',
+                addOns: config.addOns || [],
+                isStaticIp: false,
+                privateIpAddress: this.generatePrivateIp(),
+                publicIpAddress: this.generatePublicIp(),
+                ipv6Addresses: [],
+                hardware: {
+                    cpuCount: 1,
+                    disks: [{
+                        name: 'Disk 1',
+                        path: '/',
+                        sizeInGb: 20,
+                        isSystemDisk: true
+                    }],
+                    ramSizeInGb: 0.5
+                },
+                networking: {
+                    monthlyTransfer: { gbPerMonthAllocated: 512 },
+                    ports: [{
+                        fromPort: 80,
+                        toPort: 80,
+                        protocol: 'tcp',
+                        accessFrom: 'Anywhere',
+                        accessType: 'public',
+                        commonName: '',
+                        accessDirection: 'inbound'
+                    }]
+                },
+                state: { name: 'running', code: 16 },
+                username: 'ec2-user',
+                simulated: true
+            };
+            this.lightsailInstances.set(instanceName, instance);
+            console.log(`[SIMULAÇÃO] Lightsail instance ${instanceName} criado`);
+            return instance;
+        }
     }
 
     async createWorkSpace(userName, config) {
@@ -3036,81 +5473,209 @@ class CloudServicesEngine {
     // ===========================================
 
     async getCostExplorerCostAndUsage(timePeriod, metrics, granularity, groupBy) {
-        // Simular dados de custo
-        const results = [];
-        const startDate = new Date(timePeriod.Start);
-        const endDate = new Date(timePeriod.End);
+        if (this.isAWSEnabled('costexplorer')) {
+            const params = {
+                TimePeriod: timePeriod,
+                Granularity: granularity || 'DAILY',
+                Metrics: metrics || ['BlendedCost']
+            };
 
-        for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-            results.push({
-                timePeriod: {
-                    start: d.toISOString().split('T')[0],
-                    end: new Date(d.getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-                },
-                total: {
-                    amount: (Math.random() * 100 + 50).toFixed(2),
-                    unit: 'USD'
-                },
-                groups: [],
-                estimated: true
-            });
+            if (groupBy && groupBy.length > 0) {
+                params.GroupBy = groupBy.map(g => ({ Type: g.type, Key: g.key }));
+            }
+
+            try {
+                const result = await this.costexplorer.getCostAndUsage(params).promise();
+                return {
+                    resultsByTime: result.ResultsByTime.map(r => ({
+                        timePeriod: r.TimePeriod,
+                        total: r.Total,
+                        groups: r.Groups || [],
+                        estimated: r.Estimated
+                    })),
+                    nextToken: result.NextToken
+                };
+            } catch (error) {
+                console.error(`Erro ao obter custos do Cost Explorer: ${error.message}`);
+                throw error;
+            }
+        } else {
+            // Fallback para simulação quando desabilitado
+            console.log(`[SIMULAÇÃO] Cost Explorer desabilitado, retornando dados simulados`);
+            const results = [];
+            const startDate = new Date(timePeriod.Start);
+            const endDate = new Date(timePeriod.End);
+
+            for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+                results.push({
+                    timePeriod: {
+                        start: d.toISOString().split('T')[0],
+                        end: new Date(d.getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+                    },
+                    total: {
+                        amount: (Math.random() * 100 + 50).toFixed(2),
+                        unit: 'USD'
+                    },
+                    groups: [],
+                    estimated: true
+                });
+            }
+
+            return { resultsByTime: results };
         }
-
-        return { resultsByTime: results };
     }
 
     async getCostExplorerReservationRecommendation(service, accountId, term) {
-        const recommendations = [
-            {
-                accountId: accountId || '123456789012',
-                term: term || '1yr',
-                paymentOption: 'AllUpfront',
-                service: service || 'Amazon Elastic Compute Cloud - Compute',
-                recommendations: [
-                    {
-                        recommended: {
-                            purchaseOption: 'AllUpfront',
-                            instanceType: 'm5.large',
-                            region: 'us-east-1',
-                            availabilityZone: null,
-                            platform: 'Linux/UNIX',
-                            tenancy: 'Shared',
-                            offeringClass: 'standard',
-                            purchaseOption: 'AllUpfront',
-                            reservedInstancesCount: 1,
-                            productDescription: 'Linux/UNIX',
-                            instanceCount: 1,
-                            averageNormalizedInstanceHoursUsedPerMonth: '730',
-                            averageUtilization: '85',
-                            estimatedBreakEvenInMonths: '6',
-                            currencyCode: 'USD',
-                            netSavings: '150.00',
-                            totalSavings: '180.00',
-                            savingsPercentage: '25'
-                        }
-                    }
-                ]
-            }
-        ];
+        if (this.isAWSEnabled('costexplorer')) {
+            const params = {
+                Service: service || 'Amazon Elastic Compute Cloud - Compute'
+            };
 
-        return { recommendations };
+            if (accountId) {
+                params.AccountId = accountId;
+            }
+
+            if (term) {
+                params.TermInYears = term === '1yr' ? 'ONE_YEAR' : 'THREE_YEARS';
+            }
+
+            try {
+                const result = await this.costexplorer.getReservationPurchaseRecommendation(params).promise();
+                return {
+                    recommendations: result.Recommendations.map(r => ({
+                        accountId: r.AccountId,
+                        term: r.Term,
+                        paymentOption: r.PaymentOption,
+                        service: r.Service,
+                        recommendations: r.RecommendationDetails.map(rd => ({
+                            recommended: {
+                                purchaseOption: rd.InstanceDetails?.EC2InstanceDetails?.OfferingClass || rd.OfferingClass,
+                                instanceType: rd.InstanceDetails?.EC2InstanceDetails?.InstanceType,
+                                region: rd.InstanceDetails?.EC2InstanceDetails?.Region,
+                                availabilityZone: rd.InstanceDetails?.EC2InstanceDetails?.AvailabilityZone,
+                                platform: rd.InstanceDetails?.EC2InstanceDetails?.Platform,
+                                tenancy: rd.InstanceDetails?.EC2InstanceDetails?.Tenancy,
+                                offeringClass: rd.OfferingClass,
+                                purchaseOption: rd.OfferingClass,
+                                reservedInstancesCount: rd.RecommendedNumberOfInstancesToPurchase,
+                                productDescription: rd.InstanceDetails?.EC2InstanceDetails?.ProductDescription,
+                                instanceCount: rd.RecommendedNumberOfInstancesToPurchase,
+                                averageNormalizedInstanceHoursUsedPerMonth: rd.AverageNormalizedInstanceHoursUsedPerMonth,
+                                averageUtilization: rd.AverageUtilization,
+                                estimatedBreakEvenInMonths: rd.EstimatedBreakEvenInMonths,
+                                currencyCode: rd.CurrencyCode,
+                                netSavings: rd.EstimatedMonthlySavingsAmount,
+                                totalSavings: rd.EstimatedMonthlySavingsAmount,
+                                savingsPercentage: rd.EstimatedMonthlySavingsPercentage
+                            }
+                        }))
+                    }))
+                };
+            } catch (error) {
+                console.error(`Erro ao obter recomendações de reserva do Cost Explorer: ${error.message}`);
+                throw error;
+            }
+        } else {
+            // Fallback para simulação quando desabilitado
+            console.log(`[SIMULAÇÃO] Cost Explorer desabilitado, retornando recomendações simuladas`);
+            const recommendations = [
+                {
+                    accountId: accountId || '123456789012',
+                    term: term || '1yr',
+                    paymentOption: 'AllUpfront',
+                    service: service || 'Amazon Elastic Compute Cloud - Compute',
+                    recommendations: [
+                        {
+                            recommended: {
+                                purchaseOption: 'AllUpfront',
+                                instanceType: 'm5.large',
+                                region: 'us-east-1',
+                                availabilityZone: null,
+                                platform: 'Linux/UNIX',
+                                tenancy: 'Shared',
+                                offeringClass: 'standard',
+                                purchaseOption: 'AllUpfront',
+                                reservedInstancesCount: 1,
+                                productDescription: 'Linux/UNIX',
+                                instanceCount: 1,
+                                averageNormalizedInstanceHoursUsedPerMonth: '730',
+                                averageUtilization: '85',
+                                estimatedBreakEvenInMonths: '6',
+                                currencyCode: 'USD',
+                                netSavings: '150.00',
+                                totalSavings: '180.00',
+                                savingsPercentage: '25'
+                            }
+                        }
+                    ]
+                }
+            ];
+
+            return { recommendations };
+        }
     }
 
     async createBudgetsBudget(budgetName, budget) {
-        const budgetData = {
-            budgetName,
-            budgetLimit: budget.budgetLimit || { amount: '1000', unit: 'USD' },
-            costFilters: budget.costFilters || {},
-            costTypes: budget.costTypes || { includeSupport: true, includeSubscription: true, includeUpfront: true, includeRecurring: true, includeOtherSubscription: true, includeTax: true, includeCredit: false, useBlended: false },
-            timeUnit: budget.timeUnit || 'MONTHLY',
-            timePeriod: budget.timePeriod || { start: new Date().toISOString().split('T')[0] },
-            calculatedSpend: { actualSpend: { amount: '0', unit: 'USD' }, forecastedSpend: { amount: '0', unit: 'USD' } },
-            budgetType: budget.budgetType || 'COST',
-            lastUpdatedTime: new Date()
-        };
-        this.budgets.set(budgetName, budgetData);
-        console.log(`Budgets budget ${budgetName} criado`);
-        return budgetData;
+        if (this.isAWSEnabled('budgets')) {
+            const params = {
+                AccountId: budget.accountId || '123456789012',
+                Budget: {
+                    BudgetName: budgetName,
+                    BudgetLimit: budget.budgetLimit || { Amount: '1000', Unit: 'USD' },
+                    CostFilters: budget.costFilters || {},
+                    CostTypes: budget.costTypes || {
+                        IncludeSupport: true,
+                        IncludeSubscription: true,
+                        IncludeUpfront: true,
+                        IncludeRecurring: true,
+                        IncludeOtherSubscription: true,
+                        IncludeTax: true,
+                        IncludeCredit: false,
+                        UseBlended: false
+                    },
+                    TimeUnit: budget.timeUnit || 'MONTHLY',
+                    TimePeriod: budget.timePeriod || { Start: new Date().toISOString().split('T')[0] },
+                    BudgetType: budget.budgetType || 'COST'
+                },
+                NotificationsWithSubscribers: budget.notificationsWithSubscribers || []
+            };
+
+            try {
+                const result = await this.budgets.createBudget(params).promise();
+                console.log(`Budgets budget ${budgetName} criado`);
+                return {
+                    budgetName: result.Budget.BudgetName,
+                    budgetLimit: result.Budget.BudgetLimit,
+                    costFilters: result.Budget.CostFilters,
+                    costTypes: result.Budget.CostTypes,
+                    timeUnit: result.Budget.TimeUnit,
+                    timePeriod: result.Budget.TimePeriod,
+                    calculatedSpend: result.Budget.CalculatedSpend,
+                    budgetType: result.Budget.BudgetType,
+                    lastUpdatedTime: result.Budget.LastUpdatedTime
+                };
+            } catch (error) {
+                console.error(`Erro ao criar budget no Budgets: ${error.message}`);
+                throw error;
+            }
+        } else {
+            // Fallback para simulação quando desabilitado
+            console.log(`[SIMULAÇÃO] Budgets desabilitado, criando budget simulado`);
+            const budgetData = {
+                budgetName,
+                budgetLimit: budget.budgetLimit || { amount: '1000', unit: 'USD' },
+                costFilters: budget.costFilters || {},
+                costTypes: budget.costTypes || { includeSupport: true, includeSubscription: true, includeUpfront: true, includeRecurring: true, includeOtherSubscription: true, includeTax: true, includeCredit: false, useBlended: false },
+                timeUnit: budget.timeUnit || 'MONTHLY',
+                timePeriod: budget.timePeriod || { start: new Date().toISOString().split('T')[0] },
+                calculatedSpend: { actualSpend: { amount: '0', unit: 'USD' }, forecastedSpend: { amount: '0', unit: 'USD' } },
+                budgetType: budget.budgetType || 'COST',
+                lastUpdatedTime: new Date()
+            };
+            this.budgets.set(budgetName, budgetData);
+            console.log(`Budgets budget ${budgetName} criado`);
+            return budgetData;
+        }
     }
 
     async describeBudgetsBudget(budgetName) {
