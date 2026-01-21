@@ -10,28 +10,35 @@ const loyaltyPointsSchema = new mongoose.Schema({
     totalPoints: {
         type: Number,
         default: 0,
-        min: 0
+        min: [0, 'Total de pontos não pode ser negativo']
     },
     availablePoints: {
         type: Number,
         default: 0,
-        min: 0
+        min: [0, 'Pontos disponíveis não podem ser negativos']
     },
     level: {
         type: Number,
         default: 1,
-        min: 1
+        min: [1, 'Nível deve ser pelo menos 1']
     },
     levelName: {
         type: String,
         default: 'Bronze'
     },
     levelThresholds: {
-        bronze: { min: 0, max: 499 },
-        silver: { min: 500, max: 1499 },
-        gold: { min: 1500, max: 2999 },
-        platinum: { min: 3000, max: 4999 },
-        diamond: { min: 5000, max: Infinity }
+        type: Map,
+        of: new mongoose.Schema({
+            min: Number,
+            max: Number
+        }, { _id: false }),
+        default: {
+            bronze: { min: 0, max: 499 },
+            silver: { min: 500, max: 1499 },
+            gold: { min: 1500, max: 2999 },
+            platinum: { min: 3000, max: 4999 },
+            diamond: { min: 5000, max: 999999999 }
+        }
     },
     badges: [{
         id: String,
