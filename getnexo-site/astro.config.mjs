@@ -35,7 +35,6 @@ export default defineConfig({
     compressHTML: true,
     build: {
         inlineStylesheets: 'always', // Crítico para LCP
-        assetsPrefix: '/assets', // Organização
     },
     // Compressão gzip/brotli para assets estáticos
     server: {
@@ -58,6 +57,8 @@ export default defineConfig({
             target: 'es2022',
             cssCodeSplit: true,
             chunkSizeWarningLimit: 500,
+            modulePreload: false,
+            crossorigin: "anonymous",
             rollupOptions: {
                 output: {
                     manualChunks: {

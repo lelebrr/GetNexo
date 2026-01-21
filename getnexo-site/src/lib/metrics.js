@@ -1,5 +1,5 @@
-const promClient = require('prom-client');
-const logger = require('./logger');
+import promClient from 'prom-client';
+import logger from './logger.js';
 
 // Criar registro de métricas
 const register = new promClient.Registry();
@@ -84,7 +84,20 @@ function metricsEndpoint(req, res) {
     res.end(register.metrics());
 }
 
-module.exports = {
+export {
+    metricsMiddleware,
+    incrementError,
+    updateActiveConnections,
+    getMetrics,
+    metricsEndpoint,
+    register,
+    httpRequestDuration,
+    activeConnections,
+    errorCounter,
+    uptimeGauge
+};
+
+export default {
     metricsMiddleware,
     incrementError,
     updateActiveConnections,

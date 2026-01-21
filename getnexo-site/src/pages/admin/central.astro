@@ -252,6 +252,7 @@ import Layout from '../../layouts/Layout.astro';
           <a href="#cfg-notificacoes" class="nav-subitem" data-section="cfg-notificacoes">Notificações</a>
           <a href="#cfg-api" class="nav-subitem" data-section="cfg-api">API/Tokens</a>
           <a href="#cfg-backup" class="nav-subitem" data-section="cfg-backup">Backup</a>
+          <a href="#cfg-aparencia" class="nav-subitem" data-section="cfg-aparencia">Aparência</a>
         </div>
       </div>
 
@@ -1035,6 +1036,76 @@ import Layout from '../../layouts/Layout.astro';
             <tbody id="categorias-tbody"></tbody>
           </table>
         </div>
+      </section>
+
+      <!-- Aparência Section -->
+      <section class="section-panel" id="section-cfg-aparencia">
+        <div class="section-header">
+          <h2>🎨 Customização de Aparência</h2>
+        </div>
+        <div class="module-card">
+          <h3>Estilo do Fundo (Website)</h3>
+          <p>Escolha o estilo visual para o fundo do site principal.</p>
+          <div style="margin-top:1.5rem;">
+            <div class="config-row" style="margin-bottom:1rem;">
+              <label class="radio-item">
+                <input type="radio" name="bg-type" value="blobs" id="bg-blobs">
+                <div class="radio-content">
+                  <strong>Padrão (Bolhas Animadas)</strong>
+                  <span>Fundo escuro original com bolhas suaves e desfocadas.</span>
+                </div>
+              </label>
+            </div>
+            <div class="config-row">
+              <label class="radio-item">
+                <input type="radio" name="bg-type" value="neural" id="bg-neural">
+                <div class="radio-content">
+                  <strong>Moderno (Partículas Neurais)</strong>
+                  <span>Fundo tecnológico com partículas e conexões dinâmicas.</span>
+                </div>
+              </label>
+            </div>
+            <div style="margin-top:2rem;">
+              <button class="btn-primary" onclick="saveAppearanceConfig()">Salvar Alterações</button>
+            </div>
+          </div>
+        </div>
+
+        <style>
+          .radio-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+          }
+          .radio-item:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: #00d4ff;
+          }
+          .radio-item input {
+            width: 20px;
+            height: 20px;
+            accent-color: #00d4ff;
+            margin-top: 0.2rem;
+          }
+          .radio-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+          }
+          .radio-content strong {
+            color: white;
+            font-size: 1rem;
+          }
+          .radio-content span {
+            color: #94a3b8;
+            font-size: 0.85rem;
+          }
+        </style>
       </section>
 
       <!-- Backup Section -->

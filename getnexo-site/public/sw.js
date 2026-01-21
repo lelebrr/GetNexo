@@ -58,7 +58,7 @@ const CACHE_STRATEGIES = {
 
 const CRITICAL_ASSETS = [
     '/',
-    '/assets/logo.svg',
+    '/favicon.svg',
     '/scripts/performance/neural-bg.js',
     '/scripts/performance/ui-features.js'
 ];
@@ -93,6 +93,7 @@ self.addEventListener('fetch', (event) => {
     if (request.method !== 'GET') return;
 
     const url = new URL(request.url);
+    if (!url.protocol.startsWith('http')) return;
 
     // Estratégia baseada no tipo de recurso
     if (url.pathname.match(/\.(js|css)$/)) {

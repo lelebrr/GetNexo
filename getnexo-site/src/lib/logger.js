@@ -1,4 +1,4 @@
-const winston = require('winston');
+import winston from 'winston';
 
 // Configuração do logger com diferentes níveis
 const logger = winston.createLogger({
@@ -45,4 +45,4 @@ logger.audit = (message, meta = {}) => {
     logger.info(message, { ...meta, level: 'audit', timestamp: new Date().toISOString() });
 };
 
-module.exports = logger;
+export default logger;

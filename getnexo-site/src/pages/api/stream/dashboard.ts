@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { verifyToken } from '../../../lib/auth';
+import { verifyToken } from '../../../lib/auth.js';
 import { calculateKPIs, generateForecast, checkRisks } from '../../../lib/kpis.js';
 import { getMetrics } from '../../../lib/metrics.js';
 

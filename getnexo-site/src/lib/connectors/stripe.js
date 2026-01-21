@@ -62,5 +62,6 @@ class StripeConnector {
     }
 }
 
+export { StripeConnector };
 const stripeConnector = new StripeConnector();
-module.exports = stripeConnector;
+export default stripeConnector;

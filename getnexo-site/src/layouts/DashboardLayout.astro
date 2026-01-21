@@ -39,6 +39,25 @@ const nonce = Astro.locals.nonce;
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
         }
+
+        /* Animated Background Blobs */
+        .animated-bg { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1; overflow: hidden; background: #030712; }
+        .blob { position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(0, 212, 255, 0.07) 0%, transparent 70%); border-radius: 50%; filter: blur(80px); animation: move-bg 25s infinite alternate; }
+        .blob-1 { top: -100px; left: -100px; }
+        .blob-2 { bottom: -100px; right: -100px; background: radial-gradient(circle, rgba(0, 255, 157, 0.04) 0%, transparent 70%); }
+        @keyframes move-bg { from { transform: translate(0, 0) scale(1); } to { transform: translate(150px, 100px) scale(1.1); } }
+        
+        .neural-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; background: #030712; }
+
+        /* Force Chat Widget to Bottom-Right */
+        #getnexo-root, .chatwoot-widget-holder, #chatwoot-widget-container { 
+            top: auto !important; 
+            bottom: 20px !important; 
+            right: 20px !important; 
+            left: auto !important;
+            z-index: 9999 !important;
+        }
+
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
@@ -83,6 +102,27 @@ const nonce = Astro.locals.nonce;
     </style>
 </head>
 <body class="antialiased">
+    <div id="neural-bg" class="neural-canvas" style="display: none;"></div>
+    <div class="animated-bg" id="old-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <script is:inline>
+        (function() {
+            const bgType = localStorage.getItem('getnexo-bg-type') || 'blobs';
+            const neuralCanvas = document.getElementById('neural-bg');
+            const oldBg = document.getElementById('old-bg');
+            if (bgType === 'neural') {
+                if (neuralCanvas) neuralCanvas.style.display = 'block';
+                if (oldBg) oldBg.style.display = 'none';
+            } else {
+                if (neuralCanvas) neuralCanvas.style.display = 'none';
+                if (oldBg) oldBg.style.display = 'block';
+            }
+        })();
+    </script>
+
     <!-- Header -->
     <header style="height:var(--header-height); position:fixed; top:0; left:0; right:0; background:rgba(3, 7, 18, 0.95); border-bottom:1px solid rgba(255,255,255,0.05); z-index:50; display:flex; justify-content:space-between; align-items:center; padding:0 1.5rem; backdrop-filter:blur(10px);">
         <div style="display:flex; align-items:center; gap:20px;">
@@ -98,20 +138,151 @@ const nonce = Astro.locals.nonce;
         </div>
 
         <div style="display:flex; align-items:center; gap:20px;">
-            <button class="icon-btn" style="position:relative;">
-                <span style="position:absolute; top:-2px; right:-2px; width:8px; height:8px; background:var(--neon-blue); border-radius:50%;"></span>
-                🔔
-            </button>
-            <div style="display:flex; align-items:center; gap:10px; border-left:1px solid rgba(255,255,255,0.1); padding-left:20px;">
-                <div style="text-align:right;">
-                    <div style="font-size:0.85rem; font-weight:700; color:white;">Admin</div>
-                    <div style="font-size:0.7rem; color:#64748b;">Pro Plan</div>
+            <div style="position:relative;">
+                <button id="notif-trigger" class="icon-btn" style="position:relative; background:none; border:none; color:white; cursor:pointer; font-size:1.2rem; padding:5px; border-radius:8px; transition:0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='none'">
+                    <span id="notif-dot" style="position:absolute; top:2px; right:2px; width:8px; height:8px; background:var(--neon-blue); border-radius:50%; display:none;"></span>
+                    🔔
+                </button>
+                
+                <!-- Notification Tray -->
+                <div id="notif-tray" class="glass-panel" style="position:absolute; top:calc(100% + 15px); right:0; width:300px; padding:15px; z-index:100; display:none; opacity:0; transform:translateY(-10px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:10px;">
+                        <h3 style="font-size:0.9rem; font-weight:800; color:white; margin:0;">Notificações</h3>
+                        <span style="font-size:0.7rem; color:var(--neon-blue); cursor:pointer;">Limpar tudo</span>
+                    </div>
+                    <div id="notif-list" style="max-height:300px; overflow-y:auto; display:flex; flex-direction:column; gap:10px;">
+                        <div style="padding:10px; border-radius:8px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05);">
+                            <div style="font-size:0.8rem; font-weight:700; color:white;">Bem-vindo ao GetNexo!</div>
+                            <div style="font-size:0.7rem; color:#94a3b8; margin-top:2px;">Sua conta Pro Plan está ativa e pronta para uso.</div>
+                            <div style="font-size:0.6rem; color:#475569; margin-top:5px;">Há 2 minutos</div>
+                        </div>
+                    </div>
                 </div>
-                <img src="https://ui-avatars.com/api/?name=Admin&background=00d4ff&color=000" style="width:36px; height:36px; border-radius:50%; border:2px solid rgba(255,255,255,0.1);" alt="Profile" />
-                <button onclick="logout()" style="font-size:0.8rem; color:#f87171; background:none; border:none; cursor:pointer;">Sair</button>
+            </div>
+
+            <div style="position:relative; border-left:1px solid rgba(255,255,255,0.1); padding-left:20px;">
+                <div id="user-menu-trigger" style="display:flex; align-items:center; gap:10px; cursor:pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                    <div style="text-align:right;">
+                        <div style="font-size:0.85rem; font-weight:700; color:white;">Admin</div>
+                        <div style="font-size:0.7rem; color:#64748b;">Pro Plan</div>
+                    </div>
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=00d4ff&color=000" style="width:36px; height:36px; border-radius:50%; border:2px solid rgba(255,255,255,0.1);" alt="Profile" />
+                </div>
+
+                <!-- Account Dropdown -->
+                <div id="account-dropdown" class="glass-panel" style="position:absolute; top:calc(100% + 15px); right:0; width:220px; padding:10px; z-index:100; display:none; opacity:0; transform:translateY(-10px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
+                    <div style="padding:10px; border-bottom:1px solid rgba(255,255,255,0.05); margin-bottom:5px;">
+                        <div style="font-size:0.9rem; font-weight:700; color:white;">Admin Account</div>
+                        <div style="font-size:0.75rem; color:#94a3b8;">admin@getnexo.com.br</div>
+                    </div>
+                    <a href="/dashboard/perfil" class="dropdown-item">
+                        <span>👤</span> Meu Perfil
+                    </a>
+                    <a href="/dashboard/configuracoes" class="dropdown-item">
+                        <span>⚙️</span> Configurações
+                    </a>
+                    <a href="/dashboard/faturamento" class="dropdown-item">
+                        <span>💳</span> Faturamento
+                    </a>
+                    <div style="height:1px; background:rgba(255,255,255,0.05); margin:5px 0;"></div>
+                    <button id="logout-btn" class="dropdown-item" style="width:100%; color:#f87171; text-align:left; border:none; background:none; cursor:pointer; font-family:inherit;">
+                        <span>🚪</span> Sair da Conta
+                    </button>
+                </div>
             </div>
         </div>
     </header>
+
+    <style is:global>
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--neon-blue);
+        }
+        .dropdown-item span { font-size: 1.1rem; }
+        
+        .show-dropdown {
+            display: block !important;
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+
+        /* Scrollbar for notif-tray */
+        #notif-list::-webkit-scrollbar { width: 4px; }
+        #notif-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+    </style>
+
+    <script is:inline>
+        document.addEventListener('DOMContentLoaded', () => {
+            // User Menu Toggle
+            const userTrigger = document.getElementById('user-menu-trigger');
+            const userDropdown = document.getElementById('account-dropdown');
+            
+            // Notification Toggle
+            const notifTrigger = document.getElementById('notif-trigger');
+            const notifTray = document.getElementById('notif-tray');
+
+            // Logout Business
+            const logoutBtn = document.getElementById('logout-btn');
+
+            if (userTrigger && userDropdown) {
+                userTrigger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    notifTray?.classList.remove('show-dropdown');
+                    userDropdown.classList.toggle('show-dropdown');
+                });
+            }
+
+            if (notifTrigger && notifTray) {
+                notifTrigger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    userDropdown?.classList.remove('show-dropdown');
+                    notifTray.classList.toggle('show-dropdown');
+                    // Hide dot when opened
+                    document.getElementById('notif-dot').style.display = 'none';
+                });
+            }
+
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    console.log('Logging out...');
+                    // Clear storage/cookies if needed
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                    window.location.href = '/login';
+                });
+            }
+
+            // Close on outside click
+            document.addEventListener('click', (e) => {
+                if (userDropdown && !userDropdown.contains(e.target) && !userTrigger.contains(e.target)) {
+                    userDropdown.classList.remove('show-dropdown');
+                }
+                if (notifTray && !notifTray.contains(e.target) && !notifTrigger.contains(e.target)) {
+                    notifTray.classList.remove('show-dropdown');
+                }
+            });
+
+            // Simulate a notification after 5s
+            setTimeout(() => {
+                const dot = document.getElementById('notif-dot');
+                if (dot) dot.style.display = 'block';
+            }, 5000);
+        });
+    </script>
 
     <!-- Sidebar & Content -->
     <div style="display:flex; margin-top:var(--header-height); min-height:calc(100vh - var(--header-height));">

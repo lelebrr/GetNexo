@@ -54,7 +54,7 @@ export function initSocket(server) {
     });
 
     // Iniciar monitoramento de alertas
-    startAlertMonitoring();
+    startAlertMonitoring(io);
 
     return io;
 }

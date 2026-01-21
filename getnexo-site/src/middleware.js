@@ -1,6 +1,8 @@
-import { verifyToken } from './lib/auth';
+// Middleware de autenticação e segurança para GetNexo
+import { verifyToken } from './lib/auth.js';
 import logger from './lib/logger.js';
 import { metricsMiddleware, incrementError } from './lib/metrics.js';
+import crypto from 'node:crypto';
 
 // Rate limiting granular por endpoint e tipo de usuário
 const rateLimitStore = new Map();
@@ -110,13 +112,19 @@ export const onRequest = async (context, next) => {
     }
 
     // Generate Nonce for CSP
-    const nonce = Buffer.from(crypto.getRandomValues(new Uint8Array(16))).toString('base64');
+    const nonce = crypto.randomBytes(16).toString('base64');
     context.locals.nonce = nonce;
 
     // Check authentication for protected routes
     const requestUrl = new URL(context.request.url);
     const protectedPaths = ['/admin', '/meu-painel', '/revenda'];
-    const isProtected = protectedPaths.some(path => requestUrl.pathname.startsWith(path));
+
+    // Allow login endpoints (public)
+    const publicAuthPaths = ['/api/login', '/api/auth/google', '/api/auth/github'];
+    const isPublicAuth = publicAuthPaths.some(path => requestUrl.pathname.startsWith(path)) ||
+        (requestUrl.pathname === '/admin/login' && method === 'GET');
+
+    const isProtected = protectedPaths.some(path => requestUrl.pathname.startsWith(path)) && !isPublicAuth;
 
     if (isProtected) {
         const authHeader = context.request.headers.get('Authorization');
@@ -197,18 +205,17 @@ export const onRequest = async (context, next) => {
     response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
     response.headers.set('Cross-Origin-Opener-Policy', 'same-origin');
 
-    // Hardened CSP
-    // - uses 'strict-dynamic' with nonce for modern browsers
-    // - uses 'require-trusted-types-for' for DOM XSS mitigation
+    // Relaxed CSP for maximum compatibility with Cloudflare and external widgets
+    // - allows 'unsafe-inline' for Rocket Loader and event handlers
+    // - whitelists getnexo domains for API and Widget loading
     const csp = [
         "default-src 'self'",
-        `script-src 'strict-dynamic' 'nonce-${nonce}' 'unsafe-inline' http: https:; object-src 'none'; base-uri 'none';`,
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.cloudflare.com static.cloudflareinsights.com https://api.getnexo.com.br https://*.getnexo.com.br; object-src 'none'; base-uri 'none';",
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
         "img-src * data:",
         "font-src 'self' https://fonts.gstatic.com",
         "connect-src *",
-        "frame-ancestors *",
-        "require-trusted-types-for 'script'"
+        "frame-ancestors *"
     ].join('; ');
 
     response.headers.set('Content-Security-Policy', csp);

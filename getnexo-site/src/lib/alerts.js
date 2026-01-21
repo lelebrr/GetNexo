@@ -1,9 +1,7 @@
 const nodemailer = require('nodemailer');
-const logger = require('./logger');
-const { getIO } = require('../server');
 
 // Configuração do transporte de email
-const emailTransporter = nodemailer.createTransporter({
+const emailTransporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'smtp.gmail.com',
     port: process.env.SMTP_PORT || 587,
     secure: false,
@@ -27,7 +25,7 @@ const ALERT_THRESHOLDS = {
 const activeAlerts = new Map();
 
 // Função principal para verificar e enviar alertas
-async function checkAndSendAlerts(metrics, kpis) {
+async function checkAndSendAlerts(metrics, kpis, io) {
     const alerts = [];
 
     // Verificar performance do sistema
@@ -89,7 +87,7 @@ async function checkAndSendAlerts(metrics, kpis) {
         const alertKey = `${alert.type}_${Date.now()}`;
         if (!activeAlerts.has(alertKey)) {
             activeAlerts.set(alertKey, alert);
-            await sendAlert(alert);
+            await sendAlert(alert, io);
 
             // Remover alerta ativo após 1 hora
             setTimeout(() => activeAlerts.delete(alertKey), 3600000);
@@ -98,10 +96,10 @@ async function checkAndSendAlerts(metrics, kpis) {
 }
 
 // Enviar alerta por email e WebSocket
-async function sendAlert(alert) {
+async function sendAlert(alert, io) {
     try {
         // Log do alerta
-        logger.warn(`ALERT: ${alert.title} - ${alert.message}`, {
+        console.warn(`ALERT: ${alert.title} - ${alert.message}`, {
             type: alert.type,
             level: alert.level,
             action: alert.action
@@ -113,7 +111,6 @@ async function sendAlert(alert) {
         }
 
         // Enviar por WebSocket para admin
-        const io = getIO();
         if (io) {
             io.to('admin_room').emit('system_alert', {
                 ...alert,
@@ -125,7 +122,7 @@ async function sendAlert(alert) {
         await sendPushNotification(alert);
 
     } catch (error) {
-        logger.error('Erro ao enviar alerta', { error: error.message, alert });
+        console.error('Erro ao enviar alerta', { error: error.message, alert });
     }
 }
 
@@ -151,11 +148,11 @@ async function sendEmailAlert(alert) {
 // Enviar notificação push (placeholder para implementação futura)
 async function sendPushNotification(alert) {
     // Implementar integração com serviço de push notifications
-    logger.info('Push notification would be sent', { alert });
+    console.info('Push notification would be sent', { alert });
 }
 
 // Alerta manual para admins
-async function sendManualAlert(title, message, level = 'info') {
+async function sendManualAlert(title, message, level = 'info', io) {
     const alert = {
         type: 'manual',
         level,
@@ -164,11 +161,11 @@ async function sendManualAlert(title, message, level = 'info') {
         action: 'Verificar dashboard'
     };
 
-    await sendAlert(alert);
+    await sendAlert(alert, io);
 }
 
 // Verificar alertas periodicamente
-function startAlertMonitoring() {
+function startAlertMonitoring(io) {
     setInterval(async () => {
         try {
             // Simular coleta de métricas (em produção, usar dados reais)
@@ -184,9 +181,9 @@ function startAlertMonitoring() {
                 revenueGrowth: (Math.random() - 0.5) * 20000
             };
 
-            await checkAndSendAlerts(mockMetrics, mockKPIs);
+            await checkAndSendAlerts(mockMetrics, mockKPIs, io);
         } catch (error) {
-            logger.error('Erro no monitoramento de alertas', { error: error.message });
+            console.error('Erro no monitoramento de alertas', { error: error.message });
         }
     }, 300000); // A cada 5 minutos
 }

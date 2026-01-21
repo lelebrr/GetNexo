@@ -1,7 +1,45 @@
 import jwt from 'jsonwebtoken';
-import crypto from 'crypto';
+import crypto from 'node:crypto';
+import bcrypt from 'bcryptjs';
+import CryptoJS from 'crypto-js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
+const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || 'encryption-key-123';
+
+// Mock user database (replace with real DB later)
+const users = [
+    {
+        id: 1,
+        email: 'admin@getnexo.com.br',
+        password: '$2a$10$hashedpassword', // Will hash on init
+        role: 'admin',
+        name: 'Admin User',
+        permissions: ['all'],
+        createdAt: new Date().toISOString(),
+    },
+    {
+        id: 2,
+        email: 'reseller@example.com',
+        password: '$2a$10$hashedpassword',
+        role: 'reseller',
+        name: 'Reseller User',
+        permissions: ['products.view', 'products.create', 'products.edit', 'coupons.view', 'coupons.create', 'coupons.edit', 'reports.view', 'dashboard.view', 'conversations.view', 'conversations.manage'],
+        createdAt: new Date().toISOString(),
+    },
+];
+
+// Audit logs
+let auditLogs = [];
+
+// Hash passwords on startup
+const initUsers = async () => {
+    for (const user of users) {
+        if (!user.password.startsWith('$2a$')) {
+            user.password = await bcrypt.hash('password123', 10);
+        }
+    }
+};
+initUsers();
 
 // OAuth URLs
 const GOOGLE_AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
@@ -12,9 +50,34 @@ const GITHUB_AUTH_URL = 'https://github.com/login/oauth/authorize';
 const GITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token';
 const GITHUB_USER_URL = 'https://api.github.com/user';
 
-// JWT functions
+// Auth functions
+export const authenticateUser = async (email, password) => {
+    const user = users.find(u => u.email === email);
+    if (!user) return null;
+
+    // Se a senha mockada ainda for a string literal (casos raros de sync)
+    if (user.password === '$2a$10$hashedpassword') {
+        user.password = await bcrypt.hash('password123', 10);
+    }
+
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) return null;
+
+    return {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        name: user.name,
+        permissions: user.permissions,
+    };
+};
+
 export const generateToken = (user) => {
-    return jwt.sign(user, JWT_SECRET, { expiresIn: '7d' });
+    return jwt.sign(
+        { id: user.id, email: user.email, role: user.role, permissions: user.permissions },
+        JWT_SECRET,
+        { expiresIn: '24h' }
+    );
 };
 
 export const verifyToken = (token) => {
@@ -23,6 +86,78 @@ export const verifyToken = (token) => {
     } catch (error) {
         return null;
     }
+};
+
+export const findUserByEmail = (email) => {
+    return users.find(u => u.email === email);
+};
+
+export const createUser = async (userData) => {
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
+    const newUser = {
+        id: users.length + 1,
+        email: userData.email,
+        password: hashedPassword,
+        name: userData.name,
+        role: 'user',
+        permissions: ['dashboard.view', 'site.view'],
+        company: userData.company,
+        whatsapp: userData.whatsapp,
+        cpf_cnpj: userData.cpf_cnpj,
+        website: userData.website,
+        platform: userData.platform,
+        segment: userData.segment,
+        createdAt: new Date().toISOString()
+    };
+    users.push(newUser);
+    return {
+        id: newUser.id,
+        email: newUser.email,
+        name: newUser.name,
+        role: newUser.role,
+        permissions: newUser.permissions
+    };
+};
+
+export const hashPassword = async (password) => {
+    return await bcrypt.hash(password, 10);
+};
+
+// Data encryption
+export const encryptData = (data) => {
+    return CryptoJS.AES.encrypt(data, ENCRYPTION_KEY).toString();
+};
+
+export const decryptData = (encryptedData) => {
+    const bytes = CryptoJS.AES.decrypt(encryptedData, ENCRYPTION_KEY);
+    return bytes.toString(CryptoJS.enc.Utf8);
+};
+
+// Anonymization for GDPR
+export const anonymizeData = (data) => {
+    return CryptoJS.SHA256(data).toString();
+};
+
+// Audit logging
+export const logAudit = (action, userId, details) => {
+    auditLogs.push({
+        id: auditLogs.length + 1,
+        action,
+        userId,
+        details,
+        timestamp: new Date().toISOString(),
+    });
+};
+
+export const getAuditLogs = () => {
+    return auditLogs;
+};
+
+// Check permissions
+export const hasPermission = (userPermissions, permission) => {
+    if (!userPermissions || !Array.isArray(userPermissions)) return false;
+    if (userPermissions.includes('all')) return true;
+    return userPermissions.includes(permission);
 };
 
 // Generate state for CSRF protection

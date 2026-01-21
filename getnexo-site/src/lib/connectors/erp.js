@@ -89,5 +89,6 @@ class ERPConnector {
     }
 }
 
+export { ERPConnector };
 const erpConnector = new ERPConnector();
-module.exports = erpConnector;
+export default erpConnector;

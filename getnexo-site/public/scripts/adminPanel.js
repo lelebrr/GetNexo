@@ -59,6 +59,7 @@ async function loadSectionData(section) {
     case 'users': loadTeam(); break;
     case 'fluxos': loadFlows(); break;
     case 'int-webhooks': loadWebhooks(); break;
+    case 'cfg-aparencia': initAppearanceConfig(); break;
   }
 }
 
@@ -741,6 +742,19 @@ window.saveBotConfig = async function () {
     });
     showToast('Configurações do bot salvas no servidor!', 'success');
   } catch (e) { showToast('Erro ao salvar config', 'error'); }
+};
+
+window.saveAppearanceConfig = function () {
+  const selectedBg = document.querySelector('input[name="bg-type"]:checked')?.value || 'blobs';
+  localStorage.setItem('getnexo-bg-type', selectedBg);
+  showToast('Aparência atualizada! Recarregando...', 'success');
+  setTimeout(() => window.location.reload(), 1500);
+};
+
+window.initAppearanceConfig = function () {
+  const currentBg = localStorage.getItem('getnexo-bg-type') || 'blobs';
+  const radio = document.getElementById('bg-' + currentBg);
+  if (radio) radio.checked = true;
 };
 
 window.deleteFila = async (id) => {
@@ -2771,15 +2785,15 @@ window.updateContentItem = async function (e) {
 window.publishContent = async function (id) {
   if (!confirm('Deseja publicar este conteúdo no seu site?')) return;
   try {
-    const res = await fetch(`${API_URL}/api/content/publish/${id}`, { 
+    const res = await fetch(`${API_URL}/api/content/publish/${id}`, {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${localStorage.getItem('omnichat_token')}` }
     });
     if (res.ok) {
-        showToast('Conteúdo publicado com sucesso!', 'success');
-        loadContentQueue();
+      showToast('Conteúdo publicado com sucesso!', 'success');
+      loadContentQueue();
     } else {
-        showToast('Erro ao publicar.', 'error');
+      showToast('Erro ao publicar.', 'error');
     }
   } catch (e) {
     showToast('Erro de conexão.', 'error');
@@ -2787,30 +2801,30 @@ window.publishContent = async function (id) {
 };
 
 window.generateWithIA = async function (id) {
-    const btn = event?.target;
-    const originalText = btn ? btn.innerHTML : '';
-    if (btn) {
-        btn.innerHTML = '🤖 ...';
-        btn.disabled = true;
-    }
+  const btn = event?.target;
+  const originalText = btn ? btn.innerHTML : '';
+  if (btn) {
+    btn.innerHTML = '🤖 ...';
+    btn.disabled = true;
+  }
 
-    try {
-        const res = await fetch(`${API_URL}/api/content/generate/${id}`, { 
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${localStorage.getItem('omnichat_token')}` }
-        });
-        if (res.ok) {
-            showToast('IA gerou o conteúdo baseado na pauta!', 'success');
-            loadContentQueue();
-        } else {
-            showToast('Erro na geração IA.', 'error');
-        }
-    } catch (e) {
-        showToast('Erro de conexão IA.', 'error');
-    } finally {
-        if (btn) {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        }
+  try {
+    const res = await fetch(`${API_URL}/api/content/generate/${id}`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('omnichat_token')}` }
+    });
+    if (res.ok) {
+      showToast('IA gerou o conteúdo baseado na pauta!', 'success');
+      loadContentQueue();
+    } else {
+      showToast('Erro na geração IA.', 'error');
     }
+  } catch (e) {
+    showToast('Erro de conexão IA.', 'error');
+  } finally {
+    if (btn) {
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+    }
+  }
 };

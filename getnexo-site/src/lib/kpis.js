@@ -1,4 +1,4 @@
-const logger = require('./logger');
+import logger from './logger.js';
 
 // Simulação de dados de negócio (em produção, viria do banco/ERP)
 let businessData = {
@@ -148,11 +148,21 @@ function checkRisks(kpis) {
 // Atualizar dados periodicamente (simulação)
 setInterval(updateBusinessData, 60000); // A cada minuto
 
-module.exports = {
+export {
     calculateKPIs,
     generateForecast,
     checkRisks,
     updateBusinessData,
-    getBusinessData: () => businessData,
+    RISK_THRESHOLDS
+};
+
+export const getBusinessData = () => businessData;
+
+export default {
+    calculateKPIs,
+    generateForecast,
+    checkRisks,
+    updateBusinessData,
+    getBusinessData,
     RISK_THRESHOLDS
 };

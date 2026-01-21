@@ -1,7 +1,5 @@
 ---
-// AccessibilityControls.astro
-// Painel de controle de acessibilidade flutuante
-// Certificações: WCAG 2.2 AA, CIDA, PAL, ISO 9241-171
+const { nonce } = Astro.props;
 ---
 
 <div class="accessibility-panel-wrapper">
@@ -95,7 +93,7 @@
     </div>
 </div>
 
-<script is:inline src="/scripts/performance/a11y-manager.js" defer data-cfasync="false"></script>
+<script is:inline src="/scripts/performance/a11y-manager.js" defer data-cfasync="false" nonce={nonce}></script>
 
 <style>
     .accessibility-panel-wrapper {

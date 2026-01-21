@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
-import { StripeConnector } from '../../lib/connectors/stripe';
-import { verifyToken } from '../../lib/auth';
+import { StripeConnector } from '../../lib/connectors/stripe.js';
+import { verifyToken } from '../../lib/auth.js';
 
 const stripe = new StripeConnector();
 

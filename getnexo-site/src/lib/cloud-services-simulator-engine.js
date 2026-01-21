@@ -6,21 +6,43 @@
 const AWS = require('aws-sdk');
 
 class CloudServicesEngine {
-    constructor() {
-        // AWS SDK Clients
-        this.ec2 = new AWS.EC2();
-        this.s3 = new AWS.S3();
-        this.rds = new AWS.RDS();
-        this.lambda = new AWS.Lambda();
-        this.iam = new AWS.IAM();
-        this.cloudwatch = new AWS.CloudWatch();
-        this.sns = new AWS.SNS();
-        this.sqs = new AWS.SQS();
-        this.eventbridge = new AWS.EventBridge();
-        this.cloudformation = new AWS.CloudFormation();
-        this.elb = new AWS.ELBv2();
-        this.route53 = new AWS.Route53();
-        this.kms = new AWS.KMS();
+    constructor(config = {}) {
+        // Configuração AWS - facultativo, habilitado se tiver credenciais ou config explícita
+        this.awsEnabled = config.awsEnabled || (!!process.env.AWS_ACCESS_KEY_ID && !!process.env.AWS_REGION) || false;
+        this.awsServicesEnabled = {
+            ec2: config.awsServicesEnabled?.ec2 ?? true,
+            s3: config.awsServicesEnabled?.s3 ?? true,
+            rds: config.awsServicesEnabled?.rds ?? true,
+            lambda: config.awsServicesEnabled?.lambda ?? true,
+            cloudwatch: config.awsServicesEnabled?.cloudwatch ?? true,
+            sns: config.awsServicesEnabled?.sns ?? true,
+            sqs: config.awsServicesEnabled?.sqs ?? true,
+            cloudformation: config.awsServicesEnabled?.cloudformation ?? true,
+            iam: config.awsServicesEnabled?.iam ?? true
+        };
+
+        // AWS SDK Clients - só inicializa se AWS estiver habilitado
+        if (this.awsEnabled) {
+            try {
+                this.ec2 = new AWS.EC2();
+                this.s3 = new AWS.S3();
+                this.rds = new AWS.RDS();
+                this.lambda = new AWS.Lambda();
+                this.iam = new AWS.IAM();
+                this.cloudwatch = new AWS.CloudWatch();
+                this.sns = new AWS.SNS();
+                this.sqs = new AWS.SQS();
+                this.eventbridge = new AWS.EventBridge();
+                this.cloudformation = new AWS.CloudFormation();
+                this.elb = new AWS.ELBv2();
+                this.route53 = new AWS.Route53();
+                this.kms = new AWS.KMS();
+                console.log('AWS SDK clients inicializados');
+            } catch (error) {
+                console.warn('Erro ao inicializar AWS SDK:', error.message);
+                this.awsEnabled = false;
+            }
+        }
 
         // Cached AWS Resources (optional, for faster lookups)
         this.ec2Instances = new Map();
@@ -130,11 +152,85 @@ class CloudServicesEngine {
     }
 
     /**
+     * AWS Configuration Methods
+     */
+
+    // Verificar se um serviço AWS está habilitado
+    isAWSEnabled(service = null) {
+        if (!this.awsEnabled) return false;
+        if (!service) return this.awsEnabled;
+        return this.awsServicesEnabled[service] || false;
+    }
+
+    // Habilitar/desabilitar AWS geral
+    setAWSEnabled(enabled) {
+        this.awsEnabled = enabled;
+        if (!enabled) {
+            // Desabilitar todos os serviços se AWS geral estiver desabilitado
+            Object.keys(this.awsServicesEnabled).forEach(service => {
+                this.awsServicesEnabled[service] = false;
+            });
+        }
+        console.log(`AWS ${enabled ? 'habilitado' : 'desabilitado'}`);
+        return this.getAWSConfig();
+    }
+
+    // Habilitar/desabilitar serviço específico
+    setAWSServiceEnabled(service, enabled) {
+        if (!this.awsEnabled && enabled) {
+            throw new Error('AWS deve estar habilitado primeiro');
+        }
+        this.awsServicesEnabled[service] = enabled;
+        console.log(`AWS service ${service} ${enabled ? 'habilitado' : 'desabilitado'}`);
+        return this.getAWSConfig();
+    }
+
+    // Obter configuração atual
+    getAWSConfig() {
+        return {
+            awsEnabled: this.awsEnabled,
+            awsServicesEnabled: { ...this.awsServicesEnabled }
+        };
+    }
+
+    // Configurar múltiplos serviços de uma vez
+    setAWSConfig(config) {
+        if (config.awsEnabled !== undefined) {
+            this.awsEnabled = config.awsEnabled;
+        }
+        if (config.awsServicesEnabled) {
+            Object.assign(this.awsServicesEnabled, config.awsServicesEnabled);
+        }
+        console.log('Configuração AWS atualizada:', this.getAWSConfig());
+        return this.getAWSConfig();
+    }
+
+    /**
      * AWS Services
      */
 
     // EC2
     async createEC2Instance(instanceId, config) {
+        // Verificar se EC2 está habilitado
+        if (!this.isAWSEnabled('ec2')) {
+            // Fallback para simulação quando desabilitado
+            console.log(`[SIMULAÇÃO] EC2 instance ${instanceId} criada (AWS EC2 desabilitado)`);
+            return {
+                id: instanceId,
+                instanceType: config.instanceType || 't2.micro',
+                ami: config.ami || 'ami-simulated',
+                state: 'running',
+                publicIp: this.generatePublicIp(),
+                privateIp: this.generatePrivateIp(),
+                securityGroups: config.securityGroups || [],
+                tags: config.tags || {},
+                region: config.region || 'us-east-1',
+                availabilityZone: config.availabilityZone || 'us-east-1a',
+                createdAt: new Date(),
+                simulated: true
+            };
+        }
+
         const params = {
             ImageId: config.ami || 'ami-0abcdef1234567890', // AMI padrão
             InstanceType: config.instanceType || 't2.micro',
@@ -165,10 +261,11 @@ class CloudServicesEngine {
                 publicIp: instance.PublicIpAddress,
                 privateIp: instance.PrivateIpAddress,
                 securityGroups: instance.SecurityGroups,
-                tags: instance.Tags.reduce((acc, tag) => ({ ...acc, [tag.Key]: tag.Value }), {}),
+                tags: instance.Tags ? instance.Tags.reduce((acc, tag) => ({ ...acc, [tag.Key]: tag.Value }), {}) : {},
                 region: config.region || 'us-east-1',
                 availabilityZone: instance.Placement.AvailabilityZone,
-                createdAt: instance.LaunchTime
+                createdAt: instance.LaunchTime,
+                simulated: false
             };
         } catch (error) {
             console.error(`Erro ao criar EC2 instance: ${error.message}`);
@@ -659,108 +756,20 @@ class CloudServicesEngine {
      */
 
     /**
-     * GCP Services Simulation
+     * GCP Services - Not implemented (placeholder for future development)
+     * Note: GCP services are not currently supported in this real AWS implementation
      */
-
-    // Compute Engine
-    async createComputeInstance(instanceName, config) {
-        const instance = {
-            name: instanceName,
-            machineType: config.machineType || 'f1-micro',
-            zone: config.zone || 'us-central1-a',
-            disks: config.disks || [],
-            networkInterfaces: config.networkInterfaces || [],
-            status: 'PROVISIONING',
-            externalIP: null,
-            internalIP: this.generatePrivateIp(),
-            labels: config.labels || {},
-            createdAt: new Date(),
-            metrics: {
-                cpuUtilization: 0,
-                networkBytesIn: 0,
-                networkBytesOut: 0,
-                diskReadBytes: 0,
-                diskWriteBytes: 0
-            }
-        };
-
-        this.computeInstances.set(instanceName, instance);
-
-        setTimeout(() => {
-            instance.status = 'RUNNING';
-            instance.externalIP = this.generatePublicIp();
-        }, 4000);
-
-        console.log(`GCP Compute Instance ${instanceName} criado`);
-        return instance;
-    }
-
-    // Cloud Storage
-    async createCloudStorageBucket(bucketName, config) {
-        const bucket = {
-            name: bucketName,
-            location: config.location || 'US',
-            storageClass: config.storageClass || 'STANDARD',
-            versioning: config.versioning || false,
-            encryption: config.encryption || 'google-managed',
-            objects: new Map(),
-            totalSize: 0,
-            objectCount: 0,
-            createdAt: new Date()
-        };
-
-        this.cloudStorage.set(bucketName, bucket);
-        console.log(`GCP Cloud Storage bucket ${bucketName} criado`);
-        return bucket;
-    }
-
-    // Cloud SQL
-    async createCloudSQLInstance(instanceName, config) {
-        const instance = {
-            name: instanceName,
-            databaseVersion: config.databaseVersion || 'MYSQL_8_0',
-            region: config.region || 'us-central1',
-            tier: config.tier || 'db-f1-micro',
-            diskSize: config.diskSize || 10, // GB
-            status: 'CREATING',
-            ipAddresses: [],
-            connectionName: null,
-            createdAt: new Date(),
-            metrics: {
-                cpuUtilization: 0,
-                memoryUtilization: 0,
-                diskUtilization: 0,
-                connections: 0
-            }
-        };
-
-        this.cloudSql.set(instanceName, instance);
-
-        setTimeout(() => {
-            instance.status = 'RUNNABLE';
-            instance.ipAddresses = [{ type: 'PRIMARY', ipAddress: this.generatePrivateIp() }];
-            instance.connectionName = `${config.projectId}:${config.region}:${instanceName}`;
-        }, 12000);
-
-        console.log(`GCP Cloud SQL instance ${instanceName} criado`);
-        return instance;
-    }
 
     /**
      * Cross-Cloud Operations
      */
 
     async createResource(provider, service, resourceName, config) {
-        switch (provider) {
-            case 'aws':
-                return this.createAWSResource(service, resourceName, config);
-            case 'azure':
-                return this.createAzureResource(service, resourceName, config);
-            case 'gcp':
-                return this.createGCPResource(service, resourceName, config);
-            default:
-                throw new Error(`Provider ${provider} não suportado`);
+        if (provider !== 'aws') {
+            throw new Error(`Provider ${provider} não suportado. Apenas AWS é suportado nesta implementação real.`);
         }
+
+        return this.createAWSResource(service, resourceName, config);
     }
 
     async createAWSResource(service, resourceName, config) {
@@ -769,25 +778,10 @@ class CloudServicesEngine {
             case 's3': return this.createS3Bucket(resourceName, config);
             case 'rds': return this.createRDSInstance(resourceName, config);
             case 'lambda': return this.createLambdaFunction(resourceName, config);
+            case 'sns': return this.createSNSTopic(resourceName, config);
+            case 'sqs': return this.createSQSQueue(resourceName, config);
+            case 'cloudformation': return this.createCloudFormationStack(resourceName, config.templateBody, config.parameters);
             default: throw new Error(`AWS service ${service} não suportado`);
-        }
-    }
-
-    async createAzureResource(service, resourceName, config) {
-        switch (service) {
-            case 'vm': return this.createVM(resourceName, config);
-            case 'storage': return this.createStorageAccount(resourceName, config);
-            case 'sql': return this.createSQLDatabase(resourceName, config);
-            default: throw new Error(`Azure service ${service} não suportado`);
-        }
-    }
-
-    async createGCPResource(service, resourceName, config) {
-        switch (service) {
-            case 'compute': return this.createComputeInstance(resourceName, config);
-            case 'storage': return this.createCloudStorageBucket(resourceName, config);
-            case 'sql': return this.createCloudSQLInstance(resourceName, config);
-            default: throw new Error(`GCP service ${service} não suportado`);
         }
     }
 
@@ -3201,29 +3195,28 @@ class CloudServicesEngine {
     /**
      * Lista recursos por provider
      */
-    listResources(provider) {
-        switch (provider) {
-            case 'aws':
-                return {
-                    ec2: Array.from(this.ec2Instances.values()).map(i => ({ id: i.id, state: i.state, type: i.instanceType })),
-                    s3: Array.from(this.s3Buckets.values()).map(b => ({ name: b.name, region: b.region, objects: b.objectCount })),
-                    rds: Array.from(this.rdsInstances.values()).map(i => ({ id: i.id, state: i.state, engine: i.engine })),
-                    lambda: Array.from(this.lambdaFunctions.values()).map(f => ({ name: f.id, runtime: f.runtime, state: f.state }))
-                };
-            case 'azure':
-                return {
-                    vm: Array.from(this.vmInstances.values()).map(v => ({ name: v.name, state: v.state, size: v.size })),
-                    storage: Array.from(this.storageAccounts.values()).map(s => ({ name: s.name, location: s.location })),
-                    sql: Array.from(this.sqlDatabases.values()).map(d => ({ name: d.name, state: d.state, edition: d.edition }))
-                };
-            case 'gcp':
-                return {
-                    compute: Array.from(this.computeInstances.values()).map(i => ({ name: i.name, status: i.status, machineType: i.machineType })),
-                    storage: Array.from(this.cloudStorage.values()).map(b => ({ name: b.name, location: b.location, objects: b.objectCount })),
-                    sql: Array.from(this.cloudSql.values()).map(i => ({ name: i.name, status: i.status, tier: i.tier }))
-                };
-            default:
-                throw new Error(`Provider ${provider} não suportado`);
+    async listResources(provider) {
+        if (provider !== 'aws') {
+            throw new Error(`Provider ${provider} não suportado. Apenas AWS é suportado nesta implementação real.`);
+        }
+
+        try {
+            const [ec2Instances, s3Buckets, rdsInstances, lambdaFunctions] = await Promise.all([
+                this.describeEC2Instances(),
+                this.s3.listBuckets().promise().then(result => result.Buckets || []),
+                this.describeRDSInstances(),
+                this.listLambdaFunctions()
+            ]);
+
+            return {
+                ec2: ec2Instances.map(i => ({ id: i.id, state: i.state, type: i.instanceType })),
+                s3: s3Buckets.map(b => ({ name: b.Name, createdAt: b.CreationDate })),
+                rds: rdsInstances.map(i => ({ id: i.id, state: i.state, engine: i.engine })),
+                lambda: lambdaFunctions.map(f => ({ name: f.id, runtime: f.runtime, state: f.state }))
+            };
+        } catch (error) {
+            console.error(`Erro ao listar recursos AWS: ${error.message}`);
+            throw error;
         }
     }
 }

@@ -49,6 +49,17 @@ import Layout from '../../layouts/Layout.astro';
                 <a href="/suporte">Esqueci a senha</a>
             </div>
         </div>
+
+        <!-- Welcome Animation Overlay -->
+        <div id="welcome-overlay" class="welcome-overlay">
+            <div class="welcome-content">
+                <div class="welcome-glow"></div>
+                <div id="welcome-text" class="welcome-text">USER</div>
+                <div class="loading-bar">
+                    <div class="loading-progress"></div>
+                </div>
+            </div>
+        </div>
     </div>
 </Layout>
 
@@ -177,10 +188,123 @@ import Layout from '../../layouts/Layout.astro';
     }
 
     .footer-links a:hover { color: #00d4ff; }
+
+    /* Welcome Animation Styles */
+    .welcome-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(0, 212, 255, 0.1) 0%, rgba(0, 255, 157, 0.05) 100%);
+        backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.5s ease;
+    }
+
+    .welcome-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .welcome-content {
+        text-align: center;
+        animation: welcomeBounce 0.8s ease;
+        position: relative;
+        z-index: 2;
+    }
+
+    .welcome-text {
+        font-size: 4rem;
+        font-weight: 900;
+        background: linear-gradient(45deg, #00d4ff, #00ff9d, #ff6b35);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: gradientShift 2s ease infinite, textGlow 1s ease;
+        text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+        margin-bottom: 1rem;
+        letter-spacing: 0.2em;
+    }
+
+    .welcome-glow {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, rgba(0, 212, 255, 0.3) 0%, rgba(0, 255, 157, 0.2) 50%, transparent 70%);
+        border-radius: 50%;
+        animation: glowPulse 2s ease-in-out infinite;
+        z-index: 1;
+    }
+
+    .loading-bar {
+        width: 200px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 2px;
+        margin: 2rem auto 0;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .loading-progress {
+        height: 100%;
+        background: linear-gradient(90deg, #00d4ff, #00ff9d);
+        border-radius: 2px;
+        animation: loadingProgress 2.3s ease-out;
+    }
+
+    @keyframes welcomeBounce {
+        0% { transform: scale(0.3); opacity: 0; }
+        50% { transform: scale(1.1); }
+        70% { transform: scale(0.9); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    @keyframes textGlow {
+        0% { text-shadow: 0 0 5px rgba(0, 212, 255, 0.2); }
+        50% { text-shadow: 0 0 30px rgba(0, 212, 255, 0.8), 0 0 40px rgba(0, 255, 157, 0.4); }
+        100% { text-shadow: 0 0 5px rgba(0, 212, 255, 0.2); }
+    }
+
+    @keyframes fadeInUp {
+        0% { transform: translateY(30px); opacity: 0; }
+        100% { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes particleExplosion {
+        0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+    }
+
+    @keyframes glowPulse {
+        0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
+        50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.6; }
+    }
+
+    @keyframes loadingProgress {
+        0% { width: 0%; }
+        100% { width: 100%; }
+    }
 </style>
 
 <script is:inline>
-    const API = 'https://api.getnexo.com.br';
+    const API = '';
     const form = document.getElementById('login-form');
     const errorDiv = document.getElementById('error-msg');
     const btn = document.getElementById('btn-login');
@@ -230,10 +354,13 @@ import Layout from '../../layouts/Layout.astro';
                     errorDiv.innerText = 'Digite o código do Google Authenticator.';
                     errorDiv.style.color = '#00ff9d';
                 } else {
-                    // Success
+                    // Success - Show welcome animation
                     localStorage.setItem('omnichat_token', data.token);
                     localStorage.setItem('adminUser', JSON.stringify(data.user));
-                    window.location.href = '/dashboard';
+
+                    // Determine user type and show animation
+                    const userRole = data.user.role || data.user.type || 'user';
+                    showWelcomeAnimation(userRole);
                 }
             } else {
                 errorDiv.innerText = data.error || 'Erro ao fazer login.';
@@ -247,4 +374,72 @@ import Layout from '../../layouts/Layout.astro';
             if (!pending2FA) btn.innerText = 'Entrar no Sistema';
         }
     };
+
+    // Welcome Animation Function
+    function showWelcomeAnimation(userRole) {
+        const overlay = document.getElementById('welcome-overlay');
+        const welcomeText = document.getElementById('welcome-text');
+
+        // Determine animation text based on role
+        let animationText = 'USER';
+        let redirectUrl = '/dashboard';
+
+        if (userRole === 'admin' || userRole === 'superadmin' || userRole === 'administrator') {
+            animationText = 'ADMIN';
+            redirectUrl = '/admin';
+        } else if (userRole === 'partner' || userRole === 'reseller' || userRole === 'revendedor') {
+            animationText = 'PARTNERS';
+            redirectUrl = '/revenda/dash';
+        }
+
+        // Set animation text
+        welcomeText.textContent = animationText;
+
+        // Show overlay
+        overlay.classList.add('active');
+
+        // Add explosion effect
+        createExplosionEffect();
+
+        // Redirect after animation
+        setTimeout(() => {
+            window.location.href = redirectUrl;
+        }, 2500);
+    }
+
+    // Create explosion effect
+    function createExplosionEffect() {
+        const overlay = document.getElementById('welcome-overlay');
+        const particles = 20;
+
+        for (let i = 0; i < particles; i++) {
+            setTimeout(() => {
+                const particle = document.createElement('div');
+                particle.style.cssText = `
+                    position: absolute;
+                    width: 8px;
+                    height: 8px;
+                    background: ${i % 2 === 0 ? '#00d4ff' : '#00ff9d'};
+                    border-radius: 50%;
+                    pointer-events: none;
+                    animation: particleExplosion 1.5s ease-out forwards;
+                    left: 50%;
+                    top: 50%;
+                    transform: translate(-50%, -50%);
+                `;
+
+                // Random direction
+                const angle = (Math.PI * 2 * i) / particles;
+                const distance = 150 + Math.random() * 100;
+
+                particle.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
+                particle.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
+
+                overlay.appendChild(particle);
+
+                // Remove particle after animation
+                setTimeout(() => particle.remove(), 1500);
+            }, i * 50);
+        }
+    }
 </script>

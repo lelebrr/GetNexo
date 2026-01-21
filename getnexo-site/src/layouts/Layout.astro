@@ -68,48 +68,40 @@ const nonce = Astro.locals.nonce;
       }
     }
 
-    // Performance Observers
-    new PerformanceObserver((list) => {
+    // Performance Observers with Safety Checks
+    const observeSafe = (type, callback) => {
+      if (typeof PerformanceObserver !== 'undefined' && PerformanceObserver.supportedEntryTypes && PerformanceObserver.supportedEntryTypes.includes(type)) {
+        new PerformanceObserver((list) => callback(list)).observe({ type, buffered: true });
+      }
+    };
+
+    observeSafe('layout-shift', (list) => {
       for (const entry of list.getEntries()) {
         if (!entry.hadRecentInput) {
-          sendToAnalytics({
-            name: 'CLS',
-            value: entry.value,
-            id: 'v3-' + Date.now() + '-' + Math.floor(Math.random() * 1000)
-          });
+          sendToAnalytics({ name: 'CLS', value: entry.value, id: 'v3-' + Date.now() });
         }
       }
-    }).observe({ entryTypes: ['layout-shift'] });
+    });
 
-    new PerformanceObserver((list) => {
+    observeSafe('first-input', (list) => {
       for (const entry of list.getEntries()) {
-        sendToAnalytics({
-          name: 'FID',
-          value: entry.processingStart - entry.startTime,
-          id: 'v3-' + Date.now() + '-' + Math.floor(Math.random() * 1000)
-        });
+        sendToAnalytics({ name: 'FID', value: entry.processingStart - entry.startTime, id: 'v3-' + Date.now() });
       }
-    }).observe({ entryTypes: ['first-input'] });
+    });
 
-    new PerformanceObserver((list) => {
+    observeSafe('largest-contentful-paint', (list) => {
       const entries = list.getEntries();
       const lastEntry = entries[entries.length - 1];
-      sendToAnalytics({
-        name: 'LCP',
-        value: lastEntry.startTime,
-        id: 'v3-' + Date.now() + '-' + Math.floor(Math.random() * 1000)
-      });
-    }).observe({ entryTypes: ['largest-contentful-paint'] });
+      sendToAnalytics({ name: 'LCP', value: lastEntry.startTime, id: 'v3-' + Date.now() });
+    });
 
-    new PerformanceObserver((list) => {
+    observeSafe('paint', (list) => {
       for (const entry of list.getEntries()) {
-        sendToAnalytics({
-          name: 'FCP',
-          value: entry.startTime,
-          id: 'v3-' + Date.now() + '-' + Math.floor(Math.random() * 1000)
-        });
+        if (entry.name === 'first-contentful-paint') {
+          sendToAnalytics({ name: 'FCP', value: entry.startTime, id: 'v3-' + Date.now() });
+        }
       }
-    }).observe({ entryTypes: ['paint'] });
+    });
   </script>
 
   <script type="text/partytown" nonce={nonce}>
@@ -146,8 +138,7 @@ const nonce = Astro.locals.nonce;
   
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style is:inline>
       /* Critical LCP Styles */
       .logo-text { font-family: 'Inter', sans-serif; font-weight: 800; visibility: visible !important; opacity: 1 !important; }
@@ -223,16 +214,19 @@ const nonce = Astro.locals.nonce;
       background: rgba(255,255,255,0.1);
       color: white;
       border: 1px solid rgba(255,255,255,0.2);
-      padding: 0.4rem 0.8rem;
-      border-radius: 8px;
+      padding: 0.5rem 0.8rem;
+      border-radius: 12px;
       cursor: pointer;
-      font-size: 0.85rem;
+      font-size: 1.1rem;
+      font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 0.3rem;
-      transition: 0.3s;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
-    .lang-btn:hover { background: rgba(255,255,255,0.2); }
+    .lang-btn:hover { background: rgba(0, 212, 255, 0.15); border-color: var(--primary); transform: translateY(-1px); }
+    #current-lang-code { font-size: 0.75rem; color: #94a3b8; }
     .lang-dropdown {
       position: absolute;
       top: 100%;
@@ -266,8 +260,7 @@ const nonce = Astro.locals.nonce;
     .footer-col a:hover { color: var(--success); }
     .footer-bottom { border-top: 1px solid rgba(255,255,255,0.05); margin-top: 4rem; padding-top: 2rem; text-align: center; color: var(--light); font-size: 0.85rem; }
 
-    .floating-whatsapp { position: fixed; bottom: 30px; right: 30px; background: #25d366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; box-shadow: 0 10px 20px rgba(37,211,102,0.3); z-index: 1000; text-decoration: none; transition: 0.3s; }
-    .floating-whatsapp:hover { transform: scale(1.1) rotate(10deg); }
+
 
     /* Header landing style - mais transparente */
     .header-landing { background: rgba(3, 7, 18, 0.5); border-bottom-color: rgba(0, 212, 255, 0.1); }
@@ -351,9 +344,20 @@ const nonce = Astro.locals.nonce;
     }
 
     @media (max-width: 900px) {
-      .nav-links, .header-ctas { display: none; }
+      .nav-links { display: none; }
+      .header-ctas { display: flex; gap: 0.5rem; }
+      .btn-login, .btn-start { display: none; }
       .global-header { padding: 1rem 5%; }
       .mobile-menu-btn { display: flex; }
+      .lang-btn { padding: 0.4rem 0.6rem; font-size: 1rem; }
+    }
+
+    /* Force Chat Widget to Bottom-Right */
+    #getnexo-root, .chatwoot-widget-holder, #chatwoot-widget-container { 
+      top: auto !important; 
+      bottom: 20px !important; 
+      right: 20px !important; 
+      left: auto !important;
     }
   </style>
 </head>
@@ -362,7 +366,42 @@ const nonce = Astro.locals.nonce;
     <a href="#main-content" class="skip-link">Pular para conteúdo principal</a>
     <a href="#main-nav" class="skip-link">Pular para navegação</a>
   </div>
-  <canvas id="neural-bg" class="neural-canvas"></canvas>
+  <canvas id="neural-bg" class="neural-canvas" style="display: none;"></canvas>
+  
+  <div class="animated-bg" id="old-bg">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+  </div>
+
+  <script is:inline>
+    // Gerenciador de Fundo Global
+    (function() {
+      const bgType = localStorage.getItem('getnexo-bg-type') || 'blobs';
+      const neuralCanvas = document.getElementById('neural-bg');
+      const oldBg = document.getElementById('old-bg');
+
+      if (bgType === 'neural') {
+        if (neuralCanvas) neuralCanvas.style.display = 'block';
+        if (oldBg) oldBg.style.display = 'none';
+      } else {
+        if (neuralCanvas) neuralCanvas.style.display = 'none';
+        if (oldBg) oldBg.style.display = 'block';
+      }
+
+      // Escutar mudanças de configuração
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'getnexo-bg-type') {
+          window.location.reload();
+        }
+      });
+    })();
+
+    // Fix Rocket Loader preload warning
+    document.addEventListener('DOMContentLoaded', () => {
+      const script = document.querySelector('script[src="/_astro/hoisted.BPcAlPma.js"]');
+      if (script) script.crossOrigin = 'anonymous';
+    });
+  </script>
 
   <!-- Neural Background Controls -->
   <div class="neural-controls" id="neural-controls" style="display:none;">
@@ -473,6 +512,8 @@ const nonce = Astro.locals.nonce;
       <a href="/blog" data-i18n="nav.blog">Blog</a>
     </nav>
     <div class="header-ctas">
+      <a href="/login" class="btn-login" data-i18n="nav.login">Entrar</a>
+      <a href="/criar-bot" class="btn-start" data-i18n="nav.startFree">Testar Grátis</a>
       <div class="lang-selector">
         <button id="lang-btn" class="lang-btn">
           <span id="current-lang-flag">🇧🇷</span>
@@ -481,10 +522,10 @@ const nonce = Astro.locals.nonce;
         <div id="lang-dropdown" class="lang-dropdown">
           <a href="#" data-lang="pt-BR" class="lang-option">🇧🇷 Português</a>
           <a href="#" data-lang="en" class="lang-option">🇺🇸 English</a>
+          <a href="#" data-lang="es" class="lang-option">🇪🇸 Español</a>
+          <a href="#" data-lang="fr" class="lang-option">🇫🇷 Français</a>
         </div>
       </div>
-      <a href="/admin/login" class="btn-login" data-i18n="nav.login">Entrar</a>
-      <a href="/criar-bot" class="btn-start" data-i18n="nav.startFree">Testar Grátis</a>
     </div>
     <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -501,7 +542,7 @@ const nonce = Astro.locals.nonce;
       <a href="/blog">📝 Blog</a>
       <a href="/suporte">🛟 Suporte</a>
       <div class="mobile-divider"></div>
-      <a href="/admin/login" class="mobile-login">Entrar no Dashboard</a>
+      <a href="/login" class="mobile-login">Entrar no Dashboard</a>
       <a href="/criar-bot" class="mobile-cta">Testar Grátis →</a>
     </nav>
   </div>
@@ -513,7 +554,7 @@ const nonce = Astro.locals.nonce;
 
 
   <!-- Accessibility Controls Panel -->
-  <AccessibilityControls />
+  <AccessibilityControls nonce={nonce} />
 
   <!-- Cookie Consent Banner -->
   <CookieConsent />
@@ -566,9 +607,7 @@ const nonce = Astro.locals.nonce;
     </div>
   </footer>
 
-  <a href="https://wa.me/55..." target="_blank" class="floating-whatsapp" aria-label="Falar no WhatsApp">
-    <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.4 0 1.177.308 2.279.846 3.234l-.893 3.245 3.32-.871c.907.493 1.946.77 3.5.77 3.182 0 5.77-2.587 5.77-5.4 0-3.183-2.587-5.378-5.775-5.378zM12.031 2c5.523 0 10 4.477 10 10s-4.477 10-10 10-10-4.477-10-10 4.477-10 10-10z"/></svg>
-  </a>
+
 
   <!-- Live Pulse Engine UI -->
   <div id="live-pulse" class="pulse-toast glass-panel" style="display:none;">

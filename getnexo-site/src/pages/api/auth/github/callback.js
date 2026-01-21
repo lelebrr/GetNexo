@@ -1,4 +1,4 @@
-import { exchangeGitHubCode, generateToken } from '../../../lib/auth.js';
+import { exchangeGitHubCode, generateToken } from '../../../../lib/auth.js';
 
 export async function get(req) {
     const url = new URL(req.url);

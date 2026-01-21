@@ -5,186 +5,373 @@ import Layout from '../layouts/Layout.astro';
   <!-- intl-tel-input CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
 
-  <div class="wizard-container">
-    <header class="wizard-header">
-      <h1>Criar Plugin</h1>
-      <p>Configure seu assistente de vendas em 3 passos simples</p>
-      <div class="all-required-notice">⚠️ Todos os campos são obrigatórios</div>
-    </header>
+  <div class="page-wrapper">
+    <!-- AUTH GATE SECTION -->
+    <div id="auth-gate" class="auth-gate hidden">
+      <div class="auth-card glass-panel reveal">
+        <div class="auth-header">
+           <div class="auth-logo">N</div>
+           <h1>Comece sua Jornada</h1>
+           <p>Você precisa estar logado para configurar seu plugin e acessar o suporte prioritário.</p>
+        </div>
 
-    <!-- Step Indicators -->
-    <div class="step-indicators">
-      <div class="step-item active" data-step="1">
-        <span class="step-number">1</span>
-        <span class="step-label">Dados</span>
-      </div>
-      <div class="step-line"></div>
-      <div class="step-item" data-step="2">
-        <span class="step-number">2</span>
-        <span class="step-label">Validar</span>
-      </div>
-      <div class="step-line"></div>
-      <div class="step-item" data-step="3">
-        <span class="step-number">3</span>
-        <span class="step-label">Plugin</span>
-      </div>
-    </div>
-
-    <!-- Step 1: Registration Info -->
-    <div class="step-content" id="step1">
-      <h2>📋 Informações de Registro</h2>
-      <form id="form1" class="wizard-form">
-        <div class="form-grid">
-          <div class="field">
-            <label>Nome Completo ou Nome da Empresa *</label>
-            <input type="text" name="nome_empresa" id="nome_empresa" placeholder="Sua Empresa ou Seu Nome" required />
-          </div>
-          <div class="field">
-            <label>CPF ou CNPJ *</label>
-            <input type="text" name="cpf_cnpj" id="cpf_cnpj" placeholder="Apenas números" required />
-          </div>
-          <div class="field">
-            <label>WhatsApp (Verificação) *</label>
-            <input type="tel" name="whatsapp" id="whatsapp" required />
-          </div>
-          <div class="field">
-            <label>E-mail Real *</label>
-            <input type="email" name="email" id="email" placeholder="nome@exemplo.com" required />
-          </div>
-          <div class="field">
-            <label>Seu Site *</label>
-            <input type="url" name="site" id="site" placeholder="https://seusite.com.br" required />
-            <span style="font-size: 0.75rem; color: #94a3b8; margin-top: -0.25rem;">Ex: https://seusite.com.br</span>
-          </div>
-          <div class="field">
-            <label>Sua Plataforma / CMS *</label>
-            <select name="plataforma" id="plataforma" required>
-              <option value="nenhuma">Sem integração específica</option>
-              <option value="shopify">Shopify</option>
-              <option value="woocommerce">WooCommerce (WordPress)</option>
-              <option value="nuvemshop">Nuvemshop</option>
-              <option value="yampi">Yampi</option>
-              <option value="cartpanda">CartPanda</option>
-              <option value="vtex">VTEX</option>
-              <option value="outro">Outra / Site Próprio</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Por que quer usar o GetNexo? *</label>
-            <select name="motivo" id="motivo" required>
-              <option value="">Selecione...</option>
-              <option value="vendas">Aumentar Vendas / Checkout PIX</option>
-              <option value="suporte">Automatizar Suporte / FAQ</option>
-              <option value="recuperacao">Recuperar Carrinhos Abandonados</option>
-              <option value="leads">Gerar e Qualificar Leads</option>
-              <option value="revenda">Sou Agência / Quero Ser Revendedor</option>
-              <option value="outro">Outro Motivo</option>
-            </select>
+        <div id="auth-choice" class="auth-choice">
+          <button class="btn-auth-primary" onclick="showAuthMode('register')">Criar Conta Grátis</button>
+          <button class="btn-auth-secondary" onclick="showAuthMode('login')">Já tenho conta (Entrar)</button>
+          <div class="auth-divider"><span>ou continue com</span></div>
+          <div class="social-auth">
+            <button class="social-btn" onclick="loginWithGoogle()">Google</button>
+            <button class="social-btn" onclick="loginWithGitHub()">GitHub</button>
           </div>
         </div>
-        <div id="form-error-msg" class="error-msg"></div>
-        <button type="submit" class="btn-next" id="btn-submit-reg">Validar Número →</button>
-      </form>
+
+        <!-- LOGIN FORM -->
+        <form id="login-form" class="auth-form hidden">
+          <div class="field">
+            <label>E-mail</label>
+            <input type="email" name="email" required placeholder="seu@email.com" />
+          </div>
+          <div class="field">
+            <label>Senha</label>
+            <input type="password" name="password" required placeholder="••••••••" />
+          </div>
+          <button type="submit" class="btn-next">Entrar →</button>
+          <p class="auth-switch">Ainda não tem conta? <a href="#" onclick="showAuthMode('register')">Cadastre-se</a></p>
+        </form>
+
+        <!-- REGISTER FORM -->
+        <form id="register-form" class="auth-form hidden">
+          <div class="form-grid">
+            <div class="field">
+              <label>Seu Nome Completo *</label>
+              <input type="text" name="name" id="reg-name" required placeholder="João da Silva" />
+            </div>
+            <div class="field">
+              <label>E-mail Corporativo/Real *</label>
+              <input type="email" name="email" id="reg-email" required placeholder="joao@empresa.com" />
+            </div>
+            <div class="field">
+              <label>Crie uma Senha *</label>
+              <input type="password" name="password" id="reg-password" required placeholder="Mínimo 8 caracteres" minlength="8" />
+            </div>
+            <div class="field">
+               <label>CPF ou CNPJ *</label>
+               <input type="text" name="cpf_cnpj" id="reg-cpf-cnpj" required placeholder="000.000.000-00" />
+            </div>
+            <div class="field">
+              <label>Nome da Empresa (Opcional)</label>
+              <input type="text" name="company" placeholder="Minha Empresa Ltda" />
+            </div>
+            <div class="field">
+              <label>Seu Site Principal *</label>
+              <input type="url" name="website" id="reg-site" required placeholder="https://seusite.com.br" />
+            </div>
+            <div class="field">
+              <label>WhatsApp Corporativo *</label>
+              <input type="tel" name="whatsapp" id="reg-whatsapp" required />
+            </div>
+            <div class="field">
+              <label>Segmento de Atuação *</label>
+              <select name="segment" required>
+                <option value="">Selecione...</option>
+                <option value="ecommerce">E-commerce / Varejo</option>
+                <option value="servicos">Serviços / Consultoria</option>
+                <option value="saude">Saúde / Bem-estar</option>
+                <option value="infoproducts">Infoprodutos / Educação</option>
+                <option value="outros">Outros</option>
+              </select>
+            </div>
+          </div>
+          <div class="auth-checks">
+            <label class="checkbox-container">
+              <input type="checkbox" required checked />
+              <span class="checkmark"></span>
+              Aceito os <a href="/termos">Termos de Uso</a> e <a href="/privacidade">Privacidade</a>
+            </label>
+          </div>
+          <div id="reg-error" class="error-msg"></div>
+          <button type="submit" class="btn-next" id="btn-submit-register">Criar Minha Conta →</button>
+          <p class="auth-switch">Já tem conta? <a href="#" onclick="showAuthMode('login')">Fazer Login</a></p>
+        </form>
+
+        <!-- OTP VERIFICATION -->
+        <div id="otp-section" class="auth-form hidden">
+           <h2>Validar WhatsApp</h2>
+           <p>Enviamos um código de 6 dígitos para o seu WhatsApp. Digite abaixo para ativar sua conta.</p>
+           <div class="otp-input-container">
+             <input type="text" id="otp-code" maxlength="6" placeholder="000000" />
+           </div>
+           <div id="otp-error" class="error-msg"></div>
+           <button class="btn-next" onclick="verifyOTP()">Validar Código ✅</button>
+           <p class="resend-text">Não recebeu? <a href="#" onclick="resendOTP()">Reenviar em <span id="otp-timer">30</span>s</a></p>
+        </div>
+      </div>
     </div>
 
-    <!-- Step 2: WhatsApp Verification -->
-    <div class="step-content hidden" id="step2">
-      <h2>Validar WhatsApp</h2>
-      <p class="step-desc">Enviamos um código de verificação para o seu WhatsApp. Digite-o abaixo para ativar seu teste de 36 horas.</p>
-      
-      <div class="verification-box">
-        <label>Código de 6 dígitos</label>
-        <input type="text" id="verify-code" maxlength="6" placeholder="000000" />
-        <p id="verify-error" class="error-msg"></p>
-        <button type="button" class="btn-next" id="btn-verify">Ativar Teste Grátis →</button>
+    <!-- WIZARD SECTION (Only visible if logged in) -->
+    <div id="wizard-section" class="wizard-container hidden">
+      <header class="wizard-header">
+        <h1>Criar Plugin</h1>
+        <p>Dashboard: <span id="user-display-name">Carregando...</span></p>
+        <div class="all-required-notice">Configuração Finalizada com Sucesso</div>
+      </header>
+
+      <!-- Step Indicators -->
+      <div class="step-indicators">
+        <div class="step-item active" data-step="1">
+          <span class="step-number">1</span>
+          <span class="step-label">Personalização</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-item" data-step="2">
+          <span class="step-number">2</span>
+          <span class="step-label">Visual</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-item" data-step="3">
+          <span class="step-number">3</span>
+          <span class="step-label">Código</span>
+        </div>
       </div>
 
-      <div class="step-actions">
-        <button type="button" class="btn-back" onclick="goToStep(1)">← Voltar</button>
+      <!-- Wizard Step 1: Config (Simplified since we have user data) -->
+      <div class="step-content" id="step1">
+        <h2>🎨 Configure seu Bot</h2>
+        <form id="wizard-form" class="wizard-form">
+           <div class="form-grid">
+             <div class="field">
+               <label>Nome do Assistente *</label>
+               <input type="text" id="bot-name" placeholder="Ex: Nexus Vendas" required />
+             </div>
+             <div class="field">
+               <label>Site para o Widget *</label>
+               <input type="url" id="bot-site" placeholder="https://seusite.com.br" required />
+             </div>
+             <div class="field">
+                <label>Tom de Voz</label>
+                <select id="bot-tone">
+                  <option value="formal">Formal e Profissional</option>
+                  <option value="casual" selected>Casual e Amigável</option>
+                  <option value="urgencia">Focado em Urgência/Vendas</option>
+                </select>
+             </div>
+             <div class="field">
+                <label>Emoji de Destaque</label>
+                <input type="text" id="bot-emoji" value="🤖" placeholder="Escolha um emoji" />
+             </div>
+           </div>
+           <button type="submit" class="btn-next">Gerar Visual Prévio →</button>
+        </form>
       </div>
-    </div>
 
-    <!-- Step 3: Success & Plugin Code -->
-    <div class="step-content hidden" id="step3">
-      <h2>✅ Plugin Gerado!</h2>
-      
-      <div class="success-box">
-        <div class="success-icon">⏳</div>
-        <h3>Seu período de 36h começou!</h3>
-        <p>Abaixo está o seu plugin configurado para o site <strong id="display-site">...</strong></p>
+      <!-- Wizard Step 2: Preview -->
+      <div class="step-content hidden" id="step2">
+         <h2>✨ Preview do Estilo</h2>
+         <div class="preview-area glass-panel">
+            <div class="mock-widget">
+               <div class="mock-header">
+                 <span id="preview-emoji">🤖</span>
+                 <strong id="preview-name">Nexus Bot</strong>
+               </div>
+               <div class="mock-body">
+                 <div class="mock-msg">Olá! Como posso ajudar você hoje?</div>
+               </div>
+            </div>
+            <div class="theme-choices">
+               <label>Tema de Cor:</label>
+               <div class="theme-dots">
+                 <div class="dot active" style="background:#00d4ff;" onclick="setTheme('neon')"></div>
+                 <div class="dot" style="background:#00ff9d;" onclick="setTheme('matrix')"></div>
+                 <div class="dot" style="background:#f43f5e;" onclick="setTheme('sunset')"></div>
+               </div>
+            </div>
+         </div>
+         <div class="step-actions">
+           <button class="btn-back" onclick="goToStep(1)">← Editar</button>
+           <button class="btn-next" onclick="generateFinalCode()" id="btn-final-step">Obter Código do Plugin →</button>
+         </div>
       </div>
-      
-      <div class="code-box">
-        <code id="widget-code">&lt;script src="..." data-bot="..."&gt;&lt;/script&gt;</code>
-        <button onclick="copiarCodigo()" class="btn-copy">📋 Copiar</button>
-      </div>
-      
-      <div class="next-steps">
-        <h4>Próximos passos:</h4>
-        <ul>
-          <li>✅ Cole o código no final do seu site</li>
-          <li>✅ O tempo de 36h expira em <span id="expire-time">...</span></li>
-          <li>✅ Acesse o <a href="/admin">Painel Admin</a> com seu e-mail</li>
-        </ul>
-      </div>
-      
-      <div class="step-actions">
-        <a href="/admin" class="btn-next">Acessar Painel GetNexo →</a>
+
+      <!-- Wizard Step 3: Result -->
+      <div class="step-content hidden" id="step3">
+        <h2>🚀 Tudo Pronto!</h2>
+        <p>Instale o código abaixo na tag <code>&lt;head&gt;</code> ou antes do fechamento de <code>&lt;/body&gt;</code> do seu site.</p>
+        <div class="code-box">
+          <code id="widget-code">Carregando código...</code>
+          <button onclick="copiarCodigo()" class="btn-copy">Copiar</button>
+        </div>
+        <div class="wizard-footer">
+          <a href="/dashboard" class="btn-next">Acessar Meu Painel →</a>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- intl-tel-input JS -->
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
-
   <script is:inline>
-    let iti = null;
+    // State Management
+    let currentUser = null;
+    let itiReg = null;
     let registrationData = {};
+    let selectedTheme = 'neon';
 
-    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    const API_URL = isLocalhost ? 'http://localhost:8080' : '';
+    const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:8080' : '';
 
-    window.addEventListener('DOMContentLoaded', () => {
-        const input = document.querySelector("#whatsapp");
-        if (input) {
-            iti = window.intlTelInput(input, {
-                initialCountry: "br",
-                preferredCountries: ["br", "pt", "us"],
-                separateDialCode: true,
-                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-            });
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/auth/me');
+        const data = await res.json();
+        if (data.authenticated) {
+          currentUser = data.user;
+          showWizard();
+        } else {
+          showAuthGate();
         }
-
-        // CPF/CNPJ Mask
-        const docInput = document.getElementById('cpf_cnpj');
-        if (docInput) {
-            docInput.addEventListener('input', (e) => {
-                let v = e.target.value.replace(/\D/g, "");
-                if (v.length > 14) v = v.slice(0, 14);
-                
-                if (v.length <= 11) {
-                    v = v.replace(/(\d{3})(\d)/, "$1.$2");
-                    v = v.replace(/(\d{3})(\d)/, "$1.$2");
-                    v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-                } else {
-                    v = v.replace(/^(\d{2})(\d)/, "$1.$2");
-                    v = v.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
-                    v = v.replace(/\.(\d{3})(\d)/, ".$1/$2");
-                    v = v.replace(/(\d{4})(\d)/, "$1-$2");
-                }
-                e.target.value = v;
-            });
-        }
-    });
-
-    function validateEmail(email) {
-        return String(email)
-            .toLowerCase()
-            .match(
-                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-            );
+      } catch (e) {
+        showAuthGate();
+      }
     }
 
+    function showAuthGate() {
+      document.getElementById('auth-gate').classList.remove('hidden');
+      document.getElementById('wizard-section').classList.add('hidden');
+      initTelInput();
+      initMasks();
+    }
+
+    function showWizard() {
+      document.getElementById('auth-gate').classList.add('hidden');
+      document.getElementById('wizard-section').classList.remove('hidden');
+      document.getElementById('user-display-name').textContent = currentUser.name || currentUser.email;
+      
+      // Auto-pre-fill bot site if available from registration
+      if (registrationData.website) {
+        document.getElementById('bot-site').value = registrationData.website;
+      }
+    }
+
+    function showAuthMode(mode) {
+      document.getElementById('auth-choice').classList.add('hidden');
+      document.querySelectorAll('.auth-form').forEach(f => f.classList.add('hidden'));
+      
+      if (mode === 'login') {
+        document.getElementById('login-form').classList.remove('hidden');
+      } else if (mode === 'register') {
+        document.getElementById('register-form').classList.remove('hidden');
+      }
+    }
+
+    // Auth Actions
+    function loginWithGoogle() { window.location.href = '/api/auth/google'; }
+    function loginWithGitHub() { window.location.href = '/api/auth/github'; }
+
+    // Forms
+    document.getElementById('login-form').onsubmit = async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const data = Object.fromEntries(fd.entries());
+      
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(data)
+        });
+        const resData = await res.json();
+        if (resData.user) {
+          currentUser = resData.user;
+          // Store token in cookie (handled by API mostly, but just in case)
+          showWizard();
+        } else {
+          alert('Erro de login: ' + (resData.error || 'Credenciais inválidas'));
+        }
+      } catch (e) { alert('Erro ao conectar ao servidor'); }
+    }
+
+    document.getElementById('register-form').onsubmit = async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('btn-submit-register');
+      btn.disabled = true;
+      btn.textContent = 'Enviando...';
+
+      const fd = new FormData(e.target);
+      const data = Object.fromEntries(fd.entries());
+      
+      // Validate WhatsApp
+      if (!itiReg.isValidNumber()) {
+        document.getElementById('reg-error').textContent = '❌ WhatsApp inválido. Digite ddd + número.';
+        btn.disabled = false;
+        btn.textContent = 'Criar Minha Conta →';
+        return;
+      }
+      data.whatsapp = itiReg.getNumber();
+
+      registrationData = data;
+
+      try {
+        const res = await fetch(`${API_URL}/api/trial/register`, { // Reusing trial logic for OTP
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(data)
+        });
+        const resData = await res.json();
+        if (resData.ok) {
+          showOTP();
+        } else {
+          document.getElementById('reg-error').textContent = '❌ ' + (resData.error || 'Erro no cadastro');
+        }
+      } catch (e) { alert('Erro ao registrar'); }
+      finally {
+        btn.disabled = false;
+        btn.textContent = 'Criar Minha Conta →';
+      }
+    }
+
+    function showOTP() {
+      document.getElementById('register-form').classList.add('hidden');
+      document.getElementById('otp-section').classList.remove('hidden');
+      startOTPTimer();
+    }
+
+    async function verifyOTP() {
+      const code = document.getElementById('otp-code').value;
+      const errorEl = document.getElementById('otp-error');
+      errorEl.textContent = '';
+
+      try {
+        const res = await fetch(`${API_URL}/api/trial/verify`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ whatsapp: registrationData.whatsapp, code })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          // Success! Now create the real account in our system
+          completeFullRegistration();
+        } else {
+          errorEl.textContent = '❌ Código incorreto ou expirado.';
+        }
+      } catch (e) { errorEl.textContent = 'Erro de rede'; }
+    }
+
+    async function completeFullRegistration() {
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(registrationData)
+        });
+        const data = await res.json();
+        if (data.success) {
+          currentUser = data.user;
+          showWizard();
+        } else {
+          alert('Erro ao finalizar conta: ' + data.error);
+        }
+      } catch (e) { alert('Falha crítica no sistema de registro.'); }
+    }
+
+    // Wizard Logic
     function goToStep(step) {
       document.querySelectorAll('.step-item').forEach((el, i) => {
         if (i + 1 <= step) el.classList.add('active');
@@ -196,457 +383,213 @@ import Layout from '../layouts/Layout.astro';
       });
     }
 
-    const form1 = document.getElementById('form1');
-    form1.onsubmit = async (e) => {
-        e.preventDefault();
-        const errorMsg = document.getElementById('form-error-msg');
-        errorMsg.innerText = "";
-
-        const email = document.getElementById('email').value;
-        if (!validateEmail(email)) {
-            errorMsg.innerText = "❌ E-mail inválido. Use um e-mail real.";
-            return;
-        }
-
-        const site = document.getElementById('site').value;
-        if (!site.startsWith('http://') && !site.startsWith('https://')) {
-            errorMsg.innerText = "⚠️ O site deve incluir http:// ou https://";
-            return;
-        }
-
-        const cpfCnpjRaw = document.getElementById('cpf_cnpj').value.replace(/\D/g, "");
-        if (cpfCnpjRaw.length < 11) {
-            errorMsg.innerText = "❌ CPF ou CNPJ incompleto.";
-            return;
-        }
-
-        if (!iti.isValidNumber()) {
-            errorMsg.innerText = "❌ Número de WhatsApp inválido.";
-            return;
-        }
-
-        const formData = new FormData(e.target);
-        registrationData = {
-            whatsapp: iti.getNumber(),
-            nome: formData.get('nome_empresa'),
-            email: formData.get('email'),
-            cpf_cnpj: formData.get('cpf_cnpj'),
-            motivo: formData.get('motivo'),
-            plataforma: formData.get('plataforma'),
-            site: formData.get('site')
-        };
-
-        const btn = document.getElementById('btn-submit-reg');
-        const originalBtnText = btn.innerText;
-        btn.innerText = "Enviando...";
-        btn.disabled = true;
-
-        try {
-            const res = await fetch(`${API_URL}/api/trial/register`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(registrationData)
-            });
-            const data = await res.json();
-            if (data.ok) {
-                goToStep(2);
-            } else {
-                errorMsg.innerText = "❌ " + (data.error || "Erro ao registrar.");
-                btn.innerText = originalBtnText;
-                btn.disabled = false;
-            }
-        } catch (err) {
-            console.error(err);
-            errorMsg.innerText = "🚑 Erro de conexão com o servidor. Tente novamente.";
-            btn.innerText = originalBtnText;
-            btn.disabled = false;
-        }
-    };
-
-    document.getElementById('btn-verify').onclick = async () => {
-        const code = document.getElementById('verify-code').value;
-        const errorMsg = document.getElementById('verify-error');
-        errorMsg.innerText = "";
-
-        try {
-            const res = await fetch(`${API_URL}/api/trial/verify`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ whatsapp: registrationData.whatsapp, code })
-            });
-            const data = await res.json();
-            if (data.ok) {
-                generatePlugin(data.expires_at, data.bot_id);
-                goToStep(3);
-            } else {
-                errorMsg.innerText = data.error || "Código incorreto.";
-            }
-        } catch (err) {
-            errorMsg.innerText = "Erro ao verificar.";
-        }
-    };
-
-    function generatePlugin(expiresAt, botId) {
-      const site = registrationData.site;
-      document.getElementById('display-site').innerText = site;
+    document.getElementById('wizard-form').onsubmit = (e) => {
+      e.preventDefault();
+      const name = document.getElementById('bot-name').value;
+      const emoji = document.getElementById('bot-emoji').value;
       
-      const date = new Date(expiresAt);
-      document.getElementById('expire-time').innerText = date.toLocaleString('pt-BR');
+      document.getElementById('preview-name').textContent = name;
+      document.getElementById('preview-emoji').textContent = emoji;
+      
+      goToStep(2);
+    }
 
+    function generateFinalCode() {
+      const botId = 'bot_' + Math.random().toString(36).substr(2, 9); // In production this comes from user record/project
       const scriptUrl = window.location.hostname === 'localhost' 
         ? 'http://localhost:8080/widget.js' 
         : 'https://api.getnexo.com.br/widget.js';
       
-      document.getElementById('widget-code').textContent = 
-        `<script src="${scriptUrl}" data-bot="${botId}" data-theme="neon"><\/script>`;
+      const code = `<script src="${scriptUrl}" data-bot="${botId}" data-theme="${selectedTheme}"><\/script>`;
+      document.getElementById('widget-code').textContent = code;
+      goToStep(3);
+    }
+
+    // Helpers
+    function initTelInput() {
+      const input = document.querySelector("#reg-whatsapp");
+      if (input && !itiReg) {
+        itiReg = window.intlTelInput(input, {
+          initialCountry: "br",
+          separateDialCode: true,
+          preferredCountries: ["br", "pt", "us"],
+          utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+      }
+    }
+
+    function initMasks() {
+      const cpInput = document.getElementById('reg-cpf-cnpj');
+      if (cpInput) {
+        cpInput.addEventListener('input', (e) => {
+           let v = e.target.value.replace(/\D/g, "");
+           if (v.length > 14) v = v.slice(0, 14);
+           if (v.length <= 11) {
+             v = v.replace(/(\d{3})(\d)/, "$1.$2");
+             v = v.replace(/(\d{3})(\d)/, "$1.$2");
+             v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+           } else {
+             v = v.replace(/^(\d{2})(\d)/, "$1.$2");
+             v = v.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+             v = v.replace(/\.(\d{3})(\d)/, ".$1/$2");
+             v = v.replace(/(\d{4})(\d)/, "$1-$2");
+           }
+           e.target.value = v;
+        });
+      }
+    }
+
+    function startOTPTimer() {
+      let timeLeft = 30;
+      const timerEl = document.getElementById('otp-timer');
+      const interval = setInterval(() => {
+        timeLeft--;
+        timerEl.textContent = timeLeft;
+        if (timeLeft <= 0) clearInterval(interval);
+      }, 1000);
+    }
+
+    function setTheme(theme) {
+      selectedTheme = theme;
+      document.querySelectorAll('.dot').forEach(d => d.classList.remove('active'));
+      event.target.classList.add('active');
     }
 
     window.copiarCodigo = function() {
       const code = document.getElementById('widget-code').textContent;
-      navigator.clipboard.writeText(code).then(() => {
-        alert('✅ Código do Plugin copiado!');
-      });
-    };
+      navigator.clipboard.writeText(code).then(() => alert('✅ Código copiado!'));
+    }
+
+    // Start
+    checkAuth();
   </script>
 </Layout>
 
 <style>
-  .wizard-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 3rem 2rem;
-    min-height: 100vh;
-  }
-  
-  .wizard-header {
-    text-align: center;
-    margin-bottom: 3rem;
-  }
-  
-  .wizard-header h1 {
-    color: #00ff9d;
-    font-size: 3rem;
-    margin: 0;
-    font-weight: 800;
-  }
-  
-  .wizard-header p {
-    color: #94a3b8;
-    margin-top: 0.5rem;
-    font-size: 1.2rem;
+  .page-wrapper {
+    min-height: 90vh;
+    padding: 100px 5% 50px;
   }
 
-  .all-required-notice {
-    margin-top: 1rem;
-    color: #f87171;
-    font-size: 0.9rem;
-    font-weight: 600;
-  }
-  
-  /* Step Indicators */
-  .step-indicators {
+  /* Auth Gate Styles */
+  .auth-gate {
     display: flex;
     justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 3rem;
+    align-items: flex-start;
   }
-  
-  .step-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    opacity: 0.3;
-    transition: 0.3s;
-  }
-  
-  .step-item.active {
-    opacity: 1;
-  }
-  
-  .step-number {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    background: #1e293b;
-    border: 2px solid #334155;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: bold;
-    font-size: 1.1rem;
-  }
-  
-  .step-item.active .step-number {
-    background: #00ff9d;
-    border-color: #00ff9d;
-    color: black;
-    box-shadow: 0 0 20px rgba(0, 255, 157, 0.3);
-  }
-  
-  .step-label {
-    font-size: 0.85rem;
-    color: #94a3b8;
-    font-weight: 600;
-  }
-  
-  .step-line {
-    width: 60px;
-    height: 2px;
-    background: #334155;
-    margin-bottom: 25px;
-  }
-  
-  /* Step Content */
-  .step-content {
-    background: rgba(15, 23, 42, 0.8);
-    backdrop-filter: blur(20px);
-    border-radius: 24px;
+  .auth-card {
+    max-width: 900px;
+    width: 100%;
     padding: 3rem;
-    border: 1px solid rgba(0, 212, 255, 0.1);
-    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    border-radius: 30px;
   }
-  
-  .step-content.hidden {
-    display: none;
+  .auth-header { text-align: center; margin-bottom: 3rem; }
+  .auth-logo { 
+    width: 60px; height: 60px; 
+    background: linear-gradient(135deg, #00d4ff, #00ff9d); 
+    color: black; display: flex; align-items: center; justify-content: center; 
+    font-weight: 900; font-size: 2rem; border-radius: 15px; margin: 0 auto 1.5rem;
+    box-shadow: 0 0 30px rgba(0, 212, 255, 0.4);
   }
-  
-  .step-content h2 {
-    color: #00d4ff;
-    margin: 0 0 2rem 0;
-    font-size: 1.8rem;
-    font-weight: 800;
-  }
-  
-  .step-desc {
-    color: #94a3b8;
-    margin-bottom: 2rem;
-    font-size: 1.1rem;
-  }
-  
-  /* Form */
-  .form-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-  }
-  
-  @media (max-width: 650px) {
-    .form-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-  
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .field label {
-    color: #e2e8f0;
-    font-size: 0.9rem;
-    font-weight: 600;
-  }
-  
-  .field input, .field select {
-    padding: 1rem;
-    border-radius: 12px;
-    background: #020617;
-    color: white;
-    border: 1px solid #1e293b;
-    font-size: 1rem;
-    transition: 0.3s;
-  }
-  
-  .field input:focus, .field select:focus {
-    outline: none;
-    border-color: #00d4ff;
-    box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
-  }
+  .auth-header h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+  .auth-header p { color: #94a3b8; font-size: 1.1rem; }
 
-  .iti { width: 100%; } 
-  .iti__country-list { background: #0f172a; border-color: #1e293b; color: white; }
-  .iti__country.iti__highlight { background: #1e293b; }
-  
-  .error-msg {
-    color: #f87171;
-    font-size: 0.9rem;
-    margin-top: 1rem;
-    font-weight: 500;
-  }
+  .auth-choice { display: flex; flex-direction: column; gap: 1rem; max-width: 400px; margin: 0 auto; }
+  .btn-auth-primary { background: white; color: black; padding: 1.2rem; border-radius: 15px; font-weight: 800; border: none; cursor: pointer; transition: 0.3s; font-size: 1.1rem; }
+  .btn-auth-secondary { background: rgba(255,255,255,0.05); color: white; padding: 1.2rem; border-radius: 15px; font-weight: 700; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.3s; }
+  .btn-auth-primary:hover { background: #00ff9d; transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0, 255, 157, 0.3); }
+  .btn-auth-secondary:hover { background: rgba(255,255,255,0.1); border-color: #00d4ff; }
 
-  /* Verification Box */
-  .verification-box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    max-width: 300px;
-    margin: 0 auto;
-  }
+  .auth-divider { position: relative; text-align: center; margin: 2rem 0; }
+  .auth-divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(255,255,255,0.1); }
+  .auth-divider span { background: #030712; padding: 0 1rem; color: #475569; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; position: relative; }
 
-  #verify-code {
-    font-size: 2.5rem;
-    text-align: center;
-    letter-spacing: 0.8rem;
-    width: 100%;
-    font-family: 'JetBrains Mono', monospace;
-    background: transparent;
-    border: none;
-    border-bottom: 2px solid #00d4ff;
-    color: #00ff9d;
-    outline: none;
-  }
+  .social-auth { display: flex; gap: 1rem; }
+  .social-btn { flex: 1; background: #0f172a; border: 1px solid #334155; color: white; padding: 0.8rem; border-radius: 10px; cursor: pointer; transition: 0.2s; }
+  .social-btn:hover { border-color: #00d4ff; background: #1e293b; }
 
-  /* Buttons */
-  .btn-next {
-    background: linear-gradient(90deg, #00d4ff, #00ff9d);
-    color: black;
-    padding: 1.2rem 2.5rem;
-    border: none;
-    border-radius: 50px;
-    font-weight: 800;
-    cursor: pointer;
-    margin-top: 2rem;
-    font-size: 1.1rem;
-    display: inline-block;
-    text-decoration: none;
-    transition: 0.3s;
-    width: 100%;
-    text-align: center;
-  }
+  .auth-form { animation: fadeIn 0.4s ease-out; }
+  .auth-switch { text-align: center; margin-top: 2rem; color: #94a3b8; font-size: 0.9rem; }
+  .auth-switch a { color: #00ff9d; font-weight: 700; text-decoration: none; }
 
-  .btn-next:hover:not(:disabled) {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(0, 255, 157, 0.4);
-  }
+  .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; text-align: left; }
+  @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } }
 
-  .btn-next:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
+  .field { display: flex; flex-direction: column; gap: 0.5rem; }
+  .field label { font-size: 0.85rem; font-weight: 600; color: #e2e8f0; }
+  .field input, .field select { 
+    background: #020617; border: 1px solid #1e293b; color: white; 
+    padding: 0.8rem 1rem; border-radius: 10px; font-size: 0.95rem; outline: none; transition: 0.3s;
   }
-  
-  .btn-back {
-    background: transparent;
-    color: #94a3b8;
-    padding: 1rem 2rem;
-    border: 1px solid #334155;
-    border-radius: 50px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: 0.3s;
-  }
+  .field input:focus, .field select:focus { border-color: #00d4ff; box-shadow: 0 0 15px rgba(0, 212, 255, 0.15); }
 
-  .btn-back:hover {
-      color: white;
-      border-color: white;
-  }
-  
-  .step-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 2.5rem;
-  }
-  
-  /* Success Box */
-  .success-box {
-    text-align: center;
-    padding: 2.5rem;
-    background: rgba(0,255,157,0.05);
-    border-radius: 20px;
-    margin-bottom: 2rem;
-    border: 1px solid rgba(0,255,157,0.1);
-  }
-  
-  .success-icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-  }
-  
-  .success-box h3 {
-    color: #00ff9d;
-    margin: 0;
-    font-size: 1.5rem;
-  }
-  
-  .success-box p {
-    color: #94a3b8;
-    margin-top: 0.5rem;
-  }
-  
-  /* Code Box */
-  .code-box {
-    background: #020617;
-    border-radius: 12px;
-    padding: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    border: 1px solid rgba(0, 255, 157, 0.3);
-  }
-  
-  .code-box code {
-    flex: 1;
-    color: #00ff9d;
-    font-size: 0.9rem;
-    word-break: break-all;
-    font-family: 'JetBrains Mono', monospace;
-  }
-  
-  .btn-copy {
-    background: #00ff9d;
-    color: black;
-    border: none;
-    padding: 0.8rem 1.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 700;
-    white-space: nowrap;
-    transition: 0.3s;
-  }
+  .checkbox-container { display: flex; align-items: center; gap: 0.8rem; cursor: pointer; user-select: none; margin: 1.5rem 0; font-size: 0.85rem; color: #94a3b8; }
+  .checkbox-container input { display: none; }
+  .checkmark { width: 22px; height: 22px; background: #020617; border: 2px solid #1e293b; border-radius: 6px; position: relative; }
+  .checkbox-container input:checked ~ .checkmark { background: #00ff9d; border-color: #00ff9d; }
+  .checkmark:after { content: "✓"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: black; display: none; font-weight: 900; }
+  .checkbox-container input:checked ~ .checkmark:after { display: block; }
 
-  .btn-copy:hover {
-      background: #00d4ff;
+  .error-msg { color: #f43f5e; font-size: 0.85rem; margin: 1rem 0; font-weight: 600; }
+
+  /* Wizard Styles */
+  .wizard-container { max-width: 1000px; margin: 0 auto; animation: fadeInUp 0.5s ease-out; }
+  .wizard-header { text-align: center; margin-bottom: 3rem; }
+  .wizard-header h1 { font-size: 3rem; font-weight: 800; color: #00ff9d; margin: 0; }
+  .wizard-header p { color: #94a3b8; margin-top: 0.5rem; }
+
+  .step-indicators { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 3rem; }
+  .step-item { opacity: 0.3; transition: 0.3s; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+  .step-item.active { opacity: 1; }
+  .step-number { width: 40px; height: 40px; border-radius: 50%; background: #1e293b; display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; }
+  .step-item.active .step-number { background: #00d4ff; color: black; box-shadow: 0 0 20px rgba(0, 212, 255, 0.4); }
+  .step-label { font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; }
+  .step-line { height: 2px; width: 60px; background: #1e293b; margin-top: -25px; }
+
+  .step-content { background: rgba(15, 23, 42, 0.6); padding: 4rem; border-radius: 30px; border: 1px solid rgba(255,255,255,0.05); }
+  .step-content.hidden { display: none; }
+  .step-content h2 { margin-bottom: 2.5rem; font-size: 2rem; font-weight: 800; }
+
+  .btn-next { 
+    width: 100%; border: none; padding: 1.2rem; border-radius: 15px; font-weight: 800; font-size: 1.1rem;
+    background: linear-gradient(90deg, #00d4ff, #00ff9d); color: black; cursor: pointer; transition: 0.3s;
+    margin-top: 1.5rem;
   }
+  .btn-next:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0, 255, 157, 0.3); }
+
+  .preview-area { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+  @media (max-width: 768px) { .preview-area { grid-template-columns: 1fr; } }
   
-  /* Next Steps */
-  .next-steps {
-    margin-top: 2rem;
-    padding: 2rem;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 20px;
+  .mock-widget { 
+    background: #0f172a; border-radius: 15px; border: 1px solid #1e293b; overflow: hidden;
+    height: 300px; display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
   }
-  
-  .next-steps h4 {
-    color: #00d4ff;
-    margin: 0 0 1rem 0;
-    font-size: 1rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+  .mock-header { background: #1e293b; padding: 1rem; display: flex; align-items: center; gap: 0.8rem; }
+  .mock-body { flex: 1; padding: 1.5rem; display: flex; flex-direction: column; justify-content: flex-end; }
+  .mock-msg { background: #334155; color: white; padding: 0.8rem; border-radius: 12px 12px 12px 0; align-self: flex-start; font-size: 0.85rem; }
+
+  .theme-dots { display: flex; gap: 0.8rem; margin-top: 0.5rem; }
+  .dot { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
+  .dot.active { border-color: white; transform: scale(1.1); }
+
+  .code-box { 
+    background: #020617; padding: 1.5rem; border-radius: 12px; margin: 2rem 0; 
+    border: 1px solid #00ff9d44; position: relative;
   }
-  
-  .next-steps ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  .code-box code { color: #00ff9d; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; word-break: break-all; }
+  .btn-copy { position: absolute; right: 10px; top: 10px; background: #334155; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.7rem; font-weight: 700; }
+
+  .otp-input-container { margin: 2rem 0; }
+  #otp-code { 
+    background: transparent; border: none; border-bottom: 3px solid #00d4ff; 
+    color: #00ff9d; font-size: 3.5rem; text-align: center; letter-spacing: 1.5rem; 
+    width: 300px; outline: none; font-family: 'Inter', sans-serif; font-weight: 800;
   }
-  
-  .next-steps li {
-    color: #94a3b8;
-    padding: 0.5rem 0;
-    font-size: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  
-  .next-steps a {
-    color: #00ff9d;
-    font-weight: 700;
-    text-decoration: none;
-  }
+  .resend-text { margin-top: 1.5rem; color: #475569; font-size: 0.9rem; }
+  .resend-text a { color: #94a3b8; font-weight: 700; text-decoration: none; }
+
+  .hidden { display: none !important; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 </style>

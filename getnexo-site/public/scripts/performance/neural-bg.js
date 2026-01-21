@@ -82,6 +82,10 @@ const themes = {
 };
 
 (function () {
+    // Verificar se o fundo neural está ativo nas configurações
+    const activeBg = localStorage.getItem('getnexo-bg-type') || 'blobs';
+    if (activeBg !== 'neural') return;
+
     const canvas = document.getElementById('neural-bg');
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) {
