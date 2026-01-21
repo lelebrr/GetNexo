@@ -725,80 +725,9 @@ const nonce = Astro.locals.nonce;
     }
   </style>
 
-  <script is:inline src="/scripts/performance/neural-bg.js" defer data-cfasync="false" nonce={nonce}></script>
-  <script is:inline src="/scripts/performance/ui-features.js" defer data-cfasync="false" nonce={nonce}></script>
-  <script is:inline src="/scripts/performance/plugin-manager.js" defer data-cfasync="false" nonce={nonce}></script>
-  <script is:inline src="/scripts/performance/i18n.js" defer data-cfasync="false" nonce={nonce}></script>
 
-  <!-- Otimizações para dispositivos de baixa potência -->
-  <script is:inline nonce={nonce}>
-    // Battery awareness e reduce motion
-    class PerformanceOptimizer {
-      constructor() {
-        this.init();
-      }
-
-      async init() {
-        // Detectar bateria baixa
-        if ('getBattery' in navigator) {
-          try {
-            const battery = await navigator.getBattery();
-            this.handleBatteryChange(battery);
-
-            battery.addEventListener('levelchange', () => this.handleBatteryChange(battery));
-            battery.addEventListener('chargingchange', () => this.handleBatteryChange(battery));
-          } catch (e) {
-            console.warn('Battery API not supported');
-          }
-        }
-
-        // Detectar preferência de movimento reduzido
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          this.enableReducedMotion();
-        }
-      }
-
-      handleBatteryChange(battery) {
-        const isLowBattery = battery.level < 0.2 && !battery.charging;
-
-        if (isLowBattery) {
-          document.documentElement.classList.add('low-battery-mode');
-          // Pausar animações pesadas
-          if (window.neuralBG && window.neuralBG.pause) {
-            window.neuralBG.pause();
-          }
-          // Reduzir polling
-          window.lowBatteryMode = true;
-        } else {
-          document.documentElement.classList.remove('low-battery-mode');
-          window.lowBatteryMode = false;
-        }
-      }
-
-      enableReducedMotion() {
-        document.documentElement.classList.add('reduced-motion');
-        // Injetar CSS para reduzir animações
-        const style = document.createElement('style');
-        style.textContent = `
-          *, *::before, *::after {
-            animation-duration: 0.01ms !important;
-            animation-iteration-count: 1 !important;
-            transition-duration: 0.01ms !important;
-            scroll-behavior: auto !important;
-          }
-          .animated-bg { display: none !important; }
-        `;
-        document.head.appendChild(style);
-      }
-    }
-
-    // Inicializar quando DOM estiver pronto
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => new PerformanceOptimizer());
-    } else {
-      new PerformanceOptimizer();
-    }
-  </script>
+  <!-- Global Effects & Interactivity -->
+  <script is:inline src="/scripts/layout-effects.js" defer></script>
 
   <!-- GetNexo Custom Widget -->
   <script is:inline data-cfasync="false" nonce={nonce}>
@@ -836,7 +765,6 @@ const nonce = Astro.locals.nonce;
           document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
         });
 
-        // Close menu on link click
         mobileMenu.querySelectorAll('a').forEach(link => {
           link.addEventListener('click', () => {
             menuBtn.classList.remove('active');
@@ -845,17 +773,8 @@ const nonce = Astro.locals.nonce;
           });
         });
       }
-
-      // Safety: Reveal all hidden elements if JS/Animations take too long
-      setTimeout(() => {
-        document.querySelectorAll('.reveal, .fade-in').forEach(el => {
-          el.classList.add('active');
-          el.classList.add('visible');
-          el.style.opacity = '1';
-          el.style.transform = 'none';
-        });
-      }, 3000);
     });
   </script>
+
 </body>
 </html>

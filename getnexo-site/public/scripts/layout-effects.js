@@ -219,4 +219,43 @@
         }
     });
 
+    // Fix Rocket Loader preload warning
+    document.addEventListener('DOMContentLoaded', () => {
+        const scripts = document.querySelectorAll('script[src*="_astro/hoisted"]');
+        scripts.forEach(s => s.crossOrigin = 'anonymous');
+    });
+
+    // Performance Optimizer for Low-Power Devices
+    class PerformanceOptimizer {
+        constructor() { this.init(); }
+        async init() {
+            if ('getBattery' in navigator) {
+                try {
+                    const b = await navigator.getBattery();
+                    this.handle(b);
+                    b.addEventListener('levelchange', () => this.handle(b));
+                    b.addEventListener('chargingchange', () => this.handle(b));
+                } catch (e) { }
+            }
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                this.reduce();
+            }
+        }
+        handle(b) {
+            if (b.level < 0.2 && !b.charging) {
+                document.documentElement.classList.add('low-battery');
+                window.lowPower = true;
+            } else {
+                document.documentElement.classList.remove('low-battery');
+                window.lowPower = false;
+            }
+        }
+        reduce() {
+            const s = document.createElement('style');
+            s.textContent = `* { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } .animated-bg { display: none !important; }`;
+            document.head.appendChild(s);
+        }
+    }
+    new PerformanceOptimizer();
+
 })();
