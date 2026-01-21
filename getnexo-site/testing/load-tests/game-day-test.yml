@@ -1,0 +1,201 @@
+config:
+  target: 'http://localhost:4321'
+  phases:
+    # Cenário 1: Funcionamento Normal
+    - duration: 300
+      arrivalRate: 10
+      name: "Normal Operation"
+
+    # Cenário 2: Aumento gradual de carga
+    - duration: 180
+      arrivalRate: 10
+      rampTo: 30
+      name: "Load Increase"
+
+    # Cenário 3: Simulação de incidente (redução de performance)
+    - duration: 120
+      arrivalRate: 30
+      name: "Incident Simulation"
+
+    # Cenário 4: Recovery e auto-scaling
+    - duration: 300
+      arrivalRate: 30
+      rampTo: 15
+      name: "Recovery Phase"
+
+    # Cenário 5: Pós-incidente (volta ao normal)
+    - duration: 180
+      arrivalRate: 15
+      name: "Post-Incident Normal"
+
+  defaults:
+    headers:
+      Content-Type: 'application/json'
+    timeout: 45000
+
+  # Variáveis para simular usuários reais
+  variables:
+    userTypes:
+      - "admin"
+      - "user"
+      - "viewer"
+    priorities:
+      - "high"
+      - "medium"
+      - "low"
+
+scenarios:
+  - name: "Admin Dashboard Load"
+    weight: 20
+    requests:
+      - get:
+          url: "/api/stream/dashboard"
+          headers:
+            Authorization: "Bearer admin_token"
+            X-User-Type: "{{ userTypes.0 }}"
+          expect:
+            - statusCode: [200, 503]  # Aceita 503 durante incidentes
+          capture:
+            json: "$"
+            as: "admin_response"
+
+      - get:
+          url: "/api/metrics"
+          headers:
+            Authorization: "Bearer admin_token"
+          expect:
+            - statusCode: [200, 503]
+
+  - name: "User Operations"
+    weight: 40
+    flow:
+      - post:
+          url: "/api/graphql"
+          json:
+            query: |
+              mutation CreateUserOperation($priority: String!) {
+                createOperation(input: {
+                  type: "user_action"
+                  priority: $priority
+                  data: "game_day_test_data"
+                }) {
+                  id
+                  status
+                }
+              }
+            variables:
+              priority: "{{ priorities }}"
+          expect:
+            - statusCode: [200, 503]
+          capture:
+            json: "$.data.createOperation"
+            as: "operation_result"
+
+      - get:
+          url: "/api/stream/dashboard"
+          headers:
+            Authorization: "Bearer user_token"
+          expect:
+            - statusCode: [200, 503]
+
+  - name: "System Health Checks"
+    weight: 20
+    requests:
+      - get:
+          url: "/"
+          expect:
+            - statusCode: 200
+          capture:
+            json: "$"
+            as: "health_check"
+
+      - post:
+          url: "/api/graphql"
+          json:
+            query: "query { health { status uptime version } }"
+          expect:
+            - statusCode: [200, 503]
+
+  - name: "Error Scenario Simulation"
+    weight: 10
+    requests:
+      # Simula requests que podem falhar durante incidente
+      - get:
+          url: "/api/failing-endpoint"
+          expect:
+            - statusCode: [200, 404, 500, 503]  # Aceita vários códigos durante caos
+          capture:
+            json: "$"
+            as: "error_response"
+
+      - post:
+          url: "/api/graphql"
+          json:
+            query: "query { failingQuery }"
+          expect:
+            - statusCode: [200, 400, 500, 503]
+
+  - name: "Recovery Validation"
+    weight: 10
+    requests:
+      - get:
+          url: "/api/metrics"
+          headers:
+            Authorization: "Bearer recovery_token"
+          expect:
+            - statusCode: 200
+          capture:
+            json: "$.metrics"
+            as: "recovery_metrics"
+
+# Plugins para análise avançada
+plugins:
+  metrics-by-endpoint: {}
+  expect: {}
+  artillery-plugin-metrics-by-endpoint: {}
+
+# Configurações específicas para cenários de disaster recovery
+processor: "./game-day-processor.js"
+
+# Métricas de SLA para game day
+ensure:
+  # Durante funcionamento normal
+  conditions:
+    - expression: "metrics.http_response_time.p95 < 1000"
+      name: "Normal operation P95 < 1s"
+      strict: false  # Não falha o teste, apenas registra
+
+    # Durante incidente (mais tolerante)
+    - expression: "metrics.http_response_time.p95 < 5000"
+      name: "Incident tolerance P95 < 5s"
+      strict: false
+
+    # Recovery time
+    - expression: "metrics.http_response_time.p95 < 2000"
+      name: "Recovery P95 < 2s"
+      strict: false
+
+  thresholds:
+    - metric: http.response_time.p95
+      threshold: 3000
+      operator: "<"
+      name: "P95 Response Time"
+
+    - metric: http.error_rate
+      threshold: 0.05
+      operator: "<"
+      name: "Error Rate < 5%"
+
+# Configuração de saída para análise
+reporting:
+  - module: 'artillery-plugin-publish-metrics'
+    config:
+      target: 'console'
+      includeOnly:
+        - http.response_time.*
+        - http.codes.*
+        - vusers.*
+
+  - module: 'artillery-plugin-json-report'
+    config:
+      output: 'reports/game-day-results.json'

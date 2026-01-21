@@ -1,0 +1,164 @@
+{
+    "id": "memory_leak_incident",
+    "title": "Runbook: Memory Leak Crítico",
+    "description": "Procedimento automatizado para tratamento de vazamentos de memória",
+    "version": "1.0.0",
+    "lastUpdated": "2024-01-21",
+    "author": "GetNexo SRE Team",
+    "metadata": {
+        "severity": "critical",
+        "estimatedResolutionTime": "15-45 minutos",
+        "businessImpact": "Crítico - Pode causar indisponibilidade total",
+        "customerImpact": "Alto - Sistema pode parar completamente"
+    },
+    "detection": {
+        "alertRule": "high_memory",
+        "thresholds": {
+            "memory": "> 95%",
+            "growthRate": "> 10MB/min",
+            "duration": "3 minutos consecutivos"
+        },
+        "symptoms": [
+            "Aumento constante de uso de memória",
+            "GC frequente e lento",
+            "OOM Killed containers",
+            "Latência crescente",
+            "Erros de alocação"
+        ]
+    },
+    "automatedResponse": {
+        "immediateActions": [
+            {
+                "action": "force_gc",
+                "description": "Forçar garbage collection em todas as instâncias",
+                "command": "kubectl exec -it deployment/getnexo-app -- curl http://localhost:6060/debug/pprof/gc",
+                "timeout": 30000,
+                "rollbackOnFailure": false
+            },
+            {
+                "action": "heap_dump",
+                "description": "Gerar heap dump para análise",
+                "command": "kubectl exec -it deployment/getnexo-app -- go tool pprof http://localhost:6060/debug/pprof/heap > heap.prof",
+                "timeout": 60000,
+                "rollbackOnFailure": false
+            },
+            {
+                "action": "pod_restart_gradual",
+                "description": "Reiniciar pods gradualmente para liberar memória",
+                "command": "kubectl rollout restart deployment/getnexo-app --strategy=RollingUpdate --maxUnavailable=1",
+                "timeout": 300000,
+                "rollbackOnFailure": true
+            }
+        ],
+        "diagnosticActions": [
+            {
+                "action": "memory_profiling",
+                "description": "Profile de memória detalhado",
+                "command": "kubectl exec -it deployment/getnexo-app -- go tool pprof -alloc_space http://localhost:6060/debug/pprof/heap",
+                "timeout": 90000
+            },
+            {
+                "action": "check_connections",
+                "description": "Verificar conexões abertas (DB, Redis, etc.)",
+                "command": "kubectl exec -it deployment/getnexo-app -- netstat -antp | grep ESTABLISHED | wc -l",
+                "timeout": 30000
+            }
+        ]
+    },
+    "manualSteps": {
+        "triage": [
+            {
+                "step": 1,
+                "title": "Analisar heap dump",
+                "description": "Usar pprof para identificar vazamentos",
+                "tools": [
+                    "go tool pprof",
+                    "heap.prof"
+                ],
+                "estimatedTime": "10 minutos"
+            },
+            {
+                "step": 2,
+                "title": "Verificar código suspeito",
+                "description": "Buscar goroutines com alto consumo",
+                "tools": [
+                    "pprof goroutine",
+                    "DataDog APM"
+                ],
+                "estimatedTime": "5 minutos"
+            },
+            {
+                "step": 3,
+                "title": "Verificar conexões externas",
+                "description": "Checar pools de conexão database/Redis",
+                "tools": [
+                    "kubectl logs",
+                    "Prometheus metrics"
+                ],
+                "estimatedTime": "5 minutos"
+            }
+        ],
+        "escalationPath": [
+            {
+                "level": "L2",
+                "condition": "Memória continua crescendo após restart",
+                "actions": [
+                    "Análise de código com dev team",
+                    "Possível hotfix"
+                ]
+            },
+            {
+                "level": "L3",
+                "condition": "OOM kills recorrentes",
+                "actions": [
+                    "Rollback imediato",
+                    "Manutenção emergencial"
+                ]
+            }
+        ]
+    },
+    "recovery": {
+        "successCriteria": [
+            "Memória estável < 80%",
+            "Sem OOM kills por 15 minutos",
+            "GC funcionando normalmente",
+            "Aplicação respondendo normalmente"
+        ],
+        "rollbackPlan": {
+            "conditions": [
+                "Memory leak persiste",
+                "Restarts não resolvem"
+            ],
+            "steps": [
+                {
+                    "action": "rollback_deployment",
+                    "description": "Reverter para versão sem leak",
+                    "command": "kubectl rollout undo deployment/getnexo-app --to-revision=<last-stable>"
+                },
+                {
+                    "action": "emergency_scale_down",
+                    "description": "Reduzir carga removendo instâncias",
+                    "command": "kubectl scale deployment/getnexo-app --replicas=1"
+                }
+            ]
+        }
+    },
+    "postMortem": {
+        "required": true,
+        "template": "memory_leak_template",
+        "questions": [
+            "Qual foi a causa raiz do vazamento?",
+            "Onde estava o código problemático?",
+            "Podemos adicionar detecção precoce?",
+            "Testes de memory leak foram insuficientes?"
+        ]
+    },
+    "tags": [
+        "memory",
+        "leak",
+        "gc",
+        "heap",
+        "oom",
+        "golang"
+    ]
+}

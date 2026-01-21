@@ -1,0 +1,148 @@
+config:
+  target: 'http://localhost:4321'
+  phases:
+    # Aquecimento gradual
+    - duration: 120
+      arrivalRate: 1
+      rampTo: 20
+      name: "Gradual warm-up"
+
+    # Carga normal
+    - duration: 300
+      arrivalRate: 20
+      name: "Normal load"
+
+    # Estresse progressivo
+    - duration: 180
+      arrivalRate: 20
+      rampTo: 100
+      name: "Progressive stress"
+
+    # Pico máximo
+    - duration: 120
+      arrivalRate: 100
+      rampTo: 200
+      name: "Peak stress"
+
+    # Sobrecarga extrema
+    - duration: 60
+      arrivalRate: 200
+      name: "Extreme overload"
+
+    # Recovery test
+    - duration: 180
+      arrivalRate: 50
+      name: "Recovery phase"
+
+  defaults:
+    headers:
+      Content-Type: 'application/json'
+      User-Agent: 'Artillery-Load-Test/1.0'
+    timeout: 30000
+
+  variables:
+    userId:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+    sessionToken:
+      - "demo_token_1"
+      - "demo_token_2"
+
+scenarios:
+  - name: "Homepage stress"
+    weight: 30
+    requests:
+      - get:
+          url: "/"
+          expect:
+            - statusCode: 200
+          capture:
+            json: "$"
+            as: "homepage_response"
+
+  - name: "Dashboard API stress"
+    weight: 25
+    requests:
+      - get:
+          url: "/api/stream/dashboard"
+          headers:
+            Authorization: "Bearer {{ sessionToken }}"
+          expect:
+            - statusCode: 200
+          capture:
+            json: "$.data"
+            as: "dashboard_data"
+
+  - name: "Metrics API stress"
+    weight: 20
+    requests:
+      - get:
+          url: "/api/metrics"
+          headers:
+            Authorization: "Bearer {{ sessionToken }}"
+          expect:
+            - statusCode: 200
+
+  - name: "GraphQL stress"
+    weight: 15
+    requests:
+      - post:
+          url: "/api/graphql"
+          json:
+            query: |
+              query GetHealth($userId: ID!) {
+                health(userId: $userId) {
+                  status
+                  uptime
+                  version
+                }
+                user(id: $userId) {
+                  id
+                  name
+                  metrics
+                }
+              }
+            variables:
+              userId: "{{ userId }}"
+          expect:
+            - statusCode: 200
+            - hasProperty: "data"
+
+  - name: "Complex user flow"
+    weight: 10
+    flow:
+      - get:
+          url: "/"
+      - post:
+          url: "/api/graphql"
+          json:
+            query: "query { health }"
+      - get:
+          url: "/api/metrics"
+          headers:
+            Authorization: "Bearer {{ sessionToken }}"
+      - get:
+          url: "/api/stream/dashboard"
+          headers:
+            Authorization: "Bearer {{ sessionToken }}"
+
+# Plugins para monitoramento avançado
+plugins:
+  metrics-by-endpoint: {}
+  expect: {}
+
+# Configurações de relatório detalhado
+reporting:
+  - module: 'artillery-plugin-publish-metrics'
+    config:
+      target: 'console'
+
+# Asserts para validação de performance
+ensure:
+  p50: 500     # 50% das requests < 500ms
+  p95: 2000    # 95% das requests < 2s
+  p99: 5000    # 99% das requests < 5s
+  maxErrorRate: 1  # Máximo 1% de erro

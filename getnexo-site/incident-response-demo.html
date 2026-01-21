@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incident Response System - GetNexo Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .metric {
+            display: inline-block;
+            background: #ecf0f1;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 4px;
+        }
+
+        .alert {
+            background: #e74c3c;
+            color: white;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+
+        .success {
+            background: #27ae60;
+            color: white;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+
+        .warning {
+            background: #f39c12;
+            color: white;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+
+        .button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .button:hover {
+            background: #2980b9;
+        }
+
+        .button.danger {
+            background: #e74c3c;
+        }
+
+        .button.danger:hover {
+            background: #c0392b;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status.active {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .status.resolved {
+            background: #27ae60;
+            color: white;
+        }
+
+        .status.learning {
+            background: #f39c12;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚨 Sistema Completo de Incident Response - GetNexo</h1>
+            <p>Demonstração integrada de todos os componentes do sistema de resposta a incidentes</p>
+        </div>
+
+        <div class="section">
+            <h2>📊 Status do Sistema</h2>
+            <div id="systemStatus">
+                <div class="metric">CPU: <span id="cpuValue">45%</span></div>
+                <div class="metric">Memória: <span id="memoryValue">62%</span></div>
+                <div class="metric">Erro Rate: <span id="errorValue">1.2%</span></div>
+                <div class="metric">Latência: <span id="latencyValue">245ms</span></div>
+            </div>
+            <br>
+            <button class="button" onclick="simulateMetrics()">🔄 Atualizar Métricas</button>
+            <button class="button" onclick="simulateHighLoad()">⚡ Simular Alta Carga</button>
+            <button class="button" onclick="simulateIncident()">🚨 Simular Incidente</button>
+        </div>
+
+        <div class="section">
+            <h2>🔔 Alertas Ativos</h2>
+            <div id="alertsContainer">
+                <p>Nenhum alerta ativo no momento.</p>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="section">
+                <h2>🔄 On-Call Rotation</h2>
+                <div id="onCallInfo">
+                    <p>Carregando informações de on-call...</p>
+                </div>
+                <button class="button" onclick="refreshOnCall()">🔄 Atualizar</button>
+            </div>
+
+            <div class="section">
+                <h2>📋 Runbooks</h2>
+                <div id="runbooksInfo">
+                    <p>Runbooks automatizados prontos para execução.</p>
+                </div>
+                <button class="button" onclick="showRunbooks()">📖 Ver Runbooks</button>
+            </div>
+
+            <div class="section">
+                <h2>🤖 Auto-Scaling</h2>
+                <div id="scalingInfo">
+                    <p>Sistema de escalabilidade automática ativo.</p>
+                </div>
+                <button class="button" onclick="manualScale(5)">⬆️ Scale to 5</button>
+                <button class="button" onclick="manualScale(3)">⬇️ Scale to 3</button>
+            </div>
+
+            <div class="section">
+                <h2>🎭 Chaos Engineering</h2>
+                <div id="chaosInfo">
+                    <p>Experimentos de caos disponíveis para teste.</p>
+                </div>
+                <button class="button" onclick="runPodKill()">💀 Pod Kill Test</button>
+                <button class="button danger" onclick="stopChaos()">🛑 Parar Experimento</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🧠 Machine Learning</h2>
+            <div id="mlInfo">
+                <p>Sistema de ML aprendendo com incidentes passados.</p>
+            </div>
+            <button class="button" onclick="getMLAnalysis()">📊 Análise ML</button>
+            <button class="button" onclick="predictIncident()">🔮 Prever Incidente</button>
+        </div>
+
+        <div class="section">
+            <h2>📈 Dashboard Integrado</h2>
+            <pre id="dashboardData">Carregando dados do dashboard...</pre>
+            <button class="button" onclick="refreshDashboard()">🔄 Atualizar Dashboard</button>
+        </div>
+
+        <div class="section">
+            <h2>🎯 Testes Rápidos</h2>
+            <button class="button" onclick="runFullSystemTest()">🚀 Teste Completo do Sistema</button>
+            <button class="button" onclick="simulateEmergency()">🚨 Emergência</button>
+            <button class="button" onclick="resetSystem()">🔄 Reset Sistema</button>
+        </div>
+    </div>
+
+    <script>
+        // Carregar scripts do sistema
+        const scripts = [
+            '/lib/advanced-alerts.js',
+            '/lib/on-call-rotation.js',
+            '/lib/automated-runbooks.js',
+            '/lib/automation/auto-restart.js',
+            '/lib/automation/auto-scaling.js',
+            '/lib/automation/auto-rollback.js',
+            '/lib/chaos-engineering.js',
+            '/lib/advanced-self-healing.js'
+        ];
+
+        // Carregar scripts dinamicamente
+        scripts.forEach(src => {
+            const script = document.createElement('script');
+            script.src = src;
+            document.head.appendChild(script);
+        });
+
+        // Simulação de métricas
+        let currentMetrics = {
+            cpu: 45,
+            memory: 62,
+            errorRate: 1.2,
+            avgResponseTime: 245,
+            requestRate: 1250
+        };
+
+        // Funções de demonstração
+        function updateMetricsDisplay() {
+            document.getElementById('cpuValue').textContent = currentMetrics.cpu + '%';
+            document.getElementById('memoryValue').textContent = currentMetrics.memory + '%';
+            document.getElementById('errorValue').textContent = currentMetrics.errorRate + '%';
+            document.getElementById('latencyValue').textContent = currentMetrics.avgResponseTime + 'ms';
+        }
+
+        function simulateMetrics() {
+            // Simular variação natural
+            currentMetrics.cpu = Math.max(10, Math.min(95, currentMetrics.cpu + (Math.random() - 0.5) * 20));
+            currentMetrics.memory = Math.max(20, Math.min(95, currentMetrics.memory + (Math.random() - 0.5) * 15));
+            currentMetrics.errorRate = Math.max(0.1, Math.min(10, currentMetrics.errorRate + (Math.random() - 0.5) * 2));
+            currentMetrics.avgResponseTime = Math.max(50, Math.min(2000, currentMetrics.avgResponseTime + (Math.random() - 0.5) * 100));
+
+            updateMetricsDisplay();
+
+            // Verificar alertas com o sistema
+            if (window.alerts) {
+                window.alerts.trigger('metrics_update', currentMetrics);
+            }
+        }
+
+        function simulateHighLoad() {
+            currentMetrics.cpu = 85 + Math.random() * 10;
+            currentMetrics.memory = 80 + Math.random() * 15;
+            currentMetrics.avgResponseTime = 800 + Math.random() * 400;
+            currentMetrics.requestRate = 2500 + Math.random() * 1000;
+
+            updateMetricsDisplay();
+            addAlert('Simulação de alta carga aplicada', 'warning');
+
+            if (window.alerts) {
+                window.alerts.trigger('high_load_simulation', currentMetrics);
+            }
+        }
+
+        function simulateIncident() {
+            currentMetrics.cpu = 95 + Math.random() * 5;
+            currentMetrics.memory = 94 + Math.random() * 6;
+            currentMetrics.errorRate = 8 + Math.random() * 7;
+            currentMetrics.avgResponseTime = 1500 + Math.random() * 500;
+
+            updateMetricsDisplay();
+            addAlert('Incidente crítico simulado!', 'alert');
+
+            setTimeout(() => {
+                addAlert('Sistema se recuperando automaticamente', 'success');
+                currentMetrics.cpu = 45;
+                currentMetrics.memory = 62;
+                currentMetrics.errorRate = 1.2;
+                currentMetrics.avgResponseTime = 245;
+                updateMetricsDisplay();
+            }, 10000);
+
+            if (window.alerts) {
+                window.alerts.trigger('incident_simulation', currentMetrics);
+            }
+        }
+
+        function addAlert(message, type) {
+            const container = document.getElementById('alertsContainer');
+            const alertDiv = document.createElement('div');
+            alertDiv.className = type;
+            alertDiv.innerHTML = `<span class="status active">ATIVO</span> ${message} <small>(${new Date().toLocaleTimeString()})</small>`;
+            container.appendChild(alertDiv);
+
+            setTimeout(() => {
+                alertDiv.querySelector('.status').className = 'status resolved';
+                alertDiv.querySelector('.status').textContent = 'RESOLVIDO';
+            }, 5000);
+        }
+
+        function refreshOnCall() {
+            if (window.alerts && window.alerts.getIntegratedAPI) {
+                const api = window.alerts.getIntegratedAPI();
+                if (api.onCall) {
+                    const current = api.onCall.getCurrent();
+                    document.getElementById('onCallInfo').innerHTML = `
+                        <p><strong>Atualmente:</strong> ${current.name} (${current.engineer})</p>
+                        <p><strong>Próximo:</strong> ${api.onCall.getNext().name}</p>
+                        <p><strong>Turno até:</strong> ${current.shiftEnd.toLocaleString('pt-BR')}</p>
+                    `;
+                }
+            }
+        }
+
+        function showRunbooks() {
+            const runbooks = [
+                'High CPU Incident Runbook',
+                'Memory Leak Incident Runbook',
+                'Service Outage Incident Runbook'
+            ];
+
+            document.getElementById('runbooksInfo').innerHTML = `
+                <ul>
+                    ${runbooks.map(r => `<li>📖 ${r}</li>`).join('')}
+                </ul>
+                <p>Runbooks automatizados prontos para execução automática em incidentes críticos.</p>
+            `;
+        }
+
+        function manualScale(replicas) {
+            if (window.alerts && window.alerts.getIntegratedAPI) {
+                const api = window.alerts.getIntegratedAPI();
+                if (api.automation && api.automation.scaling) {
+                    api.automation.scaling.manualScale(replicas);
+                    addAlert(`Escalabilidade manual para ${replicas} réplicas`, 'success');
+                }
+            }
+            document.getElementById('scalingInfo').innerHTML = `
+                <p>Escalando manualmente para ${replicas} réplicas...</p>
+                <p>Sistema de auto-scaling: <span class="status active">ATIVO</span></p>
+            `;
+        }
+
+        function runPodKill() {
+            if (window.alerts && window.alerts.getIntegratedAPI) {
+                const api = window.alerts.getIntegratedAPI();
+                if (api.chaos) {
+                    api.chaos.runExperiment('pod_kill');
+                    addAlert('Experimento de Pod Kill iniciado', 'warning');
+                }
+            }
+            document.getElementById('chaosInfo').innerHTML = `
+                <p>🧪 Experimento "Pod Kill" em execução...</p>
+                <p>Chaos Engineering: <span class="status active">ATIVO</span></p>
+            `;
+        }
+
+        function stopChaos() {
+            if (window.alerts && window.alerts.getIntegratedAPI) {
+                const api = window.alerts.getIntegratedAPI();
+                if (api.chaos) {
+                    // Parar todos os experimentos ativos
+                    const active = api.chaos.getActive();
+                    active.forEach(exp => api.chaos.getExperiments().find(e => e.id === exp.experimentId));
+                    addAlert('Experimentos de caos interrompidos', 'success');
+                }
+            }
+            document.getElementById('chaosInfo').innerHTML = `
+                <p>Experimentos interrompidos.</p>
+                <p>Chaos Engineering: <span class="status resolved">PARADO</span></p>
+            `;
+        }
+
+        function getMLAnalysis() {
+            if (window.alerts && window.alerts.getIntegratedAPI) {
+                const api = window.alerts.getIntegratedAPI();
+                if (api.ml) {
+                    const metrics = api.ml.getMetrics();
+                    document.getElementById('mlInfo').innerHTML = `
+                        <p><strong>Amostras de treinamento:</strong> ${metrics.trainingSamples}</p>
+                        <p><strong>Predições realizadas:</strong> ${metrics.predictionsMade}</p>
+                        <p><strong>Ações preventivas:</strong> ${metrics.preventiveActions}</p>
+                        <p>Machine Learning: <span class="status learning">APRENDENDO</span></p>
+                    `;
+                }
+            }
+        }
+
+        function predictIncident() {
+            if (window.alerts && window.alerts.getIntegratedAPI) {
+                const api = window.alerts.getIntegratedAPI();
+                if (api.ml) {
+                    api.ml.predict(currentMetrics).then(prediction => {
+                        const result = prediction.willFail
+                            ? `🔴 Risco alto detectado (${(prediction.confidence * 100).toFixed(1)}% confiança)`
+                            : `🟢 Sistema estável (${(prediction.confidence * 100).toFixed(1)}% confiança)`;
+
+                        addAlert(`Predição ML: ${result}`, prediction.willFail ? 'warning' : 'success');
+                    });
+                }
+            }
+        }
+
+        function refreshDashboard() {
+            if (window.alerts) {
+                const dashboard = window.alerts.getDashboard();
+                document.getElementById('dashboardData').textContent = JSON.stringify(dashboard, null, 2);
+            }
+        }
+
+        function runFullSystemTest() {
+            addAlert('🧪 Iniciando teste completo do sistema...', 'warning');
+
+            setTimeout(() => {
+                simulateMetrics();
+                refreshOnCall();
+                showRunbooks();
+                getMLAnalysis();
+                refreshDashboard();
+
+                addAlert('✅ Teste completo concluído com sucesso!', 'success');
+            }, 2000);
+        }
+
+        function simulateEmergency() {
+            currentMetrics.cpu = 98;
+            currentMetrics.memory = 97;
+            currentMetrics.errorRate = 15;
+            currentMetrics.avgResponseTime = 3000;
+
+            updateMetricsDisplay();
+            addAlert('🚨 EMERGÊNCIA: Sistema crítico falhando!', 'alert');
+
+            if (window.alerts) {
+                window.alerts.trigger('emergency_simulation', currentMetrics);
+            }
+        }
+
+        function resetSystem() {
+            currentMetrics = {
+                cpu: 45,
+                memory: 62,
+                errorRate: 1.2,
+                avgResponseTime: 245,
+                requestRate: 1250
+            };
+
+            updateMetricsDisplay();
+            document.getElementById('alertsContainer').innerHTML = '<p>Nenhum alerta ativo no momento.</p>';
+            addAlert('🔄 Sistema resetado para estado normal', 'success');
+
+            if (window.alerts) {
+                window.alerts.trigger('system_reset', currentMetrics);
+            }
+        }
+
+        // Inicialização
+        setTimeout(() => {
+            updateMetricsDisplay();
+            refreshOnCall();
+            showRunbooks();
+            getMLAnalysis();
+            refreshDashboard();
+
+            // Simular atividade normal
+            setInterval(simulateMetrics, 10000);
+        }, 2000);
+    </script>
+</body>
+
+</html>

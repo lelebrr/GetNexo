@@ -1,0 +1,148 @@
+{
+    "id": "high_cpu_incident",
+    "title": "Runbook: CPU Alta Crítica",
+    "description": "Procedimento automatizado para tratamento de incidentes de CPU alta",
+    "version": "1.0.0",
+    "lastUpdated": "2024-01-21",
+    "author": "GetNexo SRE Team",
+    "metadata": {
+        "severity": "critical",
+        "estimatedResolutionTime": "30-60 minutos",
+        "businessImpact": "Alto - Pode causar degradação de serviço",
+        "customerImpact": "Médio - Lentidão geral no sistema"
+    },
+    "detection": {
+        "alertRule": "critical_cpu",
+        "thresholds": {
+            "cpu": "> 95%",
+            "duration": "5 minutos consecutivos"
+        },
+        "symptoms": [
+            "Resposta de API lenta (> 2s)",
+            "Aumento de erros 5xx",
+            "Timeout em conexões",
+            "Alto uso de CPU nos containers"
+        ]
+    },
+    "automatedResponse": {
+        "immediateActions": [
+            {
+                "action": "scale_out",
+                "description": "Adicionar 2 instâncias ao auto-scaling group",
+                "command": "kubectl scale deployment getnexo-app --replicas=+2",
+                "timeout": 300000,
+                "rollbackOnFailure": true
+            },
+            {
+                "action": "increase_resources",
+                "description": "Aumentar CPU limits temporariamente",
+                "command": "kubectl patch deployment getnexo-app -p '{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"app\",\"resources\":{\"limits\":{\"cpu\":\"2000m\"}}}]}}}'",
+                "timeout": 60000,
+                "rollbackOnFailure": false
+            }
+        ],
+        "diagnosticActions": [
+            {
+                "action": "cpu_profiling",
+                "description": "Coletar perfil de CPU das instâncias",
+                "command": "kubectl exec -it deployment/getnexo-app -- pprof /app/cpu.prof",
+                "timeout": 120000
+            },
+            {
+                "action": "check_containers",
+                "description": "Verificar status dos containers",
+                "command": "kubectl get pods -l app=getnexo-app -o wide",
+                "timeout": 30000
+            },
+            {
+                "action": "memory_analysis",
+                "description": "Analisar uso de memória associado",
+                "command": "kubectl top pods -l app=getnexo-app",
+                "timeout": 30000
+            }
+        ]
+    },
+    "manualSteps": {
+        "triage": [
+            {
+                "step": 1,
+                "title": "Verificar métricas em tempo real",
+                "description": "Acessar dashboard do Grafana e verificar tendências de CPU",
+                "tools": [
+                    "Grafana",
+                    "Prometheus"
+                ],
+                "estimatedTime": "5 minutos"
+            },
+            {
+                "step": 2,
+                "title": "Identificar processo problemático",
+                "description": "Usar profiling para encontrar gargalo de CPU",
+                "tools": [
+                    "pprof",
+                    "go tool pprof"
+                ],
+                "estimatedTime": "10 minutos"
+            }
+        ],
+        "escalationPath": [
+            {
+                "level": "L2",
+                "condition": "CPU permanece > 90% após 10 minutos",
+                "actions": [
+                    "Contato com equipe de desenvolvimento",
+                    "Considerar rollback"
+                ]
+            },
+            {
+                "level": "L3",
+                "condition": "CPU > 95% por 30+ minutos",
+                "actions": [
+                    "Notificar liderança",
+                    "Considerar manutenção emergencial"
+                ]
+            }
+        ]
+    },
+    "recovery": {
+        "successCriteria": [
+            "CPU < 80% por 10 minutos consecutivos",
+            "Latência de resposta < 500ms",
+            "Sem erros 5xx por 5 minutos"
+        ],
+        "rollbackPlan": {
+            "conditions": [
+                "Auto-scaling falhou",
+                "CPU continua alta após intervenção"
+            ],
+            "steps": [
+                {
+                    "action": "rollback_deployment",
+                    "description": "Reverter para versão anterior",
+                    "command": "kubectl rollout undo deployment/getnexo-app"
+                },
+                {
+                    "action": "emergency_restart",
+                    "description": "Restart forçado dos serviços",
+                    "command": "kubectl delete pods -l app=getnexo-app --force"
+                }
+            ]
+        }
+    },
+    "postMortem": {
+        "required": true,
+        "template": "cpu_incident_template",
+        "questions": [
+            "O que causou o aumento de CPU?",
+            "A intervenção automática foi efetiva?",
+            "Podemos melhorar a detecção precoce?",
+            "Precisa de otimização no código?"
+        ]
+    },
+    "tags": [
+        "cpu",
+        "performance",
+        "auto-scaling",
+        "kubernetes"
+    ]
+}

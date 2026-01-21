@@ -1,0 +1,215 @@
+{
+    "id": "service_outage_incident",
+    "title": "Runbook: Outage de Serviço Completo",
+    "description": "Procedimento de emergência para indisponibilidade total do serviço",
+    "version": "1.0.0",
+    "lastUpdated": "2024-01-21",
+    "author": "GetNexo SRE Team",
+    "metadata": {
+        "severity": "emergency",
+        "estimatedResolutionTime": "5-30 minutos",
+        "businessImpact": "Crítico - Perda total de receita",
+        "customerImpact": "Crítico - Serviço completamente indisponível"
+    },
+    "detection": {
+        "alertRule": "service_down",
+        "thresholds": {
+            "availability": "< 95%",
+            "responseTime": "> 30000ms",
+            "errorRate": "> 50%",
+            "duration": "2 minutos consecutivos"
+        },
+        "symptoms": [
+            "5xx errors em todas as APIs",
+            "Timeout em todas as conexões",
+            "Sem resposta do health check",
+            "Pods em estado CrashLoopBackOff",
+            "Load balancer retornando 502/504"
+        ]
+    },
+    "automatedResponse": {
+        "immediateActions": [
+            {
+                "action": "emergency_page",
+                "description": "Paginação imediata da equipe on-call",
+                "command": "activate_emergency_protocol()",
+                "timeout": 30000,
+                "rollbackOnFailure": false
+            },
+            {
+                "action": "circuit_breaker",
+                "description": "Ativar circuit breaker para proteger downstream",
+                "command": "kubectl patch configmap getnexo-config -p '{\"data\":{\"CIRCUIT_BREAKER\":\"true\"}}'",
+                "timeout": 15000,
+                "rollbackOnFailure": false
+            },
+            {
+                "action": "failover_check",
+                "description": "Verificar se failover automático funcionou",
+                "command": "kubectl get ingress getnexo-ingress -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'",
+                "timeout": 30000,
+                "rollbackOnFailure": false
+            },
+            {
+                "action": "emergency_restart",
+                "description": "Restart forçado de todos os pods",
+                "command": "kubectl delete pods -l app=getnexo-app --force --grace-period=0",
+                "timeout": 60000,
+                "rollbackOnFailure": true
+            }
+        ],
+        "diagnosticActions": [
+            {
+                "action": "cluster_status",
+                "description": "Status geral do cluster Kubernetes",
+                "command": "kubectl get nodes,pods,svc,ingress -o wide",
+                "timeout": 20000
+            },
+            {
+                "action": "logs_recent",
+                "description": "Logs dos últimos 5 minutos",
+                "command": "kubectl logs -l app=getnexo-app --since=5m --tail=100",
+                "timeout": 30000
+            },
+            {
+                "action": "database_check",
+                "description": "Verificar conectividade com banco de dados",
+                "command": "kubectl exec -it deployment/getnexo-db-check -- mysqladmin ping",
+                "timeout": 15000
+            }
+        ]
+    },
+    "manualSteps": {
+        "triage": [
+            {
+                "step": 1,
+                "title": "Verificar infraestrutura",
+                "description": "Checar status de nodes, networking, storage",
+                "tools": [
+                    "kubectl",
+                    "AWS Console",
+                    "Datadog"
+                ],
+                "estimatedTime": "2 minutos"
+            },
+            {
+                "step": 2,
+                "title": "Identificar ponto de falha",
+                "description": "Analisar logs e métricas para root cause",
+                "tools": [
+                    "Kibana",
+                    "Prometheus",
+                    "DataDog"
+                ],
+                "estimatedTime": "5 minutos"
+            },
+            {
+                "step": 3,
+                "title": "Teste de conectividade",
+                "description": "Verificar rede, DNS, certificados SSL",
+                "tools": [
+                    "curl",
+                    "dig",
+                    "openssl"
+                ],
+                "estimatedTime": "3 minutos"
+            }
+        ],
+        "escalationPath": [
+            {
+                "level": "L1",
+                "condition": "Imediato - outage detectado",
+                "actions": [
+                    "Equipe on-call notificada",
+                    "Protocolo de emergência ativado"
+                ]
+            },
+            {
+                "level": "L2",
+                "condition": "Sem resolução após 5 minutos",
+                "actions": [
+                    "Engenharia completa mobilizada",
+                    "Comunicação com clientes"
+                ]
+            },
+            {
+                "level": "L3",
+                "condition": "Outage > 15 minutos",
+                "actions": [
+                    "CEO/CTO notificados",
+                    "Comunicação pública",
+                    "Status page atualizado"
+                ]
+            }
+        ]
+    },
+    "recovery": {
+        "successCriteria": [
+            "Health check retornando 200",
+            "Latência < 1000ms",
+            "Error rate < 1%",
+            "Todas as funcionalidades funcionando",
+            "Monitoramento confirmando recuperação"
+        ],
+        "rollbackPlan": {
+            "conditions": [
+                "Serviço não volta após restart",
+                "Problema de infraestrutura"
+            ],
+            "steps": [
+                {
+                    "action": "rollback_emergency",
+                    "description": "Rollback para versão conhecida como boa",
+                    "command": "kubectl rollout undo deployment/getnexo-app --to-revision=<known-good>"
+                },
+                {
+                    "action": "regional_failover",
+                    "description": "Failover para outra região AWS",
+                    "command": "aws route53 change-resource-record-sets --hosted-zone-id $HOSTED_ZONE --change-batch file://failover.json"
+                },
+                {
+                    "action": "static_page",
+                    "description": "Servir página estática de manutenção",
+                    "command": "kubectl apply -f maintenance-page.yaml"
+                }
+            ]
+        }
+    },
+    "communication": {
+        "internal": {
+            "slack": "#incidents",
+            "email": "team@getnexo.com",
+            "frequency": "Cada 5 minutos durante outage"
+        },
+        "external": {
+            "statusPage": "status.getnexo.com",
+            "twitter": "@getnexo",
+            "email": "customers@getnexo.com",
+            "frequency": "Cada 15 minutos ou quando resolvido"
+        },
+        "templates": {
+            "outageStart": "🚨 Estamos enfrentando instabilidade em nossos serviços. Nossa equipe está trabalhando para resolver. Atualizações em: status.getnexo.com",
+            "outageUpdate": "🔄 Continuamos trabalhando na resolução. Tempo estimado: {eta}",
+            "outageResolved": "✅ Serviço restaurado. Pedimos desculpas pelo inconveniente. Detalhes em: status.getnexo.com/incidents/{incident_id}"
+        }
+    },
+    "postMortem": {
+        "required": true,
+        "template": "outage_incident_template",
+        "timeline": "Análise detalhada obrigatória",
+        "questions": [
+            "Qual foi a causa raiz?",
+            "Por que os alertas não detectaram antes?",
+            "O plano de contingência funcionou?",
+            "Como melhorar o MTTR?",
+            "Prevenção para recorrência?"
+        ]
+    },
+    "tags": [
+        "outage",
+        "emergency",
+        "high-priority",
+        "failover",
+        "infrastructure"
+    ]
+}

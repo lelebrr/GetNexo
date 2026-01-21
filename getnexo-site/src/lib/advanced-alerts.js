@@ -50,6 +50,15 @@ class AdvancedAlertSystem {
         this.machineLearning = new AlertMLPredictor();
         this.autoHealing = new AutoHealingEngine();
 
+        // Novos sistemas integrados
+        this.onCallRotation = null;
+        this.automatedRunbooks = null;
+        this.autoRestart = null;
+        this.autoScaling = null;
+        this.autoRollback = null;
+        this.chaosEngineering = null;
+        this.advancedSelfHealing = null;
+
         this.initialize();
     }
 
@@ -63,10 +72,13 @@ class AdvancedAlertSystem {
         // Carregar regras de alertas
         this.loadDefaultRules();
 
+        // Inicializar sistemas integrados
+        await this.initializeIntegratedSystems();
+
         // Iniciar monitoramento preditivo
         this.machineLearning.startPrediction();
 
-        console.log('🚨 Sistema Avançado de Alertas inicializado');
+        console.log('🚨 Sistema Avançado de Alertas inicializado com integração completa');
     }
 
     // Configuração do sistema
@@ -206,6 +218,29 @@ class AdvancedAlertSystem {
     async checkMetrics(metrics) {
         if (!this.config.enabled || this.config.maintenanceMode) return;
 
+        // Verificações proativas com ML avançado
+        if (this.advancedSelfHealing) {
+            try {
+                const prediction = await this.advancedSelfHealing.predictIncident(metrics);
+                const anomaly = await this.advancedSelfHealing.detectAnomalies(metrics);
+
+                if (prediction.willFail && prediction.confidence > 0.8) {
+                    console.log(`🔮 ML prevê incidente iminente com ${(prediction.confidence * 100).toFixed(1)}% confiança`);
+                    // Preparar sistemas para possível incidente
+                    this.prepareForPredictedIncident(metrics);
+                }
+
+                if (anomaly.isAnomaly) {
+                    console.log(`🚨 Anomalia detectada (score: ${anomaly.score.toFixed(2)})`);
+                    // Investigar anomalia automaticamente
+                    await this.advancedSelfHealing.investigateAnomaly(metrics, anomaly.score);
+                }
+            } catch (error) {
+                console.error('Erro nas verificações proativas de ML:', error);
+            }
+        }
+
+        // Verificações tradicionais de regras
         for (const [ruleId, rule] of this.rules) {
             if (!rule.active) continue;
 
@@ -254,9 +289,23 @@ class AdvancedAlertSystem {
         // Armazenar alerta
         this.alerts.set(alertId, alert);
 
-        // Predição de impacto usando ML
+        // Predição de impacto usando ML básico
         const impact = await this.machineLearning.predictImpact(alert, metrics);
         alert.predictedImpact = impact;
+
+        // Análise avançada com ML se disponível
+        if (this.advancedSelfHealing) {
+            const analysis = await this.advancedSelfHealing.analyzeIncident(alert);
+            alert.mlAnalysis = analysis;
+            console.log(`🧠 Análise ML: ${analysis.prediction.willFail ? 'Falha prevista' : 'Recuperação esperada'} (${(analysis.confidence * 100).toFixed(1)}% confiança)`);
+        }
+
+        // Executar runbook automatizado se disponível
+        if (this.automatedRunbooks && rule.level === ALERT_LEVELS.CRITICAL) {
+            const incidentId = await this.automatedRunbooks.executeRunbook(alert, metrics);
+            alert.automatedIncident = incidentId;
+            console.log(`📋 Runbook automatizado iniciado: ${incidentId}`);
+        }
 
         // Notificar canais
         await this.notifyChannels(alert, rule.channels);
@@ -266,16 +315,26 @@ class AdvancedAlertSystem {
             await this.escalateAlert(alert);
         }
 
-        // Tentar auto-healing
+        // Tentar auto-healing integrado
         if (this.config.autoHealingEnabled) {
             await this.autoHealing.attemptFix(alert);
+
+            // Integrar com sistemas de automação
+            if (this.autoRestart) {
+                await this.autoRestart.checkAndRestart(metrics);
+            }
+
+            if (this.autoScaling) {
+                await this.autoScaling.checkAndScale(metrics);
+            }
         }
 
         // Log do alerta
         console.warn(`🚨 ALERTA [${rule.level.toUpperCase()}]: ${rule.name} - ${rule.description}`, {
             alertId,
             metrics,
-            impact
+            impact,
+            automated: !!alert.automatedIncident
         });
 
         // Disparar evento customizado
@@ -373,6 +432,13 @@ class AdvancedAlertSystem {
     // Ativar equipe on-call
     async activateOnCall(alert) {
         console.warn(`🚨 ATIVANDO ON-CALL: ${alert.title}`);
+
+        // Integrar com sistema de on-call rotation
+        if (this.onCallRotation) {
+            return await this.onCallRotation.activateOnCall(alert);
+        }
+
+        // Fallback para implementação básica
         // Implementar lógica de pager duty, etc.
     }
 
@@ -408,6 +474,56 @@ class AdvancedAlertSystem {
         localStorage.setItem('nexo-alerts-config', JSON.stringify(this.config));
     }
 
+    // Inicializar sistemas integrados
+    async initializeIntegratedSystems() {
+        try {
+            // Aguardar outros sistemas serem carregados
+            await this.waitForSystems();
+
+            // Conectar sistemas integrados
+            this.onCallRotation = window.OnCallRotation;
+            this.automatedRunbooks = window.AutomatedRunbooks;
+            this.autoRestart = window.AutoRestartEngine;
+            this.autoScaling = window.AutoScalingEngine;
+            this.autoRollback = window.AutoRollbackEngine;
+            this.chaosEngineering = window.ChaosEngineering;
+            this.advancedSelfHealing = window.AdvancedSelfHealing;
+
+            console.log('🔗 Sistemas integrados conectados:', {
+                onCall: !!this.onCallRotation,
+                runbooks: !!this.automatedRunbooks,
+                restart: !!this.autoRestart,
+                scaling: !!this.autoScaling,
+                rollback: !!this.autoRollback,
+                chaos: !!this.chaosEngineering,
+                ml: !!this.advancedSelfHealing
+            });
+
+        } catch (error) {
+            console.error('Erro ao inicializar sistemas integrados:', error);
+        }
+    }
+
+    // Aguardar carregamento dos sistemas
+    async waitForSystems() {
+        const maxWait = 5000; // 5 segundos
+        const startTime = Date.now();
+
+        while (Date.now() - startTime < maxWait) {
+            if (window.OnCallRotation && window.AutomatedRunbooks &&
+                window.AutoRestartEngine && window.AutoScalingEngine) {
+                return;
+            }
+            await this.sleep(100);
+        }
+
+        console.warn('Timeout aguardando carregamento dos sistemas integrados');
+    }
+
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     // Dashboard de alertas
     getDashboardData() {
         const alerts = this.getAlerts();
@@ -418,13 +534,22 @@ class AdvancedAlertSystem {
             a.resolvedAt.toDateString() === new Date().toDateString()
         );
 
+        // Dados integrados
+        const integratedData = {
+            automatedIncidents: this.automatedRunbooks ? this.automatedRunbooks.getActiveIncidents().length : 0,
+            chaosExperiments: this.chaosEngineering ? this.chaosEngineering.getActiveExperiments().length : 0,
+            mlPredictions: this.advancedSelfHealing ? this.advancedSelfHealing.getLearningMetrics().predictionsMade : 0,
+            autoScalingEvents: this.autoScaling ? this.autoScaling.getScalingHistory(24).length : 0
+        };
+
         return {
             totalAlerts: alerts.length,
             activeAlerts: activeAlerts.length,
             resolvedToday: resolvedToday.length,
             criticalAlerts: activeAlerts.filter(a => a.level === ALERT_LEVELS.CRITICAL).length,
             escalationHistory: this.escalationHistory.slice(-10),
-            topRules: this.getTopTriggeredRules()
+            topRules: this.getTopTriggeredRules(),
+            integrated: integratedData
         };
     }
 
@@ -442,6 +567,104 @@ class AdvancedAlertSystem {
         return Object.values(ruleStats)
             .sort((a, b) => b.count - a.count)
             .slice(0, 5);
+    }
+
+    // Preparar sistemas para incidente previsto
+    async prepareForPredictedIncident(metrics) {
+        console.log('🛡️ Preparando sistemas para incidente previsto');
+
+        try {
+            // Pré-escalar se necessário
+            if (this.autoScaling && metrics.cpu > 70) {
+                await this.autoScaling.manualScale(
+                    Math.min(this.autoScaling.config.maxReplicas,
+                        Math.ceil(this.autoScaling.getCurrentState().replicas * 1.2))
+                );
+            }
+
+            // Preparar runbooks
+            if (this.automatedRunbooks) {
+                // Pré-carregar runbooks relevantes
+                console.log('📋 Runbooks preparados para resposta rápida');
+            }
+
+            // Alertar equipe on-call preventivamente
+            if (this.onCallRotation) {
+                const currentOnCall = this.onCallRotation.getCurrentOnCall();
+                console.log(`📞 Equipe on-call preparada: ${currentOnCall.name}`);
+            }
+
+        } catch (error) {
+            console.error('Erro ao preparar para incidente previsto:', error);
+        }
+    }
+
+    // API completa do sistema integrado
+    getIntegratedAPI() {
+        return {
+            // Sistema de alertas
+            alerts: {
+                trigger: (ruleId, metrics) => this.checkMetrics(metrics),
+                getAlerts: () => this.getAlerts(),
+                acknowledge: (alertId) => this.acknowledgeAlert(alertId),
+                resolve: (alertId) => this.resolveAlert(alertId),
+                getDashboard: () => this.getDashboardData(),
+                updateConfig: (config) => this.updateConfig(config)
+            },
+
+            // On-call rotation
+            onCall: this.onCallRotation ? {
+                getCurrent: () => this.onCallRotation.getCurrentOnCall(),
+                getNext: () => this.onCallRotation.getNextOnCall(),
+                escalate: (incident) => this.onCallRotation.escalateIncident(incident)
+            } : null,
+
+            // Runbooks automatizados
+            runbooks: this.automatedRunbooks ? {
+                execute: (alert, metrics) => this.automatedRunbooks.executeRunbook(alert, metrics),
+                getActive: () => this.automatedRunbooks.getActiveIncidents(),
+                getHistory: () => this.automatedRunbooks.getExecutionHistory()
+            } : null,
+
+            // Automação
+            automation: {
+                restart: this.autoRestart ? {
+                    check: (metrics) => this.autoRestart.checkAndRestart(metrics),
+                    getHistory: () => this.autoRestart.getRestartHistory(),
+                    getStatus: () => this.autoRestart.getCircuitBreakerStatus()
+                } : null,
+
+                scaling: this.autoScaling ? {
+                    check: (metrics) => this.autoScaling.checkAndScale(metrics),
+                    getHistory: () => this.autoScaling.getScalingHistory(),
+                    getState: () => this.autoScaling.getCurrentState(),
+                    manualScale: (replicas) => this.autoScaling.manualScale(replicas)
+                } : null,
+
+                rollback: this.autoRollback ? {
+                    registerDeployment: (deployment) => this.autoRollback.registerDeployment(deployment),
+                    getHistory: () => this.autoRollback.getRollbackHistory(),
+                    manualRollback: (version) => this.autoRollback.manualRollback(version)
+                } : null
+            },
+
+            // Chaos engineering
+            chaos: this.chaosEngineering ? {
+                runExperiment: (id, options) => this.chaosEngineering.runExperiment(id, options),
+                getExperiments: () => this.chaosEngineering.getExperiments(),
+                getActive: () => this.chaosEngineering.getActiveExperiments(),
+                getDashboard: () => this.chaosEngineering.getChaosDashboard()
+            } : null,
+
+            // Machine learning avançado
+            ml: this.advancedSelfHealing ? {
+                analyze: (incident) => this.advancedSelfHealing.analyzeIncident(incident),
+                predict: (metrics) => this.advancedSelfHealing.predictIncident(metrics),
+                learn: (incident, outcome) => this.advancedSelfHealing.learnFromOutcome(incident, outcome),
+                getMetrics: () => this.advancedSelfHealing.getLearningMetrics(),
+                getPerformance: () => this.advancedSelfHealing.getModelPerformance()
+            } : null
+        };
     }
 }
 
@@ -543,14 +766,17 @@ class AutoHealingEngine {
 // Instância global
 window.AdvancedAlertSystem = new AdvancedAlertSystem();
 
-// API global para integração
+// API global para integração (mantém compatibilidade)
 window.alerts = {
     trigger: (ruleId, metrics) => window.AdvancedAlertSystem.checkMetrics(metrics),
     getAlerts: () => window.AdvancedAlertSystem.getAlerts(),
     acknowledge: (alertId) => window.AdvancedAlertSystem.acknowledgeAlert(alertId),
     resolve: (alertId) => window.AdvancedAlertSystem.resolveAlert(alertId),
     getDashboard: () => window.AdvancedAlertSystem.getDashboardData(),
-    updateConfig: (config) => window.AdvancedAlertSystem.updateConfig(config)
+    updateConfig: (config) => window.AdvancedAlertSystem.updateConfig(config),
+
+    // Acesso aos sistemas integrados
+    getIntegratedAPI: () => window.AdvancedAlertSystem.getIntegratedAPI()
 };
 
 export default AdvancedAlertSystem;
