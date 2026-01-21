@@ -267,6 +267,162 @@ const nonce = Astro.locals.nonce;
     .footer-col a:hover { color: var(--success); }
     .footer-bottom { border-top: 1px solid rgba(255,255,255,0.05); margin-top: 4rem; padding-top: 2rem; text-align: center; color: var(--light); font-size: 0.85rem; }
 
+    /* Security Section Styles */
+    .security-section {
+      background: linear-gradient(135deg, rgba(3, 7, 18, 0.95), rgba(15, 23, 42, 0.95));
+      border-top: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding: 5rem 5%;
+      margin: 4rem 0;
+    }
+
+    .security-container { max-width: 1200px; margin: 0 auto; }
+
+    .security-title {
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+    }
+
+    .security-subtitle {
+      text-align: center;
+      font-size: 1.2rem;
+      color: var(--text);
+      margin-bottom: 4rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+    }
+
+    .security-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+
+    .security-item {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 2rem;
+      text-align: center;
+      transition: 0.3s;
+      height: 100%;
+    }
+
+    .security-item:hover {
+      border-color: rgba(0, 212, 255, 0.3);
+      transform: translateY(-5px);
+      background: rgba(15, 23, 42, 0.8);
+      box-shadow: 0 20px 40px rgba(0, 212, 255, 0.1);
+    }
+
+    .security-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .security-item h3 {
+      color: white;
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .security-item p {
+      color: var(--text);
+      line-height: 1.6;
+      margin: 0;
+      font-size: 0.9rem;
+    }
+
+    .security-cta {
+      background: rgba(0, 212, 255, 0.1);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      border-radius: 20px;
+      padding: 3rem;
+      text-align: center;
+    }
+
+    .security-highlight {
+      font-size: 1.3rem;
+      color: #00d4ff;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    .security-cta p {
+      color: var(--light);
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .security-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-security-primary {
+      background: linear-gradient(135deg, var(--primary), var(--success));
+      color: black;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-weight: 800;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: 0.3s;
+      display: inline-block;
+      box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
+    }
+
+    .btn-security-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 35px rgba(0, 212, 255, 0.4);
+    }
+
+    .btn-security-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: 0.3s;
+      display: inline-block;
+    }
+
+    .btn-security-secondary:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: rgba(0, 212, 255, 0.1);
+    }
+
+    @media (max-width: 768px) {
+      .security-title { font-size: 2rem; }
+      .security-subtitle { font-size: 1rem; }
+      .security-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+      .security-item { padding: 1.5rem; }
+      .security-cta { padding: 2rem; }
+      .security-highlight { font-size: 1.1rem; }
+      .security-buttons { flex-direction: column; }
+      .btn-security-primary, .btn-security-secondary { width: 100%; text-align: center; }
+    }
+
 
 
     /* Header landing style - mais transparente */
@@ -637,6 +793,78 @@ const nonce = Astro.locals.nonce;
         <a href="/acessibilidade" title="Certificações de Acessibilidade WCAG 2.2 AA">Acessibilidade</a>
       </div>
     </div>
+
+    <!-- Seção de Segurança -->
+    <div class="security-section">
+      <div class="security-container">
+        <h2 class="security-title">🛡️ Segurança Máxima no GetNexo</h2>
+        <p class="security-subtitle">
+          Proteja Sua Loja e Seus Clientes com Confiança Total
+        </p>
+
+        <div class="security-grid">
+          <div class="security-item">
+            <div class="security-icon">
+              <img src="/assets/security/cloudflare-shield.svg" alt="Cloudflare Shield" loading="lazy" style="width: 60px; height: 60px;">
+            </div>
+            <h3>Cloudflare: Escudo Global</h3>
+            <p>Proteção contra DDoS, Firewall Avançado (WAF) e Gerenciamento de Bots. Sua loja protegida como as maiores do mundo.</p>
+          </div>
+
+          <div class="security-item">
+            <div class="security-icon">
+              <img src="/assets/security/aes-encryption.svg" alt="AES Encryption" loading="lazy" style="width: 60px; height: 60px;">
+            </div>
+            <h3>Criptografia LGPD</h3>
+            <p>Dados criptografados com AES-256. Conformidade 100% LGPD. Zero armazenamento desnecessário.</p>
+          </div>
+
+          <div class="security-item">
+            <div class="security-icon">
+              <img src="/assets/security/zero-trust.svg" alt="Zero Trust Network" loading="lazy" style="width: 60px; height: 60px;">
+            </div>
+            <h3>Zero Portas Abertas</h3>
+            <p>Cloudflare Tunnel com Zero Trust. Nenhuma porta aberta no servidor. Conexão outbound apenas.</p>
+          </div>
+
+          <div class="security-item">
+            <div class="security-icon">
+              <img src="/assets/security/monitoring.svg" alt="24h Monitoring" loading="lazy" style="width: 60px; height: 60px;">
+            </div>
+            <h3>Monitoramento 24h</h3>
+            <p>Rate Limiting inteligente, detecção de ameaças em tempo real e backups seguros automatizados.</p>
+          </div>
+
+          <div class="security-item">
+            <div class="security-icon">
+              <img src="/assets/security/pix-secure.svg" alt="Secure PIX" loading="lazy" style="width: 60px; height: 60px;">
+            </div>
+            <h3>PIX Seguro</h3>
+            <p>Integração direta com gateways confiáveis. QR Code validado e criptografado em tempo real.</p>
+          </div>
+
+          <div class="security-item">
+            <div class="security-icon">
+              <img src="/assets/security/uptime.svg" alt="99.99% Uptime" loading="lazy" style="width: 60px; height: 60px;">
+            </div>
+            <h3>Uptime 99.99%</h3>
+            <p>Sua loja nunca fica offline. Sem histórico de breaches. Atualizações automáticas.</p>
+          </div>
+        </div>
+
+        <div class="security-cta">
+          <p class="security-highlight">
+            💡 <strong>Segurança WhatsApp Business não é luxo — é necessidade.</strong>
+          </p>
+          <p>Com o GetNexo, você tem proteção de nível enterprise sem complicação ou custo absurdo.</p>
+          <div class="security-buttons">
+            <a href="/criar-bot" class="btn-security-primary">Teste Grátis Agora →</a>
+            <a href="/privacidade" class="btn-security-secondary">Ver Certificações</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="footer-bottom">
       <p>© {new Date().getFullYear()} GetNexo - Inteligência Artificial Aplicada a Vendas. Todos os direitos reservados.</p>
     </div>
