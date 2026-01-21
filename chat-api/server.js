@@ -409,8 +409,6 @@ app.get('/api/users', authenticate, (req, res) => {
 });
 
 // Game endpoints
-db.exec('CREATE TABLE IF NOT EXISTS game_scores (id INTEGER PRIMARY KEY AUTOINCREMENT, player_name TEXT NOT NULL, score INTEGER NOT NULL, clicks INTEGER NOT NULL, level INTEGER DEFAULT 1, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, ip_hash TEXT);');
-
 app.get('/api/game/records', (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 50;
@@ -500,7 +498,8 @@ CREATE TABLE IF NOT EXISTS video_streams (id TEXT PRIMARY KEY, url TEXT, quality
 CREATE TABLE IF NOT EXISTS system_logs (id INTEGER PRIMARY KEY AUTOINCREMENT, level TEXT, message TEXT, details TEXT, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
 CREATE TABLE IF NOT EXISTS bot_settings (id INTEGER PRIMARY KEY AUTOINCREMENT, key TEXT UNIQUE, value TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
 CREATE TABLE IF NOT EXISTS push_subscriptions (id TEXT PRIMARY KEY, user_id INTEGER, endpoint TEXT, keys TEXT, user_agent TEXT, subscribed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
-CREATE TABLE IF NOT EXISTS gamification_scores (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, game_type TEXT, score INTEGER, level INTEGER, metadata TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);`);
+CREATE TABLE IF NOT EXISTS gamification_scores (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, game_type TEXT, score INTEGER, level INTEGER, metadata TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS game_scores (id INTEGER PRIMARY KEY AUTOINCREMENT, player_name TEXT NOT NULL, score INTEGER NOT NULL, clicks INTEGER NOT NULL, level INTEGER DEFAULT 1, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, ip_hash TEXT);`);
 
 // Init basic data
 db.prepare('INSERT OR IGNORE INTO roles (name, permissions) VALUES (?, ?)').run('Admin', 'all');
