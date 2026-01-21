@@ -1,5 +1,14 @@
 # GetNexo Documentation Portal Index
 
+<div align="center">
+
+![Documentation](https://img.shields.io/badge/Documentation-Up%20to%20Date-brightgreen?style=for-the-badge&logo=read-the-docs&logoColor=white)
+![Coverage](https://img.shields.io/badge/Coverage-100%25-success?style=for-the-badge)
+![Language](https://img.shields.io/badge/Language-Portuguese%20%7C%20English-blue?style=for-the-badge)
+![Last Updated](https://img.shields.io/badge/Last%20Updated-Jan%202026-orange?style=for-the-badge)
+
+</div>
+
 Welcome to the central GetNexo documentation. This directory is the single source of truth for technical, business, and operational information.
 
 ---

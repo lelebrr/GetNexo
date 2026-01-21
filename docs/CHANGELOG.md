@@ -1,5 +1,13 @@
 # 📋 Changelog - GetNexo Platform
 
+<div align="center">
+
+![Version](https://img.shields.io/badge/Version-1.0.0-blue?style=for-the-badge&logo=semver)
+![Release Date](https://img.shields.io/badge/Released-Jan%202026-green?style=for-the-badge)
+![Changes](https://img.shields.io/badge/Changes-High-orange?style=for-the-badge)
+
+</div>
+
 Todas as mudanças significativas neste projeto serão documentadas neste arquivo.
 
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),

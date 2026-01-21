@@ -1,5 +1,13 @@
 # Manual do Administrador - GetNexo
 
+<div align="center">
+
+![Admin](https://img.shields.io/badge/Role-Administrator-red?style=for-the-badge)
+![Security](https://img.shields.io/badge/Security-High-critical?style=for-the-badge&logo=auth0)
+![Access](https://img.shields.io/badge/Access-Restricted-black?style=for-the-badge)
+
+</div>
+
 ## 1. Visão Geral
 O painel administrativo do GetNexo permite o gerenciamento completo da plataforma, desde a configuração de IAs até o acompanhamento de vendas e suporte.
 

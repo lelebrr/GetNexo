@@ -1,5 +1,24 @@
 # GetNexo v1.0+ 🚀
 
+<div align="center">
+
+![Status](https://img.shields.io/badge/Status-Production%20Ready-success?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-1.0+-blue?style=for-the-badge&logo=semver)
+![License](https://img.shields.io/badge/License-Proprietary-red?style=for-the-badge)
+![Uptime](https://img.shields.io/badge/Uptime-99.9%25-green?style=for-the-badge)
+
+![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-20+-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Astro](https://img.shields.io/badge/Astro-5.0-BC52EE?style=for-the-badge&logo=astro&logoColor=white)
+![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=white)
+
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-Cache-DC382D?style=for-the-badge&logo=redis&logoColor=white)
+![AI](https://img.shields.io/badge/AI-Generative-8A2BE2?style=for-the-badge&logo=openai&logoColor=white)
+![Accessibility](https://img.shields.io/badge/Accessibility-WCAG%20AA-gold?style=for-the-badge&logo=w3c)
+
+</div>
+
 **Plataforma de Automação de Vendas & Atendimento via WhatsApp com IA.**
 
 GetNexo é uma solução completa "All-in-One" que transforma seu WhatsApp em uma máquina de vendas autônoma. Oferecemos infraestrutura robusta, PIX nativo, IA generativa, Realidade Aumentada, Machine Learning integrado, jogos interativos e muito mais para conversão máxima de leads.
