@@ -1,7 +1,8 @@
-import type { APIRoute } from 'astro';
+import type { APIRoute, APIContext } from 'astro';
 
 // Zapier webhook endpoint - accepts any data format
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async (context: APIContext) => {
+    const { request } = context;
     try {
         const contentType = request.headers.get('content-type') || '';
 
@@ -82,7 +83,7 @@ async function processGenericWebhook(data: any) {
 }
 
 // Zapier also supports GET for testing
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = async (context: APIContext) => {
     return new Response(JSON.stringify({
         message: 'Zapier webhook endpoint - use POST to send data',
         supported_triggers: ['new_user', 'new_order', 'payment_received', 'generic']
