@@ -1,0 +1,149 @@
+{
+    "nodes": [
+        {
+            "parameters": {
+                "path": "calculate-freight",
+                "responseMode": "lastNode",
+                "options": {}
+            },
+            "name": "Freight Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                200,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "key": "freight_{{ $json.cep }}",
+                "options": {}
+            },
+            "name": "Check Redis Cache",
+            "type": "n8n-nodes-base.redis",
+            "typeVersion": 1,
+            "position": [
+                400,
+                300
+            ],
+            "operation": "get"
+        },
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "url": "https://api.frenet.com.br/shipping/quote",
+                "options": {},
+                "headerParametersUi": {
+                    "parameter": [
+                        {
+                            "name": "token",
+                            "value": "{{ $env.FRENET_TOKEN }}"
+                        }
+                    ]
+                },
+                "jsonParameters": true,
+                "bodyParametersJson": "{ \"SellerCEP\": \"01001000\", \"RecipientCEP\": \"{{ $json.cep }}\", \"ShipmentInvoiceValue\": 100 }"
+            },
+            "name": "Frenet Quote",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 3,
+            "position": [
+                650,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "url": "https://menv.io/api/v2/me/shipment/calculate",
+                "options": {},
+                "headerParametersUi": {
+                    "parameter": [
+                        {
+                            "name": "Authorization",
+                            "value": "Bearer {{ $env.MELHOR_ENVIO_TOKEN }}"
+                        }
+                    ]
+                },
+                "jsonParameters": true,
+                "bodyParametersJson": "{ \"from\": { \"postal_code\": \"01001000\" }, \"to\": { \"postal_code\": \"{{ $json.cep }}\" } }"
+            },
+            "name": "Melhor Envio Quote",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 3,
+            "position": [
+                650,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "key": "freight_{{ $json.cep }}",
+                "value": "={{ JSON.stringify($json) }}",
+                "options": {
+                    "expire": 1800
+                }
+            },
+            "name": "Save to Redis",
+            "type": "n8n-nodes-base.redis",
+            "typeVersion": 1,
+            "position": [
+                900,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Freight Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Check Redis Cache",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check Redis Cache": {
+            "main": [
+                [
+                    {
+                        "node": "Frenet Quote",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Melhor Envio Quote",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Frenet Quote": {
+            "main": [
+                [
+                    {
+                        "node": "Save to Redis",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Melhor Envio Quote": {
+            "main": [
+                [
+                    {
+                        "node": "Save to Redis",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": false,
+    "name": "Logistics Freight Aggregator"
+}

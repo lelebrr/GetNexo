@@ -1,0 +1,98 @@
+{
+    "nodes": [
+        {
+            "parameters": {
+                "functionCode": "const prompt = $json.prompt;\n\n// 1. Regex PII Check (CPF, CNPJ, Phone)\nconst piiRegex = new RegExp(process.env.GUARDRAIL_PII_REGEX || '(?:\\\\d{3}\\\\.\\\\d{3}\\\\.\\\\d{3}-\\\\d{2}|\\\\d{11})');\nconst pii = prompt.match(piiRegex);\nif (pii) {\n  return [{ json: { safe: false, reason: 'PII detectado: Dados sensíveis encontrados.' } }];\n}\n\n// 2. Anti-injection Check\nconst injectionKeywords = ['ignore previous', 'system prompt', 'jailbreak'];\nif (injectionKeywords.some(kw => prompt.toLowerCase().includes(kw))) {\n  return [{ json: { safe: false, reason: 'Tentativa de Injection detectada.' } }];\n}\n\n// 3. Token Limit Check (Apróx)\nif (prompt.length > (process.env.GUARDRAIL_MAX_TOKENS * 4 || 16000)) {\n  return [{ json: { safe: false, reason: 'Limite de tokens excedido.' } }];\n}\n\nreturn [{ json: { safe: true, clean_prompt: 'Você é o assistente oficial Use Nexo. Responda de forma profissional. Contexto: ' + prompt } }];"
+            },
+            "name": "Guardrail Check",
+            "type": "n8n-nodes-base.function",
+            "typeVersion": 1,
+            "position": [
+                460,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "options": {}
+            },
+            "name": "AI Model Router",
+            "type": "n8n-nodes-base.openAi",
+            "typeVersion": 1,
+            "position": [
+                680,
+                300
+            ],
+            "credentials": {
+                "openAiApi": {
+                    "id": "gemini_creds",
+                    "name": "Gemini Account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "prompt": "Analise a resposta anterior. Ela é segura, profissional e não alucina fato inexistente? Responda APENAS 'SIM' ou 'NAO'. Resposta: {{ $json.response }}",
+                "options": {}
+            },
+            "name": "Self-Check Agent",
+            "type": "n8n-nodes-base.openAi",
+            "typeVersion": 1,
+            "position": [
+                900,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "path": "ai-guardrail",
+                "responseMode": "lastNode",
+                "options": {}
+            },
+            "name": "Webhook Input",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                240,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook Input": {
+            "main": [
+                [
+                    {
+                        "node": "Guardrail Check",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Guardrail Check": {
+            "main": [
+                [
+                    {
+                        "node": "AI Model Router",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "AI Model Router": {
+            "main": [
+                [
+                    {
+                        "node": "Self-Check Agent",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": false,
+    "name": "Advanced AI Guardrail System"
+}

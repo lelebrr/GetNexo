@@ -37,6 +37,52 @@ class CloudServicesEngine {
                 this.elb = new AWS.ELBv2();
                 this.route53 = new AWS.Route53();
                 this.kms = new AWS.KMS();
+
+                // Additional AWS Services Clients
+                this.codecommit = new AWS.CodeCommit();
+                this.codebuild = new AWS.CodeBuild();
+                this.codedeploy = new AWS.CodeDeploy();
+                this.apigateway = new AWS.APIGateway();
+                this.appsync = new AWS.AppSync();
+                this.amplify = new AWS.Amplify();
+                this.cognitoidentity = new AWS.CognitoIdentity();
+                this.cognitoidentityprovider = new AWS.CognitoIdentityServiceProvider();
+                this.sts = new AWS.STS();
+                this.organizations = new AWS.Organizations();
+                this.configservice = new AWS.ConfigService();
+                this.support = new AWS.Support();
+                this.costexplorer = new AWS.CostExplorer();
+                this.budgets = new AWS.Budgets();
+                this.savingsplans = new AWS.SavingsPlans();
+                this.efs = new AWS.EFS();
+                this.fsx = new AWS.FSx();
+                this.storagegateway = new AWS.StorageGateway();
+                this.backup = new AWS.Backup();
+                this.snowball = new AWS.Snowball();
+                this.outposts = new AWS.Outposts();
+                this.licensemanager = new AWS.LicenseManager();
+                this.imagebuilder = new AWS.Imagebuilder();
+                this.ssm = new AWS.SSM();
+                this.opsworks = new AWS.OpsWorks();
+                this.elasticbeanstalk = new AWS.ElasticBeanstalk();
+                this.codestar = new AWS.CodeStar();
+                this.proton = new AWS.Proton();
+                this.apprunner = new AWS.AppRunner();
+                this.ecs = new AWS.ECS();
+                this.eks = new AWS.EKS();
+                this.stepfunctions = new AWS.StepFunctions();
+                this.batch = new AWS.Batch();
+                this.lightsail = new AWS.Lightsail();
+                this.workspaces = new AWS.WorkSpaces();
+                this.appstream = new AWS.AppStream();
+                this.workdocs = new AWS.WorkDocs();
+                this.workmail = new AWS.WorkMail();
+                this.chime = new AWS.Chime();
+                this.connect = new AWS.Connect();
+                this.pinpoint = new AWS.Pinpoint();
+                this.ses = new AWS.SES();
+                this.xray = new AWS.XRay();
+
                 console.log('AWS SDK clients inicializados');
             } catch (error) {
                 console.warn('Erro ao inicializar AWS SDK:', error.message);

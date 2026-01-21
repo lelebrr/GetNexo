@@ -1,0 +1,133 @@
+{
+    "name": "Phase 6: Affiliate Commission & Gamification",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "affiliate-sale",
+                "options": {}
+            },
+            "name": "Webhook: New Sale",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "incr",
+                "key": "affiliate:{{$json[\"ref_code\"]}}:sales",
+                "value": 1
+            },
+            "name": "Redis: Update Stats",
+            "type": "n8n-nodes-base.redis",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "functionCode": "const com = $json[\"amount\"] * 0.40;\nreturn { \"commission\": com, \"pix_key\": $json[\"pix_key\"] };"
+            },
+            "name": "Calc: 40% Commission",
+            "type": "n8n-nodes-base.function",
+            "typeVersion": 1,
+            "position": [
+                650,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "url": "https://api.banco.com/v1/pix/send",
+                "method": "POST",
+                "jsonParameters": true,
+                "options": {},
+                "bodyParametersUi": {
+                    "parameter": [
+                        {
+                            "name": "key",
+                            "value": "={{$json[\"pix_key\"]}}"
+                        },
+                        {
+                            "name": "amount",
+                            "value": "={{$json[\"commission\"]}}"
+                        }
+                    ]
+                }
+            },
+            "name": "Pix API: Pay Affiliate",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 1,
+            "position": [
+                850,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "zadd",
+                "key": "affiliate_leaderboard",
+                "value": "={{$json[\"commission\"]}}",
+                "member": "={{$json[\"ref_code\"]}}"
+            },
+            "name": "Redis: Update Leaderboard",
+            "type": "n8n-nodes-base.redis",
+            "typeVersion": 1,
+            "position": [
+                1050,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook: New Sale": {
+            "main": [
+                [
+                    {
+                        "node": "Redis: Update Stats",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Redis: Update Stats": {
+            "main": [
+                [
+                    {
+                        "node": "Calc: 40% Commission",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Calc: 40% Commission": {
+            "main": [
+                [
+                    {
+                        "node": "Pix API: Pay Affiliate",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Pix API: Pay Affiliate": {
+            "main": [
+                [
+                    {
+                        "node": "Redis: Update Leaderboard",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

@@ -1,0 +1,181 @@
+{
+    "name": "Phase 6: Case Study & Black Friday",
+    "nodes": [
+        {
+            "parameters": {
+                "triggerTimes": {
+                    "item": [
+                        {
+                            "mode": "custom",
+                            "cronExpression": "0 0 1 11 *"
+                        }
+                    ]
+                }
+            },
+            "name": "Cron: Black Friday (Nov 1)",
+            "type": "n8n-nodes-base.cron",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "set",
+                "key": "bf_mode",
+                "value": "true",
+                "dataPropertyName": "result"
+            },
+            "name": "Redis: Set BF Flag",
+            "type": "n8n-nodes-base.redis",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "case-study-trigger",
+                "options": {}
+            },
+            "name": "Webhook: Case Study (3 Months)",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                250,
+                500
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "SELECT count(*) as tickets FROM tickets WHERE account_id = {{$json[\"account_id\"]}}"
+            },
+            "name": "Postgres: Get Stats",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                450,
+                500
+            ]
+        },
+        {
+            "parameters": {
+                "url": "http://browserless:3000/content",
+                "method": "POST",
+                "jsonParameters": true,
+                "bodyParametersUi": {
+                    "parameter": [
+                        {
+                            "name": "url",
+                            "value": "https://getnexo.com.br/recorder-ui"
+                        },
+                        {
+                            "name": "script",
+                            "value": "await page.click('#record_btn');"
+                        }
+                    ]
+                }
+            },
+            "name": "Browserless: Record Testimonial",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 1,
+            "position": [
+                650,
+                500
+            ]
+        },
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "feature-launch",
+                "options": {}
+            },
+            "name": "Webhook: Feature Launch",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                250,
+                700
+            ]
+        },
+        {
+            "parameters": {
+                "url": "https://us6.api.mailchimp.com/3.0/campaigns",
+                "method": "POST",
+                "authentication": "headerAuth",
+                "jsonParameters": true,
+                "bodyParametersUi": {
+                    "parameter": [
+                        {
+                            "name": "type",
+                            "value": "regular"
+                        },
+                        {
+                            "name": "recipients",
+                            "value": {
+                                "list_id": "MEDIA_LIST_ID"
+                            }
+                        }
+                    ]
+                }
+            },
+            "name": "Mailchimp: Press Release",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 1,
+            "position": [
+                450,
+                700
+            ]
+        }
+    ],
+    "connections": {
+        "Cron: Black Friday (Nov 1)": {
+            "main": [
+                [
+                    {
+                        "node": "Redis: Set BF Flag",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Webhook: Case Study (3 Months)": {
+            "main": [
+                [
+                    {
+                        "node": "Postgres: Get Stats",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Postgres: Get Stats": {
+            "main": [
+                [
+                    {
+                        "node": "Browserless: Record Testimonial",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Webhook: Feature Launch": {
+            "main": [
+                [
+                    {
+                        "node": "Mailchimp: Press Release",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

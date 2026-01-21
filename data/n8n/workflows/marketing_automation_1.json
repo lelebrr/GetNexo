@@ -1,0 +1,223 @@
+{
+    "name": "Phase 6: Trust Filter & Webinar Automation",
+    "nodes": [
+        {
+            "parameters": {},
+            "name": "Start",
+            "type": "n8n-nodes-base.start",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "trust-filter",
+                "options": {}
+            },
+            "name": "Webhook: Trust Filter",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                250,
+                500
+            ]
+        },
+        {
+            "parameters": {
+                "url": "http://browserless:3000/scrape",
+                "method": "POST",
+                "jsonParameters": true,
+                "options": {},
+                "bodyParametersUi": {
+                    "parameter": [
+                        {
+                            "name": "url",
+                            "value": "={{$json[\"profile_url\"]}}"
+                        }
+                    ]
+                }
+            },
+            "name": "Browserless: Scrape Profile",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 1,
+            "position": [
+                450,
+                500
+            ]
+        },
+        {
+            "parameters": {
+                "model": "gemini-pro",
+                "prompt": "=Analyze this LinkedIn profile content and determine if they post about E-commerce. Reply YES or NO.\\n\\nContent: {{$json[\"data\"]}}"
+            },
+            "name": "AI: Trust Analysis",
+            "type": "n8n-nodes-base.googleGemini",
+            "typeVersion": 1,
+            "position": [
+                650,
+                500
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "string": [
+                        {
+                            "value1": "={{$json[\"text\"]}}",
+                            "operation": "contains",
+                            "value2": "YES"
+                        }
+                    ]
+                }
+            },
+            "name": "If Trusted",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                850,
+                500
+            ]
+        },
+        {
+            "parameters": {
+                "functionCode": "return { \"approved\": true };"
+            },
+            "name": "Approve Lead",
+            "type": "n8n-nodes-base.function",
+            "typeVersion": 1,
+            "position": [
+                1050,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "triggerTimes": {
+                    "item": [
+                        {
+                            "mode": "custom",
+                            "cronExpression": "0 20 5 * *"
+                        }
+                    ]
+                }
+            },
+            "name": "Cron: Webinar (5th 8PM)",
+            "type": "n8n-nodes-base.cron",
+            "typeVersion": 1,
+            "position": [
+                250,
+                700
+            ]
+        },
+        {
+            "parameters": {
+                "command": "python3 /home/lele/getnexo/scripts/generate_slides.py"
+            },
+            "name": "Generates PDF Slides",
+            "type": "n8n-nodes-base.executeCommand",
+            "typeVersion": 1,
+            "position": [
+                450,
+                700
+            ]
+        },
+        {
+            "parameters": {
+                "authentication": "headerAuth",
+                "url": "https://api.zoom.us/v2/users/me/meetings",
+                "method": "POST",
+                "jsonParameters": true,
+                "bodyParametersUi": {
+                    "parameter": [
+                        {
+                            "name": "topic",
+                            "value": "Webinar Mensal Use Nexo"
+                        },
+                        {
+                            "name": "type",
+                            "value": 2
+                        }
+                    ]
+                }
+            },
+            "name": "Zoom: Create Meeting",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 1,
+            "position": [
+                650,
+                700
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook: Trust Filter": {
+            "main": [
+                [
+                    {
+                        "node": "Browserless: Scrape Profile",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Browserless: Scrape Profile": {
+            "main": [
+                [
+                    {
+                        "node": "AI: Trust Analysis",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "AI: Trust Analysis": {
+            "main": [
+                [
+                    {
+                        "node": "If Trusted",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "If Trusted": {
+            "main": [
+                [
+                    {
+                        "node": "Approve Lead",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Cron: Webinar (5th 8PM)": {
+            "main": [
+                [
+                    {
+                        "node": "Generates PDF Slides",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Generates PDF Slides": {
+            "main": [
+                [
+                    {
+                        "node": "Zoom: Create Meeting",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

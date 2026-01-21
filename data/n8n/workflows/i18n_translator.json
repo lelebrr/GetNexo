@@ -1,0 +1,158 @@
+{
+    "name": "i18n AI Translator",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "i18n",
+                "options": {}
+            },
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                100,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "get",
+                "key": "=i18n:{{$json.body.key}}:{{$json.body.lang}}"
+            },
+            "name": "Check Redis",
+            "type": "n8n-nodes-base.redis",
+            "typeVersion": 1,
+            "position": [
+                300,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "boolean": [
+                        {
+                            "value1": "={{$json.value === null}}",
+                            "value2": true
+                        }
+                    ]
+                }
+            },
+            "name": "If Missing",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                500,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "model": "gpt-4o-mini",
+                "prompt": "=Translate the following text to {{$node[\"Webhook\"].json.body.lang}}: '{{$node[\"Webhook\"].json.body.fallback}}'. Return only the translated string."
+            },
+            "name": "AI Translate",
+            "type": "n8n-nodes-base.openAi",
+            "typeVersion": 1,
+            "position": [
+                700,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "set",
+                "key": "=i18n:{{$node[\"Webhook\"].json.body.key}}:{{$node[\"Webhook\"].json.body.lang}}",
+                "value": "={{$json.choices[0].message.content}}",
+                "options": {
+                    "expire": 31536000
+                }
+            },
+            "name": "Save Redis",
+            "type": "n8n-nodes-base.redis",
+            "typeVersion": 1,
+            "position": [
+                900,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={\n  \"translation\": \"{{$json.value || $node[\"AI Translate\"].json.choices[0].message.content}}\"\n}"
+            },
+            "name": "Respond",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                1100,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Check Redis",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check Redis": {
+            "main": [
+                [
+                    {
+                        "node": "If Missing",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "If Missing": {
+            "main": [
+                [
+                    {
+                        "node": "AI Translate",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Respond",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "AI Translate": {
+            "main": [
+                [
+                    {
+                        "node": "Save Redis",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Save Redis": {
+            "main": [
+                [
+                    {
+                        "node": "Respond",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

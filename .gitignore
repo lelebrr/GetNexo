@@ -1,4 +1,9 @@
-data/
+# Data directories - Exclude heavy DBs but keep configs
+data/postgres/
+data/redis/
+data/qdrant/
+data/chat_logs/
+
 node-linux/
 node_modules/
 .env
@@ -6,10 +11,11 @@ node_modules/
 *.tar.gz
 *.log
 *.db
+*.db-wal
+*.db-shm
+
 postgres_data/
 redis_data/
 .vscode/
 dist/
 build/
-node_modules
-node_modules

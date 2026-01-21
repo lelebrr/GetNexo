@@ -1,0 +1,81 @@
+{
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "GET",
+                "url": "https://{{ $env.SHOPIFY_STORE }}/admin/api/2024-10/products/{{ $json.product_id }}.json",
+                "authentication": "basicAuth",
+                "options": {}
+            },
+            "name": "Get Shopify Product",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 3,
+            "position": [
+                460,
+                300
+            ],
+            "credentials": {
+                "httpBasicAuth": {
+                    "id": "shopify_creds",
+                    "name": "Shopify Credentials"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "key": "shopify_stock_{{ $json.product_id }}",
+                "value": "={{ $json.body.product.variants[0].inventory_quantity }}",
+                "options": {
+                    "expire": 300
+                }
+            },
+            "name": "Cache Redis Stock",
+            "type": "n8n-nodes-base.redis",
+            "typeVersion": 1,
+            "position": [
+                680,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "path": "check-stock",
+                "responseMode": "lastNode",
+                "options": {}
+            },
+            "name": "Webhook Trigger",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                240,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "Get Shopify Product",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Get Shopify Product": {
+            "main": [
+                [
+                    {
+                        "node": "Cache Redis Stock",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": false,
+    "name": "Shopify Stock Check (Optimized)"
+}

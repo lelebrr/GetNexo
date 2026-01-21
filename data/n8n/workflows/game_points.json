@@ -1,0 +1,115 @@
+{
+    "name": "Mini-Game Points Engine",
+    "nodes": [
+        {
+            "parameters": {
+                "path": "game",
+                "method": "POST",
+                "options": {}
+            },
+            "name": "Webhook Game",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                100,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "incrby",
+                "key": "={{ \"client_points:\" + $json.body.client_id }}",
+                "value": 10
+            },
+            "name": "Add Points Redis",
+            "type": "n8n-nodes-base.redis",
+            "typeVersion": 1,
+            "position": [
+                300,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "zadd",
+                "key": "game_leaderboard",
+                "value": "={{ $json.body.client_id }}",
+                "score": "={{ $json.points }}"
+            },
+            "name": "Update Leaderboard",
+            "type": "n8n-nodes-base.redis",
+            "typeVersion": 1,
+            "position": [
+                500,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "functionCode": "if (items[0].json.points > 100) {\n  return [{ json: { grant_coupon: true, code: 'GAMEMASTER20' } }];\n}\nreturn [{ json: { grant_coupon: false } }];"
+            },
+            "name": "Check Threshold",
+            "type": "n8n-nodes-base.function",
+            "typeVersion": 1,
+            "position": [
+                700,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "message": "🏆 Parabéns! Você atingiu 100 pontos no game!\nAqui está seu cupom especial: *{{ $json.code }}*",
+                "additionalFields": {
+                    "conversation_id": "={{ $json.body.conversation_id }}"
+                }
+            },
+            "name": "Send Coupon Chatwoot",
+            "type": "n8n-nodes-base.chatwoot",
+            "typeVersion": 1,
+            "position": [
+                900,
+                200
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook Game": {
+            "main": [
+                [
+                    {
+                        "node": "Add Points Redis",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Add Points Redis": {
+            "main": [
+                [
+                    {
+                        "node": "Update Leaderboard",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Check Threshold",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check Threshold": {
+            "main": [
+                [
+                    {
+                        "node": "Send Coupon Chatwoot",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}
