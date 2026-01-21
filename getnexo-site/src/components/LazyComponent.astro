@@ -1,0 +1,153 @@
+---
+// Componente para Lazy Loading de Componentes Pesados
+// Performance Strategy: Carrega apenas quando visível na viewport
+export interface Props {
+  component: string;
+  fallback?: string;
+  rootMargin?: string;
+  threshold?: number;
+  class?: string;
+}
+
+const {
+  component,
+  fallback = '<div class="lazy-placeholder">Carregando...</div>',
+  rootMargin = '50px',
+  threshold = 0.1,
+  class: className
+} = Astro.props;
+---
+
+<div class={`lazy-component ${className || ''}`} data-component={component} data-root-margin={rootMargin} data-threshold={threshold}>
+  <div class="lazy-fallback" set:html={fallback}></div>
+</div>
+
+<style>
+  .lazy-component {
+    min-height: 100px;
+    position: relative;
+  }
+
+  .lazy-fallback {
+    opacity: 0.7;
+    filter: blur(1px);
+    transition: opacity 0.3s ease;
+  }
+
+  .lazy-component.loaded .lazy-fallback {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .lazy-component.loaded .lazy-content {
+    opacity: 1;
+  }
+
+  .lazy-content {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+</style>
+
+<script>
+  class LazyComponentLoader {
+    components: Map<string, any>;
+    observer: IntersectionObserver | null;
+
+    constructor() {
+      this.components = new Map();
+      this.observer = null;
+      this.init();
+    }
+
+    async init() {
+      if ('IntersectionObserver' in window) {
+        this.observer = new IntersectionObserver((entries) => {
+          entries.forEach(async (entry) => {
+            if (entry.isIntersecting) {
+              const container = entry.target as HTMLElement;
+              await this.loadComponent(container);
+              this.observer?.unobserve(container);
+            }
+          });
+        }, {
+          rootMargin: '50px',
+          threshold: 0.1
+        });
+
+        // Observa todos os componentes lazy
+        document.querySelectorAll('.lazy-component[data-component]').forEach(el => {
+          const container = el as HTMLElement;
+          const rootMargin = container.dataset.rootMargin || '50px';
+          const threshold = parseFloat(container.dataset.threshold || '0.1');
+
+          // Cria observer personalizado se necessário
+          if (rootMargin !== '50px' || threshold !== 0.1) {
+            const customObserver = new IntersectionObserver(async (entries) => {
+              entries.forEach(async (entry) => {
+                if (entry.isIntersecting) {
+                  const container = entry.target as HTMLElement;
+                  await this.loadComponent(container);
+                  customObserver.unobserve(container);
+                }
+              });
+            }, { rootMargin, threshold });
+
+            customObserver.observe(container);
+          } else {
+            this.observer?.observe(container);
+          }
+        });
+      } else {
+        // Fallback para navegadores antigos
+        await this.loadAllComponents();
+      }
+    }
+
+    async loadComponent(container: HTMLElement) {
+      const componentName = container.dataset.component;
+      if (!componentName) return;
+
+      try {
+        // Performance: Cache de módulos carregados
+        if (!this.components.has(componentName)) {
+          // Import dinâmico baseado no nome do componente
+          const module = await import(`./${componentName}.astro`);
+          this.components.set(componentName, module.default);
+        }
+
+        const Component = this.components.get(componentName);
+
+        // Renderiza o componente
+        const content = await Component();
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'lazy-content';
+        contentDiv.innerHTML = content;
+
+        container.appendChild(contentDiv);
+        container.classList.add('loaded');
+
+      } catch (error) {
+        console.error(`Erro ao carregar componente ${componentName}:`, error);
+        container.innerHTML = '<div class="lazy-error">Erro ao carregar componente</div>';
+      }
+    }
+
+    async loadAllComponents() {
+      const containers = document.querySelectorAll('.lazy-component[data-component]');
+      for (const container of containers) {
+        await this.loadComponent(container as HTMLElement);
+      }
+    }
+  }
+
+  // Inicializa quando DOM estiver pronto
+  document.addEventListener('DOMContentLoaded', () => {
+    new LazyComponentLoader();
+  });
+
+  // Também inicializa quando novos componentes são adicionados dinamicamente
+  document.addEventListener('lazy-component-added', () => {
+    new LazyComponentLoader();
+  });
+</script>

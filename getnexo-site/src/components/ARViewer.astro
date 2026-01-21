@@ -1,0 +1,341 @@
+---
+// AR Viewer component using WebXR
+export interface Props {
+  modelUrl?: string;
+  fallbackImage?: string;
+  title?: string;
+}
+
+const {
+  modelUrl = '/models/getnexo-logo.glb',
+  fallbackImage = '/assets/logo.svg',
+  title = "Visualizar em AR"
+} = Astro.props;
+---
+
+<div class="ar-container">
+  <div class="ar-viewer" id="ar-viewer">
+    <canvas id="ar-canvas" width="800" height="600"></canvas>
+
+    <!-- Fallback for non-AR devices -->
+    <div class="ar-fallback">
+      <img src={fallbackImage} alt="GetNexo AR Preview" class="ar-preview-image" />
+      <p>Realidade Aumentada não suportada neste dispositivo</p>
+      <button class="ar-fallback-btn" onclick="openFallbackView()">
+        Ver em 3D Simulado
+      </button>
+    </div>
+  </div>
+
+  <div class="ar-controls">
+    <button id="enter-ar" class="ar-btn glass-panel">
+      <span class="ar-icon">📱</span>
+      {title}
+    </button>
+    <button id="reset-ar" class="ar-btn glass-panel">
+      <span class="ar-icon">🔄</span>
+      Reset
+    </button>
+  </div>
+</div>
+
+<style>
+  .ar-container {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #000;
+  }
+
+  .ar-viewer {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    border-radius: 12px;
+  }
+
+  #ar-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 12px;
+  }
+
+  .ar-fallback {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    text-align: center;
+    padding: 20px;
+    border-radius: 12px;
+  }
+
+  .ar-preview-image {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.5));
+  }
+
+  .ar-fallback p {
+    margin: 10px 0 20px;
+    font-size: 14px;
+    opacity: 0.8;
+  }
+
+  .ar-fallback-btn {
+    background: var(--primary);
+    color: black;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .ar-fallback-btn:hover {
+    background: var(--success);
+    transform: translateY(-2px);
+  }
+
+  .ar-controls {
+    display: flex;
+    gap: 10px;
+    padding: 20px;
+    justify-content: center;
+  }
+
+  .ar-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 25px;
+    background: rgba(0, 212, 255, 0.1);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .ar-btn:hover {
+    background: rgba(0, 212, 255, 0.2);
+    transform: translateY(-2px);
+  }
+
+  .ar-icon {
+    font-size: 16px;
+  }
+
+  /* Mobile responsive */
+  @media (max-width: 768px) {
+    .ar-viewer {
+      height: 300px;
+    }
+
+    .ar-controls {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .ar-btn {
+      width: 200px;
+      justify-content: center;
+    }
+  }
+</style>
+
+<script>
+  class ARViewer {
+    constructor() {
+      this.scene = null;
+      this.camera = null;
+      this.renderer = null;
+      this.model = null;
+      this.isARSupported = false;
+
+      this.init();
+    }
+
+    async init() {
+      await this.checkARSupport();
+
+      if (this.isARSupported) {
+        this.setupThreeJS();
+        this.setupAR();
+        this.loadModel();
+        this.setupControls();
+      } else {
+        this.showFallback();
+      }
+    }
+
+    async checkARSupport() {
+      if ('xr' in navigator) {
+        try {
+          this.isARSupported = await navigator.xr.isSessionSupported('immersive-ar');
+        } catch (error) {
+          console.log('AR not supported:', error);
+        }
+      }
+    }
+
+    setupThreeJS() {
+      // Basic Three.js setup for AR
+      this.scene = new THREE.Scene();
+      this.camera = new THREE.PerspectiveCamera(75, 800/600, 0.1, 1000);
+
+      this.renderer = new THREE.WebGLRenderer({
+        canvas: document.getElementById('ar-canvas'),
+        alpha: true
+      });
+      this.renderer.setSize(800, 600);
+
+      // Lighting
+      const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+      this.scene.add(light);
+
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
+      directionalLight.position.set(10, 10, 5);
+      this.scene.add(directionalLight);
+    }
+
+    async setupAR() {
+      const enterARBtn = document.getElementById('enter-ar');
+      if (enterARBtn) {
+        enterARBtn.addEventListener('click', async () => {
+          try {
+            const session = await navigator.xr.requestSession('immersive-ar', {
+              requiredFeatures: ['local-floor', 'dom-overlay'],
+              domOverlay: { root: document.getElementById('ar-viewer') }
+            });
+
+            this.onSessionStarted(session);
+          } catch (error) {
+            console.log('Failed to start AR session:', error);
+            this.enterSimulatedAR();
+          }
+        });
+      }
+    }
+
+    onSessionStarted(session) {
+      session.addEventListener('end', () => {
+        this.renderer.xr.setSession(null);
+      });
+
+      this.renderer.xr.setSession(session);
+
+      // Hide fallback, show canvas
+      document.querySelector('.ar-fallback').style.display = 'none';
+      document.getElementById('ar-canvas').style.display = 'block';
+
+      this.animate();
+    }
+
+    enterSimulatedAR() {
+      // Fallback: show 3D model in regular view
+      document.querySelector('.ar-fallback').style.display = 'none';
+      document.getElementById('ar-canvas').style.display = 'block';
+
+      this.camera.position.z = 5;
+      this.animate();
+    }
+
+    async loadModel() {
+      // Simple geometric model as fallback
+      const geometry = new THREE.BoxGeometry(1, 1, 1);
+      const material = new THREE.MeshPhongMaterial({
+        color: 0x00d4ff,
+        transparent: true,
+        opacity: 0.8
+      });
+      this.model = new THREE.Mesh(geometry, material);
+      this.scene.add(this.model);
+
+      // Add GetNexo branding
+      const textGeometry = new THREE.PlaneGeometry(2, 0.5);
+      const textMaterial = new THREE.MeshBasicMaterial({
+        color: 0x00ff9d,
+        transparent: true,
+        opacity: 0.9
+      });
+      const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+      textMesh.position.set(0, -1.5, 0);
+      this.scene.add(textMesh);
+    }
+
+    setupControls() {
+      const resetBtn = document.getElementById('reset-ar');
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          if (this.model) {
+            this.model.position.set(0, 0, 0);
+            this.model.rotation.set(0, 0, 0);
+          }
+          this.camera.position.set(0, 0, 5);
+          this.camera.lookAt(0, 0, 0);
+        });
+      }
+    }
+
+    animate() {
+      if (this.model) {
+        this.model.rotation.x += 0.01;
+        this.model.rotation.y += 0.01;
+      }
+
+      this.renderer.render(this.scene, this.camera);
+
+      if (!this.renderer.xr.isPresenting) {
+        requestAnimationFrame(() => this.animate());
+      }
+    }
+
+    showFallback() {
+      // Fallback already shown by default
+    }
+  }
+
+  // Global function for fallback
+  window.openFallbackView = function() {
+    const viewer = document.getElementById('ar-viewer');
+    const fallback = viewer.querySelector('.ar-fallback');
+
+    // Show simulated 3D view
+    fallback.innerHTML = `
+      <div style="text-align: center;">
+        <h3>Visualização 3D Simulada</h3>
+        <p>O GetNexo em realidade aumentada</p>
+        <div style="width: 200px; height: 200px; background: linear-gradient(45deg, #00d4ff, #00ff9d); border-radius: 12px; margin: 20px auto; display: flex; align-items: center; justify-content: center; font-size: 48px;">N</div>
+        <button onclick="this.parentElement.parentElement.style.display='flex'" class="ar-fallback-btn" style="margin-top: 20px;">Voltar</button>
+      </div>
+    `;
+  };
+
+  // Initialize AR viewer
+  document.addEventListener('DOMContentLoaded', () => {
+    // Load Three.js if not already loaded
+    if (typeof THREE === 'undefined') {
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+      script.onload = () => new ARViewer();
+      document.head.appendChild(script);
+    } else {
+      new ARViewer();
+    }
+  });
+</script>

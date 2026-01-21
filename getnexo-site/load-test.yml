@@ -1,0 +1,72 @@
+config:
+  target: 'http://localhost:4321'
+  phases:
+    # Fase de aquecimento
+    - duration: 60
+      arrivalRate: 5
+      name: "Warm up"
+    # Fase de carga normal
+    - duration: 120
+      arrivalRate: 10
+      name: "Normal load"
+    # Fase de stress
+    - duration: 60
+      arrivalRate: 20
+      name: "Stress test"
+    # Fase de pico
+    - duration: 30
+      arrivalRate: 50
+      name: "Peak load"
+  defaults:
+    headers:
+      Content-Type: 'application/json'
+
+scenarios:
+  - name: "Homepage load"
+    weight: 40
+    requests:
+      - get:
+          url: "/"
+
+  - name: "API dashboard"
+    weight: 20
+    requests:
+      - get:
+          url: "/api/stream/dashboard"
+          headers:
+            Authorization: "Bearer demo_token"
+
+  - name: "API metrics"
+    weight: 15
+    requests:
+      - get:
+          url: "/api/metrics"
+
+  - name: "GraphQL queries"
+    weight: 15
+    requests:
+      - post:
+          url: "/api/graphql"
+          json:
+            query: "query { health }"
+
+  - name: "Mixed requests"
+    weight: 10
+    requests:
+      - get:
+          url: "/"
+      - get:
+          url: "/api/stream/dashboard"
+          headers:
+            Authorization: "Bearer demo_token"
+      - get:
+          url: "/api/metrics"
+
+# Plugins para métricas adicionais
+plugins:
+  metrics-by-endpoint: {}
+
+# Configurações de relatório
+ensure:
+  p95: 2000  # 95% das requests devem ser < 2s
+  maxErrorRate: 1  # Máximo 1% de erro

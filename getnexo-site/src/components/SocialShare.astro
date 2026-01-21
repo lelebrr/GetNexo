@@ -1,0 +1,287 @@
+---
+// Social Share component
+export interface Props {
+  url?: string;
+  title?: string;
+  description?: string;
+  hashtags?: string;
+  showCopy?: boolean;
+}
+
+const {
+  url = Astro.url.href,
+  title = "GetNexo – IA que fecha vendas sozinho 24h",
+  description = "Assistente de Vendas WhatsApp Grátis. Zero nuvem. Zero risco.",
+  hashtags = "getnexo,whatsapp,ia,vendas",
+  showCopy = true
+} = Astro.props;
+
+const encodedUrl = encodeURIComponent(url);
+const encodedTitle = encodeURIComponent(title);
+const encodedDescription = encodeURIComponent(description);
+---
+
+<div class="social-share">
+  <h4 class="share-title">Compartilhar</h4>
+  <div class="share-buttons">
+    <a
+      href={`https://wa.me/?text=${encodedTitle}%20${encodedUrl}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="share-btn whatsapp"
+      aria-label="Compartilhar no WhatsApp"
+    >
+      <span class="share-icon">📱</span>
+      WhatsApp
+    </a>
+
+    <a
+      href={`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}&hashtags=${hashtags}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="share-btn twitter"
+      aria-label="Compartilhar no Twitter"
+    >
+      <span class="share-icon">🐦</span>
+      Twitter
+    </a>
+
+    <a
+      href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedTitle}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="share-btn facebook"
+      aria-label="Compartilhar no Facebook"
+    >
+      <span class="share-icon">📘</span>
+      Facebook
+    </a>
+
+    {showCopy && (
+      <button
+        class="share-btn copy-link"
+        onclick="copyToClipboard()"
+        aria-label="Copiar link"
+      >
+        <span class="share-icon">🔗</span>
+        Copiar Link
+      </button>
+    )}
+  </div>
+
+  <div id="copy-toast" class="copy-toast" style="display: none;">
+    <span class="toast-icon">✅</span>
+    Link copiado!
+  </div>
+</div>
+
+<style>
+  .social-share {
+    margin: 2rem 0;
+    text-align: center;
+  }
+
+  .share-title {
+    color: white;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .share-buttons {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.2rem;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    min-height: 44px;
+  }
+
+  .share-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  }
+
+  .share-btn:active {
+    transform: translateY(0);
+  }
+
+  .whatsapp {
+    background: linear-gradient(135deg, #25d366, #128c7e);
+    color: white;
+  }
+
+  .whatsapp:hover {
+    background: linear-gradient(135deg, #128c7e, #075e54);
+  }
+
+  .twitter {
+    background: #1da1f2;
+    color: white;
+  }
+
+  .twitter:hover {
+    background: #0d95e8;
+  }
+
+  .facebook {
+    background: #4267b2;
+    color: white;
+  }
+
+  .facebook:hover {
+    background: #365899;
+  }
+
+  .copy-link {
+    background: rgba(0, 212, 255, 0.1);
+    color: #00d4ff;
+    border-color: rgba(0, 212, 255, 0.3);
+    cursor: pointer;
+  }
+
+  .copy-link:hover {
+    background: rgba(0, 212, 255, 0.2);
+  }
+
+  .share-icon {
+    font-size: 1rem;
+  }
+
+  .copy-toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 255, 157, 0.9);
+    color: black;
+    padding: 0.8rem 1.5rem;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 1000;
+    animation: toastSlideUp 0.3s ease;
+  }
+
+  .toast-icon {
+    font-size: 1rem;
+  }
+
+  @keyframes toastSlideUp {
+    from {
+      transform: translateX(-50%) translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  }
+
+  /* Mobile responsive */
+  @media (max-width: 768px) {
+    .share-buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .share-btn {
+      width: 200px;
+      justify-content: center;
+    }
+
+    .social-share {
+      margin: 1.5rem 0;
+    }
+  }
+</style>
+
+<script>
+  // Copy to clipboard functionality
+  window.copyToClipboard = async function() {
+    const url = window.location.href;
+    try {
+      await navigator.clipboard.writeText(url);
+      showCopyToast();
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = url;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      showCopyToast();
+    }
+  };
+
+  function showCopyToast() {
+    const toast = document.getElementById('copy-toast');
+    if (toast) {
+      toast.style.display = 'flex';
+      setTimeout(() => {
+        toast.style.animation = 'toastFadeOut 0.3s ease';
+        setTimeout(() => {
+          toast.style.display = 'none';
+          toast.style.animation = '';
+        }, 300);
+      }, 2000);
+    }
+  }
+
+  // Add toast fade out animation
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes toastFadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Track social share events
+  document.addEventListener('DOMContentLoaded', () => {
+    const shareButtons = document.querySelectorAll('.share-btn:not(.copy-link)');
+
+    shareButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        const platform = button.className.split(' ').find(cls => ['whatsapp', 'twitter', 'facebook'].includes(cls));
+
+        // Send to analytics
+        if (window.gtag) {
+          gtag('event', 'share', {
+            method: platform,
+            content_type: 'page',
+            item_id: window.location.pathname
+          });
+        }
+
+        // Show success feedback
+        const originalText = button.innerHTML;
+        button.innerHTML = '<span class="share-icon">✅</span> Compartilhado!';
+        button.style.background = 'var(--success)';
+
+        setTimeout(() => {
+          button.innerHTML = originalText;
+          button.style.background = '';
+        }, 1500);
+      });
+    });
+  });
+</script>

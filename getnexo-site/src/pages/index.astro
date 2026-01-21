@@ -183,7 +183,7 @@ const homeSchema = {
   .hero-split { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; padding: 12rem 5% 6rem; max-width: 1400px; margin: 0 auto; align-items: center; }
 
   .hero-badge { background: rgba(0, 212, 255, 0.1); color: #00d4ff; padding: 0.5rem 1.2rem; border-radius: 50px; font-size: 0.85rem; font-weight: 800; border: 1px solid rgba(0, 212, 255, 0.2); display: inline-block; margin-bottom: 2rem; }
-  .hero-title { font-size: clamp(2.5rem, 6vw, 4.5rem); line-height: 1.1; margin-bottom: 1.5rem; font-weight: 900; color: white; }
+  .hero-title { font-size: clamp(2rem, 5vw, 4.5rem); line-height: 1.1; margin-bottom: 1.5rem; font-weight: 900; color: white; }
   .hero-subtitle { font-size: 1.4rem; color: #e2e8f0; max-width: 650px; margin-bottom: 3.5rem; line-height: 1.6; }
 
   .hero-ctas { display: flex; gap: 1.5rem; margin-bottom: 3rem; }
@@ -195,7 +195,7 @@ const homeSchema = {
   .hero-trust { display: flex; gap: 2rem; color: #e2e8f0; font-size: 0.9rem; font-weight: 700; }
 
   /* 3D Ara Hologram */
-  .hologram-container { position: relative; width: 500px; height: 600px; display: flex; align-items: center; justify-content: center; perspective: 1000px; margin: 0 auto; }
+  .hologram-container { position: relative; width: 100%; max-width: 500px; height: 600px; display: flex; align-items: center; justify-content: center; perspective: 1000px; margin: 0 auto; }
   .hologram-core { position: relative; width: 250px; height: 250px; transform-style: preserve-3d; transition: transform 0.1s ease-out; }
 
   .hologram-ring { position: absolute; inset: -20px; border: 2px solid #00d4ff; border-radius: 50%; opacity: 0.3; }
@@ -247,7 +247,7 @@ const homeSchema = {
   .metrics-section { max-width: 1000px; margin: 4rem auto; display: flex; justify-content: space-around; padding: 4rem; border-radius: 32px; text-align: center; }
   .metric-item { flex: 1; }
   .m-val { display: block; font-size: 3rem; font-weight: 900; color: #00ff9d; line-height: 1; margin-bottom: 0.5rem; }
-  .m-label { color: #e2e8f0; font-size: 0.9rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+  .m-label { color: white; font-size: 0.9rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
   .metric-divider { width: 1px; background: rgba(255,255,255,0.05); }
 
   /* Final CTA */
@@ -263,7 +263,7 @@ const homeSchema = {
 
   /* Responsive */
   @media (max-width: 1000px) {
-    .hero-split { grid-template-columns: 1fr; text-align: center; gap: 6rem; }
+    .hero-split { grid-template-columns: 1fr; text-align: center; gap: 4rem; padding-top: 8rem; }
     .hero-subtitle, .hero-trust { margin-left: auto; margin-right: auto; }
     .hero-ctas, .hero-trust { justify-content: center; }
     .hero-trust { flex-wrap: wrap; }
@@ -272,5 +272,24 @@ const homeSchema = {
     .cta-actions { flex-direction: column; gap: 1rem; }
     .cta-box h2 { font-size: 2.5rem; }
     .grid-cards { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 768px) {
+    .hero-title { font-size: 2.2rem; line-height: 1.2; }
+    .hero-subtitle { font-size: 1rem; margin-bottom: 2rem; }
+    
+    .hero-ctas { flex-direction: column; padding: 0 1rem; }
+    .btn-primary-glow, .btn-outline { width: 100%; padding: 1rem; }
+    
+    .hero-trust { flex-direction: column; gap: 0.8rem; }
+    
+    /* Fix Hologram overflow */
+    .hologram-container { width: 100%; height: 400px; transform: scale(0.9); }
+    .floating-chat { right: 50%; transform: translateX(50%) translateY(0) !important; bottom: -20px; animation: none; width: 200px; }
+    
+    .cta-box { padding: 3rem 1.5rem; }
+    .cta-box h2 { font-size: 1.8rem; }
+    
+    .section-header h2 { font-size: 2rem; }
   }
 </style>

@@ -1,0 +1,245 @@
+---
+// VideoPlayer component with streaming support
+export interface Props {
+  src: string;
+  poster?: string;
+  title?: string;
+  autoplay?: boolean;
+  muted?: boolean;
+  controls?: boolean;
+  loop?: boolean;
+  streaming?: boolean;
+}
+
+const {
+  src,
+  poster,
+  title = "Vídeo GetNexo",
+  autoplay = false,
+  muted = true,
+  controls = true,
+  loop = false,
+  streaming = false
+} = Astro.props;
+---
+
+<div class="video-container">
+  <video
+    class="video-player"
+    poster={poster}
+    autoplay={autoplay}
+    muted={muted}
+    controls={controls}
+    loop={loop}
+    preload="metadata"
+    playsinline
+    data-streaming={streaming}
+  >
+    <source src={src} type={streaming ? "application/x-mpegURL" : "video/mp4"} />
+    Seu navegador não suporta vídeo HTML5.
+  </video>
+
+  {streaming && (
+    <script>
+      // Basic HLS streaming support
+      if (typeof Hls !== 'undefined') {
+        const video = document.querySelector('.video-player[data-streaming="true"]');
+        if (video && Hls.isSupported()) {
+          const hls = new Hls();
+          hls.loadSource(video.querySelector('source').src);
+          hls.attachMedia(video);
+        }
+      }
+    </script>
+  )}
+</div>
+
+<style>
+  .video-container {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #000;
+  }
+
+  .video-player {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+  }
+
+  .video-player:hover {
+    transform: scale(1.02);
+  }
+
+  /* Custom video controls styling */
+  .video-player::-webkit-media-controls-panel {
+    background: rgba(0, 0, 0, 0.8);
+  }
+
+  .video-player::-webkit-media-controls-current-time-display,
+  .video-player::-webkit-media-controls-time-remaining-display {
+    color: #00d4ff;
+  }
+
+  .video-player::-webkit-media-controls-play-button {
+    background-color: #00d4ff;
+    border-radius: 50%;
+  }
+
+  /* Loading spinner */
+  .video-player::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    border: 3px solid rgba(0, 212, 255, 0.3);
+    border-top: 3px solid #00d4ff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    display: none;
+  }
+
+  .video-player[preload="none"]:not([autoplay])::before {
+    display: block;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .video-container {
+      border-radius: 8px;
+    }
+
+    .video-player {
+      border-radius: 8px;
+    }
+  }
+</style>
+
+<script>
+  // Video streaming and performance optimizations
+  class VideoStreamer {
+    constructor() {
+      this.init();
+    }
+
+    init() {
+      const videos = document.querySelectorAll('.video-player');
+
+      videos.forEach(video => {
+        // Lazy loading for videos
+        this.lazyLoadVideo(video);
+
+        // Quality adaptation based on connection
+        if ('connection' in navigator) {
+          this.adaptQuality(video);
+        }
+
+        // Performance monitoring
+        this.monitorPerformance(video);
+      });
+    }
+
+    lazyLoadVideo(video) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const source = video.querySelector('source');
+            if (source && !source.src.includes('#loaded')) {
+              source.src = source.src + '#loaded';
+              video.load();
+            }
+            observer.unobserve(video);
+          }
+        });
+      }, {
+        threshold: 0.1,
+        rootMargin: '50px'
+      });
+
+      observer.observe(video);
+    }
+
+    adaptQuality(video) {
+      const connection = navigator.connection;
+      if (!connection) return;
+
+      const adaptQuality = () => {
+        const effectiveType = connection.effectiveType;
+        const source = video.querySelector('source');
+
+        // Adjust quality based on connection speed
+        if (effectiveType === 'slow-2g' || effectiveType === '2g') {
+          // Load lower quality version
+          this.setLowQuality(video);
+        } else if (effectiveType === '3g') {
+          // Load medium quality
+          this.setMediumQuality(video);
+        } else {
+          // Load high quality
+          this.setHighQuality(video);
+        }
+      };
+
+      connection.addEventListener('change', adaptQuality);
+      adaptQuality();
+    }
+
+    setLowQuality(video) {
+      // Implementation for switching to low quality stream
+      console.log('Switching to low quality video');
+    }
+
+    setMediumQuality(video) {
+      // Implementation for switching to medium quality stream
+      console.log('Switching to medium quality video');
+    }
+
+    setHighQuality(video) {
+      // Implementation for switching to high quality stream
+      console.log('Switching to high quality video');
+    }
+
+    monitorPerformance(video) {
+      const observer = new PerformanceObserver((list) => {
+        for (const entry of list.getEntries()) {
+          if (entry.entryType === 'measure') {
+            console.log('Video performance:', entry.name, entry.duration);
+          }
+        }
+      });
+
+      // Monitor video buffering
+      video.addEventListener('waiting', () => {
+        performance.mark('video-buffering-start');
+      });
+
+      video.addEventListener('playing', () => {
+        performance.mark('video-playing-start');
+        performance.measure('video-buffer-time', 'video-buffering-start', 'video-playing-start');
+      });
+
+      // Monitor video load time
+      video.addEventListener('loadeddata', () => {
+        performance.mark('video-loaded');
+        performance.measure('video-load-time', 'navigationStart', 'video-loaded');
+      });
+    }
+  }
+
+  // Initialize video streamer
+  document.addEventListener('DOMContentLoaded', () => {
+    new VideoStreamer();
+  });
+</script>

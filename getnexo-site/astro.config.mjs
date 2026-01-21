@@ -4,6 +4,7 @@ import react from '@astrojs/react';
 import node from '@astrojs/node';
 import vercel from '@astrojs/vercel/serverless';
 import tailwind from '@astrojs/tailwind';
+import { initSocket } from './src/server.js';
 
 const isVercel = process.env.VERCEL === '1';
 
@@ -11,7 +12,10 @@ export default defineConfig({
     output: 'server',
     adapter: isVercel
         ? vercel({ webAnalytics: { enabled: true } })
-        : node({ mode: 'standalone' }),
+        : node({
+            mode: 'standalone',
+            server: './src/server-entry.js'
+        }),
     site: 'https://getnexo.com.br',
     trailingSlash: 'never',
     devToolbar: {
@@ -20,7 +24,7 @@ export default defineConfig({
     integrations: [
         react(),
         tailwind({ applyBaseStyles: false }),
-        // sitemap(), // Removido temporariamente devido a erro com SSR
+        // sitemap(),
         partytown({
             config: {
                 forward: ['dataLayer.push'],
@@ -33,10 +37,23 @@ export default defineConfig({
         inlineStylesheets: 'always', // Crítico para LCP
         assetsPrefix: '/assets', // Organização
     },
+    // Compressão gzip/brotli para assets estáticos
+    server: {
+        headers: {
+            'Content-Encoding': 'gzip, br',
+            'Cache-Control': 'public, max-age=31536000, immutable'
+        }
+    },
     vite: {
         server: {
             allowedHosts: ['getnexo.com.br', 'admin.getnexo.com.br', 'www.getnexo.com.br', 'chat.getnexo.com.br']
         },
+        plugins: !isVercel ? [{
+            name: 'socket-io',
+            configureServer(server) {
+                initSocket(server.httpServer);
+            }
+        }] : [],
         build: {
             target: 'es2022',
             cssCodeSplit: true,

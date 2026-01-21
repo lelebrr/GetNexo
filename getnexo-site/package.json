@@ -8,7 +8,9 @@
         "start": "node ./dist/server/entry.mjs",
         "build": "astro build",
         "preview": "node ./dist/server/entry.mjs",
-        "test:perf": "npx lighthouse-ci --url=https://jetnexo.com.br --budget=performance:100,accessibility:100,seo:100"
+        "test:perf": "npx lighthouse-ci --url=https://jetnexo.com.br --budget=performance:100,accessibility:100,seo:100",
+        "test:load": "artillery run load-test.yml",
+        "test:load:quick": "artillery quick --count 10 --num 5 http://localhost:4321/"
     },
     "dependencies": {
         "@astrojs/check": "^0.9.6",
@@ -19,14 +21,40 @@
         "@astrojs/sitemap": "^3.0.0",
         "@astrojs/tailwind": "^5.1.5",
         "@astrojs/vercel": "^7.5.0",
+        "@graphql-tools/schema": "^10.0.31",
         "@nanostores/react": "^1.0.0",
+        "@simplewebauthn/browser": "^13.2.2",
+        "@simplewebauthn/server": "^13.2.2",
+        "artillery": "^2.0.21",
         "astro": "^4.16.19",
         "axios": "^1.6.0",
+        "bcryptjs": "^3.0.3",
+        "chart.js": "^4.5.1",
+        "crypto": "^1.0.1",
+        "crypto-js": "^4.2.0",
+        "express-session": "^1.18.2",
+        "graphql": "^16.12.0",
+        "jsonwebtoken": "^9.0.3",
+        "leaflet": "^1.9.4",
+        "multer": "^2.0.2",
         "nanostores": "^1.1.0",
+        "nodemailer": "^7.0.12",
+        "passport": "^0.7.0",
+        "passport-github2": "^0.1.12",
+        "passport-google-oauth20": "^2.0.0",
+        "prom-client": "^15.1.3",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
+        "react-leaflet": "^4.2.1",
+        "sharp": "^0.34.5",
+        "socket.io": "^4.8.3",
         "socket.io-client": "^4.8.3",
         "tailwindcss": "^3.4.19",
-        "typescript": "^5.9.3"
+        "typescript": "^5.9.3",
+        "winston": "^3.19.0"
+    },
+    "devDependencies": {
+        "@types/jest": "^30.0.0",
+        "jest": "^30.2.0"
     }
 }
