@@ -5,10 +5,11 @@ import AccessibilityControls from '../components/AccessibilityControls.astro';
 import CookieConsent from '../components/CookieConsent.astro';
 import NeuralBackground from '../components/NeuralBackground.astro';
 import ClippyAssistants from '../components/ClippyAssistants.astro';
+import WhatsAppFloat from '../components/WhatsAppFloat.astro';
 const {
-  title = "GetNexo – Assistente de Vendas WhatsApp Grátis",
-  description = "IA que fecha vendas sozinho 24h. Sem nuvem. Sem mensalidade. Sem risco.",
-  keywords = "assistente vendas whatsapp grátis, ia whatsapp vendas, automação whatsapp sem nuvem, getnexo, evolution api, n8n whatsapp, vendas 24h, self hosted ia",
+  title = "Chatbot WhatsApp IA Grátis Self-Hosted – Fecha Vendas 24h | GetNexo PIX Automático",
+  description = "Chatbot WhatsApp IA grátis self-hosted: fecha vendas sozinho 24/7 no seu domínio. Sem taxa por mensagem, integra PIX automático, estoque, frete. Teste 7 dias grátis. API Meta Oficial + CRM IA.",
+  keywords = "chatbot whatsapp gratis, chatbot whatsapp ia, automacao whatsapp vendas, chatbot whatsapp self hosted, pix no whatsapp automatico, ia whatsapp vendas, chatbot whatsapp conversao, vendas whatsapp 24h, chatbot whatsapp api oficial, getnexo chatbot whatsapp, chatbot whatsapp gratis brasil, chatbot whatsapp ia vendas, chatbot whatsapp sem mensalidade, chatbot whatsapp self hosted, chatbot whatsapp api meta, chatbot whatsapp pix automatico, chatbot whatsapp crm integrado",
   isLanding = false,
   preloadImage,
   ogImage = "https://getnexo.com.br/assets/og-poster.jpg",
@@ -105,6 +106,11 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
 
   <meta name="google-site-verification" content="getnexo-verification-2026" />
   <meta name="msvalidate.01" content="getnexo-ms-2026" />
+
+  <!-- AOS (Animate On Scroll) -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>AOS.init({duration: 800, once: true});</script>
 
   <slot name="head" />
 
@@ -1004,7 +1010,10 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
   <!-- Clippy-style Assistants -->
   <ClippyAssistants />
 
-  <footer class="global-footer" id="main-footer">
+  <!-- WhatsApp Floating Button -->
+  <WhatsAppFloat />
+
+  <footer class="global-footer" id="main-footer" itemscope itemtype="https://schema.org/Organization">
     <div class="footer-grid">
       <!-- Coluna 1: Branding e Trust -->
       <div class="footer-col branding-col">

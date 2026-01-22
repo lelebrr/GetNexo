@@ -1,0 +1,308 @@
+---
+// SEO Extremo Component - Prompt 4 Implementation
+export interface Props {
+  title: string;
+  description: string;
+  keywords: string;
+  canonical: string;
+  ogImage: string;
+  ogType: string;
+  article?: {
+    publishedTime: string;
+    modifiedTime: string;
+    author: string;
+    section: string;
+    tags: string[];
+  };
+  product?: {
+    price: string;
+    currency: string;
+    availability: string;
+    condition: string;
+  };
+  faq?: Array<{
+    question: string;
+    answer: string;
+  }>;
+}
+
+const {
+  title,
+  description,
+  keywords,
+  canonical,
+  ogImage,
+  ogType = 'website',
+  article,
+  product,
+  faq
+} = Astro.props;
+
+const baseUrl = "https://getnexo.com.br";
+const currentUrl = canonical || `${baseUrl}${Astro.url.pathname}`;
+const lang = Astro.url.pathname.split('/')[1] || 'pt';
+
+// Meta tags agressivas com densidade 2-3%
+const aggressiveKeywords = `${keywords} chatbot whatsapp gratis, chatbot whatsapp ia, automacao whatsapp vendas, chatbot whatsapp self hosted, pix no whatsapp automatico, ia whatsapp vendas, chatbot whatsapp conversao, vendas whatsapp 24h, chatbot whatsapp api oficial, getnexo chatbot whatsapp, chatbot whatsapp gratis brasil`;
+
+// Schema.org completo
+const softwareApplicationSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "GetNexo",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "BRL",
+    "availability": "https://schema.org/InStock",
+    "priceValidUntil": "2027-12-31"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "ratingCount": "150",
+    "bestRating": "5",
+    "worstRating": "1"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "GetNexo",
+    "url": baseUrl,
+    "sameAs": [
+      "https://linkedin.com/company/getnexo",
+      "https://instagram.com/getnexo",
+      "https://facebook.com/getnexo"
+    ]
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "GetNexo",
+    "logo": {
+      "@type": "ImageObject",
+      "url": `${baseUrl}/logo.svg`
+    }
+  },
+  "description": description,
+  "screenshot": ogImage,
+  "softwareVersion": "2026.1",
+  "datePublished": "2023-01-01",
+  "dateModified": new Date().toISOString().split('T')[0]
+};
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GetNexo",
+  "url": baseUrl,
+  "logo": `${baseUrl}/logo.svg`,
+  "description": "Plataforma líder em automação WhatsApp e IA self-hosted",
+  "foundingDate": "2023",
+  "founders": [
+    {
+      "@type": "Person",
+      "name": "Leandro Rodrigues",
+      "jobTitle": "CEO & Founder",
+      "sameAs": [
+        "https://linkedin.com/in/leandro-rodrigues-getnexo",
+        "https://github.com/lelebrr"
+      ]
+    }
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+55-11-99999-9999",
+    "contactType": "customer service",
+    "availableLanguage": ["Portuguese", "English", "Spanish", "French"]
+  },
+  "sameAs": [
+    "https://linkedin.com/company/getnexo",
+    "https://instagram.com/getnexo",
+    "https://facebook.com/getnexo",
+    "https://twitter.com/getnexo"
+  ],
+  "address": {
+    "@type": "PostalAddress",
+    "addressCountry": "BR",
+    "addressRegion": "SP",
+    "addressLocality": "São Paulo"
+  }
+};
+
+const schemas = [softwareApplicationSchema, organizationSchema];
+
+// Article schema se for post do blog
+if (article) {
+  schemas.push({
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": title,
+    "description": description,
+    "image": ogImage,
+    "author": {
+      "@type": "Person",
+      "name": article.author,
+      "url": `${baseUrl}/sobre`
+    },
+    "publisher": organizationSchema,
+    "datePublished": article.publishedTime,
+    "dateModified": article.modifiedTime,
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": currentUrl
+    },
+    "articleSection": article.section,
+    "keywords": article.tags.join(", ")
+  });
+}
+
+// Product schema se for produto
+if (product) {
+  schemas.push({
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": title,
+    "description": description,
+    "image": ogImage,
+    "offers": {
+      "@type": "Offer",
+      "price": product.price,
+      "priceCurrency": product.currency,
+      "availability": product.availability,
+      "condition": product.condition,
+      "priceValidUntil": "2027-12-31"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "ratingCount": "150"
+    },
+    "brand": {
+      "@type": "Brand",
+      "name": "GetNexo"
+    }
+  });
+}
+
+// FAQ schema
+if (faq && faq.length > 0) {
+  schemas.push({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faq.map(item => ({
+      "@type": "Question",
+      "name": item.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.answer
+      }
+    }))
+  });
+}
+
+// BreadcrumbList schema
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": baseUrl
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": title,
+      "item": currentUrl
+    }
+  ]
+};
+
+schemas.push(breadcrumbSchema);
+---
+
+<!-- Meta tags agressivas com densidade alta -->
+<meta name="title" content={title} />
+<meta name="description" content={description} />
+<meta name="keywords" content={aggressiveKeywords} />
+<meta name="author" content="GetNexo" />
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+<meta name="language" content={lang} />
+<meta name="geo.region" content="BR-SP" />
+<meta name="geo.country" content="Brazil" />
+<meta name="ICBM" content="-23.5505,-46.6333" />
+<meta name="revisit-after" content="1 days" />
+<meta name="distribution" content="global" />
+<meta name="rating" content="general" />
+
+<!-- Canonical URL -->
+<link rel="canonical" href={currentUrl} />
+
+<!-- Open Graph agressivo -->
+<meta property="og:type" content={ogType} />
+<meta property="og:site_name" content="GetNexo" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={title} />
+<meta property="og:url" content={currentUrl} />
+<meta property="og:locale" content={lang === 'pt' ? 'pt_BR' : lang === 'en' ? 'en_US' : lang === 'es' ? 'es_ES' : 'fr_FR'} />
+<meta property="og:updated_time" content={new Date().toISOString()} />
+
+<!-- Twitter Card completo -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@getnexo" />
+<meta name="twitter:creator" content="@getnexo" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+<meta name="twitter:image:alt" content={title} />
+
+<!-- Hreflang dinâmico -->
+<link rel="alternate" hreflang="pt-BR" href={`${baseUrl}/pt${Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '')}`} />
+<link rel="alternate" hreflang="en-US" href={`${baseUrl}/en${Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '')}`} />
+<link rel="alternate" hreflang="es-ES" href={`${baseUrl}/es${Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '')}`} />
+<link rel="alternate" hreflang="fr-FR" href={`${baseUrl}/fr${Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '')}`} />
+<link rel="alternate" hreflang="x-default" href={`${baseUrl}/pt${Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '')}`} />
+
+<!-- Schema.org JSON-LD completo -->
+{schemas.map(schema => (
+  <script type="application/ld+json" set:html={JSON.stringify(schema)}></script>
+))}
+
+<!-- Preload crítico para Core Web Vitals A+ -->
+<link rel="preload" href="/logo.svg" as="image" type="image/svg+xml" />
+<link rel="preload" href={ogImage} as="image" />
+<link rel="dns-prefetch" href="//fonts.googleapis.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+<!-- Font display swap para melhor LCP -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+
+<!-- Meta tags adicionais para E-E-A-T -->
+<meta name="author" content="Leandro Rodrigues, CEO GetNexo" />
+<meta name="publisher" content="GetNexo" />
+<meta name="copyright" content={`GetNexo ${new Date().getFullYear()}`} />
+
+<!-- Meta tags para mobile e PWA -->
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="GetNexo" />
+<meta name="application-name" content="GetNexo" />
+
+<!-- Meta tags para velocidade -->
+<meta http-equiv="x-dns-prefetch-control" content="on" />
+<meta name="format-detection" content="telephone=no" />
+
+<!-- Meta tags para segurança e confiança -->
+<meta name="referrer" content="strict-origin-when-cross-origin" />
+<meta name="theme-color" content="#00d4ff" />
+<meta name="color-scheme" content="dark light" />

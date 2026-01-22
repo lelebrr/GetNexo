@@ -1,0 +1,414 @@
+---
+export interface Props {
+  title?: string;
+  subtitle?: string;
+}
+
+const { title = "Calculadora de ROI GetNexo", subtitle = "Veja quanto você economiza em 6 meses" } = Astro.props;
+---
+
+<div id="roi-calculator" class="roi-calculator">
+  <div class="roi-header">
+    <h3 class="roi-title">{title}</h3>
+    <p class="roi-subtitle">{subtitle}</p>
+  </div>
+
+  <div class="roi-inputs">
+    <div class="input-group">
+      <label for="current-attendants">Atendentes atuais</label>
+      <input
+        type="number"
+        id="current-attendants"
+        min="1"
+        max="50"
+        value="3"
+        placeholder="3"
+      />
+    </div>
+
+    <div class="input-group">
+      <label for="avg-salary">Salário médio (R$/mês)</label>
+      <input
+        type="number"
+        id="avg-salary"
+        min="1000"
+        max="10000"
+        value="2500"
+        placeholder="2500"
+        step="100"
+      />
+    </div>
+
+    <div class="input-group">
+      <label for="work-hours">Horas trabalhadas/dia</label>
+      <input
+        type="number"
+        id="work-hours"
+        min="4"
+        max="12"
+        value="8"
+        placeholder="8"
+      />
+    </div>
+
+    <div class="input-group">
+      <label for="monthly-customers">Clientes/mês</label>
+      <input
+        type="number"
+        id="monthly-customers"
+        min="10"
+        max="10000"
+        value="500"
+        placeholder="500"
+      />
+    </div>
+  </div>
+
+  <div class="roi-results" id="roi-results">
+    <div class="result-card">
+      <div class="result-icon">💰</div>
+      <div class="result-content">
+        <div class="result-label">Economia Mensal</div>
+        <div class="result-value" id="monthly-saving">R$ 0</div>
+      </div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-icon">📈</div>
+      <div class="result-content">
+        <div class="result-label">Economia em 6 meses</div>
+        <div class="result-value" id="six-month-saving">R$ 0</div>
+      </div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-icon">⚡</div>
+      <div class="result-content">
+        <div class="result-label">Atendimento 24/7</div>
+        <div class="result-value" id="hours-coverage">0h</div>
+      </div>
+    </div>
+
+    <div class="result-card highlight">
+      <div class="result-icon">🚀</div>
+      <div class="result-content">
+        <div class="result-label">Retorno do Investimento</div>
+        <div class="result-value" id="roi-percentage">0%</div>
+        <div class="result-subtext">em 3 meses</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="roi-cta">
+    <button class="roi-cta-btn" onclick="scrollToPricing()">
+      Começar Agora → R$ 97/mês
+    </button>
+    <p class="roi-note">Investimento recuperado em até 30 dias</p>
+  </div>
+</div>
+
+<style>
+  .roi-calculator {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 2rem;
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .roi-calculator::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #00d4ff, #00ff9d, #00d4ff);
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0%, 100% { background-position: -200% 0; }
+    50% { background-position: 200% 0; }
+  }
+
+  .roi-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .roi-title {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .roi-subtitle {
+    color: #e2e8f0;
+    font-size: 0.9rem;
+    opacity: 0.9;
+  }
+
+  .roi-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .input-group label {
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .input-group input {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 0.75rem;
+    color: white;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+  }
+
+  .input-group input:focus {
+    outline: none;
+    border-color: #00d4ff;
+    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .input-group input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .roi-results {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .result-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .result-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 212, 255, 0.1);
+  }
+
+  .result-card.highlight {
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1));
+    border-color: rgba(0, 212, 255, 0.3);
+  }
+
+  .result-card.highlight::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #00d4ff, #00ff9d);
+  }
+
+  .result-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .result-content {
+    flex: 1;
+  }
+
+  .result-label {
+    color: #e2e8f0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+  }
+
+  .result-value {
+    color: #00ff9d;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+    transition: all 0.3s ease;
+  }
+
+  .result-subtext {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.7rem;
+    font-weight: 500;
+  }
+
+  .roi-cta {
+    text-align: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .roi-cta-btn {
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    color: black;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+    margin-bottom: 0.5rem;
+  }
+
+  .roi-cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
+  }
+
+  .roi-note {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  /* Mobile responsive */
+  @media (max-width: 768px) {
+    .roi-calculator {
+      padding: 1.5rem;
+      margin: 0 1rem;
+    }
+
+    .roi-inputs {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .roi-results {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    .result-card {
+      padding: 1rem;
+    }
+
+    .result-value {
+      font-size: 1.25rem;
+    }
+
+    .roi-title {
+      font-size: 1.25rem;
+    }
+  }
+
+  /* Animation for result updates */
+  .result-updating {
+    animation: pulse 0.3s ease-in-out;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+</style>
+
+<script>
+  function calculateROI() {
+    const attendants = parseInt(document.getElementById('current-attendants').value) || 0;
+    const salary = parseInt(document.getElementById('avg-salary').value) || 0;
+    const hours = parseInt(document.getElementById('work-hours').value) || 0;
+    const customers = parseInt(document.getElementById('monthly-customers').value) || 0;
+
+    // Cálculos
+    const monthlyLaborCost = attendants * salary;
+    const dailyCoverage = attendants * hours;
+    const monthlySavings = monthlyLaborCost * 0.7; // 70% economia estimada
+    const sixMonthSavings = monthlySavings * 6;
+    const roi = monthlySavings > 0 ? ((monthlySavings / 97) * 100) : 0;
+
+    // Atualizar resultados com animação
+    updateResult('monthly-saving', `R$ ${monthlySavings.toLocaleString('pt-BR')}`);
+    updateResult('six-month-saving', `R$ ${sixMonthSavings.toLocaleString('pt-BR')}`);
+    updateResult('hours-coverage', `${dailyCoverage * 30}h`);
+    updateResult('roi-percentage', `${Math.round(roi)}%`);
+  }
+
+  function updateResult(elementId, value) {
+    const element = document.getElementById(elementId);
+    if (element) {
+      element.classList.add('result-updating');
+      setTimeout(() => {
+        element.textContent = value;
+        element.classList.remove('result-updating');
+      }, 150);
+    }
+  }
+
+  function scrollToPricing() {
+    const pricingSection = document.querySelector('.pricing-section, #pricing, [data-section="pricing"]');
+    if (pricingSection) {
+      pricingSection.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      // Fallback: scroll to bottom where pricing usually is
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+  }
+
+  // Initialize calculation and event listeners
+  document.addEventListener('DOMContentLoaded', function() {
+    // Calculate initial values
+    calculateROI();
+
+    // Add event listeners to all inputs
+    const inputs = document.querySelectorAll('#roi-calculator input');
+    inputs.forEach(input => {
+      input.addEventListener('input', calculateROI);
+      input.addEventListener('change', calculateROI);
+    });
+
+    // Add visual feedback
+    inputs.forEach(input => {
+      input.addEventListener('focus', function() {
+        this.parentElement.style.transform = 'scale(1.02)';
+      });
+
+      input.addEventListener('blur', function() {
+        this.parentElement.style.transform = 'scale(1)';
+      });
+    });
+  });
+
+  // Make functions globally available
+  window.calculateROI = calculateROI;
+  window.scrollToPricing = scrollToPricing;
+</script>

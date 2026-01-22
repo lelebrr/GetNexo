@@ -1,0 +1,440 @@
+---
+export interface Props {
+  showTitle?: boolean;
+  maxItems?: number;
+  layout?: 'hero' | 'section';
+}
+
+const {
+  showTitle = true,
+  maxItems = 3,
+  layout = 'section'
+} = Astro.props;
+
+const testimonials = [
+  {
+    name: "Carlos Eduardo",
+    role: "Dono da EletroShop",
+    company: "São Paulo, SP",
+    photo: "/testimonials/carlos.jpg",
+    quote: "Com o GetNexo, passei de 23 vendas por mês para 147. A IA responde 24/7 e nunca perde uma venda!",
+    results: "+540% em vendas",
+    avatar: "CE"
+  },
+  {
+    name: "Mariana Silva",
+    role: "CEO da ModaPlus",
+    company: "Rio de Janeiro, RJ",
+    photo: "/testimonials/mariana.jpg",
+    quote: "Setup em 12 minutos e já estava vendendo automaticamente. Economia de R$ 8.500/mês com salários.",
+    results: "R$ 8.5k economia/mês",
+    avatar: "MS"
+  },
+  {
+    name: "Roberto Santos",
+    role: "Proprietário da TechStore",
+    company: "Belo Horizonte, MG",
+    photo: "/testimonials/roberto.jpg",
+    quote: "O PIX integrado é show! Clientes pagam direto no chat. Zero abandono de carrinho.",
+    results: "98% conversão checkout",
+    avatar: "RS"
+  },
+  {
+    name: "Ana Paula Costa",
+    role: "Fundadora da BeautyBox",
+    company: "Salvador, BA",
+    photo: "/testimonials/ana.jpg",
+    quote: "O CRM com IA é incrível. A plataforma entende o que o cliente quer antes mesmo de perguntar.",
+    results: "+300% satisfação",
+    avatar: "AC"
+  }
+].slice(0, maxItems);
+---
+
+<div class={`testimonials-container ${layout === 'hero' ? 'hero-testimonials' : 'section-testimonials'}`}>
+  {showTitle && layout === 'section' && (
+    <div class="testimonials-header">
+      <h2 class="testimonials-title">O que nossos clientes dizem</h2>
+      <p class="testimonials-subtitle">Mais de 500 lojas já transformaram seu negócio</p>
+    </div>
+  )}
+
+  <div class={`testimonials-grid ${layout === 'hero' ? 'hero-grid' : 'section-grid'}`}>
+    {testimonials.map((testimonial, index) => (
+      <div class="testimonial-card reveal" style={`animation-delay: ${index * 0.1}s`}>
+        <div class="testimonial-header">
+          <div class="testimonial-avatar">
+            {testimonial.photo ? (
+              <img src={testimonial.photo} alt={testimonial.name} />
+            ) : (
+              <span class="avatar-initials">{testimonial.avatar}</span>
+            )}
+          </div>
+          <div class="testimonial-meta">
+            <div class="testimonial-name">{testimonial.name}</div>
+            <div class="testimonial-role">{testimonial.role}</div>
+            <div class="testimonial-company">{testimonial.company}</div>
+          </div>
+          <div class="testimonial-result">{testimonial.results}</div>
+        </div>
+
+        <div class="testimonial-quote">
+          "{testimonial.quote}"
+        </div>
+
+        <div class="testimonial-rating">
+          <span class="stars">★★★★★</span>
+          <span class="verified">✓ Verificado</span>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  {layout === 'hero' && (
+    <div class="hero-testimonials-footer">
+      <div class="trust-indicators">
+        <span>⭐ 4.9/5 estrelas</span>
+        <span>📊 +500 clientes</span>
+        <span>⏱️ 99.99% uptime</span>
+      </div>
+    </div>
+  )}
+
+  {layout === 'section' && (
+    <div class="section-testimonials-footer">
+      <button class="testimonials-cta-btn">
+        Ver todos os depoimentos →
+      </button>
+    </div>
+  )}
+</div>
+
+<style>
+  .testimonials-container {
+    width: 100%;
+  }
+
+  .hero-testimonials {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .section-testimonials {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 0;
+  }
+
+  .testimonials-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .testimonials-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .testimonials-subtitle {
+    color: #e2e8f0;
+    font-size: 1.1rem;
+    opacity: 0.9;
+  }
+
+  .testimonials-grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .hero-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  .section-grid {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  }
+
+  .testimonial-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .testimonial-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #00d4ff, #00ff9d, #00d4ff);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .testimonial-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 212, 255, 0.15);
+    border-color: rgba(0, 212, 255, 0.2);
+  }
+
+  .testimonial-card:hover::before {
+    opacity: 1;
+  }
+
+  .testimonial-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    gap: 1rem;
+  }
+
+  .testimonial-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid rgba(0, 212, 255, 0.3);
+    flex-shrink: 0;
+  }
+
+  .testimonial-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .avatar-initials {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    color: black;
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+
+  .testimonial-meta {
+    flex: 1;
+  }
+
+  .testimonial-name {
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .testimonial-role {
+    color: #00ff9d;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  .testimonial-company {
+    color: #e2e8f0;
+    font-size: 0.75rem;
+    opacity: 0.8;
+  }
+
+  .testimonial-result {
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    color: black;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+
+  .testimonial-quote {
+    color: #e2e8f0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    font-style: italic;
+    position: relative;
+  }
+
+  .testimonial-quote::before {
+    content: '"';
+    color: #00d4ff;
+    font-size: 3rem;
+    position: absolute;
+    top: -10px;
+    left: -15px;
+    opacity: 0.3;
+  }
+
+  .testimonial-rating {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .stars {
+    color: #ffd700;
+    font-size: 1rem;
+  }
+
+  .verified {
+    color: #00ff9d;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .hero-testimonials-footer {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .trust-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    color: #e2e8f0;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .section-testimonials-footer {
+    text-align: center;
+    margin-top: 3rem;
+  }
+
+  .testimonials-cta-btn {
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    color: black;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+  }
+
+  .testimonials-cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
+  }
+
+  /* Reveal animation */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Mobile responsive */
+  @media (max-width: 768px) {
+    .hero-grid,
+    .section-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .testimonials-title {
+      font-size: 2rem;
+    }
+
+    .testimonial-card {
+      padding: 1.25rem;
+    }
+
+    .testimonial-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .testimonial-meta {
+      text-align: center;
+    }
+
+    .trust-indicators {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .testimonial-quote {
+      font-size: 0.9rem;
+    }
+
+    .testimonial-result {
+      font-size: 0.65rem;
+      padding: 0.2rem 0.6rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .testimonial-card {
+      padding: 1rem;
+    }
+
+    .testimonial-avatar {
+      width: 40px;
+      height: 40px;
+    }
+
+    .testimonial-name {
+      font-size: 0.9rem;
+    }
+
+    .testimonial-role,
+    .testimonial-company {
+      font-size: 0.7rem;
+    }
+  }
+</style>
+
+<script>
+  // Intersection Observer for reveal animations
+  document.addEventListener('DOMContentLoaded', function() {
+    const reveals = document.querySelectorAll('.testimonial-card.reveal');
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    });
+
+    reveals.forEach(reveal => {
+      revealObserver.observe(reveal);
+    });
+  });
+</script>

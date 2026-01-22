@@ -6,6 +6,9 @@ import vercel from '@astrojs/vercel/serverless';
 import tailwind from '@astrojs/tailwind';
 import { initSocket } from './src/server.js';
 
+// Otimização automática de imagens WebP
+import sharp from 'sharp';
+
 const isVercel = process.env.VERCEL === '1';
 
 export default defineConfig({
@@ -42,6 +45,29 @@ export default defineConfig({
     compressHTML: true,
     build: {
         inlineStylesheets: 'always', // Crítico para LCP
+    },
+    image: {
+        service: {
+            entrypoint: 'astro/assets/services/sharp',
+            config: {
+                // Otimização automática para WebP
+                formats: ['webp', 'png', 'jpg'],
+                defaultQuality: 85,
+                // Compressão agressiva para performance
+                webp: {
+                    quality: 80,
+                    effort: 6
+                },
+                png: {
+                    quality: 85,
+                    compressionLevel: 9
+                },
+                jpg: {
+                    quality: 85,
+                    progressive: true
+                }
+            }
+        }
     },
     // Compressão gzip/brotli para assets estáticos
     server: {

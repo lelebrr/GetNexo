@@ -1,0 +1,772 @@
+---
+// src/pages/painel.astro - Dashboard Administrativo Completo
+---
+
+<!doctype html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GetNexo Painel | Dashboard Completo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" />
+</head>
+<body class="bg-gray-950 text-gray-100 font-inter h-screen flex overflow-hidden">
+  <!-- Sidebar -->
+  <div id="sidebar" class="fixed left-0 top-0 w-64 bg-gray-900 h-full p-4 border-r border-gray-800 transition-all duration-300 z-50 md:relative md:translate-x-0 shadow-xl">
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-xl font-black text-cyan-400">GetNexo</h1>
+      <button onclick="toggleSidebar()" class="md:hidden text-gray-400 hover:text-white text-2xl">×</button>
+    </div>
+
+    <nav class="space-y-2">
+      <a href="#dashboard" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition active" onclick="showScreen('Dashboard')">
+        <span class="text-cyan-400">🏠</span> Dashboard
+      </a>
+      <a href="#lojas" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition" onclick="showScreen('Lojas')">
+        <span class="text-green-400">🏪</span> Lojas
+      </a>
+      <a href="#adicionais" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition" onclick="showScreen('Adicionais')">
+        <span class="text-purple-400">🔌</span> Adicionais
+      </a>
+      <a href="#suporte" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition" onclick="showScreen('Suporte')">
+        <span class="text-orange-400">💬</span> Suporte
+      </a>
+      <a href="#financeiro" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition" onclick="showScreen('Financeiro')">
+        <span class="text-yellow-400">💰</span> Financeiro
+      </a>
+      <a href="#personalizar" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition" onclick="showScreen('Personalizar')">
+        <span class="text-pink-400">🎨</span> Personalizar
+      </a>
+      <a href="#notificacoes" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition" onclick="showScreen('Notificacoes')">
+        <span class="text-blue-400">🔔</span> Notificações
+      </a>
+      <a href="#leads" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition" onclick="showScreen('Leads')">
+        <span class="text-orange-400">🎯</span> Leads Perdidos
+      </a>
+    </nav>
+
+    <!-- Status do Sistema -->
+    <div class="mt-8 p-4 bg-gray-800 rounded-lg">
+      <div class="flex items-center gap-2 text-green-400 text-sm">
+        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+        Sistema Online
+      </div>
+      <p class="text-xs text-gray-500 mt-1">Última sync: agora</p>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="flex-1 overflow-y-auto">
+    <!-- Header -->
+    <header class="p-4 md:p-6 bg-gray-900 border-b border-gray-800 flex items-center justify-between sticky top-0 z-40">
+      <div class="flex items-center gap-4">
+        <button onclick="toggleSidebar()" class="md:hidden text-2xl text-white hover:text-cyan-400 transition">
+          ☰
+        </button>
+        <div>
+          <h1 id="page-title" class="text-2xl font-black text-white">Dashboard</h1>
+          <p id="page-subtitle" class="text-sm text-gray-400">Visão geral do seu negócio</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <!-- Notificações -->
+        <div class="relative">
+          <button class="relative text-gray-400 hover:text-white transition">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+            </svg>
+            <span id="notification-count" class="absolute -top-1 -right-1 text-xs bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center">3</span>
+          </button>
+        </div>
+
+        <!-- Trial Status -->
+        <div class="hidden md:flex items-center gap-2 px-3 py-1 bg-red-900/50 rounded-full text-red-400 text-sm">
+          <div class="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
+          Trial: 12h 34m
+        </div>
+
+        <!-- User Menu -->
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-gradient-to-br from-cyan-400 to-green-400 rounded-full flex items-center justify-center text-black font-bold text-lg">
+            L
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content Area -->
+    <div id="main-content" class="p-4 md:p-6">
+      <!-- Dashboard Inicial -->
+      <div id="dashboard-content">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div class="bg-gray-900 p-6 rounded-xl border border-cyan-900/30 shadow-lg hover:shadow-cyan-500/10 transition">
+            <div class="text-cyan-400 text-sm mb-2">Vendas Hoje</div>
+            <div class="text-3xl font-black text-white">R$ 7.420</div>
+            <div class="text-xs text-green-500 mt-1 flex items-center gap-1">
+              <span>↑</span> 12% vs ontem
+            </div>
+          </div>
+          <div class="bg-gray-900 p-6 rounded-xl border border-green-900/30 shadow-lg hover:shadow-green-500/10 transition">
+            <div class="text-green-400 text-sm mb-2">Lojas Ativas</div>
+            <div class="text-3xl font-black text-white">42</div>
+            <div class="text-xs text-gray-500 mt-1">+3 esta semana</div>
+          </div>
+          <div class="bg-gray-900 p-6 rounded-xl border border-purple-900/30 shadow-lg hover:shadow-purple-500/10 transition">
+            <div class="text-purple-400 text-sm mb-2">Conversão IA</div>
+            <div class="text-3xl font-black text-white">82%</div>
+            <div class="text-xs text-green-500 mt-1">+5 pts</div>
+          </div>
+          <div class="bg-gray-900 p-6 rounded-xl border border-red-900/30 shadow-lg hover:shadow-red-500/10 transition">
+            <div class="text-red-400 text-sm mb-2">Trial Restante</div>
+            <div class="text-3xl font-black text-white">12h 34m</div>
+            <div class="text-xs text-red-500 mt-1">Renovar plano</div>
+          </div>
+        </div>
+
+        <!-- Gráficos e Métricas -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <div class="bg-gray-900 p-6 rounded-xl border border-gray-800">
+            <h3 class="text-lg font-bold mb-4">Vendas por Canal</h3>
+            <div class="space-y-3">
+              <div class="flex justify-between items-center">
+                <span class="text-sm">WhatsApp</span>
+                <div class="flex items-center gap-2">
+                  <div class="w-24 h-2 bg-gray-700 rounded">
+                    <div class="w-3/4 h-full bg-green-500 rounded"></div>
+                  </div>
+                  <span class="text-sm text-green-400">75%</span>
+                </div>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm">Instagram</span>
+                <div class="flex items-center gap-2">
+                  <div class="w-24 h-2 bg-gray-700 rounded">
+                    <div class="w-1/5 h-full bg-blue-500 rounded"></div>
+                  </div>
+                  <span class="text-sm text-blue-400">20%</span>
+                </div>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm">Site</span>
+                <div class="flex items-center gap-2">
+                  <div class="w-24 h-2 bg-gray-700 rounded">
+                    <div class="w-1/10 h-full bg-purple-500 rounded"></div>
+                  </div>
+                  <span class="text-sm text-purple-400">5%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-gray-900 p-6 rounded-xl border border-gray-800">
+            <h3 class="text-lg font-bold mb-4">Produtos Mais Vendidos</h3>
+            <div class="space-y-3">
+              <div class="flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 bg-gradient-to-br from-cyan-400 to-green-400 rounded"></div>
+                  <span class="text-sm">Galaxy S24 Ultra</span>
+                </div>
+                <span class="text-green-400 font-bold">R$ 4.999</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-400 rounded"></div>
+                  <span class="text-sm">iPhone 15 Pro</span>
+                </div>
+                <span class="text-green-400 font-bold">R$ 9.499</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 bg-gradient-to-br from-red-400 to-pink-400 rounded"></div>
+                  <span class="text-sm">MacBook Pro M3</span>
+                </div>
+                <span class="text-green-400 font-bold">R$ 18.499</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ações Rápidas -->
+        <div class="bg-gradient-to-r from-gray-900 to-gray-800 p-6 rounded-xl border border-gray-700">
+          <h3 class="text-lg font-bold mb-4">Ações Rápidas</h3>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <button class="p-4 bg-gray-800 hover:bg-gray-750 rounded-lg transition text-center">
+              <div class="text-2xl mb-2">➕</div>
+              <div class="text-sm font-medium">Nova Loja</div>
+            </button>
+            <button class="p-4 bg-gray-800 hover:bg-gray-750 rounded-lg transition text-center">
+              <div class="text-2xl mb-2">📦</div>
+              <div class="text-sm font-medium">Add Produto</div>
+            </button>
+            <button class="p-4 bg-gray-800 hover:bg-gray-750 rounded-lg transition text-center">
+              <div class="text-2xl mb-2">💰</div>
+              <div class="text-sm font-medium">Ver Faturas</div>
+            </button>
+            <button class="p-4 bg-gray-800 hover:bg-gray-750 rounded-lg transition text-center">
+              <div class="text-2xl mb-2">🎨</div>
+              <div class="text-sm font-medium">Personalizar</div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conteúdo Dinâmico -->
+      <div id="dynamic-content" class="hidden">
+        <!-- Será preenchido via JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script type="text/babel">
+    // Estado da aplicação
+    const state = {
+      currentScreen: 'Dashboard',
+      notifications: [
+        { id: 1, type: 'venda', title: 'Nova venda!', message: 'Cliente João comprou Galaxy S24', time: '14:30', unread: true },
+        { id: 2, type: 'suporte', title: 'Ticket #123', message: 'Cliente precisa ajuda com trial', time: '13:45', unread: true },
+        { id: 3, type: 'sistema', title: 'Backup OK', message: 'Backup automático concluído', time: '02:00', unread: false }
+      ]
+    };
+
+    // Funções de navegação
+    window.toggleSidebar = () => {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('-translate-x-full');
+    };
+
+    window.showScreen = (screenName) => {
+      state.currentScreen = screenName;
+
+      // Atualizar navegação ativa
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active', 'bg-gray-800');
+      });
+      event.target.closest('.nav-link').classList.add('active', 'bg-gray-800');
+
+      // Atualizar título da página
+      document.getElementById('page-title').textContent = screenName;
+      document.getElementById('page-subtitle').textContent = getScreenSubtitle(screenName);
+
+      // Esconder dashboard e mostrar conteúdo dinâmico
+      document.getElementById('dashboard-content').classList.add('hidden');
+      document.getElementById('dynamic-content').classList.remove('hidden');
+
+      // Renderizar tela específica
+      renderScreen(screenName);
+    };
+
+    function getScreenSubtitle(screenName) {
+      const subtitles = {
+        'Dashboard': 'Visão geral do seu negócio',
+        'Lojas': 'Gerenciar suas lojas',
+        'Adicionais': 'Módulos e upgrades',
+        'Suporte': 'Ajuda e atendimento',
+        'Financeiro': 'Pagamentos e faturas',
+        'Personalizar': 'Configure seu bot',
+        'Notificacoes': 'Alertas e mensagens'
+      };
+      return subtitles[screenName] || '';
+    }
+
+    function renderScreen(screenName) {
+      const content = document.getElementById('dynamic-content');
+
+      switch (screenName) {
+        case 'Lojas':
+          content.innerHTML = renderLojas();
+          break;
+        case 'Adicionais':
+          content.innerHTML = renderAdicionais();
+          break;
+        case 'Suporte':
+          content.innerHTML = renderSuporte();
+          break;
+        case 'Financeiro':
+          content.innerHTML = renderFinanceiro();
+          break;
+        case 'Personalizar':
+          content.innerHTML = renderPersonalizar();
+          break;
+        case 'Notificacoes':
+          content.innerHTML = renderNotificacoes();
+          break;
+        case 'Leads':
+          content.innerHTML = renderLeads();
+          break;
+        case 'Leads':
+          content.innerHTML = renderLeads();
+          break;
+        default:
+          content.innerHTML = '<p>Tela não encontrada</p>';
+      }
+    }
+
+    function renderLeads() {
+      return `
+        <div class="max-w-7xl mx-auto">
+          <div class="flex justify-between items-center mb-6">
+            <div>
+              <h2 class="text-2xl font-black text-white">Leads Perdidos Inteligentes</h2>
+              <p class="text-gray-400 mt-1">Clientes que mostraram interesse mas não compraram</p>
+            </div>
+            <div class="text-right">
+              <div class="text-2xl font-black text-cyan-400">47</div>
+              <div class="text-sm text-gray-500">Total de leads</div>
+            </div>
+          </div>
+
+          <!-- Cards de estatísticas -->
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-gray-900 p-4 rounded-lg border border-cyan-900/30">
+              <div class="text-cyan-400 text-sm mb-1">Média Score</div>
+              <div class="text-2xl font-bold">73%</div>
+            </div>
+            <div class="bg-gray-900 p-4 rounded-lg border border-blue-900/30">
+              <div class="text-blue-400 text-sm mb-1">Reenviados</div>
+              <div class="text-2xl font-bold">23</div>
+            </div>
+            <div class="bg-gray-900 p-4 rounded-lg border border-green-900/30">
+              <div class="text-green-400 text-sm mb-1">Convertidos</div>
+              <div class="text-2xl font-bold">8</div>
+            </div>
+            <div class="bg-gray-900 p-4 rounded-lg border border-purple-900/30">
+              <div class="text-purple-400 text-sm mb-1">Taxa Conversão</div>
+              <div class="text-2xl font-bold">35%</div>
+            </div>
+          </div>
+
+          <!-- Filtros -->
+          <div class="flex flex-wrap gap-2 mb-6">
+            <button class="px-4 py-2 rounded-lg text-sm font-medium bg-cyan-600 text-white">Todos</button>
+            <button class="px-4 py-2 rounded-lg text-sm font-medium bg-gray-800 text-gray-300 hover:bg-gray-700">Não Reenviados</button>
+            <button class="px-4 py-2 rounded-lg text-sm font-medium bg-gray-800 text-gray-300 hover:bg-gray-700">Alta Intenção</button>
+            <button class="px-4 py-2 rounded-lg text-sm font-medium bg-gray-800 text-gray-300 hover:bg-gray-700">Preço Alto</button>
+            <button class="px-4 py-2 rounded-lg text-sm font-medium bg-gray-800 text-gray-300 hover:bg-gray-700">Atendimento</button>
+            <button class="px-4 py-2 rounded-lg text-sm font-medium bg-gray-800 text-gray-300 hover:bg-gray-700">Estoque</button>
+          </div>
+
+          <!-- Tabela -->
+          <div class="overflow-x-auto rounded-xl border border-gray-800 bg-gray-900/50">
+            <table class="min-w-full divide-y divide-gray-800">
+              <thead class="bg-gray-800">
+                <tr>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase">Cliente</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase">Produto</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase">Valor</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase">Motivo</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase">Score</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase">Status</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase">Data</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase">Ação</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-800">
+                <tr class="hover:bg-gray-800/50 transition">
+                  <td class="px-6 py-4">
+                    <div class="font-medium text-white">João Silva</div>
+                    <div class="text-sm text-gray-400">+55 51 99999-8888</div>
+                  </td>
+                  <td class="px-6 py-4">
+                    <div class="font-medium text-white">Tênis Nike Air Max 270</div>
+                    <div class="text-sm text-gray-400">pediu tamanho 40</div>
+                  </td>
+                  <td class="px-6 py-4 font-bold text-green-400">R$ 399,90</td>
+                  <td class="px-6 py-4">
+                    <span class="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-red-900/50 text-red-400">
+                      Preço Alto
+                    </span>
+                  </td>
+                  <td class="px-6 py-4">
+                    <span class="font-bold text-green-400">85%</span>
+                  </td>
+                  <td class="px-6 py-4">
+                    <span class="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-orange-900/50 text-orange-400">
+                      Perdido
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm text-gray-400">22/01 14:32</td>
+                  <td class="px-6 py-4">
+                    <button class="text-cyan-400 hover:text-cyan-300 text-sm underline font-medium">
+                      Reenviar oferta
+                    </button>
+                  </td>
+                </tr>
+
+                <tr class="hover:bg-gray-800/50 transition">
+                  <td class="px-6 py-4">
+                    <div class="font-medium text-white">Maria Santos</div>
+                    <div class="text-sm text-gray-400">+55 51 98888-7777</div>
+                  </td>
+                  <td class="px-6 py-4">
+                    <div class="font-medium text-white">iPhone 15 Pro</div>
+                    <div class="text-sm text-gray-400">cor preta, 256GB</div>
+                  </td>
+                  <td class="px-6 py-4 font-bold text-green-400">R$ 9.499,00</td>
+                  <td class="px-6 py-4">
+                    <span class="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-blue-900/50 text-blue-400">
+                      Atendimento
+                    </span>
+                  </td>
+                  <td class="px-6 py-4">
+                    <span class="font-bold text-yellow-400">72%</span>
+                  </td>
+                  <td class="px-6 py-4">
+                    <span class="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-blue-900/50 text-blue-400">
+                      Reenviado
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm text-gray-400">21/01 16:45</td>
+                  <td class="px-6 py-4">
+                    <span class="text-green-400 text-sm">✅ Reenviado</span>
+                  </td>
+                </tr>
+
+                <tr class="hover:bg-gray-800/50 transition">
+                  <td class="px-6 py-4">
+                    <div class="font-medium text-white">Carlos Oliveira</div>
+                    <div class="text-sm text-gray-400">+55 51 97777-6666</div>
+                  </td>
+                  <td class="px-6 py-4">
+                    <div class="font-medium text-white">MacBook Pro M3</div>
+                    <div class="text-sm text-gray-400">16GB RAM, 512GB</div>
+                  </td>
+                  <td class="px-6 py-4 font-bold text-green-400">R$ 18.499,00</td>
+                  <td class="px-6 py-4">
+                    <span class="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-green-900/50 text-green-400">
+                      Urgente
+                    </span>
+                  </td>
+                  <td class="px-6 py-4">
+                    <span class="font-bold text-red-400">45%</span>
+                  </td>
+                  <td class="px-6 py-4">
+                    <span class="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-green-900/50 text-green-400">
+                      Convertido
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm text-gray-400">20/01 11:22</td>
+                  <td class="px-6 py-4">
+                    <span class="text-green-400 text-sm">🎉 Comprou!</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="mt-6 text-center text-gray-400 text-sm">
+            Sistema de IA classifica automaticamente o motivo da perda e gera reengajamento personalizado
+          </div>
+        </div>
+      `;
+    }
+
+    // Render functions
+    function renderLojas() {
+      return `
+        <div class="max-w-7xl mx-auto">
+          <div class="flex justify-between items-center mb-6">
+            <div>
+              <h2 class="text-2xl font-black">Minhas Lojas</h2>
+              <p class="text-gray-400">Gerencie múltiplas lojas e seus trials</p>
+            </div>
+            <button onclick="showAddLojaModal()" class="px-6 py-3 bg-gradient-to-r from-cyan-500 to-green-500 text-black font-bold rounded-lg hover:from-cyan-400 hover:to-green-400 transition">
+              + Nova Loja
+            </button>
+          </div>
+
+          <div class="overflow-x-auto rounded-xl border border-gray-800 bg-gray-900/50">
+            <table class="min-w-full divide-y divide-gray-800">
+              <thead class="bg-gray-800">
+                <tr>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase">Logo</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase">Nome</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase hidden md:table-cell">Domínio</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase hidden lg:table-cell">Vendas</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase">Status</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase">Trial</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase">Ações</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-800">
+                <tr class="hover:bg-gray-800/50 transition">
+                  <td class="px-6 py-4"><div class="w-10 h-10 bg-gradient-to-br from-cyan-400 to-green-400 rounded-full"></div></td>
+                  <td class="px-6 py-4 font-medium text-white">Sneakers BR</td>
+                  <td class="px-6 py-4 text-gray-400 hidden md:table-cell">sneakersbr.com</td>
+                  <td class="px-6 py-4 text-green-400 font-bold hidden lg:table-cell">R$ 124.450</td>
+                  <td class="px-6 py-4"><span class="px-3 py-1 bg-green-900/50 text-green-400 rounded-full text-xs">Ativa</span></td>
+                  <td class="px-6 py-4 text-sm text-gray-400">Expira 31/03</td>
+                  <td class="px-6 py-4"><button class="text-cyan-400 hover:text-cyan-300">Editar</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderAdicionais() {
+      return `
+        <div class="max-w-6xl mx-auto">
+          <h2 class="text-2xl font-black mb-6">Adicionais & Upgrades</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="p-6 bg-gray-900 rounded-xl border border-green-500/50 shadow-lg">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="text-3xl">🔄</div>
+                <div>
+                  <h3 class="font-bold text-lg">360° AR</h3>
+                  <p class="text-sm text-gray-400">Visualização 3D completa</p>
+                </div>
+              </div>
+              <p class="text-2xl font-black text-white mb-4">R$ 97/mês</p>
+              <button class="w-full py-2 bg-green-600 hover:bg-green-500 text-white rounded transition">Ativo ✓</button>
+            </div>
+
+            <div class="p-6 bg-gray-900 rounded-xl border border-gray-700 hover:border-purple-500/50 transition">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="text-3xl">📱</div>
+                <div>
+                  <h3 class="font-bold text-lg">MultiZap</h3>
+                  <p class="text-sm text-gray-400">3 contas WhatsApp simultâneas</p>
+                </div>
+              </div>
+              <p class="text-2xl font-black text-white mb-4">R$ 147/mês</p>
+              <button onclick="ativarAdicional('multizap')" class="w-full py-2 bg-gradient-to-r from-cyan-500 to-green-500 text-black font-bold rounded hover:from-cyan-400 hover:to-green-400 transition">
+                Ativar
+              </button>
+            </div>
+
+            <div class="p-6 bg-gray-900 rounded-xl border border-gray-700 hover:border-blue-500/50 transition">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="text-3xl">🤖</div>
+                <div>
+                  <h3 class="font-bold text-lg">IA Plus</h3>
+                  <p class="text-sm text-gray-400">GPT-4o + respostas humanas</p>
+                </div>
+              </div>
+              <p class="text-2xl font-black text-white mb-4">R$ 197/mês</p>
+              <button onclick="ativarAdicional('aiplus')" class="w-full py-2 bg-gradient-to-r from-cyan-500 to-green-500 text-black font-bold rounded hover:from-cyan-400 hover:to-green-400 transition">
+                Ativar
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderSuporte() {
+      return `
+        <div class="max-w-4xl mx-auto">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-black">Suporte GetNexo</h2>
+            <button onclick="abrirTicket()" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg transition flex items-center gap-2">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              Novo Ticket
+            </button>
+          </div>
+
+          <div class="bg-gray-900 rounded-xl border border-gray-800 h-96 flex flex-col">
+            <div class="flex-1 p-4 overflow-y-auto space-y-4">
+              <div class="flex justify-start">
+                <div class="max-w-[80%] p-3 rounded-lg bg-gray-800 text-white">
+                  <p class="text-sm">Olá! Como posso ajudar hoje?</p>
+                  <p class="text-xs opacity-70 mt-1">09:12</p>
+                </div>
+              </div>
+              <div class="flex justify-end">
+                <div class="max-w-[80%] p-3 rounded-lg bg-gradient-to-r from-cyan-600 to-green-600 text-black">
+                  <p class="text-sm">Meu trial não atualiza depois do pagamento.</p>
+                  <p class="text-xs opacity-70 mt-1">09:13</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-4 border-t border-gray-800">
+              <div class="flex gap-2">
+                <input type="text" placeholder="Digite sua mensagem..." class="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 transition" />
+                <button class="px-6 py-3 bg-gradient-to-r from-cyan-500 to-green-500 text-black font-bold rounded-lg hover:from-cyan-400 hover:to-green-400 transition">
+                  Enviar
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-xs text-gray-500 mt-4 text-center">
+            Suporte humano: seg-sex 9h-18h • Resposta média: 2-4h
+          </p>
+        </div>
+      `;
+    }
+
+    function renderFinanceiro() {
+      return `
+        <div class="max-w-6xl mx-auto">
+          <h2 class="text-2xl font-black mb-6">Financeiro</h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-gray-900 p-6 rounded-xl border border-cyan-900/50">
+              <div class="text-cyan-400 text-sm">Total Faturado</div>
+              <div class="text-3xl font-black text-white">R$ 2.381</div>
+              <div class="text-xs text-green-500 mt-1">+12% vs mês passado</div>
+            </div>
+            <div class="bg-gray-900 p-6 rounded-xl border border-orange-900/50">
+              <div class="text-orange-400 text-sm">Pendentes</div>
+              <div class="text-3xl font-black text-white">R$ 97</div>
+              <div class="text-xs text-orange-500 mt-1">Vencem hoje</div>
+            </div>
+            <div class="bg-gray-900 p-6 rounded-xl border border-green-900/50">
+              <div class="text-green-400 text-sm">Mensal Atual</div>
+              <div class="text-3xl font-black text-white">R$ 297</div>
+              <div class="text-xs text-green-500 mt-1">Pago</div>
+            </div>
+            <div class="bg-gray-900 p-6 rounded-xl border border-purple-900/50">
+              <div class="text-purple-400 text-sm">Economia IA</div>
+              <div class="text-3xl font-black text-white">75%</div>
+              <div class="text-xs text-purple-500 mt-1">vs atendimento humano</div>
+            </div>
+          </div>
+
+          <div class="bg-gray-900 p-6 rounded-xl border border-gray-800 mb-6">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-lg font-bold">Histórico de Pagamentos</h3>
+              <button onclick="emitirNF()" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg transition text-sm">
+                Emitir NF-e
+              </button>
+            </div>
+
+            <div class="space-y-3">
+              <div class="flex justify-between items-center p-4 bg-gray-800 rounded-lg">
+                <div><p class="font-medium">IA Plus</p><p class="text-xs text-gray-500">22/01/26</p></div>
+                <div class="flex items-center gap-4">
+                  <span class="text-green-400 font-bold">R$ 197</span>
+                  <span class="px-3 py-1 bg-green-900 rounded text-green-400 text-xs">Pago</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderPersonalizar() {
+      return `
+        <div class="max-w-4xl mx-auto">
+          <h2 className="text-2xl font-black mb-6">Personalize seu Bot</h2>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="bg-gray-900 p-6 rounded-xl border border-gray-800">
+              <h3 class="text-lg font-bold mb-4">Configurações</h3>
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium mb-2">Nome do Bot</label>
+                  <input type="text" value="GetNexo Assistant" class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white" />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-2">Cor Primária</label>
+                  <div class="flex gap-2">
+                    <input type="color" value="#00f7ff" class="w-12 h-8 rounded border-none" />
+                    <input type="text" value="#00f7ff" class="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white" />
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-2">Mensagem Inicial</label>
+                  <input type="text" value="Oi! Como posso ajudar você hoje?" class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white" />
+                </div>
+                <button class="w-full py-3 bg-gradient-to-r from-cyan-500 to-green-500 text-black font-bold rounded hover:from-cyan-400 hover:to-green-400 transition">
+                  Salvar Personalização
+                </button>
+              </div>
+            </div>
+
+            <div class="bg-gray-900 p-6 rounded-xl border border-gray-800">
+              <h3 class="text-lg font-bold mb-4">Preview do Chat</h3>
+              <div class="bg-gray-800 rounded-lg p-4">
+                <div class="flex items-center gap-3 mb-4 p-3 rounded-lg" style="background: linear-gradient(135deg, #00f7ff20, #0099cc20)">
+                  <div class="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center text-sm">🤖</div>
+                  <div><div class="font-bold text-sm" style="color: #00f7ff">GetNexo Assistant</div></div>
+                </div>
+                <div class="space-y-2">
+                  <div class="flex justify-start"><div class="max-w-[80%] p-3 rounded-lg bg-gray-700 text-white text-sm">Oi! Como posso ajudar você hoje?</div></div>
+                  <div class="flex justify-end"><div class="max-w-[80%] p-3 rounded-lg text-black text-sm" style="background: linear-gradient(135deg, #00f7ff, #0099cc)">Obrigado!</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderNotificacoes() {
+      return `
+        <div class="max-w-4xl mx-auto">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-black">Notificações</h2>
+            <div class="flex gap-2">
+              <select class="px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white text-sm">
+                <option>Todas</option>
+                <option>Não lidas</option>
+                <option>Urgentes</option>
+              </select>
+              <button class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded transition text-sm">
+                Marcar todas lidas
+              </button>
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            <div class="p-4 bg-gray-800 rounded-lg border border-gray-700">
+              <div class="flex items-start gap-4">
+                <div class="text-2xl">💰</div>
+                <div class="flex-1">
+                  <div class="flex justify-between items-start mb-2">
+                    <h4 class="font-bold text-white">Nova venda realizada!</h4>
+                    <span class="text-xs text-gray-500">14:30</span>
+                  </div>
+                  <p class="text-sm text-gray-300">Cliente João comprou Smartphone Galaxy por R$ 2.499</p>
+                  <div class="flex gap-2 mt-3">
+                    <button class="px-3 py-1 bg-cyan-600 hover:bg-cyan-500 text-white rounded text-xs">Marcar lida</button>
+                    <button class="px-3 py-1 bg-red-600 hover:bg-red-500 text-white rounded text-xs">Excluir</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Funções auxiliares
+    window.showAddLojaModal = () => {
+      alert('Modal de adicionar loja seria aberto aqui');
+    };
+
+    window.ativarAdicional = (tipo) => {
+      alert(\`Adicional \${tipo} ativado! R$ 147/mês\`);
+    };
+
+    window.abrirTicket = () => {
+      alert('Novo ticket criado! Responderemos em até 4h.');
+    };
+
+    window.emitirNF = () => {
+      alert('NF-e gerada e enviada por email!');
+    };
+
+    // Inicialização
+    document.addEventListener('DOMContentLoaded', () => {
+      // Atualizar contador de notificações
+      const unreadCount = state.notifications.filter(n => n.unread).length;
+      document.getElementById('notification-count').textContent = unreadCount;
+
+      console.log('🚀 GetNexo Painel Administrativo Carregado!');
+    });
+  </script>
+</body>
+</html>

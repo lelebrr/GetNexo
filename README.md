@@ -25,7 +25,21 @@ GetNexo é uma solução completa "All-in-One" que transforma seu WhatsApp em um
 
 ---
 
-## 📖 Documentação Centralizada
+## 🚀 **Roda em 30s:**
+
+```bash
+docker compose up -d
+```
+
+Acesse: http://localhost:3000
+
+> **Self-hosted. Sem taxa. Sem cartão.**
+
+---
+
+
+
+## � Documentação Centralizada
 
 Toda a documentação do projeto foi centralizada na pasta **[`docs/`](docs/)**. Utilize os links abaixo para acessar as seções principais:
 

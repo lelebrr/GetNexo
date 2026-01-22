@@ -1,0 +1,195 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ProductViewer from '../components/ProductViewer.astro';
+---
+
+<Layout title="Demonstração 360° e AR - GetNexo" description="Veja como funciona a visualização 360° e Realidade Aumentada no GetNexo">
+    <div class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <!-- Header -->
+            <div class="text-center mb-12">
+                <div class="inline-flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-full px-6 py-3 mb-6">
+                    <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                    <span class="text-white font-medium">Sistema Funcional</span>
+                </div>
+                <h1 class="text-5xl font-bold text-white mb-4">
+                    Demonstração <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">360° & AR</span>
+                </h1>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    Visualize produtos em rotação completa e realidade aumentada.
+                    Funciona no WhatsApp, Instagram e site do GetNexo.
+                </p>
+            </div>
+
+            <!-- Product Demo -->
+            <div class="bg-white/5 backdrop-blur-lg rounded-3xl p-8 mb-12 border border-white/10">
+                <h2 class="text-3xl font-bold text-white mb-8 text-center">
+                    🪑 Sofá Executivo Premium
+                </h2>
+
+                <ProductViewer
+                    productId="demo-sofa"
+                    mode="both"
+                    title="Sofá Executivo - 360° + AR"
+                    trialMode={true}
+                    has360Module={true}
+                    hasARModule={true}
+                    client:load
+                />
+
+                <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl p-6 border border-blue-500/30">
+                        <div class="text-3xl mb-3">🔄</div>
+                        <h3 class="text-white font-semibold mb-2">360° Interativo</h3>
+                        <p class="text-gray-300 text-sm">Giro automático mostrando todos os ângulos do produto</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-xl p-6 border border-purple-500/30">
+                        <div class="text-3xl mb-3">📱</div>
+                        <h3 class="text-white font-semibold mb-2">AR Realista</h3>
+                        <p class="text-gray-300 text-sm">Visualize na sua casa com realidade aumentada</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-xl p-6 border border-green-500/30">
+                        <div class="text-3xl mb-3">💰</div>
+                        <h3 class="text-white font-semibold mb-2">Mais Vendas</h3>
+                        <p class="text-gray-300 text-sm">+31% de conversão com visualização imersiva</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Integration Demo -->
+            <div class="bg-white/5 backdrop-blur-lg rounded-3xl p-8 mb-12 border border-white/10">
+                <h2 class="text-3xl font-bold text-white mb-8 text-center">
+                    💬 Integração no Chat
+                </h2>
+                <p class="text-gray-300 text-center mb-8">
+                    No WhatsApp e chat do site, o assistente IA pode mostrar produtos em 360° e AR
+                </p>
+
+                <div class="max-w-2xl mx-auto">
+                    <!-- Chat Simulator -->
+                    <div class="bg-slate-800 rounded-2xl p-6 border border-slate-700">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center">
+                                <span class="text-white text-sm">🤖</span>
+                            </div>
+                            <span class="text-white font-medium">GetNexo Assistant</span>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="flex justify-start">
+                                <div class="bg-slate-700 text-white rounded-2xl rounded-tl-md px-4 py-3 max-w-xs">
+                                    Olá! Gostaria de ver o sofá executivo em 360°?
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end">
+                                <div class="bg-cyan-600 text-white rounded-2xl rounded-tr-md px-4 py-3 max-w-xs">
+                                    Sim, mostra aí!
+                                </div>
+                            </div>
+
+                            <div class="flex justify-start">
+                                <div class="bg-slate-700 text-white rounded-2xl rounded-tl-md px-4 py-3">
+                                    <div class="text-sm mb-2">🔄 Visualização 360° do produto:</div>
+                                    <div class="bg-slate-900 rounded-lg p-4 border border-slate-600">
+                                        <div class="text-cyan-400 text-sm font-mono mb-2">[360° Viewer Active]</div>
+                                        <div class="text-gray-400 text-xs">Girando automaticamente...</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-start">
+                                <div class="bg-slate-700 text-white rounded-2xl rounded-tl-md px-4 py-3">
+                                    <div class="text-sm mb-2">📱 Quer ver em AR na sua casa?</div>
+                                    <button class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:shadow-lg transition-all">
+                                        Ver em Realidade Aumentada
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tech Specs -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+                <div class="bg-white/5 backdrop-blur-lg rounded-3xl p-8 border border-white/10">
+                    <h3 class="text-2xl font-bold text-white mb-6">🛠️ Tecnologias</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                                <span class="text-blue-400">🎮</span>
+                            </div>
+                            <div>
+                                <div class="text-white font-medium">Three.js</div>
+                                <div class="text-gray-400 text-sm">Motor 3D para visualização 360°</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                                <span class="text-purple-400">📱</span>
+                            </div>
+                            <div>
+                                <div class="text-white font-medium">Model Viewer</div>
+                                <div class="text-gray-400 text-sm">Google para realidade aumentada</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center">
+                                <span class="text-green-400">⚡</span>
+                            </div>
+                            <div>
+                                <div class="text-white font-medium">WebXR</div>
+                                <div class="text-gray-400 text-sm">API moderna para AR/VR web</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur-lg rounded-3xl p-8 border border-white/10">
+                    <h3 class="text-2xl font-bold text-white mb-6">📊 Resultados</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">Conversão com 360°</span>
+                            <span class="text-green-400 font-bold">+23%</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">Conversão com AR</span>
+                            <span class="text-green-400 font-bold">+31%</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">Redução de devoluções</span>
+                            <span class="text-green-400 font-bold">-40%</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">Tempo de decisão</span>
+                            <span class="text-cyan-400 font-bold">-60%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="text-center">
+                <div class="bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-3xl p-12 border border-cyan-500/30">
+                    <h2 class="text-3xl font-bold text-white mb-4">
+                        Pronto para revolucionar suas vendas?
+                    </h2>
+                    <p class="text-gray-300 mb-8 max-w-2xl mx-auto">
+                        Ative a visualização 360° e AR no GetNexo e aumente suas conversões hoje mesmo.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="/cliente/produtos" class="bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-8 py-4 rounded-xl font-semibold hover:shadow-2xl transition-all transform hover:scale-105">
+                            🆓 Testar Grátis 36h
+                        </a>
+                        <a href="/cliente/hub" class="border border-white/30 text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/10 transition-all">
+                            📊 Ver Painel
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</Layout>

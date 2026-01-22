@@ -3,70 +3,44 @@ export interface Props {
   productId?: string;
   imageCount?: number;
   title?: string;
-  fallbackImage?: string;
 }
 
 const {
   productId = 'demo',
   imageCount = 72,
-  title = 'Visualizar Produto 360°',
-  fallbackImage = '/assets/logo.svg'
+  title = 'Girar Produto 360°'
 } = Astro.props;
 ---
 
+<!-- No painel: <div id="nexo-360-${productId}" class="w-full h-96 rounded-lg"></div> -->
 <div id="nexo-360-${productId}" class="spin-360-container">
-  <div class="spin-360-viewer">
-    <canvas id="spin-360-canvas-${productId}" class="spin-360-canvas"></canvas>
+  <canvas id="spin-360-canvas-${productId}" class="spin-360-canvas"></canvas>
 
-    <!-- Fallback -->
-    <div class="spin-360-fallback">
-      <img src={fallbackImage} alt="Produto GetNexo" class="spin-360-preview" />
-      <p>Carregando visualização 360°...</p>
-      <div class="spin-360-loading">
-        <div class="spin-360-spinner"></div>
-      </div>
+  <!-- Fallback -->
+  <div class="spin-360-fallback">
+    <img src="/assets/logo.svg" alt="Produto GetNexo" class="spin-360-preview" />
+    <p>Carregando spinner 360°...</p>
+    <div class="spin-360-loading">
+      <div class="spin-360-spinner"></div>
     </div>
-  </div>
-
-  <div class="spin-360-controls">
-    <button id="spin-360-play-${productId}" class="spin-360-btn">
-      <span class="spin-360-icon">▶️</span>
-      {title}
-    </button>
-    <button id="spin-360-pause-${productId}" class="spin-360-btn" style="display: none;">
-      <span class="spin-360-icon">⏸️</span>
-      Pausar
-    </button>
-    <button id="spin-360-reset-${productId}" class="spin-360-btn">
-      <span class="spin-360-icon">🔄</span>
-      Reset
-    </button>
   </div>
 </div>
 
 <style>
-  .spin-360-container {
-    position: relative;
+  #nexo-360-${productId} {
     width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
+    height: 400px;
+    position: relative;
     border-radius: 12px;
     overflow: hidden;
     background: #000;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
 
-  .spin-360-viewer {
-    position: relative;
-    width: 100%;
-    height: 400px;
-    border-radius: 12px;
-  }
-
   .spin-360-canvas {
     width: 100% !important;
     height: 100% !important;
-    display: none;
+    display: block;
     border-radius: 12px;
   }
 
@@ -121,373 +95,67 @@ const {
     100% { transform: rotate(360deg); }
   }
 
-  .spin-360-controls {
-    display: flex;
-    gap: 10px;
-    padding: 20px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .spin-360-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 20px;
-    border: 1px solid rgba(0, 212, 255, 0.3);
-    border-radius: 25px;
-    background: rgba(0, 212, 255, 0.1);
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.3s;
-    font-size: 14px;
-  }
-
-  .spin-360-btn:hover {
-    background: rgba(0, 212, 255, 0.2);
-    transform: translateY(-2px);
-  }
-
-  .spin-360-icon {
-    font-size: 16px;
-  }
-
   /* Mobile responsive */
   @media (max-width: 768px) {
-    .spin-360-viewer {
+    #nexo-360-${productId} {
       height: 300px;
-    }
-
-    .spin-360-controls {
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .spin-360-btn {
-      width: 200px;
-      justify-content: center;
     }
   }
 </style>
 
 <script define:vars={{ productId, imageCount }}>
-  // @ts-ignore
-  declare const THREE: any;
+  import * as THREE from 'https://cdn.skypack.dev/three@0.150';
+  import { OrbitControls } from 'https://cdn.skypack.dev/three@0.150/examples/jsm/controls/OrbitControls.js';
 
-  declare global {
-    interface Window {
-      [key: string]: any;
-    }
+  const container = document.getElementById(`nexo-360-${productId}`);
+  if (!container) return;
+
+  // Carrega imagens em sequência
+  const loader = new THREE.TextureLoader();
+  const images = [];  // array de texturas
+  let loaded = 0;
+
+  for (let i = 1; i <= imageCount; i++) {
+    const imgPath = `/360/${productId}/foto${String(i).padStart(3, '0')}.jpg`;
+    loader.load(imgPath, (tex) => {
+      images.push(tex);
+      loaded++;
+      if (loaded === imageCount) initSpinner();
+    });
   }
 
-  class Spin360Viewer {
-    productId: string;
-    imageCount: number;
-    container: HTMLElement | null;
-    canvas: HTMLCanvasElement | null;
-    scene: any;
-    camera: any;
-    renderer: any;
-    geometry: any;
-    material: any;
-    mesh: any;
-    controls: any;
-    textures: any[];
-    currentFrame: number;
-    isPlaying: boolean;
-    animationId: number | null;
+  function initSpinner() {
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(70, container.clientWidth / container.clientHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(renderer.domElement);
 
-    constructor(productId: string, imageCount: number) {
-      this.productId = productId;
-      this.imageCount = imageCount;
-      this.container = document.getElementById(`nexo-360-${productId}`);
-      this.canvas = document.getElementById(`spin-360-canvas-${productId}`) as HTMLCanvasElement;
-      this.scene = null;
-      this.camera = null;
-      this.renderer = null;
-      this.geometry = null;
-      this.material = null;
-      this.mesh = null;
-      this.controls = null;
-      this.textures = [];
-      this.currentFrame = 0;
-      this.isPlaying = false;
-      this.animationId = null;
+    const geometry = new THREE.BoxGeometry(2, 2, 0.1);
+    const material = new THREE.MeshBasicMaterial({ map: images[0] });
+    const mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
 
-      this.init();
+    camera.position.z = 3;
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableZoom = false;
+    controls.enablePan = false;
+
+    let idx = 0;
+    function animate() {
+      requestAnimationFrame(animate);
+      idx = (idx + 1) % imageCount;
+      material.map = images[idx];
+      material.needsUpdate = true;
+      controls.update();
+      renderer.render(scene, camera);
     }
+    animate();
 
-    async init() {
-      if (!this.container || !this.canvas) return;
-
-      await this.checkWebGLSupport();
-      if (!this.isWebGLSupported()) {
-        this.showFallback();
-        return;
-      }
-
-      this.setupThreeJS();
-      await this.loadTextures();
-      this.setupControls();
-      this.hideFallback();
-
-      // Auto-play on load
-      this.play();
-    }
-
-    isWebGLSupported() {
-      try {
-        const canvas = document.createElement('canvas');
-        return !!(window.WebGLRenderingContext &&
-          canvas.getContext('webgl'));
-      } catch (e) {
-        return false;
-      }
-    }
-
-    async checkWebGLSupport() {
-      return new Promise((resolve) => {
-        if (this.isWebGLSupported()) {
-          resolve(true);
-        } else {
-          this.showFallback();
-          resolve(false);
-        }
-      });
-    }
-
-    setupThreeJS() {
-      // Scene
-      this.scene = new THREE.Scene();
-
-      // Camera
-      this.camera = new THREE.PerspectiveCamera(
-        70,
-        this.container!.clientWidth / this.container!.clientHeight,
-        0.1,
-        1000
-      );
-      this.camera.position.z = 3;
-
-      // Renderer
-      this.renderer = new THREE.WebGLRenderer({
-        canvas: this.canvas,
-        alpha: true,
-        antialias: true
-      });
-      this.renderer.setSize(this.container!.clientWidth, this.container!.clientHeight);
-      this.renderer.setClearColor(0x000000, 0);
-
-      // Geometry (flat plane for 360 spin)
-      this.geometry = new THREE.PlaneGeometry(3.5, 3.5);
-
-      // Initial material
-      this.material = new THREE.MeshBasicMaterial({
-        transparent: true,
-        side: THREE.DoubleSide
-      });
-
-      // Mesh
-      this.mesh = new THREE.Mesh(this.geometry, this.material);
-      this.scene.add(this.mesh);
-
-      // OrbitControls
-      this.setupOrbitControls();
-
-      // Handle resize
-      window.addEventListener('resize', () => this.onResize());
-    }
-
-    setupOrbitControls() {
-      if (typeof THREE.OrbitControls !== 'undefined') {
-        this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
-        this.controls.enableZoom = true;
-        this.controls.enablePan = false;
-        this.controls.enableDamping = true;
-        this.controls.dampingFactor = 0.05;
-        this.controls.minDistance = 2;
-        this.controls.maxDistance = 6;
-      }
-    }
-
-    async loadTextures() {
-      const loader = new THREE.TextureLoader();
-      const promises = [];
-
-      for (let i = 1; i <= this.imageCount; i++) {
-        const promise = new Promise((resolve, reject) => {
-          const imgPath = `/360/${this.productId}/foto${String(i).padStart(3, '0')}.jpg`;
-          loader.load(
-            imgPath,
-            (texture) => {
-              texture.generateMipmaps = false;
-              texture.minFilter = THREE.LinearFilter;
-              this.textures.push(texture);
-              resolve(texture);
-            },
-            undefined,
-            (error) => {
-              console.warn(`Failed to load texture ${imgPath}:`, error);
-              resolve(null); // Resolve with null to continue
-            }
-          );
-        });
-        promises.push(promise);
-      }
-
-      await Promise.all(promises);
-
-      // Filter out null textures
-      this.textures = this.textures.filter(tex => tex !== null);
-
-      if (this.textures.length > 0) {
-        this.material.map = this.textures[0];
-        this.material.needsUpdate = true;
-      }
-
-      console.log(`Loaded ${this.textures.length} textures for product ${this.productId}`);
-    }
-
-    setupControls() {
-      const playBtn = document.getElementById(`spin-360-play-${this.productId}`);
-      const pauseBtn = document.getElementById(`spin-360-pause-${this.productId}`);
-      const resetBtn = document.getElementById(`spin-360-reset-${this.productId}`);
-
-      if (playBtn) {
-        playBtn.addEventListener('click', () => this.play());
-      }
-
-      if (pauseBtn) {
-        pauseBtn.addEventListener('click', () => this.pause());
-      }
-
-      if (resetBtn) {
-        resetBtn.addEventListener('click', () => this.reset());
-      }
-    }
-
-    play() {
-      if (this.textures.length === 0) return;
-
-      this.isPlaying = true;
-      this.updateButtons();
-      this.animate();
-    }
-
-    pause() {
-      this.isPlaying = false;
-      this.updateButtons();
-      if (this.animationId) {
-        cancelAnimationFrame(this.animationId);
-        this.animationId = null;
-      }
-    }
-
-    reset() {
-      this.currentFrame = 0;
-      this.camera.position.set(0, 0, 3);
-      this.camera.lookAt(0, 0, 0);
-      if (this.controls) {
-        this.controls.reset();
-      }
-      this.updateMaterial();
-    }
-
-    updateButtons() {
-      const playBtn = document.getElementById(`spin-360-play-${this.productId}`);
-      const pauseBtn = document.getElementById(`spin-360-pause-${this.productId}`);
-
-      if (playBtn && pauseBtn) {
-        if (this.isPlaying) {
-          playBtn.style.display = 'none';
-          pauseBtn.style.display = 'flex';
-        } else {
-          playBtn.style.display = 'flex';
-          pauseBtn.style.display = 'none';
-        }
-      }
-    }
-
-    animate = () => {
-      if (!this.isPlaying) return;
-
-      this.currentFrame = (this.currentFrame + 1) % this.textures.length;
-      this.updateMaterial();
-
-      if (this.controls) {
-        this.controls.update();
-      }
-
-      this.renderer.render(this.scene, this.camera);
-
-      this.animationId = requestAnimationFrame(this.animate);
-    }
-
-    updateMaterial() {
-      if (this.textures[this.currentFrame]) {
-        this.material.map = this.textures[this.currentFrame];
-        this.material.needsUpdate = true;
-      }
-    }
-
-    onResize() {
-      if (!this.container) return;
-
-      this.camera.aspect = this.container.clientWidth / this.container.clientHeight;
-      this.camera.updateProjectionMatrix();
-      this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
-    }
-
-    showFallback() {
-      const fallback = this.container?.querySelector('.spin-360-fallback') as HTMLElement;
-      if (fallback) {
-        fallback.innerHTML = `
-          <img src="/assets/logo.svg" alt="GetNexo" class="spin-360-preview" />
-          <p>Visualização 360° não suportada neste dispositivo</p>
-          <p>Para melhor experiência, use um navegador moderno com WebGL</p>
-        `;
-      }
-    }
-
-    hideFallback() {
-      const fallback = this.container?.querySelector('.spin-360-fallback') as HTMLElement;
-      const canvas = this.canvas;
-      if (fallback && canvas) {
-        fallback.style.display = 'none';
-        canvas.style.display = 'block';
-      }
-    }
-  }
-
-  // Initialize when DOM is ready
-  document.addEventListener('DOMContentLoaded', () => {
-    // Load Three.js if not already loaded
-    if (typeof THREE === 'undefined') {
-      const script = document.createElement('script');
-      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r150/three.min.js';
-      script.onload = () => loadOrbitControls();
-      document.head.appendChild(script);
-    } else {
-      loadOrbitControls();
-    }
-  });
-
-  function loadOrbitControls() {
-    if (typeof THREE.OrbitControls === 'undefined') {
-      const orbitScript = document.createElement('script');
-      orbitScript.src = 'https://cdn.jsdelivr.net/npm/three@0.150.0/examples/js/controls/OrbitControls.js';
-      orbitScript.onload = () => initializeViewer();
-      document.head.appendChild(orbitScript);
-    } else {
-      initializeViewer();
-    }
-  }
-
-  function initializeViewer() {
-    // Small delay to ensure DOM is fully ready
-    setTimeout(() => {
-      window[`spin360Viewer_${productId}`] = new Spin360Viewer(productId, imageCount);
-    }, 100);
+    window.addEventListener('resize', () => {
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+    });
   }
 </script>

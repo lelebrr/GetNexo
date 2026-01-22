@@ -14,6 +14,7 @@ class NexoChat extends HTMLElement {
         this.debounceTimeout = null;
         this.cacheTTL = 30 * 60 * 1000; // 30 mins
         this.isStreaming = false;
+        this.userModules = { ar: true, vr360: true }; // Trial mode - all enabled
     }
 
     connectedCallback() {
@@ -164,6 +165,170 @@ class NexoChat extends HTMLElement {
     scrollToBottom() {
         const body = this.shadowRoot.querySelector('#chat-body');
         body.scrollTop = body.scrollHeight;
+    }
+
+    // --- 360° E AR FEATURES ---
+    mostrarProduto360(produtoId) {
+        if (!this.userModules.vr360 && !this.trialMode) {
+            this.addMessage('assistant', '🔒 Módulo 360° não ativado. Clique aqui para adquirir: https://getnexo.com.br/adicionais');
+            return;
+        }
+
+        const viewer = document.createElement('div');
+        viewer.innerHTML = `
+            <div style="width: 100%; height: 300px; background: #1e293b; border-radius: 8px; margin: 10px 0; position: relative;">
+                <div id="nexo-360-${produtoId}" style="width: 100%; height: 100%; border-radius: 8px;"></div>
+                <button onclick="this.parentElement.remove()" style="position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer;">×</button>
+            </div>
+        `;
+
+        this.shadowRoot.querySelector('#chat-body').appendChild(viewer);
+        this.scrollToBottom();
+
+        // Load Three.js and initialize 360 viewer
+        this.loadThreeJS(produtoId);
+    }
+
+    mostrarProdutoAR(produtoId) {
+        if (!this.userModules.ar && !this.trialMode) {
+            this.addMessage('assistant', '🔒 Módulo AR não ativado. Clique aqui para adquirir: https://getnexo.com.br/adicionais');
+            return;
+        }
+
+        // Create AR button and viewer
+        const arButton = document.createElement('button');
+        arButton.innerHTML = 'Ver em Realidade Aumentada';
+        arButton.style.cssText = `
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px 0;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+            transition: all 0.3s ease;
+        `;
+        arButton.onmouseover = () => arButton.style.transform = 'scale(1.05)';
+        arButton.onmouseout = () => arButton.style.transform = 'scale(1)';
+        arButton.onclick = () => this.abrirAR(produtoId);
+
+        this.shadowRoot.querySelector('#chat-body').appendChild(arButton);
+        this.scrollToBottom();
+    }
+
+    async loadThreeJS(produtoId) {
+        if (window.THREE) {
+            this.init360Viewer(produtoId);
+            return;
+        }
+
+        // Load Three.js dynamically
+        const script = document.createElement('script');
+        script.src = 'https://cdn.skypack.dev/three@0.150';
+        script.onload = () => this.init360Viewer(produtoId);
+        document.head.appendChild(script);
+    }
+
+    async init360Viewer(produtoId) {
+        const containerId = `nexo-360-${produtoId}`;
+        const container = this.shadowRoot.querySelector(`#${containerId}`);
+
+        if (!container) return;
+
+        const { Scene, PerspectiveCamera, WebGLRenderer, TextureLoader, BoxGeometry, MeshBasicMaterial, Mesh } = window.THREE;
+
+        const scene = new Scene();
+        const camera = new PerspectiveCamera(70, container.clientWidth / container.clientHeight, 0.1, 1000);
+        const renderer = new WebGLRenderer({ antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        container.appendChild(renderer.domElement);
+
+        // Load 72 images for 360 spin
+        const images = [];
+        let loaded = 0;
+
+        for (let i = 1; i <= 72; i++) {
+            const imgPath = `/360/${produtoId}/foto${String(i).padStart(3, '0')}.jpg`;
+            const loader = new TextureLoader();
+
+            loader.load(imgPath,
+                (tex) => {
+                    images.push(tex);
+                    loaded++;
+                    if (loaded === 72) {
+                        // Create cube with first image
+                        const geometry = new BoxGeometry(2, 2, 0.1);
+                        const material = new MeshBasicMaterial({ map: images[0] });
+                        const mesh = new Mesh(geometry, material);
+                        scene.add(mesh);
+
+                        camera.position.z = 3;
+
+                        // Animation loop
+                        let idx = 0;
+                        const animate = () => {
+                            requestAnimationFrame(animate);
+                            idx = (idx + 1) % 72;
+                            material.map = images[idx];
+                            material.needsUpdate = true;
+                            renderer.render(scene, camera);
+                        };
+                        animate();
+                    }
+                },
+                undefined,
+                () => {
+                    // Fallback if image fails
+                    console.warn(`Failed to load image: ${imgPath}`);
+                }
+            );
+        }
+
+        // Handle resize
+        const resizeObserver = new ResizeObserver(() => {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+        resizeObserver.observe(container);
+    }
+
+    abrirAR(produtoId) {
+        // Create modal with AR viewer
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.8); z-index: 9999; display: flex;
+            align-items: center; justify-content: center;
+        `;
+
+        modal.innerHTML = `
+            <div style="position: relative; width: 90vw; height: 90vh; background: white; border-radius: 10px;">
+                <button onclick="this.parentElement.parentElement.remove()" style="position: absolute; top: 10px; right: 10px; background: #333; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; z-index: 10000;">×</button>
+                <model-viewer
+                    src="/modelos/${produtoId}.glb"
+                    ios-src="/modelos/${produtoId}.usdz"
+                    ar
+                    ar-modes="webxr scene-viewer quick-look"
+                    camera-orbit="-45deg 55deg 2m"
+                    auto-rotate
+                    shadow-intensity="1"
+                    style="width: 100%; height: 100%; border-radius: 10px;"
+                ></model-viewer>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        // Load model-viewer script if not loaded
+        if (!window.customElements.get('model-viewer')) {
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js';
+            script.type = 'module';
+            document.head.appendChild(script);
+        }
     }
 
     setupListeners() {

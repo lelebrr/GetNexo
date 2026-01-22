@@ -1,8 +1,12 @@
 ---
 import Layout from '../layouts/Layout.astro';
-const title = "GetNexo: IA que GERA R$ 50.000/Mês no WhatsApp | API Meta Oficial | PIX Automático | CRM IA | Zero Mensalidade 2026";
-const description = "🚀 IA SUPREMA que VENDE AUTOMATICAMENTE no WhatsApp 24/7! 15x MAIS CONVERSÕES, API Oficial Meta, PIX Instantâneo, CRM com IA GPT-4, Fidelidade VIP, Analytics em Tempo Real. ZERO MENSALIDADES, ZERO RISCO, Setup em 10 MINUTOS. SEU NEGÓCIO VENDE ENQUANTO VOCÊ DORME! 🔥";
-const keywords = "whatsapp business api oficial, ia para vendas whatsapp, chatbot whatsapp grátis, automação whatsapp vendas, recuperar carrinho abandonado whatsapp, pix no whatsapp automatico, crm whatsapp integrado, sistema de fidelidade whatsapp, analytics whatsapp vendas, getnexo ia vendas, plataforma whatsapp vendas, bot whatsapp inteligente, vendas 24 horas whatsapp, api meta whatsapp oficial, whatsapp business api, bot whatsapp conversão, sistema vendas whatsapp, chatbot vendas whatsapp, automação comercial whatsapp, inteligencia artificial whatsapp, getnexo whatsapp, vendas automaticas whatsapp, chatgpt whatsapp integrado, gpt-4 whatsapp vendas, whatsapp marketing automation, funil vendas whatsapp, pipeline vendas whatsapp, ticket system whatsapp, gamificação vendas whatsapp, realidade aumentada whatsapp, blockchain whatsapp vendas, metaverso whatsapp commerce, computação quântica vendas";
+import VideoDemo from '../components/VideoDemo.astro';
+import ROICalculator from '../components/ROICalculator.astro';
+import Testimonials from '../components/Testimonials.astro';
+import TourGuided from '../components/TourGuided.astro';
+const title = "Chatbot WhatsApp IA Self-Hosted – Fecha Venda Sozinho | GetNexo";
+const description = "Automação 24h no seu domínio. Sem taxa por mensagem. Integra estoque, frete, PIX. Teste grátis 7 dias. API Oficial Meta + AR + 360°.";
+const keywords = "chatbot whatsapp, ia vendas, automação self hosted, pix no zap, ar produto, giro 360, whatsapp business api oficial, ia para vendas whatsapp, chatbot whatsapp grátis, automação whatsapp vendas, recuperar carrinho abandonado whatsapp, pix no whatsapp automatico";
 
 const lang = 'pt';
 const { default: t } = await import(`../i18n/pt.json`);
@@ -254,6 +258,9 @@ const homeSchema = {
         </div>
     </div>
   </section>
+
+  <!-- Tour Guided Component -->
+  <TourGuided targetPage="home" mobileOptimized={true} client:load />
 
   <!-- Value Propositions Grid -->
     <div class="section-header reveal">
@@ -1082,6 +1089,151 @@ const homeSchema = {
 
 <script is:inline src="/scripts/performance/home-animations.js" defer></script>
 </Layout>
+
+   <!-- Enhanced Hero Styles -->
+   <style>
+     .hero-enhanced {
+       padding: 8rem 5% 4rem;
+       max-width: 1400px;
+       margin: 0 auto;
+       display: flex;
+       flex-direction: column;
+       gap: 4rem;
+     }
+
+     .hero-main {
+       display: grid;
+       grid-template-columns: 1fr 1fr;
+       gap: 4rem;
+       align-items: center;
+       margin-bottom: 2rem;
+     }
+
+     .hero-calculator {
+       margin: 2rem 0;
+     }
+
+     .hero-testimonials {
+       margin-top: 1rem;
+     }
+
+     /* Mobile responsive */
+     @media (max-width: 1000px) {
+       .hero-enhanced {
+         padding: 6rem 5% 3rem;
+         gap: 3rem;
+       }
+
+       .hero-main {
+         grid-template-columns: 1fr;
+         gap: 3rem;
+         text-align: center;
+       }
+
+       .hero-calculator,
+       .hero-testimonials {
+         margin: 1rem 0;
+       }
+     }
+   </style>
+
+   <!-- Original Hero Styles -->
+   <style>
+     /* Hero Section Styles */
+     .hero-split { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; padding: 12rem 5% 6rem; max-width: 1400px; margin: 0 auto; align-items: center; }
+
+     .hero-badge { background: rgba(0, 212, 255, 0.1); color: #00d4ff; padding: 0.5rem 1.2rem; border-radius: 50px; font-size: 0.85rem; font-weight: 800; border: 1px solid rgba(0, 212, 255, 0.2); display: inline-block; margin-bottom: 2rem; }
+     .hero-title { font-size: clamp(2rem, 5vw, 4.5rem); line-height: 1.1; margin-bottom: 1.5rem; font-weight: 900; color: white; }
+     .hero-subtitle { font-size: 1.4rem; color: #e2e8f0; max-width: 650px; margin-bottom: 3.5rem; line-height: 1.6; }
+
+     .hero-ctas { display: flex; gap: 1.5rem; margin-bottom: 3rem; }
+     .btn-primary-glow { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1.2rem 2.8rem; border-radius: 12px; font-weight: 900; text-decoration: none; transition: 0.3s; box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2); text-align: center; }
+     .btn-primary-glow:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(0, 212, 255, 0.4); }
+     .btn-outline { border: 1px solid rgba(255,255,255,0.1); color: white; padding: 1.2rem 2.8rem; border-radius: 12px; font-weight: 700; text-decoration: none; transition: 0.3s; background: rgba(255,255,255,0.03); text-align: center; }
+     .btn-outline:hover { background: rgba(255,255,255,0.08); border-color: #00d4ff; }
+
+     .hero-trust { display: flex; gap: 2rem; color: #e2e8f0; font-size: 0.9rem; font-weight: 700; }
+
+     /* 3D Ara Hologram */
+     .hologram-container { position: relative; width: 100%; max-width: 500px; height: 600px; display: flex; align-items: center; justify-content: center; perspective: 1000px; margin: 0 auto; }
+     .hologram-core { position: relative; width: 250px; height: 250px; transform-style: preserve-3d; transition: transform 0.1s ease-out; }
+
+     .hologram-ring { position: absolute; inset: -20px; border: 2px solid #00d4ff; border-radius: 50%; opacity: 0.3; }
+     .ring-1 { transform: rotateX(70deg); animation: ringRotate 4s linear infinite; }
+     .ring-2 { transform: rotateX(70deg) rotateY(45deg); animation: ringRotate 6s linear reverse infinite; border-color: #00ff9d; }
+     .ring-3 { transform: rotateX(70deg) rotateY(-45deg); animation: ringRotate 8s linear infinite; }
+     @keyframes ringRotate { from { transform: rotateX(70deg) rotateZ(0deg); } to { transform: rotateX(70deg) rotateZ(360deg); } }
+
+     .ara-avatar { font-size: 6rem; display: flex; align-items: center; justify-content: center; height: 100%; filter: drop-shadow(0 0 20px #00d4ff); animation: floatAra 3s ease-in-out infinite alternate; }
+     @keyframes floatAra { from { transform: translateY(-10px); } to { transform: translateY(10px); } }
+
+     .hologram-shards span { position: absolute; width: 4px; height: 4px; background: #00ff9d; border-radius: 50%; box-shadow: 0 0 10px #00ff9d; animation: shardMove 2s infinite linear; }
+     .hologram-shards span:nth-child(1) { top: -20%; left: 10%; animation-delay: 0.5s; }
+     .hologram-shards span:nth-child(2) { bottom: -10%; right: 20%; animation-delay: 1.2s; }
+     @keyframes shardMove { 0% { opacity: 0; transform: translateY(0); } 50% { opacity: 1; } 100% { opacity: 0; transform: translateY(-40px); } }
+
+     .hologram-base { position: absolute; bottom: 50px; width: 150px; height: 12px; background: rgba(0, 212, 255, 0.4); border-radius: 50%; filter: blur(10px); animation: pulseBase 3s infinite alternate; }
+     @keyframes pulseBase { from { transform: scale(0.8); opacity: 0.3; } to { transform: scale(1.2); opacity: 0.6; } }
+
+     .hologram-glow { position: absolute; top: 0; width: 350px; height: 350px; background: radial-gradient(circle, rgba(0, 212, 255, 0.15) 0%, transparent 70%); border-radius: 50%; z-index: -1; }
+
+     /* Floating Mini Chat */
+     .floating-chat { position: absolute; width: 240px; bottom: 30px; right: -50px; padding: 1rem; border-color: rgba(0, 255, 157, 0.2); animation: floatChat 6s ease-in-out infinite alternate; }
+     @keyframes floatChat { from { transform: translateY(0) rotate(2deg); } to { transform: translateY(-15px) rotate(-1deg); } }
+
+     .chat-header-mini { font-size: 0.7rem; font-weight: 900; color: #00ff9d; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.3rem; }
+
+     /* Reveal Implementation */
+     .reveal { opacity: 0; transform: translateY(30px); transition: 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+     .reveal.active { opacity: 1; transform: translateY(0); }
+   </style>
+
+   <!-- Enhanced Hero Styles -->
+   <style>
+     .hero-enhanced {
+       padding: 8rem 5% 4rem;
+       max-width: 1400px;
+       margin: 0 auto;
+       display: flex;
+       flex-direction: column;
+       gap: 4rem;
+     }
+
+     .hero-main {
+       display: grid;
+       grid-template-columns: 1fr 1fr;
+       gap: 4rem;
+       align-items: center;
+       margin-bottom: 2rem;
+     }
+
+     .hero-calculator {
+       margin: 2rem 0;
+     }
+
+     .hero-testimonials {
+       margin-top: 1rem;
+     }
+
+     /* Mobile responsive */
+     @media (max-width: 1000px) {
+       .hero-enhanced {
+         padding: 6rem 5% 3rem;
+         gap: 3rem;
+       }
+
+       .hero-main {
+         grid-template-columns: 1fr;
+         gap: 3rem;
+         text-align: center;
+       }
+
+       .hero-calculator,
+       .hero-testimonials {
+         margin: 1rem 0;
+       }
+     }
+   </style>
 
 <style is:global>
   :root {

@@ -28,9 +28,27 @@ const path = require('path');
 const os = require('os');
 const { exec } = require('child_process');
 
+// --- CONFIGURATION VALIDATION ---
+if (!process.env.EVOLUTION_API_KEY) {
+    console.error('❌ ERRO: EVOLUTION_API_KEY não configurado!');
+    process.exit(1);
+}
+
+if (!process.env.JWT_SECRET) {
+    console.error('❌ ERRO: JWT_SECRET não configurado!');
+    process.exit(1);
+}
+
+if (!process.env.DATABASE_URL && !process.env.POSTGRES_DB) {
+    console.error('❌ ERRO: DATABASE_URL ou POSTGRES_DB não configurado!');
+    process.exit(1);
+}
+
+const allowedOrigin = process.env.CORS_ORIGIN || 'https://getnexo.com.br';
+
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "*" } });
+const io = new Server(server, { cors: { origin: allowedOrigin } });
 
 // Body parsing middleware (must come before routes)
 app.use(bodyParser.json({ limit: '10mb' }));
@@ -38,10 +56,17 @@ app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
 // Basic security
 app.set('trust proxy', 1);
+
+// Rate limiting com configurações do .env
 const limiter = rateLimit({
-    windowMs: 1 * 60 * 1000,
-    max: 100,
-    message: { error: 'Too many requests' }
+    windowMs: (process.env.RATE_LIMIT_WINDOW || 15) * 60 * 1000,
+    max: process.env.RATE_LIMIT_MAX || 100,
+    message: {
+        error: 'Muitas requisições! Tente novamente em alguns minutos.',
+        retryAfter: Math.ceil(((process.env.RATE_LIMIT_WINDOW || 15) * 60 * 1000) / 1000)
+    },
+    standardHeaders: true,
+    legacyHeaders: false
 });
 app.use(limiter);
 
@@ -94,9 +119,9 @@ const getAiKey = (provider) => {
     return null;
 };
 
-// CORS
+// CORS seguro
 app.use(cors({
-    origin: true,
+    origin: allowedOrigin,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
     credentials: true
@@ -575,6 +600,27 @@ app.post('/api/game/score', (req, res) => {
         res.status(500).json({ error: e.message });
     }
 });
+
+// Middleware de trial backend
+const trialMiddleware = (req, res, next) => {
+    const trialDays = parseInt(process.env.TRIAL_DAYS) || 36;
+    const installDate = new Date(process.env.INSTALL_DATE || '2026-01-22');
+    const hoje = new Date();
+    const diasPassados = Math.floor((hoje - installDate) / (1000 * 60 * 60 * 24));
+
+    if (diasPassados > trialDays) {
+        return res.status(403).json({
+            error: 'Trial expirado. Ative Pro por R$ 297.',
+            trialExpired: true,
+            daysOver: diasPassados - trialDays
+        });
+    }
+
+    // Adicionar headers de trial status
+    res.setHeader('X-Trial-Days-Left', Math.max(0, trialDays - diasPassados));
+    res.setHeader('X-Trial-Expired', 'false');
+    next();
+};
 
 // Trial management
 app.post('/api/trial/register', async (req, res) => {
@@ -2110,7 +2156,7 @@ app.post('/api/pwa/push/send', authenticate, (req, res) => {
 // --- AR & 3D FEATURES ---
 
 // POST /api/ar/load - Load GLTF model for AR
-app.post('/api/ar/load', (req, res) => {
+app.post('/api/ar/load', trialMiddleware, (req, res) => {
     try {
         const { modelUrl, scale, position, rotation } = req.body;
 
@@ -5730,6 +5776,40 @@ app.get('/api/games/analytics/dashboard', authenticate, async (req, res) => {
         res.json({ summary, games, realtime, insights });
     } catch (error) {
         res.status(500).json({ error: error.message });
+    }
+});
+
+// --- HEALTH CHECK ---
+app.get('/api/health', (req, res) => {
+    try {
+        // Verificar conectividade do banco
+        const dbHealth = db.prepare('SELECT 1').get();
+
+        const healthCheck = {
+            status: dbHealth ? 'healthy' : 'unhealthy',
+            timestamp: new Date().toISOString(),
+            services: {
+                database: dbHealth ? 'up' : 'down',
+                api: 'up',
+                websocket: io ? 'up' : 'down'
+            },
+            system: {
+                uptime: process.uptime(),
+                memory: process.memoryUsage(),
+                platform: process.platform,
+                nodeVersion: process.version
+            },
+            version: '1.0.0'
+        };
+
+        res.json(healthCheck);
+    } catch (error) {
+        console.error('[HEALTH CHECK ERROR]:', error.message);
+        res.status(500).json({
+            status: 'unhealthy',
+            error: error.message,
+            timestamp: new Date().toISOString()
+        });
     }
 });
 

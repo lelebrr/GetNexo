@@ -1,0 +1,414 @@
+---
+export interface Props {
+  targetPage?: 'home' | 'demo' | 'pricing';
+  autoStart?: boolean;
+  mobileOptimized?: boolean;
+}
+
+const {
+  targetPage = 'home',
+  autoStart = false,
+  mobileOptimized = true
+} = Astro.props;
+---
+
+<!-- Shepherd.js CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@11.0.1/dist/css/shepherd.css" />
+
+<!-- Shepherd.js Script -->
+<script src="https://cdn.jsdelivr.net/npm/shepherd.js@11.0.1/dist/js/shepherd.min.js"></script>
+
+<script define:vars={{ targetPage, autoStart, mobileOptimized }}>
+  // @ts-ignore
+  declare const Shepherd: any;
+
+  let tourInstance = null;
+
+  function createTour() {
+    // Detect mobile
+    const isMobile = window.innerWidth <= 768;
+    const useMobileMode = mobileOptimized && isMobile;
+
+    // Tour configuration
+    const tourConfig = {
+      useModalOverlay: true,
+      defaultStepOptions: {
+        classes: 'shepherd-theme-arrows shepherd-theme-dark',
+        scrollTo: { behavior: 'smooth', block: 'center' },
+        cancelIcon: { enabled: true },
+        arrow: !useMobileMode, // No arrows on mobile
+        modalOverlayOpeningPadding: useMobileMode ? 4 : 8,
+        modalOverlayOpeningRadius: useMobileMode ? 8 : 16,
+        popperOptions: {
+          modifiers: [
+            { name: 'offset', options: { offset: useMobileMode ? [0, 8] : [0, 16] } }
+          ]
+        }
+      }
+    };
+
+    tourInstance = new Shepherd.Tour(tourConfig);
+
+    // Add steps based on target page
+    if (targetPage === 'home') {
+      addHomeSteps(useMobileMode);
+    } else if (targetPage === 'demo') {
+      addDemoSteps(useMobileMode);
+    } else if (targetPage === 'pricing') {
+      addPricingSteps(useMobileMode);
+    }
+
+    // Auto-start if configured
+    if (autoStart) {
+      // Small delay to ensure DOM is ready
+      setTimeout(() => {
+        tourInstance.start();
+      }, 1000);
+    }
+
+    return tourInstance;
+  }
+
+  function addHomeSteps(isMobile) {
+    // Step 1: Hero Badge
+    tourInstance.addStep({
+      id: 'hero-badge',
+      title: '🚀 Bem-vindo ao GetNexo!',
+      text: 'Você está prestes a descobrir como transformar seu WhatsApp em uma máquina de vendas automática.',
+      attachTo: { element: '.hero-badge', on: isMobile ? 'bottom' : 'bottom' },
+      buttons: [
+        { text: 'Pular Tour', type: 'cancel', classes: 'shepherd-button-secondary' },
+        { text: 'Vamos lá!', type: 'next', classes: 'shepherd-button-primary' }
+      ]
+    });
+
+    // Step 2: Hero CTA
+    tourInstance.addStep({
+      id: 'hero-cta',
+      title: '🎯 Comece Agora Grátis',
+      text: 'Setup completo em 12 minutos. Sem mensalidades, sem taxas por mensagem. Teste 7 dias grátis.',
+      attachTo: { element: '.btn-primary-glow', on: isMobile ? 'top' : 'right' },
+      buttons: [
+        { text: 'Voltar', type: 'back', classes: 'shepherd-button-secondary' },
+        { text: 'Próximo', type: 'next', classes: 'shepherd-button-primary' }
+      ]
+    });
+
+    // Step 3: Video Demo (if exists)
+    if (document.querySelector('.video-demo-container')) {
+      tourInstance.addStep({
+        id: 'video-demo',
+        title: '🎬 Veja Como Funciona',
+        text: 'Assista este vídeo de 1 minuto e veja leads sendo convertidos automaticamente no WhatsApp.',
+        attachTo: { element: '.video-demo-container', on: isMobile ? 'top' : 'left' },
+        buttons: [
+          { text: 'Voltar', type: 'back', classes: 'shepherd-button-secondary' },
+          { text: 'Próximo', type: 'next', classes: 'shepherd-button-primary' }
+        ]
+      });
+    }
+
+    // Step 4: ROI Calculator (if exists)
+    if (document.querySelector('.roi-calculator')) {
+      tourInstance.addStep({
+        id: 'roi-calculator',
+        title: '💰 Calcule Sua Economia',
+        text: 'Veja quanto você economiza com o GetNexo. Digite seus dados e descubra o ROI real.',
+        attachTo: { element: '.roi-calculator', on: isMobile ? 'top' : 'right' },
+        buttons: [
+          { text: 'Voltar', type: 'back', classes: 'shepherd-button-secondary' },
+          { text: 'Próximo', type: 'next', classes: 'shepherd-button-primary' }
+        ]
+      });
+    }
+
+    // Step 5: Features
+    tourInstance.addStep({
+      id: 'features',
+      title: '⚡ Recursos Poderosos',
+      text: 'IA Generativa, PIX Nativo, CRM Inteligente, Analytics em Tempo Real e muito mais.',
+      attachTo: { element: '.grid-cards', on: isMobile ? 'top' : 'top' },
+      buttons: [
+        { text: 'Voltar', type: 'back', classes: 'shepherd-button-secondary' },
+        { text: 'Próximo', type: 'next', classes: 'shepherd-button-primary' }
+      ]
+    });
+
+    // Step 6: Testimonials
+    tourInstance.addStep({
+      id: 'testimonials',
+      title: '👥 Resultados Reais',
+      text: 'Veja o que clientes como você conquistaram com o GetNexo.',
+      attachTo: { element: '.testimonials-container', on: isMobile ? 'top' : 'bottom' },
+      buttons: [
+        { text: 'Voltar', type: 'back', classes: 'shepherd-button-secondary' },
+        { text: 'Próximo', type: 'next', classes: 'shepherd-button-primary' }
+      ]
+    });
+
+    // Final Step: CTA
+    tourInstance.addStep({
+      id: 'final-cta',
+      title: '🎯 Pronto para Começar?',
+      text: 'Você viu tudo! Agora é hora de transformar seu negócio. Comece seu teste grátis.',
+      attachTo: { element: '.final-cta', on: isMobile ? 'top' : 'bottom' },
+      buttons: [
+        { text: 'Voltar', type: 'back', classes: 'shepherd-button-secondary' },
+        { text: 'Começar Agora!', action: () => {
+          const ctaButton = document.querySelector('.final-cta .btn-primary-glow');
+          if (ctaButton) ctaButton.click();
+          tourInstance.complete();
+        }, classes: 'shepherd-button-primary' }
+      ]
+    });
+  }
+
+  function addDemoSteps(isMobile) {
+    // Step 1: Welcome
+    tourInstance.addStep({
+      id: 'demo-welcome',
+      title: '🎮 Demo Interativa GetNexo',
+      text: 'Bem-vindo à demonstração! Aqui você pode testar todas as funcionalidades como se estivesse no seu negócio.',
+      attachTo: { element: '.hero-enhanced', on: isMobile ? 'bottom' : 'bottom' },
+      buttons: [
+        { text: 'Pular', type: 'cancel', classes: 'shepherd-button-secondary' },
+        { text: 'Explorar', type: 'next', classes: 'shepherd-button-primary' }
+      ]
+    });
+
+    // Step 2: Chat Demo
+    if (document.getElementById('ia-modal')) {
+      tourInstance.addStep({
+        id: 'chat-demo',
+        title: '💬 Chat IA Inteligente',
+        text: 'Teste o chat! Digite frases como "Quero um PC gamer" e veja a IA responder com produtos, preços e até vídeos.',
+        attachTo: { element: '#ia-modal', on: isMobile ? 'top' : 'right' },
+        buttons: [
+          { text: 'Voltar', type: 'back', classes: 'shepherd-button-secondary' },
+          { text: 'Próximo', type: 'next', classes: 'shepherd-button-primary' }
+        ]
+      });
+    }
+
+    // Step 3: Product Viewer
+    if (document.querySelector('.product-viewer-container')) {
+      tourInstance.addStep({
+        id: 'product-viewer',
+        title: '🔄 Visualização 360° + AR',
+        text: 'Clique aqui para ver produtos em 360° graus ou em Realidade Aumentada na sua casa!',
+        attachTo: { element: '.product-viewer-container', on: isMobile ? 'top' : 'left' },
+        buttons: [
+          { text: 'Voltar', type: 'back', classes: 'shepherd-button-secondary' },
+          { text: 'Próximo', type: 'next', classes: 'shepherd-button-primary' }
+        ]
+      });
+    }
+
+    // Final Step
+    tourInstance.addStep({
+      id: 'demo-complete',
+      title: '🚀 Demo Concluída!',
+      text: 'Incrível, né? Agora imagine isso rodando 24/7 no seu WhatsApp. Pronto para implementar?',
+      attachTo: { element: '.final-cta', on: isMobile ? 'top' : 'bottom' },
+      buttons: [
+        { text: 'Voltar', type: 'back', classes: 'shepherd-button-secondary' },
+        { text: 'Quero Implementar!', action: () => {
+          window.location.href = '/criar-bot';
+        }, classes: 'shepherd-button-primary' }
+      ]
+    });
+  }
+
+  function addPricingSteps(isMobile) {
+    // Pricing tour steps
+    tourInstance.addStep({
+      id: 'pricing-free',
+      title: '🆓 Plano Gratuito',
+      text: 'Self-hosted completo e grátis. Todas as funcionalidades básicas incluídas.',
+      attachTo: { element: '.pricing-free', on: isMobile ? 'bottom' : 'right' },
+      buttons: [
+        { text: 'Próximo', type: 'next', classes: 'shepherd-button-primary' }
+      ]
+    });
+
+    tourInstance.addStep({
+      id: 'pricing-pro',
+      title: '⚡ Plano Pro - R$ 97/mês',
+      text: 'IA avançada, analytics ilimitado, suporte prioritário. ROI garantido em 30 dias.',
+      attachTo: { element: '.pricing-pro', on: isMobile ? 'bottom' : 'left' },
+      buttons: [
+        { text: 'Voltar', type: 'back', classes: 'shepherd-button-secondary' },
+        { text: 'Assinar Agora!', action: () => {
+          const proButton = document.querySelector('.pricing-pro .cta-button');
+          if (proButton) proButton.click();
+          tourInstance.complete();
+        }, classes: 'shepherd-button-primary' }
+      ]
+    });
+  }
+
+  // Progress indicator
+  tourInstance.on('show', function(event) {
+    const currentStep = event.step;
+    const totalSteps = tourInstance.steps.length;
+    const currentIndex = tourInstance.steps.indexOf(currentStep) + 1;
+
+    // Add progress indicator to step content
+    const progressHtml = `<div class="tour-progress" style="margin-top: 1rem; font-size: 0.8rem; color: #666;">
+      Passo ${currentIndex} de ${totalSteps}
+      <div style="width: 100%; height: 4px; background: #eee; margin-top: 0.5rem; border-radius: 2px;">
+        <div style="width: ${(currentIndex / totalSteps) * 100}%; height: 100%; background: linear-gradient(90deg, #00d4ff, #00ff9d); border-radius: 2px; transition: width 0.3s ease;"></div>
+      </div>
+    </div>`;
+
+    // Insert progress after the main text
+    setTimeout(() => {
+      const stepElement = currentStep.el;
+      if (stepElement && !stepElement.querySelector('.tour-progress')) {
+        const textElement = stepElement.querySelector('.shepherd-text');
+        if (textElement) {
+          textElement.insertAdjacentHTML('afterend', progressHtml);
+        }
+      }
+    }, 10);
+  });
+
+  // Global function to start tour
+  window.startGetNexoTour = function(page = targetPage) {
+    if (tourInstance) {
+      tourInstance.start();
+    } else {
+      createTour();
+      tourInstance.start();
+    }
+  };
+
+  // Initialize on DOM ready
+  document.addEventListener('DOMContentLoaded', function() {
+    createTour();
+  });
+
+  // Export for external use
+  window.getNexoTour = {
+    start: () => window.startGetNexoTour(),
+    cancel: () => tourInstance?.cancel(),
+    complete: () => tourInstance?.complete()
+  };
+</script>
+
+<!-- Tour Trigger Button -->
+<button
+  onclick="startGetNexoTour()"
+  class="tour-trigger-btn fixed bottom-6 left-6 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-40 group"
+  title="Tour Guiado GetNexo"
+>
+  <div class="flex items-center gap-2">
+    <span class="text-lg">🎯</span>
+    <span class="hidden md:inline font-medium">Tour</span>
+  </div>
+  <div class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+    !
+  </div>
+</button>
+
+<!-- Custom Styles for Tour -->
+<style>
+  /* Tour customizations */
+  .shepherd-theme-dark {
+    --shepherd-theme-primary: #00d4ff;
+    --shepherd-theme-secondary: #666;
+  }
+
+  .shepherd-theme-dark .shepherd-button-primary {
+    background: linear-gradient(135deg, #00d4ff, #00ff9d) !important;
+    border: none !important;
+    color: black !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+  }
+
+  .shepherd-theme-dark .shepherd-button-primary:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3) !important;
+  }
+
+  .shepherd-theme-dark .shepherd-button-secondary {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+    transition: all 0.3s ease !important;
+  }
+
+  .shepherd-theme-dark .shepherd-button-secondary:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .shepherd-theme-dark .shepherd-text {
+    color: #e2e8f0 !important;
+    line-height: 1.6 !important;
+  }
+
+  .shepherd-theme-dark .shepherd-title {
+    color: white !important;
+    font-size: 1.2rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .shepherd-theme-dark .shepherd-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding-bottom: 1rem !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .tour-progress {
+    margin-top: 1rem !important;
+    padding-top: 1rem !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+
+  /* Tour trigger button */
+  .tour-trigger-btn {
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    animation: gentlePulse 3s ease-in-out infinite;
+  }
+
+  @keyframes gentlePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+
+  .tour-trigger-btn:hover {
+    transform: scale(1.05);
+  }
+
+  /* Mobile optimizations */
+  @media (max-width: 768px) {
+    .shepherd-theme-dark .shepherd-element {
+      max-width: calc(100vw - 2rem) !important;
+    }
+
+    .shepherd-theme-dark .shepherd-text {
+      font-size: 0.9rem !important;
+    }
+
+    .tour-trigger-btn {
+      bottom: 5rem; /* Above mobile navigation */
+      left: 1rem;
+      padding: 0.75rem;
+    }
+
+    .tour-trigger-btn span:not(.text-lg) {
+      display: none;
+    }
+  }
+
+  /* Hide tour button on very small screens if needed */
+  @media (max-width: 480px) {
+    .tour-trigger-btn {
+      bottom: 4rem;
+      padding: 0.5rem;
+    }
+  }
+</style>

@@ -1,13 +1,61 @@
+# Robots.txt Otimizado para SEO Extremo - GetNexo
+# Bloqueia áreas sensíveis e direciona crawlers para conteúdo importante
+
 User-agent: *
-Disallow: /admin/
-Disallow: /private/
-Allow: /pt/
-Allow: /es/
-Allow: /fr/
-Allow: /en/
+Allow: /
+
+# Páginas principais - prioridade máxima
+Allow: /
+Allow: /precos
+Allow: /criar-bot
 Allow: /blog/
-Allow: /sitemap-*.xml
+Allow: /loja/
+
+# Bloquear áreas administrativas e sensíveis
+Disallow: /admin/
+Disallow: /api/
+Disallow: /private/
+Disallow: /_astro/
+Disallow: /node_modules/
+Disallow: /src/
+Disallow: /*.json$
+Disallow: /*.md$
+Disallow: /deploy_selling_machine.sh
+Disallow: /.env
+Disallow: /check_output*
+Disallow: /globalConfigs.json
+
+# Bloquear arquivos temporários e de desenvolvimento
+Disallow: /*.tmp
+Disallow: /*.bak
+Disallow: /*.old
+Disallow: /*~
+Disallow: /.git/
+Disallow: /.github/
+
+# Permitir crawlers específicos com regras especiais
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 2
+
+# Bing, pode indexar tudo, menos essas pastas
+
+User-agent: Slurp
+Allow: /
+Crawl-delay: 2
+
+# Sitemap principal
+Sitemap: https://getnexo.com.br/sitemap.xml
+
+# Sitemaps específicos por idioma
 Sitemap: https://getnexo.com.br/sitemap-pt.xml
+Sitemap: https://getnexo.com.br/sitemap-en.xml
 Sitemap: https://getnexo.com.br/sitemap-es.xml
 Sitemap: https://getnexo.com.br/sitemap-fr.xml
-Sitemap: https://getnexo.com.br/sitemap-en.xml
+
+# Host directive para canonicalização
+Host: https://getnexo.com.br

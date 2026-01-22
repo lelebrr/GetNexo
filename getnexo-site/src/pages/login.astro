@@ -7,7 +7,8 @@ import ClientLayout from '../layouts/ClientLayout.astro';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - GetNexo</title>
+    <title>GetNexo - Login Seguro</title>
+    <link rel="icon" href="/favicon.ico">
     <style>
         * {
             margin: 0;
@@ -17,7 +18,7 @@ import ClientLayout from '../layouts/ClientLayout.astro';
 
         body {
             font-family: 'JetBrains Mono', monospace;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            background: linear-gradient(135deg, #0f0f1a 0%, #1e1e2e 50%, #2d2d44 100%);
             color: white;
             min-height: 100vh;
             display: flex;
@@ -27,13 +28,27 @@ import ClientLayout from '../layouts/ClientLayout.astro';
         }
 
         .login-container {
-            background: rgba(15, 23, 42, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: linear-gradient(135deg, #1e1e2e 0%, #2d2d44 100%);
+            border: 1px solid #00f7ff;
             border-radius: 16px;
             padding: 2rem;
             width: 100%;
-            max-width: 400px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            max-width: 420px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 247, 255, 0.1);
+            position: relative;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00f7ff, #00ff9d, #00f7ff);
+            border-radius: 18px;
+            z-index: -1;
+            opacity: 0.3;
         }
 
         .login-header {
@@ -41,16 +56,42 @@ import ClientLayout from '../layouts/ClientLayout.astro';
             margin-bottom: 2rem;
         }
 
+        .login-header .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #00f7ff, #00ff9d);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 1rem;
+            box-shadow: 0 10px 30px rgba(0, 247, 255, 0.3);
+        }
+
         .login-header h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #00d4ff;
+            font-size: 2.2rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, #00f7ff, #00ff9d);
+            -webkit-background-clip: text;
+            color: transparent;
             margin-bottom: 0.5rem;
         }
 
         .login-header p {
-            color: #94a3b8;
-            font-size: 0.9rem;
+            color: #00f7ff;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .security-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: #00ff9d;
         }
 
         .form-group {
@@ -60,49 +101,79 @@ import ClientLayout from '../layouts/ClientLayout.astro';
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
-            color: #cbd5e1;
+            color: #00f7ff;
             font-weight: 600;
             font-size: 0.9rem;
         }
 
+        .input-group {
+            position: relative;
+        }
+
         .form-group input {
             width: 100%;
-            padding: 0.75rem 1rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
+            padding: 1rem;
+            background: #1a1a2e;
+            border: 1px solid #00f7ff;
+            border-radius: 12px;
             color: white;
             font-size: 1rem;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 247, 255, 0.1);
         }
 
         .form-group input:focus {
             outline: none;
-            border-color: #00d4ff;
-            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+            border-color: #00ff9d;
+            box-shadow: 0 0 0 3px rgba(0, 255, 157, 0.2), 0 4px 20px rgba(0, 247, 255, 0.3);
+            background: #1e1e2e;
         }
 
         .form-group input::placeholder {
             color: #64748b;
         }
 
+        .eye-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #00f7ff;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+
+        .eye-toggle:hover {
+            color: #00ff9d;
+        }
+
         .login-btn {
             width: 100%;
-            padding: 0.75rem 1rem;
-            background: linear-gradient(135deg, #00d4ff, #00ff9d);
+            padding: 1rem;
+            background: linear-gradient(135deg, #00f7ff, #00ff9d);
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             color: black;
-            font-size: 1rem;
-            font-weight: 600;
+            font-size: 1.1rem;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
             margin-bottom: 1rem;
+            box-shadow: 0 8px 25px rgba(0, 247, 255, 0.3);
+            position: relative;
+            overflow: hidden;
         }
 
         .login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 247, 255, 0.4);
+        }
+
+        .login-btn:active {
+            transform: translateY(-1px);
         }
 
         .login-btn:disabled {
@@ -111,9 +182,35 @@ import ClientLayout from '../layouts/ClientLayout.astro';
             transform: none;
         }
 
+        .login-btn.loading::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 1rem;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            border-top-color: black;
+            animation: spin 1s linear infinite;
+        }
+
+        .login-btn.loading {
+            color: transparent;
+        }
+
+        .login-btn.loading::after {
+            content: 'Entrando...';
+            color: black;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
         .divider {
             text-align: center;
-            margin: 1.5rem 0;
+            margin: 2rem 0;
             position: relative;
             color: #64748b;
             font-size: 0.8rem;
@@ -126,41 +223,53 @@ import ClientLayout from '../layouts/ClientLayout.astro';
             left: 0;
             right: 0;
             height: 1px;
-            background: rgba(255, 255, 255, 0.1);
+            background: linear-gradient(90deg, transparent, #00f7ff, transparent);
         }
 
         .divider span {
-            background: rgba(15, 23, 42, 0.9);
+            background: linear-gradient(135deg, #1e1e2e 0%, #2d2d44 100%);
             padding: 0 1rem;
         }
 
         .demo-accounts {
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 8px;
-            padding: 1rem;
+            background: linear-gradient(135deg, rgba(0, 247, 255, 0.05), rgba(0, 255, 157, 0.05));
+            border: 1px solid rgba(0, 247, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
             margin-bottom: 1rem;
         }
 
         .demo-accounts h3 {
             color: #00ff9d;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
         }
 
         .demo-account {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.5rem;
+            padding: 0.75rem;
             background: rgba(255, 255, 255, 0.02);
-            border-radius: 6px;
-            margin-bottom: 0.25rem;
+            border: 1px solid rgba(0, 247, 255, 0.1);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
         }
 
         .demo-account:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(0, 247, 255, 0.1);
+            border-color: #00ff9d;
+            transform: translateY(-2px);
+        }
+
+        .demo-account.selected {
+            background: rgba(0, 247, 255, 0.2);
+            border-color: #00ff9d;
+            box-shadow: 0 0 15px rgba(0, 247, 255, 0.3);
         }
 
         .demo-account:last-child {
@@ -168,61 +277,108 @@ import ClientLayout from '../layouts/ClientLayout.astro';
         }
 
         .demo-label {
-            font-size: 0.8rem;
-            color: #94a3b8;
+            font-size: 0.9rem;
+            color: #00f7ff;
+            font-weight: 500;
         }
 
         .demo-creds {
             font-size: 0.8rem;
-            color: #00d4ff;
-            font-weight: 500;
+            color: #94a3b8;
+            font-family: 'Courier New', monospace;
         }
 
         .error-message {
             background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
             color: #ef4444;
-            padding: 0.75rem;
+            padding: 1rem;
             border-radius: 8px;
             margin-bottom: 1rem;
             font-size: 0.9rem;
             display: none;
+            animation: shake 0.5s;
         }
 
         .success-message {
             background: rgba(0, 255, 157, 0.1);
-            border: 1px solid rgba(0, 255, 157, 0.2);
+            border: 1px solid rgba(0, 255, 157, 0.3);
             color: #00ff9d;
-            padding: 0.75rem;
+            padding: 1rem;
             border-radius: 8px;
             margin-bottom: 1rem;
             font-size: 0.9rem;
             display: none;
         }
 
-        .loading {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: #00d4ff;
-            animation: spin 1s ease-in-out infinite;
-            margin-right: 0.5rem;
+        .links {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .links a {
+            color: #00f7ff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .links a:hover {
+            color: #00ff9d;
+            text-decoration: underline;
+        }
+
+        .signup-cta {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(0, 255, 157, 0.05);
+            border: 1px solid rgba(0, 255, 157, 0.2);
+            border-radius: 8px;
+        }
+
+        .signup-cta p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .signup-cta a {
+            color: #00ff9d;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+        .signup-cta a:hover {
+            text-decoration: underline;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
         @media (max-width: 480px) {
             .login-container {
                 padding: 1.5rem;
                 margin: 10px;
+                max-width: 90vw;
             }
 
             .login-header h1 {
-                font-size: 1.8rem;
+                font-size: 2rem;
+            }
+
+            .login-header .logo {
+                width: 60px;
+                height: 60px;
+                font-size: 2rem;
             }
         }
     </style>
@@ -230,8 +386,12 @@ import ClientLayout from '../layouts/ClientLayout.astro';
 <body>
     <div class="login-container">
         <div class="login-header">
-            <h1>🚀 GetNexo</h1>
+            <div class="logo">N</div>
+            <h1>GetNexo</h1>
             <p>Acesse sua conta</p>
+            <div class="security-badge">
+                🔒 Conexão segura • Dados criptografados
+            </div>
         </div>
 
         <div id="error-message" class="error-message"></div>
@@ -240,12 +400,15 @@ import ClientLayout from '../layouts/ClientLayout.astro';
         <form id="login-form">
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+                <input type="email" id="email" name="email" value="admin@getnexo.local" placeholder="seu@email.com" required>
             </div>
 
             <div class="form-group">
                 <label for="password">Senha</label>
-                <input type="password" id="password" name="password" placeholder="••••••••" required>
+                <div class="input-group">
+                    <input type="password" id="password" name="password" value="demo123" placeholder="••••••••" required>
+                    <button type="button" class="eye-toggle" onclick="togglePassword()">👁️</button>
+                </div>
             </div>
 
             <button type="submit" class="login-btn" id="login-btn">
@@ -253,31 +416,59 @@ import ClientLayout from '../layouts/ClientLayout.astro';
             </button>
         </form>
 
-        <div style="text-align: center; margin-top: 1rem;">
-            <a href="#" id="forgot-password-link" style="color: #00d4ff; text-decoration: none; font-size: 0.9rem;">Esqueci a senha</a>
+        <div class="links">
+            <a href="#" id="forgot-password-link">Esqueci minha senha</a>
+        </div>
+
+        <div class="divider">
+            <span>Teste Grátis</span>
+        </div>
+
+        <div class="demo-accounts">
+            <h3>🚀 Clique para testar rapidamente:</h3>
+
+            <div class="demo-account" onclick="fillDemo('admin@getnexo.local', 'demo123')">
+                <div class="demo-label">Admin</div>
+                <div class="demo-creds">admin@getnexo.local</div>
+            </div>
+
+            <div class="demo-account" onclick="fillDemo('revendedor@getnexo.com', 'demo123')">
+                <div class="demo-label">Revendedor</div>
+                <div class="demo-creds">revendedor@getnexo.com</div>
+            </div>
+
+            <div class="demo-account" onclick="fillDemo('cliente@getnexo.com', 'demo123')">
+                <div class="demo-label">Cliente</div>
+                <div class="demo-creds">cliente@getnexo.com</div>
+            </div>
+        </div>
+
+        <div class="signup-cta">
+            <p>Ainda não tem conta?</p>
+            <a href="/criar-conta">Criar conta grátis →</a>
         </div>
 
         <!-- Forgot Password Modal -->
         <div id="forgot-password-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1000; align-items: center; justify-content: center;">
-            <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 2rem; width: 100%; max-width: 400px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);">
-                <h3 style="color: #00d4ff; text-align: center; margin-bottom: 1rem;">Redefinir Senha</h3>
+            <div style="background: linear-gradient(135deg, #1e1e2e 0%, #2d2d44 100%); border: 1px solid #00f7ff; border-radius: 16px; padding: 2rem; width: 100%; max-width: 400px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);">
+                <h3 style="color: #00f7ff; text-align: center; margin-bottom: 1rem;">Redefinir Senha</h3>
                 <p style="color: #94a3b8; text-align: center; margin-bottom: 1.5rem; font-size: 0.9rem;">Digite seu email para receber um link de redefinição</p>
 
                 <div id="forgot-error-message" class="error-message"></div>
                 <div id="forgot-success-message" class="success-message"></div>
 
                 <div class="form-group">
-                    <label for="forgot-email" style="color: #cbd5e1; font-weight: 600; font-size: 0.9rem;">Email</label>
-                    <input type="email" id="forgot-email" placeholder="seu@email.com" required style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: white; font-size: 1rem; transition: all 0.3s ease;">
+                    <label for="forgot-email" style="color: #00f7ff; font-weight: 600; font-size: 0.9rem;">Email</label>
+                    <input type="email" id="forgot-email" placeholder="seu@email.com" required style="width: 100%; padding: 1rem; background: #1a1a2e; border: 1px solid #00f7ff; border-radius: 12px; color: white; font-size: 1rem; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 247, 255, 0.1);">
                 </div>
 
-                <button id="send-reset-link-btn" style="width: 100%; padding: 0.75rem 1rem; background: linear-gradient(135deg, #00d4ff, #00ff9d); border: none; border-radius: 8px; color: black; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin-bottom: 1rem;">Enviar Link</button>
+                <button id="send-reset-link-btn" style="width: 100%; padding: 1rem; background: linear-gradient(135deg, #00f7ff, #00ff9d); border: none; border-radius: 12px; color: black; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; margin-bottom: 1rem; box-shadow: 0 8px 25px rgba(0, 247, 255, 0.3);">Enviar Link</button>
 
-                <button id="close-forgot-modal" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: #94a3b8; font-size: 1rem; cursor: pointer; transition: all 0.3s ease;">Cancelar</button>
+                <button id="close-forgot-modal" style="width: 100%; padding: 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: #94a3b8; font-size: 1rem; cursor: pointer; transition: all 0.3s ease;">Cancelar</button>
             </div>
         </div>
 
-        <!-- Panel Selection Modal -->
+        <!-- Panel Selection Modal (Admin) -->
         <div id="panel-selection-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1000; align-items: center; justify-content: center;">
             <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 2rem; width: 100%; max-width: 500px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);">
                 <h3 style="color: #00d4ff; text-align: center; margin-bottom: 1rem;">Selecione o Painel Administrativo</h3>
@@ -304,6 +495,33 @@ import ClientLayout from '../layouts/ClientLayout.astro';
                 </div>
 
                 <button id="logout-btn" style="width: 100%; padding: 0.75rem 1rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px; color: #ef4444; font-size: 1rem; cursor: pointer; transition: all 0.3s ease;">Sair</button>
+            </div>
+        </div>
+
+        <!-- Reseller Panel Selection Modal -->
+        <div id="reseller-panel-selection-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1000; align-items: center; justify-content: center;">
+            <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 2rem; width: 100%; max-width: 500px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);">
+                <h3 style="color: #00d4ff; text-align: center; margin-bottom: 1rem;">🏪 Bem-vindo, Revendedor!</h3>
+                <p style="color: #94a3b8; text-align: center; margin-bottom: 2rem; font-size: 0.9rem;">Como você deseja acessar o sistema hoje?</p>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+                    <button id="select-reseller-as-reseller" class="panel-option" data-panel="reseller" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 2rem 1rem; cursor: pointer; transition: all 0.3s ease; text-align: center;">
+                        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🏪</div>
+                        <div style="color: #00d4ff; font-weight: 600; font-size: 1rem;">Painel do Revendedor</div>
+                        <div style="color: #94a3b8; font-size: 0.8rem; margin-top: 0.5rem;">Gerenciar vendas, clientes e comissões</div>
+                    </button>
+
+                    <button id="select-reseller-as-client" class="panel-option" data-panel="client" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 2rem 1rem; cursor: pointer; transition: all 0.3s ease; text-align: center;">
+                        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">👤</div>
+                        <div style="color: #00d4ff; font-weight: 600; font-size: 1rem;">Painel do Cliente</div>
+                        <div style="color: #94a3b8; font-size: 0.8rem; margin-top: 0.5rem;">Usar o sistema como usuário normal</div>
+                    </button>
+                </div>
+
+                <div style="display: flex; gap: 1rem;">
+                    <button id="reseller-logout-btn" style="flex: 1; padding: 0.75rem 1rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px; color: #ef4444; font-size: 1rem; cursor: pointer; transition: all 0.3s ease;">Sair</button>
+                    <button id="reseller-back-btn" style="flex: 1; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: #94a3b8; font-size: 1rem; cursor: pointer; transition: all 0.3s ease;">Voltar</button>
+                </div>
             </div>
         </div>
 
@@ -357,9 +575,10 @@ import ClientLayout from '../layouts/ClientLayout.astro';
                     // Show success message
                     showMessage('success', 'Login realizado com sucesso!');
 
-                    // Check if user is superadmin
+                    // Check if user is superadmin or reseller
                     const userRole = data.user.role || data.user.type || 'client';
                     const isSuperAdmin = userRole === 'superadmin' || data.user.email === 'lelebrr@gmail.com';
+                    const isReseller = userRole === 'reseller' || userRole === 'partner' || data.user.email === 'revendedor@getnexo.com';
 
                     if (isSuperAdmin) {
                         // Show panel selection for superadmin
@@ -367,13 +586,17 @@ import ClientLayout from '../layouts/ClientLayout.astro';
                             document.getElementById('panel-selection-modal').style.display = 'flex';
                             setLoading(false);
                         }, 1000);
+                    } else if (isReseller) {
+                        // Show panel selection for reseller
+                        setTimeout(() => {
+                            document.getElementById('reseller-panel-selection-modal').style.display = 'flex';
+                            setLoading(false);
+                        }, 1000);
                     } else {
                         // Normal redirect for regular users
                         setTimeout(() => {
                             if (userRole === 'admin') {
                                 window.location.href = '/admin';
-                            } else if (userRole === 'reseller' || userRole === 'partner' || data.user.email === 'revendedor@getnexo.com') {
-                                window.location.href = '/revenda/dash';
                             } else {
                                 window.location.href = '/dashboard';
                             }
@@ -412,15 +635,42 @@ import ClientLayout from '../layouts/ClientLayout.astro';
 
             if (loading) {
                 btn.disabled = true;
-                btn.innerHTML = '<span class="loading"></span>Entrando...';
+                btn.classList.add('loading');
                 // Disable form inputs
                 form.querySelectorAll('input').forEach(input => input.disabled = true);
             } else {
                 btn.disabled = false;
+                btn.classList.remove('loading');
                 btn.textContent = 'Entrar';
                 // Enable form inputs
                 form.querySelectorAll('input').forEach(input => input.disabled = false);
             }
+        }
+
+        // Toggle password visibility
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.querySelector('.eye-toggle');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.textContent = '👁️';
+            }
+        }
+
+        // Fill demo credentials
+        function fillDemo(email, password) {
+            document.getElementById('email').value = email;
+            document.getElementById('password').value = password;
+
+            // Add visual feedback
+            const accounts = document.querySelectorAll('.demo-account');
+            accounts.forEach(account => account.classList.remove('selected'));
+
+            event.currentTarget.classList.add('selected');
         }
 
         // Check if already logged in
@@ -436,16 +686,18 @@ import ClientLayout from '../layouts/ClientLayout.astro';
                         const user = JSON.parse(localStorage.getItem('user') || '{}');
                         const userRole = user.role || user.type || 'client';
                         const isSuperAdmin = userRole === 'superadmin' || user.email === 'lelebrr@gmail.com';
+                        const isReseller = userRole === 'reseller' || userRole === 'partner' || user.email === 'revendedor@getnexo.com';
 
                         if (isSuperAdmin) {
                             // Show panel selection for superadmin
                             document.getElementById('panel-selection-modal').style.display = 'flex';
+                        } else if (isReseller) {
+                            // Show panel selection for reseller
+                            document.getElementById('reseller-panel-selection-modal').style.display = 'flex';
                         } else {
                             // Normal redirect for regular users
                             if (userRole === 'admin') {
                                 window.location.href = '/admin';
-                            } else if (userRole === 'reseller' || userRole === 'partner' || user.email === 'revendedor@getnexo.com') {
-                                window.location.href = '/revenda/dash';
                             } else {
                                 window.location.href = '/dashboard';
                             }
@@ -574,6 +826,33 @@ import ClientLayout from '../layouts/ClientLayout.astro';
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             document.getElementById('panel-selection-modal').style.display = 'none';
+            // Reset form
+            document.getElementById('login-form').reset();
+            showMessage('success', '');
+            showMessage('error', '');
+        });
+
+        // Reseller panel selection functionality
+        document.getElementById('select-reseller-as-reseller').addEventListener('click', () => {
+            window.location.href = '/revenda/dash';
+        });
+
+        document.getElementById('select-reseller-as-client').addEventListener('click', () => {
+            window.location.href = '/dashboard';
+        });
+
+        document.getElementById('reseller-logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            document.getElementById('reseller-panel-selection-modal').style.display = 'none';
+            // Reset form
+            document.getElementById('login-form').reset();
+            showMessage('success', '');
+            showMessage('error', '');
+        });
+
+        document.getElementById('reseller-back-btn').addEventListener('click', () => {
+            document.getElementById('reseller-panel-selection-modal').style.display = 'none';
             // Reset form
             document.getElementById('login-form').reset();
             showMessage('success', '');

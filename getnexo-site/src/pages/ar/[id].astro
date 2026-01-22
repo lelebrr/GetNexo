@@ -1,0 +1,33 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  // Demo products for AR
+  const products = [
+    { id: 'demo-sofa' },
+    { id: 'demo-table' },
+    { id: 'demo-luxury-chair' }
+  ];
+
+  return products.map(product => ({
+    params: { id: product.id }
+  }));
+}
+
+const { id } = Astro.params;
+---
+
+<Layout title={`AR - ${id} | GetNexo`}>
+  <!-- Em /ar/ .astro: -->
+  <model-viewer
+    src={`/modelos/${id}.glb`}
+    ar
+    ios-src={`/modelos/${id}.usdz`}
+    camera-orbit="-45deg 55deg 2m"
+    auto-rotate
+    shadow-intensity="1"
+    style="width:100vw; height:100vh;"
+  ></model-viewer>
+
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+</Layout>

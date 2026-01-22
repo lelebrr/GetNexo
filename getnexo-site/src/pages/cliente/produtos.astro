@@ -1,0 +1,375 @@
+---
+import ClientLayout from '../../layouts/ClientLayout.astro';
+import SEO from '../../components/SEO.astro';
+---
+
+<ClientLayout title="Produtos - GetNexo">
+    <SEO
+        title="Gerenciar Produtos - GetNexo"
+        description="Upload e gerenciamento de produtos com visualização 360° e AR/VR"
+        keywords="produtos, 360, AR, VR, upload, getnexo"
+    />
+
+    <div class="p-6">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-black text-white">Produtos & Visualização</h1>
+            <button
+                id="novo-produto-btn"
+                class="px-6 py-3 bg-gradient-to-r from-cyan-500 to-green-500 text-black font-bold rounded-lg hover:from-cyan-400 hover:to-green-400 transition"
+            >
+                + Novo Produto
+            </button>
+        </div>
+
+        <!-- Lista de produtos -->
+        <div id="produtos-lista" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Produtos serão carregados dinamicamente -->
+        </div>
+
+        <!-- Modal de upload -->
+        <div id="modal-upload" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50">
+            <div class="bg-gray-900 p-8 rounded-xl border border-gray-800 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Novo Produto</h2>
+                    <button id="fechar-modal" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+                </div>
+
+                <form id="form-produto" class="space-y-6">
+                    <!-- Informações básicas -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Nome do Produto *</label>
+                            <input
+                                type="text"
+                                name="nome"
+                                required
+                                class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white"
+                                placeholder="Ex: Smartphone Galaxy S24"
+                            />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Categoria</label>
+                            <select name="categoria" class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white">
+                                <option value="eletronicos">Eletrônicos</option>
+                                <option value="roupas">Roupas</option>
+                                <option value="moveis">Móveis</option>
+                                <option value="automoveis">Automóveis</option>
+                                <option value="outros">Outros</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Descrição</label>
+                        <textarea
+                            name="descricao"
+                            rows="3"
+                            class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white"
+                            placeholder="Descrição detalhada do produto"
+                        ></textarea>
+                    </div>
+
+                    <!-- Upload 360° -->
+                    <div class="border-t border-gray-700 pt-6">
+                        <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                            <span class="text-cyan-400">🔄</span>
+                            Imagens 360° (24-72 fotos)
+                        </h3>
+                        <div class="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center">
+                            <input type="file" id="upload-360" multiple accept="image/*" class="hidden" />
+                            <label for="upload-360" class="cursor-pointer">
+                                <div class="text-gray-400 mb-2">
+                                    <svg class="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                    </svg>
+                                    <p class="text-lg">Clique para selecionar imagens 360°</p>
+                                    <p class="text-sm">JPG/PNG • Máx 10MB cada</p>
+                                </div>
+                            </label>
+                        </div>
+                        <div id="preview-360" class="mt-4 grid grid-cols-4 gap-2"></div>
+                    </div>
+
+                    <!-- Upload AR/VR -->
+                    <div class="border-t border-gray-700 pt-6">
+                        <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                            <span class="text-green-400">🥽</span>
+                            Modelo 3D (GLTF/GLB + USDZ)
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="border-2 border-dashed border-gray-600 rounded-lg p-4 text-center">
+                                <input type="file" id="upload-glb" accept=".glb,.gltf" class="hidden" />
+                                <label for="upload-glb" class="cursor-pointer">
+                                    <div class="text-gray-400">
+                                        <p class="font-medium">Modelo 3D (GLB/GLTF)</p>
+                                        <p class="text-sm">Para web e Android</p>
+                                    </div>
+                                </label>
+                                <div id="preview-glb" class="mt-2 text-sm text-cyan-400"></div>
+                            </div>
+                            <div class="border-2 border-dashed border-gray-600 rounded-lg p-4 text-center">
+                                <input type="file" id="upload-usdz" accept=".usdz" class="hidden" />
+                                <label for="upload-usdz" class="cursor-pointer">
+                                    <div class="text-gray-400">
+                                        <p class="font-medium">Modelo USDZ</p>
+                                        <p class="text-sm">Para iPhone/Safari</p>
+                                    </div>
+                                </label>
+                                <div id="preview-usdz" class="mt-2 text-sm text-cyan-400"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botões -->
+                    <div class="flex gap-4 pt-6 border-t border-gray-700">
+                        <button
+                            type="button"
+                            id="cancelar-upload"
+                            class="flex-1 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="submit"
+                            class="flex-1 py-3 bg-gradient-to-r from-cyan-500 to-green-500 text-black font-bold rounded-lg hover:from-cyan-400 hover:to-green-400 transition"
+                        >
+                            Salvar Produto
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Gerenciamento de produtos
+        class ProdutosManager {
+            constructor() {
+                this.produtos = [];
+                this.init();
+            }
+
+            async init() {
+                await this.carregarProdutos();
+                this.setupEventListeners();
+            }
+
+            async carregarProdutos() {
+                try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch('/api/cliente/produtos', {
+                        headers: { 'Authorization': token }
+                    });
+
+                    if (response.ok) {
+                        this.produtos = await response.json();
+                        this.renderProdutos();
+                    }
+                } catch (error) {
+                    console.error('Erro ao carregar produtos:', error);
+                }
+            }
+
+            renderProdutos() {
+                const container = document.getElementById('produtos-lista');
+
+                if (this.produtos.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-12">
+                            <p class="text-gray-500 mb-4">Nenhum produto cadastrado ainda.</p>
+                            <button onclick="document.getElementById('novo-produto-btn').click()" class="px-6 py-3 bg-gradient-to-r from-cyan-500 to-green-500 text-black font-bold rounded-lg hover:from-cyan-400 hover:to-green-400 transition">
+                                Criar Primeiro Produto
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = this.produtos.map(produto => `
+                    <div class="bg-gray-900 p-6 rounded-xl border border-gray-800">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="font-bold text-lg text-white">${produto.nome}</h3>
+                                <p class="text-sm text-gray-400">${produto.categoria}</p>
+                            </div>
+                            <div class="flex gap-2">
+                                ${produto.tem360 ? '<span class="text-cyan-400">🔄</span>' : ''}
+                                ${produto.temAR ? '<span class="text-green-400">🥽</span>' : ''}
+                            </div>
+                        </div>
+
+                        <p class="text-sm text-gray-300 mb-4">${produto.descricao || 'Sem descrição'}</p>
+
+                        <div class="flex gap-2">
+                            ${produto.tem360 ? `
+                                <button onclick="window.produtosManager.testar360('${produto.id}')" class="flex-1 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded transition text-sm">
+                                    Testar 360°
+                                </button>
+                            ` : ''}
+                            ${produto.temAR ? `
+                                <button onclick="window.produtosManager.testarAR('${produto.id}')" class="flex-1 py-2 bg-green-600 hover:bg-green-500 text-white rounded transition text-sm">
+                                    Testar AR
+                                </button>
+                            ` : ''}
+                            <button onclick="window.produtosManager.editarProduto('${produto.id}')" class="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded transition text-sm">
+                                Editar
+                            </button>
+                            <button onclick="window.produtosManager.excluirProduto('${produto.id}')" class="px-3 py-2 bg-red-600 hover:bg-red-500 text-white rounded transition text-sm">
+                                Excluir
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            testar360(produtoId) {
+                // Abre modal de teste 360
+                const modal = document.createElement('div');
+                modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50';
+                modal.innerHTML = `
+                    <div class="bg-gray-900 p-6 rounded-xl w-full max-w-4xl">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold">Visualização 360°</h3>
+                            <button onclick="this.parentElement.parentElement.remove()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+                        </div>
+                        <div id="teste-360-${produtoId}" class="w-full h-96 bg-gray-800 rounded-lg"></div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+
+                // Initialize 360 viewer (similar to chat implementation)
+                this.init360Viewer(produtoId);
+            }
+
+            testarAR(produtoId) {
+                // Abre modal de teste AR
+                const modal = document.createElement('div');
+                modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50';
+                modal.innerHTML = `
+                    <div class="bg-gray-900 p-6 rounded-xl w-full max-w-4xl">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold">Realidade Aumentada</h3>
+                            <button onclick="this.parentElement.parentElement.remove()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+                        </div>
+                        <div id="teste-ar-${produtoId}" class="w-full h-96 bg-gray-800 rounded-lg">
+                            <model-viewer
+                                src="/modelos/${produtoId}.glb"
+                                ios-src="/modelos/${produtoId}.usdz"
+                                ar
+                                ar-modes="webxr scene-viewer quick-look"
+                                camera-orbit="-45deg 55deg 2m"
+                                auto-rotate
+                                shadow-intensity="1"
+                                style="width: 100%; height: 100%;"
+                            ></model-viewer>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            }
+
+            setupEventListeners() {
+                // Modal controls
+                document.getElementById('novo-produto-btn').addEventListener('click', () => {
+                    document.getElementById('modal-upload').classList.remove('hidden');
+                    document.getElementById('modal-upload').classList.add('flex');
+                });
+
+                document.getElementById('fechar-modal').addEventListener('click', this.fecharModal);
+                document.getElementById('cancelar-upload').addEventListener('click', this.fecharModal);
+
+                // File uploads
+                document.getElementById('upload-360').addEventListener('change', (e) => this.handle360Upload(e));
+                document.getElementById('upload-glb').addEventListener('change', (e) => this.handleFileUpload(e, 'glb'));
+                document.getElementById('upload-usdz').addEventListener('change', (e) => this.handleFileUpload(e, 'usdz'));
+
+                // Form submit
+                document.getElementById('form-produto').addEventListener('submit', (e) => this.handleSubmit(e));
+            }
+
+            fecharModal() {
+                document.getElementById('modal-upload').classList.add('hidden');
+                document.getElementById('modal-upload').classList.remove('flex');
+                document.getElementById('form-produto').reset();
+                document.getElementById('preview-360').innerHTML = '';
+                document.getElementById('preview-glb').innerHTML = '';
+                document.getElementById('preview-usdz').innerHTML = '';
+            }
+
+            handle360Upload(e) {
+                const files = Array.from(e.target.files);
+                const preview = document.getElementById('preview-360');
+
+                preview.innerHTML = files.map((file, index) => `
+                    <div class="relative">
+                        <img src="${URL.createObjectURL(file)}" class="w-full h-16 object-cover rounded" />
+                        <span class="absolute top-0 right-0 bg-black bg-opacity-75 text-white text-xs px-1 rounded">${index + 1}</span>
+                    </div>
+                `).join('');
+            }
+
+            handleFileUpload(e, type) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const preview = document.getElementById(`preview-${type}`);
+                preview.innerHTML = `<span class="text-green-400">✓ ${file.name}</span>`;
+            }
+
+            async handleSubmit(e) {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+
+                try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch('/api/cliente/produtos', {
+                        method: 'POST',
+                        headers: { 'Authorization': token },
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        alert('Produto criado com sucesso!');
+                        this.fecharModal();
+                        await this.carregarProdutos();
+                    } else {
+                        throw new Error('Erro ao criar produto');
+                    }
+                } catch (error) {
+                    alert('Erro: ' + error.message);
+                }
+            }
+
+            editarProduto(produtoId) {
+                // Implementar edição
+                alert('Funcionalidade de edição em desenvolvimento');
+            }
+
+            async excluirProduto(produtoId) {
+                if (!confirm('Tem certeza que deseja excluir este produto?')) return;
+
+                try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(`/api/cliente/produtos/${produtoId}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': token }
+                    });
+
+                    if (response.ok) {
+                        await this.carregarProdutos();
+                    } else {
+                        throw new Error('Erro ao excluir produto');
+                    }
+                } catch (error) {
+                    alert('Erro: ' + error.message);
+                }
+            }
+        }
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            window.produtosManager = new ProdutosManager();
+        });
+    </script>
+</ClientLayout>
