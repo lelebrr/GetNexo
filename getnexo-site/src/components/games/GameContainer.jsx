@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Card, Loading, Toast } from '../design-system';
+import { Button, Card, Loading, Toast } from '../../design-system';
 
 const GameContainer = ({
     gameType,

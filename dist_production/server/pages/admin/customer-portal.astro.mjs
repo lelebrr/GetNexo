@@ -1,0 +1,58 @@
+import { f as createComponent, k as renderComponent, r as renderTemplate, m as maybeRenderHead } from "../../assets/astro/server-MCYX8tFF.js";
+import "piccolore";
+import { $ as $$AdminLayout } from "../../assets/AdminLayout-htIlQTkN.js";
+import { renderers } from "../../renderers.mjs";
+const $$CustomerPortal = createComponent(($$result, $$props, $$slots) => {
+  return renderTemplate`${renderComponent($$result, "AdminLayout", $$AdminLayout, { "title": "Configuração Portal do Cliente - Admin" }, { "default": ($$result2) => renderTemplate` ${maybeRenderHead()}<div class="space-y-6"> <div class="bg-white rounded-lg shadow p-6"> <h2 class="text-xl font-semibold mb-4">Portal do Cliente - Configurações</h2> <form class="space-y-6"> <!-- Login Settings --> <div> <h3 class="text-lg font-medium mb-3">Configurações de Login</h3> <div class="space-y-3"> <label class="flex items-center"> <input type="checkbox" checked class="mr-2">
+Habilitar Magic Link por Email
+</label> <label class="flex items-center"> <input type="checkbox" checked class="mr-2">
+Habilitar WhatsApp Link
+</label> <label class="flex items-center"> <input type="checkbox" checked class="mr-2">
+Habilitar QR Code
+</label> </div> </div> <!-- Timeline Settings --> <div> <h3 class="text-lg font-medium mb-3">Timeline Unificada</h3> <div class="space-y-3"> <label class="flex items-center"> <input type="checkbox" checked class="mr-2">
+Mostrar compras
+</label> <label class="flex items-center"> <input type="checkbox" checked class="mr-2">
+Mostrar tickets
+</label> <label class="flex items-center"> <input type="checkbox" checked class="mr-2">
+Mostrar cupons
+</label> <label class="flex items-center"> <input type="checkbox" checked class="mr-2">
+Mostrar pontos
+</label> </div> </div> <!-- Hub Features --> <div> <h3 class="text-lg font-medium mb-3">Funcionalidades do Hub</h3> <div class="space-y-3"> <label class="flex items-center"> <input type="checkbox" checked class="mr-2">
+Permitir responder tickets
+</label> <label class="flex items-center"> <input type="checkbox" checked class="mr-2">
+Permitir reabrir tickets
+</label> <label class="flex items-center"> <input type="checkbox" checked class="mr-2">
+Mostrar histórico de compras
+</label> <label class="flex items-center"> <input type="checkbox" checked class="mr-2">
+Sistema de pontos
+</label> <label class="flex items-center"> <input type="checkbox" checked class="mr-2">
+Lista de desejos
+</label> <label class="flex items-center"> <input type="checkbox" checked class="mr-2">
+Mini-store para reordenação
+</label> </div> </div> <!-- UX Settings --> <div> <h3 class="text-lg font-medium mb-3">Experiência do Usuário</h3> <div class="space-y-3"> <label class="flex items-center"> <input type="checkbox" checked class="mr-2">
+Sistema de favoritos VIP
+</label> <label class="flex items-center"> <input type="checkbox" checked class="mr-2">
+Galeria de produtos comprados
+</label> <label class="flex items-center"> <input type="checkbox" checked class="mr-2">
+Mensagem direta (bypass bot)
+</label> <label class="flex items-center"> <input type="checkbox" checked class="mr-2">
+Sistema de troféus
+</label> <label class="flex items-center"> <input type="checkbox" checked class="mr-2">
+Ghost Mode botão suporte
+</label> </div> </div> <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+Salvar Configurações
+</button> </form> </div> </div> ` })}`;
+}, "/home/lele/usenexo/getnexo-site/src/pages/admin/customer-portal.astro", void 0);
+const $$file = "/home/lele/usenexo/getnexo-site/src/pages/admin/customer-portal.astro";
+const $$url = "/admin/customer-portal";
+const _page = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: $$CustomerPortal,
+  file: $$file,
+  url: $$url
+}, Symbol.toStringTag, { value: "Module" }));
+const page = () => _page;
+export {
+  page,
+  renderers
+};

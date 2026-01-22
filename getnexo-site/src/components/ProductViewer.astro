@@ -1,0 +1,372 @@
+---
+export interface Props {
+  productId?: string;
+  mode?: '360' | 'ar' | 'both';
+  imageCount?: number;
+  glbUrl?: string;
+  usdzUrl?: string;
+  title?: string;
+  trialMode?: boolean;
+  has360Module?: boolean;
+  hasARModule?: boolean;
+}
+
+const {
+  productId = 'demo',
+  mode = 'both',
+  imageCount = 72,
+  glbUrl,
+  usdzUrl,
+  title = 'Visualizar Produto',
+  trialMode = true,
+  has360Module = false,
+  hasARModule = false
+} = Astro.props;
+
+// Check permissions
+const canShow360 = trialMode || has360Module;
+const canShowAR = trialMode || hasARModule;
+---
+
+<div class="product-viewer-container" id="product-viewer-${productId}">
+  <!-- Header -->
+  <div class="product-viewer-header">
+    <h3 class="product-viewer-title">{title}</h3>
+    <div class="product-viewer-badges">
+      {trialMode && (
+        <span class="badge badge-trial">TRIAL 36H</span>
+      )}
+      {canShow360 && (
+        <span class="badge badge-360">360°</span>
+      )}
+      {canShowAR && (
+        <span class="badge badge-ar">AR/VR</span>
+      )}
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="product-viewer-content">
+    {mode === '360' && canShow360 && (
+      <Spin360Viewer productId={productId} imageCount={imageCount} title="Girar Produto 360°" client:load />
+    )}
+
+    {mode === 'ar' && canShowAR && (
+      <ARModelViewer
+        productId={productId}
+        glbUrl={glbUrl}
+        usdzUrl={usdzUrl}
+        title="Ver em AR"
+        client:load
+      />
+    )}
+
+    {mode === 'both' && (
+      <div class="product-viewer-tabs">
+        <div class="tabs-header">
+          {canShow360 && (
+            <button class="tab-btn active" data-tab="360">
+              <span class="tab-icon">🔄</span>
+              360° Spin
+            </button>
+          )}
+          {canShowAR && (
+            <button class="tab-btn" data-tab="ar">
+              <span class="tab-icon">📱</span>
+              AR/VR
+            </button>
+          )}
+        </div>
+
+        <div class="tabs-content">
+          {canShow360 && (
+            <div class="tab-pane active" data-tab="360">
+              <Spin360Viewer productId={productId} imageCount={imageCount} title="Girar Produto 360°" client:load />
+            </div>
+          )}
+          {canShowAR && (
+            <div class="tab-pane" data-tab="ar">
+              <ARModelViewer
+                productId={productId}
+                glbUrl={glbUrl}
+                usdzUrl={usdzUrl}
+                title="Ver em AR"
+                client:load
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    )}
+
+    <!-- Upgrade prompts -->
+    {(!canShow360 || !canShowAR) && (
+      <div class="product-viewer-upgrade">
+        {!canShow360 && (
+          <div class="upgrade-card">
+            <div class="upgrade-icon">🔄</div>
+            <h4>Visualização 360° Premium</h4>
+            <p>Adicione rotação interativa ao seu produto</p>
+            <button class="upgrade-btn" onclick="showUpgrade('360')">
+              Ativar por R$ 97
+            </button>
+          </div>
+        )}
+        {!canShowAR && (
+          <div class="upgrade-card">
+            <div class="upgrade-icon">📱</div>
+            <h4>Realidade Aumentada</h4>
+            <p>Permita que clientes vejam produtos na casa deles</p>
+            <button class="upgrade-btn" onclick="showUpgrade('ar')">
+              Ativar por R$ 97
+            </button>
+          </div>
+        )}
+      </div>
+    )}
+  </div>
+</div>
+
+<style>
+  .product-viewer-container {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+
+  .product-viewer-header {
+    padding: 24px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .product-viewer-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #111827;
+  }
+
+  .product-viewer-badges {
+    display: flex;
+    gap: 8px;
+  }
+
+  .badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+
+  .badge-trial {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+  }
+
+  .badge-360 {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+  }
+
+  .badge-ar {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    color: white;
+  }
+
+  .product-viewer-content {
+    padding: 0;
+  }
+
+  /* Tabs */
+  .product-viewer-tabs {
+    width: 100%;
+  }
+
+  .tabs-header {
+    display: flex;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 16px 20px;
+    border: none;
+    background: transparent;
+    color: #6b7280;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .tab-btn.active {
+    background: white;
+    color: #111827;
+    border-bottom: 2px solid #3b82f6;
+  }
+
+  .tab-btn:hover:not(.active) {
+    background: #f3f4f6;
+  }
+
+  .tab-icon {
+    font-size: 16px;
+  }
+
+  .tabs-content {
+    position: relative;
+  }
+
+  .tab-pane {
+    display: none;
+    padding: 24px;
+  }
+
+  .tab-pane.active {
+    display: block;
+  }
+
+  /* Upgrade */
+  .product-viewer-upgrade {
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  @media (min-width: 640px) {
+    .product-viewer-upgrade {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .upgrade-card {
+    text-align: center;
+    padding: 24px;
+    border: 2px dashed #d1d5db;
+    border-radius: 12px;
+    background: #fafafa;
+  }
+
+  .upgrade-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+
+  .upgrade-card h4 {
+    margin: 0 0 8px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+  }
+
+  .upgrade-card p {
+    margin: 0 0 20px;
+    color: #6b7280;
+    font-size: 14px;
+  }
+
+  .upgrade-btn {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .upgrade-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
+
+  /* Mobile responsive */
+  @media (max-width: 640px) {
+    .product-viewer-header {
+      padding: 20px;
+      flex-direction: column;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .product-viewer-title {
+      font-size: 18px;
+    }
+
+    .tabs-header {
+      flex-direction: column;
+    }
+
+    .tab-btn {
+      padding: 12px 16px;
+    }
+
+    .tab-pane {
+      padding: 20px;
+    }
+
+    .product-viewer-upgrade {
+      padding: 20px;
+    }
+
+    .upgrade-card {
+      padding: 20px;
+    }
+  }
+</style>
+
+<script define:vars={{ productId, canShow360, canShowAR }}>
+  // Tab switching functionality
+  document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById(`product-viewer-${productId}`);
+    if (!container) return;
+
+    const tabBtns = container.querySelectorAll('.tab-btn');
+    const tabPanes = container.querySelectorAll('.tab-pane');
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tabName = btn.getAttribute('data-tab');
+
+        // Update active tab button
+        tabBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // Update active tab pane
+        tabPanes.forEach(pane => {
+          pane.classList.remove('active');
+          if (pane.getAttribute('data-tab') === tabName) {
+            pane.classList.add('active');
+          }
+        });
+      });
+    });
+  });
+
+  // Global functions for upgrade prompts
+  window.showUpgrade = function(module) {
+    const message = module === '360'
+      ? '🎯 Módulo 360° Premium\n\nAdicione visualização interativa ao seu produto com giro automático e controles manuais.\n\nPreço: R$ 97/mês\n\nDeseja ativar agora?'
+      : '🚀 Realidade Aumentada Premium\n\nPermita que seus clientes vejam produtos em AR diretamente no WhatsApp e site.\n\nCompatível com iOS e Android\n\nPreço: R$ 97/mês\n\nDeseja ativar agora?';
+
+    if (confirm(message)) {
+      // Here you would integrate with your payment/checkout system
+      alert('Redirecionando para checkout...');
+      // window.location.href = `/checkout?module=${module}`;
+    }
+  };
+</script>

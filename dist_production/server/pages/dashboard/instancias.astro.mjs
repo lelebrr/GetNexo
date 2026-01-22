@@ -1,0 +1,282 @@
+import { f as createComponent, k as renderComponent, r as renderTemplate, m as maybeRenderHead } from "../../assets/astro/server-MCYX8tFF.js";
+import "piccolore";
+import { $ as $$DashboardLayout } from "../../assets/DashboardLayout-DSSr717x.js";
+import { renderers } from "../../renderers.mjs";
+var __freeze = Object.freeze;
+var __defProp = Object.defineProperty;
+var __template = (cooked, raw) => __freeze(__defProp(cooked, "raw", { value: __freeze(raw || cooked.slice()) }));
+var _a;
+const $$Instancias = createComponent(async ($$result, $$props, $$slots) => {
+  return renderTemplate`${renderComponent($$result, "DashboardLayout", $$DashboardLayout, { "title": "Instâncias WhatsApp | OmniNexo" }, { "default": async ($$result2) => renderTemplate(_a || (_a = __template([" ", `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;"> <div> <h1 style="font-size:2rem; font-weight:800; color:white; margin:0;">Conexões WhatsApp</h1> <p style="color:#94a3b8; margin:0.5rem 0 0;">Gerencie suas instâncias da Evolution API em tempo real.</p> </div> <button onclick="openNewInstanceModal()" style="background:var(--neon-blue); color:black; font-weight:800; border:none; padding:12px 24px; border-radius:10px; cursor:pointer; display:flex; align-items:center; gap:8px; box-shadow:0 0 20px rgba(0,212,255,0.2); transition:0.3s;"> <span>+</span> Nova Instância
+</button> </div>  <div id="instances-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap:1.5rem;"> <!-- Loading Skeleton --> <div class="glass-panel" style="padding:1.5rem; height:200px; display:flex; align-items:center; justify-content:center;"> <div style="color:#64748b;">Carregando instâncias...</div> </div> </div>  <div id="modal-new-instance" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(5px); z-index:1000; display:none; align-items:center; justify-content:center;"> <div class="glass-panel" style="width:400px; padding:2rem; background:#0f172a; border:1px solid #334155; position:relative;"> <button onclick="closeModal()" style="position:absolute; top:15px; right:15px; background:none; border:none; color:#64748b; font-size:1.5rem; cursor:pointer;">&times;</button> <h2 style="margin:0 0 1.5rem; color:white;">Nova Conexão</h2> <div id="setup-step-1"> <div style="margin-bottom:1.5rem;"> <label style="display:block; color:#94a3b8; margin-bottom:0.5rem; font-size:0.9rem;">Nome da Instância</label> <input type="text" id="input-instance-name" placeholder="Ex: Atendimento Principal" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid #334155; padding:10px; color:white; border-radius:8px; outline:none;"> </div> <button onclick="createInstance()" style="width:100%; padding:12px; background:var(--neon-green); color:black; font-weight:800; border:none; border-radius:8px; cursor:pointer;">
+Gerar QR Code
+</button> </div> <div id="setup-step-2" style="display:none; text-align:center;"> <div style="margin-bottom:1rem; color:#94a3b8; font-size:0.9rem;">Escaneie com seu WhatsApp</div> <div id="qr-container" style="background:white; padding:10px; border-radius:10px; display:inline-block; margin-bottom:1rem;"> <img id="qr-image" src="" style="width:200px; height:200px; display:block;"> </div> <div id="connection-log" style="font-family:'JetBrains Mono', monospace; font-size:0.7rem; color:#64748b; height:60px; overflow-y:auto; text-align:left; background:black; padding:10px; border-radius:6px; margin-bottom:1rem;">
+> Aguardando leitura...
+</div> <button onclick="closeModal()" style="background:none; border:1px solid #334155; color:white; padding:8px 16px; border-radius:6px; cursor:pointer;">Cancelar</button> </div> </div> </div> <script>
+        const API = 'https://api.getnexo.com.br'; // or local
+        const grid = document.getElementById('instances-grid');
+
+        // Helpers
+        const getHeaders = () => window.getAuthHeader();
+
+        async function fetchInstances() {
+            try {
+                // Mock API call - Replace with fetch(\`\${API}/api/whatsapp/instances\`)
+                // Simulating response
+                await new Promise(r => setTimeout(r, 800)); 
+                
+                const instances = [
+                    { name: 'Comercial 01', status: 'open', battery: 85, phone: '5511999999999', lastUpdate: 'Agora' },
+                    { name: 'Suporte N2', status: 'connecting', battery: 0, phone: '', lastUpdate: 'Há 5min' }
+                ];
+
+                renderInstances(instances);
+            } catch (e) {
+                grid.innerHTML = \`<div style="color:#ef4444;">Erro ao carregar instâncias.</div>\`;
+            }
+        }
+
+        function renderInstances(list) {
+            grid.innerHTML = list.map(inst => \`
+                <div class="glass-panel" style="padding:0; overflow:hidden; position:relative; transition:0.3s; border-color:\${inst.status === 'open' ? 'rgba(0,255,157,0.3)' : 'rgba(255,255,255,0.05)'};">
+                    <div style="padding:1.5rem; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:start;">
+                        <div>
+                            <div style="font-size:1.2rem; font-weight:700; color:white; margin-bottom:4px;">\${inst.name}</div>
+                            <div style="font-size:0.8rem; color:#94a3b8;">\${inst.phone ? formatPhone(inst.phone) : 'Sem número'}</div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:6px; background:\${inst.status === 'open' ? 'rgba(0,255,157,0.1)' : 'rgba(255,255,255,0.05)'}; padding:4px 10px; border-radius:20px;">
+                            <div style="width:8px; height:8px; border-radius:50%; background:\${inst.status === 'open' ? 'var(--neon-green)' : '#facc15'}; box-shadow:0 0 8px \${inst.status === 'open' ? 'var(--neon-green)' : '#facc15'};"></div>
+                            <span style="font-size:0.75rem; font-weight:700; color:\${inst.status === 'open' ? 'var(--neon-green)' : '#facc15'}; text-transform:uppercase;">\${inst.status === 'open' ? 'ONLINE' : 'CONNECTING'}</span>
+                        </div>
+                    </div>
+                    
+                    <div style="padding:1.5rem; background:rgba(0,0,0,0.2);">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+                            <div style="text-align:center;">
+                                <div style="font-size:0.7rem; color:#64748b; text-transform:uppercase;">Bateria</div>
+                                <div style="font-size:1rem; color:white; font-weight:700;">\${inst.battery}%</div>
+                            </div>
+                            <div style="text-align:center;">
+                                <div style="font-size:0.7rem; color:#64748b; text-transform:uppercase;">Uptime</div>
+                                <div style="font-size:1rem; color:white; font-weight:700;">99.9%</div>
+                            </div>
+                            <div style="text-align:center;">
+                                <div style="font-size:0.7rem; color:#64748b; text-transform:uppercase;">Latência</div>
+                                <div style="font-size:1rem; color:var(--neon-blue); font-weight:700;">24ms</div>
+                            </div>
+                        </div>
+                        
+                        <div style="display:flex; gap:10px;">
+                            <button style="flex:1; padding:8px; background:rgba(255,255,255,0.05); color:white; border:none; border-radius:6px; font-weight:600; cursor:pointer; transition:0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+                                🔄 Reiniciar
+                            </button>
+                            <button style="flex:1; padding:8px; background:rgba(239,68,68,0.1); color:#fca5a5; border:none; border-radius:6px; font-weight:600; cursor:pointer; transition:0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.2)'" onmouseout="this.style.background='rgba(239,68,68,0.1)'">
+                                🗑️ Deletar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            \`).join('');
+        }
+
+        // Modal Logic
+        const modal = document.getElementById('modal-new-instance');
+        const step1 = document.getElementById('setup-step-1');
+        const step2 = document.getElementById('setup-step-2');
+        const params = { name: '' };
+
+        window.openNewInstanceModal = () => {
+            modal.style.display = 'flex';
+            step1.style.display = 'block';
+            step2.style.display = 'none';
+            document.getElementById('input-instance-name').value = '';
+        };
+
+        window.closeModal = () => {
+            modal.style.display = 'none';
+        };
+
+        window.createInstance = async () => {
+            const name = document.getElementById('input-instance-name').value;
+            if (!name) return alert('Digite um nome!');
+            
+            // UI Transition
+            step1.style.display = 'none';
+            step2.style.display = 'block';
+            params.name = name;
+
+            // Simulate QR Generation
+            const log = document.getElementById('connection-log');
+            const addLog = (msg) => { log.innerHTML += \`<div>> \${msg}</div>\`; log.scrollTop = log.scrollHeight; };
+            
+            addLog('Criando instância na API...');
+            
+            setTimeout(() => {
+                addLog('Instância criada: ' + name);
+                addLog('Obtendo QR Code...');
+                // Dummy QR for demo (Normally fetch from API)
+                document.getElementById('qr-image').src = \`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GetNexo-Evolution-\${Date.now()}\`;
+                
+                // Simulate Connection Success after 5s
+                setTimeout(() => {
+                    addLog('✅ Leitura detectada!');
+                    addLog('Conectando...');
+                    setTimeout(() => {
+                        window.location.reload(); // Refresh to show new instance
+                    }, 2000);
+                }, 5000);
+
+            }, 1500);
+        };
+
+        function formatPhone(p) {
+            return p.replace(/(\\d{2})(\\d{2})(\\d{5})(\\d{4})/, '+$1 ($2) $3-$4');
+        }
+
+        // Init
+        fetchInstances();
+
+    <\/script> `], [" ", `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;"> <div> <h1 style="font-size:2rem; font-weight:800; color:white; margin:0;">Conexões WhatsApp</h1> <p style="color:#94a3b8; margin:0.5rem 0 0;">Gerencie suas instâncias da Evolution API em tempo real.</p> </div> <button onclick="openNewInstanceModal()" style="background:var(--neon-blue); color:black; font-weight:800; border:none; padding:12px 24px; border-radius:10px; cursor:pointer; display:flex; align-items:center; gap:8px; box-shadow:0 0 20px rgba(0,212,255,0.2); transition:0.3s;"> <span>+</span> Nova Instância
+</button> </div>  <div id="instances-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap:1.5rem;"> <!-- Loading Skeleton --> <div class="glass-panel" style="padding:1.5rem; height:200px; display:flex; align-items:center; justify-content:center;"> <div style="color:#64748b;">Carregando instâncias...</div> </div> </div>  <div id="modal-new-instance" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(5px); z-index:1000; display:none; align-items:center; justify-content:center;"> <div class="glass-panel" style="width:400px; padding:2rem; background:#0f172a; border:1px solid #334155; position:relative;"> <button onclick="closeModal()" style="position:absolute; top:15px; right:15px; background:none; border:none; color:#64748b; font-size:1.5rem; cursor:pointer;">&times;</button> <h2 style="margin:0 0 1.5rem; color:white;">Nova Conexão</h2> <div id="setup-step-1"> <div style="margin-bottom:1.5rem;"> <label style="display:block; color:#94a3b8; margin-bottom:0.5rem; font-size:0.9rem;">Nome da Instância</label> <input type="text" id="input-instance-name" placeholder="Ex: Atendimento Principal" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid #334155; padding:10px; color:white; border-radius:8px; outline:none;"> </div> <button onclick="createInstance()" style="width:100%; padding:12px; background:var(--neon-green); color:black; font-weight:800; border:none; border-radius:8px; cursor:pointer;">
+Gerar QR Code
+</button> </div> <div id="setup-step-2" style="display:none; text-align:center;"> <div style="margin-bottom:1rem; color:#94a3b8; font-size:0.9rem;">Escaneie com seu WhatsApp</div> <div id="qr-container" style="background:white; padding:10px; border-radius:10px; display:inline-block; margin-bottom:1rem;"> <img id="qr-image" src="" style="width:200px; height:200px; display:block;"> </div> <div id="connection-log" style="font-family:'JetBrains Mono', monospace; font-size:0.7rem; color:#64748b; height:60px; overflow-y:auto; text-align:left; background:black; padding:10px; border-radius:6px; margin-bottom:1rem;">
+> Aguardando leitura...
+</div> <button onclick="closeModal()" style="background:none; border:1px solid #334155; color:white; padding:8px 16px; border-radius:6px; cursor:pointer;">Cancelar</button> </div> </div> </div> <script>
+        const API = 'https://api.getnexo.com.br'; // or local
+        const grid = document.getElementById('instances-grid');
+
+        // Helpers
+        const getHeaders = () => window.getAuthHeader();
+
+        async function fetchInstances() {
+            try {
+                // Mock API call - Replace with fetch(\\\`\\\${API}/api/whatsapp/instances\\\`)
+                // Simulating response
+                await new Promise(r => setTimeout(r, 800)); 
+                
+                const instances = [
+                    { name: 'Comercial 01', status: 'open', battery: 85, phone: '5511999999999', lastUpdate: 'Agora' },
+                    { name: 'Suporte N2', status: 'connecting', battery: 0, phone: '', lastUpdate: 'Há 5min' }
+                ];
+
+                renderInstances(instances);
+            } catch (e) {
+                grid.innerHTML = \\\`<div style="color:#ef4444;">Erro ao carregar instâncias.</div>\\\`;
+            }
+        }
+
+        function renderInstances(list) {
+            grid.innerHTML = list.map(inst => \\\`
+                <div class="glass-panel" style="padding:0; overflow:hidden; position:relative; transition:0.3s; border-color:\\\${inst.status === 'open' ? 'rgba(0,255,157,0.3)' : 'rgba(255,255,255,0.05)'};">
+                    <div style="padding:1.5rem; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:start;">
+                        <div>
+                            <div style="font-size:1.2rem; font-weight:700; color:white; margin-bottom:4px;">\\\${inst.name}</div>
+                            <div style="font-size:0.8rem; color:#94a3b8;">\\\${inst.phone ? formatPhone(inst.phone) : 'Sem número'}</div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:6px; background:\\\${inst.status === 'open' ? 'rgba(0,255,157,0.1)' : 'rgba(255,255,255,0.05)'}; padding:4px 10px; border-radius:20px;">
+                            <div style="width:8px; height:8px; border-radius:50%; background:\\\${inst.status === 'open' ? 'var(--neon-green)' : '#facc15'}; box-shadow:0 0 8px \\\${inst.status === 'open' ? 'var(--neon-green)' : '#facc15'};"></div>
+                            <span style="font-size:0.75rem; font-weight:700; color:\\\${inst.status === 'open' ? 'var(--neon-green)' : '#facc15'}; text-transform:uppercase;">\\\${inst.status === 'open' ? 'ONLINE' : 'CONNECTING'}</span>
+                        </div>
+                    </div>
+                    
+                    <div style="padding:1.5rem; background:rgba(0,0,0,0.2);">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+                            <div style="text-align:center;">
+                                <div style="font-size:0.7rem; color:#64748b; text-transform:uppercase;">Bateria</div>
+                                <div style="font-size:1rem; color:white; font-weight:700;">\\\${inst.battery}%</div>
+                            </div>
+                            <div style="text-align:center;">
+                                <div style="font-size:0.7rem; color:#64748b; text-transform:uppercase;">Uptime</div>
+                                <div style="font-size:1rem; color:white; font-weight:700;">99.9%</div>
+                            </div>
+                            <div style="text-align:center;">
+                                <div style="font-size:0.7rem; color:#64748b; text-transform:uppercase;">Latência</div>
+                                <div style="font-size:1rem; color:var(--neon-blue); font-weight:700;">24ms</div>
+                            </div>
+                        </div>
+                        
+                        <div style="display:flex; gap:10px;">
+                            <button style="flex:1; padding:8px; background:rgba(255,255,255,0.05); color:white; border:none; border-radius:6px; font-weight:600; cursor:pointer; transition:0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+                                🔄 Reiniciar
+                            </button>
+                            <button style="flex:1; padding:8px; background:rgba(239,68,68,0.1); color:#fca5a5; border:none; border-radius:6px; font-weight:600; cursor:pointer; transition:0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.2)'" onmouseout="this.style.background='rgba(239,68,68,0.1)'">
+                                🗑️ Deletar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            \\\`).join('');
+        }
+
+        // Modal Logic
+        const modal = document.getElementById('modal-new-instance');
+        const step1 = document.getElementById('setup-step-1');
+        const step2 = document.getElementById('setup-step-2');
+        const params = { name: '' };
+
+        window.openNewInstanceModal = () => {
+            modal.style.display = 'flex';
+            step1.style.display = 'block';
+            step2.style.display = 'none';
+            document.getElementById('input-instance-name').value = '';
+        };
+
+        window.closeModal = () => {
+            modal.style.display = 'none';
+        };
+
+        window.createInstance = async () => {
+            const name = document.getElementById('input-instance-name').value;
+            if (!name) return alert('Digite um nome!');
+            
+            // UI Transition
+            step1.style.display = 'none';
+            step2.style.display = 'block';
+            params.name = name;
+
+            // Simulate QR Generation
+            const log = document.getElementById('connection-log');
+            const addLog = (msg) => { log.innerHTML += \\\`<div>> \\\${msg}</div>\\\`; log.scrollTop = log.scrollHeight; };
+            
+            addLog('Criando instância na API...');
+            
+            setTimeout(() => {
+                addLog('Instância criada: ' + name);
+                addLog('Obtendo QR Code...');
+                // Dummy QR for demo (Normally fetch from API)
+                document.getElementById('qr-image').src = \\\`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GetNexo-Evolution-\\\${Date.now()}\\\`;
+                
+                // Simulate Connection Success after 5s
+                setTimeout(() => {
+                    addLog('✅ Leitura detectada!');
+                    addLog('Conectando...');
+                    setTimeout(() => {
+                        window.location.reload(); // Refresh to show new instance
+                    }, 2000);
+                }, 5000);
+
+            }, 1500);
+        };
+
+        function formatPhone(p) {
+            return p.replace(/(\\\\d{2})(\\\\d{2})(\\\\d{5})(\\\\d{4})/, '+$1 ($2) $3-$4');
+        }
+
+        // Init
+        fetchInstances();
+
+    <\/script> `])), maybeRenderHead()) })}`;
+}, "/home/lele/usenexo/getnexo-site/src/pages/dashboard/instancias.astro", void 0);
+const $$file = "/home/lele/usenexo/getnexo-site/src/pages/dashboard/instancias.astro";
+const $$url = "/dashboard/instancias";
+const _page = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: $$Instancias,
+  file: $$file,
+  url: $$url
+}, Symbol.toStringTag, { value: "Module" }));
+const page = () => _page;
+export {
+  page,
+  renderers
+};

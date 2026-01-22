@@ -1,0 +1,110 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Carrinho Abandonado no WhatsApp: Como Recuperar até 45% das Vendas Perdidas",
+      "description": "Aprenda estratégias avançadas para recuperar carrinhos abandonados usando a API do WhatsApp. Guia completo sobre automação e copywriting para vendas.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-21",
+      "image": "/images/blog/recuperacao_carrinho_whatsapp.png",
+      "articleSection": "WhatsApp Marketing",
+      "keywords": "recuperação carrinho, whatsapp vendas, carrinho abandonado, automação ecommerce, roi whatsapp"
+    }
+  ]
+};
+---
+
+<Layout title="Recuperação de Carrinho WhatsApp | GetNexo">
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta animate-fade-in">Conversão • Jan 2026</div>
+      <h1 class="animate-slide-up">Carrinho Abandonado:<br/><span class="text-primary">Recuperação via WhatsApp</span></h1>
+      <p class="subtitle animate-fade-in delay-200">Transforme "quase vendas" em lucro real com a imediatividade do WhatsApp.</p>
+      
+      <img src="/images/blog/recuperacao_carrinho_whatsapp.png" alt="Recuperação de Carrinho Abandonado no WhatsApp" class="featured-image glass-panel" />
+    </header>
+
+    <div class="post-content">
+      <section id="problema">
+        <h2>😱 O Grande Vilão do Ecommerce</h2>
+        <p>Mais de 70% dos carrinhos são abandonados. No email, a taxa de abertura é baixa. No WhatsApp, a abertura é de 98%. O segredo da recuperação não é apenas o canal, mas a <strong>inteligência do timing</strong>.</p>
+        <div class="glass-panel mt-8">
+          <p><strong>Estatística:</strong> Campanhas de recuperação via WhatsApp têm uma taxa de conversão 5x maior que o email marketing tradicional.</p>
+        </div>
+      </section>
+
+      <section id="estrategia">
+        <h2>🛠️ A Estratégia dos 3 Toques</h2>
+        <p>Não basta mandar uma mensagem. É preciso um fluxo lógico que resolva as dúvidas do cliente:</p>
+        
+        <div class="stack-grid">
+          <div class="stack-card glass-panel blur">
+            <h4>Toque 1: Ajuda (15 min)</h4>
+            <p>"Vi que você deixou algo no carrinho. Teve algum erro no checkout ou dúvida sobre o frete?"</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Toque 2: Valor (4h)</h4>
+            <p>"Ainda quer garantir o seu [Produto]? Separamos um depoimento de quem já comprou!"</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Toque 3: Escassez (24h)</h4>
+            <p>"Últimas horas! Use o cupom VOLTEI10 para finalizar seu pedido com desconto exclusivo."</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="automacao">
+        <h2>🤖 Automação Inteligente GetNexo</h2>
+        <p>Com a GetNexo, você não precisa de uma equipe manual. Nossa IA detecta o abandono via Webhook e inicia o diálogo de forma natural, inclusive tirando dúvidas técnicas sobre o produto antes de fechar a venda.</p>
+      </section>
+
+      <div class="final-cta animate-scale-up">
+        <h3>Pare de perder dinheiro hoje!</h3>
+        <p>Recupere seus carrinhos automaticamente com a ferramenta mais poderosa do mercado.</p>
+        <div class="cta-buttons mt-8">
+          <a href="/recuperacao-carrinho" class="btn-primary">Ativar Recuperação</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+</Layout>
+
+<style>
+  :root {
+    --primary: #25d366;
+    --accent: #ffd700;
+    --glass: rgba(15, 23, 42, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.05);
+  }
+
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  .meta { color: var(--primary); font-size: 0.8rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem; display: inline-block; padding: 0.5rem 1rem; background: rgba(37, 211, 102, 0.05); border: 1px solid var(--glass-border); border-radius: 50px; }
+  h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; color: white; }
+  .text-primary { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .subtitle { font-size: 1.25rem; color: #94a3b8; max-width: 700px; margin: 0 auto; line-height: 1.6; }
+  .featured-image { width: 100%; border-radius: 24px; margin-top: 3rem; object-fit: cover; height: 500px; border: 1px solid var(--glass-border); }
+  .post-content { color: #cbd5e1; line-height: 1.8; font-size: 1.15rem; }
+  h2 { font-size: 2.2rem; color: white; margin: 6rem 0 2rem; font-weight: 800; }
+  .glass-panel { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 2.5rem; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+  .stack-card { background: var(--glass); border: 1px solid var(--glass-border); padding: 2rem; border-radius: 20px; text-align: left; }
+  .stack-card h4 { color: var(--primary); margin-bottom: 1rem; font-size: 1.3rem; }
+  .final-cta { background: linear-gradient(135deg, rgba(37, 211, 102, 0.1), rgba(255, 215, 0, 0.1)); border: 1px solid var(--primary); padding: 5rem 2rem; text-align: center; border-radius: 32px; margin-top: 8rem; }
+  .btn-primary { background: white; color: black; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; font-weight: 800; display: inline-block; transition: 0.3s; }
+  .btn-primary:hover { background: var(--primary); color: white; transform: translateY(-3px); box-shadow: 0 15px 30px rgba(37, 211, 102, 0.3); }
+  
+  strong { color: var(--accent); }
+
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade-in { animation: fade-in 1s ease forwards; }
+  .animate-slide-up { animation: slide-up 1s ease forwards; }
+</style>

@@ -27,8 +27,15 @@ export default defineConfig({
         // sitemap(),
         partytown({
             config: {
-                forward: ['dataLayer.push'],
+                forward: ['dataLayer.push', 'gtag'],
                 debug: false,
+                resolveUrl: function (url) {
+                    // Resolve URLs for third-party scripts
+                    if (url.hostname === 'www.googletagmanager.com') {
+                        return url;
+                    }
+                    return url;
+                },
             },
         }),
     ],
@@ -40,7 +47,8 @@ export default defineConfig({
     server: {
         headers: {
             'Content-Encoding': 'gzip, br',
-            'Cache-Control': 'public, max-age=31536000, immutable'
+            'Cache-Control': 'public, max-age=31536000, immutable',
+            ...(!isVercel ? {} : { 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload' })
         }
     },
     vite: {
@@ -63,6 +71,14 @@ export default defineConfig({
                 output: {
                     manualChunks: {
                         'vendor': ['react', 'react-dom', 'astro'],
+                    },
+                    // Disable automatic module preloading for non-critical chunks
+                    chunkFileNames: (chunkInfo) => {
+                        // Don't generate preloads for component-specific chunks
+                        if (chunkInfo.name.includes('astro_astro_type_script')) {
+                            return 'assets/[name]-[hash].js';
+                        }
+                        return 'assets/[name]-[hash].js';
                     }
                 }
             }

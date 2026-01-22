@@ -1,0 +1,111 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Guia de Guerra Black Friday 2026: Automação e Escala no WhatsApp",
+      "description": "Prepare sua operação para a maior Black Friday da história. Estratégias de automação, recuperação de carrinho em massa e infraestrutura WhatsApp API.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-21",
+      "image": "/images/blog/black-friday-automacao.png",
+      "articleSection": "Estratégia de Vendas",
+      "keywords": "black friday 2026, automação vendas, whatsapp ecommerce, escala vendas, recuperação carrinho black friday"
+    }
+  ]
+};
+---
+
+<Layout title="Guia Black Friday 2026 Automação | GetNexo">
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta animate-fade-in">Sazonal • Jan 2026</div>
+      <h1 class="animate-slide-up">Guia de Guerra:<br/><span class="text-primary">Black Friday 2026</span></h1>
+      <p class="subtitle animate-fade-in delay-200">A Black Friday não se vence em novembro, se vence agora. Prepare sua infraestrutura para a tempestade de leads.</p>
+      
+      <div class="placeholder-image glass-panel animate-fade-in">
+        <p>Image: Epic Black Friday Automation War Room</p>
+      </div>
+    </header>
+
+    <div class="post-content">
+      <section id="preparacao">
+        <h2>⚔️ Por que sua infraestrutura irá falhar (se você não agir)</h2>
+        <p>Na Black Friday, o volume de mensagens por segundo (MPS) triplica. Plataformas amadoras travam, banem números e perdem milhões em oportunidades. Com a GetNexo e a <strong>API Oficial Meta</strong>, sua empresa tem o suporte de servidores dedicados para aguentar milhões de conversas simultâneas.</p>
+        
+        <div class="glass-panel mt-8">
+          <p><strong>Checklist de Combate:</strong> Verifique seu Tier de Mensagem na Meta e garanta que sua automação de triagem suporte picos de 10.000 leads/hora.</p>
+        </div>
+      </section>
+
+      <section id="estrategias-vitoria">
+        <h2>🏆 3 Estratégias para Vencer a Concorrência</h2>
+        <p>Enquanto todos enviam SPAM, você envia valor. Use o poder da GetNexo para ser cirúrgico:</p>
+        
+        <div class="stack-grid">
+          <div class="stack-card glass-panel blur">
+            <h4>Aquecimento de Carrinho</h4>
+            <p>Comece a recuperar carrinhos 48h antes do evento com cupons progressivos automáticos.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Live Commerce Integrado</h4>
+            <p>Sua IA responde dúvidas técnicas da Live em tempo real, enviando o link de compra no chat.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Fila de Espera VIP</h4>
+            <p>Crie antecipação e segure o lead em um fluxo de nutrição até a liberação das ofertas.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="pos-black">
+        <h2>📈 Transformando Compradores em Clientes Fiéis</h2>
+        <p>O maior erro da Black Friday é focar apenas na venda única. Use o módulo de <strong>Fidelização GetNexo</strong> para converter o cliente de "oportunidade" em um fã recorrente, enviando mensagens de pós-venda personalizadas e ofertas de Cross-sell baseadas na compra original.</p>
+      </section>
+
+      <div class="final-cta animate-scale-up">
+        <h3>Sua Black Friday começa agora.</h3>
+        <p>Não deixe para a última hora. Reserve seu lugar no ecossistema GetNexo.</p>
+        <div class="cta-buttons mt-8">
+          <a href="/recuperacao-carrinho" class="btn-primary">Ver Recuperação Total</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+</Layout>
+
+<style>
+  :root {
+    --primary: #ef4444;
+    --accent: #f87171;
+    --glass: rgba(15, 23, 42, 0.7);
+    --glass-border: rgba(239, 68, 68, 0.1);
+  }
+
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  .meta { color: var(--primary); font-size: 0.8rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem; display: inline-block; padding: 0.5rem 1rem; background: rgba(239, 68, 68, 0.05); border: 1px solid var(--glass-border); border-radius: 50px; }
+  h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; color: white; }
+  .text-primary { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .subtitle { font-size: 1.25rem; color: #94a3b8; max-width: 700px; margin: 0 auto; line-height: 1.6; }
+  .placeholder-image { width: 100%; border-radius: 24px; margin-top: 3rem; height: 500px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #450a0a, #0f172a); color: var(--primary); font-weight: 800; border: 1px dashed var(--primary); }
+  .post-content { color: #cbd5e1; line-height: 1.8; font-size: 1.15rem; }
+  h2 { font-size: 2.2rem; color: white; margin: 6rem 0 2rem; font-weight: 800; }
+  .glass-panel { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 2.5rem; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+  .stack-card { background: var(--glass); border: 1px solid var(--glass-border); padding: 2rem; border-radius: 20px; text-align: left; }
+  .stack-card h4 { color: var(--primary); margin-bottom: 1rem; font-size: 1.3rem; }
+  .final-cta { background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(248, 113, 113, 0.1)); border: 1px solid var(--primary); padding: 5rem 2rem; text-align: center; border-radius: 32px; margin-top: 8rem; }
+  .btn-primary { background: white; color: black; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; font-weight: 800; display: inline-block; transition: 0.3s; }
+  .btn-primary:hover { background: var(--primary); color: white; transform: translateY(-3px); box-shadow: 0 15px 30px rgba(239, 68, 68, 0.3); }
+
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade-in { animation: fade-in 1s ease forwards; }
+  .animate-slide-up { animation: slide-up 1s ease forwards; }
+</style>

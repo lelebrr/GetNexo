@@ -7,6 +7,8 @@ export default function PWAInstall() {
     const [notificationPermission, setNotificationPermission] = useState('default');
     const [updateAvailable, setUpdateAvailable] = useState(false);
     const [offlineStatus, setOfflineStatus] = useState(!navigator.onLine);
+    const [countdown, setCountdown] = useState(30);
+    const [countdownInterval, setCountdownInterval] = useState(null);
 
     useEffect(() => {
         // Check if already installed
@@ -25,13 +27,30 @@ export default function PWAInstall() {
 
         // Listen for beforeinstallprompt event
         const handleBeforeInstallPrompt = (e) => {
+            // Prevent the native browser prompt immediately
             e.preventDefault();
+
+            // Store the event for later use
+            const localDeferredPrompt = e;
             setDeferredPrompt(e);
 
             // Show prompt after user interaction (scroll, click, etc.)
             const showPrompt = () => {
                 if (!isInstalled && !showInstallPrompt) {
                     setShowInstallPrompt(true);
+                    // Start countdown
+                    setCountdown(20);
+                    const interval = setInterval(() => {
+                        setCountdown(prev => {
+                            if (prev <= 1) {
+                                clearInterval(interval);
+                                setShowInstallPrompt(false); // Auto-close after countdown
+                                return 0;
+                            }
+                            return prev - 1;
+                        });
+                    }, 1000);
+                    setCountdownInterval(interval);
                 }
             };
 
@@ -89,11 +108,21 @@ export default function PWAInstall() {
             window.removeEventListener('appinstalled', handleAppInstalled);
             window.removeEventListener('online', handleOnline);
             window.removeEventListener('offline', handleOffline);
+            // Clear countdown interval
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
         };
     }, [isInstalled, showInstallPrompt]);
 
     const handleInstallClick = async () => {
         if (!deferredPrompt) return;
+
+        // Clear countdown interval
+        if (countdownInterval) {
+            clearInterval(countdownInterval);
+            setCountdownInterval(null);
+        }
 
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
@@ -111,6 +140,12 @@ export default function PWAInstall() {
     };
 
     const handleDismissInstall = () => {
+        // Clear countdown interval
+        if (countdownInterval) {
+            clearInterval(countdownInterval);
+            setCountdownInterval(null);
+        }
+
         setShowInstallPrompt(false);
 
         // Track dismissal
@@ -219,7 +254,7 @@ export default function PWAInstall() {
                             onClick={handleInstallClick}
                             className="w-full bg-white text-blue-600 font-semibold py-3 px-4 rounded-lg hover:bg-blue-50 transition-colors"
                         >
-                            📲 Instalar Agora
+                            📲 Instalar Agora {countdown > 0 && `(${countdown}s)`}
                         </button>
                         <button
                             onClick={handleDismissInstall}

@@ -200,7 +200,7 @@ loyaltyTierSchema.methods.getProgressToNext = function (currentPoints, nextTier)
 };
 
 // Método estático para encontrar tier apropriado
-loyaltyTierSchema.statics.findAppropriateTier = function (points, userStats = {}) {
+loyaltyTierSchema.statics.findAppropriateTier = async function (points, userStats = {}) {
     // Primeiro, encontrar tiers ativos ordenados por level
     const tiers = await this.find({ isActive: true }).sort({ level: 1 });
 

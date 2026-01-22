@@ -55,8 +55,20 @@ import Layout from '../layouts/Layout.astro';
               <input type="password" name="password" id="reg-password" required placeholder="Mínimo 8 caracteres" minlength="8" />
             </div>
             <div class="field">
-               <label>CPF ou CNPJ *</label>
-               <input type="text" name="cpf_cnpj" id="reg-cpf-cnpj" required placeholder="000.000.000-00" />
+               <label>Tipo de Pessoa *</label>
+               <select name="person_type" id="reg-person-type" required onchange="togglePersonFields()">
+                 <option value="">Selecione...</option>
+                 <option value="pf">Pessoa Física</option>
+                 <option value="pj">Pessoa Jurídica</option>
+               </select>
+            </div>
+            <div class="field" id="cpf-field" style="display: none;">
+               <label>CPF *</label>
+               <input type="text" name="cpf" id="reg-cpf" placeholder="000.000.000-00" />
+            </div>
+            <div class="field" id="cnpj-field" style="display: none;">
+               <label>CNPJ *</label>
+               <input type="text" name="cnpj" id="reg-cnpj" placeholder="00.000.000/0000-00" />
             </div>
             <div class="field">
               <label>Nome da Empresa (Opcional)</label>
@@ -207,7 +219,7 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </div>
 
-  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+  <!-- Removido intl-tel-input que estava causando problemas -->
   <script is:inline>
     // State Management
     let currentUser = null;
@@ -396,9 +408,9 @@ import Layout from '../layouts/Layout.astro';
 
     function generateFinalCode() {
       const botId = 'bot_' + Math.random().toString(36).substr(2, 9); // In production this comes from user record/project
-      const scriptUrl = window.location.hostname === 'localhost' 
-        ? 'http://localhost:8080/widget.js' 
-        : 'https://api.getnexo.com.br/widget.js';
+      const scriptUrl = window.location.hostname === 'localhost'
+        ? 'http://localhost:8080/widget.js'
+        : '/widget.js';
       
       const code = `<script src="${scriptUrl}" data-bot="${botId}" data-theme="${selectedTheme}"><\/script>`;
       document.getElementById('widget-code').textContent = code;
@@ -406,34 +418,63 @@ import Layout from '../layouts/Layout.astro';
     }
 
     // Helpers
-    function initTelInput() {
-      const input = document.querySelector("#reg-whatsapp");
-      if (input && !itiReg) {
-        itiReg = window.intlTelInput(input, {
-          initialCountry: "br",
-          separateDialCode: true,
-          preferredCountries: ["br", "pt", "us"],
-          utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-        });
+    function updateCountryCode() {
+      const countrySelect = document.getElementById('reg-country');
+      const display = document.getElementById('country-code-display');
+      if (countrySelect && display) {
+        display.textContent = countrySelect.value;
+      }
+    }
+
+    function togglePersonFields() {
+      const personType = document.getElementById('reg-person-type').value;
+      const cpfField = document.getElementById('cpf-field');
+      const cnpjField = document.getElementById('cnpj-field');
+      const cpfInput = document.getElementById('reg-cpf');
+      const cnpjInput = document.getElementById('reg-cnpj');
+
+      if (personType === 'pf') {
+        cpfField.style.display = 'block';
+        cnpjField.style.display = 'none';
+        cpfInput.required = true;
+        cnpjInput.required = false;
+      } else if (personType === 'pj') {
+        cpfField.style.display = 'none';
+        cnpjField.style.display = 'block';
+        cpfInput.required = false;
+        cnpjInput.required = true;
+      } else {
+        cpfField.style.display = 'none';
+        cnpjField.style.display = 'none';
+        cpfInput.required = false;
+        cnpjInput.required = false;
       }
     }
 
     function initMasks() {
-      const cpInput = document.getElementById('reg-cpf-cnpj');
-      if (cpInput) {
-        cpInput.addEventListener('input', (e) => {
+      // CPF mask
+      const cpfInput = document.getElementById('reg-cpf');
+      if (cpfInput) {
+        cpfInput.addEventListener('input', (e) => {
+           let v = e.target.value.replace(/\D/g, "");
+           if (v.length > 11) v = v.slice(0, 11);
+           v = v.replace(/(\d{3})(\d)/, "$1.$2");
+           v = v.replace(/(\d{3})(\d)/, "$1.$2");
+           v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+           e.target.value = v;
+        });
+      }
+
+      // CNPJ mask
+      const cnpjInput = document.getElementById('reg-cnpj');
+      if (cnpjInput) {
+        cnpjInput.addEventListener('input', (e) => {
            let v = e.target.value.replace(/\D/g, "");
            if (v.length > 14) v = v.slice(0, 14);
-           if (v.length <= 11) {
-             v = v.replace(/(\d{3})(\d)/, "$1.$2");
-             v = v.replace(/(\d{3})(\d)/, "$1.$2");
-             v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-           } else {
-             v = v.replace(/^(\d{2})(\d)/, "$1.$2");
-             v = v.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
-             v = v.replace(/\.(\d{3})(\d)/, ".$1/$2");
-             v = v.replace(/(\d{4})(\d)/, "$1-$2");
-           }
+           v = v.replace(/^(\d{2})(\d)/, "$1.$2");
+           v = v.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+           v = v.replace(/\.(\d{3})(\d)/, ".$1/$2");
+           v = v.replace(/(\d{4})(\d)/, "$1-$2");
            e.target.value = v;
         });
       }

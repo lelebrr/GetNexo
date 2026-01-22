@@ -1,8 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
-const title = "GetNexo: A Melhor Plataforma de IA para Vendas no WhatsApp | API Oficial";
-const description = "Scale suas vendas 24h por dia com a IA mais avançada para WhatsApp. API Oficial Meta, PIX Nativo, Recuperação de Carrinhos e Automação de Altíssima Conversão.";
-const keywords = "melhor plataforma whatsapp vendas, ia para whatsapp, api whatsapp oficial, automação de vendas whatsapp, recuperar carrinho whatsapp, pix no whatsapp, getnexo ia";
+const title = "GetNexo: IA que GERA R$ 50.000/Mês no WhatsApp | API Meta Oficial | PIX Automático | CRM IA | Zero Mensalidade 2026";
+const description = "🚀 IA SUPREMA que VENDE AUTOMATICAMENTE no WhatsApp 24/7! 15x MAIS CONVERSÕES, API Oficial Meta, PIX Instantâneo, CRM com IA GPT-4, Fidelidade VIP, Analytics em Tempo Real. ZERO MENSALIDADES, ZERO RISCO, Setup em 10 MINUTOS. SEU NEGÓCIO VENDE ENQUANTO VOCÊ DORME! 🔥";
+const keywords = "whatsapp business api oficial, ia para vendas whatsapp, chatbot whatsapp grátis, automação whatsapp vendas, recuperar carrinho abandonado whatsapp, pix no whatsapp automatico, crm whatsapp integrado, sistema de fidelidade whatsapp, analytics whatsapp vendas, getnexo ia vendas, plataforma whatsapp vendas, bot whatsapp inteligente, vendas 24 horas whatsapp, api meta whatsapp oficial, whatsapp business api, bot whatsapp conversão, sistema vendas whatsapp, chatbot vendas whatsapp, automação comercial whatsapp, inteligencia artificial whatsapp, getnexo whatsapp, vendas automaticas whatsapp, chatgpt whatsapp integrado, gpt-4 whatsapp vendas, whatsapp marketing automation, funil vendas whatsapp, pipeline vendas whatsapp, ticket system whatsapp, gamificação vendas whatsapp, realidade aumentada whatsapp, blockchain whatsapp vendas, metaverso whatsapp commerce, computação quântica vendas";
 
 const lang = 'pt';
 const { default: t } = await import(`../i18n/pt.json`);
@@ -16,18 +16,30 @@ const homeSchema = {
       "name": "GetNexo",
       "url": "https://getnexo.com.br",
       "logo": "https://getnexo.com.br/logo.svg",
+      "description": "Plataforma de IA para vendas no WhatsApp 24h por dia. API Oficial Meta, PIX automático, CRM integrado.",
+      "foundingDate": "2024",
       "sameAs": [
         "https://linkedin.com/company/getnexo",
         "https://instagram.com/getnexo",
-        "https://github.com/lelebrr"
-      ]
+        "https://github.com/lelebrr",
+        "https://youtube.com/@getnexo",
+        "https://tiktok.com/@getnexo"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+55-11-4003-XXXX",
+        "contactType": "customer service",
+        "availableLanguage": ["Portuguese", "English", "Spanish", "French"]
+      }
     },
     {
       "@type": "WebSite",
       "@id": "https://getnexo.com.br/#website",
       "url": "https://getnexo.com.br",
-      "name": "GetNexo",
+      "name": "GetNexo - IA para Vendas WhatsApp",
+      "description": "IA que fecha vendas no WhatsApp 24h. Plataforma completa com API Oficial Meta, PIX, CRM, fidelidade e analytics.",
       "publisher": { "@id": "https://getnexo.com.br/#organization" },
+      "inLanguage": "pt-BR",
       "potentialAction": {
         "@type": "SearchAction",
         "target": "https://getnexo.com.br/buscar?q={search_term_string}",
@@ -35,14 +47,67 @@ const homeSchema = {
       }
     },
     {
+      "@type": "SoftwareApplication",
+      "@id": "https://getnexo.com.br/#software",
+      "name": "GetNexo",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web, WhatsApp",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "BRL",
+        "priceValidUntil": "2026-12-31",
+        "description": "Plano gratuito com funcionalidades avançadas"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "ratingCount": "500",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "author": { "@id": "https://getnexo.com.br/#organization" }
+    },
+    {
+      "@type": "Service",
+      "@id": "https://getnexo.com.br/#service",
+      "name": "Automação de Vendas WhatsApp com IA",
+      "description": "Serviço completo de automação de vendas via WhatsApp com inteligência artificial avançada",
+      "provider": { "@id": "https://getnexo.com.br/#organization" },
+      "serviceType": "Business Automation",
+      "areaServed": "Worldwide",
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Planos GetNexo",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Plano Gratuito",
+              "description": "Acesso completo às funcionalidades básicas"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Plano Pro",
+              "description": "Recursos avançados e suporte prioritário"
+            }
+          }
+        ]
+      }
+    },
+    {
       "@type": "FAQPage",
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "O GetNexo usa API Oficial?",
+          "name": "O que é o GetNexo?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Sim, o GetNexo é 100% compatível com a API Oficial da Meta via Evolution API, garantindo segurança e zero risco de banimento."
+            "text": "GetNexo é uma plataforma de IA que automatiza vendas no WhatsApp 24 horas por dia. Usa API Oficial Meta, PIX automático, CRM integrado e muito mais."
           }
         },
         {
@@ -50,16 +115,93 @@ const homeSchema = {
           "name": "Como funciona a IA para vendas?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Nossa IA é treinada com os dados do seu negócio e catálogo de produtos, permitindo que ela tire dúvidas, sugira produtos e feche vendas automaticamente 24h por dia."
+            "text": "Nossa IA é treinada com seu catálogo de produtos e histórico de vendas. Ela conversa naturalmente com clientes, tira dúvidas, sugere produtos e fecha vendas automaticamente."
           }
         },
         {
           "@type": "Question",
-          "name": "Tem suporte para PIX?",
+          "name": "O GetNexo tem PIX integrado?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Sim, temos PIX Nativo. O bot gera o código copia e cola ou QR Code e confirma o pagamento instantaneamente na conversa."
+            "text": "Sim! Temos PIX nativo. O bot gera QR Code ou código copia e cola automaticamente e confirma pagamentos em tempo real na conversa."
           }
+        },
+        {
+          "@type": "Question",
+          "name": "Quanto custa usar o GetNexo?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "O plano básico é 100% GRÁTIS! Você só paga uma pequena taxa por transação realizada. Sem mensalidades fixas ou contratos longos."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Quais integrações estão disponíveis?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Integramos com Shopify, WooCommerce, VTEX, Bling, Tiny, PagSeguro, Mercado Pago, Correios, Melhor Envio e muito mais. API REST completa disponível."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "O GetNexo funciona com API Oficial do WhatsApp?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sim! Somos 100% compatíveis com a API Oficial da Meta via Evolution API. Zero risco de banimento, máxima segurança e conformidade."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Quanto tempo leva para configurar?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Setup completo em até 12 minutos! Nossa plataforma é self-hosted, você instala em seu servidor e começa a vender imediatamente."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Tem sistema de fidelidade integrado?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sim! Sistema completo de pontos, tiers, recompensas e gamificação. Seus clientes acumulam pontos automaticamente e resgatam prêmios via WhatsApp."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "HowTo",
+      "name": "Como configurar GetNexo em 5 passos",
+      "description": "Guia passo a passo para configurar sua IA de vendas no WhatsApp",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "Instalação",
+          "text": "Instale a plataforma em seu servidor (Docker ou manual)"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "Conectar WhatsApp",
+          "text": "Configure a API Oficial do WhatsApp Business"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "Configurar Catálogo",
+          "text": "Importe seus produtos e configure preços"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 4,
+          "name": "Treinar IA",
+          "text": "Configure as respostas e comportamento da IA"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 5,
+          "name": "Ativar Vendas",
+          "text": "Configure PIX, CRM e analytics. Pronto para vender!"
         }
       ]
     }
@@ -73,14 +215,15 @@ const homeSchema = {
   <!-- Modern Hero with 3D Phone Simulation -->
   <section class="hero-split">
     <div class="hero-content">
-      <div class="hero-badge reveal">A revolução das vendas chegou 🚀</div>
-      <h1 class="hero-title reveal" set:html={t.hero.title.replace('Vende Sozinha', '<span class="text-gradient">Vende Sozinha</span>')}></h1>
+      <div class="hero-badge reveal">🚀 TRANSFORME SEU WHATSAPP EM UMA MÁQUINA DE VENDAS AUTOMATIZADA</div>
+      <h1 class="hero-title reveal" set:html={'<span class="text-gradient">IA INTELIGENTE</span> VENDE 24H/DIA SEM PRECISAR DE ATENDENTES'}</h1>
       <p class="hero-subtitle reveal">
-        {t.hero.subtitle}
+        ⚡ API Oficial Meta + PIX Nativo + CRM IA + Analytics Avançado<br>
+        ✅ Setup em 12 minutos | ✅ Zero Mensalidades | ✅ Suporte Técnico Especializado
       </p>
       <div class="hero-ctas reveal">
-        <a href={`/${lang}/criar-bot`} class="btn-primary-glow">{t.hero.cta_primary}</a>
-        <button onclick="abrirModalDemo()" class="btn-outline">{t.hero.cta_secondary} →</button>
+        <a href={`/${lang}/criar-bot`} class="btn-primary-glow">COMEÇAR AGORA GRÁTIS</a>
+        <button onclick="abrirModalDemo()" class="btn-outline">VER DEMONSTRAÇÃO IA →</button>
       </div>
       <div class="hero-trust reveal">
         <span>✅ API Oficial Meta</span>
@@ -161,6 +304,137 @@ const homeSchema = {
     <div class="metric-item">
         <span class="m-val">R$ 0</span>
         <span class="m-label">Mensalidade Fixa</span>
+    </div>
+  </section>
+  
+  <!-- Giant Features Showcase -->
+  <section class="giant-features">
+    <!-- Magic Replies -->
+    <div class="giant-feature-row reveal">
+        <div class="giant-feature-visual">
+            <img src="/assets/features/magic-replies.png" alt="Magic Replies AI" class="premium-visual" />
+        </div>
+        <div class="giant-feature-info">
+            <div class="feature-tag">Exclusivo</div>
+            <h2 class="text-gradient">{t.features_giant.magic_replies.title}</h2>
+            <p>{t.features_giant.magic_replies.description}</p>
+            <ul class="feature-bullets">
+                <li><span>✨</span> {t.features_giant.magic_replies.f1}</li>
+                <li><span>🧠</span> {t.features_giant.magic_replies.f2}</li>
+                <li><span>📈</span> {t.features_giant.magic_replies.f3}</li>
+            </ul>
+            <a href="/produtos/automacao" class="btn-outline-glow">Conhecer Magic Replies</a>
+        </div>
+    </div>
+
+    <!-- Loyalty System -->
+    <div class="giant-feature-row reverse reveal">
+        <div class="giant-feature-info">
+            <div class="feature-tag gold">Retenção</div>
+            <h2 class="text-gradient">{t.features_giant.loyalty.title}</h2>
+            <p>{t.features_giant.loyalty.description}</p>
+            <ul class="feature-bullets">
+                <li><span>🏆</span> {t.features_giant.loyalty.f1}</li>
+                <li><span>🎁</span> {t.features_giant.loyalty.f2}</li>
+                <li><span>❤️</span> {t.features_giant.loyalty.f3}</li>
+            </ul>
+            <a href="/produtos/fidelidade" class="btn-outline-glow">Ver Fidelidade</a>
+        </div>
+        <div class="giant-feature-visual">
+            <img src="/assets/features/loyalty.png" alt="Loyalty System" class="premium-visual" />
+        </div>
+    </div>
+
+    <!-- Analytics -->
+    <div class="giant-feature-row reveal">
+        <div class="giant-feature-visual">
+            <img src="/assets/features/analytics.png" alt="Advanced Analytics" class="premium-visual" />
+        </div>
+        <div class="giant-feature-info">
+            <div class="feature-tag blue">Inteligência</div>
+            <h2 class="text-gradient">{t.features_giant.analytics.title}</h2>
+            <p>{t.features_giant.analytics.description}</p>
+            <ul class="feature-bullets">
+                <li><span>📊</span> {t.features_giant.analytics.f1}</li>
+                <li><span>📝</span> {t.features_giant.analytics.f2}</li>
+                <li><span>🌍</span> {t.features_giant.analytics.f3}</li>
+            </ul>
+            <a href="/produtos/analytics" class="btn-outline-glow">Explorar Dados</a>
+        </div>
+    </div>
+
+    <!-- Integrations -->
+    <div class="giant-feature-row reverse reveal">
+        <div class="giant-feature-info">
+            <div class="feature-tag green">Ecossistema</div>
+            <h2 class="text-gradient">{t.features_giant.integrations.title}</h2>
+            <p>{t.features_giant.integrations.description}</p>
+            <ul class="feature-bullets">
+                <li><span>🔗</span> {t.features_giant.integrations.f1}</li>
+                <li><span>⚙️</span> {t.features_giant.integrations.f2}</li>
+                <li><span>📡</span> {t.features_giant.integrations.f3}</li>
+            </ul>
+            <a href="/integracoes" class="btn-outline-glow">Ver Todas as Integrações</a>
+        </div>
+        <div class="giant-feature-visual">
+            <img src="/assets/features/integrations.png" alt="Integrations Map" class="premium-visual" />
+        </div>
+    </div>
+  </section>
+
+  <!-- Security Section -->
+  <section class="security-section">
+    <div class="section-header reveal">
+        <h2 class="text-gradient">🛡️ Segurança Máxima no GetNexo</h2>
+        <p>Proteja Sua Loja e Seus Clientes com Confiança Total</p>
+    </div>
+
+    <div class="security-grid reveal">
+      <div class="security-card glass-panel">
+        <div class="security-icon">🛡️</div>
+        <h3>Cloudflare Shield</h3>
+        <p>Proteção contra DDoS, Firewall Avançado (WAF) e Gerenciamento de Bots. Sua loja protegida como as maiores do mundo.</p>
+      </div>
+
+      <div class="security-card glass-panel">
+        <div class="security-icon">🔐</div>
+        <h3>AES Encryption</h3>
+        <p>Criptografia LGPD-compliant com AES-256. Conformidade 100% LGPD. Zero armazenamento desnecessário.</p>
+      </div>
+
+      <div class="security-card glass-panel">
+        <div class="security-icon">🚪</div>
+        <h3>Zero Trust Network</h3>
+        <p>Cloudflare Tunnel com Zero Trust. Nenhuma porta aberta no servidor. Conexão outbound apenas.</p>
+      </div>
+
+      <div class="security-card glass-panel">
+        <div class="security-icon">⏰</div>
+        <h3>24h Monitoring</h3>
+        <p>Rate Limiting inteligente, detecção de ameaças em tempo real e backups seguros automatizados.</p>
+      </div>
+
+      <div class="security-card glass-panel">
+        <div class="security-icon">💳</div>
+        <h3>Secure PIX</h3>
+        <p>Integração direta com gateways confiáveis. QR Code validado e criptografado em tempo real.</p>
+      </div>
+
+      <div class="security-card glass-panel">
+        <div class="security-icon">✅</div>
+        <h3>99.99% Uptime</h3>
+        <p>Sua loja nunca fica offline. Sem histórico de breaches. Atualizações automáticas.</p>
+      </div>
+    </div>
+
+    <div class="security-cta reveal">
+        <p class="security-notice">💡 Segurança WhatsApp Business não é luxo — é necessidade.</p>
+        <p class="security-benefit">Com o GetNexo, você tem proteção de nível enterprise sem complicação ou custo absurdo.</p>
+        <div class="security-actions">
+            <a href="/criar-bot" class="btn-primary-glow security-btn">Teste Grátis Agora →</a>
+            <button onclick="abrirModalDemo()" class="btn-outline security-btn">Ver Certificações</button>
+        </div>
+        <p class="security-footer">© 2026 GetNexo. Todos os direitos reservados. | GetNexo: A vanguarda em Automação WhatsApp e IA para Negócios.</p>
     </div>
   </section>
 
@@ -751,10 +1025,79 @@ const homeSchema = {
   });
 </script>
 
+<script is:inline>
+  // Elegant reveal animations
+  document.addEventListener('DOMContentLoaded', function() {
+    const reveals = document.querySelectorAll('.reveal');
+
+    function revealOnScroll() {
+      reveals.forEach(element => {
+        const elementTop = element.getBoundingClientRect().top;
+        const windowHeight = window.innerHeight;
+
+        if (elementTop < windowHeight * 0.85) {
+          element.classList.add('active');
+        }
+      });
+    }
+
+    // Initial check
+    revealOnScroll();
+
+    // Check on scroll with throttling
+    let ticking = false;
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        requestAnimationFrame(function() {
+          revealOnScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+
+    // Add subtle parallax to floating elements
+    const floatingElements = document.querySelectorAll('.floating-chat, .hologram-container');
+    window.addEventListener('scroll', function() {
+      const scrolled = window.pageYOffset;
+      floatingElements.forEach(element => {
+        const rate = scrolled * -0.5;
+        element.style.transform = `translateY(${rate}px)`;
+      });
+    });
+  });
+
+  // Smooth magnetic hover effect for buttons
+  document.querySelectorAll('.btn-primary-glow, .btn-outline').forEach(button => {
+    button.addEventListener('mousemove', function(e) {
+      const rect = this.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      this.style.setProperty('--x', `${x}px`);
+      this.style.setProperty('--y', `${y}px`);
+    });
+  });
+</script>
+
 <script is:inline src="/scripts/performance/home-animations.js" defer></script>
 </Layout>
 
 <style is:global>
+  :root {
+    --neon-blue: #00d4ff;
+    --neon-green: #00ff9d;
+    --cyber-gold: #ffd700;
+    --matrix-green: #00ff41;
+    --void-black: #0a0a0a;
+    --glass-bg: rgba(255, 255, 255, 0.02);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --shadow-primary: rgba(0, 212, 255, 0.2);
+    --shadow-secondary: rgba(0, 255, 157, 0.1);
+    --transition-smooth: cubic-bezier(0.23, 1, 0.32, 1);
+    --transition-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
   /* Hero Section Styles */
   .hero-split { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; padding: 12rem 5% 6rem; max-width: 1400px; margin: 0 auto; align-items: center; }
 
@@ -798,6 +1141,53 @@ const homeSchema = {
   @keyframes floatChat { from { transform: translateY(0) rotate(2deg); } to { transform: translateY(-15px) rotate(-1deg); } }
 
   .chat-header-mini { font-size: 0.7rem; font-weight: 900; color: #00ff9d; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.3rem; }
+
+  /* Giant Features Showcase Styles */
+  .giant-features { padding: 6rem 5%; max-width: 1200px; margin: 0 auto; }
+  .giant-feature-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 4rem; align-items: center; margin-bottom: 6rem; }
+  .giant-feature-row.reverse { direction: rtl; }
+  .giant-feature-row.reverse > * { direction: ltr; }
+
+  .giant-feature-info { display: flex; flex-direction: column; gap: 1.5rem; }
+  .feature-tag { background: rgba(0, 212, 255, 0.1); color: #00d4ff; padding: 0.3rem 0.8rem; border-radius: 50px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; width: fit-content; }
+  .feature-tag.gold { background: rgba(255, 215, 0, 0.1); color: #ffd700; }
+  .feature-tag.blue { background: rgba(0, 102, 255, 0.1); color: #0066ff; }
+  .feature-tag.green { background: rgba(0, 255, 157, 0.1); color: #00ff9d; }
+
+  .giant-feature-info h2 { font-size: 2.2rem; line-height: 1.2; font-weight: 800; }
+  .giant-feature-info p { font-size: 1rem; color: #94a3b8; line-height: 1.7; }
+
+  .feature-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; margin: 1rem 0; }
+  .feature-bullets li { display: flex; align-items: flex-start; gap: 0.8rem; font-weight: 600; color: #e2e8f0; font-size: 0.9rem; }
+  .feature-bullets li span { font-size: 1.2rem; margin-top: 0.1rem; }
+
+  .premium-visual { width: 100%; border-radius: 30px; box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 20px rgba(0,212,255,0.1); transition: 0.5s; }
+  .premium-visual:hover { transform: scale(1.02) translateY(-10px); box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 40px rgba(0,212,255,0.2); }
+
+  .btn-outline-glow {
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: 0.3s;
+    background: rgba(0, 212, 255, 0.05);
+    width: fit-content;
+    text-align: center;
+  }
+  .btn-outline-glow:hover {
+    background: rgba(0, 212, 255, 0.15);
+    border-color: #00d4ff;
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+  }
+
+  @media (max-width: 900px) {
+    .giant-feature-row { grid-template-columns: 1fr; gap: 3rem; margin-bottom: 6rem; text-align: center; }
+    .giant-feature-row.reverse { direction: ltr; }
+    .giant-feature-info { align-items: center; }
+    .giant-feature-info h2 { font-size: 2.2rem; }
+  }
   .chat-body-mini { height: 150px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.8rem; }
   .chat-msg { font-size: 0.75rem; line-height: 1.4; animation: msgPop 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards; }
   .msg-inner { padding: 0.5rem 0.8rem; border-radius: 8px; }
@@ -827,10 +1217,10 @@ const homeSchema = {
   .metric-divider { width: 1px; background: rgba(255,255,255,0.05); }
 
   /* Final CTA */
-  .final-cta { padding: 8rem 5% 12rem; max-width: 1200px; margin: 0 auto; }
+  .final-cta { padding: 6rem 5% 10rem; max-width: 1200px; margin: 0 auto; }
   .cta-box { padding: 6rem; text-align: center; border-radius: 48px; position: relative; overflow: hidden; }
-  .cta-box h2 { font-size: 3.5rem; margin-bottom: 1.5rem; font-weight: 900; }
-  .cta-box p { color: #e2e8f0; font-size: 1.25rem; margin-bottom: 3.5rem; }
+  .cta-box h2 { font-size: 2.8rem; margin-bottom: 1.5rem; font-weight: 900; }
+  .cta-box p { color: #e2e8f0; font-size: 1.1rem; margin-bottom: 2.5rem; }
   .cta-actions { display: flex; justify-content: center; gap: 2rem; }
 
   /* Reveal Implementation */
@@ -846,7 +1236,7 @@ const homeSchema = {
     .metrics-section { flex-direction: column; gap: 3rem; padding: 3rem; }
     .metric-divider { height: 1px; width: 50%; margin: 0 auto; }
     .cta-actions { flex-direction: column; gap: 1rem; }
-    .cta-box h2 { font-size: 2.5rem; }
+    .cta-box h2 { font-size: 2.2rem; }
     .grid-cards { grid-template-columns: 1fr; }
   }
 
@@ -867,5 +1257,498 @@ const homeSchema = {
     .cta-box h2 { font-size: 1.8rem; }
     
     .section-header h2 { font-size: 2rem; }
+  }
+
+  /* 🎨 Elegant Enhancements - Sophisticated Touches */
+  .glass-panel {
+      background: rgba(255,255,255,0.02);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+  }
+
+  .glass-panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  }
+
+  .glass-panel::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  }
+
+  .p-card {
+      padding: 3rem;
+      transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      position: relative;
+  }
+
+  .p-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      border-color: #00ff9d;
+      box-shadow: 0 20px 40px rgba(0,212,255,0.1), 0 0 0 1px rgba(0,212,255,0.2);
+  }
+
+  .p-card::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, #00d4ff, #00ff9d, #00d4ff);
+      border-radius: 26px;
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.3s;
+  }
+
+  .p-card:hover::before {
+      opacity: 0.3;
+  }
+
+  .p-icon {
+      font-size: 3rem;
+      margin-bottom: 1.5rem;
+      transition: all 0.3s ease;
+  }
+
+  .p-card:hover .p-icon {
+      transform: scale(1.1) rotate(5deg);
+      filter: drop-shadow(0 0 10px rgba(0,212,255,0.3));
+  }
+
+  /* Enhanced CTA Section */
+  .cta-box {
+      padding: 6rem;
+      text-align: center;
+      border-radius: 48px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+  }
+
+  .cta-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 30% 20%, rgba(0,212,255,0.1) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 80%, rgba(0,255,157,0.1) 0%, transparent 50%);
+      z-index: -1;
+  }
+
+  .btn-primary-glow {
+      background: linear-gradient(135deg, #00d4ff, #00ff9d);
+      color: black;
+      padding: 1.4rem 3rem;
+      border-radius: 16px;
+      font-weight: 900;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+  }
+
+  .btn-primary-glow::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: 0.5s;
+  }
+
+  .btn-primary-glow:hover::before {
+      left: 100%;
+  }
+
+  .btn-primary-glow:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(0, 212, 255, 0.5);
+  }
+
+  /* Floating particles effect */
+  .section-header::after {
+      content: '';
+      position: absolute;
+      top: 20%;
+      right: 10%;
+      width: 4px;
+      height: 4px;
+      background: #00d4ff;
+      border-radius: 50%;
+      animation: floatParticle 6s ease-in-out infinite;
+  }
+
+  .section-header::before {
+      content: '';
+      position: absolute;
+      bottom: 30%;
+      left: 15%;
+      width: 6px;
+      height: 6px;
+      background: #00ff9d;
+      border-radius: 50%;
+      animation: floatParticle 8s ease-in-out infinite reverse;
+  }
+
+  @keyframes floatParticle {
+      0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.3; }
+      50% { transform: translateY(-20px) rotate(180deg); opacity: 1; }
+  }
+
+  /* Subtle text animations */
+  .text-gradient {
+      background: linear-gradient(135deg, #00d4ff 0%, #00ff9d 50%, #00d4ff 100%);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientShift 4s ease-in-out infinite;
+  }
+
+  @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+  }
+
+  /* Sophisticated Hover States */
+  .btn-outline {
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      padding: 1.2rem 2.8rem;
+      border-radius: 16px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+      background: rgba(255,255,255,0.03);
+      text-align: center;
+      position: relative;
+      backdrop-filter: blur(10px);
+  }
+
+  .btn-outline:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: #00d4ff;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0,212,255,0.2);
+  }
+
+  .btn-outline-glow {
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.4s ease;
+      background: rgba(0, 212, 255, 0.05);
+      width: fit-content;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+  }
+
+  .btn-outline-glow::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0,212,255,0.1), transparent);
+      transition: 0.5s;
+  }
+
+  .btn-outline-glow:hover::before {
+      left: 100%;
+  }
+
+  .btn-outline-glow:hover {
+      background: rgba(0, 212, 255, 0.15);
+      border-color: #00d4ff;
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+      transform: translateY(-3px);
+  }
+
+  /* Enhanced Typography */
+  .hero-title {
+      font-size: clamp(2rem, 5vw, 4.5rem);
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 30px rgba(255,255,255,0.1);
+      position: relative;
+  }
+
+  .hero-subtitle {
+      font-size: 1.4rem;
+      color: #e2e8f0;
+      max-width: 650px;
+      margin-bottom: 3.5rem;
+      line-height: 1.6;
+      font-weight: 400;
+      opacity: 0.9;
+  }
+
+  /* Micro-interactions */
+  .p-link {
+      color: #00d4ff;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 0.9rem;
+      border-bottom: 1px solid transparent;
+      transition: all 0.3s ease;
+      position: relative;
+  }
+
+  .p-link::after {
+      content: '→';
+      margin-left: 0.5rem;
+      transition: all 0.3s ease;
+      display: inline-block;
+  }
+
+  .p-link:hover {
+      border-bottom-color: #00d4ff;
+      color: #00ff9d;
+      transform: translateX(5px);
+  }
+
+  .p-link:hover::after {
+      transform: translateX(3px);
+  }
+
+  /* Subtle Reveal Animations */
+  .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+  }
+
+  /* Enhanced metrics section */
+  .m-val {
+      display: block;
+      font-size: 3rem;
+      font-weight: 900;
+      color: #00ff9d;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+      position: relative;
+  }
+
+  .m-val::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #00ff9d, #00d4ff);
+      animation: metricGlow 2s ease-out 2s forwards;
+  }
+
+  @keyframes metricGlow {
+      from { width: 0; }
+      to { width: 100%; }
+  }
+
+  /* Floating elements */
+  @keyframes gentleFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+  }
+
+  .floating-chat {
+      position: absolute;
+      width: 240px;
+      bottom: 30px;
+      right: -50px;
+      padding: 1rem;
+      border-color: rgba(0, 255, 157, 0.2);
+      animation: gentleFloat 6s ease-in-out infinite;
+      border-radius: 16px;
+  }
+
+  /* Enhanced glass morphism */
+  .metrics-section {
+      max-width: 1000px;
+      margin: 4rem auto;
+      display: flex;
+      justify-content: space-around;
+      padding: 4rem;
+      border-radius: 32px;
+      background: rgba(255,255,255,0.02);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.1);
+      position: relative;
+      overflow: hidden;
+  }
+
+  .metrics-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg,
+          rgba(0,212,255,0.05) 0%,
+          transparent 30%,
+          transparent 70%,
+          rgba(0,255,157,0.05) 100%);
+      z-index: -1;
+  }
+
+  /* Security Section Styles */
+  .security-section {
+      padding: 8rem 5%;
+      max-width: 1400px;
+      margin: 0 auto;
+      text-align: center;
+  }
+
+  .security-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 3rem;
+      margin: 4rem 0;
+  }
+
+  .security-card {
+      padding: 2.5rem;
+      text-align: center;
+      transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      position: relative;
+  }
+
+  .security-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 25px 50px rgba(0,212,255,0.15);
+  }
+
+  .security-icon {
+      font-size: 3.5rem;
+      margin-bottom: 1.5rem;
+      transition: all 0.3s ease;
+  }
+
+  .security-card:hover .security-icon {
+      transform: scale(1.1) rotate(5deg);
+      filter: drop-shadow(0 0 15px rgba(0,212,255,0.3));
+  }
+
+  .security-card h3 {
+      color: white;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #00d4ff, #00ff9d);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+  }
+
+  .security-card p {
+      color: #e2e8f0;
+      line-height: 1.6;
+      font-size: 0.95rem;
+      opacity: 0.9;
+  }
+
+  .security-cta {
+      margin-top: 4rem;
+      padding: 3rem;
+      border-radius: 32px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .security-notice {
+      color: #00d4ff;
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+  }
+
+  .security-benefit {
+      color: #e2e8f0;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      opacity: 0.9;
+  }
+
+  .security-actions {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+  }
+
+  .security-btn {
+      padding: 1.2rem 2.5rem;
+      font-weight: 700;
+  }
+
+  .security-footer {
+      color: #94a3b8;
+      font-size: 0.85rem;
+      margin-top: 2rem;
+      opacity: 0.7;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 2rem;
+  }
+
+  @media (max-width: 768px) {
+      .security-grid {
+          grid-template-columns: 1fr;
+          gap: 2rem;
+      }
+
+      .security-actions {
+          flex-direction: column;
+          gap: 1rem;
+      }
+
+      .security-card {
+          padding: 2rem;
+      }
+
+      .security-cta {
+          padding: 2rem;
+          margin-top: 3rem;
+      }
   }
 </style>

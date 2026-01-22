@@ -1,0 +1,27 @@
+class o{constructor(){this.currentAssistant=null,this.isControlVisible=!1,this.assistants={nexus:{name:"Nexus",tips:["Olá! Sou o Nexus, sua IA de vendas. Que tal configurar um chatbot inteligente para seu WhatsApp?","Dica: Use análise de sentimento para entender melhor seus clientes!","Precisa de ajuda com automação? Posso te guiar pelos nossos recursos avançados."],actions:["show-demo","config-guide","analytics-tour"]},clippy:{name:"Clippy",tips:["Parece que você está navegando no GetNexo! Posso ajudar com alguma configuração?","Dica: Configure suas notificações para não perder nenhuma venda!","Precisa de suporte? Estou aqui para ajudar!"],actions:["support-chat","settings-guide","faq-search"]},genius:{name:"Genius",tips:["Oi! Sou o Genius, especialista em analytics. Vamos analisar seus dados de vendas?","Dica: Configure dashboards personalizados para acompanhar seu negócio em tempo real!","Quer ver relatórios avançados? Posso te mostrar como!"],actions:["analytics-demo","reports-guide","kpi-setup"]},rover:{name:"Rover",tips:["Woof! Sou o Rover, especialista em programas de fidelidade. Vamos fidelizar seus clientes?","Dica: Configure pontos por compra para aumentar o lifetime value!","Precisa de ideias para programas de recompensa?"],actions:["loyalty-demo","points-setup","rewards-guide"]},powerpup:{name:"Powerpup",tips:["Olá! Sou o Powerpup, cheio de energia! Vamos turbinar suas vendas?","Dica: Use gamificação para motivar sua equipe de vendas!","Quer aumentar a produtividade? Posso ajudar!"],actions:["gamification-demo","motivation-tips","performance-guide"]}},this.init()}init(){this.loadClippyJS(),this.setupControls(),this.showWelcomeMessage()}async loadClippyJS(){try{this.createFallbackAssistant()}catch{this.createFallbackAssistant()}}loadAssistant(s){const e=this.assistants[s];e&&(this.currentAssistant&&this.currentAssistant.hide(),this.createFallbackAssistant(e))}createFallbackAssistant(s){const e=document.getElementById("assistants-container"),t=document.createElement("div");t.className="fallback-assistant",t.innerHTML=`
+        <div class="assistant-body">
+          <div class="assistant-avatar">${this.getAssistantEmoji(s?.name||"Nexus")}</div>
+          <div class="assistant-name">${s?.name||"Nexus"}</div>
+        </div>
+      `,e.appendChild(t),setTimeout(()=>{t.style.animation="bounce 2s infinite"},1e3),this.currentAssistant={hide:()=>t.remove(),speak:a=>this.showMessage(a)},setTimeout(()=>{this.showMessage(s?.tips?.[0]||"Olá! Como posso ajudar você hoje?")},2e3)}getAssistantEmoji(s){return{Nexus:"🤖",Clippy:"📎",Genius:"🧠",Rover:"🐕",Powerpup:"🐶"}[s]||"🤖"}setupControls(){const s=document.getElementById("toggle-assistants"),e=document.getElementById("assistants-control"),t=document.getElementById("active-assistant"),a=document.getElementById("show-tip"),i=document.getElementById("start-tour"),n=document.getElementById("ask-help");s.addEventListener("click",()=>{this.isControlVisible=!this.isControlVisible,e.classList.toggle("active",this.isControlVisible)}),t.addEventListener("change",r=>{this.loadAssistant(r.target.value)}),a.addEventListener("click",()=>{this.showRandomTip()}),i.addEventListener("click",()=>{this.startGuidedTour()}),n.addEventListener("click",()=>{this.showHelpOptions()})}showMessage(s){this.removeExistingBubbles();const e=document.createElement("div");e.className="clippy-bubble",e.innerHTML=`
+        <div class="bubble-content">
+          <h4>${this.assistants[document.getElementById("active-assistant").value]?.name||"Assistente"}</h4>
+          <p>${s}</p>
+          <div class="bubble-actions">
+            <button class="bubble-btn primary" onclick="this.closest('.clippy-bubble').remove()">OK</button>
+            <button class="bubble-btn secondary" onclick="window.showMoreHelp()">Mais Ajuda</button>
+          </div>
+        </div>
+      `,document.getElementById("assistants-container").getBoundingClientRect(),e.style.bottom="70px",e.style.right="20px",document.body.appendChild(e),setTimeout(()=>{e.parentNode&&e.remove()},1e4)}removeExistingBubbles(){document.querySelectorAll(".clippy-bubble").forEach(s=>s.remove())}showRandomTip(){const s=document.getElementById("active-assistant").value,e=this.assistants[s],t=e.tips[Math.floor(Math.random()*e.tips.length)];this.showMessage(t)}startGuidedTour(){const s=["Bem-vindo ao GetNexo! Vamos fazer um tour rápido.","Primeiro, explore nossas soluções de IA para WhatsApp.","Depois, veja como configurar seu chatbot inteligente.","Por fim, acesse o dashboard para acompanhar seus resultados!","Tour concluído! Qualquer dúvida, estou aqui."];let e=0;const t=()=>{e<s.length&&(this.showMessage(s[e]),e++,setTimeout(t,3e3))};t()}showHelpOptions(){this.showMessage(`
+        Como posso ajudar?
+        <br><br>
+        • 💬 Configurar chatbot
+        <br>
+        • 📊 Ver analytics
+        <br>
+        • 🎯 Configurar vendas
+        <br>
+        • 🛠️ Resolver problemas
+        <br><br>
+        Escolha uma opção ou pergunte diretamente!
+      `)}showWelcomeMessage(){setTimeout(()=>{this.showMessage("Olá! Bem-vindo ao GetNexo. Sou seu assistente pessoal. Clique no botão 🤖 para ver minhas opções de ajuda!")},5e3)}}window.showMoreHelp=function(){window.open("https://getnexo.com.br/suporte","_blank")};document.readyState==="loading"?document.addEventListener("DOMContentLoaded",()=>new o):new o;

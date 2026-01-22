@@ -1,0 +1,428 @@
+---
+import Layout from '../layouts/Layout.astro';
+const title = "Sistema de Tickets GetNexo - Gestão Avançada de Suporte WhatsApp";
+const description = "Sistema completo de tickets para WhatsApp. Categorização automática, regras de automação, mesclagem de duplicatas e multi-agente simultâneo. Suporte profissional 24/7.";
+const keywords = "sistema tickets whatsapp, gestão suporte whatsapp, tickets automatizados, suporte multi-agente, regras automação tickets";
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-badge">🎫 Sistema Completo</div>
+      <h1>Sistema de Tickets que Transforma Suporte em Oportunidades</h1>
+      <p>Categorização automática inteligente. Regras de automação que resolvem 80% dos problemas sem intervenção humana. Multi-agente simultâneo com histórico completo.</p>
+      <div class="hero-features">
+        <span>✅ Resolução em 5 min</span>
+        <span>✅ Categorização automática</span>
+        <span>✅ Multi-agente simultâneo</span>
+      </div>
+      <div class="hero-ctas">
+        <a href="/criar-bot" class="btn-primary">Implementar Sistema de Tickets</a>
+        <a href="#demo" class="btn-secondary">Ver Dashboard</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="tickets-dashboard">
+        <div class="dashboard-header">🎫 Sistema de Tickets - GetNexo</div>
+        <div class="tickets-list">
+          <div class="ticket-item urgent">
+            <div class="ticket-info">
+              <span class="ticket-id">#1247</span>
+              <span class="ticket-title">Problema com pedido cancelado</span>
+              <span class="ticket-status">⚡ Urgente - IA Escalado</span>
+            </div>
+            <div class="ticket-time">2 min atrás</div>
+          </div>
+          <div class="ticket-item auto">
+            <div class="ticket-info">
+              <span class="ticket-id">#1248</span>
+              <span class="ticket-title">Consulta sobre frete</span>
+              <span class="ticket-status">🤖 Resolvido pela IA</span>
+            </div>
+            <div class="ticket-time">5 min atrás</div>
+          </div>
+          <div class="ticket-item progress">
+            <div class="ticket-info">
+              <span class="ticket-id">#1249</span>
+              <span class="ticket-title">Devolução de produto</span>
+              <span class="ticket-status">👤 João - Em andamento</span>
+            </div>
+            <div class="ticket-time">12 min atrás</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Features -->
+  <section class="core-features">
+    <div class="section-header">
+      <h2>Tecnologia Avançada de Gestão de Tickets</h2>
+      <p>Cada funcionalidade projetada para maximizar eficiência e satisfação do cliente.</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🧠</div>
+        <h3>Categorização Inteligente</h3>
+        <p>IA analisa automaticamente cada mensagem e categoriza por tipo: dúvida de produto, problema técnico, reclamação, elogio. Nunca mais tickets perdidos.</p>
+        <div class="feature-metrics">
+          <span class="metric">98%</span>
+          <span class="metric-label">Precisão</span>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">⚙️</div>
+        <h3>Regras de Automação</h3>
+        <p>Configure regras inteligentes: "Se cliente VIP, prioridade máxima", "Se reclamação sobre frete, creditar automaticamente", "Se dúvida simples, resolver com IA".</p>
+        <div class="feature-metrics">
+          <span class="metric">80%</span>
+          <span class="metric-label">Resolução automática</span>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">👥</div>
+        <h3>Multi-agente Simultâneo</h3>
+        <p>Diversos agentes trabalhando ao mesmo tempo no mesmo ticket. Histórico completo compartilhado. Nunca perca o contexto da conversa.</p>
+        <div class="feature-metrics">
+          <span class="metric">15x</span>
+          <span class="metric-label">Produtividade</span>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🔗</div>
+        <h3>Mesclagem de Duplicatas</h3>
+        <p>Identifica automaticamente conversas do mesmo cliente sobre o mesmo assunto. Une tudo em um único histórico organizado.</p>
+        <div class="feature-metrics">
+          <span class="metric">50%</span>
+          <span class="metric-label">Menos duplicatas</span>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Analytics de Suporte</h3>
+        <p>Dashboard completo: tempo médio de resolução, satisfação por categoria, agentes mais eficientes, padrões de reclamações.</p>
+        <div class="feature-metrics">
+          <span class="metric">40+</span>
+          <span class="metric-label">Relatórios</span>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🚀</div>
+        <h3>Integração Total</h3>
+        <p>Conectado com seu CRM, ERP e e-commerce. Atualiza automaticamente status de pedidos, envia notificações e sincroniza dados.</p>
+        <div class="feature-metrics">
+          <span class="metric">100%</span>
+          <span class="metric-label">Sincronização</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="workflow-section">
+    <div class="section-header">
+      <h2>Fluxo de Trabalho Otimizado</h2>
+      <p>Do primeiro contato à resolução completa</p>
+    </div>
+
+    <div class="workflow-steps">
+      <div class="workflow-step">
+        <div class="step-icon">📱</div>
+        <h3>1. Recebimento Automático</h3>
+        <p>Cliente manda mensagem no WhatsApp. Sistema identifica automaticamente e cria ticket categorizado.</p>
+      </div>
+
+      <div class="workflow-step">
+        <div class="step-icon">🤖</div>
+        <h3>2. Triagem Inteligente</h3>
+        <p>IA analisa urgência, complexidade e categoria. Decide se resolve automaticamente ou escalona para humano.</p>
+      </div>
+
+      <div class="workflow-step">
+        <div class="step-icon">👤</div>
+        <h3>3. Atendimento Humano</h3>
+        <p>Agente recebe ticket com contexto completo. Pode ver histórico, produtos comprados, perfil do cliente.</p>
+      </div>
+
+      <div class="workflow-step">
+        <div class="step-icon">✅</div>
+        <h3>4. Resolução e Follow-up</h3>
+        <p>Ticket resolvido. Sistema envia automaticamente pesquisa de satisfação e arquiva com aprendizado para IA.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Performance Metrics -->
+  <section class="metrics-section">
+    <div class="section-header">
+      <h2>Resultados Comprovados</h2>
+      <p>Números que fazem a diferença no seu negócio</p>
+    </div>
+
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-value">5 min</div>
+        <div class="metric-label">Tempo Médio de Resolução</div>
+        <div class="metric-change positive">↓ 75%</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-value">95%</div>
+        <div class="metric-label">Taxa de Resolução Primeiro Contato</div>
+        <div class="metric-change positive">↑ 40%</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-value">4.8/5</div>
+        <div class="metric-label">NPS de Satisfação</div>
+        <div class="metric-change positive">↑ 0.6</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-value">80%</div>
+        <div class="metric-label">Redução de Custos Operacionais</div>
+        <div class="metric-change positive">↓ 80%</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Use Cases -->
+  <section class="use-cases">
+    <div class="section-header">
+      <h2>Casos de Uso Reais</h2>
+      <p>Como diferentes tipos de negócio se beneficiam</p>
+    </div>
+
+    <div class="cases-grid">
+      <div class="case-card">
+        <div class="case-icon">🛍️</div>
+        <h3>E-commerce</h3>
+        <p>Gerencie milhares de pedidos, devoluções e dúvidas de produto. Categorização automática por departamento: logística, produto, financeiro.</p>
+      </div>
+
+      <div class="case-card">
+        <div class="case-icon">🏢</div>
+        <h3>Empresa B2B</h3>
+        <p>Suporte a clientes corporativos com contratos complexos. Histórico completo de negociações e SLA garantido.</p>
+      </div>
+
+      <div class="case-card">
+        <div class="case-icon">🏥</div>
+        <h3>Serviços</h3>
+        <p>Agendamento automático, confirmações e follow-ups. Regras específicas por tipo de serviço e urgência médica.</p>
+      </div>
+
+      <div class="case-card">
+        <div class="case-icon">🎓</div>
+        <h3>Educação</h3>
+        <p>Suporte a alunos, professores e responsáveis. Categorização por instituição, curso e tipo de dúvida acadêmica.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="pricing-section">
+    <div class="section-header">
+      <h2>Planos de Sistema de Tickets</h2>
+      <p>Escolha baseado no volume de atendimento</p>
+    </div>
+
+    <div class="pricing-cards">
+      <div class="pricing-card">
+        <div class="pricing-header">
+          <h3>Starter</h3>
+          <div class="price">R$ 47<span>/mês</span></div>
+          <p>Até 200 tickets/mês</p>
+        </div>
+        <ul class="pricing-features">
+          <li>✅ Categorização automática</li>
+          <li>✅ Dashboard básico</li>
+          <li>✅ Até 2 agentes</li>
+          <li>✅ Suporte por chat</li>
+        </ul>
+        <a href="/criar-bot" class="pricing-cta">Começar Starter</a>
+      </div>
+
+      <div class="pricing-card featured">
+        <div class="pricing-badge">Mais Popular</div>
+        <div class="pricing-header">
+          <h3>Professional</h3>
+          <div class="price">R$ 97<span>/mês</span></div>
+          <p>Até 1.000 tickets/mês</p>
+        </div>
+        <ul class="pricing-features">
+          <li>✅ Tudo do Starter</li>
+          <li>✅ Regras de automação</li>
+          <li>✅ Até 5 agentes</li>
+          <li>✅ Relatórios avançados</li>
+          <li>✅ Integração API</li>
+        </ul>
+        <a href="/criar-bot" class="pricing-cta">Escolher Professional</a>
+      </div>
+
+      <div class="pricing-card">
+        <div class="pricing-header">
+          <h3>Enterprise</h3>
+          <div class="price">R$ 197<span>/mês</span></div>
+          <p>Tickets ilimitados</p>
+        </div>
+        <ul class="pricing-features">
+          <li>✅ Tudo do Professional</li>
+          <li>✅ Agentes ilimitados</li>
+          <li>✅ SLA garantido</li>
+          <li>✅ Consultoria dedicada</li>
+          <li>✅ White-label completo</li>
+        </ul>
+        <a href="/contato" class="pricing-cta">Falar com Vendas</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section">
+    <div class="section-header">
+      <h2>Perguntas Sobre Sistema de Tickets</h2>
+    </div>
+
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>Como funciona a categorização automática?</summary>
+        <div class="faq-answer">
+          <p>Usamos IA treinada especificamente para entender o contexto de cada mensagem. Ela identifica palavras-chave, intenção do cliente e urgência para categorizar automaticamente em departamentos como: vendas, suporte técnico, financeiro, logística, etc.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Posso configurar regras personalizadas?</summary>
+        <div class="faq-answer">
+          <p>Sim! Interface drag-and-drop para criar regras complexas: "Se cliente VIP E reclamação sobre frete > R$50, creditar automaticamente", "Se primeira compra E avaliação baixa, enviar cupom de desconto", etc.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>E se dois agentes responderem ao mesmo tempo?</summary>
+        <div class="faq-answer">
+          <p>Sistema de bloqueio inteligente impede conflitos. Primeiro agente a abrir o ticket tem prioridade. Outros agentes veem status "Em atendimento" e podem colaborar ou assumir se necessário.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Como funciona com WhatsApp Business API?</summary>
+        <div class="faq-answer">
+          <p>Integração nativa com WhatsApp Business API oficial. Mantém conversação no WhatsApp nativo, mas adiciona camadas de gestão profissional: tickets, histórico, automação e analytics avançados.</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- CTA Final -->
+  <section class="final-cta">
+    <div class="cta-content">
+      <h2>Transforme Suporte em Vantagem Competitiva</h2>
+      <p>Clientes mais satisfeitos. Equipe mais produtiva. Resultados que impressionam.</p>
+      <a href="/criar-bot" class="btn-primary-large">Implementar Sistema de Tickets →</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero-section { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; padding: 8rem 5%; max-width: 1400px; margin: 0 auto; align-items: center; }
+  .hero-badge { background: rgba(0, 212, 255, 0.1); color: #00d4ff; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; font-weight: 600; display: inline-block; margin-bottom: 2rem; }
+  .hero-content h1 { font-size: 3rem; font-weight: 900; margin-bottom: 1.5rem; background: linear-gradient(90deg, #00d4ff, #00ff9d); -webkit-background-clip: text; color: transparent; }
+  .hero-content p { font-size: 1.2rem; color: #e2e8f0; margin-bottom: 2rem; line-height: 1.6; }
+  .hero-features { display: flex; gap: 1rem; margin-bottom: 3rem; flex-wrap: wrap; }
+  .hero-features span { background: rgba(0, 255, 157, 0.1); color: #00ff9d; padding: 0.5rem 1rem; border-radius: 15px; font-size: 0.9rem; font-weight: 600; }
+  .hero-ctas { display: flex; gap: 1.5rem; }
+  .btn-primary { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1rem 2rem; border-radius: 12px; font-weight: 800; text-decoration: none; transition: 0.3s; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3); }
+  .btn-secondary { border: 1px solid rgba(255,255,255,0.3); color: white; padding: 1rem 2rem; border-radius: 12px; font-weight: 600; text-decoration: none; transition: 0.3s; }
+  .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+
+  .tickets-dashboard { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2rem; }
+  .dashboard-header { font-size: 1.2rem; font-weight: 800; color: #00d4ff; margin-bottom: 2rem; text-align: center; }
+  .tickets-list { display: flex; flex-direction: column; gap: 1rem; }
+  .ticket-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; border-left: 4px solid #00ff9d; }
+  .ticket-item.urgent { border-left-color: #ff4444; }
+  .ticket-item.auto { border-left-color: #00d4ff; }
+  .ticket-info { flex: 1; }
+  .ticket-id { font-weight: 800; color: #00d4ff; margin-right: 1rem; }
+  .ticket-title { color: white; margin-bottom: 0.3rem; }
+  .ticket-status { font-size: 0.8rem; color: #94a3b8; }
+  .ticket-time { color: #94a3b8; font-size: 0.8rem; }
+
+  .core-features { padding: 8rem 5%; background: rgba(15, 23, 42, 0.5); }
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-top: 4rem; }
+  .feature-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 3rem; text-align: center; transition: 0.3s; }
+  .feature-card:hover { transform: translateY(-10px); border-color: rgba(0, 212, 255, 0.3); }
+  .feature-icon { font-size: 3rem; margin-bottom: 1.5rem; }
+  .feature-card h3 { color: white; font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem; }
+  .feature-card p { color: #e2e8f0; line-height: 1.6; margin-bottom: 2rem; }
+  .feature-metrics { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem; }
+  .metric { display: block; font-size: 2rem; font-weight: 900; color: #00ff9d; }
+  .metric-label { color: #94a3b8; font-size: 0.9rem; font-weight: 600; }
+
+  .workflow-section { padding: 8rem 5%; max-width: 1400px; margin: 0 auto; }
+  .workflow-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 3rem; margin-top: 4rem; }
+  .workflow-step { text-align: center; padding: 2rem; background: rgba(15, 23, 42, 0.6); border-radius: 20px; position: relative; }
+  .workflow-step:not(:last-child)::after { content: '→'; position: absolute; right: -2rem; top: 50%; transform: translateY(-50%); color: #00d4ff; font-size: 1.5rem; }
+  .step-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .workflow-step h3 { color: white; font-size: 1.3rem; margin-bottom: 1rem; }
+  .workflow-step p { color: #e2e8f0; line-height: 1.6; }
+
+  .metrics-section { padding: 8rem 5%; background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1)); }
+  .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; max-width: 1000px; margin: 0 auto; }
+  .metric-card { text-align: center; padding: 3rem; background: rgba(255,255,255,0.05); border-radius: 20px; }
+  .metric-value { font-size: 3rem; font-weight: 900; color: #00ff9d; margin-bottom: 1rem; }
+  .metric-label { color: white; font-weight: 600; margin-bottom: 0.5rem; }
+  .metric-change { font-size: 0.9rem; font-weight: 800; }
+  .metric-change.positive { color: #00ff9d; }
+
+  .use-cases { padding: 8rem 5%; background: rgba(15, 23, 42, 0.5); }
+  .cases-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 4rem; }
+  .case-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2.5rem; text-align: center; }
+  .case-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .case-card h3 { color: white; font-size: 1.3rem; margin-bottom: 1rem; }
+  .case-card p { color: #e2e8f0; line-height: 1.6; }
+
+  .pricing-section { padding: 8rem 5%; max-width: 1200px; margin: 0 auto; }
+  .pricing-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 4rem; }
+  .pricing-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 3rem; text-align: center; position: relative; }
+  .pricing-card.featured { border-color: #00d4ff; box-shadow: 0 0 30px rgba(0, 212, 255, 0.2); }
+  .pricing-badge { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #00d4ff; color: black; padding: 0.5rem 1rem; border-radius: 15px; font-weight: 800; font-size: 0.8rem; }
+  .pricing-header h3 { color: white; font-size: 1.5rem; margin-bottom: 1rem; }
+  .price { font-size: 3rem; font-weight: 900; color: #00ff9d; }
+  .price span { font-size: 1rem; color: #94a3b8; }
+  .pricing-features { list-style: none; text-align: left; margin: 2rem 0; }
+  .pricing-features li { color: #e2e8f0; margin-bottom: 0.8rem; }
+  .pricing-cta { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1rem 2rem; border-radius: 12px; font-weight: 800; text-decoration: none; display: inline-block; margin-top: 2rem; }
+
+  .faq-section { padding: 8rem 5%; max-width: 800px; margin: 0 auto; }
+  .faq-list { margin-top: 4rem; }
+  .faq-item { border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; margin-bottom: 1rem; overflow: hidden; }
+  .faq-item summary { padding: 1.5rem; background: rgba(15, 23, 42, 0.6); color: white; font-weight: 600; cursor: pointer; }
+  .faq-item summary:hover { background: rgba(15, 23, 42, 0.8); }
+  .faq-answer { padding: 0 1.5rem 1.5rem; color: #e2e8f0; line-height: 1.6; }
+
+  .final-cta { padding: 8rem 5%; background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1)); text-align: center; }
+  .cta-content h2 { font-size: 3rem; font-weight: 900; margin-bottom: 1.5rem; background: linear-gradient(90deg, #00d4ff, #00ff9d); -webkit-background-clip: text; color: transparent; }
+  .cta-content p { font-size: 1.2rem; color: #e2e8f0; margin-bottom: 3rem; }
+  .btn-primary-large { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1.5rem 3rem; border-radius: 15px; font-weight: 900; font-size: 1.2rem; text-decoration: none; transition: 0.3s; }
+  .btn-primary-large:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(0, 212, 255, 0.4); }
+
+  .section-header { text-align: center; margin-bottom: 4rem; }
+  .section-header h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; background: linear-gradient(90deg, #00d4ff, #00ff9d); -webkit-background-clip: text; color: transparent; }
+  .section-header p { color: #e2e8f0; font-size: 1.1rem; }
+
+  @media (max-width: 900px) {
+    .hero-section { grid-template-columns: 1fr; text-align: center; }
+    .workflow-step:not(:last-child)::after { display: none; }
+    .workflow-steps { grid-template-columns: 1fr; }
+  }
+</style>

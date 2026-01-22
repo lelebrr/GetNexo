@@ -1,0 +1,179 @@
+import { f as createComponent, k as renderComponent, r as renderTemplate, m as maybeRenderHead } from "../../assets/astro/server-MCYX8tFF.js";
+import "piccolore";
+import { $ as $$DashboardLayout } from "../../assets/DashboardLayout-DSSr717x.js";
+/* empty css                                         */
+import { renderers } from "../../renderers.mjs";
+var __freeze = Object.freeze;
+var __defProp = Object.defineProperty;
+var __template = (cooked, raw) => __freeze(__defProp(cooked, "raw", { value: __freeze(raw || cooked.slice()) }));
+var _a;
+const $$Integracoes = createComponent(($$result, $$props, $$slots) => {
+  return renderTemplate`${renderComponent($$result, "DashboardLayout", $$DashboardLayout, { "title": "Central de Integrações | OmniNexo", "data-astro-cid-henxtmeu": true }, { "default": ($$result2) => renderTemplate(_a || (_a = __template([" ", `<div style="text-align:center; margin-bottom:3rem;" data-astro-cid-henxtmeu> <h1 style="font-size:2.5rem; font-weight:800; color:white; margin:0; letter-spacing:-1px;" data-astro-cid-henxtmeu>Central de Conexões</h1> <p style="color:#94a3b8; font-size:1.1rem; max-width:600px; margin:0.5rem auto;" data-astro-cid-henxtmeu>Conecte o GetNexo às suas ferramentas favoritas e automatize seu império.</p> </div>  <div style="display:flex; justify-content:center; gap:1rem; margin-bottom:2rem;" data-astro-cid-henxtmeu> <button class="filter-btn active" onclick="filter('all')" data-astro-cid-henxtmeu>Todos</button> <button class="filter-btn" onclick="filter('erp')" data-astro-cid-henxtmeu>ERPs & Fiscal</button> <button class="filter-btn" onclick="filter('crm')" data-astro-cid-henxtmeu>CRMs & Mkt</button> <button class="filter-btn" onclick="filter('payment')" data-astro-cid-henxtmeu>Pagamentos</button> </div>  <div id="integrations-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:1.5rem;" data-astro-cid-henxtmeu> <!-- Items Injected via JS --> </div>  <div id="auth-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(5px); z-index:1000; display:none; align-items:center; justify-content:center;" data-astro-cid-henxtmeu> <div class="glass-panel" style="width:400px; padding:2rem; background:#0f172a; border:1px solid #334155; text-align:center;" data-astro-cid-henxtmeu> <div id="modal-icon" style="font-size:3rem; margin-bottom:1rem;" data-astro-cid-henxtmeu></div> <h2 id="modal-title" style="margin:0 0 0.5rem; color:white;" data-astro-cid-henxtmeu>Conectar Serviço</h2> <p style="color:#94a3b8; margin-bottom:2rem;" data-astro-cid-henxtmeu>Você será redirecionado para autorizar o acesso.</p> <button onclick="confirmAuth()" style="width:100%; padding:12px; background:var(--neon-green); color:black; font-weight:800; border:none; border-radius:8px; cursor:pointer;" data-astro-cid-henxtmeu>
+Autorizar Conexão 🔗
+</button> <button onclick="closeModal()" style="margin-top:1rem; background:none; border:none; color:#64748b; cursor:pointer;" data-astro-cid-henxtmeu>Cancelar</button> </div> </div>  <script>
+        const services = [
+            { id: 'bling', name: 'Bling ERP', type: 'erp', icon: '📦', color: '#fb923c', connected: true },
+            { id: 'tiny', name: 'Tiny ERP', type: 'erp', icon: '📄', color: '#3b82f6', connected: false },
+            { id: 'rd', name: 'RD Station', type: 'crm', icon: '📈', color: '#38bdf8', connected: true },
+            { id: 'active', name: 'ActiveCampaign', type: 'crm', icon: '✉️', color: '#ef4444', connected: false },
+            { id: 'kommo', name: 'Kommo (Amo)', type: 'crm', icon: '🤖', color: '#8b5cf6', connected: false },
+            { id: 'mp', name: 'Mercado Pago', type: 'payment', icon: '🤝', color: '#0ea5e9', connected: true },
+            { id: 'stripe', name: 'Stripe', type: 'payment', icon: '💳', color: '#6366f1', connected: false },
+            { id: 'asaas', name: 'Asaas', type: 'payment', icon: '💸', color: '#f43f5e', connected: false },
+            { id: 'openai', name: 'OpenAI (GPT-4)', type: 'ai', icon: '🧠', color: '#10b981', connected: true },
+        ];
+
+        let currentFilter = 'all';
+
+        function render() {
+            const grid = document.getElementById('integrations-grid');
+            const list = currentFilter === 'all' ? services : services.filter(s => s.type === currentFilter);
+            
+            grid.innerHTML = list.map(s => \`
+                <div class="glass-panel" style="padding:2rem; text-align:center; position:relative; border-top:4px solid \${s.color}; opacity:\${s.connected ? 1 : 0.8};">
+                    \${s.connected ? '<div style="position:absolute; top:10px; right:10px; background:#10b981; color:white; font-size:0.6rem; padding:2px 6px; border-radius:4px; font-weight:700;">ATIVO</div>' : ''}
+                    
+                    <div style="font-size:3rem; margin-bottom:1rem; filter:drop-shadow(0 0 20px \${s.color}40);">\${s.icon}</div>
+                    <h3 style="margin:0 0 0.5rem; color:white; font-weight:800;">\${s.name}</h3>
+                    <p style="font-size:0.8rem; color:#94a3b8; margin-bottom:1.5rem;">Sincronização automática de dados.</p>
+                    
+                    <button onclick="connect('\${s.id}')" style="width:100%; padding:10px; border-radius:8px; font-weight:700; cursor:pointer; border:none; transition:0.3s;
+                        background: \${s.connected ? 'rgba(255,255,255,0.05)' : 'white'};
+                        color: \${s.connected ? '#94a3b8' : 'black'};
+                        border: \${s.connected ? '1px solid rgba(255,255,255,0.1)' : 'none'};">
+                        \${s.connected ? 'Gerenciar' : 'Conectar Agora'}
+                    </button>
+                </div>
+            \`).join('');
+        }
+
+        window.filter = (type) => {
+            currentFilter = type;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            render();
+        };
+
+        // Modal Auth
+        const modal = document.getElementById('auth-modal');
+        let selectedService = null;
+
+        window.connect = (id) => {
+            selectedService = services.find(s => s.id === id);
+            if (selectedService.connected) {
+                // Manage Interface (mock)
+                alert('Abrindo configurações da integração...');
+                return;
+            }
+            document.getElementById('modal-title').innerText = \`Conectar \${selectedService.name}\`;
+            document.getElementById('modal-icon').innerText = selectedService.icon;
+            modal.style.display = 'flex';
+        };
+
+        window.closeModal = () => modal.style.display = 'none';
+
+        window.confirmAuth = () => {
+            const btn = document.querySelector('#auth-modal button');
+            btn.innerText = 'Autenticando...';
+            
+            setTimeout(() => {
+                services.find(s => s.id === selectedService.id).connected = true;
+                render();
+                closeModal();
+                btn.innerText = 'Autorizar Conexão 🔗';
+            }, 1500);
+        };
+
+        render();
+    <\/script> `], [" ", `<div style="text-align:center; margin-bottom:3rem;" data-astro-cid-henxtmeu> <h1 style="font-size:2.5rem; font-weight:800; color:white; margin:0; letter-spacing:-1px;" data-astro-cid-henxtmeu>Central de Conexões</h1> <p style="color:#94a3b8; font-size:1.1rem; max-width:600px; margin:0.5rem auto;" data-astro-cid-henxtmeu>Conecte o GetNexo às suas ferramentas favoritas e automatize seu império.</p> </div>  <div style="display:flex; justify-content:center; gap:1rem; margin-bottom:2rem;" data-astro-cid-henxtmeu> <button class="filter-btn active" onclick="filter('all')" data-astro-cid-henxtmeu>Todos</button> <button class="filter-btn" onclick="filter('erp')" data-astro-cid-henxtmeu>ERPs & Fiscal</button> <button class="filter-btn" onclick="filter('crm')" data-astro-cid-henxtmeu>CRMs & Mkt</button> <button class="filter-btn" onclick="filter('payment')" data-astro-cid-henxtmeu>Pagamentos</button> </div>  <div id="integrations-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:1.5rem;" data-astro-cid-henxtmeu> <!-- Items Injected via JS --> </div>  <div id="auth-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(5px); z-index:1000; display:none; align-items:center; justify-content:center;" data-astro-cid-henxtmeu> <div class="glass-panel" style="width:400px; padding:2rem; background:#0f172a; border:1px solid #334155; text-align:center;" data-astro-cid-henxtmeu> <div id="modal-icon" style="font-size:3rem; margin-bottom:1rem;" data-astro-cid-henxtmeu></div> <h2 id="modal-title" style="margin:0 0 0.5rem; color:white;" data-astro-cid-henxtmeu>Conectar Serviço</h2> <p style="color:#94a3b8; margin-bottom:2rem;" data-astro-cid-henxtmeu>Você será redirecionado para autorizar o acesso.</p> <button onclick="confirmAuth()" style="width:100%; padding:12px; background:var(--neon-green); color:black; font-weight:800; border:none; border-radius:8px; cursor:pointer;" data-astro-cid-henxtmeu>
+Autorizar Conexão 🔗
+</button> <button onclick="closeModal()" style="margin-top:1rem; background:none; border:none; color:#64748b; cursor:pointer;" data-astro-cid-henxtmeu>Cancelar</button> </div> </div>  <script>
+        const services = [
+            { id: 'bling', name: 'Bling ERP', type: 'erp', icon: '📦', color: '#fb923c', connected: true },
+            { id: 'tiny', name: 'Tiny ERP', type: 'erp', icon: '📄', color: '#3b82f6', connected: false },
+            { id: 'rd', name: 'RD Station', type: 'crm', icon: '📈', color: '#38bdf8', connected: true },
+            { id: 'active', name: 'ActiveCampaign', type: 'crm', icon: '✉️', color: '#ef4444', connected: false },
+            { id: 'kommo', name: 'Kommo (Amo)', type: 'crm', icon: '🤖', color: '#8b5cf6', connected: false },
+            { id: 'mp', name: 'Mercado Pago', type: 'payment', icon: '🤝', color: '#0ea5e9', connected: true },
+            { id: 'stripe', name: 'Stripe', type: 'payment', icon: '💳', color: '#6366f1', connected: false },
+            { id: 'asaas', name: 'Asaas', type: 'payment', icon: '💸', color: '#f43f5e', connected: false },
+            { id: 'openai', name: 'OpenAI (GPT-4)', type: 'ai', icon: '🧠', color: '#10b981', connected: true },
+        ];
+
+        let currentFilter = 'all';
+
+        function render() {
+            const grid = document.getElementById('integrations-grid');
+            const list = currentFilter === 'all' ? services : services.filter(s => s.type === currentFilter);
+            
+            grid.innerHTML = list.map(s => \\\`
+                <div class="glass-panel" style="padding:2rem; text-align:center; position:relative; border-top:4px solid \\\${s.color}; opacity:\\\${s.connected ? 1 : 0.8};">
+                    \\\${s.connected ? '<div style="position:absolute; top:10px; right:10px; background:#10b981; color:white; font-size:0.6rem; padding:2px 6px; border-radius:4px; font-weight:700;">ATIVO</div>' : ''}
+                    
+                    <div style="font-size:3rem; margin-bottom:1rem; filter:drop-shadow(0 0 20px \\\${s.color}40);">\\\${s.icon}</div>
+                    <h3 style="margin:0 0 0.5rem; color:white; font-weight:800;">\\\${s.name}</h3>
+                    <p style="font-size:0.8rem; color:#94a3b8; margin-bottom:1.5rem;">Sincronização automática de dados.</p>
+                    
+                    <button onclick="connect('\\\${s.id}')" style="width:100%; padding:10px; border-radius:8px; font-weight:700; cursor:pointer; border:none; transition:0.3s;
+                        background: \\\${s.connected ? 'rgba(255,255,255,0.05)' : 'white'};
+                        color: \\\${s.connected ? '#94a3b8' : 'black'};
+                        border: \\\${s.connected ? '1px solid rgba(255,255,255,0.1)' : 'none'};">
+                        \\\${s.connected ? 'Gerenciar' : 'Conectar Agora'}
+                    </button>
+                </div>
+            \\\`).join('');
+        }
+
+        window.filter = (type) => {
+            currentFilter = type;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            render();
+        };
+
+        // Modal Auth
+        const modal = document.getElementById('auth-modal');
+        let selectedService = null;
+
+        window.connect = (id) => {
+            selectedService = services.find(s => s.id === id);
+            if (selectedService.connected) {
+                // Manage Interface (mock)
+                alert('Abrindo configurações da integração...');
+                return;
+            }
+            document.getElementById('modal-title').innerText = \\\`Conectar \\\${selectedService.name}\\\`;
+            document.getElementById('modal-icon').innerText = selectedService.icon;
+            modal.style.display = 'flex';
+        };
+
+        window.closeModal = () => modal.style.display = 'none';
+
+        window.confirmAuth = () => {
+            const btn = document.querySelector('#auth-modal button');
+            btn.innerText = 'Autenticando...';
+            
+            setTimeout(() => {
+                services.find(s => s.id === selectedService.id).connected = true;
+                render();
+                closeModal();
+                btn.innerText = 'Autorizar Conexão 🔗';
+            }, 1500);
+        };
+
+        render();
+    <\/script> `])), maybeRenderHead()) })}`;
+}, "/home/lele/usenexo/getnexo-site/src/pages/dashboard/integracoes.astro", void 0);
+const $$file = "/home/lele/usenexo/getnexo-site/src/pages/dashboard/integracoes.astro";
+const $$url = "/dashboard/integracoes";
+const _page = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: $$Integracoes,
+  file: $$file,
+  url: $$url
+}, Symbol.toStringTag, { value: "Module" }));
+const page = () => _page;
+export {
+  page,
+  renderers
+};

@@ -1,5 +1,27 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import RelatedArticles from '../components/RelatedArticles.astro';
+
+const relatedPosts = [
+  {
+    slug: "vendas-preditivas-ia",
+    title: "Vendas Preditivas: IA no Ecommerce",
+    category: "Data Science",
+    excerpt: "Saiba o que o seu cliente quer comprar antes mesmo dele saber."
+  },
+  {
+    slug: "recuperacao-carrinho-whatsapp",
+    title: "Recuperação de Carrinho: WhatsApp",
+    category: "Conversão",
+    excerpt: "Como recuperar até 45% das vendas perdidas com automação inteligente."
+  },
+  {
+    slug: "omnichannel-pdv-whatsapp",
+    title: "Omnichannel 2026: Guia Completo",
+    category: "Arquitetura",
+    excerpt: "Integre sua loja física, seu site e seu WhatsApp em uma única rede."
+  }
+];
 ---
 
 <Layout title="Loja Oficial | GetNexo">
@@ -37,6 +59,7 @@ import Layout from '../layouts/Layout.astro';
              <button onclick="closeCheckout()" class="btn-cancel">Fechar</button>
         </div>
     </div>
+    <RelatedArticles articles={relatedPosts} />
 </Layout>
 
 <style>

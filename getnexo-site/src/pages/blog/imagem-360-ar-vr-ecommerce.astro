@@ -1,0 +1,144 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Imagem 360, AR e VR: O Guia Definitivo para Ecommerce 2026",
+      "description": "Descubra como transformar seu chat do WhatsApp e Instagram com imagens 360°, Realidade Aumentada (AR) e Realidade Virtual (VR). Aumente sua conversão hoje.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-22",
+      "image": "/images/blog/imagem_360_product_viewer.png"
+    }
+  ]
+};
+
+const pageTitle = "Imagem 360, AR e VR no Ecommerce | GetNexo";
+---
+
+<Layout title={pageTitle}>
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta animate-fade-in">Tecnologia • Jan 2026</div>
+      <h1 class="animate-slide-up">Imagens 360°, AR e VR:<br/><span class="text-primary">O Futuro do Ecommerce 2026</span></h1>
+      <p class="subtitle animate-fade-in delay-200">Como a Realidade Aumentada e Imagens Imersivas estão explodindo as taxas de conversão no WhatsApp, Instagram e Site.</p>
+      
+      <img src="/images/blog/imagem_360_product_viewer.png" alt="360 Product Viewer Mobile" class="featured-image glass-panel" />
+    </header>
+
+    <div class="post-content">
+      <section id="introducao">
+        <h2>🚀 A Era do Spatial Commerce</h2>
+        <p>Ei, Leandro! Pra botar <strong>imagens 360°</strong>, <strong>AR</strong> (realidade aumentada) e <strong>VR</strong> no GetNexo (no chat do WhatsApp, Instagram ou site), o que você precisa é entender que o ecommerce em 2026 não é mais sobre fotos estáticas. É sobre <strong>experiência spatial</strong>.</p>
+        <p>Com o avanço de dispositivos como o Vision Pro e Meta Quest, o consumidor quer interagir com o produto na casa dele antes de clicar em comprar. Se você ainda usa fotos 2D simples, está deixando dinheiro na mesa.</p>
+      </section>
+
+      <section id="360-spin">
+        <h2>🔄 Imagens 360° Spin: O Mais Fácil e Que Mais Vende</h2>
+        <p>A visualização 360° é o "ponto de entrada" para a venda imersiva. Ela permite que o cliente gire o produto e veja cada detalhe, eliminando dúvidas e reduzindo devoluções.</p>
+        
+        <div class="step-card glass-panel">
+          <h4>Como Fazer:</h4>
+          <ul>
+            <li><strong>Captação:</strong> Tire de 24 a 72 fotos do produto girando em ângulos iguais (a cada 15° ou 10°). Fundo branco e iluminação profissional são essenciais.</li>
+            <li><strong>Tecnologia:</strong> Use bibliotecas JS leves como <strong>Three.js</strong>, <strong>PhotoSphere</strong>, <strong>Sirv Spin</strong> ou <strong>Magic360</strong>.</li>
+            <li><strong>Entrega no Chat:</strong> Manda um link direto para o viewer 360° (ex: <code>bot.seudominio.com/360/produto123</code>) ou embeda sprites otimizados para 3G.</li>
+          </ul>
+        </div>
+        
+        <div class="image-grid mt-8">
+          <img src="/images/blog/imagem_360_ecommerce_tablet.png" alt="Visualização 360 em Tablet" class="content-image glass-panel" />
+          <img src="/images/blog/imagem_360_blue_sneaker.png" alt="Produto 360 Sniper" class="content-image glass-panel" />
+        </div>
+      </section>
+
+      <section id="ar-augmented-reality">
+        <h2>📱 Realidade Aumentada (AR): Onde a Conversão Explode</h2>
+        <p>A AR é o que faz o cliente "sentir" o produto no ambiente dele. Imagine o cliente projetando um sofá na sala ou um tênis no próprio pé usando apenas a câmera do celular.</p>
+        <div class="stack-grid">
+          <div class="stack-card glass-panel blur">
+            <h4>Formatos</h4>
+            <p>Modelo 3D em <strong>GLTF/GLB</strong> (Android/Web) e <strong>USDZ</strong> (iPhone/Safari).</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Ferramentas</h4>
+            <p>Google <strong>model-viewer</strong> ou Three.js + WebXR para experiências customizadas.</p>
+          </div>
+        </div>
+
+        <p class="mt-8"><strong>No Bot WhatsApp/Instagram:</strong> Manda o link com <code>rel="ar"</code> e os arquivos .usdz/.glb. O iPhone abre direto na câmera com o Quick Look, e o Android usa o Scene Viewer.</p>
+        
+        <img src="/images/blog/ar_furniture_ecommerce.png" alt="AR Furniture Placement" class="content-image glass-panel mt-8" />
+      </section>
+
+      <section id="vr-virtual-reality">
+        <h2>🥽 Realidade Virtual (VR) Plena</h2>
+        <p>A VR é focada em headsets (Quest, Vision Pro). Embora menos massificada, para produtos premium como carros ou imóveis de luxo, ela cria um impacto inigualável.</p>
+        <ul>
+          <li><strong>Assets:</strong> Usa o mesmo modelo 3D GLB da Realidade Aumentada.</li>
+          <li><strong>Implementação:</strong> Three.js ou Babylon.js com modo VR ativado.</li>
+        </ul>
+        <img src="/images/blog/ar_local_shopping_guide.png" alt="AR Local Shopping Info" class="content-image glass-panel mt-8" />
+      </section>
+
+      <section id="nexo-integration">
+        <h2>🛠️ O Que Você Precisa Fazer Agora no GetNexo</h2>
+        <p>Estamos liberando o módulo imersivo para transformar seu bot em uma máquina de vendas imbatível:</p>
+        <div class="glass-panel mt-8">
+            <ol>
+                <li><strong>Painel do Lojista:</strong> Upload de pasta com as 72 fotos → o GetNexo gera o player 360 automático.</li>
+                <li><strong>Modelos 3D:</strong> Upload de .glb + .usdz → libera automaticamente o botão "Ver em AR/VR" no seu chat.</li>
+                <li><strong>Monetização:</strong> No trial de 36h, tudo fica liberado. Após o período, o lojista pode ativar o módulo por um valor adicional (sugerimos R$ 97/mês por ser um diferencial de alta conversão).</li>
+            </ol>
+        </div>
+      </section>
+
+      <div class="final-cta animate-scale-up">
+        <h3>Bora deixar o bot imbatível? 🔥</h3>
+        <p>Quer que eu monte o código com <code>&lt;model-viewer&gt;</code> pro AR ou o spinner 360 com <strong>Three.js</strong>? Fala que eu gero na hora.</p>
+        <div class="cta-buttons mt-8">
+          <a href="/login" class="btn-primary">Acessar Meu Painel</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+</Layout>
+
+<style>
+  :root {
+    --primary: #00f7ff;
+    --accent: #7000ff;
+    --glass: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+  }
+
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  .meta { color: var(--primary); font-size: 0.8rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem; display: inline-block; padding: 0.5rem 1rem; background: rgba(0, 247, 255, 0.05); border: 1px solid var(--glass-border); border-radius: 50px; }
+  h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; color: white; }
+  .text-primary { color: var(--primary); }
+  .subtitle { font-size: 1.25rem; color: #a0a0a0; max-width: 700px; margin: 0 auto; line-height: 1.6; }
+  .featured-image { width: 100%; border-radius: 24px; margin-top: 3rem; object-fit: cover; height: 500px; }
+  .content-image { width: 100%; border-radius: 16px; margin: 2rem 0; }
+  .image-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+  .post-content { color: #ccc; line-height: 1.8; font-size: 1.15rem; }
+  h2 { font-size: 2.2rem; color: white; margin: 6rem 0 2rem; font-weight: 800; }
+  .glass-panel { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 24px; padding: 2.5rem; }
+  .step-card { border-left: 4px solid var(--primary); }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+  .stack-card { background: var(--glass); border: 1px solid var(--glass-border); padding: 1.5rem; border-radius: 20px; text-align: center; backdrop-filter: blur(10px); }
+  .final-cta { background: linear-gradient(135deg, rgba(0, 247, 255, 0.1), rgba(112, 0, 255, 0.1)); border: 1px solid var(--primary); padding: 5rem 2rem; text-align: center; border-radius: 32px; margin-top: 8rem; }
+  .btn-primary { background: var(--primary); color: black; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; font-weight: 800; display: inline-block; transition: 0.3s; }
+  .btn-primary:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(0, 247, 255, 0.4); }
+  code { background: rgba(255,255,255,0.1); padding: 0.2rem 0.5rem; border-radius: 4px; color: var(--primary); font-family: monospace; }
+  
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade-in { animation: fade-in 1s ease forwards; }
+  .animate-slide-up { animation: slide-up 1s ease forwards; }
+</style>

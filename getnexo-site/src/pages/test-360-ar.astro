@@ -1,0 +1,153 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ProductViewer from '../components/ProductViewer.astro';
+---
+
+<Layout title="Teste 360° e AR - GetNexo">
+    <div class="min-h-screen bg-gray-50 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <!-- Header -->
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">
+                    Teste Visualização 360° e Realidade Aumentada
+                </h1>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Demonstração dos novos recursos de visualização imersiva para produtos no GetNexo.
+                    Experimente a diferença que faz na conversão de vendas!
+                </p>
+            </div>
+
+            <!-- Demo Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+
+                <!-- 360° Only -->
+                <div class="bg-white rounded-xl shadow-lg p-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">
+                        🔄 Visualização 360°
+                    </h2>
+                    <p class="text-gray-600 mb-6 text-center">
+                        Giro automático interativo do produto. Clientes podem ver todos os ângulos.
+                    </p>
+
+                    <ProductViewer
+                        productId="demo-sofa"
+                        mode="360"
+                        title="Sofá Modelo Premium - 360°"
+                        trialMode={true}
+                        has360Module={true}
+                        hasARModule={false}
+                        client:load
+                    />
+
+                    <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                        <h3 class="font-semibold text-blue-900 mb-2">Benefícios:</h3>
+                        <ul class="text-blue-800 text-sm space-y-1">
+                            <li>• Visualização completa do produto</li>
+                            <li>• Redução de dúvidas sobre aparência</li>
+                            <li>• Aumento de confiança na compra</li>
+                            <li>• Conversão +23% em média</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- AR Only -->
+                <div class="bg-white rounded-xl shadow-lg p-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">
+                        📱 Realidade Aumentada
+                    </h2>
+                    <p class="text-gray-600 mb-6 text-center">
+                        Veja o produto na sua casa! Funciona no WhatsApp, Instagram e site.
+                    </p>
+
+                    <ProductViewer
+                        productId="demo-table"
+                        mode="ar"
+                        title="Mesa Escritório Pro - AR"
+                        trialMode={true}
+                        has360Module={false}
+                        hasARModule={true}
+                        client:load
+                    />
+
+                    <div class="mt-6 p-4 bg-purple-50 rounded-lg">
+                        <h3 class="font-semibold text-purple-900 mb-2">Benefícios:</h3>
+                        <ul class="text-purple-800 text-sm space-y-1">
+                            <li>• Experiência imersiva única</li>
+                            <li>• Compatível com iOS e Android</li>
+                            <li>• Redução de devoluções</li>
+                            <li>• Conversão +31% em média</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Combined Demo -->
+            <div class="bg-white rounded-xl shadow-lg p-8 mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">
+                    🚀 Experiência Completa - 360° + AR
+                </h2>
+                <p class="text-xl text-gray-600 mb-8 text-center max-w-4xl mx-auto">
+                    A combinação perfeita: visualização 360° para explorar detalhes e AR para ver na sua casa.
+                    Mude entre as abas para comparar.
+                </p>
+
+                <ProductViewer
+                    productId="demo-luxury-chair"
+                    mode="both"
+                    title="Cadeira Executiva Luxo - 360° + AR"
+                    trialMode={true}
+                    has360Module={true}
+                    hasARModule={true}
+                    client:load
+                />
+            </div>
+
+            <!-- Features Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center">
+                    <div class="text-6xl mb-4">📸</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Fácil de Usar</h3>
+                    <p class="text-gray-600">
+                        Tire 24-72 fotos do produto girando. Nosso sistema gera automaticamente a visualização 360°.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center">
+                    <div class="text-6xl mb-4">🎯</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Aumenta Conversão</h3>
+                    <p class="text-gray-600">
+                        Produtos com visualização imersiva convertem até 31% mais que produtos sem visualização.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center">
+                    <div class="text-6xl mb-4">💰</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Retorno Garantido</h3>
+                    <p class="text-gray-600">
+                        ROI médio de 5x nos primeiros 30 dias. Clientes compram com mais confiança.
+                    </p>
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl shadow-lg p-12 text-center text-white">
+                <h2 class="text-3xl font-bold mb-6">
+                    Pronto para revolucionar suas vendas?
+                </h2>
+                <p class="text-xl mb-8 opacity-90">
+                    Experimente gratuitamente por 36 horas e veja a diferença na conversão dos seus produtos.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="/cliente/hub" class="bg-white text-purple-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                        🆓 Testar Grátis 36h
+                    </a>
+                    <a href="/cliente/produtos" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-purple-600 transition-colors">
+                        📊 Ver Relatórios
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</Layout>

@@ -73,8 +73,26 @@ import Layout from '../../layouts/Layout.astro';
     <!-- DeepSeek -->
     <div class="card" style="background:rgba(30,41,59,0.8); padding:2rem; border-radius:16px; border:1px solid #00d4ff55;">
       <h3 style="color:#00d4ff;">DeepSeek</h3>
+      
+      <div id="deepseek-balance-display" style="background:rgba(0, 255, 157, 0.1); padding:0.8rem; border-radius:8px; margin-bottom:1rem; display:none; border:1px solid #00ff9d55;">
+        <span style="color:#00ff9d; font-weight:bold;">Saldo:</span> <span id="ds-balance-value" style="color:white;">Carregando...</span>
+      </div>
+
+      <select id="deepseek-model-select" style="width:100%; padding:0.8rem; margin:0.8rem 0; background:#1e293b; color:white; border:1px solid #00d4ff55;" onchange="updateDeepSeekPricing()">
+        <option value="deepseek-chat" selected>DeepSeek V3 (Chat)</option>
+        <option value="deepseek-reasoner">DeepSeek R1 (Reasoner)</option>
+      </select>
+
+      <div id="deepseek-pricing" style="font-size:0.8rem; color:#94a3b8; margin-bottom:1rem; padding-left:0.5rem; border-left:3px solid #00ff9d;">
+        Preço aproximado: $0.14 / 1M tokens
+      </div>
+
       <input id="deepseek-key" type="text" placeholder="Cole sua API Key DeepSeek aqui" style="width:100%; padding:0.8rem; background:#1e293b; color:white; border:1px solid #00d4ff55;" />
-      <button onclick="saveConfig('deepseek')" class="btn-cta" style="margin-top:1rem; width:100%;">Salvar DeepSeek</button>
+      
+      <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+        <button onclick="saveConfig('deepseek')" class="btn-cta" style="flex:2;">Salvar DeepSeek</button>
+        <button onclick="checkDeepSeekBalance()" class="btn-cta" style="flex:1; background:rgba(30,41,59,1); color:#00ff9d; border:1px solid #00ff9d;">Saldo</button>
+      </div>
     </div>
 
   </div>
@@ -87,20 +105,54 @@ import Layout from '../../layouts/Layout.astro';
 
 <script is:inline>
   const API_URL = window.location.hostname === 'localhost' 
-      ? 'http://localhost:8080' 
+      ? 'http://localhost:3006' 
       : 'https://api.getnexo.com.br';
 
+  function updateDeepSeekPricing() {
+    const model = document.getElementById('deepseek-model-select').value;
+    const pricingDiv = document.getElementById('deepseek-pricing');
+    if (model === 'deepseek-chat') {
+      pricingDiv.innerText = 'Preço (Prompt/Compl): $0.14 / $0.28 per 1M tokens';
+    } else {
+      pricingDiv.innerText = 'Preço (Prompt/Compl): $0.55 / $2.19 per 1M tokens';
+    }
+  }
+
+  async function checkDeepSeekBalance() {
+    const display = document.getElementById('deepseek-balance-display');
+    const valueSpan = document.getElementById('ds-balance-value');
+    display.style.display = 'block';
+    valueSpan.innerText = 'Carregando...';
+
+    try {
+      const res = await fetch(`${API_URL}/api/ai/balance/deepseek`);
+      const data = await res.json();
+      if (data.success && data.balance.balance_infos) {
+          const info = data.balance.balance_infos[0];
+          valueSpan.innerText = `${info.total_balance} ${info.currency}`;
+      } else {
+          valueSpan.innerText = 'Erro ao buscar saldo.';
+      }
+    } catch (e) {
+      valueSpan.innerText = 'Erro de conexão.';
+    }
+  }
+
   async function saveConfig(type) {
-      const geminiKey = document.getElementById('gemini-key').value;
-      const openRouterKey = document.getElementById('openrouter-key').value;
-      const grokKey = document.getElementById('grok-key').value;
-      const deepseekKey = document.getElementById('deepseek-key').value;
+      const geminiKey = document.getElementById('gemini-key')?.value;
+      const openRouterKey = document.getElementById('openrouter-key')?.value;
+      const grokKey = document.getElementById('grok-key')?.value;
+      const deepseekKey = document.getElementById('deepseek-key')?.value;
+      const deepseekModel = document.getElementById('deepseek-model-select')?.value;
       
       const payload = {};
       if (type === 'gemini') payload.geminiKey = geminiKey;
       if (type === 'openrouter') payload.openRouterKey = openRouterKey;
       if (type === 'grok') payload.grokKey = grokKey;
-      if (type === 'deepseek') payload.deepseekKey = deepseekKey;
+      if (type === 'deepseek') {
+          payload.deepseekKey = deepseekKey;
+          payload.deepseekModel = deepseekModel;
+      }
       if (type === 'active') {
           const selected = document.querySelector('input[name="activeAI"]:checked');
           if (selected) payload.activeAI = selected.value;
@@ -114,7 +166,8 @@ import Layout from '../../layouts/Layout.astro';
           });
           const data = await res.json();
           if (data.success) {
-              alert('✅ API Key salva com sucesso!');
+              alert('✅ Configuração salva com sucesso!');
+              if (type === 'deepseek') checkDeepSeekBalance();
           } else {
               alert('❌ Erro ao salvar configuração.');
           }
@@ -163,17 +216,25 @@ import Layout from '../../layouts/Layout.astro';
   // Load current config
   async function loadCurrentConfig() {
       try {
-          const res = await fetch(`${API_URL}/api/config`);
+          const res = await fetch(`${API_URL}/api/config/ai`);
           const data = await res.json();
+          const config = data.config || {};
           
-          if (data.activeAI) {
-              const radio = document.querySelector(`input[name="activeAI"][value="${data.activeAI}"]`);
+          if (config.activeAI) {
+              const radio = document.querySelector(`input[name="activeAI"][value="${config.activeAI}"]`);
               if (radio) radio.checked = true;
           }
-          if (data.geminiKey) document.getElementById('gemini-key').value = data.geminiKey;
-          if (data.openRouterKey) document.getElementById('openrouter-key').value = data.openRouterKey;
-          if (data.grokKey) document.getElementById('grok-key').value = data.grokKey;
-          if (data.deepseekKey) document.getElementById('deepseek-key').value = data.deepseekKey;
+          if (config.geminiKey) document.getElementById('gemini-key').value = config.geminiKey;
+          if (config.openRouterKey) document.getElementById('openrouter-key').value = config.openRouterKey;
+          if (config.grokKey) document.getElementById('grok-key').value = config.grokKey;
+          if (config.deepseekKey) {
+            document.getElementById('deepseek-key').value = config.deepseekKey;
+            checkDeepSeekBalance();
+          }
+          if (config.deepseekModel) {
+            document.getElementById('deepseek-model-select').value = config.deepseekModel;
+            updateDeepSeekPricing();
+          }
           
       } catch(e) {
           console.error("Error loading config", e);

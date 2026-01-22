@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline | GetNexo</title>
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --success: #00ff9d;
+            --dark: #0a0e17;
+            --light: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--dark);
+            color: var(--light);
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 500px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin: 0 0 1rem;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        p {
+            color: #94a3b8;
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            color: #000;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: transform 0.3s;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="icon">📡</div>
+        <h1>Você está offline</h1>
+        <p>Parece que você perdeu a conexão com a internet. Verifique sua conexão e tente novamente.</p>
+        <a href="/" class="btn" onclick="location.reload(); return false;">Tentar Novamente</a>
+    </div>
+</body>
+
+</html>

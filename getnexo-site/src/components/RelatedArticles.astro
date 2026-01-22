@@ -1,0 +1,104 @@
+---
+const { articles = [] } = Astro.props;
+---
+<section class="related-articles-section">
+  <div class="custom-container">
+    <div class="section-header">
+      <h2>📚 Conteúdo Recomendado</h2>
+      <p>Aprofunde seus conhecimentos com nossos guias especialistas</p>
+    </div>
+    <div class="related-grid">
+      {articles.map(article => (
+        <article class="related-card glass-panel">
+          <div class="card-content">
+            <div class="card-meta">
+              <span class="category">{article.category}</span>
+            </div>
+            <h3><a href={`/blog/${article.slug}`}>{article.title}</a></h3>
+            <p>{article.excerpt}</p>
+            <a href={`/blog/${article.slug}`} class="read-more">
+              Ler artigo completo <span class="arrow">→</span>
+            </a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .related-articles-section {
+    padding: 8rem 5%;
+    background: rgba(15, 23, 42, 0.3);
+  }
+  .custom-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+  .section-header h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 1rem;
+  }
+  .section-header p {
+    color: #94a3b8;
+    font-size: 1.1rem;
+  }
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+  .related-card {
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    transition: 0.3s;
+  }
+  .related-card:hover {
+    transform: translateY(-5px);
+    border-color: #00d4ff;
+    background: rgba(255, 255, 255, 0.05);
+  }
+  .category {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #00ff9d;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: block;
+    margin-bottom: 1rem;
+  }
+  .related-card h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  .related-card h3 a {
+    color: white;
+    text-decoration: none;
+  }
+  .related-card p {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+  .read-more {
+    color: #00d4ff;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .arrow { transition: 0.3s; }
+  .read-more:hover .arrow { transform: translateX(5px); }
+</style>

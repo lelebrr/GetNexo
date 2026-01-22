@@ -1,0 +1,386 @@
+{
+    "name": "Cupom Aniversário Personalizado",
+    "nodes": [
+        {
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "dayOfMonth",
+                            "equals": "={{ $now.format('D') }}"
+                        },
+                        {
+                            "field": "month",
+                            "equals": "={{ $now.format('M') }}"
+                        }
+                    ]
+                }
+            },
+            "name": "Birthday Schedule",
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1,
+            "position": [
+                240,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "database",
+                "operation": "select",
+                "tableName": "customers",
+                "conditions": "DATE_FORMAT(birth_date, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d') AND active = true",
+                "limit": 100
+            },
+            "name": "Find Birthday Customers",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                460,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "postgres_credentials",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "resource": "database",
+                "operation": "select",
+                "tableName": "orders",
+                "conditions": "customer_email = '{{ $json.email }}' AND status = 'completed'",
+                "additionalFields": "SUM(total) as lifetime_value, COUNT(*) as order_count, MAX(created_at) as last_order"
+            },
+            "name": "Calculate Customer LTV",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                680,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "postgres_credentials",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "functionCode": "// Calculate personalized discount based on LTV\nconst ltv = $node[\"Calculate Customer LTV\"].json[\"lifetime_value\"] || 0;\nconst orderCount = $node[\"Calculate Customer LTV\"].json[\"order_count\"] || 0;\nconst customer = $node[\"Find Birthday Customers\"].json;\n\n// Discount tiers based on lifetime value\nlet discountPercent = 10; // Default\nlet couponCode = `ANIVER${customer.id}`;\nlet validDays = 7;\n\nif (ltv >= 2000) {\n  discountPercent = 25;\n  couponCode = `VIP${customer.id}`;\n  validDays = 30;\n} else if (ltv >= 1000) {\n  discountPercent = 20;\n  couponCode = `GOLD${customer.id}`;\n  validDays = 15;\n} else if (ltv >= 500) {\n  discountPercent = 15;\n  couponCode = `PLUS${customer.id}`;\n  validDays = 10;\n}\n\n// Calculate customer's age\nconst birthYear = new Date(customer.birth_date).getFullYear();\nconst currentYear = new Date().getFullYear();\nconst age = currentYear - birthYear;\n\n// Personalized message based on segments\nconst messages = {\n  vip: {\n    subject: `Feliz Aniversário ${customer.name}! 🎉 25% OFF Especial`,\n    greeting: `Parabéns pelos ${age} anos, nosso cliente VIP!`,\n    offer: `Como agradecimento pela sua fidelidade, oferecemos 25% OFF em toda loja!`\n  },\n  gold: {\n    subject: `Feliz Aniversário ${customer.name}! 🎂 20% OFF Especial`,\n    greeting: `Feliz ${age} anos, nosso cliente Gold!`,\n    offer: `Para celebrar seu aniversário, oferecemos 20% OFF em toda loja!`\n  },\n  plus: {\n    subject: `Feliz Aniversário ${customer.name}! 🎈 15% OFF Especial`,\n    greeting: `Parabéns pelos ${age} anos!`,\n    offer: `Para seu aniversário, oferecemos 15% OFF em toda loja!`\n  },\n  default: {\n    subject: `Feliz Aniversário ${customer.name}! 🎁 10% OFF Especial`,\n    greeting: `Feliz ${age} anos!`,\n    offer: `Para celebrar seu aniversário, oferecemos 10% OFF em toda loja!`\n  }\n};\n\nlet messageKey = 'default';\nif (discountPercent >= 25) messageKey = 'vip';\nelse if (discountPercent >= 20) messageKey = 'gold';\nelse if (discountPercent >= 15) messageKey = 'plus';\n\nconst message = messages[messageKey];\n\nreturn {\n  customer,\n  discountPercent,\n  couponCode,\n  validDays,\n  ltv,\n  orderCount,\n  age,\n  message,\n  segment: messageKey.toUpperCase()\n};"
+            },
+            "name": "Calculate Personalized Offer",
+            "type": "n8n-nodes-base.function",
+            "typeVersion": 1,
+            "position": [
+                900,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "database",
+                "operation": "insert",
+                "tableName": "birthday_coupons",
+                "columns": "customer_email,coupon_code,discount_percent,valid_until,segment,ltv_score,used",
+                "valuesToInsert": "'{{$json.customer.email}}','{{$json.couponCode}}',{{$json.discountPercent}},NOW() + INTERVAL '{{$json.validDays}} days','{{$json.segment}}',{{$json.ltv}},false"
+            },
+            "name": "Save Coupon to Database",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                1120,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "postgres_credentials",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "functionCode": "// Generate personalized birthday email\nconst data = $node[\"Calculate Personalized Offer\"].json;\nconst customer = data.customer;\nconst message = data.message;\nconst couponCode = data.couponCode;\nconst discountPercent = data.discountPercent;\nconst validDays = data.validDays;\nconst ltv = data.ltv;\nconst orderCount = data.orderCount;\n\n// Create coupon URL\nconst couponUrl = `https://getnexo.com.br?coupon=${couponCode}&birthday=true`;\n\n// Personalized product recommendations based on history\nconst recommendations = [];\nif (ltv > 1000) {\n  recommendations.push('Nossa linha premium');\n} else if (orderCount > 3) {\n  recommendations.push('Produtos da sua categoria favorita');\n} else {\n  recommendations.push('Nossos best-sellers');\n}\n\n// Generate HTML email\nconst emailHtml = `\n<!DOCTYPE html>\n<html lang=\"pt-BR\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>${message.subject}</title>\n  <style>\n    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }\n    .container { max-width: 600px; margin: 0 auto; background: #fff; }\n    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px 20px; text-align: center; }\n    .content { padding: 30px 20px; }\n    .coupon { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 25px; border-radius: 15px; text-align: center; margin: 20px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }\n    .coupon-code { font-size: 28px; font-weight: bold; letter-spacing: 3px; margin: 10px 0; }\n    .discount { font-size: 18px; margin-bottom: 15px; }\n    .cta-button { display: inline-block; background: #28a745; color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; margin: 20px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }\n    .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; }\n    .stats { background: #e9ecef; padding: 15px; border-radius: 8px; margin: 20px 0; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>🎉 ${message.greeting}</h1>\n      <p>Hoje é um dia especial e queremos celebrar com você!</p>\n    </div>\n    \n    <div class=\"content\">\n      <p>Olá <strong>${customer.name}</strong>,</p>\n      \n      <p>${message.offer}</p>\n      \n      <div class=\"stats\">\n        <p><strong>Seus ${orderCount} pedidos conosco totalizam R$ ${ltv.toFixed(2)} em compras!</strong></p>\n        <p>Como forma de agradecimento, criamos uma oferta exclusiva para você.</p>\n      </div>\n      \n      <div class=\"coupon\">\n        <div class=\"discount\">🎁 ${discountPercent}% DE DESCONTO</div>\n        <div class=\"coupon-code\">${couponCode}</div>\n        <div>Válido por ${validDays} dias</div>\n      </div>\n      \n      <div style=\"text-align: center;\">\n        <a href=\"${couponUrl}\" class=\"cta-button\">Usar Meu Desconto Agora</a>\n      </div>\n      \n      <p><strong>Sugestões para você:</strong></p>\n      <ul>\n        ${recommendations.map(rec => `<li>${rec}</li>`).join('')}\n      </ul>\n      \n      <p>Esperamos que aproveite seu dia especial! 🥳</p>\n      \n      <p>Com carinho,<br>\n      <strong>Equipe GetNexo</strong></p>\n    </div>\n    \n    <div class=\"footer\">\n      <p>Esta é uma oferta especial de aniversário e não pode ser combinada com outras promoções.</p>\n      <p>Cupom válido apenas para compras online • Não acumulável</p>\n    </div>\n  </div>\n</body>\n</html>`;\n\nconst emailText = `🎉 ${message.greeting}\n\nOlá ${customer.name},\n\n${message.offer}\n\nSeus ${orderCount} pedidos conosco totalizam R$ ${ltv.toFixed(2)}!\n\n🎁 CUPOM ESPECIAL: ${couponCode}\n📉 DESCONTO: ${discountPercent}%\n⏰ VÁLIDO POR: ${validDays} dias\n\nUse agora: ${couponUrl}\n\nSugestões: ${recommendations.join(', ')}\n\nFeliz aniversário!\nEquipe GetNexo`;\n\nreturn {\n  emailHtml,\n  emailText,\n  couponUrl,\n  recommendations\n};"
+            },
+            "name": "Generate Birthday Email",
+            "type": "n8n-nodes-base.function",
+            "typeVersion": 1,
+            "position": [
+                1340,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "fromEmail": "aniversario@getnexo.com.br",
+                "toEmail": "={{ $node[\"Calculate Personalized Offer\"].json[\"customer\"][\"email\"] }}",
+                "subject": "={{ $node[\"Calculate Personalized Offer\"].json[\"message\"][\"subject\"] }}",
+                "html": "={{ $json.emailHtml }}",
+                "text": "={{ $json.emailText }}",
+                "options": {
+                    "priority": "high"
+                }
+            },
+            "name": "Send Birthday Email",
+            "type": "n8n-nodes-base.emailSend",
+            "typeVersion": 1,
+            "position": [
+                1560,
+                300
+            ],
+            "credentials": {
+                "smtp": {
+                    "id": "smtp_credentials",
+                    "name": "SMTP account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "resource": "database",
+                "operation": "update",
+                "tableName": "customers",
+                "updateFields": "last_birthday_campaign",
+                "updateValues": "NOW()",
+                "conditions": "email = '{{ $node[\"Calculate Personalized Offer\"].json[\"customer\"][\"email\"] }}'"
+            },
+            "name": "Update Customer Record",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                1780,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "postgres_credentials",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "resource": "analytics",
+                "operation": "track",
+                "event": "birthday_campaign_sent",
+                "properties": "customer_email={{ $node[\"Calculate Personalized Offer\"].json[\"customer\"][\"email\"] }},segment={{ $json.segment }},discount_percent={{ $json.discountPercent }},ltv={{ $json.ltv }},coupon_code={{ $json.couponCode }}"
+            },
+            "name": "Track Birthday Campaign",
+            "type": "n8n-nodes-base.analytics",
+            "typeVersion": 1,
+            "position": [
+                2000,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "hour",
+                            "equals": 9
+                        }
+                    ]
+                }
+            },
+            "name": "Morning Follow-up Schedule",
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1,
+            "position": [
+                2220,
+                100
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "database",
+                "operation": "select",
+                "tableName": "birthday_coupons",
+                "conditions": "used = false AND valid_until > NOW() AND created_at >= NOW() - INTERVAL '1 day'",
+                "limit": 50
+            },
+            "name": "Check Unused Birthday Coupons",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                2440,
+                100
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "postgres_credentials",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "fromEmail": "lembrete@getnexo.com.br",
+                "toEmail": "={{ $json.customer_email }}",
+                "subject": "Lembrete: Seu Cupom de Aniversário Expira Hoje! 🎂",
+                "text": "Olá!\n\nEspero que tenha aproveitado seu dia especial! 😊\n\nLembrando que seu cupom de aniversário {{ $json.coupon_code }} expira hoje.\n\nNão perca esta oferta especial de {{ $json.discount_percent }}% OFF!\n\nUse agora: https://getnexo.com.br?coupon={{ $json.coupon_code }}\n\nAtenciosamente,\nEquipe GetNexo",
+                "html": "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'><div style='background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;'><h2>🎂 Lembrete Importante!</h2><p>Seu cupom de aniversário expira hoje</p></div><div style='background: white; padding: 30px; border: 1px solid #ddd; border-radius: 0 0 10px 10px;'><p>Olá!</p><p>Espero que tenha aproveitado seu dia especial! 😊</p><p>Lembrando que seu cupom <strong>{{ $json.coupon_code }}</strong> expira <strong>hoje</strong>.</p><div style='background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;'><h3 style='color: #28a745;'>{{ $json.discount_percent }}% OFF</h3><p><strong>Código: {{ $json.coupon_code }}</strong></p></div><div style='text-align: center; margin: 30px 0;'><a href='https://getnexo.com.br?coupon={{ $json.coupon_code }}' style='background: #28a745; color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; font-weight: bold;'>Usar Cupom Agora</a></div><p>Atenciosamente,<br><strong>Equipe GetNexo</strong></p></div></div>"
+            },
+            "name": "Send Expiration Reminder",
+            "type": "n8n-nodes-base.emailSend",
+            "typeVersion": 1,
+            "position": [
+                2660,
+                100
+            ],
+            "credentials": {
+                "smtp": {
+                    "id": "smtp_credentials",
+                    "name": "SMTP account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "resource": "analytics",
+                "operation": "track",
+                "event": "birthday_reminder_sent",
+                "properties": "customer_email={{ $json.customer_email }},coupon_code={{ $json.coupon_code }},days_until_expiry=0"
+            },
+            "name": "Track Reminder Sent",
+            "type": "n8n-nodes-base.analytics",
+            "typeVersion": 1,
+            "position": [
+                2880,
+                100
+            ]
+        }
+    ],
+    "connections": {
+        "Birthday Schedule": {
+            "main": [
+                [
+                    {
+                        "node": "Find Birthday Customers",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Find Birthday Customers": {
+            "main": [
+                [
+                    {
+                        "node": "Calculate Customer LTV",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Calculate Customer LTV": {
+            "main": [
+                [
+                    {
+                        "node": "Calculate Personalized Offer",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Calculate Personalized Offer": {
+            "main": [
+                [
+                    {
+                        "node": "Save Coupon to Database",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Save Coupon to Database": {
+            "main": [
+                [
+                    {
+                        "node": "Generate Birthday Email",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Generate Birthday Email": {
+            "main": [
+                [
+                    {
+                        "node": "Send Birthday Email",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Send Birthday Email": {
+            "main": [
+                [
+                    {
+                        "node": "Update Customer Record",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Update Customer Record": {
+            "main": [
+                [
+                    {
+                        "node": "Track Birthday Campaign",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Morning Follow-up Schedule": {
+            "main": [
+                [
+                    {
+                        "node": "Check Unused Birthday Coupons",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check Unused Birthday Coupons": {
+            "main": [
+                [
+                    {
+                        "node": "Send Expiration Reminder",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Send Expiration Reminder": {
+            "main": [
+                [
+                    {
+                        "node": "Track Reminder Sent",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "executionOrder": "v1"
+    },
+    "staticData": null
+}

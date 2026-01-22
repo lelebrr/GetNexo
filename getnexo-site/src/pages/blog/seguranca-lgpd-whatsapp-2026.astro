@@ -1,0 +1,112 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Guia de Segurança e LGPD no WhatsApp Corporate",
+      "description": "Proteja os dados da sua empresa e dos seus clientes. Entenda como operar no WhatsApp em total conformidade com a LGPD em 2026.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-21",
+      "image": "/images/blog/seguranca-lgpd-whatsapp.png",
+      "articleSection": "Compliance",
+      "keywords": "lgpd whatsapp, segurança de dados whatsapp, conformidade digital, whatsapp corporate segurança"
+    }
+  ]
+};
+---
+
+<Layout title="Segurança e LGPD no WhatsApp Corporate | GetNexo">
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta animate-fade-in">Segurança • Jan 2026</div>
+      <h1 class="animate-slide-up">LGPD no WhatsApp:<br/><span class="text-primary">Guia de Conformidade</span></h1>
+      <p class="subtitle animate-fade-in delay-200">Não transforme seu maior canal de vendas em um passivo jurídico. Saiba como blindar seu atendimento no WhatsApp.</p>
+      
+      <div class="placeholder-image glass-panel animate-fade-in">
+        <p>Image: Data security shield protecting a WhatsApp chat</p>
+      </div>
+    </header>
+
+    <div class="post-content">
+      <section id="importancia">
+        <h2>🛡️ Por que a LGPD no WhatsApp é Urgente?</h2>
+        <p>Em 2026, as sanções da ANPD (Autoridade Nacional de Proteção de Dados) tornaram-se rigorosas. O WhatsApp, por ser um canal informal, é frequentemente o ponto cego das empresas. Capturar dados sensíveis sem consentimento ou armazenar conversas em servidores inseguros pode resultar em multas pesadas e danos à reputação.</p>
+        
+        <div class="glass-panel mt-8">
+          <p><strong>Destaque:</strong> O uso da API Oficial é o primeiro passo para a conformidade, pois oferece criptografia de ponta a ponta em nível corporativo e logs de auditoria.</p>
+        </div>
+      </section>
+
+      <section id="pilares">
+        <h2>🛠️ Os 3 Pilares do WhatsApp Seguro</h2>
+        <p>Operar com segurança exige tecnologia e processos bem definidos.</p>
+        
+        <div class="stack-grid">
+          <div class="stack-card glass-panel blur">
+            <h4>Opt-in Documentado</h4>
+            <p>Nunca inicie uma conversa sem o consentimento claro do usuário. A GetNexo automatiza a captura e o registro do Opt-in.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Gestão de Acessos</h4>
+            <p>Quem no seu time pode ver os dados do cliente? Nosso CRM permite controle granular de permissões por nível hierárquico.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Direito ao Esquecimento</h4>
+            <p>Sua empresa precisa ser capaz de apagar todos os dados de um lead em segundos, caso solicitado. Fazemos isso de forma automatizada.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="conclusao">
+        <h2>🚀 Compliance como Diferencial Competitivo</h2>
+        <p>Clientes sentem-se mais seguros comprando de empresas que respeitam sua privacidade. Ao utilizar a GetNexo, você demonstra profissionalismo e garante que sua operação está protegida contra vazamentos e processos judiciais.</p>
+      </section>
+
+      <div class="final-cta animate-scale-up">
+        <h3>Sua empresa está 100% segura?</h3>
+        <p>Fale com nosso consultor de compliance e valide sua operação no WhatsApp hoje mesmo.</p>
+        <div class="cta-buttons mt-8">
+          <a href="/demo" class="btn-primary">Validar minha Segurança</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+</Layout>
+
+<style>
+  :root {
+    --primary: #00d4ff;
+    --accent: #00ff9d;
+    --glass: rgba(15, 23, 42, 0.7);
+    --glass-border: rgba(0, 212, 255, 0.1);
+  }
+
+  /* Reusing the same standard premium styles */
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  .meta { color: var(--primary); font-size: 0.8rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem; display: inline-block; padding: 0.5rem 1rem; background: rgba(0, 212, 255, 0.05); border: 1px solid var(--glass-border); border-radius: 50px; }
+  h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; color: white; }
+  .text-primary { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .subtitle { font-size: 1.25rem; color: #94a3b8; max-width: 700px; margin: 0 auto; line-height: 1.6; }
+  .placeholder-image { width: 100%; border-radius: 24px; margin-top: 3rem; height: 500px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0f172a, #020617); color: var(--primary); font-weight: 800; border: 1px dashed var(--primary); }
+  .post-content { color: #cbd5e1; line-height: 1.8; font-size: 1.15rem; }
+  h2 { font-size: 2.2rem; color: white; margin: 6rem 0 2rem; font-weight: 800; }
+  .glass-panel { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 2.5rem; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+  .stack-card { background: var(--glass); border: 1px solid var(--glass-border); padding: 2rem; border-radius: 20px; text-align: left; }
+  .stack-card h4 { color: var(--primary); margin-bottom: 1rem; font-size: 1.3rem; }
+  .final-cta { background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1)); border: 1px solid var(--primary); padding: 5rem 2rem; text-align: center; border-radius: 32px; margin-top: 8rem; }
+  .btn-primary { background: white; color: black; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; font-weight: 800; display: inline-block; transition: 0.3s; }
+  .btn-primary:hover { background: var(--primary); color: white; transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0, 212, 255, 0.3); }
+
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade-in { animation: fade-in 1s ease forwards; }
+  .animate-slide-up { animation: slide-up 1s ease forwards; }
+</style>

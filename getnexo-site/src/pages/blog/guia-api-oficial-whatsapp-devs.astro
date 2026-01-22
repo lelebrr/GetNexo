@@ -1,0 +1,129 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Guia da API Oficial do WhatsApp para Desenvolvedores 2026",
+      "description": "Documentação e melhores práticas para integrar a API do WhatsApp Business. Webhooks, autenticação e envio de mensagens para desenvolvedores.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-21",
+      "image": "/images/blog/api-whatsapp-dev-guide.png",
+      "articleSection": "Documentação Técnica",
+      "keywords": "api whatsapp oficial, documentação dev whatsapp, integração whatsapp rest, webhooks whatsapp, meta business api"
+    }
+  ]
+};
+---
+
+<Layout title="Guia Dev API WhatsApp 2026 | GetNexo">
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta animate-fade-in">Dev • Jan 2026</div>
+      <h1 class="animate-slide-up">WhatsApp API Oficial:<br/><span class="text-primary">O Guia Definitivo para Devs</span></h1>
+      <p class="subtitle animate-fade-in delay-200">Menos burocracia, mais código. Tudo o que você precisa saber para integrar o WhatsApp na sua stack.</p>
+      
+      <div class="premium-hero-card glass-panel animate-fade-in">
+        <div class="visual-glow"></div>
+        <div class="visual-content">
+          <span class="visual-icon">🚀</span>
+          <h2 class="visual-title">API Oficial: Guia Dev</h2>
+          <div class="visual-stats">
+            <div class="stat"><span>RESTful</span> arquitetura</div>
+            <div class="stat"><span>SDK</span> completa</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="post-content">
+      <section id="stack-tecnica">
+        <h2>🛠️ A Anatomia da Integração</h2>
+        <p>Integrar a API do WhatsApp Business não precisa ser um pesadelo. Em 2026, a GetNexo abstrai a complexidade burocrática da Meta e entrega uma <strong>API RESTful limpa</strong>, com SDKs para as principais linguagens (Node.js, Python, Go e PHP).</p>
+        
+        <div class="api-code-block glass-panel mt-8">
+          <pre><code>{`// Exemplo de Envio de Template
+POST /v1/messages
+{
+  "to": "5511999999999",
+  "type": "template",
+  "template": {
+    "name": "boas_vindas",
+    "language": { "code": "pt_BR" }
+  }
+}`}</code></pre>
+        </div>
+      </section>
+
+      <section id="webhooks">
+        <h2>📡 Webhooks e Event-Driven Architecture</h2>
+        <p>A chave para uma automação de sucesso é a reação em tempo real. Nossos webhooks entregam status de entrega, leitura e, claro, o conteúdo das mensagens recebidas com latência inferior a 100ms.</p>
+        
+        <div class="stack-grid">
+          <div class="stack-card glass-panel blur">
+            <h4>Segurança OAuth 2.0</h4>
+            <p>Autenticação robusta para garantir que seus dados nunca fiquem expostos.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Retry Logic Automático</h4>
+            <p>Se seu servidor cair, nós tentamos reenviar o webhook até que a entrega seja confirmada.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Rate Limits Enterprise</h4>
+            <p>Escalabilidade real para suportar milhões de mensagens sem quedas de performance.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="boas-praticas">
+        <h2>⚡ Melhores Práticas de Performance</h2>
+        <p>Para manter seu número saudável (Tier 3 ou superior), é essencial seguir as políticas da Meta. A GetNexo audita suas mensagens em tempo real para evitar 'flags' de spam e garantir que sua integração seja duradoura e escalável.</p>
+      </section>
+
+      <div class="final-cta animate-scale-up">
+        <h3>Pronto para codar a próxima grande solução?</h3>
+        <p>Acesse nosso Sandbox e comece a integrar em 5 minutos.</p>
+        <div class="cta-buttons mt-8">
+          <a href="/documentacao" class="btn-primary">Ver Documentação Completa</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+</Layout>
+
+<style>
+  :root {
+    --primary: #10b981;
+    --accent: #059669;
+    --glass: rgba(15, 23, 42, 0.7);
+    --glass-border: rgba(16, 185, 129, 0.1);
+  }
+
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  .meta { color: var(--primary); font-size: 0.8rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem; display: inline-block; padding: 0.5rem 1rem; background: rgba(16, 185, 129, 0.05); border: 1px solid var(--glass-border); border-radius: 50px; }
+  h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; color: white; }
+  .text-primary { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .subtitle { font-size: 1.25rem; color: #94a3b8; max-width: 700px; margin: 0 auto; line-height: 1.6; }
+  .placeholder-image { width: 100%; border-radius: 24px; margin-top: 3rem; height: 500px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #064e3b, #0f172a); color: var(--primary); font-weight: 800; border: 1px dashed var(--primary); }
+  .post-content { color: #cbd5e1; line-height: 1.8; font-size: 1.15rem; }
+  h2 { font-size: 2.2rem; color: white; margin: 6rem 0 2rem; font-weight: 800; }
+  .glass-panel { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 2.5rem; }
+  .api-code-block { background: #0a0f1a; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: #10b981; padding: 2rem; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.2); }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+  .stack-card { background: var(--glass); border: 1px solid var(--glass-border); padding: 2rem; border-radius: 20px; text-align: left; }
+  .stack-card h4 { color: var(--primary); margin-bottom: 1rem; font-size: 1.3rem; }
+  .final-cta { background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1)); border: 1px solid var(--primary); padding: 5rem 2rem; text-align: center; border-radius: 32px; margin-top: 8rem; }
+  .btn-primary { background: white; color: black; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; font-weight: 800; display: inline-block; transition: 0.3s; }
+  .btn-primary:hover { background: var(--primary); color: white; transform: translateY(-3px); box-shadow: 0 15px 30px rgba(16, 185, 129, 0.3); }
+
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade-in { animation: fade-in 1s ease forwards; }
+  .animate-slide-up { animation: slide-up 1s ease forwards; }
+</style>

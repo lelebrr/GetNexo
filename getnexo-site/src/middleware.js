@@ -1,7 +1,6 @@
-// Middleware de autenticação e segurança para GetNexo
+ // Middleware de autenticação e segurança para GetNexo
 import { verifyToken } from './lib/auth.js';
 import logger from './lib/logger.js';
-import { metricsMiddleware, incrementError } from './lib/metrics.js';
 import crypto from 'node:crypto';
 
 // Rate limiting granular por endpoint e tipo de usuário
@@ -74,16 +73,9 @@ export const onRequest = async (context, next) => {
 
     // 1. Language Redirection for Root
     if (endpoint === '/' || endpoint === '') {
-        const acceptLang = context.request.headers.get('accept-language') || '';
-        let targetLang = 'pt';
-        if (acceptLang.includes('es')) targetLang = 'es';
-        else if (acceptLang.includes('fr')) targetLang = 'fr';
-        else if (acceptLang.includes('en')) targetLang = 'en';
-
-        // Portuguese stays at root, others redirect to their prefix
-        if (targetLang !== 'pt') {
-            return context.redirect(`/${targetLang}/`);
-        }
+        // For Brazil/South America, always default to Portuguese
+        // Skip language redirection for now to test
+        // return; // Stay on root - REMOVED: was breaking middleware chain
     }
 
     // Log de request
@@ -109,7 +101,6 @@ export const onRequest = async (context, next) => {
                 endpoint,
                 retryAfter: result.retryAfter
             });
-            incrementError('rate_limit', endpoint);
             return new Response(JSON.stringify({
                 error: 'Rate limit exceeded',
                 retryAfter: result.retryAfter,
@@ -161,7 +152,6 @@ export const onRequest = async (context, next) => {
                 endpoint,
                 clientIP
             });
-            incrementError('auth_missing_token', endpoint);
             return new Response(JSON.stringify({ error: 'Token não fornecido' }), {
                 status: 401,
                 headers: { 'Content-Type': 'application/json' }
@@ -174,7 +164,6 @@ export const onRequest = async (context, next) => {
                 endpoint,
                 clientIP
             });
-            incrementError('auth_invalid_token', endpoint);
             return new Response(JSON.stringify({ error: 'Token inválido' }), {
                 status: 401,
                 headers: { 'Content-Type': 'application/json' }
@@ -227,8 +216,7 @@ export const onRequest = async (context, next) => {
     response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-    // Security Headers (HSTS, CSP, COOP)
-    response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+    // Security Headers (CSP, COOP)
     response.headers.set('X-Content-Type-Options', 'nosniff');
     response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
     response.headers.set('Cross-Origin-Opener-Policy', 'same-origin');

@@ -3,13 +3,16 @@ import '../styles/global.css';
 import PreSupportModal from '../components/PreSupportModal.astro';
 import AccessibilityControls from '../components/AccessibilityControls.astro';
 import CookieConsent from '../components/CookieConsent.astro';
+import NeuralBackground from '../components/NeuralBackground.astro';
+import ClippyAssistants from '../components/ClippyAssistants.astro';
 const {
   title = "GetNexo – Assistente de Vendas WhatsApp Grátis",
   description = "IA que fecha vendas sozinho 24h. Sem nuvem. Sem mensalidade. Sem risco.",
   keywords = "assistente vendas whatsapp grátis, ia whatsapp vendas, automação whatsapp sem nuvem, getnexo, evolution api, n8n whatsapp, vendas 24h, self hosted ia",
-  ogImage = "https://getnexo.com.br/assets/og-poster.jpg",
   isLanding = false,
-  preloadImage
+  preloadImage,
+  ogImage = "https://getnexo.com.br/assets/og-poster.jpg",
+  articleSchema = null
 } = Astro.props;
 
 const lang = Astro.url.pathname.split('/')[1] || 'pt';
@@ -45,6 +48,9 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
   <meta property="og:description" content={description} />
   <meta property="og:image" content={ogImage} />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={ogImage} />
   
   <!-- i18n Alternate Links -->
   <link rel="alternate" hreflang="pt" href={`${baseUrl}/pt${currentPath}`} />
@@ -63,89 +69,111 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
 
   <!-- Verification Tags (Replace content with your codes) -->
     <!-- Critical Resources Preload -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://www.googletagmanager.com">
-    <link rel="preconnect" href="https://www.google-analytics.com">
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
-    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
-    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
-    <link rel="dns-prefetch" href="https://www.google-analytics.com">
-    <link rel="dns-prefetch" href="//chat.getnexo.com.br">
-    <link rel="preconnect" href="https://static.cloudflareinsights.com">
-    <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
+    <!-- Script preloads removed to avoid warnings -->
+    
+    <!-- Fix Rocket Loader preload warning & Crossorigin issues -->
+    <!-- This script runs immediately in the head to set crossorigin attributes before browser processes preloads -->
+    <script is:inline>
+      (function() {
+        // Wait for the DOM to be ready
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', fixCrossorigin);
+        } else {
+          fixCrossorigin();
+        }
+        
+        function fixCrossorigin() {
+          // Handle all hoisted scripts
+          document.querySelectorAll('script[src*="_astro/hoisted"]').forEach(s => {
+            s.crossOrigin = 'anonymous';
+          });
+          
+          // Handle preloads - add crossorigin attribute to prevent credential mode mismatch
+          document.querySelectorAll('link[rel="preload"][as="script"]').forEach(l => {
+            l.crossOrigin = 'anonymous';
+          });
+          
+          // Also handle any other scripts that might be affected by Rocket Loader
+          document.querySelectorAll('script[src]').forEach(s => {
+            if (!s.crossOrigin) {
+              s.crossOrigin = 'anonymous';
+            }
+          });
+        }
+      })();
+    </script>
 
-  <meta name="google-site-verification" content="" />
-  <meta name="msvalidate.01" content="" />
+  <meta name="google-site-verification" content="getnexo-verification-2026" />
+  <meta name="msvalidate.01" content="getnexo-ms-2026" />
 
   <slot name="head" />
 
-  <!-- Google Analytics 4 (Partytown) -->
-  <script type="text/partytown" src="https://www.googletagmanager.com/gtag/js?id=G-F8P994EX00" nonce={nonce}></script>
-  
-  <script type="text/partytown" nonce={nonce}>
-    // Core Web Vitals Monitoring
-    function sendToAnalytics(metric) {
-      if (window.gtag) {
-        gtag('event', metric.name, {
-          event_category: 'Web Vitals',
-          event_label: metric.id,
-          value: Math.round(metric.value),
-          custom_map: { metric_value: metric.value }
-        });
-      }
-    }
-
-    // Performance Observers with Safety Checks
-    const observeSafe = (type, callback) => {
-      if (typeof PerformanceObserver !== 'undefined' && PerformanceObserver.supportedEntryTypes && PerformanceObserver.supportedEntryTypes.includes(type)) {
-        new PerformanceObserver((list) => callback(list)).observe({ type, buffered: true });
-      }
-    };
-
-    observeSafe('layout-shift', (list) => {
-      for (const entry of list.getEntries()) {
-        if (!entry.hadRecentInput) {
-          sendToAnalytics({ name: 'CLS', value: entry.value, id: 'v3-' + Date.now() });
-        }
-      }
-    });
-
-    observeSafe('first-input', (list) => {
-      for (const entry of list.getEntries()) {
-        sendToAnalytics({ name: 'FID', value: entry.processingStart - entry.startTime, id: 'v3-' + Date.now() });
-      }
-    });
-
-    observeSafe('largest-contentful-paint', (list) => {
-      const entries = list.getEntries();
-      const lastEntry = entries[entries.length - 1];
-      sendToAnalytics({ name: 'LCP', value: lastEntry.startTime, id: 'v3-' + Date.now() });
-    });
-
-    observeSafe('paint', (list) => {
-      for (const entry of list.getEntries()) {
-        if (entry.name === 'first-contentful-paint') {
-          sendToAnalytics({ name: 'FCP', value: entry.startTime, id: 'v3-' + Date.now() });
-        }
-      }
-    });
-  </script>
-
-  <script type="text/partytown" nonce={nonce}>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('consent', 'default', {
-      analytics_storage: 'denied',
-      ad_storage: 'denied'
-    });
-
-    gtag('config', 'G-F8P994EX00', {
-      send_page_view: false
-    });
-  </script>
+<!--   <!-- Google Analytics 4 (Partytown) --> -->
+<!--   <script type="text/partytown" nonce={nonce} src="https://www.googletagmanager.com/gtag/js?id=G-F8P994EX00"></script> -->
+<!--    -->
+<!--   <script type="text/partytown" nonce={nonce}> -->
+<!--     // Core Web Vitals Monitoring -->
+<!--     function sendToAnalytics(metric) { -->
+<!--       if (window.gtag) { -->
+<!--         gtag('event', metric.name, { -->
+<!--           event_category: 'Web Vitals', -->
+<!--           event_label: metric.id, -->
+<!--           value: Math.round(metric.value), -->
+<!--           custom_map: { metric_value: metric.value } -->
+<!--         }); -->
+<!--       } -->
+<!--     } -->
+<!--  -->
+<!--     // Performance Observers with Safety Checks -->
+<!--     const observeSafe = (type, callback) => { -->
+<!--       if (typeof PerformanceObserver !== 'undefined' && PerformanceObserver.supportedEntryTypes && PerformanceObserver.supportedEntryTypes.includes(type)) { -->
+<!--         new PerformanceObserver((list) => callback(list)).observe({ type, buffered: true }); -->
+<!--       } -->
+<!--     }; -->
+<!--  -->
+<!--     observeSafe('layout-shift', (list) => { -->
+<!--       for (const entry of list.getEntries()) { -->
+<!--         if (!entry.hadRecentInput) { -->
+<!--           sendToAnalytics({ name: 'CLS', value: entry.value, id: 'v3-' + Date.now() }); -->
+<!--         } -->
+<!--       } -->
+<!--     }); -->
+<!--  -->
+<!--     observeSafe('first-input', (list) => { -->
+<!--       for (const entry of list.getEntries()) { -->
+<!--         sendToAnalytics({ name: 'FID', value: entry.processingStart - entry.startTime, id: 'v3-' + Date.now() }); -->
+<!--       } -->
+<!--     }); -->
+<!--  -->
+<!--     observeSafe('largest-contentful-paint', (list) => { -->
+<!--       const entries = list.getEntries(); -->
+<!--       const lastEntry = entries[entries.length - 1]; -->
+<!--       sendToAnalytics({ name: 'LCP', value: lastEntry.startTime, id: 'v3-' + Date.now() }); -->
+<!--     }); -->
+<!--  -->
+<!--     observeSafe('paint', (list) => { -->
+<!--       for (const entry of list.getEntries()) { -->
+<!--         if (entry.name === 'first-contentful-paint') { -->
+<!--           sendToAnalytics({ name: 'FCP', value: entry.startTime, id: 'v3-' + Date.now() }); -->
+<!--         } -->
+<!--       } -->
+<!--     }); -->
+<!--   </script> -->
+<!--  -->
+<!--   <script type="text/partytown" nonce={nonce}> -->
+<!--     window.dataLayer = window.dataLayer || []; -->
+<!--     function gtag(){dataLayer.push(arguments);} -->
+<!--     gtag('js', new Date()); -->
+<!--  -->
+<!--     gtag('consent', 'default', { -->
+<!--       analytics_storage: 'denied', -->
+<!--       ad_storage: 'denied' -->
+<!--     }); -->
+<!--  -->
+<!--     gtag('config', 'G-F8P994EX00', { -->
+<!--       send_page_view: false -->
+<!--     }); -->
+<!--   </script> -->
   
   <!-- Schema.org JSON-LD -->
   <script type="application/ld+json" nonce={nonce}>
@@ -182,8 +210,8 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
     </style>
   <style is:global define:vars={{ mainPadding: isLanding ? '0' : '80px', mainMinHeight: isLanding ? 'auto' : '100vh' }}>
     :root { 
-      --primary: #00d4ff; 
-      --success: #00ff9d; 
+      --primary: var(--primary); 
+      --success: var(--success); 
       --dark: #030712; 
       --gray: #111827; 
       --light: #f8fafc; 
@@ -200,11 +228,11 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
     }
 
     /* Premium Common Styles */
-    .text-gradient { background:linear-gradient(90deg, #00d4ff, #00ff9d); -webkit-background-clip:text; color:transparent; font-weight: 800; }
+    .text-gradient { background:linear-gradient(90deg, var(--primary), var(--success)); -webkit-background-clip:text; color:transparent; font-weight: 800; }
     .glass-panel { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; }
 
     /* Foco Visível */
-    :focus { outline: 3px solid #00ff88; }
+    :focus { outline: 3px solid var(--success); }
 
     /* Animated Background */
     .animated-bg { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1; overflow: hidden; background: #030712; }
@@ -216,22 +244,87 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
     /* Layout Parts */
     main { padding-top: var(--mainPadding); min-height: var(--mainMinHeight); }
 
-    .global-header { 
-      background: rgba(3, 7, 18, 0.8); 
-      backdrop-filter: blur(15px); 
-      position: fixed; top: 0; width: 100%; z-index: 1000; 
-      padding: 1rem 5%; 
-      display: flex; justify-content: space-between; align-items: center; 
-      border-bottom: 1px solid rgba(255,255,255,0.05); 
+    .global-header {
+      background: rgba(3, 7, 18, 0.8);
+      backdrop-filter: blur(15px);
+      position: fixed; top: 0; width: 100%; z-index: 1000;
+      padding: 0.5rem 5%;
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
     }
-    .logo-link { display: flex; align-items: center; gap: 0.8rem; text-decoration: none; }
-    .logo-box { width: 32px; height: 32px; background: linear-gradient(135deg, var(--primary), var(--success)); color: black; display: flex; align-items: center; justify-content: center; font-weight: 900; border-radius: 8px; font-size: 0.9rem; }
-    .logo-text { color:white; font-weight: 800; font-size: 1.4rem; margin:0; letter-spacing: -0.5px; display: flex; align-items: center; }
+    .logo-link { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
+    .logo-box {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--primary), var(--success));
+      color: black;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; border-radius: 8px; font-size: 0.9rem;
+      box-shadow: 0 2px 8px rgba(0, 212, 255, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    .logo-box::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+      transform: rotate(45deg);
+      transition: all 0.3s;
+    }
+    .logo-box:hover::before {
+      animation: shimmer 1.5s;
+    }
+    @keyframes shimmer {
+      0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+    }
+    .logo-text { color:white; font-weight: 800; font-size: 1.2rem; margin:0; letter-spacing: -0.3px; display: flex; align-items: center; }
     .logo-text span.logo-highlight { color: var(--success); }
 
-    .nav-links { display: flex; align-items: center; gap: 1.5rem; }
-    .nav-links a { color: var(--text); text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: 0.2s; }
-    .nav-links a:hover { color: white; }
+    .nav-links { display: flex; align-items: center; gap: 0.5rem; }
+    .nav-links > li { position: relative; }
+    .nav-links a { color: var(--text); text-decoration: none; font-weight: 600; font-size: 0.7rem; transition: 0.2s; padding: 0.3rem 0.5rem; border-radius: 6px; }
+    .nav-links a:hover { color: white; background: rgba(255,255,255,0.05); }
+
+    /* Dropdown Styles */
+    .nav-dropdown { position: relative; }
+    .nav-dropdown-toggle { cursor: pointer; display: flex; align-items: center; gap: 0.5rem; }
+    .nav-dropdown-toggle::after { content: '▼'; font-size: 0.7rem; transition: 0.2s; }
+    .nav-dropdown:hover .nav-dropdown-toggle::after { transform: rotate(180deg); }
+
+    .nav-dropdown-menu {
+      position: absolute; top: 100%; left: 0; min-width: 280px;
+      background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(15px);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+      padding: 1rem; z-index: 1000; opacity: 0; visibility: hidden;
+      transform: translateY(-10px); transition: all 0.3s ease;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+
+
+    .nav-dropdown:hover .nav-dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+
+    .dropdown-section { margin-bottom: 1rem; }
+    .dropdown-section:last-child { margin-bottom: 0; }
+    .dropdown-title { font-size: 0.75rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
+    .dropdown-links { display: flex; flex-direction: column; gap: 0.3rem; }
+    .dropdown-links a { padding: 0.4rem 0.6rem; font-size: 0.85rem; font-weight: 500; border-radius: 6px; }
+    .dropdown-links a:hover { background: rgba(0, 212, 255, 0.1); color: var(--primary); }
+
+    /* Search Bar */
+    .search-container { position: relative; margin-left: 1rem; }
+    .search-input {
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      color: white; padding: 0.4rem 2.5rem 0.4rem 1rem; border-radius: 20px;
+      font-size: 0.85rem; width: 200px; outline: none; transition: 0.3s;
+    }
+    .search-input::placeholder { color: #94a3b8; }
+    .search-input:focus { width: 250px; background: rgba(255,255,255,0.15); border-color: var(--primary); }
+    .search-btn {
+      position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%);
+      background: none; border: none; color: var(--primary); cursor: pointer; font-size: 1rem;
+    }
 
     .header-ctas { display: flex; align-items: center; gap: 1rem; }
     .btn-login { color: white; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
@@ -286,12 +379,43 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
     .lang-option:last-child { border-bottom: none; }
     .lang-option:hover { background: rgba(0, 212, 255, 0.1); }
 
-    .global-footer { padding: 5rem 5% 3rem; background: #020617; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 4rem; }
-    .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 4rem; max-width: 1200px; margin: 0 auto; }
-    .footer-col h3 { color: white; margin-bottom: 1.5rem; font-size: 1.1rem; }
-    .footer-col a { display: block; color: var(--text); text-decoration: none; margin-bottom: 0.8rem; font-weight: 500; font-size: 0.9rem; transition: 0.2s; }
-    .footer-col a:hover { color: var(--success); }
-    .footer-bottom { border-top: 1px solid rgba(255,255,255,0.05); margin-top: 4rem; padding-top: 2rem; text-align: center; color: var(--light); font-size: 0.85rem; }
+    .global-footer { padding: 10rem 5% 4rem; background: #020617; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 6rem; position: relative; z-index: 10; }
+    .footer-grid { display: grid; grid-template-columns: 1.5fr repeat(4, 1fr); gap: 3rem; max-width: 1400px; margin: 0 auto; }
+    .footer-col h3.footer-title { color: white; margin-bottom: 2rem; font-size: 1.15rem; font-weight: 800; letter-spacing: -0.5px; text-transform: uppercase; }
+    .footer-links { display: flex; flex-direction: column; gap: 0.8rem; }
+    .footer-links a { color: var(--text); text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .footer-links a:hover { color: var(--primary); transform: translateX(5px); }
+    .branding-col .footer-description { font-size: 1rem; color: #94a3b8; line-height: 1.7; margin-bottom: 2rem; max-width: 300px; }
+    .footer-socials { display: flex; gap: 1.2rem; }
+    .footer-socials a { color: var(--text); transition: 0.3s; }
+    .footer-socials a:hover { color: var(--primary); transform: translateY(-3px); }
+    
+    /* Footer Newsletter */
+    .newsletter-text { font-size: 0.9rem; color: #94a3b8; margin-bottom: 1rem; }
+    .footer-newsletter { display: flex; gap: 0.5rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 0.3rem; border-radius: 12px; }
+    .footer-newsletter input { flex: 1; background: transparent; border: none; color: white; padding: 0.5rem 0.8rem; font-size: 0.85rem; outline: none; }
+    .footer-newsletter button { background: var(--primary); color: black; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+    .footer-newsletter button:hover { transform: scale(1.05); background: var(--success); }
+
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,0.05); margin-top: 6rem; padding-top: 3rem; text-align: center; color: #475569; font-size: 0.85rem; }
+
+    .mt-6 { margin-top: 1.5rem; }
+
+    @media (max-width: 1200px) {
+      .footer-grid { grid-template-columns: repeat(3, 1fr); gap: 3rem; }
+      .branding-col { grid-column: span 3; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 3rem; }
+    }
+    @media (max-width: 768px) {
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+      .branding-col { grid-column: span 2; }
+      .newsletter-col { grid-column: span 2; padding-top: 3rem; border-top: 1px solid rgba(255,255,255,0.05); }
+    }
+    @media (max-width: 480px) {
+      .footer-grid { grid-template-columns: 1fr; gap: 2.5rem; text-align: center; }
+      .branding-col, .newsletter-col { grid-column: span 1; }
+      .footer-socials, .footer-newsletter { justify-content: center; max-width: 300px; margin-left: auto; margin-right: auto; }
+      .footer-links a:hover { transform: scale(1.05); }
+    }
 
     /* Security Section Styles */
     .security-section {
@@ -378,7 +502,7 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
 
     .security-highlight {
       font-size: 1.3rem;
-      color: #00d4ff;
+      color: var(--primary);
       margin-bottom: 1rem;
       font-weight: 700;
     }
@@ -498,9 +622,40 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
     .mobile-nav {
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: flex-start;
       gap: 1.5rem;
-      text-align: center;
+      text-align: left;
+      padding: 2rem 1rem;
+      max-width: 100%;
+    }
+    .mobile-section {
+      width: 100%;
+      margin-bottom: 2rem;
+    }
+    .mobile-section:last-child { margin-bottom: 1rem; }
+    .mobile-section-title {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .mobile-section a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 0.5rem 0;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+    .mobile-section a:hover {
+      background: rgba(0, 212, 255, 0.1);
+      color: var(--primary);
+      padding-left: 1rem;
     }
     .mobile-nav a {
       color: white;
@@ -551,9 +706,11 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
   </style>
 </head>
 <body>
+  <NeuralBackground />
   <div class="skip-links">
     <a href="#main-content" class="skip-link">Pular para conteúdo principal</a>
     <a href="#main-nav" class="skip-link">Pular para navegação</a>
+    <a href="#breadcrumb-nav" class="skip-link">Pular para breadcrumbs</a>
   </div>
   <canvas id="neural-bg" class="neural-canvas" style="display: none;"></canvas>
   
@@ -565,7 +722,7 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
   <script is:inline>
     // Gerenciador de Fundo Global
     (function() {
-      const bgType = localStorage.getItem('getnexo-bg-type') || 'blobs';
+      const bgType = localStorage.getItem('getnexo-bg-type') || 'neural';
       const neuralCanvas = document.getElementById('neural-bg');
       const oldBg = document.getElementById('old-bg');
 
@@ -585,17 +742,6 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
       });
     })();
 
-    // Fix Rocket Loader preload warning & Crossorigin issues
-    document.addEventListener('DOMContentLoaded', () => {
-      // Handle all hoisted scripts
-      document.querySelectorAll('script[src*="_astro/hoisted"]').forEach(s => {
-        s.crossOrigin = 'anonymous';
-      });
-      // Handle preloads
-      document.querySelectorAll('link[rel="preload"][as="script"]').forEach(l => {
-        l.crossOrigin = 'anonymous';
-      });
-    });
   </script>
 
   <!-- Neural Background Controls -->
@@ -636,7 +782,7 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
     .neural-controls .control-btn {
       width: 45px; height: 45px; border-radius: 50%;
       background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3);
-      color: #00d4ff; font-size: 18px; cursor: pointer;
+      color: var(--primary); font-size: 18px; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       transition: 0.3s; backdrop-filter: blur(10px);
     }
@@ -658,14 +804,14 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
       border-radius: 3px; outline: none;
     }
     .control-group input[type="range"]::-webkit-slider-thumb {
-      appearance: none; width: 16px; height: 16px; background: #00d4ff;
+      appearance: none; width: 16px; height: 16px; background: var(--primary);
       border-radius: 50%; cursor: pointer;
     }
     .control-group select {
       background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
       color: white; padding: 5px 8px; border-radius: 6px;
     }
-    #speed-value { color: #00d4ff; font-size: 0.8rem; text-align: right; }
+    #speed-value { color: var(--primary); font-size: 0.8rem; text-align: right; }
 
     @keyframes slideInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
 
@@ -699,9 +845,59 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
       <span class="logo-text">Get<span class="logo-highlight">Nexo</span></span>
     </a>
     <nav class="nav-links">
-      <a href={`/${lang}/produtos`}>{t.menu.solutions}</a>
-      <a href={`/${lang}/integracoes`}>{t.menu.integrations}</a>
-      <a href={`/${lang}/loja`}>{t.menu.store}</a>
+      <!-- Menu Soluções Simplificado -->
+      <div class="nav-dropdown">
+        <a href={`/${lang}/solucoes-completas`} class="nav-dropdown-toggle">Soluções</a>
+        <div class="nav-dropdown-menu">
+          <div class="dropdown-links">
+            <a href={`/${lang}/chat-ia-24h`}>🤖 Chatbot IA 24h</a>
+            <a href={`/${lang}/sistema-tickets-inteligente`}>🎫 Sistema de Tickets</a>
+            <a href={`/${lang}/dashboard-analytics-real-time`}>📊 Analytics</a>
+            <a href={`/${lang}/programa-pontos-fidelidade`}>🏆 Programa Fidelidade</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Menu Integrações Simplificado -->
+      <div class="nav-dropdown">
+        <a href={`/${lang}/integracoes-completas`} class="nav-dropdown-toggle">Integrações</a>
+        <div class="nav-dropdown-menu">
+          <div class="dropdown-links">
+            <a href={`/${lang}/shopify-integracao-avancada`}>🛍️ Shopify</a>
+            <a href={`/${lang}/woocommerce-full-sync`}>🛒 WooCommerce</a>
+            <a href={`/${lang}/pagseguro-uol`}>💳 PagSeguro</a>
+            <a href={`/${lang}/api-rest-documentada`}>🔄 APIs</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Menu Loja Simplificado -->
+      <div class="nav-dropdown">
+        <a href={`/${lang}/loja-personalizada-enterprise`} class="nav-dropdown-toggle">Loja</a>
+        <div class="nav-dropdown-menu">
+          <div class="dropdown-links">
+            <a href={`/${lang}/white-label-completo-personalizado`}>🎨 White Label</a>
+            <a href={`/${lang}/progressive-web-app-completo`}>📱 PWA</a>
+            <a href={`/${lang}/multicanal-omnichannel-completo`}>📞 Multicanal</a>
+            <a href={`/${lang}/visual-workflow-builder`}>⚙️ Automação</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Menu Fidelidade Simplificado -->
+      <div class="nav-dropdown">
+        <a href={`/${lang}/fidelidade-retencao-completa`} class="nav-dropdown-toggle">Fidelidade</a>
+        <div class="nav-dropdown-menu">
+          <div class="dropdown-links">
+            <a href={`/${lang}/programa-pontos-fidelidade-premium`}>🏆 Programa Pontos</a>
+            <a href={`/${lang}/email-marketing-personalizado-ia`}>📧 Email Marketing</a>
+            <a href={`/${lang}/customer-analytics-dashboard`}>📊 Analytics</a>
+            <a href={`/${lang}/referral-program-viral`}>🌟 Referral</a>
+          </div>
+        </div>
+      </div>
+
+      <a href={`/${lang}/analytics`}>{t.menu.analytics}</a>
       <a href={`/${lang}/precos`}>{t.menu.pricing}</a>
       <a href={`/${lang}/como-funciona`}>{t.menu.how_it_works}</a>
       <a href={`/${lang}/blog`}>{t.menu.blog}</a>
@@ -738,9 +934,40 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
   <!-- Mobile Menu Overlay -->
   <div id="mobile-menu" class="mobile-menu">
     <nav class="mobile-nav">
-      <a href="/produtos">🚀 Soluções</a>
-      <a href="/integracoes">🔗 Integrações</a>
-      <a href="/precos">💰 Preços</a>
+      <div class="mobile-section">
+        <span class="mobile-section-title">🚀 Soluções</span>
+        <a href="/chat-ia">🤖 Chatbot IA 24h</a>
+        <a href="/sistema-tickets">🎫 Sistema de Tickets</a>
+        <a href="/gamificacao-vendas">🏆 Gamificação de Vendas</a>
+        <a href="/dashboard-analytics">📊 Analytics Dashboard</a>
+        <a href="/criptografia-end-to-end">🔒 Segurança LGPD</a>
+      </div>
+
+      <div class="mobile-section">
+        <span class="mobile-section-title">🔗 Integrações</span>
+        <a href="/shopify-integracao">🛍️ Shopify</a>
+        <a href="/woocommerce">🛒 WooCommerce</a>
+        <a href="/pagseguro">💳 PagSeguro</a>
+        <a href="/correios">📦 Correios</a>
+        <a href="/api-rest">🔄 API REST</a>
+      </div>
+
+      <div class="mobile-section">
+        <span class="mobile-section-title">🛍️ Loja</span>
+        <a href="/white-label">🎨 White Label</a>
+        <a href="/pwa">📱 PWA</a>
+        <a href="/multicanal">📞 Multicanal</a>
+      </div>
+
+      <div class="mobile-section">
+        <span class="mobile-section-title">🏆 Fidelidade</span>
+        <a href="/pontos-fidelidade">⭐ Programa de Pontos</a>
+        <a href="/email-marketing">📧 Email Marketing</a>
+        <a href="/lifetime-value">💎 Lifetime Value</a>
+      </div>
+
+      <a href="/analytics">📊 Analytics Completo</a>
+      <a href="/precos">💰 Planos e Preços</a>
       <a href="/como-funciona">⚙️ Como Funciona</a>
       <a href="/blog">📝 Blog</a>
       <a href="/suporte">🛟 Suporte</a>
@@ -749,6 +976,18 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
       <a href="/criar-bot" class="mobile-cta">Testar Grátis →</a>
     </nav>
   </div>
+
+  <!-- Breadcrumbs Navigation -->
+  <nav aria-label="Breadcrumb" class="breadcrumb-nav" id="breadcrumb-nav" style="display: none;">
+    <div class="breadcrumb-container">
+      <ol class="breadcrumb-list">
+        <li class="breadcrumb-item">
+          <a href="/" class="breadcrumb-link">Home</a>
+        </li>
+        <!-- Breadcrumbs will be populated by JavaScript -->
+      </ol>
+    </div>
+  </nav>
 
   <main id="main-content">
     <slot />
@@ -762,69 +1001,79 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
   <!-- Cookie Consent Banner -->
   <CookieConsent />
 
-  <footer class="global-footer">
+  <!-- Clippy-style Assistants -->
+  <ClippyAssistants />
+
+  <footer class="global-footer" id="main-footer">
     <div class="footer-grid">
-      <div class="footer-col">
-        <a href="/" class="logo-link" style="margin-bottom:1rem;" aria-label="GetNexo Home">
+      <!-- Coluna 1: Branding e Trust -->
+      <div class="footer-col branding-col">
+        <a href="/" class="logo-link" aria-label="GetNexo Home - Automação WhatsApp e IA">
           <div class="logo-box" aria-hidden="true">N</div>
           <span class="logo-text">Get<span class="logo-highlight">Nexo</span></span>
         </a>
-        <p style="font-size:0.9rem; color:#cbd5e1; line-height:1.5;">{t.footer.description}</p>
-        <div style="display:flex; gap:1rem; margin-top:1.5rem;">
-          <!-- Facebook -->
-          <a href="https://facebook.com/getnexo" style="color:var(--text); transition:0.3s;" aria-label="Facebook">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg>
-          </a>
-          <!-- WhatsApp -->
-          <a href="#" style="color:var(--text); transition:0.3s;" aria-label="WhatsApp">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
-          </a>
-          <!-- Instagram -->
-          <a href="https://instagram.com/getnexo" style="color:var(--text); transition:0.3s;" aria-label="Instagram">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-          </a>
-          <!-- LinkedIn -->
-          <a href="https://linkedin.com/company/getnexo" style="color:var(--text); transition:0.3s;" aria-label="LinkedIn">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-          </a>
-          <!-- YouTube -->
-          <a href="https://youtube.com/@getnexo" style="color:var(--text); transition:0.3s;" aria-label="YouTube">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-          </a>
-          <!-- TikTok -->
-          <a href="https://tiktok.com/@getnexo" style="color:var(--text); transition:0.3s;" aria-label="TikTok">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.17-2.81-.6-4.03-1.37-.01 3.23 0 6.48-.01 9.72-.02 1.93-.78 3.8-2.24 5.06-1.48 1.28-3.51 1.83-5.46 1.58-1.93-.21-3.71-1.3-4.84-2.87-1.14-1.58-1.54-3.62-1.07-5.54.43-1.84 1.75-3.41 3.5-4.09.43-.17.88-.31 1.34-.39v4.03c-.22.07-.43.16-.63.28-.73.44-1.21 1.21-1.28 2.06-.08.9.32 1.84 1.05 2.4.74.56 1.74.73 2.65.45.92-.28 1.66-1.07 1.89-2.01.07-.26.09-.52.09-.78V0l.88.02z"/></svg>
-          </a>
-          <!-- Email -->
-          <a href="mailto:contato@getnexo.com.br" style="color:var(--text); transition:0.3s;" aria-label="Email">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M0 3v18h24v-18h-24zm6.623 7.929l-4.623 5.712v-9.458l4.623 3.746zm-4.141-5.929h19.035l-9.517 7.713-9.518-7.713zm5.694 7.188l3.824 3.099 3.83-3.104 5.612 8.138h-18.745l5.479-8.133zm9.201-1.259l4.623-3.746v9.458l-4.623-5.712z"/></svg>
-          </a>
+        <p class="footer-description">
+          A plataforma líder em <strong>automação de WhatsApp e IA Generativa</strong>. Escalamos sua operação comercial com inteligência, segurança e foco em conversão.
+        </p>
+        <div class="footer-socials">
+          <a href="https://facebook.com/getnexo" aria-label="Facebook GetNexo - Novidades em Automação"><svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg></a>
+          <a href="https://instagram.com/getnexo" aria-label="Instagram GetNexo - Dicas de Vendas WhatsApp"><svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+          <a href="https://linkedin.com/company/getnexo" aria-label="LinkedIn GetNexo - Insights Corporativos"><svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
         </div>
       </div>
+
+      <!-- Coluna 2: Plataforma de Automação -->
       <div class="footer-col">
-        <h3>{t.footer.platform}</h3>
-        <a href="/produtos">{t.menu.solutions}</a>
-        <a href="/produtos/automacao">Automação IA</a>
-        <a href="/produtos/vendas">Vendas & PIX</a>
-        <a href="/integracoes">{t.menu.integrations}</a>
-        <a href="/precos">{t.menu.pricing}</a>
+        <h3 class="footer-title">Plataforma & IA</h3>
+        <div class="footer-links">
+          <a href={`/${lang}/produtos`} title="Nossas Soluções de Automação WhatsApp e Chat IA">Soluções Completas</a>
+          <a href={`/${lang}/fidelidade`} title="Sistema de Fidelização e Recompensa com IA">Programa de Fidelidade</a>
+          <a href={`/${lang}/analytics`} title="Dashboard de Analytics e BI para WhatsApp">Analytics Enterprise</a>
+          <a href={`/${lang}/integracoes`} title="Integrações com CRM, Google Sheets, n8n e mais">Integrações de API</a>
+          <a href={`/${lang}/loja`} title="Plugins e Complementos para sua Operação">Loja GetNexo</a>
+          <a href={`/${lang}/precos`} title="Planos e Preços Assistente Virtual WhatsApp">Tabela de Preços</a>
+        </div>
       </div>
+
+      <!-- Coluna 3: Soluções por Setor (SEO) -->
       <div class="footer-col">
-        <h3>{t.footer.resources}</h3>
-        <a href="/blog">{t.menu.blog}</a>
-        <a href="/documentacao">Documentação</a>
-        <a href="/faq">FAQ</a>
-        <a href="/changelog">Novidades</a>
-        <a href="/api">API Reference</a>
+        <h3 class="footer-title">Soluções por Setor</h3>
+        <div class="footer-links">
+          <a href="/blog/whatsapp-automação-imobiliaria" title="Automação WhatsApp para Imobiliárias e Corretores">Imobiliárias</a>
+          <a href="/blog/whatsapp-clinicas-saude-lgpd" title="Agendamento Automático para Clínicas e Médicos">Saúde & Clínicas</a>
+          <a href="/blog/chatbot-infoprodutores-escala" title="Chatbot para Infoprodutores, Cursos e Lançamentos">Infoprodutores</a>
+          <a href="/blog/vendas-preditivas-ia" title="IA de Vendas para E-commerce e Lojas Virtuais">E-commerce</a>
+          <a href="/blog/automacao-agendamento-liberais" title="Automação para Profissionais Liberais e Consultores">Profissionais Liberais</a>
+          <a href="/blog/saas-growth-whatsapp-api" title="Estratégias de Growth para Empresas de Software SaaS">SaaS & Startups</a>
+        </div>
       </div>
+
+      <!-- Coluna 4: Recursos e Empresa -->
       <div class="footer-col">
-        <h3>{t.footer.company}</h3>
-        <a href="/sobre">Sobre Nós</a>
-        <a href="/contato">{t.menu.contact}</a>
-        <a href="/revenda">Programa de Revenda</a>
-        <a href="/privacidade">Privacidade</a>
-        <a href="/termos">Termos de Uso</a>
-        <a href="/acessibilidade" title="Certificações de Acessibilidade WCAG 2.2 AA">Acessibilidade</a>
+        <h3 class="footer-title">Recursos & Empresa</h3>
+        <div class="footer-links">
+          <a href="/blog" title="Blog GetNexo: Estratégias de Vendas e IA">Blog de Vendas</a>
+          <a href="/documentacao" title="Documentação Técnica e Tutoriais para Desenvolvedores">Documentação API</a>
+          <a href="/faq" title="Perguntas Frequentes sobre Automação WhatsApp">Central de FAQ</a>
+          <a href="/sobre" title="Conheça a História da GetNexo">Sobre Nós</a>
+          <a href="/contato" title="Fale com nosso Time de Suporte e Vendas">Contato Oficial</a>
+          <a href="/revenda" title="Seja um Parceiro e Revenda GetNexo">Programa de Revenda</a>
+        </div>
+      </div>
+
+      <!-- Coluna 5: Newsletter & Compliance -->
+      <div class="footer-col newsletter-col">
+        <h3 class="footer-title">Escala Semanal</h3>
+        <p class="newsletter-text">Receba táticas de IA e automação direto no seu e-mail.</p>
+        <form class="footer-newsletter">
+          <input type="email" placeholder="Seu melhor e-mail" required />
+          <button type="submit" aria-label="Inscrever-se na Newsletter">🚀</button>
+        </form>
+        <div class="footer-links mt-6">
+          <a href="/privacidade" title="Políticas de Privacidade e LGPD">Privacidade</a>
+          <a href="/termos" title="Termos de Uso do Serviço">Termos</a>
+          <a href="/acessibilidade" title="Acessibilidade Digital WCAG 2.2">Acessibilidade</a>
+        </div>
       </div>
     </div>
 
@@ -900,14 +1149,14 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
     </div>
 
     <div class="footer-bottom">
-      <p>{t.footer.rights}</p>
+      <p>{t.footer.rights} | <strong>GetNexo</strong>: A vanguarda em Automação WhatsApp e IA para Negócios.</p>
     </div>
   </footer>
 
 
 
   <!-- Live Pulse Engine UI -->
-  <div id="live-pulse" class="pulse-toast glass-panel" style="display:none;">
+  <div id="live-pulse" class="pulse-toast glass-panel" style="display:none;" onclick="window.location.href='/chat-ia'">
     <div class="pulse-icon">⚡</div>
     <div class="pulse-content">
       <span class="pulse-title">Nexus Work</span>
@@ -921,9 +1170,15 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
       padding: 1rem 1.5rem; display: flex; align-items: center; gap: 1rem;
       border-color: rgba(0, 255, 157, 0.2); z-index: 1000;
       animation: toastSlideIn 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      cursor: pointer;
+      transition: all 0.3s ease;
     }
-    .pulse-icon { font-size: 1.2rem; color: #00ff9d; filter: drop-shadow(0 0 5px #00ff9d); }
-    .pulse-title { display: block; font-size: 0.7rem; font-weight: 800; color: #00ff9d; text-transform: uppercase; letter-spacing: 1px; }
+    .pulse-toast:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 255, 157, 0.3);
+    }
+    .pulse-icon { font-size: 1.2rem; color: var(--success); filter: drop-shadow(0 0 5px var(--success)); }
+    .pulse-title { display: block; font-size: 0.7rem; font-weight: 800; color: var(--success); text-transform: uppercase; letter-spacing: 1px; }
     #pulse-message { color: white; font-size: 0.85rem; font-weight: 600; margin: 0; }
     @keyframes toastSlideIn { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
   </style>
@@ -999,13 +1254,13 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
       transition: 0.2s;
     }
     .palette-item:hover, .palette-item.active {
-      background: rgba(0, 212, 255, 0.1); color: #00d4ff;
+      background: rgba(0, 212, 255, 0.1); color: var(--primary);
     }
     .palette-item span { font-size: 1.1rem; }
 
     /* Quick Answer Box */
     .quick-answer-box { margin: 1rem 1.5rem; padding: 1.2rem; border-color: rgba(0, 212, 255, 0.3); background: rgba(0, 212, 255, 0.05); }
-    .qa-tag { font-size: 0.6rem; font-weight: 900; color: #00d4ff; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; display: block; }
+    .qa-tag { font-size: 0.6rem; font-weight: 900; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; display: block; }
     #qa-text { font-size: 0.9rem; color: #e2e8f0; line-height: 1.5; margin: 0; }
 
     .palette-footer {
@@ -1027,8 +1282,8 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
   <!-- PWA Install Prompt -->
   <script is:inline src="/custom/js/pwa-install.js" defer></script>
 
-  <!-- Magic Map User Tracking -->
-  <script src="/tracking.js" defer></script>
+  <!-- Magic Map User Tracking - Temporarily disabled -->
+  <!-- <script src="/tracking.js" defer></script> -->
 
   <!-- GetNexo Custom Widget -->
   <script is:inline data-cfasync="false" nonce={nonce}>
@@ -1038,12 +1293,31 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
         const delay = isMobile ? 3000 : 0;
 
         setTimeout(() => {
-          var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-          g.src="https://api.getnexo.com.br/widget.js";
-          g.defer = true;
-          g.async = true;
-          g.setAttribute('data-bot', 'central');
-          s.parentNode.insertBefore(g,s);
+          // Widget temporariamente desabilitado
+          return;
+          // Verificar se o servidor da API está acessível antes de tentar carregar
+          fetch('/widget.js', {
+            method: 'HEAD',
+            mode: 'no-cors'
+          }).then((response) => {
+            if (response.ok || response.type === 'opaque') {
+              var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+              g.src="/widget.js?v=" + Date.now();
+              g.defer = true;
+              g.async = true;
+              g.setAttribute('data-bot', 'central');
+
+              g.onerror = function() {
+                console.warn('[Widget] GetNexo widget failed to load - API unavailable');
+              };
+
+              s.parentNode.insertBefore(g,s);
+            } else {
+              console.warn('[Widget] GetNexo API returned error status:', response.status);
+            }
+          }).catch((error) => {
+            console.warn('[Widget] GetNexo API unavailable:', error.message);
+          });
         }, delay);
       };
 
@@ -1074,6 +1348,397 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
           });
         });
       }
+
+      // Language Selector Toggle Logic
+      const langBtn = document.getElementById('lang-btn');
+      const langDropdown = document.getElementById('lang-dropdown');
+
+      if (langBtn && langDropdown) {
+        langBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          langDropdown.classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+          if (!langBtn.contains(e.target) && !langDropdown.contains(e.target)) {
+            langDropdown.classList.remove('show');
+          }
+        });
+      }
+    });
+
+    // Detecção de Feriados Festivos com Configuração
+    (async function() {
+      try {
+        const [feriadosResponse, configResponse] = await Promise.all([
+          fetch('/data/feriados.json'),
+          fetch('/data/feriados-config.json')
+        ]);
+
+        const data = await feriadosResponse.json();
+        const config = await configResponse.json();
+        const hoje = new Date().toISOString().slice(0,10);
+        const ano = new Date().getFullYear();
+
+        // Função para calcular datas variáveis
+        function calculaCarnaval(year) {
+          const pascoa = calculaPascoa(year);
+          const carnaval = new Date(pascoa);
+          carnaval.setDate(carnaval.getDate() - 47);
+          return carnaval.toISOString().slice(0,10);
+        }
+
+        function calculaPascoa(year) {
+          const a = year % 19;
+          const b = Math.floor(year / 100);
+          const c = year % 100;
+          const d = Math.floor(b / 4);
+          const e = b % 4;
+          const f = Math.floor((b + 8) / 25);
+          const g = Math.floor((b - f + 1) / 3);
+          const h = (19 * a + b - d - g + 15) % 30;
+          const i = Math.floor(c / 4);
+          const k = c % 4;
+          const l = (32 + 2 * e + 2 * i - h - k) % 7;
+          const m = Math.floor((a + 11 * h + 22 * l) / 451);
+          const mes = Math.floor((h + l - 7 * m + 114) / 31);
+          const dia = ((h + l - 7 * m + 114) % 31) + 1;
+          return new Date(year, mes - 1, dia);
+        }
+
+        function calculaCorpus(year) {
+          const pascoa = calculaPascoa(year);
+          const corpus = new Date(pascoa);
+          corpus.setDate(corpus.getDate() + 60);
+          return corpus.toISOString().slice(0,10);
+        }
+
+        function blackFriday(year) {
+          const nov = new Date(year, 10, 1);
+          const diaSemana = nov.getDay();
+          const ultimaSexta = new Date(nov);
+          ultimaSexta.setDate(nov.getDate() + (5 - diaSemana + 26) % 7);
+          return ultimaSexta.toISOString().slice(0,10);
+        }
+
+        function segundoDomingo(mes, year) {
+          const primeiroDia = new Date(year, mes, 1);
+          const primeiroDomingo = new Date(primeiroDia);
+          primeiroDomingo.setDate(primeiroDia.getDate() + (7 - primeiroDia.getDay()));
+          const segundoDomingo = new Date(primeiroDomingo);
+          segundoDomingo.setDate(primeiroDomingo.getDate() + 7);
+          return segundoDomingo.toISOString().slice(0,10);
+        }
+
+        function terceiroQuintaNovembro(year) {
+          const nov = new Date(year, 10, 1);
+          const primeiraQuinta = new Date(nov);
+          primeiraQuinta.setDate(nov.getDate() + (4 - nov.getDay() + 7) % 7);
+          const terceiraQuinta = new Date(primeiraQuinta);
+          terceiraQuinta.setDate(primeiraQuinta.getDate() + 14);
+          return terceiraQuinta.toISOString().slice(0,10);
+        }
+
+        function terceiraSegundaAbril(year) {
+          const abr = new Date(year, 3, 1);
+          const primeiraSegunda = new Date(abr);
+          primeiraSegunda.setDate(abr.getDate() + (1 - abr.getDay() + 7) % 7);
+          const terceiraSegunda = new Date(primeiraSegunda);
+          terceiraSegunda.setDate(primeiraSegunda.getDate() + 14);
+          return terceiraSegunda.toISOString().slice(0,10);
+        }
+
+        function sextaAntesPrimavera(year) {
+          const primavera = new Date(year, 8, 22); // 22 de setembro
+          if (primavera.getDay() === 5) primavera.setDate(primavera.getDate() - 7);
+          while (primavera.getDay() !== 5) primavera.setDate(primavera.getDate() - 1);
+          return primavera.toISOString().slice(0,10);
+        }
+
+        function variavelOrgulho(year) {
+          return `${year}-06-28`; // Último dia de junho
+        }
+
+        // Verificar feriado
+        const feriadoHoje = data.feriados.find(f => {
+          if (f.data === hoje) return true;
+          if (f.data === 'variavel_carnaval' && calculaCarnaval(ano) === hoje) return true;
+          if (f.data === 'variavel_pascoa' && calculaPascoa(ano).toISOString().slice(0,10) === hoje) return true;
+          if (f.data === 'variavel_corpus' && calculaCorpus(ano) === hoje) return true;
+          if (f.data === 'variavel_blackfriday' && blackFriday(ano) === hoje) return true;
+          if (f.data === 'segundo_domingo_maio' && segundoDomingo(4, ano) === hoje) return true;
+          if (f.data === 'segundo_domingo_agosto' && segundoDomingo(7, ano) === hoje) return true;
+          if (f.data === 'segundo_domingo_setembro' && segundoDomingo(8, ano) === hoje) return true;
+          if (f.data === 'primeiro_domingo_julho' && segundoDomingo(6, ano) === hoje) return true;
+          if (f.data === 'terceira_quinta_novembro' && terceiroQuintaNovembro(ano) === hoje) return true;
+          if (f.data === 'terceira_segunda_abril' && terceiraSegundaAbril(ano) === hoje) return true;
+          if (f.data === 'sexta_antes_primavera' && sextaAntesPrimavera(ano) === hoje) return true;
+          if (f.data === 'variavel_orgulho' && variavelOrgulho(ano) === hoje) return true;
+          return false;
+        });
+
+        if (feriadoHoje) {
+          // Verificar se o feriado está ativo na configuração
+          const feriadoAtivo = config.config.feriados[feriadoHoje.nome]?.ativo ?? true;
+
+          if (feriadoAtivo) {
+            document.body.classList.add('feriado-ativo', feriadoHoje.efeito);
+            console.log(`🎉 Feriado ativado: ${feriadoHoje.nome} - Efeito: ${feriadoHoje.efeito}`);
+
+            // Expor frase do bot para o widget
+            window.feriadoFrase = feriadoHoje.bot_frase[Astro.locals.lang] || feriadoHoje.bot_frase.pt;
+          } else {
+            console.log(`🚫 Feriado desativado: ${feriadoHoje.nome} - Efeito bloqueado pela configuração`);
+          }
+        }
+      } catch (error) {
+        console.log('Erro ao carregar feriados:', error);
+      }
+    })();
+  </script>
+
+  <!-- Breadcrumb Generator Script -->
+  <script is:inline>
+    // Breadcrumb Generator
+    function generateBreadcrumbs() {
+      const path = window.location.pathname;
+      const segments = path.split('/').filter(segment => segment !== '');
+
+      // Breadcrumb mappings for better names
+      const breadcrumbMap = {
+        'chat-ia': 'Chat Inteligente',
+        'sistema-tickets': 'Sistema de Tickets',
+        'analise-sentimento': 'Análise de Sentimento',
+        'magic-replies': 'Magic Replies',
+        'gamificacao-vendas': 'Gamificação de Vendas',
+        'programa-pontos': 'Programa de Pontos',
+        'documentacao': 'Documentação',
+        'api': 'API',
+        'integracoes': 'Integrações',
+        'suporte': 'Suporte',
+        'faq': 'Perguntas Frequentes',
+        'blog': 'Blog',
+        'admin': 'Administração'
+      };
+
+      const breadcrumbNav = document.getElementById('breadcrumb-nav');
+      const breadcrumbList = document.querySelector('.breadcrumb-list');
+
+      if (segments.length === 0) {
+        breadcrumbNav.style.display = 'none';
+        return;
+      }
+
+      breadcrumbNav.style.display = 'block';
+
+      // Clear existing breadcrumbs except home
+      while (breadcrumbList.children.length > 1) {
+        breadcrumbList.removeChild(breadcrumbList.lastChild);
+      }
+
+      let currentPath = '';
+
+      segments.forEach((segment, index) => {
+        currentPath += '/' + segment;
+
+        const listItem = document.createElement('li');
+        listItem.className = 'breadcrumb-item';
+
+        const link = document.createElement('a');
+        link.href = currentPath;
+        link.className = 'breadcrumb-link';
+
+        // Check if it's the last segment (current page)
+        if (index === segments.length - 1) {
+          link.classList.add('active');
+          link.setAttribute('aria-current', 'page');
+        }
+
+        // Use mapped name or capitalize segment
+        const displayName = breadcrumbMap[segment] ||
+          segment.split('-').map(word =>
+            word.charAt(0).toUpperCase() + word.slice(1)
+          ).join(' ');
+
+        link.textContent = displayName;
+        listItem.appendChild(link);
+        breadcrumbList.appendChild(listItem);
+      });
+    }
+
+    // Generate breadcrumbs on page load and when navigating (for SPA-like behavior)
+    document.addEventListener('DOMContentLoaded', generateBreadcrumbs);
+    window.addEventListener('popstate', generateBreadcrumbs);
+  </script>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" class="back-to-top" aria-label="Voltar ao topo">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M18 15l-6-6-6 6"/>
+    </svg>
+  </button>
+
+  <style is:global>
+    /* Breadcrumb Styles */
+    .breadcrumb-nav {
+      background: rgba(3, 7, 18, 0.8);
+      backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding: 0.8rem 5%;
+      margin-top: 80px;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+    }
+
+    .breadcrumb-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .breadcrumb-list {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      flex-wrap: wrap;
+    }
+
+    .breadcrumb-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .breadcrumb-item:not(:last-child)::after {
+      content: '›';
+      color: var(--text);
+      font-size: 0.9rem;
+      margin-left: 0.5rem;
+    }
+
+    .breadcrumb-link {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: color 0.2s;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+    }
+
+    .breadcrumb-link:hover {
+      color: var(--primary);
+      background: rgba(0, 212, 255, 0.1);
+    }
+
+    .breadcrumb-link.active {
+      color: var(--success);
+      font-weight: 600;
+      background: rgba(0, 255, 157, 0.1);
+    }
+
+    .breadcrumb-link.active:hover {
+      background: rgba(0, 255, 157, 0.15);
+    }
+
+    /* Mobile Breadcrumb Adjustments */
+    @media (max-width: 768px) {
+      .breadcrumb-nav {
+        padding: 0.6rem 5%;
+        margin-top: 70px;
+      }
+
+      .breadcrumb-link {
+        font-size: 0.75rem;
+        padding: 0.15rem 0.3rem;
+      }
+
+      .breadcrumb-item:not(:last-child)::after {
+        font-size: 0.8rem;
+        margin-left: 0.3rem;
+      }
+    }
+
+    /* Hide breadcrumbs on landing pages */
+    .breadcrumb-nav.hidden {
+      display: none !important;
+    }
+
+    /* Back to Top Button Styles */
+    .back-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, var(--primary), var(--success));
+      color: black;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
+    }
+
+    .back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .back-to-top:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0, 212, 255, 0.4);
+    }
+
+    .back-to-top:active {
+      transform: translateY(-2px);
+    }
+
+    /* Mobile Back to Top Adjustments */
+    @media (max-width: 768px) {
+      .back-to-top {
+        bottom: 20px;
+        right: 20px;
+        width: 45px;
+        height: 45px;
+      }
+    }
+  </style>
+
+  <!-- Back to Top Script -->
+  <script is:inline>
+    // Back to Top Button Logic
+    document.addEventListener('DOMContentLoaded', () => {
+      const backToTopBtn = document.getElementById('back-to-top');
+      
+      if (!backToTopBtn) return;
+
+      // Show/hide button based on scroll position
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 500) {
+          backToTopBtn.classList.add('visible');
+        } else {
+          backToTopBtn.classList.remove('visible');
+        }
+      });
+
+      // Smooth scroll to top when clicked
+      backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
     });
   </script>
 

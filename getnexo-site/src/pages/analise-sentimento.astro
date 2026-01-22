@@ -1,0 +1,654 @@
+---
+import Layout from '../layouts/Layout.astro';
+const title = "Análise de Sentimento WhatsApp - IA Detecta Emoções em Tempo Real | GetNexo";
+const description = "Análise de sentimento avançada no WhatsApp. IA detecta satisfação, frustração, urgência e raiva automaticamente. 92% precisão, escalonamento inteligente, relatórios NPS.";
+const keywords = "analise sentimento whatsapp, ia emocao whatsapp, deteccao sentimento tempo real, analise sentimento cliente, nps whatsapp, satisfacao cliente whatsapp, escalonamento automatico whatsapp";
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  <script type="application/ld+json" is:inline>
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://getnexo.com.br/analise-sentimento",
+        "name": "GetNexo Sentiment Analysis",
+        "applicationCategory": "BusinessApplication",
+        "description": "Análise avançada de sentimento no WhatsApp com IA que detecta emoções em tempo real",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "BRL",
+          "description": "Funcionalidade incluída no plano gratuito"
+        },
+        "aggregateRating": {
+          "@ratingValue": "4.9",
+          "ratingCount": "500"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Como funciona a análise de sentimento?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Nossa IA analisa cada mensagem em tempo real, identificando 7 tipos de emoções: satisfação, frustração, urgência, raiva, neutralidade, alegria e preocupação. Processamento em menos de 3 segundos."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Qual é a precisão da detecção?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "92% de precisão após treinamento específico no português brasileiro. Melhoramos continuamente com dados reais de clientes."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-badge">🎭 IA Emocional</div>
+      <h1>Conheça os Sentimentos dos Seus Clientes Antes que Eles Digam</h1>
+      <p>IA que lê nas entrelinhas do WhatsApp. Detecta satisfação, frustração, urgência e raiva automaticamente. Escalona atendimentos críticos e gera relatórios NPS precisos.</p>
+      <div class="hero-features">
+        <span>✅ 92% Precisão</span>
+        <span>✅ 7 Emoções Detectadas</span>
+        <span>✅ Escalona Automaticamente</span>
+      </div>
+      <div class="hero-ctas">
+        <a href="/criar-bot" class="btn-primary">Ativar Análise de Sentimento</a>
+        <button onclick="verDemoSentimento()" class="btn-secondary">Ver Demo em Tempo Real</button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="sentiment-dashboard">
+        <div class="dashboard-header">🎭 Análise de Sentimento - Tempo Real</div>
+        <div class="sentiment-stream">
+          <div class="sentiment-item positive">
+            <div class="sentiment-icon">😊</div>
+            <div class="sentiment-content">
+              <span class="sentiment-text">"Adorei o produto! Chegou super rápido"</span>
+              <span class="sentiment-score">95% Satisfação</span>
+            </div>
+          </div>
+          <div class="sentiment-item urgent">
+            <div class="sentiment-icon">😤</div>
+            <div class="sentiment-content">
+              <span class="sentiment-text">"Já faz 3 dias que pedi e nada!"</span>
+              <span class="sentiment-score">78% Frustração - ESCALADO</span>
+            </div>
+          </div>
+          <div class="sentiment-item neutral">
+            <div class="sentiment-icon">😐</div>
+            <div class="sentiment-content">
+              <span class="sentiment-text">"Quanto custa o frete?"</span>
+              <span class="sentiment-score">45% Neutro</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Emotion Detection Deep Dive -->
+  <section class="emotions-deep">
+    <div class="section-header">
+      <h2>7 Emoções Detectadas com Precisão Científica</h2>
+      <p>Cada sentimento é uma oportunidade para melhorar seu atendimento</p>
+    </div>
+
+    <div class="emotions-grid">
+      <div class="emotion-card satisfaction">
+        <div class="emotion-header">
+          <div class="emotion-icon">😊</div>
+          <h3>Satisfação</h3>
+        </div>
+        <p>Clientes felizes que elogiam seu produto/serviço. Use para identificar pontos positivos e gerar cases de sucesso.</p>
+        <div class="emotion-stats">
+          <span>Precisão: 94%</span>
+          <span>Auto-gerar: Cases de sucesso</span>
+        </div>
+      </div>
+
+      <div class="emotion-card frustration">
+        <div class="emotion-header">
+          <div class="emotion-icon">😤</div>
+          <h3>Frustração</h3>
+        </div>
+        <p>Clientes insatisfeitos com algum aspecto. Escalona automaticamente para atendimento prioritário VIP.</p>
+        <div class="emotion-stats">
+          <span>Precisão: 91%</span>
+          <span>Escalonamento: Automático</span>
+        </div>
+      </div>
+
+      <div class="emotion-card urgency">
+        <div class="emotion-header">
+          <div class="emotion-icon">🚨</div>
+          <h3>Urgência</h3>
+        </div>
+        <p>Situações que precisam de resposta imediata. Prioriza na fila e notifica equipe com alertas sonoros.</p>
+        <div class="emotion-stats">
+          <span>Precisão: 96%</span>
+          <span>Resposta: <5 min</span>
+        </div>
+      </div>
+
+      <div class="emotion-card anger">
+        <div class="emotion-header">
+          <div class="emotion-icon">😡</div>
+          <h3>Raiva</h3>
+        </div>
+        <p>Clientes muito irritados. Escalona para gerente sênior e gera relatório automático de incidente crítico.</p>
+        <div class="emotion-stats">
+          <span>Precisão: 89%</span>
+          <span>Escalação: Gerente</span>
+        </div>
+      </div>
+
+      <div class="emotion-card joy">
+        <div class="emotion-header">
+          <div class="emotion-icon">🤩</div>
+          <h3>Alegria</h3>
+        </div>
+        <p>Clientes extremamente felizes. Oportunidade para upselling e indicação. Gera cupons de agradecimento automático.</p>
+        <div class="emotion-stats">
+          <span>Precisão: 87%</span>
+          <span>Auto-ação: Cupom desconto</span>
+        </div>
+      </div>
+
+      <div class="emotion-card concern">
+        <div class="emotion-header">
+          <div class="emotion-icon">😟</div>
+          <h3>Preocupação</h3>
+        </div>
+        <p>Clientes preocupados com algum aspecto. Oferece garantias extras e suporte adicional automaticamente.</p>
+        <div class="emotion-stats">
+          <span>Precisão: 85%</span>
+          <span>Auto-resposta: Garantias</span>
+        </div>
+      </div>
+
+      <div class="emotion-card neutral">
+        <div class="emotion-header">
+          <div class="emotion-icon">😐</div>
+          <h3>Neutro</h3>
+        </div>
+        <p>Conversas objetivas sem emoção aparente. Mantém atendimento padrão mas monitora evolução da conversa.</p>
+        <div class="emotion-stats">
+          <span>Precisão: 93%</span>
+          <span>Ação: Monitoramento</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technology Behind -->
+  <section class="technology-section">
+    <div class="section-header">
+      <h2>Tecnologia de Ponta em Processamento de Linguagem Natural</h2>
+      <p>Modelo treinado especificamente para o português brasileiro do WhatsApp</p>
+    </div>
+
+    <div class="tech-features">
+      <div class="tech-feature">
+        <div class="tech-icon">🧠</div>
+        <h3>Modelo BERT Customizado</h3>
+        <p>Baseado no BERTimbau, fine-tunado com milhões de mensagens reais do WhatsApp brasileiro. Entende gírias, erros de digitação e contexto cultural.</p>
+      </div>
+
+      <div class="tech-feature">
+        <div class="tech-icon">⚡</div>
+        <h3>Processamento em Tempo Real</h3>
+        <p>Análise completa em menos de 3 segundos. Funciona mesmo com mensagens longas, emojis e áudios transcritos automaticamente.</p>
+      </div>
+
+      <div class="tech-feature">
+        <div class="tech-icon">📚</div>
+        <h3>Dataset Brasileiro</h3>
+        <p>Treinado com 50 milhões de mensagens reais do WhatsApp brasileiro. Conhece o jeitinho brasileiro de falar e expressar emoções.</p>
+      </div>
+
+      <div class="tech-feature">
+        <div class="tech-icon">🔄</div>
+        <h3>Aprendizado Contínuo</h3>
+        <p>Melhora automaticamente com cada interação. Correções manuais ensinam o sistema a ser mais preciso com o tempo.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Auto Actions -->
+  <section class="auto-actions">
+    <div class="section-header">
+      <h2>Ações Automáticas Baseadas em Sentimento</h2>
+      <p>Cada emoção dispara uma resposta inteligente e personalizada</p>
+    </div>
+
+    <div class="actions-workflow">
+      <div class="action-step">
+        <div class="action-icon">1️⃣</div>
+        <h3>Detecção</h3>
+        <p>Mensagem chega → IA analisa → Sentimento identificado</p>
+      </div>
+
+      <div class="action-arrow">→</div>
+
+      <div class="action-step">
+        <div class="action-icon">2️⃣</div>
+        <h3>Classificação</h3>
+        <p>Sentimento mapeado → Urgência calculada → Prioridade definida</p>
+      </div>
+
+      <div class="action-arrow">→</div>
+
+      <div class="action-step">
+        <div class="action-icon">3️⃣</div>
+        <h3>Ação Automática</h3>
+        <p>Regra aplicada → Notificações enviadas → Relatório gerado</p>
+      </div>
+    </div>
+
+    <div class="actions-examples">
+      <div class="action-example">
+        <div class="action-trigger">😤 Frustração Detectada</div>
+        <div class="action-result">→ Escalonamento para atendente sênior + cupom de desconto automático</div>
+      </div>
+
+      <div class="action-example">
+        <div class="action-trigger">🤩 Alegria Extrema</div>
+        <div class="action-result">→ Geração de case de sucesso + indicação automática para amigos</div>
+      </div>
+
+      <div class="action-example">
+        <div class="action-trigger">🚨 Urgência Alta</div>
+        <div class="action-result">→ Notificação push para equipe + resposta prioritária em 2 min</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Performance Metrics -->
+  <section class="performance-metrics">
+    <div class="section-header">
+      <h2>Resultados Comprovados em Produção</h2>
+      <p>Números que mostram o impacto real da análise de sentimento</p>
+    </div>
+
+    <div class="metrics-dashboard">
+      <div class="metric-item">
+        <div class="metric-value">92%</div>
+        <div class="metric-label">Precisão Média</div>
+        <div class="metric-breakdown">
+          <span>Satisfação: 94%</span>
+          <span>Frustração: 91%</span>
+          <span>Urgência: 96%</span>
+        </div>
+      </div>
+
+      <div class="metric-item">
+        <div class="metric-value">3s</div>
+        <div class="metric-label">Tempo de Análise</div>
+        <div class="metric-breakdown">
+          <span>Processamento: <1s</span>
+          <span>Classificação: <2s</span>
+          <span>Ação: Instantâneo</span>
+        </div>
+      </div>
+
+      <div class="metric-item">
+        <div class="metric-value">67%</div>
+        <div class="metric-label">Redução Reclamações</div>
+        <div class="metric-breakdown">
+          <span>Escalonamento: +45%</span>
+          <span>Resolução: +22%</span>
+          <span>Prevenção: +89%</span>
+        </div>
+      </div>
+
+      <div class="metric-item">
+        <div class="metric-value">4.8/5</div>
+        <div class="metric-label">NPS Melhorado</div>
+        <div class="metric-breakdown">
+          <span>Antes: 3.2/5</span>
+          <span>Depois: 4.8/5</span>
+          <span>Melhoria: +50%</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Real Cases -->
+  <section class="real-cases">
+    <div class="section-header">
+      <h2>Casos Reais de Análise de Sentimento</h2>
+      <p>Como a detecção emocional salvou vendas e melhorou atendimento</p>
+    </div>
+
+    <div class="cases-stories">
+      <div class="case-story">
+        <div class="case-emotion">😤 Frustração → 🤩 Satisfação</div>
+        <h3>"Já faz 3 dias que pedi e nada!"</h3>
+        <p>Cliente frustrado com demora na entrega. Sistema detectou frustração alta, escalou automaticamente para gerente que resolveu com frete express grátis. Cliente deu 5 estrelas e indicou 3 amigos.</p>
+        <div class="case-result">💰 Venda salva + 3 indicações + Avaliação 5★</div>
+      </div>
+
+      <div class="case-story">
+        <div class="case-emotion">🚨 Urgência → ✅ Resolvido</div>
+        <h3>"PRECISO devolver AGORA!"</h3>
+        <p>Cliente em pânico precisava devolver produto urgente. Detecção de urgência ativou protocolo VIP: coleta agendada em 1 hora, reembolso imediato no cartão. Cliente se tornou embaixador da marca.</p>
+        <div class="case-result">🏆 Cliente VIP + Marketing boca a boca</div>
+      </div>
+
+      <div class="case-story">
+        <div class="case-emotion">😊 Satisfação → 💎 Lifetime Value</div>
+        <h3>"Melhor atendimento que já tive!"</h3>
+        <p>Cliente satisfeito elogiou atendimento. Sistema detectou alegria, gerou automaticamente cupom de 20% desconto e adicionou programa fidelidade. Cliente fez 3 compras extras no mês.</p>
+        <div class="case-result">📈 +180% no lifetime value do cliente</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NPS Integration -->
+  <section class="nps-integration">
+    <div class="section-header">
+      <h2>NPS Automático e Relatórios Avançados</h2>
+      <p>Transforme cada interação em dados acionáveis</p>
+    </div>
+
+    <div class="nps-features">
+      <div class="nps-feature">
+        <div class="nps-icon">📊</div>
+        <h3>Dashboard NPS em Tempo Real</h3>
+        <p>Acompanhe satisfação do cliente em tempo real. Gráficos atualizados a cada interação com drill-down por produto, região e período.</p>
+      </div>
+
+      <div class="nps-feature">
+        <div class="nps-icon">🎯</div>
+        <h3>Pesquisas Automáticas</h3>
+        <p>Após cada atendimento, sistema envia pesquisa NPS personalizada baseada no sentimento detectado durante a conversa.</p>
+      </div>
+
+      <div class="nps-feature">
+        <div class="nps-icon">📈</div>
+        <h3>Relatórios Executivos</h3>
+        <p>Relatórios semanais com tendências de satisfação, pontos de melhoria e comparações com benchmarks do mercado.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="pricing-section">
+    <div class="section-header">
+      <h2>Análise de Sentimento Gratuita</h2>
+      <p>Funcionalidade essencial incluída em todos os planos</p>
+    </div>
+
+    <div class="pricing-comparison">
+      <div class="pricing-card included">
+        <div class="card-header">
+          <h3>Plano Gratuito</h3>
+          <div class="price">R$ 0</div>
+        </div>
+        <ul class="features-list">
+          <li>✅ Análise de Sentimento Básica</li>
+          <li>✅ 7 Emoções Detectadas</li>
+          <li>✅ Escalona Frustração Alta</li>
+          <li>✅ Dashboard NPS Simples</li>
+          <li>✅ Até 1.000 mensagens/mês</li>
+        </ul>
+        <a href="/criar-bot" class="cta-button">Começar Grátis</a>
+      </div>
+
+      <div class="pricing-card premium">
+        <div class="card-header">
+          <h3>Business</h3>
+          <div class="price">R$ 197<span>/mês</span></div>
+        </div>
+        <ul class="features-list">
+          <li>✅ Tudo do Gratuito</li>
+          <li>✅ Ações Automáticas Avançadas</li>
+          <li>✅ Relatórios NPS Detalhados</li>
+          <li>✅ API de Integração</li>
+          <li>✅ Mensagens Ilimitadas</li>
+        </ul>
+        <a href="/precos" class="cta-button secondary">Ver Planos</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section">
+    <div class="section-header">
+      <h2>Perguntas Sobre Análise de Sentimento</h2>
+    </div>
+
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>A análise funciona com áudios e imagens?</summary>
+        <div class="faq-answer">
+          <p>Sim! Áudios são transcritos automaticamente pela IA e analisados pelo mesmo modelo de sentimento. Imagens são analisadas por OCR para texto e detecção visual básica de expressões.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Como sei que a detecção está correta?</summary>
+        <div class="faq-answer">
+          <p>Dashboard mostra precisão em tempo real. Você pode corrigir manualmente qualquer detecção errada - o sistema aprende com suas correções e melhora automaticamente.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>A análise funciona em outros idiomas?</summary>
+        <div class="faq-answer">
+          <p>Atualmente otimizada para português brasileiro. Suporte para espanhol, inglês e francês em desenvolvimento. Precisão cai para ~75% em outros idiomas.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>E se o cliente usar sarcasmo ou ironia?</summary>
+        <div class="faq-answer">
+          <p>Nosso modelo é treinado para detectar sarcasmo contextual. Quando não tem certeza (abaixo de 70% confiança), classifica como "neutro" e prioriza para análise humana.</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta">
+    <div class="cta-content">
+      <h2>Entenda seus Clientes como Nunca Antes</h2>
+      <p>Análise de sentimento 24/7 + escalonamento automático = Satisfação do cliente no máximo. Setup em 5 minutos.</p>
+      <a href="/criar-bot" class="btn-primary-large">Ativar Análise de Sentimento →</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero-section { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; padding: 8rem 5%; max-width: 1400px; margin: 0 auto; align-items: center; }
+  .hero-badge { background: rgba(0, 212, 255, 0.1); color: #00d4ff; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; font-weight: 600; display: inline-block; margin-bottom: 2rem; }
+  .hero-content h1 { font-size: 3rem; font-weight: 900; margin-bottom: 1.5rem; background: linear-gradient(90deg, #00d4ff, #00ff9d); -webkit-background-clip: text; color: transparent; }
+  .hero-content p { font-size: 1.2rem; color: #e2e8f0; margin-bottom: 2rem; line-height: 1.6; }
+  .hero-features { display: flex; gap: 1rem; margin-bottom: 3rem; flex-wrap: wrap; }
+  .hero-features span { background: rgba(0, 255, 157, 0.1); color: #00ff9d; padding: 0.5rem 1rem; border-radius: 15px; font-size: 0.9rem; font-weight: 600; }
+  .hero-ctas { display: flex; gap: 1.5rem; }
+  .btn-primary { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1rem 2rem; border-radius: 12px; font-weight: 800; text-decoration: none; transition: 0.3s; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3); }
+  .btn-secondary { border: 1px solid rgba(255,255,255,0.3); color: white; padding: 1rem 2rem; border-radius: 12px; font-weight: 600; text-decoration: none; transition: 0.3s; cursor: pointer; }
+  .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+
+  .sentiment-dashboard { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2rem; }
+  .dashboard-header { font-size: 1.2rem; font-weight: 800; color: #00d4ff; text-align: center; margin-bottom: 2rem; }
+  .sentiment-stream { display: flex; flex-direction: column; gap: 1rem; }
+  .sentiment-item { display: flex; align-items: center; gap: 1rem; padding: 1rem; border-radius: 10px; border-left: 4px solid; }
+  .sentiment-item.positive { background: rgba(0, 255, 157, 0.1); border-left-color: #00ff9d; }
+  .sentiment-item.urgent { background: rgba(255, 100, 100, 0.1); border-left-color: #ff6464; }
+  .sentiment-item.neutral { background: rgba(148, 163, 184, 0.1); border-left-color: #94a3b8; }
+  .sentiment-icon { font-size: 1.5rem; }
+  .sentiment-content { flex: 1; }
+  .sentiment-text { display: block; color: white; margin-bottom: 0.3rem; }
+  .sentiment-score { font-size: 0.8rem; color: #94a3b8; }
+
+  .emotions-deep { padding: 8rem 5%; background: rgba(15, 23, 42, 0.5); }
+  .emotions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 4rem; }
+  .emotion-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2rem; transition: 0.3s; }
+  .emotion-card:hover { transform: translateY(-5px); border-color: rgba(0, 212, 255, 0.3); }
+  .emotion-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+  .emotion-icon { font-size: 2rem; }
+  .emotion-card h3 { color: white; font-size: 1.3rem; margin: 0; }
+  .emotion-card p { color: #e2e8f0; line-height: 1.6; margin-bottom: 1.5rem; }
+  .emotion-stats { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .emotion-stats span { background: rgba(0, 212, 255, 0.1); color: #00d4ff; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 600; }
+
+  .technology-section { padding: 8rem 5%; max-width: 1400px; margin: 0 auto; }
+  .tech-features { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-top: 4rem; }
+  .tech-feature { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2.5rem; text-align: center; }
+  .tech-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .tech-feature h3 { color: white; font-size: 1.4rem; margin-bottom: 1rem; }
+  .tech-feature p { color: #e2e8f0; line-height: 1.6; }
+
+  .auto-actions { padding: 8rem 5%; background: rgba(15, 23, 42, 0.5); }
+  .actions-workflow { display: flex; align-items: center; justify-content: center; gap: 2rem; margin: 4rem 0; flex-wrap: wrap; }
+  .action-step { text-align: center; padding: 2rem; background: rgba(255,255,255,0.05); border-radius: 15px; min-width: 200px; }
+  .action-icon { font-size: 2rem; margin-bottom: 1rem; }
+  .action-step h3 { color: white; font-size: 1.2rem; margin-bottom: 0.5rem; }
+  .action-step p { color: #e2e8f0; font-size: 0.9rem; }
+  .action-arrow { font-size: 2rem; color: #00d4ff; }
+  .actions-examples { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 4rem; }
+  .action-example { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 1.5rem; }
+  .action-trigger { color: #00d4ff; font-weight: 800; margin-bottom: 0.5rem; display: block; }
+  .action-result { color: #e2e8f0; }
+
+  .performance-metrics { padding: 8rem 5%; background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1)); }
+  .metrics-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; max-width: 1000px; margin: 0 auto; }
+  .metric-item { text-align: center; padding: 2rem; background: rgba(255,255,255,0.05); border-radius: 20px; }
+  .metric-value { font-size: 3rem; font-weight: 900; color: #00ff9d; margin-bottom: 1rem; }
+  .metric-label { color: white; font-weight: 600; margin-bottom: 1rem; }
+  .metric-breakdown { display: flex; flex-direction: column; gap: 0.3rem; }
+  .metric-breakdown span { font-size: 0.8rem; color: #94a3b8; }
+
+  .real-cases { padding: 8rem 5%; background: rgba(15, 23, 42, 0.5); }
+  .cases-stories { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; margin-top: 4rem; }
+  .case-story { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2.5rem; }
+  .case-emotion { color: #00d4ff; font-weight: 800; margin-bottom: 1rem; display: block; }
+  .case-story h3 { color: white; font-size: 1.3rem; margin-bottom: 1rem; }
+  .case-story p { color: #e2e8f0; line-height: 1.6; margin-bottom: 1rem; }
+  .case-result { background: rgba(0, 255, 157, 0.1); color: #00ff9d; padding: 0.8rem; border-radius: 10px; font-weight: 600; }
+
+  .nps-integration { padding: 8rem 5%; max-width: 1400px; margin: 0 auto; }
+  .nps-features { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-top: 4rem; }
+  .nps-feature { text-align: center; padding: 2rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; }
+  .nps-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .nps-feature h3 { color: white; font-size: 1.4rem; margin-bottom: 1rem; }
+  .nps-feature p { color: #e2e8f0; line-height: 1.6; }
+
+  .pricing-section { padding: 8rem 5%; background: rgba(15, 23, 42, 0.5); }
+  .pricing-comparison { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-top: 4rem; max-width: 800px; margin-left: auto; margin-right: auto; }
+  .pricing-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 3rem; text-align: center; }
+  .pricing-card.premium { border-color: #00d4ff; box-shadow: 0 0 30px rgba(0, 212, 255, 0.2); }
+  .card-header h3 { color: white; font-size: 1.5rem; margin-bottom: 1rem; }
+  .price { font-size: 3rem; font-weight: 900; color: #00ff9d; margin-bottom: 0.5rem; }
+  .price span { font-size: 1rem; color: #94a3b8; }
+  .features-list { list-style: none; text-align: left; margin: 2rem 0; }
+  .features-list li { color: #e2e8f0; margin-bottom: 0.8rem; }
+  .cta-button { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1rem 2rem; border-radius: 12px; font-weight: 800; text-decoration: none; display: inline-block; margin-top: 2rem; }
+  .cta-button.secondary { background: transparent; color: #00d4ff; border: 1px solid #00d4ff; }
+
+  .faq-section { padding: 8rem 5%; max-width: 800px; margin: 0 auto; }
+  .faq-list { margin-top: 4rem; }
+  .faq-item { border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; margin-bottom: 1rem; overflow: hidden; }
+  .faq-item summary { padding: 1.5rem; background: rgba(15, 23, 42, 0.6); color: white; font-weight: 600; cursor: pointer; }
+  .faq-item summary:hover { background: rgba(15, 23, 42, 0.8); }
+  .faq-answer { padding: 0 1.5rem 1.5rem; color: #e2e8f0; line-height: 1.6; }
+
+  .final-cta { padding: 8rem 5%; background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1)); text-align: center; }
+  .cta-content h2 { font-size: 3rem; font-weight: 900; margin-bottom: 1.5rem; background: linear-gradient(90deg, #00d4ff, #00ff9d); -webkit-background-clip: text; color: transparent; }
+  .cta-content p { font-size: 1.2rem; color: #e2e8f0; margin-bottom: 3rem; }
+  .btn-primary-large { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1.5rem 3rem; border-radius: 15px; font-weight: 900; font-size: 1.2rem; text-decoration: none; transition: 0.3s; }
+  .btn-primary-large:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(0, 212, 255, 0.4); }
+
+  .section-header { text-align: center; margin-bottom: 4rem; }
+  .section-header h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; background: linear-gradient(90deg, #00d4ff, #00ff9d); -webkit-background-clip: text; color: transparent; }
+  .section-header p { color: #e2e8f0; font-size: 1.1rem; }
+
+  @media (max-width: 900px) {
+    .hero-section { grid-template-columns: 1fr; text-align: center; }
+    .emotions-grid { grid-template-columns: 1fr; }
+    .tech-features { grid-template-columns: 1fr; }
+    .actions-workflow { flex-direction: column; gap: 1rem; }
+    .actions-examples { grid-template-columns: 1fr; }
+    .cases-stories { grid-template-columns: 1fr; }
+    .nps-features { grid-template-columns: 1fr; }
+    .pricing-comparison { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script is:inline>
+  function verDemoSentimento() {
+    // Interactive sentiment demo
+    const sentiments = [
+      { text: "Adorei o produto! 5 estrelas!", emotion: "satisfaction", score: "95%" },
+      { text: "Por que demorou tanto?", emotion: "frustration", score: "78%" },
+      { text: "Quanto custa?", emotion: "neutral", score: "45%" },
+      { text: "ESTOU MUITO BRAVO!", emotion: "anger", score: "92%" },
+      { text: "UAU! Melhor compra da vida!", emotion: "joy", score: "98%" }
+    ];
+
+    let currentIndex = 0;
+    const interval = setInterval(() => {
+      const sentiment = sentiments[currentIndex];
+      const container = document.querySelector('.sentiment-stream');
+
+      const newItem = document.createElement('div');
+      newItem.className = `sentiment-item ${sentiment.emotion}`;
+      newItem.innerHTML = `
+        <div class="sentiment-icon">${getEmotionIcon(sentiment.emotion)}</div>
+        <div class="sentiment-content">
+          <span class="sentiment-text">"${sentiment.text}"</span>
+          <span class="sentiment-score">${sentiment.score} ${getEmotionLabel(sentiment.emotion)}</span>
+        </div>
+      `;
+
+      container.insertBefore(newItem, container.firstChild);
+
+      // Remove old items to keep only 3-4 visible
+      while (container.children.length > 4) {
+        container.removeChild(container.lastChild);
+      }
+
+      currentIndex = (currentIndex + 1) % sentiments.length;
+    }, 3000);
+
+    function getEmotionIcon(emotion) {
+      const icons = {
+        satisfaction: '😊',
+        frustration: '😤',
+        neutral: '😐',
+        anger: '😡',
+        joy: '🤩'
+      };
+      return icons[emotion] || '😐';
+    }
+
+    function getEmotionLabel(emotion) {
+      const labels = {
+        satisfaction: 'Satisfação',
+        frustration: 'Frustração',
+        neutral: 'Neutro',
+        anger: 'Raiva',
+        joy: 'Alegria'
+      };
+      return labels[emotion] || 'Neutro';
+    }
+  }
+
+  // Start demo automatically
+  setTimeout(verDemoSentimento, 2000);
+</script>

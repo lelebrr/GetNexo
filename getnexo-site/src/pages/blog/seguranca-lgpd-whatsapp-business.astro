@@ -1,0 +1,109 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Segurança e LGPD na API Oficial do WhatsApp: Protegendo sua Empresa",
+      "description": "Guia de segurança para WhatsApp Business API. Saiba como cumprir a LGPD, evitar banimentos e proteger os dados dos seus clientes.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-21",
+      "image": "/images/blog/seguranca_lgpd_whatsapp_business.png",
+      "articleSection": "Segurança & Compliance",
+      "keywords": "segurança whatsapp, lgpd whatsapp, api oficial meta, proteção de dados, compliance digital"
+    }
+  ]
+};
+---
+
+<Layout title="Segurança e LGPD WhatsApp | GetNexo">
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta animate-fade-in">Compliance • Jan 2026</div>
+      <h1 class="animate-slide-up">Segurança & LGPD:<br/><span class="text-primary">WhatsApp Business API</span></h1>
+      <p class="subtitle animate-fade-in delay-200">Proteção de dados não é opcional. Saiba como manter sua empresa segura e dentro da lei.</p>
+      
+      <img src="/images/blog/seguranca_lgpd_whatsapp_business.png" alt="Segurança e LGPD no WhatsApp Business" class="featured-image glass-panel" />
+    </header>
+
+    <div class="post-content">
+      <section id="importancia">
+        <h2>🛡️ Por que a Segurança Importa?</h2>
+        <p>Multas da LGPD e banimentos da Meta podem destruir um negócio em dias. Utilizar a API Oficial do WhatsApp não é apenas sobre funcionalidades, é sobre a <strong>integridade jurídica e reputacional</strong> da sua marca.</p>
+        <div class="glass-panel mt-8">
+          <p><strong>Aviso:</strong> O uso de versões "modificadas" ou automações não oficiais coloca seu número em risco imediato de banimento permanente.</p>
+        </div>
+      </section>
+
+      <section id="checkpoint">
+        <h2>✅ Checkpoint de Compliance</h2>
+        
+        <div class="stack-grid">
+          <div class="stack-card glass-panel blur">
+            <h4>Opt-in Explícito</h4>
+            <p>Sempre garanta que seu cliente consentiu em receber mensagens comerciais no WhatsApp.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Criptografia Ponta-a-Ponta</h4>
+            <p>Usando a infraestrutura GetNexo + Meta, suas conversas são blindadas contra interceptações.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Gestão de Dados</h4>
+            <p>Armazene apenas o necessário e ofereça a opção de "Esquecimento" conforme a LGPD.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="getnexo-secure">
+        <h2>🔒 O Diferencial GetNexo</h2>
+        <p>A GetNexo é construída sobre uma arquitetura de segurança nível bancário. Nossos servidores seguem padrões internacionais de proteção e oferecemos ferramentas nativas de auditoria para que você saiba exatamente quem acessou quais dados e quando.</p>
+      </section>
+
+      <div class="final-cta animate-scale-up">
+        <h3>Sua empresa segura 24/7</h3>
+        <p>Migre para a API Oficial com a GetNexo e durma tranquilo sabendo que seus dados estão protegidos.</p>
+        <div class="cta-buttons mt-8">
+          <a href="/criptografia-end-to-end" class="btn-primary">Ver Nível de Segurança</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+</Layout>
+
+<style>
+  :root {
+    --primary: #10b981;
+    --accent: #3b82f6;
+    --glass: rgba(15, 23, 42, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.05);
+  }
+
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  .meta { color: var(--primary); font-size: 0.8rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem; display: inline-block; padding: 0.5rem 1rem; background: rgba(16, 185, 129, 0.05); border: 1px solid var(--glass-border); border-radius: 50px; }
+  h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; color: white; }
+  .text-primary { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .subtitle { font-size: 1.25rem; color: #94a3b8; max-width: 700px; margin: 0 auto; line-height: 1.6; }
+  .featured-image { width: 100%; border-radius: 24px; margin-top: 3rem; object-fit: cover; height: 500px; border: 1px solid var(--glass-border); }
+  .post-content { color: #cbd5e1; line-height: 1.8; font-size: 1.15rem; }
+  h2 { font-size: 2.2rem; color: white; margin: 6rem 0 2rem; font-weight: 800; }
+  .glass-panel { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 2.5rem; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+  .stack-card { background: var(--glass); border: 1px solid var(--glass-border); padding: 2rem; border-radius: 20px; text-align: left; }
+  .stack-card h4 { color: var(--primary); margin-bottom: 1rem; font-size: 1.3rem; }
+  .final-cta { background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1)); border: 1px solid var(--primary); padding: 5rem 2rem; text-align: center; border-radius: 32px; margin-top: 8rem; }
+  .btn-primary { background: white; color: black; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; font-weight: 800; display: inline-block; transition: 0.3s; }
+  .btn-primary:hover { background: var(--primary); color: white; transform: translateY(-3px); box-shadow: 0 15px 30px rgba(16, 185, 129, 0.3); }
+  
+  strong { color: var(--primary); }
+
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade-in { animation: fade-in 1s ease forwards; }
+  .animate-slide-up { animation: slide-up 1s ease forwards; }
+</style>

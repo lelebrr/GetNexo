@@ -1,0 +1,23 @@
+const menu = { "home": "Accueil", "features": "Fonctionnalités", "solutions": "Solutions", "pricing": "Tarifs", "integrations": "Intégrations", "store": "Boutique", "loyalty": "Fidélité", "analytics": "Analytics", "how_it_works": "Comment ça marche", "blog": "Blog", "contact": "Contact" };
+const nav = { "login": "Connexion", "start_free": "Essai Gratuit" };
+const hero = { "title": "L'Intelligence Artificielle qui fait évoluer votre support", "subtitle": "Automatisez les conversations, générez des leads et vendez plus avec GetNexo. La plateforme d'IA complète pour votre entreprise.", "cta_primary": "Commencer Maintenant", "cta_secondary": "Voir la Démo" };
+const footer = { "description": "GetNexo - La prochaine geração de suporte com l'IA.", "rights": "© 2026 GetNexo. Tous los droits réservés.", "platform": "Plateforme", "resources": "Ressources", "company": "Entreprise" };
+const blog = { "title": "Blog GetNexo", "subtitle": "Apprenez à faire évoluer votre opération avec l'IA, l'automatisation avancée et le trafic WhatsApp haute performance.", "badge": "Stratégies & Insights", "read_more": "Lire l'article", "newsletter_title": "Échelle WhatsApp Chaque Semaine", "newsletter_subtitle": "Recevez des scripts et des tactiques d'automatisation directement dans votre e-mail.", "newsletter_button": "S'abonner", "placeholder_email": "Votre melhor e-mail" };
+const features_giant = { "magic_replies": { "title": "Magic Replies: l'IA qui Pense et Vend", "description": "Notre IA ne se contente pas de répondre ; elle comprend le contexte, l'intention et le sentiment du client pour conclure des ventes de manière autonome.", "f1": "Réponses Humanisées 24/7", "f2": "Entraînement Personnalisé", "f3": "Conversion à l'Échelle" }, "loyalty": { "title": "Système de Fidélité Natif", "description": "Transformez vos clients sporadiques en fans passionnés avec des points, des récompenses et une gamification intégrée à WhatsApp.", "f1": "Comptage de Points Automatique", "f2": "Échange dans le Chat", "f3": "Rétention de Clients" }, "analytics": { "title": "Power Analytics & BI en Temps Réel", "description": "Des décisions basées sur les données avec des tableaux de bord avancés affichant le ROI, la performance des canaux et les indicateurs de conversion instantanés.", "f1": "ROI des Campagnes", "f2": "Rapports de Ventes", "f3": "Indicateurs Géographiques" }, "clustering": { "title": "Segmentation Intelligente (Clustering)", "description": "Regroupez automatiquement vos clients par comportement d'achat et intérêt, permettant des envois ultra-personnalisés.", "f1": "IA Comportementale", "f2": "Tags Automatiques", "f3": "Analyse de Sentiment" }, "integrations": { "title": "Écosystème de 100+ Intégrations", "description": "Connectez GetNexo aux outils que vous utilisez déjà : Google Sheets, Calendar, Slack, Webhooks et bien plus encore.", "f1": "Synchronisation en Temps Réel", "f2": "Automatisation via n8n", "f3": "API Officielle et Robuste" } };
+const fr = {
+  menu,
+  nav,
+  hero,
+  footer,
+  blog,
+  features_giant
+};
+export {
+  blog,
+  fr as default,
+  features_giant,
+  footer,
+  hero,
+  menu,
+  nav
+};

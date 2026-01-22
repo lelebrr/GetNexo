@@ -1,0 +1,136 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Chatbot para Infoprodutores: Como Escalar Lançamentos com Automação",
+      "description": "Lançamentos meteorológicos ou perpétuos? Saiba como a automação de vendas no WhatsApp escala seu faturamento sem aumentar sua equipe de suporte.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-21",
+      "image": "/images/blog/chatbot-infotprodutores.png",
+      "articleSection": "Infoprodutos",
+      "keywords": "chatbot infoprodutos, lancamento whatsapp, automação de vendas curso, recuperar vendas infoproduto"
+    }
+  ]
+};
+---
+
+<Layout title="Automação para Infoprodutores e Lançamentos | GetNexo">
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta animate-fade-in">Escala • Jan 2026</div>
+      <h1 class="animate-slide-up">Escala para Infoprodutores:<br/><span class="text-primary">O Poder da Automação</span></h1>
+      <p class="subtitle animate-fade-in delay-200">Não deixe o seu carrinho de lançamentos explodir o seu suporte. Descubra como vender para milhares simultaneamente.</p>
+      
+      <div class="premium-hero-card glass-panel animate-fade-in">
+        <div class="visual-glow"></div>
+        <div class="visual-content">
+          <span class="visual-icon">🚀</span>
+          <h2 class="visual-title">Infoprodutos: Escala & Performance</h2>
+          <div class="visual-stats">
+            <div class="stat"><span>85%</span> conversão</div>
+            <div class="stat"><span>24/7</span> suporte IA</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="post-content">
+      <section id="pressao">
+        <h2>🤯 O Caos do Carrinho Aberto</h2>
+        <p>Todo infoprodutor sabe: no momento em que o carrinho abre, a avalanche de dúvidas no WhatsApp pode derrubar qualquer operação. "Tem certificado?", "Posso parcelar no boleto?", "Como recebo o acesso?". Sem automação, cada minuto de demora na resposta é um cliente que desiste da compra.</p>
+        
+        <div class="glass-panel mt-8">
+          <p><strong>Fato:</strong> 40% das vendas de infoprodutos ocorrem nas primeiras 2 horas de carrinho aberto. Resposta imediata não é luxo, é sobrevivência.</p>
+        </div>
+      </section>
+
+      <section id="estrategia-lancamento">
+        <h2>🎯 Funis de WhatsApp para Lançamentos de Elite</h2>
+        <p>Automatizar um lançamento não é apenas colocar um bot para responder. É criar um <strong>funil de persuasão dinâmico</strong>.</p>
+        
+        <div class="stack-grid">
+          <div class="stack-card glass-panel blur">
+            <h4>Aquecimento nos Grupos</h4>
+            <p>Gerencie milhares de grupos de WhatsApp simultaneamente, com disparos programados de conteúdo e escassez.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Recuperação de Checkout</h4>
+            <p>Se o lead parou no pagamento, a GetNexo envia um áudio automático do produtor quebrando a última objeção.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Pós-Venda e Onboarding</h4>
+            <p>Entregue os dados de acesso e as boas-vindas imediatamente após a confirmação do pagamento, reduzindo o churn.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="perpétuo">
+        <h2>🚀 E no Perpétuo? A IA é sua Melhor Vendedora</h2>
+        <p>No modelo perpétuo, a GetNexo mantém a constância. A IA generative qualifica quem tem o bônus hoje, explica a metodologia e leva o lead até a página de pagamento 24 horas por dia, 7 dias por semana.</p>
+      </section>
+
+      <div class="final-cta animate-scale-up">
+        <h3>Seu próximo 6 em 7 começa aqui.</h3>
+        <p>Prepare sua infraestrutura para o próximo lançamento e pare de perder vendas no suporte.</p>
+        <div class="cta-buttons mt-8">
+          <a href="/demo" class="btn-primary">Escalar meu Lançamento</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+</Layout>
+
+<style>
+  :root {
+    --primary: #00d4ff;
+    --accent: #00ff9d;
+    --glass: rgba(15, 23, 42, 0.7);
+    --glass-border: rgba(0, 212, 255, 0.1);
+  }
+
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  .meta { color: var(--primary); font-size: 0.8rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem; display: inline-block; padding: 0.5rem 1rem; background: rgba(0, 212, 255, 0.05); border: 1px solid var(--glass-border); border-radius: 50px; }
+  h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; color: white; }
+  .text-primary { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .subtitle { font-size: 1.25rem; color: #94a3b8; max-width: 700px; margin: 0 auto; line-height: 1.6; }
+  .premium-hero-card { 
+    width: 100%; border-radius: 32px; margin-top: 3rem; height: 450px; 
+    display: flex; align-items: center; justify-content: center; 
+    background: radial-gradient(circle at center, #0f172a, #020617); 
+    border: 1px solid var(--glass-border); position: relative; overflow: hidden;
+  }
+  .visual-glow {
+    position: absolute; width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(0, 212, 255, 0.15), transparent);
+    filter: blur(60px); top: -100px; right: -100px;
+  }
+  .visual-content { text-align: center; z-index: 2; }
+  .visual-icon { font-size: 5rem; display: block; margin-bottom: 1.5rem; filter: drop-shadow(0 0 20px var(--primary)); }
+  .visual-title { font-size: 2.5rem; font-weight: 900; color: white; margin-bottom: 1.5rem; }
+  .visual-stats { display: flex; gap: 2rem; justify-content: center; }
+  .stat { font-size: 0.9rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
+  .stat span { display: block; font-size: 1.5rem; color: white; }
+
+  .post-content { color: #cbd5e1; line-height: 1.8; font-size: 1.15rem; }
+  h2 { font-size: 2.2rem; color: white; margin: 6rem 0 2rem; font-weight: 800; }
+  .glass-panel { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 2.5rem; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+  .stack-card { background: var(--glass); border: 1px solid var(--glass-border); padding: 2rem; border-radius: 20px; text-align: left; }
+  .stack-card h4 { color: var(--primary); margin-bottom: 1rem; font-size: 1.3rem; }
+  .final-cta { background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1)); border: 1px solid var(--primary); padding: 5rem 2rem; text-align: center; border-radius: 32px; margin-top: 8rem; }
+  .btn-primary { background: white; color: black; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; font-weight: 800; display: inline-block; transition: 0.3s; }
+  .btn-primary:hover { background: var(--primary); color: white; transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0, 212, 255, 0.3); }
+
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade-in { animation: fade-in 1s ease forwards; }
+  .animate-slide-up { animation: slide-up 1s ease forwards; }
+</style>

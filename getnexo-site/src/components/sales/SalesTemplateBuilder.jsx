@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef } from 'react';
-import { Button } from '../design-system/components/Button';
-import { Input } from '../design-system/components/Input';
-import { Card } from '../design-system/components/Card';
+import { Button } from '../../design-system/components/Button';
+import { Input } from '../../design-system/components/Input';
+import { Card } from '../../design-system/components/Card';
 
 const SalesTemplateBuilder = ({ template, onSave, onCancel }) => {
     const [nodes, setNodes] = useState(template?.flow?.components || []);

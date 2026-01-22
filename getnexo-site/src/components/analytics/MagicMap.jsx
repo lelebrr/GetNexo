@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { toast } from 'react-toastify';
 
 const MagicMap = ({
     pageUrl = null,
@@ -383,8 +382,8 @@ const MagicMap = ({
                     <div className="space-y-2 max-h-40 overflow-y-auto">
                         {contextMessages.map((msg, index) => (
                             <div key={msg.session_id} className={`flex items-start gap-3 p-2 rounded text-sm ${msg.type === 'warning' ? 'bg-yellow-50 border-l-4 border-yellow-400' :
-                                    msg.type === 'success' ? 'bg-green-50 border-l-4 border-green-400' :
-                                        'bg-blue-50 border-l-4 border-blue-400'
+                                msg.type === 'success' ? 'bg-green-50 border-l-4 border-green-400' :
+                                    'bg-blue-50 border-l-4 border-blue-400'
                                 }`}>
                                 <span className="text-lg">{msg.icon}</span>
                                 <div className="flex-1">

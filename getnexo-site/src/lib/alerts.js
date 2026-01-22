@@ -166,12 +166,18 @@ export async function sendManualAlert(title, message, level = 'info', io) {
 
 // Verificar alertas periodicamente
 export function startAlertMonitoring(io) {
+    // Não executar alertas em desenvolvimento para evitar spam
+    if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'dev') {
+        console.info('Alertas desabilitados em ambiente de desenvolvimento');
+        return;
+    }
+
     setInterval(async () => {
         try {
             // Simular coleta de métricas (em produção, usar dados reais)
             const mockMetrics = {
                 avgResponseTime: Math.random() * 3000 + 500,
-                errorRate: Math.random() * 0.1,
+                errorRate: Math.random() * 0.05, // Reduzido para evitar alertas falsos
                 memoryUsage: Math.random() * 1000000000 + 500000000,
                 totalMemory: 2000000000
             };
@@ -185,7 +191,7 @@ export function startAlertMonitoring(io) {
         } catch (error) {
             console.error('Erro no monitoramento de alertas', { error: error.message });
         }
-    }, 300000); // A cada 5 minutos
+    }, 1800000); // A cada 30 minutos (menos frequente)
 }
 
 export default {

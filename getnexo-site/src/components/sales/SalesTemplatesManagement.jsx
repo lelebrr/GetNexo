@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from '../design-system/components/Button';
-import { Input } from '../design-system/components/Input';
-import { Card } from '../design-system/components/Card';
+import { Button } from '../../design-system/components/Button';
+import { Input } from '../../design-system/components/Input';
+import { Card } from '../../design-system/components/Card';
 import SalesTemplateBuilder from './SalesTemplateBuilder';
 
 const SalesTemplatesManagement = () => {

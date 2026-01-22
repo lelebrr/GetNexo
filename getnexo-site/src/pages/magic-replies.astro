@@ -1,0 +1,585 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SEO from '../components/SEO.astro';
+
+const title = "Magic Replies GetNexo - Respostas Inteligentes de IA no WhatsApp | Automação Conversacional";
+const description = "Magic Replies revoluciona o atendimento WhatsApp com IA que entende contexto completo, gera respostas personalizadas e aprende com cada interação. 95% precisão, respostas em 3 segundos.";
+const keywords = "magic replies whatsapp, respostas inteligentes ia, automação conversacional whatsapp, ia atendimento whatsapp, chatbot resposta inteligente, respostas automaticas whatsapp, ia whatsapp contexto, aprendizado continuo whatsapp, ia vendas whatsapp, chatbot inteligente, respostas automaticas conversacionais";
+
+const faqData = [
+  {
+    question: "Como funciona o Magic Replies?",
+    answer: "Magic Replies utiliza IA generativa treinada especificamente para seu negócio. Ela analisa o histórico completo da conversa, produtos já comprados, perfil do cliente e gera respostas personalizadas em 3 segundos."
+  },
+  {
+    question: "Quanto tempo leva para treinar a IA?",
+    answer: "Setup básico em 30 minutos. A IA começa respondendo imediatamente e alcança performance de especialista em 7 dias de uso contínuo."
+  },
+  {
+    question: "Qual é a precisão das respostas?",
+    answer: "95% de precisão na análise de sentimento e geração de respostas. Cada interação melhora a IA através de aprendizado contínuo."
+  },
+  {
+    question: "Magic Replies substitui meus vendedores?",
+    answer: "Não substitui completamente, mas potencializa muito! Cuida de 80% das interações rotineiras, liberando vendedores para vendas complexas."
+  },
+  {
+    question: "Como sei se as respostas estão boas?",
+    answer: "Dashboard mostra métricas em tempo real: satisfação do cliente, taxa de conversão, tempo de resposta. Você aprova ou rejeita respostas."
+  }
+];
+
+const breadcrumbs = [
+  { name: "Home", url: "/" },
+  { name: "Produtos", url: "/produtos" },
+  { name: "Magic Replies", url: "/magic-replies" }
+];
+---
+
+<SEO
+  title={title}
+  description={description}
+  keywords={keywords}
+  url="/magic-replies"
+  type="product"
+  breadcrumbs={breadcrumbs}
+  faq={faqData}
+/>
+
+<Layout title={title} description={description} keywords={keywords}>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-badge">✨ Tecnologia Exclusiva</div>
+      <h1>Magic Replies: IA que Conhece seus Clientes Melhor que Você</h1>
+      <p>Sistema de respostas inteligentes que entende contexto completo, gera respostas personalizadas e aprende com cada interação. Transforme conversas simples em vendas complexas.</p>
+      <div class="hero-features">
+        <span>✅ 95% Precisão</span>
+        <span>✅ 3s Resposta</span>
+        <span>✅ Contexto Completo</span>
+      </div>
+      <div class="hero-ctas">
+        <a href="/criar-bot" class="btn-primary">Ativar Magic Replies Grátis</a>
+        <button onclick="abrirDemo()" class="btn-secondary">Ver Demo em Ação</button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="magic-demo">
+        <div class="chat-window">
+          <div class="chat-header">Magic Replies Demo</div>
+          <div class="chat-messages" id="magic-chat">
+            <div class="message user">Olá, vocês têm tênis Nike Air Max?</div>
+            <div class="message bot typing">
+              <div class="typing-indicator">
+                <span></span><span></span><span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Technology -->
+  <section class="technology-deep">
+    <div class="section-header">
+      <h2>A Tecnologia Mais Avançada de IA Conversacional</h2>
+      <p>Magic Replies combina múltiplas tecnologias de IA para criar respostas impossíveis de distinguir de humanos</p>
+    </div>
+
+    <div class="tech-showcase">
+      <div class="tech-feature">
+        <div class="tech-icon">🧠</div>
+        <h3>Processamento de Linguagem Natural Avançado</h3>
+        <p>GPT-4 integrado com modelos customizados treinados especificamente para seu catálogo de produtos e histórico de vendas.</p>
+        <div class="tech-specs">
+          <span>🎯 Precisão: 95%</span>
+          <span>⚡ Velocidade: <3s</span>
+          <span>🗣️ Idiomas: 50+</span>
+        </div>
+      </div>
+
+      <div class="tech-feature">
+        <div class="tech-icon">📚</div>
+        <h3>Memória Conversacional Completa</h3>
+        <p>Lembra de todas as interações anteriores, produtos mostrados, preços discutidos e preferências do cliente.</p>
+        <div class="tech-specs">
+          <span>💾 Histórico: Ilimitado</span>
+          <span>🔍 Busca: Instantânea</span>
+          <span>🎭 Contexto: Completo</span>
+        </div>
+      </div>
+
+      <div class="tech-feature">
+        <div class="tech-icon">🎯</div>
+        <h3>Análise de Sentimento em Tempo Real</h3>
+        <p>Detecta emoções do cliente automaticamente: satisfação, urgência, frustração, raiva. Ajusta tom de voz dinamicamente.</p>
+        <div class="tech-specs">
+          <span>😊 Emoções: 7 tipos</span>
+          <span>📊 Precisão: 92%</span>
+          <span>🔄 Adaptação: Automática</span>
+        </div>
+      </div>
+
+      <div class="tech-feature">
+        <div class="tech-icon">🚀</div>
+        <h3>Aprendizado Contínuo</h3>
+        <p>Cada resposta é analisada e a IA aprende. Melhora automaticamente com feedback humano e resultados de vendas.</p>
+        <div class="tech-specs">
+          <span>📈 Melhoria: Diária</span>
+          <span>🎯 A/B Testing: Automático</span>
+          <span>🔧 Otimização: Contínua</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="workflow-section">
+    <div class="section-header">
+      <h2>Do Primeiro Contato à Venda Fechada</h2>
+      <p>Magic Replies guia cada conversa estrategicamente</p>
+    </div>
+
+    <div class="workflow-interactive">
+      <div class="workflow-step active" data-step="1">
+        <div class="step-icon">👋</div>
+        <h3>Saudação Personalizada</h3>
+        <p>Cliente manda primeira mensagem. IA reconhece cliente recorrente, VIP ou novo e personaliza saudação.</p>
+        <div class="step-example">
+          <strong>Cliente Novo:</strong> "Olá, bom dia"<br>
+          <strong>Magic Reply:</strong> "Bom dia! Bem-vindo à nossa loja! Vejo que é sua primeira vez aqui. Como posso ajudar?"
+        </div>
+      </div>
+
+      <div class="workflow-step" data-step="2">
+        <div class="step-icon">🔍</div>
+        <h3>Entendimento Profundo</h3>
+        <p>IA analisa intenção real por trás da mensagem, considerando contexto, urgência e necessidades implícitas.</p>
+        <div class="step-example">
+          <strong>Cliente:</strong> "Preciso de um tênis urgente"<br>
+          <strong>Análise IA:</strong> Urgência alta + Produto específico = Priorizar entrega rápida e sugestões similares
+        </div>
+      </div>
+
+      <div class="workflow-step" data-step="3">
+        <div class="step-icon">💡</div>
+        <h3>Sugestões Inteligentes</h3>
+        <p>Não apenas responde pergunta, mas sugere produtos complementares baseados no perfil e comportamento.</p>
+        <div class="step-example">
+          <strong>Cliente:</strong> "Quero um tênis Nike"<br>
+          <strong>Magic Reply:</strong> "Temos o Air Max 90 por R$299! Combina perfeitamente com nossa meia esportiva por R$29. Kit completo sai por R$328. Interessa?"
+        </div>
+      </div>
+
+      <div class="workflow-step" data-step="4">
+        <div class="step-icon">🎯</div>
+        <h3>Conversão Estratégica</h3>
+        <p>Identifica objeções comuns e as trata automaticamente com argumentos preparados e personalizados.</p>
+        <div class="step-example">
+          <strong>Cliente:</strong> "Está caro demais"<br>
+          <strong>Magic Reply:</strong> "Entendo sua preocupação! Mas este tênis tem garantia estendida de 2 anos e frete grátis. Valorizando, sai mais barato que concorrentes similares."
+        </div>
+      </div>
+
+      <div class="workflow-step" data-step="5">
+        <div class="step-icon">✅</div>
+        <h3>Fechamento Otimizado</h3>
+        <p>Quando cliente está pronto, guia suavemente para checkout com PIX automático e confirmação instantânea.</p>
+        <div class="step-example">
+          <strong>Cliente:</strong> "Pode enviar?"<br>
+          <strong>Magic Reply:</strong> "Perfeito! Aqui está seu link de checkout seguro: [LINK]. PIX automático aprovado em segundos. Qualquer dúvida, estou aqui!"
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Performance Metrics -->
+  <section class="performance-metrics">
+    <div class="section-header">
+      <h2>Resultados Comprovados em Produção</h2>
+      <p>Números reais de clientes usando Magic Replies 24/7</p>
+    </div>
+
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-value">95%</div>
+        <div class="metric-label">Precisão das Respostas</div>
+        <div class="metric-description">Clientes não distinguem das respostas humanas</div>
+        <div class="metric-trend">↗️ +12% vs humanos</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-value">3s</div>
+        <div class="metric-label">Tempo Médio de Resposta</div>
+        <div class="metric-description">Respostas instantâneas 24 horas</div>
+        <div class="metric-trend">⚡ 10x mais rápido</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-value">340%</div>
+        <div class="metric-label">Aumento Conversão Noturna</div>
+        <div class="metric-description">Vendas crescem mesmo dormindo</div>
+        <div class="metric-trend">💰 R$ 45k/mês extra</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-value">87%</div>
+        <div class="metric-label">Redução Custo Atendimento</div>
+        <div class="metric-description">80% das conversas resolvidas automaticamente</div>
+        <div class="metric-trend">💸 -R$ 8.500/mês</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Use Cases -->
+  <section class="use-cases">
+    <div class="section-header">
+      <h2>Magic Replies em Diferentes Cenários</h2>
+      <p>Cada tipo de negócio se beneficia de forma única</p>
+    </div>
+
+    <div class="cases-showcase">
+      <div class="case-study">
+        <div class="case-header">
+          <div class="case-icon">🛍️</div>
+          <h3>E-commerce de Moda</h3>
+        </div>
+        <div class="case-content">
+          <p>Cliente pergunta sobre vestidos. IA lembra que ela comprou vestido vermelho há 3 meses e sugere combinações perfeitas.</p>
+          <div class="case-quote">
+            "Magic Replies conhece minhas clientes melhor que eu! Sugestões personalizadas aumentaram ticket médio em 40%!" - Maria Silva, Fashion Store
+          </div>
+        </div>
+      </div>
+
+      <div class="case-study">
+        <div class="case-header">
+          <div class="case-icon">🍕</div>
+          <h3>Restaurante Delivery</h3>
+        </div>
+        <div class="case-content">
+          <p>Cliente pede pizza. IA lembra seus sabores favoritos, endereço de entrega e sugere acompanhamentos automaticamente.</p>
+          <div class="case-quote">
+            "Clientes adoram quando lembramos seus pedidos anteriores. Conversão subiu de 15% para 45%!" - João Santos, Pizzaria
+          </div>
+        </div>
+      </div>
+
+      <div class="case-study">
+        <div class="case-header">
+          <div class="case-icon">🏥</div>
+          <h3>Clínica de Saúde</h3>
+        </div>
+        <div class="case-content">
+          <p>Paciente marca consulta. IA lembra histórico médico, medicações atuais e sugere horários ideais automaticamente.</p>
+          <div class="case-quote">
+            "Magic Replies trata pacientes como VIPs. Agendamento automático reduziu faltas em 60%!" - Dra. Ana Costa, Clinica
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Advanced Features -->
+  <section class="advanced-features">
+    <div class="section-header">
+      <h2>Recursos Avançados Exclusivos</h2>
+      <p>Funcionalidades que só existem no GetNexo</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🎭</div>
+        <h3>Personalização por Personalidade</h3>
+        <p>IA adapta tom de voz baseado na personalidade do cliente: formal para executivos, descontraído para jovens, paciente para idosos.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🌍</div>
+        <h3>Multilíngue Automático</h3>
+        <p>Detecta idioma automaticamente e responde na mesma língua. Suporte para 50+ idiomas com sotaque cultural local.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🕒</div>
+        <h3>Horário Comportamental</h3>
+        <p>Adapta respostas baseado na hora: mensagens motivacionais pela manhã, lembretes suaves à noite, urgência nos horários de pico.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Analytics de Conversa</h3>
+        <p>Relatórios detalhados: palavras-chave mais usadas, objeções comuns, produtos mais perguntados, horários de pico.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🔄</div>
+        <h3>A/B Testing Automático</h3>
+        <p>Testa diferentes abordagens automaticamente e aprende qual gera mais vendas para cada tipo de cliente.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3>Upsell Context Aware</h3>
+        <p>Sugere produtos complementares baseado no contexto completo da conversa, não apenas no produto principal.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="pricing-comparison">
+    <div class="section-header">
+      <h2>Magic Replies Incluído Gratuitamente</h2>
+      <p>Não é um add-on caro. É a base da sua estratégia de vendas</p>
+    </div>
+
+    <div class="pricing-table">
+      <div class="pricing-plan featured">
+        <div class="plan-header">
+          <h3>Plano Gratuito</h3>
+          <div class="plan-price">R$ 0<span>/mês</span></div>
+          <p>Magic Replies completo + todas funcionalidades básicas</p>
+        </div>
+        <ul class="plan-features">
+          <li>✅ Magic Replies Ilimitado</li>
+          <li>✅ Até 1.000 conversas/mês</li>
+          <li>✅ Contexto completo</li>
+          <li>✅ Aprendizado automático</li>
+          <li>✅ Dashboard básico</li>
+          <li>✅ Suporte por chat</li>
+        </ul>
+        <a href="/criar-bot" class="plan-cta">Começar Grátis</a>
+      </div>
+
+      <div class="pricing-plan">
+        <div class="plan-header">
+          <h3>Business</h3>
+          <div class="plan-price">R$ 197<span>/mês</span></div>
+          <p>Para empresas que querem maximizar resultados</p>
+        </div>
+        <ul class="plan-features">
+          <li>✅ Tudo do Gratuito</li>
+          <li>✅ Conversas ilimitadas</li>
+          <li>✅ Personalização avançada</li>
+          <li>✅ Analytics completo</li>
+          <li>✅ A/B testing automático</li>
+          <li>✅ Suporte prioritário</li>
+        </ul>
+        <a href="/precos" class="plan-cta secondary">Ver Todos Planos</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section">
+    <div class="section-header">
+      <h2>Perguntas Sobre Magic Replies</h2>
+    </div>
+
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>Magic Replies substitui meus vendedores?</summary>
+        <div class="faq-answer">
+          <p>Não substitui completamente, mas potencializa muito! Magic Replies cuida de 80% das interações rotineiras (consultas, dúvidas básicas, sugestões), liberando seus vendedores para focarem em vendas complexas, negociação e relacionamento com clientes VIP.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Como sei se as respostas estão boas?</summary>
+        <div class="faq-answer">
+          <p>Dashboard completo mostra métricas em tempo real: satisfação do cliente, taxa de conversão, tempo de resposta, e taxa de escalação para humano. Você aprova ou rejeita respostas automaticamente.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Magic Replies funciona com meu catálogo atual?</summary>
+        <div class="faq-answer">
+          <p>Sim! Integra automaticamente com Shopify, WooCommerce, VTEX, Bling e outros. Se não usa nenhum, nossa IA aprende através de uploads CSV ou API simples. Setup leva menos de 30 minutos.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>E se o cliente quiser falar com pessoa real?</summary>
+        <div class="faq-answer">
+          <p>Magic Replies detecta automaticamente quando deve transferir. Basta cliente dizer "falar com pessoa" ou "atendente humano" - transferência instantânea com contexto completo para o vendedor.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Magic Replies aprende com meus erros?</summary>
+        <div class="faq-answer">
+          <p>Sim! Cada correção que você faz ensina a IA. Se você corrige uma resposta, ela aprende o padrão correto. Com 50 correções, a IA raramente erra novamente naquele tipo de situação.</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta">
+    <div class="cta-content">
+      <h2>Transforme seu WhatsApp em uma Máquina de Vendas Inteligente</h2>
+      <p>Magic Replies + GetNexo = Clientes felizes 24h por dia. Setup em 12 minutos.</p>
+      <a href="/criar-bot" class="btn-primary-large">Ativar Magic Replies Agora →</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero-section { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; padding: 8rem 5%; max-width: 1400px; margin: 0 auto; align-items: center; }
+  .hero-badge { background: rgba(0, 212, 255, 0.1); color: #00d4ff; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; font-weight: 600; display: inline-block; margin-bottom: 2rem; }
+  .hero-content h1 { font-size: 3rem; font-weight: 900; margin-bottom: 1.5rem; background: linear-gradient(90deg, #00d4ff, #00ff9d); -webkit-background-clip: text; color: transparent; }
+  .hero-content p { font-size: 1.2rem; color: #e2e8f0; margin-bottom: 2rem; line-height: 1.6; }
+  .hero-features { display: flex; gap: 1rem; margin-bottom: 3rem; flex-wrap: wrap; }
+  .hero-features span { background: rgba(0, 255, 157, 0.1); color: #00ff9d; padding: 0.5rem 1rem; border-radius: 15px; font-size: 0.9rem; font-weight: 600; }
+  .hero-ctas { display: flex; gap: 1.5rem; }
+  .btn-primary { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1rem 2rem; border-radius: 12px; font-weight: 800; text-decoration: none; transition: 0.3s; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3); }
+  .btn-secondary { border: 1px solid rgba(255,255,255,0.3); color: white; padding: 1rem 2rem; border-radius: 12px; font-weight: 600; text-decoration: none; transition: 0.3s; cursor: pointer; }
+  .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+
+  .magic-demo { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2rem; }
+  .chat-window { max-width: 400px; margin: 0 auto; }
+  .chat-header { font-size: 1.2rem; font-weight: 800; color: #00d4ff; text-align: center; margin-bottom: 2rem; }
+  .chat-messages { display: flex; flex-direction: column; gap: 1rem; min-height: 300px; }
+  .message { padding: 1rem 1.5rem; border-radius: 15px; max-width: 80%; }
+  .message.user { background: #00d4ff; color: black; align-self: flex-end; }
+  .message.bot { background: rgba(255,255,255,0.1); color: white; align-self: flex-start; }
+  .typing-indicator { display: flex; gap: 4px; padding: 1rem; }
+  .typing-indicator span { width: 8px; height: 8px; background: #00d4ff; border-radius: 50%; animation: typing 1.4s infinite; }
+  .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typing { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-10px); } }
+
+  .technology-deep { padding: 8rem 5%; background: rgba(15, 23, 42, 0.5); }
+  .tech-showcase { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-top: 4rem; }
+  .tech-feature { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 3rem; text-align: center; transition: 0.3s; }
+  .tech-feature:hover { transform: translateY(-10px); border-color: rgba(0, 212, 255, 0.3); }
+  .tech-icon { font-size: 3rem; margin-bottom: 1.5rem; }
+  .tech-feature h3 { color: white; font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem; }
+  .tech-feature p { color: #e2e8f0; line-height: 1.6; margin-bottom: 2rem; }
+  .tech-specs { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+  .tech-specs span { background: rgba(0, 212, 255, 0.1); color: #00d4ff; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 600; }
+
+  .workflow-section { padding: 8rem 5%; max-width: 1400px; margin: 0 auto; }
+  .workflow-step { background: rgba(15, 23, 42, 0.6); border-radius: 20px; padding: 2rem; margin-bottom: 2rem; transition: 0.3s; cursor: pointer; }
+  .workflow-step:hover, .workflow-step.active { background: rgba(15, 23, 42, 0.8); border: 1px solid #00d4ff; }
+  .step-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .workflow-step h3 { color: white; font-size: 1.3rem; margin-bottom: 1rem; }
+  .workflow-step p { color: #e2e8f0; line-height: 1.6; margin-bottom: 1.5rem; }
+  .step-example { background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; font-size: 0.9rem; color: #94a3b8; }
+
+  .performance-metrics { padding: 8rem 5%; background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1)); }
+  .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; max-width: 1000px; margin: 0 auto; }
+  .metric-card { text-align: center; padding: 3rem; background: rgba(255,255,255,0.05); border-radius: 20px; }
+  .metric-value { font-size: 4rem; font-weight: 900; color: #00ff9d; margin-bottom: 1rem; }
+  .metric-label { color: white; font-weight: 600; margin-bottom: 0.5rem; }
+  .metric-description { color: #e2e8f0; font-size: 0.9rem; margin-bottom: 1rem; }
+  .metric-trend { color: #00ff9d; font-weight: 800; font-size: 0.8rem; }
+
+  .use-cases { padding: 8rem 5%; background: rgba(15, 23, 42, 0.5); }
+  .cases-showcase { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; margin-top: 4rem; }
+  .case-study { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2.5rem; }
+  .case-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+  .case-icon { font-size: 2rem; }
+  .case-header h3 { color: white; font-size: 1.4rem; margin: 0; }
+  .case-content p { color: #e2e8f0; line-height: 1.6; margin-bottom: 1.5rem; }
+  .case-quote { background: rgba(0, 212, 255, 0.1); border-left: 4px solid #00d4ff; padding: 1rem; border-radius: 0 10px 10px 0; font-style: italic; color: #e2e8f0; }
+
+  .advanced-features { padding: 8rem 5%; max-width: 1400px; margin: 0 auto; }
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-top: 4rem; }
+  .feature-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2.5rem; text-align: center; transition: 0.3s; }
+  .feature-card:hover { transform: translateY(-5px); border-color: rgba(0, 212, 255, 0.3); }
+  .feature-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .feature-card h3 { color: white; font-size: 1.3rem; margin-bottom: 1rem; }
+  .feature-card p { color: #e2e8f0; line-height: 1.6; }
+
+  .pricing-comparison { padding: 8rem 5%; background: rgba(15, 23, 42, 0.5); }
+  .pricing-table { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-top: 4rem; max-width: 800px; margin-left: auto; margin-right: auto; }
+  .pricing-plan { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 3rem; text-align: center; }
+  .pricing-plan.featured { border-color: #00d4ff; box-shadow: 0 0 30px rgba(0, 212, 255, 0.2); }
+  .plan-header h3 { color: white; font-size: 1.5rem; margin-bottom: 1rem; }
+  .plan-price { font-size: 3rem; font-weight: 900; color: #00ff9d; margin-bottom: 0.5rem; }
+  .plan-price span { font-size: 1rem; color: #94a3b8; }
+  .plan-features { list-style: none; text-align: left; margin: 2rem 0; }
+  .plan-features li { color: #e2e8f0; margin-bottom: 0.8rem; }
+  .plan-cta { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1rem 2rem; border-radius: 12px; font-weight: 800; text-decoration: none; display: inline-block; margin-top: 2rem; }
+  .plan-cta.secondary { background: transparent; color: #00d4ff; border: 1px solid #00d4ff; }
+
+  .faq-section { padding: 8rem 5%; max-width: 800px; margin: 0 auto; }
+  .faq-list { margin-top: 4rem; }
+  .faq-item { border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; margin-bottom: 1rem; overflow: hidden; }
+  .faq-item summary { padding: 1.5rem; background: rgba(15, 23, 42, 0.6); color: white; font-weight: 600; cursor: pointer; }
+  .faq-item summary:hover { background: rgba(15, 23, 42, 0.8); }
+  .faq-answer { padding: 0 1.5rem 1.5rem; color: #e2e8f0; line-height: 1.6; }
+
+  .final-cta { padding: 8rem 5%; background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1)); text-align: center; }
+  .cta-content h2 { font-size: 3rem; font-weight: 900; margin-bottom: 1.5rem; background: linear-gradient(90deg, #00d4ff, #00ff9d); -webkit-background-clip: text; color: transparent; }
+  .cta-content p { font-size: 1.2rem; color: #e2e8f0; margin-bottom: 3rem; }
+  .btn-primary-large { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1.5rem 3rem; border-radius: 15px; font-weight: 900; font-size: 1.2rem; text-decoration: none; transition: 0.3s; }
+  .btn-primary-large:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(0, 212, 255, 0.4); }
+
+  .section-header { text-align: center; margin-bottom: 4rem; }
+  .section-header h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; background: linear-gradient(90deg, #00d4ff, #00ff9d); -webkit-background-clip: text; color: transparent; }
+  .section-header p { color: #e2e8f0; font-size: 1.1rem; }
+
+  @media (max-width: 900px) {
+    .hero-section { grid-template-columns: 1fr; text-align: center; }
+    .tech-showcase { grid-template-columns: 1fr; }
+    .workflow-steps { grid-template-columns: 1fr; }
+    .metrics-grid { grid-template-columns: 1fr; }
+    .cases-showcase { grid-template-columns: 1fr; }
+    .features-grid { grid-template-columns: 1fr; }
+    .pricing-table { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script is:inline>
+  // Magic Replies Demo Animation
+  let currentStep = 1;
+  const totalSteps = 5;
+
+  function showMagicReply(step) {
+    const messages = document.getElementById('magic-chat');
+    const existingBot = messages.querySelector('.message.bot');
+
+    if (existingBot) {
+      existingBot.remove();
+    }
+
+    const replies = [
+      "Olá! Bem-vindo à nossa loja! Temos vários modelos do Nike Air Max. Qual tamanho você calça?",
+      "Perfeito! Temos o Air Max 90 em preto tamanho 42 por R$299. É nosso best-seller! Tem garantia de 2 anos.",
+      "Frete grátis para compras acima de R$200! Podemos entregar amanhã mesmo. Quer que eu reserve este par?",
+      "Excelente escolha! Aqui está seu link de checkout seguro: [PROCESSANDO...]. Aceitamos PIX, cartão ou boleto.",
+      "Pedido confirmado! 🎉 PIX aprovado automaticamente. Seu tênis sai para entrega hoje. Qualquer dúvida, estou aqui 24h!"
+    ];
+
+    const botMessage = document.createElement('div');
+    botMessage.className = 'message bot';
+    botMessage.innerHTML = `<div class="typing-indicator"><span></span><span></span><span></span></div>`;
+
+    messages.appendChild(botMessage);
+
+    setTimeout(() => {
+      botMessage.innerHTML = replies[step - 1];
+    }, 2000);
+  }
+
+  function nextStep() {
+    currentStep = currentStep >= totalSteps ? 1 : currentStep + 1;
+    showMagicReply(currentStep);
+  }
+
+  // Auto-play demo
+  setInterval(nextStep, 8000);
+
+  // Initial reply
+  setTimeout(() => showMagicReply(1), 2000);
+
+  function abrirDemo() {
+    // Implement demo modal
+    alert('Demo interativo em desenvolvimento! Magic Replies é a tecnologia mais avançada de IA conversacional do mercado.');
+  }
+</script>

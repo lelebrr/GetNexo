@@ -1,0 +1,109 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Pós-Venda Ativo: Como a IA Pró-ativa Aumenta a Recompra e Lealdade",
+      "description": "Transforme seu atendimento em lucro. Saiba como usar IA para monitorar a satisfação do cliente e agir proativamente no pós-venda.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-21",
+      "image": "/images/blog/placeholder-pos-venda.png",
+      "articleSection": "Customer Success",
+      "keywords": "pós-venda ia, atendimento pró-ativo, retenção de clientes, customer success, recompra automática"
+    }
+  ]
+};
+---
+
+<Layout title="Pós-Venda Pró-ativo com IA | GetNexo">
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta animate-fade-in">Experience • Jan 2026</div>
+      <h1 class="animate-slide-up">Pós-Venda Ativo:<br/><span class="text-primary">Fidelização Pró-ativa</span></h1>
+      <p class="subtitle animate-fade-in delay-200">A venda não termina no checkout. Ela começa ali. Surpreenda seu cliente com cuidado real.</p>
+      
+      <div class="placeholder-image glass-panel animate-fade-in">
+        <p>Imagem: Proactive Post-Sales & Loyalty</p>
+      </div>
+    </header>
+
+    <div class="post-content">
+      <section id="reactive-vs-proactive">
+        <h2>🔄 Reativo vs Pró-ativo</h2>
+        <p>O suporte tradicional espera o problema acontecer. O **Suporte Pró-ativo GetNexo** identifica padrões de atraso na entrega ou sentimentos negativos em redes sociais e entra em contato com o cliente oferecendo uma solução antes mesmo dele reclamar.</p>
+        <div class="glass-panel mt-8">
+          <p><strong>Impacto:</strong> Clientes que recebem um contato pró-ativo de resolução têm uma probabilidade 3x maior de indicar a marca para amigos.</p>
+        </div>
+      </section>
+
+      <section id="loyalty-loop">
+        <h2>🔁 O Ciclo Infinito de Lealdade</h2>
+        
+        <div class="stack-grid">
+          <div class="stack-card glass-panel blur">
+            <h4>Check-in de Satisfação</h4>
+            <p>IA dispara mensagens 48h após a entrega para garantir que tudo está perfeito.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Aniversário e Datas</h4>
+            <p>Mais que um cupom, um reconhecimento personalizado baseado no gosto do cliente.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Prevenção de Churn</h4>
+            <p>Identificação de clientes que pararam de interagir e reativação estratégica.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="automation-care">
+        <h2>💖 Tecnologia com Coração</h2>
+        <p>A automação não precisa ser fria. A IA da GetNexo utiliza <strong>NLU (Natural Language Understanding)</strong> para redigir mensagens que soam humanas, empáticas e verdadeiramente preocupadas com a experiência final do usuário.</p>
+      </section>
+
+      <div class="final-cta animate-scale-up">
+        <h3>Encante seus clientes!</h3>
+        <p>Transforme seu suporte reativo em uma máquina de fidelização e vendas.</p>
+        <div class="cta-buttons mt-8">
+          <a href="/fidelidade" class="btn-primary">Conhecer Módulo Fidelidade</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+</Layout>
+
+<style>
+  :root {
+    --primary: #fbbf24;
+    --accent: #f59e0b;
+    --glass: rgba(15, 23, 42, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.05);
+  }
+
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  .meta { color: var(--primary); font-size: 0.8rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem; display: inline-block; padding: 0.5rem 1rem; background: rgba(251, 191, 36, 0.05); border: 1px solid var(--glass-border); border-radius: 50px; }
+  h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; color: white; }
+  .text-primary { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .subtitle { font-size: 1.25rem; color: #94a3b8; max-width: 700px; margin: 0 auto; line-height: 1.6; }
+  .placeholder-image { width: 100%; border-radius: 24px; margin-top: 3rem; height: 500px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1e293b, #0f172a); color: var(--primary); font-weight: 800; border: 1px dashed var(--primary); }
+  .post-content { color: #cbd5e1; line-height: 1.8; font-size: 1.15rem; }
+  h2 { font-size: 2.2rem; color: white; margin: 6rem 0 2rem; font-weight: 800; }
+  .glass-panel { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 2.5rem; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+  .stack-card { background: var(--glass); border: 1px solid var(--glass-border); padding: 2rem; border-radius: 20px; text-align: left; }
+  .stack-card h4 { color: var(--primary); margin-bottom: 1rem; font-size: 1.3rem; }
+  .final-cta { background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.1)); border: 1px solid var(--primary); padding: 5rem 2rem; text-align: center; border-radius: 32px; margin-top: 8rem; }
+  .btn-primary { background: white; color: black; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; font-weight: 800; display: inline-block; transition: 0.3s; }
+  .btn-primary:hover { background: var(--primary); color: white; transform: translateY(-3px); box-shadow: 0 15px 30px rgba(251, 191, 36, 0.3); }
+
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade-in { animation: fade-in 1s ease forwards; }
+  .animate-slide-up { animation: slide-up 1s ease forwards; }
+</style>

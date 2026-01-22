@@ -1,0 +1,107 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "7 Scripts de Vendas no WhatsApp: Gatilhos para Conversão Imediata",
+      "description": "Copie e cole os scripts de vendas que mais convertem no WhatsApp. Use gatilhos mentais poderosos para fechar mais negócios e quebrar objeções na hora.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-21",
+      "image": "/images/blog/scripts-vendas-whatsapp.png",
+      "articleSection": "Vendas",
+      "keywords": "scripts de vendas whatsapp, gatilhos mentais vendas, fechar venda whatsapp, modelos mensagens whatsapp"
+    }
+  ]
+};
+---
+
+<Layout title="7 Scripts de Vendas no WhatsApp (Grátis) | GetNexo">
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta animate-fade-in">Mão na Massa • Jan 2026</div>
+      <h1 class="animate-slide-up">7 Scripts de Vendas:<br/><span class="text-primary">Conversão Imediata</span></h1>
+      <p class="subtitle animate-fade-in delay-200">Pare de travar na hora de responder o cliente. Use estes modelos validados e veja suas vendas decolarem.</p>
+      
+      <div class="placeholder-image glass-panel animate-fade-in">
+        <p>Image: Collection of Sales Chat Bubbles with high-conversion icons</p>
+      </div>
+    </header>
+
+    <div class="post-content">
+      <section id="introducao">
+        <h2>🔥 O Poder das Palavras Certas</h2>
+        <p>No WhatsApp, você tem poucos segundos para prender a atenção do lead. Se sua primeira mensagem parecer um 'robô' ou for longa demais, você perdeu a venda. Estes 7 scripts foram desenhados para usar a <strong>psicologia comportamental</strong> a seu favor.</p>
+      </section>
+
+      <section id="scripts">
+        <h2>🛠️ Scripts Prontos (Copie e Cole)</h2>
+        
+        <div class="stack-grid">
+          <div class="stack-card glass-panel blur">
+            <h4>1. A Saudação Irresistível</h4>
+            <p>"Oi [Nome], vi que você se interessou por [Produto]. Fiz um vídeo rápido mostrando como ele funciona, quer que eu te mande agora?" (Foca no micro-sim).</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>2. Gatilho da Escassez</h4>
+            <p>"Consegui liberar uma última unidade com o bônus de [Brinde] para você, mas só consigo segurar até as 18h. Fechamos?"</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>3. Quebra de Objeção (Preço)</h4>
+            <p>"Entendo perfeitamente. Se eu conseguisse uma condição de parcelamento exclusiva em [X] vezes, isso facilitaria sua entrada hoje?"</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="automatizando">
+        <h2>🚀 Como Automatizar Esses Scripts</h2>
+        <p>Ter os scripts é bom. Ter a GetNexo disparando eles automaticamente no momento certo é <strong>extraordinário</strong>. Nossa plataforma permite que você crie 'atalhos inteligentes' e fluxos de automação que usam esses gatilhos baseados no comportamento do cliente.</p>
+      </section>
+
+      <div class="final-cta animate-scale-up">
+        <h3>Quer os outros 4 scripts exclusivos?</h3>
+        <p>Baixe nosso guia completo de vendas por WhatsApp ou teste a ferramenta que já vem com eles integrados.</p>
+        <div class="cta-buttons mt-8">
+          <a href="/demo" class="btn-primary">Ver Scripts & Demo</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+</Layout>
+
+<style>
+  :root {
+    --primary: #00d4ff;
+    --accent: #00ff9d;
+    --glass: rgba(15, 23, 42, 0.7);
+    --glass-border: rgba(0, 212, 255, 0.1);
+  }
+
+  /* Standard Premium Styles */
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  .meta { color: var(--primary); font-size: 0.8rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem; display: inline-block; padding: 0.5rem 1rem; background: rgba(0, 212, 255, 0.05); border: 1px solid var(--glass-border); border-radius: 50px; }
+  h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; color: white; }
+  .text-primary { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .subtitle { font-size: 1.25rem; color: #94a3b8; max-width: 700px; margin: 0 auto; line-height: 1.6; }
+  .placeholder-image { width: 100%; border-radius: 24px; margin-top: 3rem; height: 500px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0f172a, #020617); color: var(--primary); font-weight: 800; border: 1px dashed var(--primary); }
+  .post-content { color: #cbd5e1; line-height: 1.8; font-size: 1.15rem; }
+  h2 { font-size: 2.2rem; color: white; margin: 6rem 0 2rem; font-weight: 800; }
+  .glass-panel { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 2.5rem; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+  .stack-card { background: var(--glass); border: 1px solid var(--glass-border); padding: 2rem; border-radius: 20px; text-align: left; }
+  .stack-card h4 { color: var(--primary); margin-bottom: 1rem; font-size: 1.3rem; }
+  .final-cta { background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1)); border: 1px solid var(--primary); padding: 5rem 2rem; text-align: center; border-radius: 32px; margin-top: 8rem; }
+  .btn-primary { background: white; color: black; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; font-weight: 800; display: inline-block; transition: 0.3s; }
+  .btn-primary:hover { background: var(--primary); color: white; transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0, 212, 255, 0.3); }
+
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade-in { animation: fade-in 1s ease forwards; }
+  .animate-slide-up { animation: slide-up 1s ease forwards; }
+</style>

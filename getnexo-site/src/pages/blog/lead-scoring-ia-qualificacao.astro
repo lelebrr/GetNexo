@@ -1,0 +1,111 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "IA Lead Scoring: Como Qualificar Leads no WhatsApp em Tempo Real",
+      "description": "Identifique seus clientes 'ouro' automaticamente. Aprenda como o AI Lead Scoring no WhatsApp transforma sua eficiência comercial e aumenta as conversões.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-21",
+      "image": "/images/blog/lead-scoring-ia.png",
+      "articleSection": "Inteligência de Vendas",
+      "keywords": "lead scoring ia, qualificação de leads whatsapp, crm inteligente, sales pipeline, automação de vendas"
+    }
+  ]
+};
+---
+
+<Layout title="AI Lead Scoring no WhatsApp | GetNexo">
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta animate-fade-in">Inteligência • Jan 2026</div>
+      <h1 class="animate-slide-up">Lead Scoring IA:<br/><span class="text-primary">Qualificação em Tempo Real</span></h1>
+      <p class="subtitle animate-fade-in delay-200">Pare de perder tempo com curiosos. Deixe a IA identificar quem está pronto para comprar.</p>
+      
+      <div class="placeholder-image glass-panel animate-fade-in">
+        <p>Image: AI Lead Scoring Funnel & Gold Leads</p>
+      </div>
+    </header>
+
+    <div class="post-content">
+      <section id="problema-curiosos">
+        <h2>🙄 O Drama do Volume vs. Qualidade</h2>
+        <p>No WhatsApp, o volume de mensagens pode ser esmagador. Se seu time de vendas gasta 50% do dia respondendo "qual o preço?" para quem não tem perfil de compra, sua produtividade está sendo drenada. A GetNexo introduz o <strong>Smart Scoring</strong>, que analisa o comportamento e as respostas do lead no primeiro minuto de conversa.</p>
+        
+        <div class="glass-panel mt-8">
+          <p><strong>Fato:</strong> Leads qualificados por IA têm uma taxa de fechamento 3x maior, pois chegam ao vendedor humano com a intenção de compra já validada.</p>
+        </div>
+      </section>
+
+      <section id="como-funciona">
+        <h2>🧠 Como a IA Mede a "Temperatura" do Lead</h2>
+        <p>Diferente de formulários estáticos, o scoring no WhatsApp é dinâmico. Nossa IA avalia:</p>
+        
+        <div class="stack-grid">
+          <div class="stack-card glass-panel blur">
+            <h4>Análise Semântica</h4>
+            <p>O lead usa termos técnicos? Demonstra urgência? A IA 'sente' a autoridade e o desejo.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Enriquecimento de Dados</h4>
+            <p>Integração com APIs externas para verificar tamanho da empresa e cargo do interlocutor.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Histórico de Interação</h4>
+            <p>Ele já interagiu com o site? Baixou o PDF? Tudo soma pontos no score final.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="priorizacao">
+        <h2>🚀 Priorização Automática no CRM</h2>
+        <p>Quando um lead atinge o score "Ouro", a GetNexo pode disparar um alerta prioritário para o vendedor sênior ou até mesmo <strong>agendar uma reunião direta</strong>. Leads com scores baixos são mantidos em fluxos de nutrição automática até estarem prontos para a abordagem humana.</p>
+      </section>
+
+      <div class="final-cta animate-scale-up">
+        <h3>Sua equipe merece leads qualificados.</h3>
+        <p>Ative o Lead Scoring da GetNexo e foque no que realmente traz receita.</p>
+        <div class="cta-buttons mt-8">
+          <a href="/crm-futuro-gpt4" class="btn-primary">Ver CRM & IA</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+</Layout>
+
+<style>
+  :root {
+    --primary: #fbbf24;
+    --accent: #f59e0b;
+    --glass: rgba(15, 23, 42, 0.7);
+    --glass-border: rgba(251, 191, 36, 0.1);
+  }
+
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  .meta { color: var(--primary); font-size: 0.8rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem; display: inline-block; padding: 0.5rem 1rem; background: rgba(251, 191, 36, 0.05); border: 1px solid var(--glass-border); border-radius: 50px; }
+  h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; color: white; }
+  .text-primary { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .subtitle { font-size: 1.25rem; color: #94a3b8; max-width: 700px; margin: 0 auto; line-height: 1.6; }
+  .placeholder-image { width: 100%; border-radius: 24px; margin-top: 3rem; height: 500px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #451a03, #0f172a); color: var(--primary); font-weight: 800; border: 1px dashed var(--primary); }
+  .post-content { color: #cbd5e1; line-height: 1.8; font-size: 1.15rem; }
+  h2 { font-size: 2.2rem; color: white; margin: 6rem 0 2rem; font-weight: 800; }
+  .glass-panel { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 2.5rem; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+  .stack-card { background: var(--glass); border: 1px solid var(--glass-border); padding: 2rem; border-radius: 20px; text-align: left; }
+  .stack-card h4 { color: var(--primary); margin-bottom: 1rem; font-size: 1.3rem; }
+  .final-cta { background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.1)); border: 1px solid var(--primary); padding: 5rem 2rem; text-align: center; border-radius: 32px; margin-top: 8rem; }
+  .btn-primary { background: white; color: black; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; font-weight: 800; display: inline-block; transition: 0.3s; }
+  .btn-primary:hover { background: var(--primary); color: white; transform: translateY(-3px); box-shadow: 0 15px 30px rgba(251, 191, 36, 0.3); }
+
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade-in { animation: fade-in 1s ease forwards; }
+  .animate-slide-up { animation: slide-up 1s ease forwards; }
+</style>

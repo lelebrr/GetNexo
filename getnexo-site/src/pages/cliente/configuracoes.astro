@@ -1,0 +1,1261 @@
+---
+import ClientLayout from '../../layouts/ClientLayout.astro';
+---
+
+<ClientLayout title="Configurações - GetNexo">
+    <div class="mb-8">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">Configurações</h1>
+                <p class="text-gray-600 mt-2">Gerencie suas preferências e configurações da conta</p>
+            </div>
+            <button class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                Salvar Alterações
+            </button>
+        </div>
+    </div>
+
+    <!-- Abas de Configuração -->
+    <div class="mb-6">
+        <nav class="flex space-x-8 overflow-x-auto" aria-label="Tabs">
+            <button class="tab-button border-b-2 border-blue-500 text-blue-600 font-medium py-2 px-1 whitespace-nowrap" data-tab="perfil">
+                Perfil
+            </button>
+            <button class="tab-button border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium py-2 px-1 whitespace-nowrap" data-tab="notificacoes">
+                Notificações
+            </button>
+            <button class="tab-button border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium py-2 px-1 whitespace-nowrap" data-tab="seguranca">
+                Segurança
+            </button>
+            <button class="tab-button border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium py-2 px-1 whitespace-nowrap" data-tab="chat">
+                Chat
+            </button>
+            <button class="tab-button border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium py-2 px-1 whitespace-nowrap" data-tab="integracoes">
+                Integrações
+            </button>
+            <button class="tab-button border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium py-2 px-1 whitespace-nowrap" data-tab="faturamento">
+                Faturamento
+            </button>
+        </nav>
+    </div>
+
+    <!-- Conteúdo das Abas -->
+    <div class="space-y-8">
+
+        <!-- Aba Perfil -->
+        <div id="tab-perfil" class="tab-content">
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Informações do Perfil</h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nome da Empresa *</label>
+                        <input type="text" value="Minha Empresa Ltda" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nome do Responsável</label>
+                        <input type="text" value="João Silva" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                        <input type="email" value="joao@minhaempresa.com" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Telefone</label>
+                        <input type="tel" value="+55 11 99999-9999" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Website</label>
+                        <input type="url" value="https://minhaempresa.com" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Setor</label>
+                        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="tecnologia">Tecnologia</option>
+                            <option value="varejo">Varejo</option>
+                            <option value="servicos">Serviços</option>
+                            <option value="saude">Saúde</option>
+                            <option value="educacao">Educação</option>
+                            <option value="outros" selected>Outros</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Porte da Empresa</label>
+                        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="pequeno">Pequena (1-10 funcionários)</option>
+                            <option value="medio" selected>Média (11-50 funcionários)</option>
+                            <option value="grande">Grande (51+ funcionários)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Sobre a Empresa</label>
+                    <textarea rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Conte um pouco sobre seu negócio...">Somos uma empresa especializada em soluções de atendimento ao cliente, oferecendo serviços de alta qualidade para melhorar a experiência dos consumidores.</textarea>
+                </div>
+
+                <!-- Avatar -->
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Logo da Empresa</label>
+                    <div class="flex items-center space-x-4">
+                        <div class="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center">
+                            <span class="text-2xl text-gray-500">🏢</span>
+                        </div>
+                        <div>
+                            <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+                                Alterar Logo
+                            </button>
+                            <p class="text-xs text-gray-500 mt-1">PNG, JPG até 2MB</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aba Notificações -->
+        <div id="tab-notificacoes" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Preferências de Notificação</h2>
+
+                <div class="space-y-6">
+                    <!-- Notificações por Email -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Notificações por Email</h3>
+                        <div class="space-y-3">
+                            <label class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                                <div>
+                                    <span class="font-medium text-gray-900">Novas conversas</span>
+                                    <p class="text-sm text-gray-600">Receba alertas quando novos clientes iniciarem conversas</p>
+                                </div>
+                                <input type="checkbox" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            </label>
+
+                            <label class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                                <div>
+                                    <span class="font-medium text-gray-900">Conversas prioritárias</span>
+                                    <p class="text-sm text-gray-600">Alertas para conversas marcadas como urgentes</p>
+                                </div>
+                                <input type="checkbox" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            </label>
+
+                            <label class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                                <div>
+                                    <span class="font-medium text-gray-900">Relatórios semanais</span>
+                                    <p class="text-sm text-gray-600">Resumo semanal do desempenho do seu negócio</p>
+                                </div>
+                                <input type="checkbox" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            </label>
+
+                            <label class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                                <div>
+                                    <span class="font-medium text-gray-900">Atualizações do sistema</span>
+                                    <p class="text-sm text-gray-600">Novidades e manutenções programadas</p>
+                                </div>
+                                <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Notificações Push -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Notificações Push no Navegador</h3>
+                        <div class="space-y-3">
+                            <label class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                                <div>
+                                    <span class="font-medium text-gray-900">Mensagens não lidas</span>
+                                    <p class="text-sm text-gray-600">Notificações quando há mensagens aguardando resposta</p>
+                                </div>
+                                <input type="checkbox" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            </label>
+
+                            <label class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                                <div>
+                                    <span class="font-medium text-gray-900">Vendas realizadas</span>
+                                    <p class="text-sm text-gray-600">Alertas instantâneos de novas vendas</p>
+                                </div>
+                                <input type="checkbox" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Notificações por WhatsApp -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Notificações por WhatsApp</h3>
+                        <div class="space-y-3">
+                            <label class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                                <div>
+                                    <span class="font-medium text-gray-900">Resumo diário</span>
+                                    <p class="text-sm text-gray-600">Relatório diário enviado no seu WhatsApp</p>
+                                </div>
+                                <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            </label>
+
+                            <label class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                                <div>
+                                    <span class="font-medium text-gray-900">Alertas críticos</span>
+                                    <p class="text-sm text-gray-600">Apenas notificações de alta prioridade</p>
+                                </div>
+                                <input type="checkbox" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aba Segurança -->
+        <div id="tab-seguranca" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Configurações de Segurança</h2>
+
+                <div class="space-y-6">
+                    <!-- Alterar Senha -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Alterar Senha</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Senha Atual</label>
+                                <input type="password" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            </div>
+                            <div></div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nova Senha</label>
+                                <input type="password" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Confirmar Nova Senha</label>
+                                <input type="password" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            </div>
+                        </div>
+                        <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                            Alterar Senha
+                        </button>
+                    </div>
+
+                    <!-- Autenticação de Dois Fatores -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Autenticação de Dois Fatores (2FA)</h3>
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div>
+                                <span class="font-medium text-gray-900">2FA por SMS</span>
+                                <p class="text-sm text-gray-600">Receba códigos de verificação por SMS</p>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="text-sm text-green-600 font-medium mr-2">Ativado</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" checked class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sessões Ativas -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Sessões Ativas</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                        <span class="text-lg">💻</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-gray-900">Chrome no Windows</p>
+                                        <p class="text-sm text-gray-600">São Paulo, Brasil • Agora mesmo</p>
+                                    </div>
+                                </div>
+                                <span class="text-sm text-green-600 font-medium">Sessão Atual</span>
+                            </div>
+
+                            <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                                        <span class="text-lg">📱</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-gray-900">iPhone 15 Pro</p>
+                                        <p class="text-sm text-gray-600">São Paulo, Brasil • 2 horas atrás</p>
+                                    </div>
+                                </div>
+                                <button class="text-red-600 hover:text-red-800 text-sm font-medium">
+                                    Encerrar Sessão
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aba Chat -->
+        <div id="tab-chat" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Personalização do Botão do Chat</h2>
+
+                <div class="space-y-8">
+                    <!-- Preview do Chat -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Preview do Chat</h3>
+                        <div class="relative bg-gray-100 rounded-lg h-96 border-2 border-dashed border-gray-300 overflow-hidden">
+                            <!-- Simulação de página do cliente -->
+                            <div class="p-8 h-full">
+                                <div class="max-w-4xl mx-auto">
+                                    <h1 class="text-3xl font-bold text-gray-900 mb-4">Sua Página</h1>
+                                    <p class="text-gray-600 mb-8">Este é um preview da sua página com o botão do chat personalizado.</p>
+
+                                    <!-- Botão do chat preview (será controlado pelo JavaScript) -->
+                                    <div id="chat-preview-button" class="fixed bottom-6 right-6 w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl shadow-lg cursor-pointer transition-all duration-300 hover:scale-110 z-50">
+                                        💬
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2">* Este é um preview interativo. As mudanças são aplicadas em tempo real.</p>
+                    </div>
+
+                    <!-- Posição do Botão -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Posição do Botão</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <label class="relative">
+                                <input type="radio" name="chat-position" value="bottom-right" class="sr-only" checked>
+                                <div class="border-2 border-gray-200 rounded-lg p-4 cursor-pointer hover:border-blue-300 transition-colors text-center chat-position-option" data-position="bottom-right">
+                                    <div class="text-2xl mb-2">↘️</div>
+                                    <span class="text-sm font-medium">Inferior Direito</span>
+                                </div>
+                            </label>
+                            <label class="relative">
+                                <input type="radio" name="chat-position" value="bottom-left" class="sr-only">
+                                <div class="border-2 border-gray-200 rounded-lg p-4 cursor-pointer hover:border-blue-300 transition-colors text-center chat-position-option" data-position="bottom-left">
+                                    <div class="text-2xl mb-2">↙️</div>
+                                    <span class="text-sm font-medium">Inferior Esquerdo</span>
+                                </div>
+                            </label>
+                            <label class="relative">
+                                <input type="radio" name="chat-position" value="top-right" class="sr-only">
+                                <div class="border-2 border-gray-200 rounded-lg p-4 cursor-pointer hover:border-blue-300 transition-colors text-center chat-position-option" data-position="top-right">
+                                    <div class="text-2xl mb-2">↗️</div>
+                                    <span class="text-sm font-medium">Superior Direito</span>
+                                </div>
+                            </label>
+                            <label class="relative">
+                                <input type="radio" name="chat-position" value="top-left" class="sr-only">
+                                <div class="border-2 border-gray-200 rounded-lg p-4 cursor-pointer hover:border-blue-300 transition-colors text-center chat-position-option" data-position="top-left">
+                                    <div class="text-2xl mb-2">↖️</div>
+                                    <span class="text-sm font-medium">Superior Esquerdo</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Estilos de Botão -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Escolha o Estilo do Botão</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+                            <!-- Botão 1 - Clássico HD -->
+                            <label class="relative cursor-pointer group">
+                                <input type="radio" name="chat-style" value="classic" class="sr-only" checked>
+                                <div class="border-2 border-blue-500 rounded-xl p-4 text-center chat-style-option selected bg-gradient-to-br from-blue-50 to-blue-100 shadow-lg transform transition-all duration-300 hover:scale-105">
+                                    <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-3 shadow-lg relative overflow-hidden">
+                                        <div class="absolute inset-0 bg-white opacity-20 rounded-full"></div>
+                                        <svg class="w-7 h-7 relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12c0 1.54.36 3.05 1.05 4.42L2 22l5.58-1.05C9.95 21.64 11.46 22 13 22h7c1.1 0 2-.9 2-2V12c0-5.52-4.48-10-10-10z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-700">Clássico</span>
+                                </div>
+                            </label>
+
+                            <!-- Botão 2 - Modern Gradient -->
+                            <label class="relative cursor-pointer group">
+                                <input type="radio" name="chat-style" value="modern" class="sr-only">
+                                <div class="border-2 border-gray-200 rounded-xl p-4 text-center chat-style-option bg-gradient-to-br from-gray-50 to-gray-100 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                                    <div class="w-14 h-14 bg-gradient-to-br from-purple-500 via-pink-500 to-rose-500 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-3 shadow-lg relative overflow-hidden">
+                                        <div class="absolute inset-0 bg-white opacity-20 rounded-full animate-pulse"></div>
+                                        <svg class="w-7 h-7 relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-700">Moderno</span>
+                                </div>
+                            </label>
+
+                            <!-- Botão 3 - Neural AI -->
+                            <label class="relative cursor-pointer group">
+                                <input type="radio" name="chat-style" value="neural" class="sr-only">
+                                <div class="border-2 border-gray-200 rounded-xl p-4 text-center chat-style-option bg-gradient-to-br from-gray-50 to-gray-100 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                                    <div class="w-14 h-14 bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-3 shadow-lg relative overflow-hidden">
+                                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-pulse"></div>
+                                        <svg class="w-7 h-7 relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-700">IA Neural</span>
+                                </div>
+                            </label>
+
+                            <!-- Botão 4 - Glass Morphism -->
+                            <label class="relative cursor-pointer group">
+                                <input type="radio" name="chat-style" value="glass" class="sr-only">
+                                <div class="border-2 border-gray-200 rounded-xl p-4 text-center chat-style-option bg-gradient-to-br from-gray-50 to-gray-100 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                                    <div class="w-14 h-14 bg-gradient-to-br from-white to-gray-100 rounded-full flex items-center justify-center text-gray-700 text-2xl mx-auto mb-3 shadow-lg backdrop-blur-sm border border-white/50 relative overflow-hidden">
+                                        <div class="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-purple-600/20 rounded-full"></div>
+                                        <svg class="w-7 h-7 relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-700">Vidro</span>
+                                </div>
+                            </label>
+
+                            <!-- Botão 5 - Neon Glow -->
+                            <label class="relative cursor-pointer group">
+                                <input type="radio" name="chat-style" value="neon" class="sr-only">
+                                <div class="border-2 border-gray-200 rounded-xl p-4 text-center chat-style-option bg-gradient-to-br from-gray-50 to-gray-100 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                                    <div class="w-14 h-14 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-3 shadow-lg relative overflow-hidden">
+                                        <div class="absolute inset-0 bg-gradient-to-r from-cyan-400 via-pink-500 to-purple-600 rounded-full animate-pulse opacity-75"></div>
+                                        <div class="absolute inset-1 bg-black/20 rounded-full backdrop-blur-sm"></div>
+                                        <svg class="w-7 h-7 relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12c0 1.54.36 3.05 1.05 4.42L2 22l5.58-1.05C9.95 21.64 11.46 22 13 22h7c1.1 0 2-.9 2-2V12c0-5.52-4.48-10-10-10z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-700">Neon</span>
+                                </div>
+                            </label>
+
+                            <!-- Botão 6 - Holographic -->
+                            <label class="relative cursor-pointer group">
+                                <input type="radio" name="chat-style" value="holo" class="sr-only">
+                                <div class="border-2 border-gray-200 rounded-xl p-4 text-center chat-style-option bg-gradient-to-br from-gray-50 to-gray-100 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                                    <div class="w-14 h-14 bg-gradient-to-br from-indigo-400 via-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-3 shadow-lg relative overflow-hidden">
+                                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent rounded-full animate-pulse"></div>
+                                        <svg class="w-7 h-7 relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-700">Holográfico</span>
+                                </div>
+                            </label>
+
+                            <!-- Botão 7 - Quantum -->
+                            <label class="relative cursor-pointer group">
+                                <input type="radio" name="chat-style" value="quantum" class="sr-only">
+                                <div class="border-2 border-gray-200 rounded-xl p-4 text-center chat-style-option bg-gradient-to-br from-gray-50 to-gray-100 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                                    <div class="w-14 h-14 bg-gradient-to-br from-black via-gray-900 to-black rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-3 shadow-lg relative overflow-hidden border border-cyan-400/50">
+                                        <div class="absolute inset-0 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 rounded-full opacity-30 animate-pulse"></div>
+                                        <svg class="w-7 h-7 relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-700">Quântico</span>
+                                </div>
+                            </label>
+
+                            <!-- Botão 8 - Cyberpunk -->
+                            <label class="relative cursor-pointer group">
+                                <input type="radio" name="chat-style" value="cyber" class="sr-only">
+                                <div class="border-2 border-gray-200 rounded-xl p-4 text-center chat-style-option bg-gradient-to-br from-gray-50 to-gray-100 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                                    <div class="w-14 h-14 bg-gradient-to-br from-green-400 via-emerald-500 to-teal-600 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-3 shadow-lg relative overflow-hidden">
+                                        <div class="absolute inset-0 bg-green-400/30 rounded-full animate-pulse"></div>
+                                        <svg class="w-7 h-7 relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12c0 1.54.36 3.05 1.05 4.42L2 22l5.58-1.05C9.95 21.64 11.46 22 13 22h7c1.1 0 2-.9 2-2V12c0-5.52-4.48-10-10-10z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-700">Cyberpunk</span>
+                                </div>
+                            </label>
+
+                            <!-- Botão 9 - Minimalist -->
+                            <label class="relative cursor-pointer group">
+                                <input type="radio" name="chat-style" value="minimal" class="sr-only">
+                                <div class="border-2 border-gray-200 rounded-xl p-4 text-center chat-style-option bg-gradient-to-br from-gray-50 to-gray-100 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                                    <div class="w-14 h-14 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center text-gray-700 text-2xl mx-auto mb-3 shadow-lg border-2 border-gray-300 relative overflow-hidden">
+                                        <svg class="w-7 h-7 relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12c0 1.54.36 3.05 1.05 4.42L2 22l5.58-1.05C9.95 21.64 11.46 22 13 22h7c1.1 0 2-.9 2-2V12c0-5.52-4.48-10-10-10z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-700">Minimalista</span>
+                                </div>
+                            </label>
+
+                            <!-- Botão 10 - Aurora -->
+                            <label class="relative cursor-pointer group">
+                                <input type="radio" name="chat-style" value="aurora" class="sr-only">
+                                <div class="border-2 border-gray-200 rounded-xl p-4 text-center chat-style-option bg-gradient-to-br from-gray-50 to-gray-100 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                                    <div class="w-14 h-14 bg-gradient-to-br from-green-400 via-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-3 shadow-lg relative overflow-hidden">
+                                        <div class="absolute inset-0 bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 rounded-full animate-pulse opacity-60"></div>
+                                        <svg class="w-7 h-7 relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-700">Aurora</span>
+                                </div>
+                            </label>
+
+                            <!-- Botão 11 - Crystal -->
+                            <label class="relative cursor-pointer group">
+                                <input type="radio" name="chat-style" value="crystal" class="sr-only">
+                                <div class="border-2 border-gray-200 rounded-xl p-4 text-center chat-style-option bg-gradient-to-br from-gray-50 to-gray-100 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                                    <div class="w-14 h-14 bg-gradient-to-br from-blue-200 via-indigo-300 to-purple-400 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-3 shadow-lg relative overflow-hidden backdrop-blur-sm">
+                                        <div class="absolute inset-0 bg-white/30 rounded-full"></div>
+                                        <svg class="w-7 h-7 relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-700">Cristal</span>
+                                </div>
+                            </label>
+
+                            <!-- Botão 12 - Plasma -->
+                            <label class="relative cursor-pointer group">
+                                <input type="radio" name="chat-style" value="plasma" class="sr-only">
+                                <div class="border-2 border-gray-200 rounded-xl p-4 text-center chat-style-option bg-gradient-to-br from-gray-50 to-gray-100 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                                    <div class="w-14 h-14 bg-gradient-to-br from-orange-400 via-red-500 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-3 shadow-lg relative overflow-hidden">
+                                        <div class="absolute inset-0 bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 rounded-full animate-pulse opacity-70"></div>
+                                        <svg class="w-7 h-7 relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-700">Plasma</span>
+                                </div>
+                            </label>
+
+                            <!-- Botão 13 - Fluid -->
+                            <label class="relative cursor-pointer group">
+                                <input type="radio" name="chat-style" value="fluid" class="sr-only">
+                                <div class="border-2 border-gray-200 rounded-xl p-4 text-center chat-style-option bg-gradient-to-br from-gray-50 to-gray-100 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                                    <div class="w-14 h-14 bg-gradient-to-br from-cyan-300 via-blue-400 to-indigo-500 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-3 shadow-lg relative overflow-hidden">
+                                        <div class="absolute inset-0 bg-gradient-to-br from-cyan-200 via-blue-300 to-indigo-400 rounded-full opacity-50 animate-pulse"></div>
+                                        <svg class="w-7 h-7 relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12c0 1.54.36 3.05 1.05 4.42L2 22l5.58-1.05C9.95 21.64 11.46 22 13 22h7c1.1 0 2-.9 2-2V12c0-5.52-4.48-10-10-10z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-700">Fluido</span>
+                                </div>
+                            </label>
+
+                            <!-- Botão 14 - Prism -->
+                            <label class="relative cursor-pointer group">
+                                <input type="radio" name="chat-style" value="prism" class="sr-only">
+                                <div class="border-2 border-gray-200 rounded-xl p-4 text-center chat-style-option bg-gradient-to-br from-gray-50 to-gray-100 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                                    <div class="w-14 h-14 bg-gradient-to-br from-red-400 via-yellow-400 via-green-400 via-blue-400 to-purple-400 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-3 shadow-lg relative overflow-hidden">
+                                        <div class="absolute inset-0 bg-gradient-to-r from-red-400 via-yellow-400 via-green-400 via-blue-400 to-purple-400 rounded-full animate-pulse opacity-60"></div>
+                                        <svg class="w-7 h-7 relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-700">Prisma</span>
+                                </div>
+                            </label>
+
+                            <!-- Botão 15 - Vortex -->
+                            <label class="relative cursor-pointer group">
+                                <input type="radio" name="chat-style" value="vortex" class="sr-only">
+                                <div class="border-2 border-gray-200 rounded-xl p-4 text-center chat-style-option bg-gradient-to-br from-gray-50 to-gray-100 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                                    <div class="w-14 h-14 bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-3 shadow-lg relative overflow-hidden border border-gray-600">
+                                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-gray-400 to-transparent rounded-full animate-spin opacity-30"></div>
+                                        <svg class="w-7 h-7 relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-700">Vórtice</span>
+                                </div>
+                            </label>
+
+                            <!-- Botão 16 - Synthwave -->
+                            <label class="relative cursor-pointer group">
+                                <input type="radio" name="chat-style" value="synthwave" class="sr-only">
+                                <div class="border-2 border-gray-200 rounded-xl p-4 text-center chat-style-option bg-gradient-to-br from-gray-50 to-gray-100 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                                    <div class="w-14 h-14 bg-gradient-to-br from-pink-500 via-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-3 shadow-lg relative overflow-hidden">
+                                        <div class="absolute inset-0 bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 rounded-full animate-pulse opacity-60"></div>
+                                        <div class="absolute inset-1 bg-black/20 rounded-full backdrop-blur-sm"></div>
+                                        <svg class="w-7 h-7 relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12c0 1.54.36 3.05 1.05 4.42L2 22l5.58-1.05C9.95 21.64 11.46 22 13 22h7c1.1 0 2-.9 2-2V12c0-5.52-4.48-10-10-10z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-700">Synthwave</span>
+                                </div>
+                            </label>
+
+                            <!-- Botão 17 - Retro -->
+                            <label class="relative cursor-pointer group">
+                                <input type="radio" name="chat-style" value="retro" class="sr-only">
+                                <div class="border-2 border-gray-200 rounded-xl p-4 text-center chat-style-option bg-gradient-to-br from-gray-50 to-gray-100 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                                    <div class="w-14 h-14 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-3 shadow-lg relative overflow-hidden border-2 border-yellow-300">
+                                        <svg class="w-7 h-7 relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12c0 1.54.36 3.05 1.05 4.42L2 22l5.58-1.05C9.95 21.64 11.46 22 13 22h7c1.1 0 2-.9 2-2V12c0-5.52-4.48-10-10-10z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-700">Retrô</span>
+                                </div>
+                            </label>
+
+                            <!-- Botão 18 - Future -->
+                            <label class="relative cursor-pointer group">
+                                <input type="radio" name="chat-style" value="future" class="sr-only">
+                                <div class="border-2 border-gray-200 rounded-xl p-4 text-center chat-style-option bg-gradient-to-br from-gray-50 to-gray-100 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                                    <div class="w-14 h-14 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-3 shadow-lg relative overflow-hidden border border-cyan-400/50">
+                                        <div class="absolute inset-0 bg-cyan-400/20 rounded-full animate-pulse"></div>
+                                        <svg class="w-7 h-7 relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-700">Futurista</span>
+                                </div>
+                            </label>
+
+                            <!-- Botão 19 - Organic -->
+                            <label class="relative cursor-pointer group">
+                                <input type="radio" name="chat-style" value="organic" class="sr-only">
+                                <div class="border-2 border-gray-200 rounded-xl p-4 text-center chat-style-option bg-gradient-to-br from-gray-50 to-gray-100 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                                    <div class="w-14 h-14 bg-gradient-to-br from-emerald-400 via-green-500 to-teal-600 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-3 shadow-lg relative overflow-hidden">
+                                        <div class="absolute inset-0 bg-green-300/30 rounded-full animate-pulse"></div>
+                                        <svg class="w-7 h-7 relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-700">Orgânico</span>
+                                </div>
+                            </label>
+
+                            <!-- Botão 20 - Matrix -->
+                            <label class="relative cursor-pointer group">
+                                <input type="radio" name="chat-style" value="matrix" class="sr-only">
+                                <div class="border-2 border-gray-200 rounded-xl p-4 text-center chat-style-option bg-gradient-to-br from-gray-50 to-gray-100 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                                    <div class="w-14 h-14 bg-gradient-to-br from-black via-gray-900 to-black rounded-full flex items-center justify-center text-green-400 text-2xl mx-auto mb-3 shadow-lg relative overflow-hidden border border-green-400/50">
+                                        <div class="absolute inset-0 bg-green-400/10 rounded-full animate-pulse"></div>
+                                        <svg class="w-7 h-7 relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12c0 1.54.36 3.05 1.05 4.42L2 22l5.58-1.05C9.95 21.64 11.46 22 13 22h7c1.1 0 2-.9 2-2V12c0-5.52-4.48-10-10-10z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-700">Matrix</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Configurações Adicionais -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Configurações Adicionais</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Texto do Botão</label>
+                                <input type="text" value="Fale conosco" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" id="chat-button-text">
+                                <p class="text-xs text-gray-500 mt-1">Texto que aparece no botão (opcional)</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Cor Principal</label>
+                                <div class="flex items-center space-x-2">
+                                    <input type="color" value="#2563eb" class="w-12 h-10 border border-gray-300 rounded" id="chat-primary-color">
+                                    <input type="text" value="#2563eb" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" id="chat-primary-color-text">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Tamanho do Botão</label>
+                                <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" id="chat-button-size">
+                                    <option value="small">Pequeno (48px)</option>
+                                    <option value="medium" selected>Médio (64px)</option>
+                                    <option value="large">Grande (80px)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Animação</label>
+                                <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" id="chat-animation">
+                                    <option value="none">Nenhuma</option>
+                                    <option value="pulse" selected>Pulsar</option>
+                                    <option value="bounce">Saltar</option>
+                                    <option value="shake">Tremer</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mensagem de Boas-vindas -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Mensagem de Boas-vindas</h3>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Mensagem Inicial</label>
+                            <textarea rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Olá! Como podemos ajudar você hoje?">Olá! 👋 Como podemos ajudar você hoje?</textarea>
+                            <p class="text-xs text-gray-500 mt-1">Esta mensagem aparece quando o cliente abre o chat</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aba Integrações -->
+        <div id="tab-integracoes" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Integrações e APIs</h2>
+
+                <div class="space-y-6">
+                    <!-- WhatsApp Business API -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">WhatsApp Business API</h3>
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                                    <span class="text-lg">💬</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-900">Conectado</h4>
+                                    <p class="text-sm text-gray-600">Número: +55 11 99999-9999</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    Ativo
+                                </span>
+                                <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                    Configurar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- E-commerce -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">E-commerce</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                        <span class="text-lg">🛒</span>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-gray-900">Shopify</h4>
+                                        <p class="text-sm text-gray-600">Integração com produtos e pedidos</p>
+                                    </div>
+                                </div>
+                                <label class="flex items-center">
+                                    <input type="checkbox" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                    <span class="ml-2 text-sm font-medium text-gray-700">Conectado</span>
+                                </label>
+                            </div>
+
+                            <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mr-3">
+                                        <span class="text-lg">📦</span>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-gray-900">VTEX</h4>
+                                        <p class="text-sm text-gray-600">Plataforma de e-commerce</p>
+                                    </div>
+                                </div>
+                                <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                    Conectar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ERP e Gestão -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">ERP e Sistemas de Gestão</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center mr-3">
+                                        <span class="text-lg">📊</span>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-gray-900">Bling</h4>
+                                        <p class="text-sm text-gray-600">Sistema de gestão empresarial</p>
+                                    </div>
+                                </div>
+                                <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                    Conectar
+                                </button>
+                            </div>
+
+                            <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mr-3">
+                                        <span class="text-lg">🎯</span>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-gray-900">Omnichat</h4>
+                                        <p class="text-sm text-gray-600">Plataforma de atendimento</p>
+                                    </div>
+                                </div>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="rounded border-gray-300 text-red-600 focus:ring-red-500">
+                                    <span class="ml-2 text-sm font-medium text-gray-700">Conectar</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chaves API -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Chaves API</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Chave da API GetNexo</label>
+                                <div class="flex">
+                                    <input type="password" value="sk-1234567890abcdef" readonly class="flex-1 px-3 py-2 border border-gray-300 rounded-l-lg bg-gray-50">
+                                    <button class="px-4 py-2 bg-gray-100 border border-l-0 border-gray-300 rounded-r-lg hover:bg-gray-200 transition-colors">
+                                        👁️
+                                    </button>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">Use esta chave para integrar com outros sistemas</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Webhook URL</label>
+                                <input type="url" value="https://api.getnexo.com/webhook/cliente-123" readonly class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50">
+                                <p class="text-xs text-gray-500 mt-1">URL para receber notificações em tempo real</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aba Faturamento -->
+        <div id="tab-faturamento" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Informações de Faturamento</h2>
+
+                <div class="space-y-6">
+                    <!-- Plano Atual -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Plano Atual</h3>
+                        <div class="p-4 border border-blue-200 rounded-lg bg-blue-50">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h4 class="font-medium text-blue-900">Plano Professional</h4>
+                                    <p class="text-sm text-blue-700">R$ 299,00/mês • Até 50.000 conversas</p>
+                                </div>
+                                <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm">
+                                    Alterar Plano
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Método de Pagamento -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Método de Pagamento</h3>
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                    <span class="text-lg">💳</span>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-900">•••• •••• •••• 4242</p>
+                                    <p class="text-sm text-gray-600">Visa • Expira em 12/26</p>
+                                </div>
+                            </div>
+                            <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                Alterar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Histórico de Faturas -->
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Histórico de Faturas</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                                <div>
+                                    <p class="font-medium text-gray-900">Fatura #001234</p>
+                                    <p class="text-sm text-gray-600">Plano Professional • Dezembro 2025</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-medium text-gray-900">R$ 299,00</p>
+                                    <button class="text-blue-600 hover:text-blue-800 text-sm">
+                                        Download
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                                <div>
+                                    <p class="font-medium text-gray-900">Fatura #001233</p>
+                                    <p class="text-sm text-gray-600">Plano Professional • Novembro 2025</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-medium text-gray-900">R$ 299,00</p>
+                                    <button class="text-blue-600 hover:text-blue-800 text-sm">
+                                        Download
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Função para atualizar o preview do botão do chat
+        function updateChatPreview() {
+            const previewButton = document.getElementById('chat-preview-button');
+            if (!previewButton) return;
+
+            // Pegar valores selecionados
+            const selectedPosition = document.querySelector('input[name="chat-position"]:checked')?.value || 'bottom-right';
+            const selectedStyle = document.querySelector('input[name="chat-style"]:checked')?.value || 'classic';
+            const buttonText = document.getElementById('chat-button-text')?.value || '';
+            const primaryColor = document.getElementById('chat-primary-color')?.value || '#2563eb';
+            const buttonSize = document.getElementById('chat-button-size')?.value || 'medium';
+            const animation = document.getElementById('chat-animation')?.value || 'pulse';
+
+            // Resetar classes de posição
+            previewButton.className = 'fixed w-16 h-16 rounded-full flex items-center justify-center text-white text-2xl shadow-lg cursor-pointer transition-all duration-300 hover:scale-110 z-50';
+
+            // Aplicar posição
+            switch (selectedPosition) {
+                case 'bottom-right':
+                    previewButton.style.bottom = '24px';
+                    previewButton.style.right = '24px';
+                    previewButton.style.top = 'auto';
+                    previewButton.style.left = 'auto';
+                    break;
+                case 'bottom-left':
+                    previewButton.style.bottom = '24px';
+                    previewButton.style.left = '24px';
+                    previewButton.style.top = 'auto';
+                    previewButton.style.right = 'auto';
+                    break;
+                case 'top-right':
+                    previewButton.style.top = '24px';
+                    previewButton.style.right = '24px';
+                    previewButton.style.bottom = 'auto';
+                    previewButton.style.left = 'auto';
+                    break;
+                case 'top-left':
+                    previewButton.style.top = '24px';
+                    previewButton.style.left = '24px';
+                    previewButton.style.bottom = 'auto';
+                    previewButton.style.right = 'auto';
+                    break;
+            }
+
+            // Aplicar tamanho
+            switch (buttonSize) {
+                case 'small':
+                    previewButton.classList.remove('w-16', 'h-16', 'w-20', 'h-20');
+                    previewButton.classList.add('w-12', 'h-12');
+                    previewButton.style.fontSize = '1.25rem';
+                    break;
+                case 'medium':
+                    previewButton.classList.remove('w-12', 'h-12', 'w-20', 'h-20');
+                    previewButton.classList.add('w-16', 'h-16');
+                    previewButton.style.fontSize = '1.5rem';
+                    break;
+                case 'large':
+                    previewButton.classList.remove('w-12', 'h-12', 'w-16', 'h-16');
+                    previewButton.classList.add('w-20', 'h-20');
+                    previewButton.style.fontSize = '2rem';
+                    break;
+            }
+
+            // Aplicar cor
+            previewButton.style.backgroundColor = primaryColor;
+
+            // Aplicar estilo e ícone SVG
+            const styleConfig = {
+                classic: {
+                    icon: '<svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.54.36 3.05 1.05 4.42L2 22l5.58-1.05C9.95 21.64 11.46 22 13 22h7c1.1 0 2-.9 2-2V12c0-5.52-4.48-10-10-10z"/></svg>',
+                    shape: 'rounded-full',
+                    gradient: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                    effects: ['shadow-lg']
+                },
+                modern: {
+                    icon: '<svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
+                    shape: 'rounded-full',
+                    gradient: 'linear-gradient(135deg, #8b5cf6 0%, #ec4899 50%, #f97316 100%)',
+                    effects: ['shadow-lg', 'animate-pulse']
+                },
+                neural: {
+                    icon: '<svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>',
+                    shape: 'rounded-full',
+                    gradient: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 50%, #8b5cf6 100%)',
+                    effects: ['shadow-lg', 'animate-pulse']
+                },
+                glass: {
+                    icon: '<svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
+                    shape: 'rounded-full',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    textColor: '#ffffff',
+                    effects: ['backdrop-blur-sm', 'shadow-lg']
+                },
+                neon: {
+                    icon: '<svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.54.36 3.05 1.05 4.42L2 22l5.58-1.05C9.95 21.64 11.46 22 13 22h7c1.1 0 2-.9 2-2V12c0-5.52-4.48-10-10-10z"/></svg>',
+                    shape: 'rounded-full',
+                    gradient: 'linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #06b6d4 100%)',
+                    effects: ['shadow-lg', 'animate-pulse']
+                },
+                holo: {
+                    icon: '<svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
+                    shape: 'rounded-full',
+                    gradient: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%)',
+                    effects: ['shadow-lg', 'animate-pulse']
+                },
+                quantum: {
+                    icon: '<svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
+                    shape: 'rounded-full',
+                    gradient: 'linear-gradient(135deg, #000000 0%, #1f2937 50%, #000000 100%)',
+                    border: '1px solid #06b6d4',
+                    effects: ['shadow-lg']
+                },
+                cyber: {
+                    icon: '<svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.54.36 3.05 1.05 4.42L2 22l5.58-1.05C9.95 21.64 11.46 22 13 22h7c1.1 0 2-.9 2-2V12c0-5.52-4.48-10-10-10z"/></svg>',
+                    shape: 'rounded-full',
+                    gradient: 'linear-gradient(135deg, #10b981 0%, #059669 50%, #0d9488 100%)',
+                    effects: ['shadow-lg', 'animate-pulse']
+                },
+                minimal: {
+                    icon: '<svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.54.36 3.05 1.05 4.42L2 22l5.58-1.05C9.95 21.64 11.46 22 13 22h7c1.1 0 2-.9 2-2V12c0-5.52-4.48-10-10-10z"/></svg>',
+                    shape: 'rounded-full',
+                    background: 'linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)',
+                    border: '2px solid #d1d5db',
+                    textColor: '#374151',
+                    effects: ['shadow-lg']
+                },
+                aurora: {
+                    icon: '<svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
+                    shape: 'rounded-full',
+                    gradient: 'linear-gradient(135deg, #10b981 0%, #3b82f6 50%, #8b5cf6 100%)',
+                    effects: ['shadow-lg', 'animate-pulse']
+                },
+                crystal: {
+                    icon: '<svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
+                    shape: 'rounded-full',
+                    background: 'rgba(147, 197, 253, 0.3)',
+                    border: '1px solid rgba(255, 255, 255, 0.5)',
+                    effects: ['backdrop-blur-sm', 'shadow-lg']
+                },
+                plasma: {
+                    icon: '<svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
+                    shape: 'rounded-full',
+                    gradient: 'linear-gradient(135deg, #f97316 0%, #dc2626 50%, #ec4899 100%)',
+                    effects: ['shadow-lg', 'animate-pulse']
+                },
+                fluid: {
+                    icon: '<svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.54.36 3.05 1.05 4.42L2 22l5.58-1.05C9.95 21.64 11.46 22 13 22h7c1.1 0 2-.9 2-2V12c0-5.52-4.48-10-10-10z"/></svg>',
+                    shape: 'rounded-full',
+                    gradient: 'linear-gradient(135deg, #67e8f9 0%, #3b82f6 50%, #6366f1 100%)',
+                    effects: ['shadow-lg', 'animate-pulse']
+                },
+                prism: {
+                    icon: '<svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
+                    shape: 'rounded-full',
+                    gradient: 'linear-gradient(135deg, #dc2626 0%, #f59e0b 20%, #10b981 40%, #3b82f6 60%, #6366f1 80%, #8b5cf6 100%)',
+                    effects: ['shadow-lg', 'animate-pulse']
+                },
+                vortex: {
+                    icon: '<svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
+                    shape: 'rounded-full',
+                    background: 'linear-gradient(135deg, #1f2937 0%, #000000 50%, #1f2937 100%)',
+                    border: '1px solid #6b7280',
+                    effects: ['shadow-lg']
+                },
+                synthwave: {
+                    icon: '<svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.54.36 3.05 1.05 4.42L2 22l5.58-1.05C9.95 21.64 11.46 22 13 22h7c1.1 0 2-.9 2-2V12c0-5.52-4.48-10-10-10z"/></svg>',
+                    shape: 'rounded-full',
+                    gradient: 'linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #3b82f6 100%)',
+                    effects: ['shadow-lg', 'animate-pulse']
+                },
+                retro: {
+                    icon: '<svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.54.36 3.05 1.05 4.42L2 22l5.58-1.05C9.95 21.64 11.46 22 13 22h7c1.1 0 2-.9 2-2V12c0-5.52-4.48-10-10-10z"/></svg>',
+                    shape: 'rounded-full',
+                    gradient: 'linear-gradient(135deg, #fbbf24 0%, #f97316 100%)',
+                    border: '2px solid #fbbf24',
+                    effects: ['shadow-lg']
+                },
+                future: {
+                    icon: '<svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
+                    shape: 'rounded-full',
+                    background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
+                    border: '1px solid #06b6d4',
+                    effects: ['shadow-lg']
+                },
+                organic: {
+                    icon: '<svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
+                    shape: 'rounded-full',
+                    gradient: 'linear-gradient(135deg, #34d399 0%, #10b981 50%, #059669 100%)',
+                    effects: ['shadow-lg', 'animate-pulse']
+                },
+                matrix: {
+                    icon: '<svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.54.36 3.05 1.05 4.42L2 22l5.58-1.05C9.95 21.64 11.46 22 13 22h7c1.1 0 2-.9 2-2V12c0-5.52-4.48-10-10-10z"/></svg>',
+                    shape: 'rounded-full',
+                    background: 'linear-gradient(135deg, #000000 0%, #111827 50%, #000000 100%)',
+                    border: '1px solid #10b981',
+                    textColor: '#10b981',
+                    effects: ['shadow-lg']
+                }
+            };
+
+            const config = styleConfig[selectedStyle] || styleConfig.classic;
+
+            // Aplicar forma
+            if (config.shape === 'rounded-full') {
+                previewButton.classList.remove('rounded-2xl', 'rounded-3xl');
+                previewButton.classList.add('rounded-full');
+            } else if (config.shape === 'rounded-2xl') {
+                previewButton.classList.remove('rounded-full', 'rounded-3xl');
+                previewButton.classList.add('rounded-2xl');
+            } else if (config.shape === 'rounded-3xl') {
+                previewButton.classList.remove('rounded-full', 'rounded-2xl');
+                previewButton.classList.add('rounded-3xl');
+            }
+
+            // Aplicar gradiente ou cor sólida
+            if (config.gradient) {
+                previewButton.style.background = config.gradient;
+            } else if (config.background) {
+                previewButton.style.background = config.background;
+                previewButton.style.border = config.border || 'none';
+                previewButton.style.color = config.textColor || '#ffffff';
+                previewButton.style.boxShadow = '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)';
+            } else {
+                previewButton.style.backgroundColor = primaryColor;
+                previewButton.style.border = 'none';
+                previewButton.style.color = '#ffffff';
+                previewButton.style.boxShadow = '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)';
+            }
+
+            // Aplicar ícone SVG
+            previewButton.innerHTML = config.icon;
+
+            // Aplicar animação
+            previewButton.classList.remove('animate-pulse', 'animate-bounce');
+            if (animation === 'pulse') {
+                previewButton.classList.add('animate-pulse');
+            } else if (animation === 'bounce') {
+                previewButton.classList.add('animate-bounce');
+            }
+
+            // Adicionar texto se especificado
+            if (buttonText.trim()) {
+                previewButton.innerHTML = `${config.icon}<span class="text-xs ml-1">${buttonText}</span>`;
+                previewButton.classList.add('px-4');
+            }
+        }
+
+        // Função para atualizar seleção visual
+        function updateSelectionVisual() {
+            // Atualizar posições
+            document.querySelectorAll('.chat-position-option').forEach(option => {
+                option.classList.remove('border-blue-500', 'bg-blue-50');
+                option.classList.add('border-gray-200');
+            });
+
+            const selectedPosition = document.querySelector('input[name="chat-position"]:checked');
+            if (selectedPosition) {
+                const positionOption = document.querySelector(`[data-position="${selectedPosition.value}"]`);
+                if (positionOption) {
+                    positionOption.classList.remove('border-gray-200');
+                    positionOption.classList.add('border-blue-500', 'bg-blue-50');
+                }
+            }
+
+            // Atualizar estilos
+            document.querySelectorAll('.chat-style-option').forEach(option => {
+                option.classList.remove('border-blue-500', 'bg-blue-50');
+                option.classList.add('border-gray-200');
+            });
+
+            const selectedStyle = document.querySelector('input[name="chat-style"]:checked');
+            if (selectedStyle) {
+                const styleOption = document.querySelector(`[data-style="${selectedStyle.value}"]`);
+                if (styleOption) {
+                    styleOption.classList.remove('border-gray-200');
+                    styleOption.classList.add('border-blue-500', 'bg-blue-50');
+                }
+            }
+        }
+
+        // Inicializar quando a página carrega
+        document.addEventListener('DOMContentLoaded', function() {
+            // Vincular eventos de mudança para posição
+            document.querySelectorAll('input[name="chat-position"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    updateSelectionVisual();
+                    updateChatPreview();
+                });
+            });
+
+            // Vincular eventos de mudança para estilo
+            document.querySelectorAll('input[name="chat-style"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    updateSelectionVisual();
+                    updateChatPreview();
+                });
+            });
+
+            // Vincular eventos dos controles adicionais
+            ['chat-button-text', 'chat-primary-color', 'chat-button-size', 'chat-animation'].forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.addEventListener('input', updateChatPreview);
+                    element.addEventListener('change', updateChatPreview);
+                }
+            });
+
+            // Vincular mudança de cor para o input de texto
+            const colorInput = document.getElementById('chat-primary-color');
+            const colorTextInput = document.getElementById('chat-primary-color-text');
+
+            if (colorInput && colorTextInput) {
+                colorInput.addEventListener('input', function() {
+                    colorTextInput.value = this.value;
+                    updateChatPreview();
+                });
+
+                colorTextInput.addEventListener('input', function() {
+                    if (/^#[0-9A-F]{6}$/i.test(this.value)) {
+                        colorInput.value = this.value;
+                        updateChatPreview();
+                    }
+                });
+            }
+
+            // Inicializar visual
+            updateSelectionVisual();
+            updateChatPreview();
+        });
+    </script>
+
+<script>
+    // JavaScript para alternar entre as abas
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active classes
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('border-blue-500', 'text-blue-600');
+                    btn.classList.add('border-transparent', 'text-gray-500');
+                });
+                tabContents.forEach(content => content.classList.add('hidden'));
+
+                // Add active class to clicked button
+                button.classList.remove('border-transparent', 'text-gray-500');
+                button.classList.add('border-blue-500', 'text-blue-600');
+
+                // Show corresponding content
+                const tabId = button.getAttribute('data-tab');
+                document.getElementById('tab-' + tabId).classList.remove('hidden');
+            });
+        });
+    });
+</script>

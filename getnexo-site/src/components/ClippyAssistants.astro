@@ -1,0 +1,574 @@
+---
+// Componente de Assistentes Clippy Personalizados para GetNexo
+// Implementa assistentes animados inspirados no Clippy do Microsoft Office
+---
+
+<div id="clippy-assistants" class="clippy-assistants">
+  <!-- Container para os assistentes -->
+  <div id="assistants-container" class="assistants-container"></div>
+
+  <!-- Controle de Assistentes -->
+  <div id="assistants-control" class="assistants-control glass-panel">
+    <button id="toggle-assistants" class="control-btn" title="Mostrar/Ocultar Assistentes">
+      🤖
+    </button>
+    <div class="control-panel">
+      <div class="control-group">
+        <label>Assistente Ativo</label>
+        <select id="active-assistant">
+          <option value="nexus">Nexus - IA Vendas</option>
+          <option value="clippy">Clippy - Suporte</option>
+          <option value="genius">Genius - Analytics</option>
+          <option value="rover">Rover - Fidelidade</option>
+          <option value="powerpup">Powerpup - Energia</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label>Ações Disponíveis</label>
+        <button id="show-tip" class="action-btn">💡 Mostrar Dica</button>
+        <button id="start-tour" class="action-btn">🎯 Tour Guiado</button>
+        <button id="ask-help" class="action-btn">❓ Pedir Ajuda</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .clippy-assistants {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .assistants-container {
+    position: relative;
+  }
+
+  .assistants-control {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    pointer-events: all;
+  }
+
+  .assistants-control.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .control-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    color: black;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .control-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
+  }
+
+  .control-panel {
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    min-width: 250px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    animation: slideInRight 0.3s ease;
+  }
+
+  .control-group {
+    margin-bottom: 15px;
+  }
+
+  .control-group:last-child {
+    margin-bottom: 0;
+  }
+
+  .control-group label {
+    display: block;
+    color: #00d4ff;
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .control-group select {
+    width: 100%;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: white;
+    font-size: 0.9rem;
+  }
+
+  .action-btn {
+    width: 100%;
+    padding: 10px 15px;
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 8px;
+    color: #00d4ff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 5px;
+  }
+
+  .action-btn:hover {
+    background: rgba(0, 212, 255, 0.2);
+    border-color: #00d4ff;
+    transform: translateY(-1px);
+  }
+
+  /* Clippy Speech Bubble */
+  .clippy-bubble {
+    position: absolute;
+    background: white;
+    border: 2px solid #00d4ff;
+    border-radius: 15px;
+    padding: 15px;
+    max-width: 250px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    animation: bubbleAppear 0.3s ease;
+    z-index: 10000;
+  }
+
+  .clippy-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    right: 30px;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid white;
+  }
+
+  .clippy-bubble::before {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    right: 29px;
+    width: 0;
+    height: 0;
+    border-left: 11px solid transparent;
+    border-right: 11px solid transparent;
+    border-top: 11px solid #00d4ff;
+  }
+
+  .bubble-content h4 {
+    color: #00d4ff;
+    margin: 0 0 10px 0;
+    font-size: 1rem;
+  }
+
+  .bubble-content p {
+    margin: 0 0 15px 0;
+    line-height: 1.4;
+    color: #374151;
+  }
+
+  .bubble-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .bubble-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .bubble-btn.primary {
+    background: #00d4ff;
+    color: white;
+  }
+
+  .bubble-btn.secondary {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes bubbleAppear {
+    from {
+      opacity: 0;
+      transform: scale(0.8) translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  /* Mobile Responsiveness */
+  @media (max-width: 768px) {
+    .clippy-assistants {
+      bottom: 15px;
+      right: 15px;
+    }
+
+    .control-btn {
+      width: 45px;
+      height: 45px;
+      font-size: 18px;
+    }
+
+    .control-panel {
+      min-width: 220px;
+      padding: 15px;
+    }
+
+    .clippy-bubble {
+      max-width: 200px;
+      padding: 12px;
+    }
+  }
+</style>
+
+<script>
+  class GetNexoAssistants {
+    constructor() {
+      this.currentAssistant = null;
+      this.isControlVisible = false;
+      this.assistants = {
+        nexus: {
+          name: 'Nexus',
+          tips: [
+            'Olá! Sou o Nexus, sua IA de vendas. Que tal configurar um chatbot inteligente para seu WhatsApp?',
+            'Dica: Use análise de sentimento para entender melhor seus clientes!',
+            'Precisa de ajuda com automação? Posso te guiar pelos nossos recursos avançados.'
+          ],
+          actions: ['show-demo', 'config-guide', 'analytics-tour']
+        },
+        clippy: {
+          name: 'Clippy',
+          tips: [
+            'Parece que você está navegando no GetNexo! Posso ajudar com alguma configuração?',
+            'Dica: Configure suas notificações para não perder nenhuma venda!',
+            'Precisa de suporte? Estou aqui para ajudar!'
+          ],
+          actions: ['support-chat', 'settings-guide', 'faq-search']
+        },
+        genius: {
+          name: 'Genius',
+          tips: [
+            'Oi! Sou o Genius, especialista em analytics. Vamos analisar seus dados de vendas?',
+            'Dica: Configure dashboards personalizados para acompanhar seu negócio em tempo real!',
+            'Quer ver relatórios avançados? Posso te mostrar como!'
+          ],
+          actions: ['analytics-demo', 'reports-guide', 'kpi-setup']
+        },
+        rover: {
+          name: 'Rover',
+          tips: [
+            'Woof! Sou o Rover, especialista em programas de fidelidade. Vamos fidelizar seus clientes?',
+            'Dica: Configure pontos por compra para aumentar o lifetime value!',
+            'Precisa de ideias para programas de recompensa?'
+          ],
+          actions: ['loyalty-demo', 'points-setup', 'rewards-guide']
+        },
+        powerpup: {
+          name: 'Powerpup',
+          tips: [
+            'Olá! Sou o Powerpup, cheio de energia! Vamos turbinar suas vendas?',
+            'Dica: Use gamificação para motivar sua equipe de vendas!',
+            'Quer aumentar a produtividade? Posso ajudar!'
+          ],
+          actions: ['gamification-demo', 'motivation-tips', 'performance-guide']
+        }
+      };
+
+      this.init();
+    }
+
+    init() {
+      this.loadClippyJS();
+      this.setupControls();
+      this.showWelcomeMessage();
+    }
+
+    async loadClippyJS() {
+      try {
+        // ClippyJS removido devido a problemas de compatibilidade de módulos
+        // Usar apenas o fallback customizado
+        console.log('Usando assistente customizado (ClippyJS removido)');
+        this.createFallbackAssistant();
+      } catch (error) {
+        console.log('Erro ao inicializar assistente:', error.message);
+        this.createFallbackAssistant();
+      }
+    }
+
+    loadAssistant(assistantKey) {
+      const assistant = this.assistants[assistantKey];
+      if (!assistant) return;
+
+      // Remove assistente anterior
+      if (this.currentAssistant) {
+        this.currentAssistant.hide();
+      }
+
+      // Sempre usar assistente customizado (ClippyJS removido)
+      this.createFallbackAssistant(assistant);
+    }
+
+    createFallbackAssistant(assistant) {
+      const container = document.getElementById('assistants-container');
+
+      // Criar assistente visual customizado
+      const assistantDiv = document.createElement('div');
+      assistantDiv.className = 'fallback-assistant';
+      assistantDiv.innerHTML = `
+        <div class="assistant-body">
+          <div class="assistant-avatar">${this.getAssistantEmoji(assistant?.name || 'Nexus')}</div>
+          <div class="assistant-name">${assistant?.name || 'Nexus'}</div>
+        </div>
+      `;
+
+      container.appendChild(assistantDiv);
+
+      // Animações básicas
+      setTimeout(() => {
+        assistantDiv.style.animation = 'bounce 2s infinite';
+      }, 1000);
+
+      this.currentAssistant = {
+        hide: () => assistantDiv.remove(),
+        speak: (text) => this.showMessage(text)
+      };
+
+      // Saudação inicial
+      setTimeout(() => {
+        this.showMessage(assistant?.tips?.[0] || 'Olá! Como posso ajudar você hoje?');
+      }, 2000);
+    }
+
+    getAssistantEmoji(name) {
+      const emojis = {
+        'Nexus': '🤖',
+        'Clippy': '📎',
+        'Genius': '🧠',
+        'Rover': '🐕',
+        'Powerpup': '🐶'
+      };
+      return emojis[name] || '🤖';
+    }
+
+    setupControls() {
+      const toggleBtn = document.getElementById('toggle-assistants');
+      const controlPanel = document.getElementById('assistants-control');
+      const assistantSelect = document.getElementById('active-assistant');
+      const showTipBtn = document.getElementById('show-tip');
+      const startTourBtn = document.getElementById('start-tour');
+      const askHelpBtn = document.getElementById('ask-help');
+
+      toggleBtn.addEventListener('click', () => {
+        this.isControlVisible = !this.isControlVisible;
+        controlPanel.classList.toggle('active', this.isControlVisible);
+      });
+
+      assistantSelect.addEventListener('change', (e) => {
+        this.loadAssistant(e.target.value);
+      });
+
+      showTipBtn.addEventListener('click', () => {
+        this.showRandomTip();
+      });
+
+      startTourBtn.addEventListener('click', () => {
+        this.startGuidedTour();
+      });
+
+      askHelpBtn.addEventListener('click', () => {
+        this.showHelpOptions();
+      });
+    }
+
+    showMessage(message) {
+      this.removeExistingBubbles();
+
+      const bubble = document.createElement('div');
+      bubble.className = 'clippy-bubble';
+      bubble.innerHTML = `
+        <div class="bubble-content">
+          <h4>${this.assistants[document.getElementById('active-assistant').value]?.name || 'Assistente'}</h4>
+          <p>${message}</p>
+          <div class="bubble-actions">
+            <button class="bubble-btn primary" onclick="this.closest('.clippy-bubble').remove()">OK</button>
+            <button class="bubble-btn secondary" onclick="window.showMoreHelp()">Mais Ajuda</button>
+          </div>
+        </div>
+      `;
+
+      // Posicionar bolha
+      const container = document.getElementById('assistants-container');
+      const rect = container.getBoundingClientRect();
+      bubble.style.bottom = '70px';
+      bubble.style.right = '20px';
+
+      document.body.appendChild(bubble);
+
+      // Auto-remover após 10 segundos
+      setTimeout(() => {
+        if (bubble.parentNode) {
+          bubble.remove();
+        }
+      }, 10000);
+    }
+
+    removeExistingBubbles() {
+      document.querySelectorAll('.clippy-bubble').forEach(bubble => bubble.remove());
+    }
+
+    showRandomTip() {
+      const activeAssistant = document.getElementById('active-assistant').value;
+      const assistant = this.assistants[activeAssistant];
+      const tip = assistant.tips[Math.floor(Math.random() * assistant.tips.length)];
+      this.showMessage(tip);
+    }
+
+    startGuidedTour() {
+      const steps = [
+        'Bem-vindo ao GetNexo! Vamos fazer um tour rápido.',
+        'Primeiro, explore nossas soluções de IA para WhatsApp.',
+        'Depois, veja como configurar seu chatbot inteligente.',
+        'Por fim, acesse o dashboard para acompanhar seus resultados!',
+        'Tour concluído! Qualquer dúvida, estou aqui.'
+      ];
+
+      let stepIndex = 0;
+      const showNextStep = () => {
+        if (stepIndex < steps.length) {
+          this.showMessage(steps[stepIndex]);
+          stepIndex++;
+          setTimeout(showNextStep, 3000);
+        }
+      };
+
+      showNextStep();
+    }
+
+    showHelpOptions() {
+      this.showMessage(`
+        Como posso ajudar?
+        <br><br>
+        • 💬 Configurar chatbot
+        <br>
+        • 📊 Ver analytics
+        <br>
+        • 🎯 Configurar vendas
+        <br>
+        • 🛠️ Resolver problemas
+        <br><br>
+        Escolha uma opção ou pergunte diretamente!
+      `);
+    }
+
+    showWelcomeMessage() {
+      setTimeout(() => {
+        this.showMessage('Olá! Bem-vindo ao GetNexo. Sou seu assistente pessoal. Clique no botão 🤖 para ver minhas opções de ajuda!');
+      }, 5000);
+    }
+
+
+  }
+
+  // Função global para mais ajuda
+  window.showMoreHelp = function() {
+    window.open('https://getnexo.com.br/suporte', '_blank');
+  };
+
+  // Inicializar quando DOM estiver pronto
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => new GetNexoAssistants());
+  } else {
+    new GetNexoAssistants();
+  }
+</script>
+
+<style is:global>
+  .fallback-assistant {
+    position: fixed;
+    bottom: 100px;
+    right: 30px;
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: black;
+    font-weight: bold;
+    box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+    z-index: 9998;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .assistant-avatar {
+    font-size: 3rem;
+    margin-bottom: 5px;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  .assistant-name {
+    font-size: 0.8rem;
+    text-align: center;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+  }
+</style>

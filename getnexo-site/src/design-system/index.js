@@ -23,6 +23,7 @@ export {
 export { Button } from './components/Button';
 export { Input } from './components/Input';
 export { Card } from './components/Card';
+export { Select, Badge, Table, Modal, Tabs, Alert, Progress, Tag } from './components/AdminExtras';
 
 // Components - Feedback
 export { Loading } from './components/Loading';

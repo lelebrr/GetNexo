@@ -1,0 +1,97 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Criando Agentes de Vendas Virtuais: O Guia Completo ARA 2026",
+      "description": "Como construir Agentes de Vendas Virtuais que vendem 24 horas por dia, 7 dias por semana, com total autonomia e inteligência.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-21",
+      "image": "/images/blog/criando_agentes_vendas_virtuais.png"
+    }
+  ]
+};
+---
+
+<Layout title="Criando Agentes de Vendas Virtuais | GetNexo">
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta animate-fade-in">Vendas • Jan 2026</div>
+      <h1 class="animate-slide-up">Agentes de Vendas Virtuais:<br/><span class="text-primary">O Guia do ARA</span></h1>
+      <p class="subtitle animate-fade-in delay-200">Tenha um time de vendas que nunca dorme, nunca cansa e bate metas com consistência inabalável.</p>
+      
+      <img src="/images/blog/criando_agentes_vendas_virtuais.png" alt="Agentes de Vendas Virtuais ARA" class="featured-image glass-panel" />
+    </header>
+
+    <div class="post-content">
+      <section id="o-que-e-ara">
+        <h2>👸 Quem é ARA?</h2>
+        <p>ARA (Autonomous Remote Assistant) é a tecnologia de ponta da GetNexo para criação de agentes de vendas autônomos. Diferente de bots simples, o ARA consegue conduzir uma venda do início ao fim, negociando preços e tirando dúvidas complexas.</p>
+        <div class="glass-panel mt-8">
+          <p><strong>Performance:</strong> Agentes de vendas virtuais podem aumentar as vendas em horários alternativos (noite e finais de semana) em até 200%.</p>
+        </div>
+      </section>
+
+      <section id="implementacao">
+        <h2>🛠️ Como Criar seu Primeiro Agente</h2>
+        <div class="stack-grid">
+          <div class="stack-card glass-panel blur">
+            <h4>Infrainstructure de Dados</h4>
+            <p>Alimente o ARA com o manual de produtos e políticas da sua empresa.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Personalidade Única</h4>
+            <p>Defina o tom de voz e a abordagem comercial do seu agente virtual.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="futuro-vendas">
+        <h2>🚀 O Futuro das Vendas é Híbrido</h2>
+        <p>O ARA não substitui seus melhores vendedores; ele os empodera. Deixe que a IA cuide do atendimento de volume e deixe os grandes fechamentos para seus campeões humanos.</p>
+      </section>
+
+      <div class="final-cta animate-scale-up">
+        <h3>Quer ver o ARA em ação?</h3>
+        <p>Descubra como os Agentes de Vendas Virtuais podem revolucionar seu faturamento.</p>
+        <div class="cta-buttons mt-8">
+          <a href="/ara" class="btn-primary">Conhecer Agente ARA</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+</Layout>
+
+<style>
+  :root {
+    --primary: #00f7ff;
+    --accent: #7000ff;
+    --glass: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+  }
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  .meta { color: var(--primary); font-size: 0.8rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem; display: inline-block; padding: 0.5rem 1rem; background: rgba(0, 247, 255, 0.05); border: 1px solid var(--glass-border); border-radius: 50px; }
+  h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; color: white; }
+  .text-primary { color: var(--primary); }
+  .subtitle { font-size: 1.25rem; color: #a0a0a0; max-width: 700px; margin: 0 auto; line-height: 1.6; }
+  .featured-image { width: 100%; border-radius: 24px; margin-top: 3rem; object-fit: cover; height: 500px; }
+  .post-content { color: #ccc; line-height: 1.8; font-size: 1.15rem; }
+  h2 { font-size: 2.2rem; color: white; margin: 6rem 0 2rem; font-weight: 800; }
+  .glass-panel { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 24px; padding: 2.5rem; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+  .stack-card { background: var(--glass); border: 1px solid var(--glass-border); padding: 1.5rem; border-radius: 20px; text-align: center; backdrop-filter: blur(10px); }
+  .final-cta { background: linear-gradient(135deg, rgba(0, 247, 255, 0.1), rgba(112, 0, 255, 0.1)); border: 1px solid var(--primary); padding: 5rem 2rem; text-align: center; border-radius: 32px; margin-top: 8rem; }
+  .btn-primary { background: var(--primary); color: black; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; font-weight: 800; display: inline-block; transition: 0.3s; }
+  .btn-primary:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(0, 247, 255, 0.4); }
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade-in { animation: fade-in 1s ease forwards; }
+  .animate-slide-up { animation: slide-up 1s ease forwards; }
+</style>

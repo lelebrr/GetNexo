@@ -1,0 +1,2989 @@
+---
+import Layout from '../layouts/Layout.astro';
+const title = "Documentação Técnica Completa GetNexo - Arquitetura IA, APIs, Integrações | GetNexo IA";
+const description = "Documentação técnica completa GetNexo: arquitetura de IA, APIs REST/GraphQL, integrações enterprise, segurança, performance, deployment cloud-native.";
+const keywords = "documentacao tecnica getnexo, arquitetura ia, apis rest graphql, integracoes enterprise, documentacao api, arquitetura microservicos, deployment cloud native";
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  <!-- Schema.org Rich Snippets para Documentação Técnica -->
+  <script type="application/ld+json" >
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "name": "Documentação Técnica Completa GetNexo",
+      "description": "Documentação técnica abrangente da plataforma GetNexo, cobrindo arquitetura de IA, APIs, integrações enterprise, segurança e performance",
+      "author": {
+        "@type": "Organization",
+        "name": "GetNexo"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "GetNexo"
+      },
+      "datePublished": "2026-01-01",
+      "dateModified": "2026-01-22"
+    }
+  </script>
+
+  <!-- Hero Section Documentação Técnica -->
+  <section class="hero-technical-docs">
+    <div class="hero-content">
+      <div class="hero-badges">
+        <span class="hero-badge architecture">🏗️ Arquitetura IA</span>
+        <span class="hero-badge apis">🔌 APIs REST/GraphQL</span>
+        <span class="hero-badge integrations">🔗 Integrações Enterprise</span>
+        <span class="hero-badge security">🔒 Segurança Enterprise</span>
+      </div>
+
+      <h1>Documentação Técnica Completa GetNexo</h1>
+
+      <h2>Arquitetura de IA avançada, APIs enterprise, integrações cloud-native e documentação técnica abrangente</h2>
+
+      <p>Esta documentação técnica completa cobre todos os aspectos da plataforma GetNexo: desde a arquitetura de IA de última geração até APIs REST/GraphQL, integrações enterprise, segurança de nível bancário, deployment cloud-native e muito mais. Tudo que você precisa para integrar, customizar e escalar a plataforma GetNexo em seu ambiente.</p>
+
+      <div class="hero-metrics">
+        <div class="metric">
+          <div class="metric-number">500+</div>
+          <div class="metric-label">APIs Documentadas</div>
+          <div class="metric-subtext">Endpoints completos</div>
+        </div>
+        <div class="metric">
+          <div class="metric-number">99.9<span>%</span></div>
+          <div class="metric-label">Uptime SLA</div>
+          <div class="metric-subtext">Disponibilidade garantida</div>
+        </div>
+        <div class="metric">
+          <div class="metric-number">50+</div>
+          <div class="metric-label">Integrações Nativas</div>
+          <div class="metric-subtext">Plataformas suportadas</div>
+        </div>
+        <div class="metric">
+          <div class="metric-number">24/7</div>
+          <div class="metric-label">Suporte Enterprise</div>
+          <div class="metric-subtext">Arquitetos dedicados</div>
+        </div>
+      </div>
+
+      <div class="hero-navigation">
+        <div class="nav-section">
+          <h3>🚀 Início Rápido</h3>
+          <div class="nav-links">
+            <a href="#architecture">Arquitetura Geral</a>
+            <a href="#authentication">Autenticação</a>
+            <a href="#first-api">Primeira API</a>
+            <a href="#deployment">Deployment</a>
+          </div>
+        </div>
+
+        <div class="nav-section">
+          <h3>🔌 APIs & Integrações</h3>
+          <div class="nav-links">
+            <a href="#rest-api">REST API</a>
+            <a href="#graphql">GraphQL</a>
+            <a href="#webhooks">Webhooks</a>
+            <a href="#integrations">Integrações</a>
+          </div>
+        </div>
+
+        <div class="nav-section">
+          <h3>🤖 IA & Machine Learning</h3>
+          <div class="nav-links">
+            <a href="#ai-architecture">Arquitetura IA</a>
+            <a href="#nlp-models">Modelos NLP</a>
+            <a href="#training">Treinamento</a>
+            <a href="#fine-tuning">Fine-tuning</a>
+          </div>
+        </div>
+
+        <div class="nav-section">
+          <h3>🔒 Segurança & Compliance</h3>
+          <div class="nav-links">
+            <a href="#security">Segurança</a>
+            <a href="#compliance">Compliance</a>
+            <a href="#encryption">Criptografia</a>
+            <a href="#audit">Auditoria</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-ctas">
+        <a href="/api-reference" class="btn-primary-giant">
+          <span class="btn-icon">📚</span>
+          API Reference Completo
+        </a>
+        <a href="#architecture" class="btn-secondary-giant">
+          <span class="btn-icon">🏗️</span>
+          Ver Arquitetura
+        </a>
+        <a href="/downloads/sdk" class="btn-outline-giant">
+          <span class="btn-icon">📦</span>
+          Download SDKs
+        </a>
+      </div>
+
+      <div class="hero-trust-indicators">
+        <div class="trust-logos">
+          <img src="/assets/trust/openapi.svg" alt="OpenAPI 3.0 Compliant" loading="lazy" />
+          <img src="/assets/trust/kubernetes.svg" alt="Kubernetes Certified" loading="lazy" />
+          <img src="/assets/trust/aws-partner.svg" alt="AWS Advanced Partner" loading="lazy" />
+          <img src="/assets/trust/soc2-compliant.svg" alt="SOC 2 Type II Certified" loading="lazy" />
+        </div>
+        <p class="trust-text">OpenAPI 3.0 • Kubernetes Certified • AWS Advanced Partner • SOC 2 Type II Certified</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture Overview -->
+  <section id="architecture" class="architecture-overview">
+    <div class="section-header">
+      <h2>🏗️ Arquitetura Geral da Plataforma</h2>
+      <p>Arquitetura cloud-native, microserviços e IA de última geração</p>
+    </div>
+
+    <div class="architecture-diagram">
+      <div class="architecture-layers">
+        <div class="layer user-facing">
+          <h3>🎭 Camada de Usuário</h3>
+          <div class="layer-components">
+            <div class="component">
+              <span class="comp-icon">🌐</span>
+              <span>Web Apps (React/Vue)</span>
+            </div>
+            <div class="component">
+              <span class="comp-icon">📱</span>
+              <span>Mobile Apps (React Native)</span>
+            </div>
+            <div class="component">
+              <span class="comp-icon">💬</span>
+              <span>APIs REST/GraphQL</span>
+            </div>
+            <div class="component">
+              <span class="comp-icon">🔗</span>
+              <span>Webhooks & Integrations</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="layer api-gateway">
+          <h3>🚪 API Gateway Layer</h3>
+          <div class="layer-components">
+            <div class="component">
+              <span class="comp-icon">🔐</span>
+              <span>JWT Authentication</span>
+            </div>
+            <div class="component">
+              <span class="comp-icon">📊</span>
+              <span>Rate Limiting</span>
+            </div>
+            <div class="component">
+              <span class="comp-icon">🏗️</span>
+              <span>Request Routing</span>
+            </div>
+            <div class="component">
+              <span class="comp-icon">📝</span>
+              <span>API Versioning</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="layer microservices">
+          <h3>🔧 Camada de Microserviços</h3>
+          <div class="layer-components">
+            <div class="component">
+              <span class="comp-icon">🤖</span>
+              <span>AI Service (Python/FastAPI)</span>
+            </div>
+            <div class="component">
+              <span class="comp-icon">💾</span>
+              <span>Data Service (Node.js)</span>
+            </div>
+            <div class="component">
+              <span class="comp-icon">💰</span>
+              <span>Payment Service (Go)</span>
+            </div>
+            <div class="component">
+              <span class="comp-icon">📧</span>
+              <span>Notification Service (Java)</span>
+            </div>
+            <div class="component">
+              <span class="comp-icon">📈</span>
+              <span>Analytics Service (Python)</span>
+            </div>
+            <div class="component">
+              <span class="comp-icon">🔄</span>
+              <span>Integration Service (Node.js)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="layer data-ai">
+          <h3>🧠 Camada de Dados & IA</h3>
+          <div class="layer-components">
+            <div class="component">
+              <span class="comp-icon">🗄️</span>
+              <span>PostgreSQL (Primary DB)</span>
+            </div>
+            <div class="component">
+              <span class="comp-icon">🚀</span>
+              <span>Redis (Caching)</span>
+            </div>
+            <div class="component">
+              <span class="comp-icon">🔍</span>
+              <span>Elasticsearch (Search)</span>
+            </div>
+            <div class="component">
+              <span class="comp-icon">🤖</span>
+              <span>OpenAI GPT-4 API</span>
+            </div>
+            <div class="component">
+              <span class="comp-icon">📊</span>
+              <span>Qdrant (Vector DB)</span>
+            </div>
+            <div class="component">
+              <span class="comp-icon">💾</span>
+              <span>S3/MinIO (Storage)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="layer infrastructure">
+          <h3>☁️ Infraestrutura Cloud</h3>
+          <div class="layer-components">
+            <div class="component">
+              <span class="comp-icon">🐳</span>
+              <span>Kubernetes (Orquestração)</span>
+            </div>
+            <div class="component">
+              <span class="comp-icon">🚀</span>
+              <span>AWS EKS/GCP GKE</span>
+            </div>
+            <div class="component">
+              <span class="comp-icon">📊</span>
+              <span>Prometheus/Grafana</span>
+            </div>
+            <div class="component">
+              <span class="comp-icon">🔒</span>
+              <span>Istio (Service Mesh)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="architecture-details">
+      <div class="detail-card">
+        <h3>🏗️ Arquitetura de Microserviços</h3>
+        <p>Cada serviço é independente, escalável horizontalmente e desenvolvido em linguagem otimizada para sua função específica.</p>
+        <div class="tech-stack">
+          <h4>🛠️ Stack Tecnológico:</h4>
+          <div class="tech-list">
+            <span class="tech">Python/FastAPI (IA)</span>
+            <span class="tech">Node.js/Express (APIs)</span>
+            <span class="tech">Go (High-performance)</span>
+            <span class="tech">Java/Spring (Enterprise)</span>
+            <span class="tech">Rust (Security-critical)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-card">
+        <h3>🔄 Comunicação Entre Serviços</h3>
+        <p>Comunicação assíncrona via Apache Kafka, gRPC para alta performance e REST para compatibilidade.</p>
+        <div class="communication-patterns">
+          <h4>📡 Padrões Implementados:</h4>
+          <ul>
+            <li>• <strong>Event Sourcing:</strong> Todos os eventos são armazenados</li>
+            <li>• <strong>CQRS:</strong> Separação de comandos e queries</li>
+            <li>• <strong>Saga Pattern:</strong> Transações distribuídas</li>
+            <li>• <strong>Circuit Breaker:</strong> Resiliência automática</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="detail-card">
+        <h3>📊 Observabilidade Completa</h3>
+        <p>Monitoramento em tempo real, tracing distribuído e alertas inteligentes para manter 99.9% uptime.</p>
+        <div class="observability-tools">
+          <h4>🔍 Ferramentas:</h4>
+          <div class="tool-list">
+            <span class="tool">Prometheus (Métricas)</span>
+            <span class="tool">Grafana (Dashboards)</span>
+            <span class="tool">Jaeger (Tracing)</span>
+            <span class="tool">ELK Stack (Logs)</span>
+            <span class="tool">AlertManager (Alertas)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI Architecture Deep Dive -->
+  <section id="ai-architecture" class="ai-architecture">
+    <div class="section-header">
+      <h2>🤖 Arquitetura de IA Avançada</h2>
+      <p>Pipeline de IA de última geração com processamento em tempo real</p>
+    </div>
+
+    <div class="ai-pipeline">
+      <div class="pipeline-step">
+        <div class="step-number">1</div>
+        <h3>📥 Input Processing</h3>
+        <p>Processamento inicial de dados: tokenização, limpeza, normalização e validação de entrada.</p>
+        <div class="step-tech">
+          <h4>🛠️ Tecnologias:</h4>
+          <ul>
+            <li>• spaCy para NLP preprocessing</li>
+            <li>• Hugging Face Transformers</li>
+            <li>• Custom tokenizers para português</li>
+            <li>• Data validation com Pydantic</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="pipeline-step">
+        <div class="step-number">2</div>
+        <h3>🧠 Feature Extraction</h3>
+        <p>Extração de features contextuais: embeddings, entidades, intenções e padrões comportamentais.</p>
+        <div class="step-tech">
+          <h4>🛠️ Tecnologias:</h4>
+          <ul>
+            <li>• BERTimbau para português brasileiro</li>
+            <li>• Sentence Transformers para embeddings</li>
+            <li>• Named Entity Recognition customizada</li>
+            <li>• Feature engineering automatizado</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="pipeline-step">
+        <div class="step-number">3</div>
+        <h3>🎯 Model Inference</h3>
+        <p>Inferência de modelos: classificação, predição e geração de respostas contextuais.</p>
+        <div class="step-tech">
+          <h4>🛠️ Tecnologias:</h4>
+          <ul>
+            <li>• OpenAI GPT-4 Turbo para geração</li>
+            <li>• Custom fine-tuned models</li>
+            <li>• Ensemble methods para precisão</li>
+            <li>• Model versioning e A/B testing</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="pipeline-step">
+        <div class="step-number">4</div>
+        <h3>📤 Output Processing</h3>
+        <p>Processamento de saída: formatação, validação, personalização e otimização de resposta.</p>
+        <div class="step-tech">
+          <h4>🛠️ Tecnologias:</h4>
+          <ul>
+            <li>• Response templating dinâmico</li>
+            <li>• Personalização baseada em perfil</li>
+            <li>• Fallback automático para humanos</li>
+            <li>• Quality scoring em tempo real</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="pipeline-step">
+        <div class="step-number">5</div>
+        <h3>🔄 Continuous Learning</h3>
+        <p>Aprendizado contínuo: feedback loop, fine-tuning automatizado e melhoria de performance.</p>
+        <div class="step-tech">
+          <h4>🛠️ Tecnologias:</h4>
+          <ul>
+            <li>• Human-in-the-loop feedback</li>
+            <li>• Automated model retraining</li>
+            <li>• Online learning capabilities</li>
+            <li>• Performance monitoring</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-models">
+      <h3>🧠 Modelos de IA Implementados</h3>
+      <div class="models-grid">
+        <div class="model-card">
+          <h4>🤖 GPT-4 Turbo Context-Aware</h4>
+          <p>Modelo principal para geração de respostas contextuais e conversacionais.</p>
+          <div class="model-specs">
+            <span>Uso: 85% dos casos</span>
+            <span>Precisão: 94%</span>
+            <span>Latência: 1.2s</span>
+          </div>
+        </div>
+
+        <div class="model-card">
+          <h4>🎭 BERTimbau Sentiment Analysis</h4>
+          <p>Modelo especializado em detecção de emoções e sentimentos em português.</p>
+          <div class="model-specs">
+            <span>12 emoções detectadas</span>
+            <span>Precisão: 96%</span>
+            <span>Latência: 0.3s</span>
+          </div>
+        </div>
+
+        <div class="model-card">
+          <h4>🎯 Intent Classification</h4>
+          <p>Classificação automática de intenções e necessidades do usuário.</p>
+          <div class="model-specs">
+            <span>150+ intenções</span>
+            <span>Precisão: 92%</span>
+            <span>Latência: 0.1s</span>
+          </div>
+        </div>
+
+        <div class="model-card">
+          <h4>🔮 Predictive Analytics</h4>
+          <p>Previsão de comportamento, churn e oportunidades de venda.</p>
+          <div class="model-specs">
+            <span>95% acurácia predição</span>
+            <span>Churn detectado 7 dias antes</span>
+            <span>Latência: 0.5s</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- API Reference -->
+  <section id="rest-api" class="api-reference">
+    <div class="section-header">
+      <h2>🔌 API Reference Completo</h2>
+      <p>APIs REST e GraphQL com exemplos práticos e SDKs para todas as linguagens</p>
+    </div>
+
+    <div class="api-endpoints">
+      <div class="endpoint-category">
+        <h3>💬 Conversational AI APIs</h3>
+        <div class="endpoints-list">
+          <div class="endpoint-item">
+            <div class="endpoint-method">POST</div>
+            <div class="endpoint-path">/api/v1/chat/send</div>
+            <div class="endpoint-desc">Envio de mensagens para processamento de IA</div>
+            <div class="endpoint-params">
+              <code>{"message": "string", "context": "object", "user_id": "string"}</code>
+            </div>
+          </div>
+
+          <div class="endpoint-item">
+            <div class="endpoint-method">GET</div>
+            <div class="endpoint-path">/api/v1/chat/history/{user_id}</div>
+            <div class="endpoint-desc">Histórico completo de conversas</div>
+            <div class="endpoint-params">
+              <code>?limit=50&offset=0&start_date=2024-01-01</code>
+            </div>
+          </div>
+
+          <div class="endpoint-item">
+            <div class="endpoint-method">POST</div>
+            <div class="endpoint-path">/api/v1/sentiment/analyze</div>
+            <div class="endpoint-desc">Análise de sentimento em tempo real</div>
+            <div class="endpoint-params">
+              <code>{"text": "string", "language": "pt-BR", "context": "object"}</code>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="endpoint-category">
+        <h3>🎮 Gamification APIs</h3>
+        <div class="endpoints-list">
+          <div class="endpoint-item">
+            <div class="endpoint-method">POST</div>
+            <div class="endpoint-path">/api/v1/gamification/challenge/create</div>
+            <div class="endpoint-desc">Criação de desafios personalizados</div>
+            <div class="endpoint-params">
+              <code>{"type": "daily_quest", "target": 100, "reward": 500, "users": ["user1", "user2"]}</code>
+            </div>
+          </div>
+
+          <div class="endpoint-item">
+            <div class="endpoint-method">GET</div>
+            <div class="endpoint-path">/api/v1/gamification/leaderboard</div>
+            <div class="endpoint-desc">Ranking atualizado de usuários</div>
+            <div class="endpoint-params">
+              <code>?period=weekly&limit=100&category=sales</code>
+            </div>
+          </div>
+
+          <div class="endpoint-item">
+            <div class="endpoint-method">POST</div>
+            <div class="endpoint-path">/api/v1/gamification/reward/claim</div>
+            <div class="endpoint-desc">Resgate de recompensas conquistadas</div>
+            <div class="endpoint-params">
+              <code>{"reward_id": "uuid", "user_id": "string", "amount": 1000}</code>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="endpoint-category">
+        <h3>📊 Analytics APIs</h3>
+        <div class="endpoints-list">
+          <div class="endpoint-item">
+            <div class="endpoint-method">GET</div>
+            <div class="endpoint-path">/api/v1/analytics/dashboard</div>
+            <div class="endpoint-desc">Dados consolidados do dashboard</div>
+            <div class="endpoint-params">
+              <code>?date_from=2024-01-01&date_to=2024-01-31&metrics=["conversions","revenue","satisfaction"]</code>
+            </div>
+          </div>
+
+          <div class="endpoint-item">
+            <div class="endpoint-method">POST</div>
+            <div class="endpoint-path">/api/v1/analytics/event</div>
+            <div class="endpoint-desc">Registro de eventos customizados</div>
+            <div class="endpoint-params">
+              <code>{"event_type": "user_action", "user_id": "string", "properties": {"action": "button_click", "page": "checkout"}}</code>
+            </div>
+          </div>
+
+          <div class="endpoint-item">
+            <div class="endpoint-method">GET</div>
+            <div class="endpoint-path">/api/v1/analytics/predictive</div>
+            <div class="endpoint-desc">Insights preditivos baseados em IA</div>
+            <div class="endpoint-params">
+              <code>?user_id=123&prediction_type=churn_probability</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="api-examples">
+      <h3>💻 Exemplos de Implementação</h3>
+      <div class="code-examples">
+        <div class="code-example">
+          <h4>JavaScript/Node.js</h4>
+          <pre><code>const getnexo = require('getnexo-sdk');
+
+const client = new GetNexoClient({
+  apiKey: 'your-api-key',
+  baseUrl: 'https://api.getnexo.com'
+});
+
+// Enviar mensagem para IA
+const response = await client.chat.send({
+  message: 'Olá, como posso ajudar?',
+  context: { user_id: '123', channel: 'whatsapp' }
+});
+
+console.log(response);</code></pre>
+        </div>
+
+        <div class="code-example">
+          <h4>Python</h4>
+          <pre><code>from getnexo import GetNexoClient
+
+client = GetNexoClient(
+    api_key='your-api-key',
+    base_url='https://api.getnexo.com'
+)
+
+# Análise de sentimento
+result = client.sentiment.analyze(
+    text="Adorei o atendimento!",
+    language="pt-BR"
+)
+
+print(f"Sentimento: {result.sentiment}")
+print(f"Intensidade: {result.intensity}")</code></pre>
+        </div>
+
+        <div class="code-example">
+          <h4>PHP</h4>
+          <pre><code>$client = new GetNexo\Client([
+    'api_key' => 'your-api-key',
+    'base_url' => 'https://api.getnexo.com'
+]);
+
+// Criar desafio de gamificação
+$challenge = $client->gamification->createChallenge([
+    'type' => 'daily_quest',
+    'title' => 'Vender 5 produtos hoje',
+    'target' => 5,
+    'reward_points' => 500,
+    'users' => ['user1', 'user2']
+]);
+
+echo "Desafio criado: " . $challenge->id;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdk-downloads">
+      <h3>📦 SDKs e Bibliotecas</h3>
+      <div class="sdk-grid">
+        <div class="sdk-item">
+          <div class="sdk-lang">JavaScript</div>
+          <div class="sdk-install">npm install getnexo-sdk</div>
+          <a href="/downloads/js-sdk" class="sdk-download">Download</a>
+        </div>
+        <div class="sdk-item">
+          <div class="sdk-lang">Python</div>
+          <div class="sdk-install">pip install getnexo</div>
+          <a href="/downloads/python-sdk" class="sdk-download">Download</a>
+        </div>
+        <div class="sdk-item">
+          <div class="sdk-lang">PHP</div>
+          <div class="sdk-install">composer require getnexo/php-sdk</div>
+          <a href="/downloads/php-sdk" class="sdk-download">Download</a>
+        </div>
+        <div class="sdk-item">
+          <div class="sdk-lang">Java</div>
+          <div class="sdk-install">Maven/Gradle dependency</div>
+          <a href="/downloads/java-sdk" class="sdk-download">Download</a>
+        </div>
+        <div class="sdk-item">
+          <div class="sdk-lang">Go</div>
+          <div class="sdk-install">go get github.com/getnexo/go-sdk</div>
+          <a href="/downloads/go-sdk" class="sdk-download">Download</a>
+        </div>
+        <div class="sdk-item">
+          <div class="sdk-lang">.NET</div>
+          <div class="sdk-install">NuGet package</div>
+          <a href="/downloads/dotnet-sdk" class="sdk-download">Download</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Integrations -->
+  <section id="integrations" class="integrations-section">
+    <div class="section-header">
+      <h2>🔗 Integrações Enterprise</h2>
+      <p>50+ integrações nativas com as principais plataformas do mercado</p>
+    </div>
+
+    <div class="integrations-categories">
+      <div class="category">
+        <h3>🛒 E-commerce</h3>
+        <div class="integration-logos">
+          <div class="integration-item">
+            <img src="/assets/integrations/shopify.svg" alt="Shopify" />
+            <span>Shopify</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/woocommerce.svg" alt="WooCommerce" />
+            <span>WooCommerce</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/magento.svg" alt="Magento" />
+            <span>Magento</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/vtex.svg" alt="VTEX" />
+            <span>VTEX</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/tray.svg" alt="Tray" />
+            <span>Tray</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/nuvemshop.svg" alt="Nuvemshop" />
+            <span>Nuvemshop</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="category">
+        <h3>💼 CRM & Marketing</h3>
+        <div class="integration-logos">
+          <div class="integration-item">
+            <img src="/assets/integrations/hubspot.svg" alt="HubSpot" />
+            <span>HubSpot</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/rd-station.svg" alt="RD Station" />
+            <span>RD Station</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/pipedrive.svg" alt="Pipedrive" />
+            <span>Pipedrive</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/salesforce.svg" alt="Salesforce" />
+            <span>Salesforce</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/zoho.svg" alt="Zoho CRM" />
+            <span>Zoho CRM</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/activecampaign.svg" alt="ActiveCampaign" />
+            <span>ActiveCampaign</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="category">
+        <h3>💬 Comunicação</h3>
+        <div class="integration-logos">
+          <div class="integration-item">
+            <img src="/assets/integrations/whatsapp.svg" alt="WhatsApp Business" />
+            <span>WhatsApp</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/telegram.svg" alt="Telegram" />
+            <span>Telegram</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/messenger.svg" alt="Messenger" />
+            <span>Messenger</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/instagram.svg" alt="Instagram" />
+            <span>Instagram</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/teams.svg" alt="Teams" />
+            <span>Teams</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/slack.svg" alt="Slack" />
+            <span>Slack</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="category">
+        <h3>💰 Pagamentos</h3>
+        <div class="integration-logos">
+          <div class="integration-item">
+            <img src="/assets/integrations/stripe.svg" alt="Stripe" />
+            <span>Stripe</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/paypal.svg" alt="PayPal" />
+            <span>PayPal</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/mercado-pago.svg" alt="Mercado Pago" />
+            <span>Mercado Pago</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/pagseguro.svg" alt="PagSeguro" />
+            <span>PagSeguro</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/cielo.svg" alt="Cielo" />
+            <span>Cielo</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/stone.svg" alt="Stone" />
+            <span>Stone</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="category">
+        <h3>📊 Analytics & BI</h3>
+        <div class="integration-logos">
+          <div class="integration-item">
+            <img src="/assets/integrations/google-analytics.svg" alt="Google Analytics" />
+            <span>Google Analytics</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/mixpanel.svg" alt="Mixpanel" />
+            <span>Mixpanel</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/amplitude.svg" alt="Amplitude" />
+            <span>Amplitude</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/powerbi.svg" alt="Power BI" />
+            <span>Power BI</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/tableau.svg" alt="Tableau" />
+            <span>Tableau</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/looker.svg" alt="Looker" />
+            <span>Looker</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="category">
+        <h3>☁️ Cloud & DevOps</h3>
+        <div class="integration-logos">
+          <div class="integration-item">
+            <img src="/assets/integrations/aws.svg" alt="AWS" />
+            <span>AWS</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/gcp.svg" alt="Google Cloud" />
+            <span>GCP</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/azure.svg" alt="Azure" />
+            <span>Azure</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/datadog.svg" alt="Datadog" />
+            <span>Datadog</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/newrelic.svg" alt="New Relic" />
+            <span>New Relic</span>
+          </div>
+          <div class="integration-item">
+            <img src="/assets/integrations/sentry.svg" alt="Sentry" />
+            <span>Sentry</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="integration-setup">
+      <h3>🚀 Como Configurar uma Integração</h3>
+      <div class="setup-steps">
+        <div class="setup-step">
+          <div class="step-number">1</div>
+          <h4>Acesse o Painel de Integrações</h4>
+          <p>Vá para Configurações → Integrações no seu dashboard GetNexo</p>
+        </div>
+        <div class="setup-step">
+          <div class="step-number">2</div>
+          <h4>Selecione a Plataforma</h4>
+          <p>Escolha a plataforma desejada na lista de integrações disponíveis</p>
+        </div>
+        <div class="setup-step">
+          <div class="step-number">3</div>
+          <h4>Configure as Credenciais</h4>
+          <p>Insira API Keys, Webhooks URLs e permissões necessárias</p>
+        </div>
+        <div class="setup-step">
+          <div class="step-number">4</div>
+          <h4>Teste a Conexão</h4>
+          <p>Use nossos testes automatizados para validar a integração</p>
+        </div>
+        <div class="setup-step">
+          <div class="step-number">5</div>
+          <h4>Configure Mapeamentos</h4>
+          <p>Defina como os dados serão sincronizados entre as plataformas</p>
+        </div>
+        <div class="setup-step">
+          <div class="step-number">6</div>
+          <h4>Ative e Monitore</h4>
+          <p>Ative a integração e monitore através dos dashboards em tempo real</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Security & Compliance -->
+  <section id="security" class="security-section">
+    <div class="section-header">
+      <h2>🔒 Segurança & Compliance Enterprise</h2>
+      <p>Segurança de nível bancário com compliance completo LGPD, GDPR e SOC 2</p>
+    </div>
+
+    <div class="security-framework">
+      <div class="security-layer">
+        <h3>🔐 Autenticação & Autorização</h3>
+        <div class="security-features">
+          <div class="feature">
+            <span class="feature-icon">🔑</span>
+            <div class="feature-content">
+              <h4>JWT + OAuth 2.0</h4>
+              <p>Tokens JWT com refresh automático e integração OAuth 2.0 completa</p>
+            </div>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">👥</span>
+            <div class="feature-content">
+              <h4>Role-Based Access Control</h4>
+              <p>RBAC granular com permissões específicas por usuário e departamento</p>
+            </div>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">🔢</span>
+            <div class="feature-content">
+              <h4>Multi-Factor Authentication</h4>
+              <p>MFA obrigatório com TOTP, SMS e autenticação por push</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="security-layer">
+        <h3>🔒 Criptografia & Dados</h3>
+        <div class="security-features">
+          <div class="feature">
+            <span class="feature-icon">🛡️</span>
+            <div class="feature-content">
+              <h4>AES-256 End-to-End</h4>
+              <p>Criptografia AES-256 para dados em trânsito e em repouso</p>
+            </div>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">🔐</span>
+            <div class="feature-content">
+              <h4>Hashing Seguro</h4>
+              <p>Bcrypt para senhas, SHA-256 para integridade de dados</p>
+            </div>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">🗝️</span>
+            <div class="feature-content">
+              <h4>Key Management</h4>
+              <p>HSM dedicado para gerenciamento de chaves criptográficas</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="security-layer">
+        <h3>📊 Monitoramento & Auditoria</h3>
+        <div class="security-features">
+          <div class="feature">
+            <span class="feature-icon">📋</span>
+            <div class="feature-content">
+              <h4>Logs Completos</h4>
+              <p>Logs imutáveis de todas as ações com retenção de 7 anos</p>
+            </div>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">🚨</span>
+            <div class="feature-content">
+              <h4>Deteção de Intrusão</h4>
+              <p>Sistemas IDS/IPS com resposta automática a ameaças</p>
+            </div>
+          </div>
+          <div class="feature">
+            <span class="feature-icon">🔍</span>
+            <div class="feature-content">
+              <h4>Compliance Auditing</h4>
+              <p>Auditorias automatizadas de compliance e conformidade</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="compliance-certifications">
+      <h3>📜 Certificações e Compliance</h3>
+      <div class="certifications-grid">
+        <div class="certification">
+          <div class="cert-icon">🇧🇷</div>
+          <h4>LGPD Compliance</h4>
+          <p>Lei Geral de Proteção de Dados - Brasil</p>
+          <div class="cert-status">✅ Certificado</div>
+        </div>
+        <div class="certification">
+          <div class="cert-icon">🇪🇺</div>
+          <h4>GDPR Compliance</h4>
+          <p>General Data Protection Regulation - Europa</p>
+          <div class="cert-status">✅ Certificado</div>
+        </div>
+        <div class="certification">
+          <div class="cert-icon">🎯</div>
+          <h4>SOC 2 Type II</h4>
+          <p>Controles de segurança, disponibilidade e confidencialidade</p>
+          <div class="cert-status">✅ Certificado</div>
+        </div>
+        <div class="certification">
+          <div class="cert-icon">🔒</div>
+          <h4>ISO 27001</h4>
+          <p>Sistema de Gestão da Segurança da Informação</p>
+          <div class="cert-status">✅ Certificado</div>
+        </div>
+        <div class="certification">
+          <div class="cert-icon">🇺🇸</div>
+          <h4>HIPAA Compliance</h4>
+          <p>Health Insurance Portability and Accountability Act</p>
+          <div class="cert-status">✅ Certificado</div>
+        </div>
+        <div class="certification">
+          <div class="cert-icon">🇨🇦</div>
+          <h4>PIPEDA Compliance</h4>
+          <p>Personal Information Protection and Electronic Documents Act</p>
+          <div class="cert-status">✅ Certificado</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="security-best-practices">
+      <h3>🛡️ Melhores Práticas de Segurança</h3>
+      <div class="practices-grid">
+        <div class="practice">
+          <h4>🔄 Rotação Automática de Credenciais</h4>
+          <p>Credenciais rotacionadas automaticamente a cada 30 dias com notificações antecipadas</p>
+        </div>
+        <div class="practice">
+          <h4>📍 Zero Trust Architecture</h4>
+          <p>Nunca confie, sempre verifique - todas as requisições passam por validação completa</p>
+        </div>
+        <div class="practice">
+          <h4>🚫 Fail-Safe Defaults</h4>
+          <p>Em caso de falha, o sistema assume configuração mais restritiva automaticamente</p>
+        </div>
+        <div class="practice">
+          <h4>🔍 Continuous Vulnerability Scanning</h4>
+          <p>Scans automatizados diários em busca de vulnerabilidades em código e infraestrutura</p>
+        </div>
+        <div class="practice">
+          <h4>📊 Incident Response Automation</h4>
+          <p>Resposta automática a incidentes com escalação inteligente baseada na criticidade</p>
+        </div>
+        <div class="practice">
+          <h4>🔬 Penetration Testing Regular</h4>
+          <p>Testes de penetração realizados trimestralmente por empresas especializadas</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Performance & Scaling -->
+  <section class="performance-scaling">
+    <div class="section-header">
+      <h2>⚡ Performance & Escalabilidade</h2>
+      <p>Arquitetura otimizada para milhões de usuários simultâneos</p>
+    </div>
+
+    <div class="performance-metrics">
+      <div class="metric-card">
+        <div class="metric-icon">🏃‍♂️</div>
+        <h3>Latência Média</h3>
+        <div class="metric-value">1.2s</div>
+        <div class="metric-desc">Para respostas de IA complexas</div>
+        <div class="metric-trend">📈 -40% nos últimos 12 meses</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">📈</div>
+        <h3>Throughput</h3>
+        <div class="metric-value">10.000 req/s</div>
+        <div class="metric-desc">Pico de processamento</div>
+        <div class="metric-trend">📈 +200% capacidade</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">💾</div>
+        <h3>Armazenamento</h3>
+        <div class="metric-value">500TB+</div>
+        <div class="metric-desc">Dados processados mensalmente</div>
+        <div class="metric-trend">📈 Crescimento exponencial</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">🔄</div>
+        <h3>Disponibilidade</h3>
+        <div class="metric-value">99.9%</div>
+        <div class="metric-desc">Uptime SLA garantido</div>
+        <div class="metric-trend">📈 Meta superada</div>
+      </div>
+    </div>
+
+    <div class="scaling-architecture">
+      <h3>🏗️ Arquitetura de Escalabilidade</h3>
+      <div class="scaling-components">
+        <div class="scaling-component">
+          <h4>🐳 Container Orchestration</h4>
+          <p>Kubernetes com auto-scaling horizontal baseado em métricas de CPU/memória</p>
+          <div class="scaling-details">
+            <span>• HPA (Horizontal Pod Autoscaler)</span>
+            <span>• Cluster multi-zona para alta disponibilidade</span>
+            <span>• Rolling updates sem downtime</span>
+          </div>
+        </div>
+
+        <div class="scaling-component">
+          <h4>🔄 Load Balancing</h4>
+          <p>Load balancers inteligentes com distribuição geográfica e health checks</p>
+          <div class="scaling-details">
+            <span>• AWS ALB/GCP Load Balancer</span>
+            <span>• Sticky sessions para sessões de chat</span>
+            <span>• Failover automático entre regiões</span>
+          </div>
+        </div>
+
+        <div class="scaling-component">
+          <h4>💾 Database Sharding</h4>
+          <p>Sharding automático baseado em user_id com rebalancing transparente</p>
+          <div class="scaling-details">
+            <span>• PostgreSQL com Citus extension</span>
+            <span>• Sharding por tenant para multi-tenant</span>
+            <span>• Read replicas para balanceamento</span>
+          </div>
+        </div>
+
+        <div class="scaling-component">
+          <h4>🚀 CDN Global</h4>
+          <p>CloudFront/Cloudflare com edge computing para latência mínima</p>
+          <div class="scaling-details">
+            <span>• 300+ pontos de presença global</span>
+            <span>• Cache inteligente de conteúdo estático</span>
+            <span>• Edge functions para processamento local</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="performance-optimization">
+      <h3>⚡ Otimizações de Performance</h3>
+      <div class="optimizations-grid">
+        <div class="optimization">
+          <h4>🧠 Model Caching</h4>
+          <p>Cache inteligente de inferências de IA para reduzir latência em queries similares</p>
+        </div>
+        <div class="optimization">
+          <h4>📊 Query Optimization</h4>
+          <p>Otimizações automáticas de queries com índices compostos e query planning</p>
+        </div>
+        <div class="optimization">
+          <h4>🔄 Async Processing</h4>
+          <p>Processamento assíncrono para operações não críticas com webhooks de callback</p>
+        </div>
+        <div class="optimization">
+          <h4>🗜️ Data Compression</h4>
+          <p>Compressão automática de payloads com Brotli/Gzip para reduzir bandwidth</p>
+        </div>
+        <div class="optimization">
+          <h4>💾 Memory Pooling</h4>
+          <p>Pool de conexões e memory pooling para reduzir alocações e garbage collection</p>
+        </div>
+        <div class="optimization">
+          <h4>🔀 Circuit Breakers</h4>
+          <p>Proteção automática contra cascata de falhas com fallback graceful</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Getting Started -->
+  <section id="first-api" class="getting-started">
+    <div class="section-header">
+      <h2>🚀 Primeira Integração - 5 Minutos</h2>
+      <p>Comece a usar a API GetNexo em menos de 5 minutos</p>
+    </div>
+
+    <div class="quick-start-guide">
+      <div class="guide-step">
+        <div class="step-number">1</div>
+        <h3>Crie sua conta gratuita</h3>
+        <p>Acesse <a href="https://app.getnexo.com">app.getnexo.com</a> e crie sua conta gratuita com 14 dias de trial</p>
+        <div class="step-code">
+          <pre><code># Após criar conta, copie sua API Key
+API_KEY="your-api-key-here"</code></pre>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-number">2</div>
+        <h3>Instale o SDK</h3>
+        <p>Escolha sua linguagem preferida e instale o SDK GetNexo</p>
+        <div class="sdk-tabs">
+          <div class="sdk-tab active" data-lang="js">JavaScript</div>
+          <div class="sdk-tab" data-lang="python">Python</div>
+          <div class="sdk-tab" data-lang="php">PHP</div>
+        </div>
+        <div class="sdk-content active" data-lang="js">
+          <pre><code>npm install getnexo-sdk</code></pre>
+        </div>
+        <div class="sdk-content" data-lang="python">
+          <pre><code>pip install getnexo</code></pre>
+        </div>
+        <div class="sdk-content" data-lang="php">
+          <pre><code>composer require getnexo/php-sdk</code></pre>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-number">3</div>
+        <h3>Faça sua primeira chamada</h3>
+        <p>Envie sua primeira mensagem para a API de IA</p>
+        <div class="step-code">
+          <pre><code>const { GetNexoClient } = require('getnexo-sdk');
+
+const client = new GetNexoClient({
+  apiKey: 'your-api-key'
+});
+
+async function testAPI() {
+  const response = await client.chat.send({
+    message: 'Olá, teste de integração!',
+    user_id: 'test-user-123'
+  });
+  
+  console.log('Resposta:', response);
+}
+
+testAPI();</code></pre>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-number">4</div>
+        <h3>Verifique o resultado</h3>
+        <p>Sua primeira resposta de IA deve aparecer no console</p>
+        <div class="step-result">
+          <pre><code>Resposta: {
+  "success": true,
+  "response": "Olá! Obrigado pelo teste. Como posso ajudar você hoje?",
+  "confidence": 0.95,
+  "processing_time": "1.2s"
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-number">5</div>
+        <h3>Próximos passos</h3>
+        <p>Explore a documentação completa e integrações avançadas</p>
+        <div class="next-steps">
+          <a href="/api-reference" class="next-step">📚 API Reference Completo</a>
+          <a href="/integrations" class="next-step">🔗 Configurar Integrações</a>
+          <a href="/webhooks" class="next-step">🪝 Configurar Webhooks</a>
+          <a href="/examples" class="next-step">💻 Exemplos de Código</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="support-resources">
+      <h3>🆘 Precisa de Ajuda?</h3>
+      <div class="support-options">
+        <div class="support-option">
+          <div class="support-icon">💬</div>
+          <h4>Chat de Suporte</h4>
+          <p>Suporte técnico em tempo real durante horário comercial</p>
+          <a href="/support/chat" class="support-link">Iniciar Chat</a>
+        </div>
+        <div class="support-option">
+          <div class="support-icon">📧</div>
+          <h4>Email Support</h4>
+          <p>Suporte por email com SLA de 4 horas para questões técnicas</p>
+          <a href="mailto:support@getnexo.com" class="support-link">Enviar Email</a>
+        </div>
+        <div class="support-option">
+          <div class="support-icon">📚</div>
+          <h4>Comunidade</h4>
+          <p>Forum da comunidade com milhares de desenvolvedores</p>
+          <a href="/community" class="support-link">Acessar Forum</a>
+        </div>
+        <div class="support-option">
+          <div class="support-icon">🎥</div>
+          <h4>Tutoriais em Vídeo</h4>
+          <p>Biblioteca completa de tutoriais e webinars gravados</p>
+          <a href="/tutorials" class="support-link">Ver Tutoriais</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="docs-final-cta">
+    <div class="cta-background">
+      <div class="cta-content">
+        <div class="cta-badges">
+          <span class="cta-badge">🏗️ Arquitetura IA Completa</span>
+          <span class="cta-badge">🔌 500+ APIs Documentadas</span>
+          <span class="cta-badge">🔗 50+ Integrações Nativas</span>
+          <span class="cta-badge">🔒 SOC 2 & LGPD Compliant</span>
+        </div>
+
+        <h1>Documentação Técnica Completa GetNexo</h1>
+
+        <h2>Arquitetura enterprise, APIs abrangentes, segurança bancária e suporte técnico 24/7</h2>
+
+        <div class="cta-stats">
+          <div class="stat">
+            <div class="stat-number">500+</div>
+            <div class="stat-label">APIs Documentadas</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number">50+</div>
+            <div class="stat-label">Integrações Nativas</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number">99.9%</div>
+            <div class="stat-label">Uptime SLA</div>
+          </div>
+        </div>
+
+        <div class="cta-differentiators">
+          <div class="differentiator">
+            <span class="diff-icon">🤖</span>
+            <span>Arquitetura IA de última geração</span>
+          </div>
+          <div class="differentiator">
+            <span class="diff-icon">🔌</span>
+            <span>APIs REST/GraphQL completas</span>
+          </div>
+          <div class="differentiator">
+            <span class="diff-icon">🔗</span>
+            <span>Integrações enterprise</span>
+          </div>
+          <div class="differentiator">
+            <span class="diff-icon">🔒</span>
+            <span>Segurança SOC 2 compliant</span>
+          </div>
+        </div>
+
+        <div class="cta-buttons">
+          <a href="/api-reference" class="cta-primary">
+            <span class="btn-icon">📚</span>
+            Explorar APIs Completas
+          </a>
+          <a href="/integrations" class="cta-secondary">
+            <span class="btn-icon">🔗</span>
+            Ver Todas Integrações
+          </a>
+        </div>
+
+        <div class="guarantee-section">
+          <div class="guarantee-icon">🛡️</div>
+          <div class="guarantee-text">
+            <strong>Suporte Enterprise:</strong> Arquitetos dedicados, implementação guiada e SLA garantido para projetos críticos
+          </div>
+        </div>
+
+        <div class="social-proof-cta">
+          <div class="mini-testimonial">
+            <div class="stars">⭐⭐⭐⭐⭐</div>
+            <p>"Documentação mais completa que já vi. Consegui integrar tudo em 2 dias com suporte impecável."</p>
+            <cite>- CTO Empresa Tech, São Paulo</cite>
+          </div>
+          <div class="mini-testimonial">
+            <div class="stars">⭐⭐⭐⭐⭐</div>
+            <p>"APIs perfeitamente documentadas, exemplos em todas linguagens. Suporte enterprise de verdade."</p>
+            <cite>- Head de Produto, Rio de Janeiro</cite>
+          </div>
+          <div class="mini-testimonial">
+            <div class="stars">⭐⭐⭐⭐⭐</div>
+            <p>"Integrações nativas salvaram meses de desenvolvimento. ROI imediato e escalabilidade infinita."</p>
+            <cite>- CTO Startup, Belo Horizonte</cite>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  /* Hero Section Documentação Técnica */
+  .hero-technical-docs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    padding: 8rem 5%;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: center;
+  }
+
+  .hero-badges {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .hero-badge {
+    background: rgba(0, 212, 255, 0.1);
+    color: #00d4ff;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .hero-badge.apis { background: rgba(0, 255, 157, 0.1); color: #00ff9d; }
+  .hero-badge.integrations { background: rgba(255, 193, 7, 0.1); color: #ffc107; }
+  .hero-badge.security { background: rgba(52, 152, 219, 0.1); color: #3498db; }
+
+  .hero-technical-docs h1 {
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin-bottom: 1rem;
+    background: linear-gradient(90deg, #00d4ff, #00ff9d);
+    -webkit-background-clip: text;
+    color: transparent;
+    line-height: 1.1;
+  }
+
+  .hero-technical-docs h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin-bottom: 2rem;
+    line-height: 1.3;
+  }
+
+  .hero-technical-docs > .hero-content p {
+    font-size: 1.3rem;
+    color: #e2e8f0;
+    margin-bottom: 3rem;
+    line-height: 1.6;
+  }
+
+  .hero-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .metric {
+    text-align: center;
+    padding: 1.5rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 15px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .metric-number {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #00d4ff;
+    margin-bottom: 0.5rem;
+  }
+
+  .metric-number span {
+    font-size: 1.2rem;
+    color: #94a3b8;
+  }
+
+  .metric-label {
+    color: #e2e8f0;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .hero-navigation {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .nav-section h3 {
+    color: #00d4ff;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .nav-links a {
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: 0.3s;
+  }
+
+  .nav-links a:hover {
+    color: #00ff9d;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .btn-primary-giant, .btn-secondary-giant, .btn-outline-giant {
+    padding: 1.2rem 2.5rem;
+    border-radius: 12px;
+    font-weight: 800;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: 0.3s;
+  }
+
+  .btn-primary-giant {
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    color: black;
+  }
+
+  .btn-primary-giant:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+  }
+
+  .btn-secondary-giant {
+    border: 2px solid rgba(255,255,255,0.3);
+    color: white;
+  }
+
+  .btn-secondary-giant:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: #00d4ff;
+  }
+
+  .btn-outline-giant {
+    background: transparent;
+    border: 2px solid rgba(0, 212, 255, 0.3);
+    color: #00d4ff;
+  }
+
+  .btn-outline-giant:hover {
+    background: rgba(0, 212, 255, 0.1);
+    border-color: #00d4ff;
+  }
+
+  .hero-trust-indicators {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 15px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .trust-logos {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .trust-logos img {
+    width: 40px;
+    height: 40px;
+    opacity: 0.8;
+  }
+
+  .trust-text {
+    color: #94a3b8;
+    font-size: 0.9rem;
+  }
+
+  /* Architecture Overview */
+  .architecture-overview {
+    padding: 8rem 5%;
+    background: rgba(15, 23, 42, 0.3);
+  }
+
+  .architecture-diagram {
+    margin-bottom: 4rem;
+  }
+
+  .architecture-layers {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .layer {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 15px;
+    padding: 2rem;
+  }
+
+  .layer h3 {
+    color: #00d4ff;
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  .layer-components {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .component {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.8rem;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+  }
+
+  .comp-icon {
+    font-size: 1.2rem;
+    color: #00ff9d;
+    flex-shrink: 0;
+  }
+
+  .architecture-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+  }
+
+  .detail-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 15px;
+    padding: 2rem;
+  }
+
+  .detail-card h3 {
+    color: #00d4ff;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .detail-card > p {
+    color: #e2e8f0;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+
+  .tech-stack h4 {
+    color: #00d4ff;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  .tech-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tech {
+    background: rgba(0, 212, 255, 0.1);
+    color: #00d4ff;
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  /* AI Architecture */
+  .ai-architecture {
+    padding: 8rem 5%;
+    background: rgba(15, 23, 42, 0.5);
+  }
+
+  .ai-pipeline {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin-top: 4rem;
+    margin-bottom: 4rem;
+  }
+
+  .pipeline-step {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .step-number {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: black;
+    font-weight: 900;
+    font-size: 1.2rem;
+    margin: 0 auto 1rem;
+  }
+
+  .pipeline-step h3 {
+    color: white;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+
+  .pipeline-step > p {
+    color: #e2e8f0;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .step-tech h4 {
+    color: #00d4ff;
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .step-tech ul {
+    list-style: none;
+    margin: 0;
+    font-size: 0.85rem;
+    color: #94a3b8;
+  }
+
+  .ai-models {
+    padding: 3rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 20px;
+  }
+
+  .ai-models h3 {
+    color: #00d4ff;
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .models-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .model-card {
+    background: rgba(255,255,255,0.03);
+    border-radius: 15px;
+    padding: 1.5rem;
+  }
+
+  .model-card h4 {
+    color: white;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .model-card > p {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .model-specs {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #00ff9d;
+  }
+
+  /* API Reference */
+  .api-reference {
+    padding: 8rem 5%;
+    background: rgba(15, 23, 42, 0.3);
+  }
+
+  .api-endpoints {
+    margin-top: 4rem;
+  }
+
+  .endpoint-category {
+    margin-bottom: 3rem;
+  }
+
+  .endpoint-category h3 {
+    color: #00d4ff;
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+  }
+
+  .endpoints-list {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .endpoint-item {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 1.5rem;
+  }
+
+  .endpoint-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .endpoint-method {
+    background: rgba(0, 255, 157, 0.2);
+    color: #00ff9d;
+    padding: 0.3rem 0.8rem;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .endpoint-path {
+    color: white;
+    font-weight: 600;
+    font-family: 'Monaco', 'Menlo', monospace;
+  }
+
+  .endpoint-desc {
+    color: #94a3b8;
+    margin-bottom: 1rem;
+  }
+
+  .endpoint-params {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 5px;
+    padding: 1rem;
+    font-family: 'Monaco', 'Menlo', monospace;
+    font-size: 0.8rem;
+    color: #e2e8f0;
+  }
+
+  .api-examples {
+    margin-top: 4rem;
+  }
+
+  .api-examples h3 {
+    color: #00d4ff;
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+  }
+
+  .code-examples {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
+  }
+
+  .code-example {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 15px;
+    overflow: hidden;
+  }
+
+  .code-example h4 {
+    background: rgba(0, 212, 255, 0.1);
+    color: #00d4ff;
+    padding: 1rem;
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  .code-example pre {
+    margin: 0;
+    padding: 1rem;
+    background: rgba(15, 23, 42, 0.9);
+    overflow-x: auto;
+  }
+
+  .code-example code {
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  .sdk-downloads {
+    margin-top: 4rem;
+  }
+
+  .sdk-downloads h3 {
+    color: #00d4ff;
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+  }
+
+  .sdk-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .sdk-item {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .sdk-lang {
+    color: white;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .sdk-install {
+    color: #94a3b8;
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+    font-family: 'Monaco', 'Menlo', monospace;
+  }
+
+  .sdk-download {
+    background: rgba(0, 212, 255, 0.2);
+    color: #00d4ff;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: 0.3s;
+  }
+
+  .sdk-download:hover {
+    background: rgba(0, 212, 255, 0.3);
+  }
+
+  /* Integrations */
+  .integrations-section {
+    padding: 8rem 5%;
+    background: rgba(15, 23, 42, 0.5);
+  }
+
+  .integrations-categories {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 3rem;
+    margin-top: 4rem;
+  }
+
+  .category h3 {
+    color: #00d4ff;
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+  }
+
+  .integration-logos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+
+  .integration-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+  }
+
+  .integration-item img {
+    width: 40px;
+    height: 40px;
+    opacity: 0.8;
+  }
+
+  .integration-item span {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    text-align: center;
+  }
+
+  .integration-setup {
+    margin-top: 4rem;
+    padding: 3rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 20px;
+  }
+
+  .integration-setup h3 {
+    color: #00d4ff;
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+  }
+
+  .setup-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+  }
+
+  .setup-step {
+    text-align: center;
+    padding: 2rem;
+    background: rgba(255,255,255,0.03);
+    border-radius: 15px;
+  }
+
+  .setup-step .step-number {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: black;
+    font-weight: 900;
+    font-size: 1.2rem;
+    margin: 0 auto 1rem;
+  }
+
+  .setup-step h4 {
+    color: white;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+
+  .setup-step > p {
+    color: #94a3b8;
+    line-height: 1.5;
+  }
+
+  /* Security */
+  .security-section {
+    padding: 8rem 5%;
+    background: rgba(15, 23, 42, 0.3);
+  }
+
+  .security-framework {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 4rem;
+  }
+
+  .security-layer {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 2rem;
+  }
+
+  .security-layer h3 {
+    color: #00d4ff;
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .security-features {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .feature {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .feature-icon {
+    font-size: 1.5rem;
+    color: #00ff9d;
+    flex-shrink: 0;
+  }
+
+  .feature-content h4 {
+    color: white;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .feature-content p {
+    color: #94a3b8;
+    line-height: 1.5;
+  }
+
+  .compliance-certifications {
+    margin-bottom: 4rem;
+  }
+
+  .compliance-certifications h3 {
+    color: #00d4ff;
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .certifications-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .certification {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .cert-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .certification h4 {
+    color: white;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .certification > p {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .cert-status {
+    color: #00ff9d;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .security-best-practices {
+    padding: 3rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 20px;
+  }
+
+  .security-best-practices h3 {
+    color: #00d4ff;
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .practices-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .practice {
+    padding: 1.5rem;
+    background: rgba(255,255,255,0.03);
+    border-radius: 15px;
+    border-left: 4px solid #00d4ff;
+  }
+
+  .practice h4 {
+    color: white;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .practice p {
+    color: #94a3b8;
+    line-height: 1.5;
+  }
+
+  /* Performance & Scaling */
+  .performance-scaling {
+    padding: 8rem 5%;
+    background: rgba(15, 23, 42, 0.5);
+  }
+
+  .performance-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 4rem;
+  }
+
+  .metric-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .metric-icon {
+    font-size: 2rem;
+    color: #00ff9d;
+    margin-bottom: 1rem;
+  }
+
+  .metric-card h3 {
+    color: white;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .metric-value {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #00d4ff;
+    margin-bottom: 0.5rem;
+  }
+
+  .metric-desc {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .metric-trend {
+    color: #00ff9d;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .scaling-architecture {
+    margin-bottom: 4rem;
+  }
+
+  .scaling-architecture h3 {
+    color: #00d4ff;
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+  }
+
+  .scaling-components {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .scaling-component {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 15px;
+    padding: 2rem;
+  }
+
+  .scaling-component h4 {
+    color: white;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+
+  .scaling-component > p {
+    color: #94a3b8;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .scaling-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .scaling-details span {
+    color: #94a3b8;
+    font-size: 0.85rem;
+  }
+
+  .performance-optimization {
+    padding: 3rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 20px;
+  }
+
+  .performance-optimization h3 {
+    color: #00d4ff;
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .optimizations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .optimization {
+    padding: 1.5rem;
+    background: rgba(255,255,255,0.03);
+    border-radius: 15px;
+  }
+
+  .optimization h4 {
+    color: white;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .optimization p {
+    color: #94a3b8;
+    line-height: 1.5;
+  }
+
+  /* Getting Started */
+  .getting-started {
+    padding: 8rem 5%;
+    background: rgba(15, 23, 42, 0.3);
+  }
+
+  .quick-start-guide {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 3rem;
+    margin-top: 4rem;
+  }
+
+  .guide-step {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 15px;
+    padding: 2rem;
+  }
+
+  .guide-step .step-number {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: black;
+    font-weight: 900;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .guide-step h3 {
+    color: white;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+
+  .guide-step > p {
+    color: #e2e8f0;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .step-code {
+    background: rgba(15, 23, 42, 0.9);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .step-code pre {
+    margin: 0;
+  }
+
+  .step-code code {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #e2e8f0;
+  }
+
+  .sdk-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .sdk-tab {
+    padding: 0.5rem 1rem;
+    background: rgba(255,255,255,0.1);
+    border-radius: 5px;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: 0.3s;
+  }
+
+  .sdk-tab.active {
+    background: rgba(0, 212, 255, 0.2);
+    color: #00d4ff;
+  }
+
+  .sdk-content {
+    display: none;
+    background: rgba(15, 23, 42, 0.9);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  .sdk-content.active {
+    display: block;
+  }
+
+  .sdk-content pre {
+    margin: 0;
+  }
+
+  .sdk-content code {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #e2e8f0;
+  }
+
+  .step-result {
+    background: rgba(0, 255, 157, 0.1);
+    border: 1px solid rgba(0, 255, 157, 0.3);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  .step-result pre {
+    margin: 0;
+  }
+
+  .step-result code {
+    font-size: 0.8rem;
+    line-height: 1.6;
+    color: #00ff9d;
+  }
+
+  .next-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .next-step {
+    background: rgba(0, 212, 255, 0.1);
+    color: #00d4ff;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: 0.3s;
+  }
+
+  .next-step:hover {
+    background: rgba(0, 212, 255, 0.2);
+  }
+
+  .support-resources {
+    margin-top: 4rem;
+    padding: 3rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 20px;
+  }
+
+  .support-resources h3 {
+    color: #00d4ff;
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+  }
+
+  .support-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+  }
+
+  .support-option {
+    text-align: center;
+    padding: 2rem;
+    background: rgba(255,255,255,0.03);
+    border-radius: 15px;
+  }
+
+  .support-icon {
+    font-size: 2rem;
+    color: #00ff9d;
+    margin-bottom: 1rem;
+  }
+
+  .support-option h4 {
+    color: white;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .support-option > p {
+    color: #94a3b8;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+
+  .support-link {
+    background: rgba(0, 212, 255, 0.2);
+    color: #00d4ff;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: 0.3s;
+  }
+
+  .support-link:hover {
+    background: rgba(0, 212, 255, 0.3);
+  }
+
+  /* Final CTA */
+  .docs-final-cta {
+    padding: 8rem 5%;
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1));
+    text-align: center;
+  }
+
+  .cta-background {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .cta-content h1 {
+    font-size: 4rem;
+    font-weight: 900;
+    margin-bottom: 1rem;
+    background: linear-gradient(90deg, #00d4ff, #00ff9d);
+    -webkit-background-clip: text;
+    color: transparent;
+    line-height: 1.1;
+  }
+
+  .cta-content h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin-bottom: 4rem;
+    line-height: 1.3;
+  }
+
+  .cta-badges {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+  }
+
+  .cta-badge {
+    background: rgba(255,255,255,0.1);
+    color: #00d4ff;
+    padding: 0.8rem 1.5rem;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid rgba(0, 212, 255, 0.3);
+  }
+
+  .cta-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 4rem;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .stat {
+    padding: 2rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 15px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .stat-number {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #00ff9d;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    color: #e2e8f0;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .cta-differentiators {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .differentiator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    color: #e2e8f0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .diff-icon {
+    font-size: 1.5rem;
+    color: #00d4ff;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    margin-bottom: 4rem;
+    flex-wrap: wrap;
+  }
+
+  .cta-primary, .cta-secondary {
+    padding: 1.5rem 4rem;
+    border-radius: 15px;
+    font-weight: 900;
+    font-size: 1.5rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    transition: 0.3s;
+  }
+
+  .cta-primary {
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    color: black;
+    box-shadow: 0 20px 40px rgba(0, 212, 255, 0.3);
+  }
+
+  .cta-primary:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 30px 60px rgba(0, 212, 255, 0.4);
+  }
+
+  .cta-secondary {
+    border: 3px solid rgba(255,255,255,0.3);
+    color: white;
+  }
+
+  .cta-secondary:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: #00d4ff;
+  }
+
+  .guarantee-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 4rem;
+    padding: 2rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 15px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .guarantee-icon {
+    font-size: 2rem;
+    color: #00ff9d;
+  }
+
+  .guarantee-text {
+    color: #e2e8f0;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .social-proof-cta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .mini-testimonial {
+    padding: 1.5rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .stars {
+    margin-bottom: 0.5rem;
+  }
+
+  .mini-testimonial p {
+    color: #e2e8f0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+    font-style: italic;
+  }
+
+  .mini-testimonial cite {
+    color: #94a3b8;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  /* Responsividade */
+  @media (max-width: 1200px) {
+    .hero-technical-docs {
+      grid-template-columns: 1fr;
+      gap: 4rem;
+    }
+
+    .hero-metrics {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .hero-navigation {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .architecture-layers {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .architecture-details {
+      grid-template-columns: 1fr;
+    }
+
+    .ai-pipeline {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .models-grid {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+
+    .endpoints-list {
+      grid-template-columns: 1fr;
+    }
+
+    .code-examples {
+      grid-template-columns: 1fr;
+    }
+
+    .sdk-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .integrations-categories {
+      grid-template-columns: 1fr;
+    }
+
+    .setup-steps {
+      grid-template-columns: 1fr;
+    }
+
+    .security-framework {
+      grid-template-columns: 1fr;
+    }
+
+    .certifications-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .practices-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .performance-metrics {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .scaling-components {
+      grid-template-columns: 1fr;
+    }
+
+    .optimizations-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .quick-start-guide {
+      grid-template-columns: 1fr;
+    }
+
+    .support-options {
+      grid-template-columns: 1fr;
+    }
+
+    .cta-stats {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .cta-differentiators {
+      grid-template-columns: 1fr;
+    }
+
+    .social-proof-cta {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .hero-technical-docs h1 {
+      font-size: 3rem;
+    }
+
+    .hero-technical-docs h2 {
+      font-size: 1.5rem;
+    }
+
+    .hero-metrics {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-navigation {
+      grid-template-columns: 1fr;
+    }
+
+    .architecture-layers {
+      grid-template-columns: 1fr;
+    }
+
+    .ai-pipeline {
+      grid-template-columns: 1fr;
+    }
+
+    .models-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .endpoints-list {
+      grid-template-columns: 1fr;
+    }
+
+    .code-examples {
+      grid-template-columns: 1fr;
+    }
+
+    .sdk-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .integrations-categories {
+      grid-template-columns: 1fr;
+    }
+
+    .security-framework {
+      grid-template-columns: 1fr;
+    }
+
+    .certifications-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .performance-metrics {
+      grid-template-columns: 1fr;
+    }
+
+    .scaling-components {
+      grid-template-columns: 1fr;
+    }
+
+    .optimizations-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .quick-start-guide {
+      grid-template-columns: 1fr;
+    }
+
+    .support-options {
+      grid-template-columns: 1fr;
+    }
+
+    .cta-content h1 {
+      font-size: 3rem;
+    }
+
+    .cta-content h2 {
+      font-size: 1.8rem;
+    }
+
+    .cta-stats {
+      grid-template-columns: 1fr;
+    }
+
+    .cta-buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .cta-primary, .cta-secondary {
+      padding: 1.2rem 2rem;
+      font-size: 1.2rem;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .hero-technical-docs h1 {
+      font-size: 2.5rem;
+    }
+
+    .hero-technical-docs h2 {
+      font-size: 1.3rem;
+    }
+
+    .architecture-layers {
+      grid-template-columns: 1fr;
+    }
+
+    .ai-pipeline {
+      grid-template-columns: 1fr;
+    }
+
+    .models-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .endpoints-list {
+      grid-template-columns: 1fr;
+    }
+
+    .code-examples {
+      grid-template-columns: 1fr;
+    }
+
+    .sdk-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .integrations-categories {
+      grid-template-columns: 1fr;
+    }
+
+    .security-framework {
+      grid-template-columns: 1fr;
+    }
+
+    .certifications-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .performance-metrics {
+      grid-template-columns: 1fr;
+    }
+
+    .scaling-components {
+      grid-template-columns: 1fr;
+    }
+
+    .optimizations-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .quick-start-guide {
+      grid-template-columns: 1fr;
+    }
+
+    .support-options {
+      grid-template-columns: 1fr;
+    }
+
+    .cta-content h1 {
+      font-size: 3rem;
+    }
+
+    .cta-content h2 {
+      font-size: 1.8rem;
+    }
+
+    .cta-stats {
+      grid-template-columns: 1fr;
+    }
+
+    .cta-buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .cta-primary, .cta-secondary {
+      padding: 1.2rem 2rem;
+      font-size: 1.2rem;
+    }
+  }
+</style>

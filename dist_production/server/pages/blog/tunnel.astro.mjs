@@ -1,0 +1,26 @@
+import { f as createComponent, k as renderComponent, r as renderTemplate, m as maybeRenderHead } from "../../assets/astro/server-MCYX8tFF.js";
+import "piccolore";
+import { $ as $$Layout } from "../../assets/Layout-DScI-qCd.js";
+import { renderers } from "../../renderers.mjs";
+const $$Tunnel = createComponent(($$result, $$props, $$slots) => {
+  return renderTemplate`${renderComponent($$result, "Layout", $$Layout, {}, { "default": ($$result2) => renderTemplate` ${maybeRenderHead()}<article style="max-width: 800px; margin: 0 auto; padding: 100px 5% 4rem;"> <header style="margin-bottom: 3rem;"> <time style="color: #64748b; font-size: 0.95rem;">20 Jan 2026</time> <h1 style="font-size: 2.8rem; margin: 1rem 0; background: linear-gradient(90deg, var(--primary), var(--success)); -webkit-background-clip: text; color: transparent; line-height: 1.3;">
+Cloudflare Tunnel: expondo serviços locais (n8n, Chatwoot, API) de forma segura e gratuita
+</h1> </header> <div style="color: var(--light); line-height: 1.9; font-size: 1.1rem;"> <p>O Cloudflare Tunnel é a peça-chave que permite acessar seus serviços locais de qualquer lugar do mundo, sem abrir portas no roteador.</p> <h2 style="color: var(--success); margin: 2.5rem 0 1rem; font-size: 1.8rem;">O que é Cloudflare Tunnel?</h2> <p>É um serviço gratuito da Cloudflare que cria uma conexão criptografada entre seu servidor local e a rede global deles. Funciona assim:</p> <ol style="margin-left: 1.5rem; margin-bottom: 1.5rem;"> <li>Seu servidor local conecta ao Cloudflare (conexão de saída)</li> <li>Cloudflare publica o serviço em um subdomínio seu</li> <li>Clientes acessam via Cloudflare → tráfego encaminhado pro seu servidor</li> </ol> <h2 style="color: var(--success); margin: 2.5rem 0 1rem; font-size: 1.8rem;">Configuração no GetNexo</h2> <p>No docker-compose do GetNexo, configuramos assim:</p> <pre style="background: #0f172a; padding: 1.5rem; border-radius: 12px; overflow-x: auto; margin: 1.5rem 0;"><code style="color: var(--light);">cloudflared:
+  image: cloudflare/cloudflared
+  command: tunnel run
+  environment:
+    - TUNNEL_TOKEN=seu_token_aqui</code></pre> <h2 style="color: var(--success); margin: 2.5rem 0 1rem; font-size: 1.8rem;">Subdomínios configurados</h2> <ul style="margin-left: 1.5rem; margin-bottom: 1.5rem;"> <li><code>chat.seudominio.com</code> → Chatwoot (porta 3000)</li> <li><code>api.seudominio.com</code> → Evolution API (porta 8080)</li> <li><code>n8n.seudominio.com</code> → n8n (porta 5678)</li> <li><code>status.seudominio.com</code> → Uptime Kuma (porta 3001)</li> </ul> <h2 style="color: var(--success); margin: 2.5rem 0 1rem; font-size: 1.8rem;">Vantagens</h2> <ul style="margin-left: 1.5rem; margin-bottom: 1.5rem;"> <li>✅ Gratuito pra uso pessoal e comercial</li> <li>✅ SSL/TLS automático</li> <li>✅ Proteção DDoS inclusa</li> <li>✅ IP real nunca exposto</li> <li>✅ Funciona atrás de NAT/CGNAT</li> </ul> <div style="background: rgba(0,255,157,0.1); border: 1px solid var(--success); border-radius: 12px; padding: 1.5rem; margin: 3rem 0; text-align: center;"> <p style="color: var(--light); margin: 0 0 1rem;"><strong>Quer configurar corretamente?</strong></p> <a href="/documentacao" style="background: var(--success); color: black; padding: 0.8rem 2rem; border-radius: 50px; font-weight: 800; text-decoration: none;">Ver Documentação →</a> </div> </div> <footer style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid rgba(0,212,255,0.1);"> <a href="/blog" style="color: var(--primary); text-decoration: none; font-weight: 600;">← Voltar pro Blog</a> </footer> </article> ` })}`;
+}, "/home/lele/usenexo/getnexo-site/src/pages/blog/tunnel.astro", void 0);
+const $$file = "/home/lele/usenexo/getnexo-site/src/pages/blog/tunnel.astro";
+const $$url = "/blog/tunnel";
+const _page = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: $$Tunnel,
+  file: $$file,
+  url: $$url
+}, Symbol.toStringTag, { value: "Module" }));
+const page = () => _page;
+export {
+  page,
+  renderers
+};

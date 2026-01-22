@@ -1,0 +1,518 @@
+{
+    "name": "FAQ Instagram DM Bot",
+    "nodes": [
+        {
+            "parameters": {
+                "path": "instagram-dm",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "name": "Instagram Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                240,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "functionCode": "// Extract Instagram message data\nconst igMessage = $node[\"Instagram Webhook\"].json;\n\nconst messageData = {\n  id: igMessage.id || igMessage.message_id,\n  from: igMessage.from || igMessage.sender_id,\n  from_username: igMessage.from_username || igMessage.username,\n  text: igMessage.text || igMessage.message,\n  timestamp: igMessage.timestamp || new Date().toISOString(),\n  media_url: igMessage.media_url || igMessage.image_url,\n  message_type: igMessage.message_type || 'text'\n};\n\n// Validate message\nif (!messageData.text || messageData.text.trim().length === 0) {\n  return { valid: false, error: 'Empty message' };\n}\n\n// Check if it's a media-only message\nif (messageData.message_type === 'image' && !messageData.text) {\n  messageData.intent = 'image_only';\n  messageData.confidence = 1.0;\n  return { ...messageData, valid: true };\n}\n\n// Clean and normalize text\nmessageData.text_clean = messageData.text\n  .toLowerCase()\n  .trim()\n  .replace(/[\\u{1F600}-\\u{1F64F}\\u{1F300}-\\u{1F5FF}\\u{1F680}-\\u{1F6FF}\\u{2600}-\\u{26FF}]/gu, '') // Remove emojis\n  .replace(/[^a-záéíóúâêôãõç\\s]/g, ' ') // Keep only letters and spaces\n  .replace(/\\s+/g, ' ') // Normalize spaces\n  .trim();\n\n// Detect language (basic)\nconst portugueseWords = ['preço', 'valor', 'entrega', 'frete', 'tamanho', 'cor', 'pagamento', 'boleto', 'cartão', 'devolução', 'troca', 'garantia'];\nconst hasPortuguese = portugueseWords.some(word => messageData.text_clean.includes(word));\nmessageData.language = hasPortuguese ? 'pt' : 'unknown';\n\nreturn { ...messageData, valid: true };"
+            },
+            "name": "Parse Instagram Message",
+            "type": "n8n-nodes-base.function",
+            "typeVersion": 1,
+            "position": [
+                460,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "value": "={{ $json.valid }}",
+                "rules": {
+                    "rules": [
+                        {
+                            "conditions": [
+                                {
+                                    "id": "valid",
+                                    "value": true
+                                }
+                            ],
+                            "output": "process_valid_message"
+                        },
+                        {
+                            "conditions": [
+                                {
+                                    "id": "valid",
+                                    "value": false
+                                }
+                            ],
+                            "output": "handle_invalid_message"
+                        }
+                    ]
+                }
+            },
+            "name": "Validate Message",
+            "type": "n8n-nodes-base.switch",
+            "typeVersion": 1,
+            "position": [
+                680,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "functionCode": "// Classify message intent using keyword matching\nconst text = $json.text_clean;\n\n// Define intent patterns\nconst intentPatterns = {\n  preco: {\n    keywords: ['preço', 'valor', 'custa', 'quanto', 'price', 'cost', 'how much'],\n    response: 'Para verificar preços, visite nossa loja online: https://getnexo.com.br. Temos opções para todos os bolsos! 💰',\n    quick_replies: ['Ver produtos', 'Falar com humano']\n  },\n  entrega: {\n    keywords: ['entrega', 'frete', 'envio', 'shipping', 'delivery', 'quando chega'],\n    response: 'Oferecemos frete grátis para compras acima de R$200! 🚚\\nEntrega em até 5 dias úteis.\\nRastreie seu pedido em: https://getnexo.com.br/rastreamento',\n    quick_replies: ['Calcular frete', 'Política de entrega']\n  },\n  tamanho: {\n    keywords: ['tamanho', 'size', 'numero', 'medida', 'couro'],\n    response: 'Confira nossa tabela de medidas na página do produto! 📏\\nTemos tamanhos de 34 a 46.\\nDúvidas? Nossa equipe ajuda! 👟',\n    quick_replies: ['Tabela de medidas', 'Falar com consultor']\n  },\n  cor: {\n    keywords: ['cor', 'color', 'preto', 'branco', 'azul', 'vermelho', 'verde'],\n    response: 'Temos várias cores disponíveis! 🌈\\nConfira as fotos do produto ou pergunte sobre disponibilidade.\\nEstamos aqui para ajudar! 🎨',\n    quick_replies: ['Ver fotos', 'Disponibilidade']\n  },\n  pagamento: {\n    keywords: ['pagamento', 'pagar', 'boleto', 'cartão', 'credito', 'debito', 'pix', 'paypal'],\n    response: 'Aceitamos cartão, boleto, PIX e PayPal! 💳\\nParcelamento em até 12x sem juros.\\nPagamento seguro e fácil! 🔒',\n    quick_replies: ['Ver formas', 'Parcelamento']\n  },\n  devolucao: {\n    keywords: ['devolução', 'troca', 'devolver', 'return', 'exchange', 'refund'],\n    response: 'Garantia de 30 dias para troca/devolução! ↩️\\nProduto deve estar novo, com nota fiscal.\\nEntre em contato: suporte@getnexo.com.br',\n    quick_replies: ['Política completa', 'Falar com suporte']\n  },\n  garantia: {\n    keywords: ['garantia', 'defeito', 'quebrou', 'warranty', 'broken'],\n    response: 'Garantia de 1 ano contra defeitos! 🛡️\\nPara problemas, envie foto do produto e nota fiscal.\\nResolveremos rapidinho! ⚡',\n    quick_replies: ['Como acionar', 'Falar com suporte']\n  },\n  suporte: {\n    keywords: ['ajuda', 'suporte', 'problema', 'duvida', 'help', 'support', 'issue'],\n    response: 'Estamos aqui para ajudar! 💬\\nComo posso te auxiliar hoje?',\n    quick_replies: ['Falar com humano', 'Ver FAQ']\n  },\n  pedido: {\n    keywords: ['pedido', 'order', 'status', 'onde esta', 'rastreamento'],\n    response: 'Para acompanhar seu pedido, acesse: https://getnexo.com.br/meus-pedidos 📦\\nOu me diga o número do pedido!',\n    quick_replies: ['Acompanhar pedido', 'Falar com suporte']\n  }\n};\n\n// Find matching intent\nlet bestMatch = null;\nlet bestScore = 0;\nlet matchedKeywords = [];\n\nfor (const [intent, data] of Object.entries(intentPatterns)) {\n  let score = 0;\n  const foundKeywords = [];\n  \n  for (const keyword of data.keywords) {\n    if (text.includes(keyword)) {\n      score += 1;\n      foundKeywords.push(keyword);\n    }\n  }\n  \n  // Bonus for exact matches\n  if (score > 0 && foundKeywords.length > 0) {\n    score += 0.5; // Bonus por ter encontrado keywords\n  }\n  \n  if (score > bestScore) {\n    bestScore = score;\n    bestMatch = intent;\n    matchedKeywords = foundKeywords;\n  }\n}\n\n// Determine confidence\nconst confidence = bestScore > 0 ? Math.min(bestScore / 3, 1) : 0;\n\nlet result = {\n  intent: 'unknown',\n  confidence: 0,\n  response_text: 'Olá! Como posso ajudar você hoje? 😊',\n  quick_replies: ['Ver produtos', 'Suporte', 'FAQs'],\n  matched_keywords: [],\n  needs_human: false\n};\n\nif (bestMatch && confidence >= 0.3) { // Threshold de confiança\n  const intentData = intentPatterns[bestMatch];\n  result = {\n    intent: bestMatch,\n    confidence: confidence,\n    response_text: intentData.response,\n    quick_replies: intentData.quick_replies,\n    matched_keywords: matchedKeywords,\n    needs_human: false\n  };\n} else {\n  // Baixa confiança - encaminhar para humano\n  result.needs_human = true;\n  result.intent = 'low_confidence';\n  result.response_text = 'Olá! Vou transferir você para um de nossos especialistas. Eles poderão ajudar melhor! 👨‍💼\\n\\nUm momento...';\n  result.quick_replies = ['Aguardar atendimento'];\n}\n\nreturn result;"
+            },
+            "name": "Classify Intent",
+            "type": "n8n-nodes-base.function",
+            "typeVersion": 1,
+            "position": [
+                900,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "value": "={{ $json.needs_human }}",
+                "rules": {
+                    "rules": [
+                        {
+                            "conditions": [
+                                {
+                                    "id": "needs_human",
+                                    "value": true
+                                }
+                            ],
+                            "output": "human_handoff"
+                        },
+                        {
+                            "conditions": [
+                                {
+                                    "id": "needs_human",
+                                    "value": false
+                                }
+                            ],
+                            "output": "auto_respond"
+                        }
+                    ]
+                }
+            },
+            "name": "Check Human Handoff",
+            "type": "n8n-nodes-base.switch",
+            "typeVersion": 1,
+            "position": [
+                1120,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "functionCode": "// Prepare automated response\nconst messageData = $node[\"Parse Instagram Message\"].json;\nconst intentData = $json;\n\n// Personalize response based on user\nconst personalizedResponse = intentData.response_text.replace('Olá', `Olá${messageData.from_username ? ' ' + messageData.from_username : ''}`);\n\n// Add quick replies as buttons\nconst quickRepliesText = intentData.quick_replies.map(reply => `• ${reply}`).join('\\n');\nconst fullResponse = `${personalizedResponse}\\n\\n${quickRepliesText}`;\n\n// Create Instagram API response format\nconst responseData = {\n  recipient_id: messageData.from,\n  message: {\n    text: fullResponse\n  },\n  quick_replies: intentData.quick_replies.map(reply => ({\n    content_type: 'text',\n    title: reply,\n    payload: reply.toLowerCase().replace(/\\s+/g, '_')\n  }))\n};\n\nreturn responseData;"
+            },
+            "name": "Prepare Auto Response",
+            "type": "n8n-nodes-base.function",
+            "typeVersion": 1,
+            "position": [
+                1340,
+                100
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://graph.instagram.com/v18.0/me/messages",
+                "sendBody": true,
+                "bodyContentType": "json",
+                "body": "={{ $json }}",
+                "options": {}
+            },
+            "name": "Send Instagram Auto Reply",
+            "type": "@n8n/n8n-nodes-langchain.httpRequest",
+            "typeVersion": 1,
+            "position": [
+                1560,
+                100
+            ],
+            "credentials": {
+                "httpRequest": {
+                    "id": "instagram_api_credentials",
+                    "name": "Instagram API"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "functionCode": "// Log automated interaction\nconst messageData = $node[\"Parse Instagram Message\"].json;\nconst intentData = $node[\"Classify Intent\"].json;\n\nreturn {\n  timestamp: new Date().toISOString(),\n  platform: 'instagram',\n  user_id: messageData.from,\n  username: messageData.from_username,\n  message_type: 'dm',\n  original_message: messageData.text,\n  intent_classified: intentData.intent,\n  confidence: intentData.confidence,\n  response_type: 'automated',\n  matched_keywords: intentData.matched_keywords,\n  response_sent: true\n};"
+            },
+            "name": "Log Auto Interaction",
+            "type": "n8n-nodes-base.function",
+            "typeVersion": 1,
+            "position": [
+                1780,
+                100
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "database",
+                "operation": "insert",
+                "tableName": "chat_interactions",
+                "columns": "platform,user_id,username,message_type,original_message,intent_classified,confidence,response_type,matched_keywords,timestamp",
+                "valuesToInsert": "'{{$json.platform}}','{{$json.user_id}}','{{$json.username}}','{{$json.message_type}}','{{$json.original_message}}','{{$json.intent_classified}}',{{$json.confidence}},'{{$json.response_type}}','{{JSON.stringify($json.matched_keywords)}}','{{$json.timestamp}}'"
+            },
+            "name": "Save Interaction Log",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                2000,
+                100
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "postgres_credentials",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "functionCode": "// Prepare human handoff response\nconst messageData = $node[\"Parse Instagram Message\"].json;\nconst intentData = $node[\"Classify Intent\"].json;\n\n// Send initial response explaining handoff\nconst handoffResponse = {\n  recipient_id: messageData.from,\n  message: {\n    text: intentData.response_text\n  }\n};\n\n// Prepare data for human agent\nconst handoffData = {\n  platform: 'instagram',\n  user_id: messageData.from,\n  username: messageData.from_username,\n  original_message: messageData.text,\n  intent: intentData.intent,\n  confidence: intentData.confidence,\n  priority: intentData.intent === 'suporte' || intentData.intent === 'devolucao' ? 'high' : 'medium',\n  category: intentData.intent,\n  timestamp: new Date().toISOString()\n};\n\nreturn {\n  handoff_response: handoffResponse,\n  handoff_data: handoffData\n};"
+            },
+            "name": "Prepare Human Handoff",
+            "type": "n8n-nodes-base.function",
+            "typeVersion": 1,
+            "position": [
+                1340,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://graph.instagram.com/v18.0/me/messages",
+                "sendBody": true,
+                "bodyContentType": "json",
+                "body": "={{ $json.handoff_response }}",
+                "options": {}
+            },
+            "name": "Send Handoff Response",
+            "type": "@n8n/n8n-nodes-langchain.httpRequest",
+            "typeVersion": 1,
+            "position": [
+                1560,
+                300
+            ],
+            "credentials": {
+                "httpRequest": {
+                    "id": "instagram_api_credentials",
+                    "name": "Instagram API"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "resource": "database",
+                "operation": "insert",
+                "tableName": "human_handoff_queue",
+                "columns": "platform,user_id,username,original_message,intent,confidence,priority,category,status,created_at",
+                "valuesToInsert": "'{{$json.handoff_data.platform}}','{{$json.handoff_data.user_id}}','{{$json.handoff_data.username}}','{{$json.handoff_data.original_message}}','{{$json.handoff_data.intent}}',{{$json.handoff_data.confidence}},'{{$json.handoff_data.priority}}','{{$json.handoff_data.category}}','pending','{{$json.handoff_data.timestamp}}'"
+            },
+            "name": "Queue for Human Agent",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                1780,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "postgres_credentials",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "functionCode": "// Notify human agents about new handoff\nconst handoffData = $node[\"Prepare Human Handoff\"].json.handoff_data;\n\n// This would integrate with your notification system\n// (Slack, WhatsApp Business, internal dashboard, etc.)\n\nconst notification = {\n  text: `🤖 Novo handoff Instagram: ${handoffData.username} - ${handoffData.intent} (confiança: ${(handoffData.confidence * 100).toFixed(1)}%)`,\n  priority: handoffData.priority,\n  user_id: handoffData.user_id,\n  platform: handoffData.platform\n};\n\n// Send to Slack or internal system\nreturn notification;"
+            },
+            "name": "Notify Human Agents",
+            "type": "n8n-nodes-base.function",
+            "typeVersion": 1,
+            "position": [
+                2000,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK",
+                "sendBody": true,
+                "bodyContentType": "json",
+                "body": "={{ $json }}",
+                "options": {}
+            },
+            "name": "Send Slack Notification",
+            "type": "@n8n/n8n-nodes-langchain.httpRequest",
+            "typeVersion": 1,
+            "position": [
+                2220,
+                300
+            ],
+            "credentials": {
+                "slackWebhook": {
+                    "id": "slack_webhook_credentials",
+                    "name": "Slack Webhook"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "functionCode": "// Handle invalid messages (empty, media-only, etc.)\nconst messageData = $node[\"Parse Instagram Message\"].json;\n\nlet responseText = 'Olá! ';\nlet quickReplies = ['Ver produtos', 'Suporte', 'FAQs'];\n\nif (messageData.intent === 'image_only') {\n  responseText += 'Vejo que você enviou uma imagem! 📸 Como posso ajudar com isso?';\n  quickReplies = ['Analisar imagem', 'Suporte técnico', 'Falar com humano'];\n} else {\n  responseText += 'Como posso ajudar você hoje? 😊';\n}\n\nreturn {\n  recipient_id: messageData.from,\n  message: {\n    text: responseText\n  },\n  quick_replies: quickReplies.map(reply => ({\n    content_type: 'text',\n    title: reply,\n    payload: reply.toLowerCase().replace(/\\s+/g, '_')\n  }))\n};"
+            },
+            "name": "Handle Invalid Message",
+            "type": "n8n-nodes-base.function",
+            "typeVersion": 1,
+            "position": [
+                900,
+                500
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://graph.instagram.com/v18.0/me/messages",
+                "sendBody": true,
+                "bodyContentType": "json",
+                "body": "={{ $json }}",
+                "options": {}
+            },
+            "name": "Send Invalid Message Response",
+            "type": "@n8n/n8n-nodes-langchain.httpRequest",
+            "typeVersion": 1,
+            "position": [
+                1120,
+                500
+            ],
+            "credentials": {
+                "httpRequest": {
+                    "id": "instagram_api_credentials",
+                    "name": "Instagram API"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "resource": "analytics",
+                "operation": "track",
+                "event": "instagram_dm_processed",
+                "properties": "intent={{ $node[\"Classify Intent\"].json.intent }},confidence={{ $node[\"Classify Intent\"].json.confidence }},response_type=auto,human_handoff={{ $node[\"Classify Intent\"].json.needs_human }},platform=instagram"
+            },
+            "name": "Track Auto Response",
+            "type": "n8n-nodes-base.analytics",
+            "typeVersion": 1,
+            "position": [
+                2220,
+                100
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "analytics",
+                "operation": "track",
+                "event": "instagram_dm_processed",
+                "properties": "intent={{ $node[\"Classify Intent\"].json.intent }},confidence={{ $node[\"Classify Intent\"].json.confidence }},response_type=handoff,human_handoff=true,platform=instagram"
+            },
+            "name": "Track Human Handoff",
+            "type": "n8n-nodes-base.analytics",
+            "typeVersion": 1,
+            "position": [
+                2440,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Instagram Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Parse Instagram Message",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Parse Instagram Message": {
+            "main": [
+                [
+                    {
+                        "node": "Validate Message",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Validate Message": {
+            "main": [
+                [
+                    {
+                        "node": "Classify Intent",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Handle Invalid Message",
+                        "type": "main",
+                        "index": 1
+                    }
+                ]
+            ]
+        },
+        "Classify Intent": {
+            "main": [
+                [
+                    {
+                        "node": "Check Human Handoff",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check Human Handoff": {
+            "main": [
+                [
+                    {
+                        "node": "Prepare Auto Response",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Prepare Human Handoff",
+                        "type": "main",
+                        "index": 1
+                    }
+                ]
+            ]
+        },
+        "Prepare Auto Response": {
+            "main": [
+                [
+                    {
+                        "node": "Send Instagram Auto Reply",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Send Instagram Auto Reply": {
+            "main": [
+                [
+                    {
+                        "node": "Log Auto Interaction",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Log Auto Interaction": {
+            "main": [
+                [
+                    {
+                        "node": "Save Interaction Log",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Save Interaction Log": {
+            "main": [
+                [
+                    {
+                        "node": "Track Auto Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Prepare Human Handoff": {
+            "main": [
+                [
+                    {
+                        "node": "Send Handoff Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Send Handoff Response": {
+            "main": [
+                [
+                    {
+                        "node": "Queue for Human Agent",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Queue for Human Agent": {
+            "main": [
+                [
+                    {
+                        "node": "Notify Human Agents",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Notify Human Agents": {
+            "main": [
+                [
+                    {
+                        "node": "Send Slack Notification",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Send Slack Notification": {
+            "main": [
+                [
+                    {
+                        "node": "Track Human Handoff",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Handle Invalid Message": {
+            "main": [
+                [
+                    {
+                        "node": "Send Invalid Message Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "executionOrder": "v1"
+    },
+    "staticData": null
+}

@@ -1,0 +1,138 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Vendas High-Ticket no WhatsApp: O Guia de Luxo e Consultoria 2026",
+      "description": "Como vender produtos de alto valor pelo WhatsApp. Estratégias de vendas consultivas, personalização extrema e fechamento de grandes negócios.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-21",
+      "image": "/images/blog/high-ticket-whatsapp.png",
+      "articleSection": "Vendas Consultivas",
+      "keywords": "vendas high ticket, luxo whatsapp, venda consultiva, ticket alto, crm para luxo"
+    },
+    {
+      "@type": "HowTo",
+      "name": "Como estruturar uma operação de vendas High-Ticket no WhatsApp",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "text": "Qualificação rigorosa inicial com IA para identificar leads com alto poder aquisitivo."
+        },
+        {
+          "@type": "HowToStep",
+          "text": "Transição suave da automação para o atendimento humano 'White Glove'."
+        },
+        {
+          "@type": "HowToStep",
+          "text": "Uso de CRM integrado para manter o histórico detalhado de preferências e comportamento."
+        }
+      ]
+    }
+  ]
+};
+---
+
+<Layout title="Guia Vendas High-Ticket WhatsApp | GetNexo">
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta animate-fade-in">Estratégia • Jan 2026</div>
+      <h1 class="animate-slide-up">Vendas High-Ticket:<br/><span class="text-primary">O Guia de Luxo no WhatsApp</span></h1>
+      <p class="subtitle animate-fade-in delay-200">Produtos de 10k, 50k ou 500k não são vendidos por fluxos de chatbot simples. Eles exigem maestria.</p>
+      
+      <div class="premium-hero-card glass-panel animate-fade-in">
+        <div class="visual-glow"></div>
+        <div class="visual-content">
+          <span class="visual-icon">💎</span>
+          <h2 class="visual-title">High Ticket: Venda VIP</h2>
+          <div class="visual-stats">
+            <div class="stat"><span>+120%</span> ROI médio</div>
+            <div class="stat"><span>ELITE</span> experiência</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="post-content">
+      <section id="psicologia-luxo">
+        <h2>💎 A Psicologia do Cliente High-Ticket</h2>
+        <p>Vender um imóvel de luxo, um iate ou uma consultoria premium pelo WhatsApp exige uma abordagem diferente. O cliente de alto padrão valoriza o <strong>tempo, a exclusividade e a precisão</strong>. Se sua automação parecer "barata" ou robótica demais, ele irá embora em segundos.</p>
+        
+        <div class="glass-panel mt-8 border-gold">
+          <p><strong>Dica de Ouro:</strong> Use a IA da GetNexo para fazer a triagem silenciosa. Ela qualifica o lead através de dados públicos e comportamento antes mesmo do vendedor humano tocar no teclado.</p>
+        </div>
+      </section>
+
+      <section id="metodo-white-glove">
+        <h2>🧤 O Método White Glove no Digital</h2>
+        <p>A personalização extrema é a chave. Ao contrário do ecommerce de massa, aqui o objetivo da automação é <strong>preparar o terreno para o fechamento humano</strong>.</p>
+        
+        <div class="stack-grid">
+          <div class="stack-card glass-panel blur">
+            <h4>Análise de Perfil</h4>
+            <p>Sua IA detecta o nível de urgência e sofisticação do lead através da linguagem.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Agendamento VIP</h4>
+            <p>Integração com Calendly Premium para demonstrações ou visitas exclusivas.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Follow-up Invisível</h4>
+            <p>Lembretes que parecem escritos à mão pelo consultor, mantendo a chama acesa.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="tecnologia-nexo">
+        <h2>🛠️ Como a GetNexo Facilita Vendas de Alto Valor</h2>
+        <p>Com o nosso componente <strong>ARA (Agente de Respostas Avançadas)</strong>, você pode carregar todo o seu catálogo técnico e PDFs de luxo. A IA responderá perguntas complexas sobre impostos, especificações técnicas ou logística internacional com a precisão de um especialista, liberando seu consultor apenas para o fechamento emocional.</p>
+      </section>
+
+      <div class="final-cta animate-scale-up">
+        <h3>Sua operação de luxo merece GetNexo.</h3>
+        <p>Agende uma demonstração estratégica para sua equipe comercial.</p>
+        <div class="cta-buttons mt-8">
+          <a href="/criando-agentes-vendas-virtuais" class="btn-primary">Descubra o ARA</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+</Layout>
+
+<style>
+  :root {
+    --primary: #fbbf24;
+    --accent: #d97706;
+    --glass: rgba(15, 23, 42, 0.7);
+    --glass-border: rgba(251, 191, 36, 0.1);
+  }
+
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  .meta { color: var(--primary); font-size: 0.8rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem; display: inline-block; padding: 0.5rem 1rem; background: rgba(251, 191, 36, 0.05); border: 1px solid var(--glass-border); border-radius: 50px; }
+  h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; color: white; }
+  .text-primary { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .subtitle { font-size: 1.25rem; color: #94a3b8; max-width: 700px; margin: 0 auto; line-height: 1.6; }
+  .placeholder-image { width: 100%; border-radius: 24px; margin-top: 3rem; height: 500px; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, #1e293b, #0f172a); color: var(--primary); font-weight: 800; border: 1px dashed var(--primary); }
+  .post-content { color: #cbd5e1; line-height: 1.8; font-size: 1.15rem; }
+  h2 { font-size: 2.2rem; color: white; margin: 6rem 0 2rem; font-weight: 800; }
+  .glass-panel { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 2.5rem; }
+  .border-gold { border-color: rgba(251, 191, 36, 0.3); box-shadow: 0 0 30px rgba(251, 191, 36, 0.05); }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+  .stack-card { background: var(--glass); border: 1px solid var(--glass-border); padding: 2rem; border-radius: 20px; text-align: left; }
+  .stack-card h4 { color: var(--primary); margin-bottom: 1rem; font-size: 1.3rem; }
+  .final-cta { background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(217, 119, 6, 0.1)); border: 1px solid var(--primary); padding: 5rem 2rem; text-align: center; border-radius: 32px; margin-top: 8rem; }
+  .btn-primary { background: white; color: black; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; font-weight: 800; display: inline-block; transition: 0.3s; }
+  .btn-primary:hover { background: var(--primary); color: white; transform: translateY(-3px); box-shadow: 0 15px 30px rgba(251, 191, 36, 0.3); }
+
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade-in { animation: fade-in 1s ease forwards; }
+  .animate-slide-up { animation: slide-up 1s ease forwards; }
+</style>

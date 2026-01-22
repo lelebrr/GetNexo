@@ -1,0 +1,559 @@
+{
+    "name": "Reativação de Clientes Dorminhocos",
+    "nodes": [
+        {
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "hour",
+                            "equals": 14
+                        },
+                        {
+                            "field": "weekday",
+                            "in": [
+                                1,
+                                2,
+                                3,
+                                4,
+                                5
+                            ]
+                        }
+                    ]
+                }
+            },
+            "name": "Weekly Reactivation Schedule",
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1,
+            "position": [
+                240,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "database",
+                "operation": "select",
+                "tableName": "customers",
+                "conditions": "active = true AND last_login > DATE_SUB(NOW(), INTERVAL 90 DAY) AND id NOT IN (SELECT customer_id FROM reactivation_campaigns WHERE sent_date > DATE_SUB(NOW(), INTERVAL 30 DAY))",
+                "limit": 100
+            },
+            "name": "Find Active Customers",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                460,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "postgres_credentials",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "resource": "database",
+                "operation": "select",
+                "tableName": "orders",
+                "conditions": "customer_id = '{{ $json.id }}' AND created_at < DATE_SUB(NOW(), INTERVAL 30 DAY)",
+                "additionalFields": "MAX(created_at) as last_order_date, COUNT(*) as total_orders, AVG(total) as avg_order_value, SUM(total) as lifetime_value"
+            },
+            "name": "Check Last Order Date",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                680,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "postgres_credentials",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "functionCode": "// Filter customers who haven't ordered in 30+ days\nconst customers = [];\nconst now = new Date();\nconst thirtyDaysAgo = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));\n\n// Group by customer\n$itemAll().forEach(item => {\n  const customerId = item.json.customer_id;\n  const lastOrderDate = new Date(item.json.last_order_date);\n  \n  if (lastOrderDate < thirtyDaysAgo) {\n    // Find customer details\n    const customerDetails = $node[\"Find Active Customers\"].json.find(c => c.id === customerId);\n    if (customerDetails) {\n      customers.push({\n        ...customerDetails,\n        last_order_date: item.json.last_order_date,\n        total_orders: item.json.total_orders,\n        avg_order_value: item.json.avg_order_value,\n        lifetime_value: item.json.lifetime_value,\n        days_since_last_order: Math.floor((now - lastOrderDate) / (1000 * 60 * 60 * 24))\n      });\n    }\n  }\n});\n\n// Remove duplicates\nconst uniqueCustomers = customers.filter((customer, index, self) => \n  index === self.findIndex(c => c.id === customer.id)\n);\n\nreturn uniqueCustomers;"
+            },
+            "name": "Filter Dormant Customers",
+            "type": "n8n-nodes-base.function",
+            "typeVersion": 1,
+            "position": [
+                900,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "functionCode": "// Segment customers based on their profile\nconst customer = $json;\n\n// Calculate recency score (days since last order)\nconst recencyScore = Math.min(customer.days_since_last_order / 180, 1); // Max 180 days = score 1\n\n// Calculate frequency score (total orders)\nconst frequencyScore = Math.min(customer.total_orders / 20, 1); // Max 20 orders = score 1\n\n// Calculate monetary score (lifetime value)\nconst monetaryScore = Math.min(customer.lifetime_value / 5000, 1); // Max R$5000 = score 1\n\n// Calculate RFM score\nconst rfmScore = (recencyScore * 0.3 + frequencyScore * 0.3 + monetaryScore * 0.4);\n\n// Determine segment and offer\nlet segment = 'bronze';\nlet discountPercent = 10;\nlet campaignType = 'gentle_reactivation';\nlet emailTemplate = 'dormant_light';\n\nif (rfmScore >= 0.7) {\n  segment = 'gold';\n  discountPercent = 20;\n  campaignType = 'vip_reactivation';\n  emailTemplate = 'dormant_vip';\n} else if (rfmScore >= 0.4) {\n  segment = 'silver';\n  discountPercent = 15;\n  campaignType = 'standard_reactivation';\n  emailTemplate = 'dormant_standard';\n}\n\n// Generate reactivation coupon\nconst couponCode = `VOLTA${customer.id}`;\nconst validDays = segment === 'gold' ? 14 : 7;\n\n// Personalized messaging based on last order\nconst lastOrderDays = customer.days_since_last_order;\nlet urgencyMessage = 'Faz tempo que não vemos você!';\nif (lastOrderDays > 90) {\n  urgencyMessage = 'Sentimos sua falta! Já fazem 3 meses...';\n} else if (lastOrderDays > 60) {\n  urgencyMessage = 'Faz tempo que você não aparece!';\n}\n\nreturn {\n  ...customer,\n  segment: segment.toUpperCase(),\n  discountPercent,\n  couponCode,\n  validDays,\n  campaignType,\n  emailTemplate,\n  urgencyMessage,\n  rfmScore: rfmScore.toFixed(3),\n  personalization: {\n    favoriteCategory: 'Eletrônicos', // Would be calculated from order history\n    lastProducts: ['iPhone 15', 'MacBook Pro'], // Would be from last order\n    avgOrderValue: customer.avg_order_value\n  }\n};"
+            },
+            "name": "Segment Customer",
+            "type": "n8n-nodes-base.function",
+            "typeVersion": 1,
+            "position": [
+                1120,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "database",
+                "operation": "insert",
+                "tableName": "reactivation_campaigns",
+                "columns": "customer_id,campaign_type,segment,discount_percent,coupon_code,valid_until,email_template,sent_date,status",
+                "valuesToInsert": "{{$json.id}},'{{$json.campaignType}}','{{$json.segment}}',{{$json.discountPercent}},'{{$json.couponCode}}',NOW() + INTERVAL '{{$json.validDays}} days','{{$json.emailTemplate}}',NOW(),'sent'"
+            },
+            "name": "Log Reactivation Campaign",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                1340,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "postgres_credentials",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "functionCode": "// Generate personalized reactivation email\nconst data = $node[\"Segment Customer\"].json;\nconst customer = data;\nconst couponCode = data.couponCode;\nconst discountPercent = data.discountPercent;\nconst validDays = data.validDays;\nconst urgencyMessage = data.urgencyMessage;\n\n// Coupon URL\nconst couponUrl = `https://getnexo.com.br?coupon=${couponCode}&reactivation=true&ref=${customer.id}`;\n\n// Personalized product recommendations\nconst recommendations = [\n  'Seus produtos favoritos com desconto',\n  'Novidades que você pode gostar',\n  'Ofertas especiais para você'\n];\n\n// Email content based on template\ntemplates = {\n  'dormant_vip': {\n    subject: `Oi ${customer.name}! Sentimos sua falta... 🎁 20% OFF Especial`,\n    greeting: `Olá ${customer.name}, nosso cliente VIP!`,\n    body: `${urgencyMessage} 😔\\n\\nVocê fez ${customer.total_orders} pedidos conosco totalizando R$ ${customer.lifetime_value.toFixed(2)}. Como você é especial para nós, criamos uma oferta VIP:`,\n    discount: `20% OFF em TODA loja`,\n    benefits: ['Entrega gratuita', 'Suporte prioritário', 'Cupom extra de R$50']\n  },\n  'dormant_standard': {\n    subject: `Oi ${customer.name}! Temos saudades suas! 🛍️ 15% OFF`,\n    greeting: `Olá ${customer.name}!`,\n    body: `${urgencyMessage}\\n\\nVocê é um cliente valioso para nós com ${customer.total_orders} pedidos. Para te receber de volta:`,\n    discount: `15% OFF em TODA loja`,\n    benefits: ['Frete grátis acima de R$200', 'Cupom de boas-vindas']\n  },\n  'dormant_light': {\n    subject: `Oi ${customer.name}! Passamos para dizer oi! 👋 10% OFF`,\n    greeting: `Olá ${customer.name}!`,\n    body: `${urgencyMessage}\\n\\nGostaríamos de te ver novamente na nossa loja. Que tal esta oferta especial:`,\n    discount: `10% OFF para você voltar`,\n    benefits: ['Frete grátis', 'Atendimento personalizado']\n  }\n};\n\nconst template = templates[data.emailTemplate];\n\n// Generate HTML email\nconst emailHtml = `\n<!DOCTYPE html>\n<html lang=\"pt-BR\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>${template.subject}</title>\n  <style>\n    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; background: #f8f9fa; }\n    .container { max-width: 600px; margin: 20px auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }\n    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px 30px; text-align: center; }\n    .content { padding: 30px; }\n    .coupon { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; margin: 25px 0; }\n    .coupon-code { font-size: 24px; font-weight: bold; letter-spacing: 2px; margin: 15px 0; font-family: monospace; }\n    .cta-button { display: inline-block; background: #28a745; color: white; padding: 15px 35px; text-decoration: none; border-radius: 25px; font-weight: bold; margin: 20px 0; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3); }\n    .benefits { background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; }\n    .benefits ul { margin: 0; padding-left: 20px; }\n    .benefits li { margin: 5px 0; }\n    .footer { background: #343a40; color: white; padding: 20px; text-align: center; font-size: 12px; }\n    .stats { background: #e9ecef; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>💙 ${customer.name}</h1>\n      <p>Sentimos sua falta na GetNexo!</p>\n    </div>\n    \n    <div class=\"content\">\n      <p>${template.greeting}</p>\n      \n      <p>${template.body}</p>\n      \n      <div class=\"stats\">\n        <p><strong>Seus ${customer.total_orders} pedidos conosco totalizam R$ ${customer.lifetime_value.toFixed(2)}</strong></p>\n        <p>Última visita: ${customer.days_since_last_order} dias atrás</p>\n      </div>\n      \n      <div class=\"coupon\">\n        <div class=\"discount\">🎁 ${template.discount}</div>\n        <div class=\"coupon-code\">${couponCode}</div>\n        <div>⏰ Válido por ${validDays} dias</div>\n      </div>\n      \n      <div style=\"text-align: center;\">\n        <a href=\"${couponUrl}\" class=\"cta-button\">Usar Meu Desconto Agora</a>\n      </div>\n      \n      <div class=\"benefits\">\n        <h3>Além do desconto, você também ganha:</h3>\n        <ul>\n          ${template.benefits.map(benefit => `<li>${benefit}</li>`).join('')}\n        </ul>\n      </div>\n      \n      <p><strong>Algumas sugestões especiais para você:</strong></p>\n      <ul>\n        ${recommendations.map(rec => `<li>${rec}</li>`).join('')}\n      </ul>\n      \n      <p>Esperamos te ver em breve! 🛍️✨</p>\n      \n      <p>Abraços,<br>\n      <strong>Equipe GetNexo</strong></p>\n    </div>\n    \n    <div class=\"footer\">\n      <p>Não quer mais receber nossas ofertas? <a href=\"https://getnexo.com.br/unsubscribe?email=${customer.email}\" style=\"color: #ffc107;\">Cancelar inscrição</a></p>\n      <p>GetNexo - Sua loja favorita online</p>\n    </div>\n  </div>\n</body>\n</html>`;\n\nconst emailText = `${template.subject}\n\n${template.greeting}\n\n${template.body}\n\nSeus ${customer.total_orders} pedidos conosco totalizam R$ ${customer.lifetime_value.toFixed(2)}\nÚltima visita: ${customer.days_since_last_order} dias atrás\n\n🎁 ${template.discount}\nCódigo: ${couponCode}\nVálido por: ${validDays} dias\n\nUse agora: ${couponUrl}\n\nAlém do desconto:\n${template.benefits.map(b => `- ${b}`).join('\\n')}\n\nSugestões: ${recommendations.join(', ')}\n\nEsperamos te ver em breve!\nEquipe GetNexo`;\n\nreturn {\n  emailHtml,\n  emailText,\n  couponUrl,\n  template\n};"
+            },
+            "name": "Generate Reactivation Email",
+            "type": "n8n-nodes-base.function",
+            "typeVersion": 1,
+            "position": [
+                1560,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "fromEmail": "oi@getnexo.com.br",
+                "toEmail": "={{ $node[\"Segment Customer\"].json[\"email\"] }}",
+                "subject": "={{ $json.template.subject }}",
+                "html": "={{ $json.emailHtml }}",
+                "text": "={{ $json.emailText }}",
+                "options": {
+                    "priority": "normal"
+                }
+            },
+            "name": "Send Reactivation Email",
+            "type": "n8n-nodes-base.emailSend",
+            "typeVersion": 1,
+            "position": [
+                1780,
+                300
+            ],
+            "credentials": {
+                "smtp": {
+                    "id": "smtp_credentials",
+                    "name": "SMTP account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "amount": 3,
+                "unit": "days"
+            },
+            "name": "Wait 3 Days",
+            "type": "n8n-nodes-base.wait",
+            "typeVersion": 1,
+            "position": [
+                2000,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "database",
+                "operation": "select",
+                "tableName": "orders",
+                "conditions": "customer_id = '{{ $node[\"Segment Customer\"].json[\"id\"] }}' AND created_at > '{{ $node[\"Log Reactivation Campaign\"].json[\"sent_date\"] }}'",
+                "limit": 1
+            },
+            "name": "Check if Customer Returned",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                2220,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "postgres_credentials",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "value": "={{ $json.length > 0 ? 'returned' : 'not_returned' }}",
+                "rules": {
+                    "rules": [
+                        {
+                            "conditions": [
+                                {
+                                    "id": "status",
+                                    "value": "returned"
+                                }
+                            ],
+                            "output": "customer_returned"
+                        },
+                        {
+                            "conditions": [
+                                {
+                                    "id": "status",
+                                    "value": "not_returned"
+                                }
+                            ],
+                            "output": "send_follow_up"
+                        }
+                    ]
+                }
+            },
+            "name": "Check Return Status",
+            "type": "n8n-nodes-base.switch",
+            "typeVersion": 1,
+            "position": [
+                2440,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "database",
+                "operation": "update",
+                "tableName": "reactivation_campaigns",
+                "updateFields": "status,result_date",
+                "updateValues": "'successful',NOW()",
+                "conditions": "customer_id = '{{ $node[\"Segment Customer\"].json[\"id\"] }}' AND sent_date = '{{ $node[\"Log Reactivation Campaign\"].json[\"sent_date\"] }}'"
+            },
+            "name": "Mark Campaign Successful",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                2660,
+                200
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "postgres_credentials",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "fromEmail": "bemvindo@getnexo.com.br",
+                "toEmail": "={{ $node[\"Segment Customer\"].json[\"email\"] }}",
+                "subject": "Que bom ter você de volta! 🎉",
+                "text": "Olá {{ $node[\"Segment Customer\"].json[\"name\"] }}!\n\nQue alegria ter você de volta na GetNexo! 🙌\n\nVimos que você usou nosso cupom especial. Obrigado por voltar!\n\nComo forma de agradecimento, aqui vai um cupom extra de 5% OFF para sua próxima compra:\n\n🎁 Código: BEMVINDO{{ $node[\"Segment Customer\"].json[\"id\"] }}\n📅 Válido por 30 dias\n\nUse em: https://getnexo.com.br?coupon=BEMVINDO{{ $node[\"Segment Customer\"].json[\"id\"] }}\n\nContinue comprando conosco!\n\nAbraços,\nEquipe GetNexo",
+                "html": "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'><div style='background: linear-gradient(135deg, #28a745, #20c997); color: white; padding: 40px; text-align: center; border-radius: 10px 10px 0 0;'><h1>🎉 Bem-vindo de Volta!</h1><p>Que alegria ter você novamente na GetNexo!</p></div><div style='background: white; padding: 30px; border: 1px solid #ddd; border-radius: 0 0 10px 10px;'><p>Olá <strong>{{ $node[\"Segment Customer\"].json[\"name\"] }}</strong>!</p><p>Que alegria ter você de volta! 🙌 Vimos que usou nosso cupom especial de reativação.</p><p>Como forma de agradecimento, aqui vai um cupom extra:</p><div style='background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;'><h3 style='color: #28a745;'>🎁 5% OFF EXTRA</h3><p><strong>Código: BEMVINDO{{ $node[\"Segment Customer\"].json[\"id\"] }}</strong></p><p>Válido por 30 dias</p></div><div style='text-align: center; margin: 30px 0;'><a href='https://getnexo.com.br?coupon=BEMVINDO{{ $node[\"Segment Customer\"].json[\"id\"] }}' style='background: #28a745; color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; font-weight: bold;'>Usar Cupom Extra</a></div><p>Continue comprando conosco e aproveite!</p><p>Abraços,<br><strong>Equipe GetNexo</strong></p></div></div>"
+            },
+            "name": "Send Welcome Back Email",
+            "type": "n8n-nodes-base.emailSend",
+            "typeVersion": 1,
+            "position": [
+                2880,
+                200
+            ],
+            "credentials": {
+                "smtp": {
+                    "id": "smtp_credentials",
+                    "name": "SMTP account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "resource": "database",
+                "operation": "insert",
+                "tableName": "coupons",
+                "columns": "code,discount_percent,valid_until,usage_limit,used_count,campaign_type",
+                "valuesToInsert": "'BEMVINDO{{$node[\"Segment Customer\"].json[\"id\"]]}}',5,NOW() + INTERVAL '30 days',1,0,'welcome_back'"
+            },
+            "name": "Create Welcome Back Coupon",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                3100,
+                200
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "postgres_credentials",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "fromEmail": "ultima-chance@getnexo.com.br",
+                "toEmail": "={{ $node[\"Segment Customer\"].json[\"email\"] }}",
+                "subject": "Última Chance: Seu Desconto Expira Hoje! ⏰",
+                "text": "Olá {{ $node[\"Segment Customer\"].json[\"name\"] }}!\n\nEsta é nossa última tentativa de te reconquistar! 😊\n\nSeu cupom {{ $node[\"Log Reactivation Campaign\"].json[\"coupon_code\"] }} expira hoje.\n\nNão perca esta chance de voltar para a GetNexo com {{ $node[\"Log Reactivation Campaign\"].json[\"discount_percent\"] }}% OFF!\n\nUse agora: https://getnexo.com.br?coupon={{ $node[\"Log Reactivation Campaign\"].json[\"coupon_code\"] }}\n\nFoi um prazer ter você conosco antes, esperamos te ver novamente!\n\nAbraços,\nEquipe GetNexo",
+                "html": "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'><div style='background: linear-gradient(135deg, #dc3545, #fd7e14); color: white; padding: 40px; text-align: center; border-radius: 10px 10px 0 0;'><h1>⏰ ÚLTIMA CHANCE!</h1><p>Seu desconto expira hoje</p></div><div style='background: white; padding: 30px; border: 1px solid #ddd; border-radius: 0 0 10px 10px;'><p>Olá <strong>{{ $node[\"Segment Customer\"].json[\"name\"] }}</strong>!</p><p>Esta é nossa última tentativa de reconquistar você! 😊</p><p>Seu cupom <strong>{{ $node[\"Log Reactivation Campaign\"].json[\"coupon_code\"] }}</strong> expira <strong>hoje</strong>.</p><div style='background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;'><h3 style='color: #dc3545;'>{{ $node[\"Log Reactivation Campaign\"].json[\"discount_percent\"] }}% OFF</h3><p><strong>{{ $node[\"Log Reactivation Campaign\"].json[\"coupon_code\"] }}</strong></p></div><div style='text-align: center; margin: 30px 0;'><a href='https://getnexo.com.br?coupon={{ $node[\"Log Reactivation Campaign\"].json[\"coupon_code\"] }}' style='background: #dc3545; color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; font-weight: bold;'>Usar Desconto Agora</a></div><p>Foi um prazer ter você conosco antes. Esperamos te ver novamente em breve!</p><p>Abraços,<br><strong>Equipe GetNexo</strong></p></div></div>"
+            },
+            "name": "Send Final Chance Email",
+            "type": "n8n-nodes-base.emailSend",
+            "typeVersion": 1,
+            "position": [
+                2660,
+                400
+            ],
+            "credentials": {
+                "smtp": {
+                    "id": "smtp_credentials",
+                    "name": "SMTP account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "resource": "database",
+                "operation": "update",
+                "tableName": "reactivation_campaigns",
+                "updateFields": "status,result_date",
+                "updateValues": "'failed',NOW()",
+                "conditions": "customer_id = '{{ $node[\"Segment Customer\"].json[\"id\"] }}' AND sent_date = '{{ $node[\"Log Reactivation Campaign\"].json[\"sent_date\"] }}'"
+            },
+            "name": "Mark Campaign Failed",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                2880,
+                400
+            ],
+            "credentials": {
+                "smtp": {
+                    "id": "postgres_credentials",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "resource": "analytics",
+                "operation": "track",
+                "event": "reactivation_campaign",
+                "properties": "customer_id={{ $node[\"Segment Customer\"].json[\"id\"] }},segment={{ $json.segment }},campaign_type={{ $json.campaignType }},discount_percent={{ $json.discountPercent }},days_dormant={{ $json.days_since_last_order }},result=success"
+            },
+            "name": "Track Successful Reactivation",
+            "type": "n8n-nodes-base.analytics",
+            "typeVersion": 1,
+            "position": [
+                3320,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "analytics",
+                "operation": "track",
+                "event": "reactivation_campaign",
+                "properties": "customer_id={{ $node[\"Segment Customer\"].json[\"id\"] }},segment={{ $node[\"Segment Customer\"].json[\"segment\"] }},campaign_type={{ $node[\"Segment Customer\"].json[\"campaignType\"] }},discount_percent={{ $node[\"Segment Customer\"].json[\"discountPercent\"] }},days_dormant={{ $node[\"Segment Customer\"].json[\"days_since_last_order\"] }},result=failed"
+            },
+            "name": "Track Failed Reactivation",
+            "type": "n8n-nodes-base.analytics",
+            "typeVersion": 1,
+            "position": [
+                3100,
+                400
+            ]
+        }
+    ],
+    "connections": {
+        "Weekly Reactivation Schedule": {
+            "main": [
+                [
+                    {
+                        "node": "Find Active Customers",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Find Active Customers": {
+            "main": [
+                [
+                    {
+                        "node": "Check Last Order Date",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check Last Order Date": {
+            "main": [
+                [
+                    {
+                        "node": "Filter Dormant Customers",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Filter Dormant Customers": {
+            "main": [
+                [
+                    {
+                        "node": "Segment Customer",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Segment Customer": {
+            "main": [
+                [
+                    {
+                        "node": "Log Reactivation Campaign",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Log Reactivation Campaign": {
+            "main": [
+                [
+                    {
+                        "node": "Generate Reactivation Email",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Generate Reactivation Email": {
+            "main": [
+                [
+                    {
+                        "node": "Send Reactivation Email",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Send Reactivation Email": {
+            "main": [
+                [
+                    {
+                        "node": "Wait 3 Days",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Wait 3 Days": {
+            "main": [
+                [
+                    {
+                        "node": "Check if Customer Returned",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check if Customer Returned": {
+            "main": [
+                [
+                    {
+                        "node": "Check Return Status",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check Return Status": {
+            "main": [
+                [
+                    {
+                        "node": "Mark Campaign Successful",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Send Final Chance Email",
+                        "type": "main",
+                        "index": 1
+                    }
+                ]
+            ]
+        },
+        "Mark Campaign Successful": {
+            "main": [
+                [
+                    {
+                        "node": "Send Welcome Back Email",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Send Welcome Back Email": {
+            "main": [
+                [
+                    {
+                        "node": "Create Welcome Back Coupon",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Create Welcome Back Coupon": {
+            "main": [
+                [
+                    {
+                        "node": "Track Successful Reactivation",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Send Final Chance Email": {
+            "main": [
+                [
+                    {
+                        "node": "Mark Campaign Failed",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Mark Campaign Failed": {
+            "main": [
+                [
+                    {
+                        "node": "Track Failed Reactivation",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "executionOrder": "v1"
+    },
+    "staticData": null
+}

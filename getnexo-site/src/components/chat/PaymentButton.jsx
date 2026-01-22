@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button } from '../design-system';
+import { Button } from '../../design-system';
 
 /**
  * Componente PaymentButton - Botão de pagamento WhatsApp Pay

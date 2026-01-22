@@ -1,0 +1,367 @@
+---
+import ClientLayout from '../../layouts/ClientLayout.astro';
+---
+
+<ClientLayout title="Programa de Fidelidade - GetNexo">
+    <div class="mb-8">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">Programa de Fidelidade</h1>
+                <p class="text-gray-600 mt-2">Ganhe pontos, desbloqueie benefícios e economize mais</p>
+            </div>
+            <div class="text-right">
+                <p class="text-2xl font-bold text-gray-900">2.450 pontos</p>
+                <p class="text-sm text-gray-600">Nível Ouro</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status do Programa -->
+    <div class="bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-lg shadow p-6 mb-8 text-white">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-2xl font-bold mb-2">🏆 Nível Ouro Desbloqueado!</h2>
+                <p class="text-yellow-100">Parabéns! Você atingiu o nível máximo do programa de fidelidade.</p>
+                <div class="mt-4 flex items-center space-x-4">
+                    <div class="text-center">
+                        <div class="text-lg font-bold">2.450</div>
+                        <div class="text-xs text-yellow-100">Pontos Totais</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-lg font-bold">R$ 245</div>
+                        <div class="text-xs text-yellow-100">Economizados</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-lg font-bold">12</div>
+                        <div class="text-xs text-yellow-100">Recompensas Usadas</div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-6xl">🥇</div>
+        </div>
+    </div>
+
+    <!-- Progresso para Próximo Nível -->
+    <div class="bg-white rounded-lg shadow p-6 mb-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Seu Progresso</h2>
+        <div class="space-y-4">
+            <div>
+                <div class="flex justify-between text-sm mb-2">
+                    <span>Nível Ouro</span>
+                    <span>2.450 / 2.500 pontos</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-3">
+                    <div class="bg-yellow-500 h-3 rounded-full" style="width: 98%"></div>
+                </div>
+                <p class="text-xs text-gray-600 mt-1">50 pontos para manter o nível Ouro</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Como Ganhar Pontos -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+
+        <!-- Ganhar Pontos -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">Como Ganhar Pontos</h2>
+            <div class="space-y-4">
+                <div class="flex items-center p-4 bg-green-50 rounded-lg">
+                    <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                        <span class="text-lg">💬</span>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-medium text-gray-900">Conversas Atendidas</h3>
+                        <p class="text-sm text-gray-600">Ganhe 10 pontos por conversa resolvida</p>
+                    </div>
+                    <span class="text-sm font-bold text-green-600">+50 hoje</span>
+                </div>
+
+                <div class="flex items-center p-4 bg-blue-50 rounded-lg">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                        <span class="text-lg">🛒</span>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-medium text-gray-900">Vendas Realizadas</h3>
+                        <p class="text-sm text-gray-600">Ganhe 5% do valor da venda em pontos</p>
+                    </div>
+                    <span class="text-sm font-bold text-blue-600">+125 hoje</span>
+                </div>
+
+                <div class="flex items-center p-4 bg-purple-50 rounded-lg">
+                    <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mr-4">
+                        <span class="text-lg">⭐</span>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-medium text-gray-900">Avaliações 5★</h3>
+                        <p class="text-sm text-gray-600">Ganhe 50 pontos por avaliação perfeita</p>
+                    </div>
+                    <span class="text-sm font-bold text-purple-600">+75 hoje</span>
+                </div>
+
+                <div class="flex items-center p-4 bg-orange-50 rounded-lg">
+                    <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center mr-4">
+                        <span class="text-lg">🔄</span>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-medium text-gray-900">Indicações</h3>
+                        <p class="text-sm text-gray-600">Ganhe 200 pontos por cliente indicado</p>
+                    </div>
+                    <span class="text-sm font-bold text-orange-600">+0 hoje</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recompensas Disponíveis -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">Recompensas Disponíveis</h2>
+            <div class="space-y-4">
+                <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                            <span class="text-lg">📱</span>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-900">1 Hora Extra Suporte</h3>
+                            <p class="text-sm text-gray-600">Suporte prioritário adicional</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-sm font-bold text-gray-900">500 pts</span>
+                        <button class="block mt-1 bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700 transition-colors">
+                            Resgatar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                            <span class="text-lg">🎁</span>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-900">Desconto 10%</h3>
+                            <p class="text-sm text-gray-600">Próxima mensalidade com desconto</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-sm font-bold text-gray-900">300 pts</span>
+                        <button class="block mt-1 bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700 transition-colors">
+                            Resgatar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mr-3">
+                            <span class="text-lg">🚀</span>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-900">Recurso Premium</h3>
+                            <p class="text-sm text-gray-600">Acesso antecipado a novos recursos</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-sm font-bold text-gray-900">800 pts</span>
+                        <button class="block mt-1 bg-gray-400 text-gray-700 px-3 py-1 rounded text-xs cursor-not-allowed">
+                            Pontos Insuficientes
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center mr-3">
+                            <span class="text-lg">👑</span>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-900">Acesso VIP</h3>
+                            <p class="text-sm text-gray-600">Suporte 24/7 e prioridade máxima</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-sm font-bold text-gray-900">1.000 pts</span>
+                        <button class="block mt-1 bg-gray-400 text-gray-700 px-3 py-1 rounded text-xs cursor-not-allowed">
+                            Pontos Insuficientes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Histórico de Pontos -->
+    <div class="bg-white rounded-lg shadow">
+        <div class="p-6 border-b border-gray-200">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-900">Histórico de Pontos</h2>
+                <div class="flex gap-2">
+                    <select class="text-sm border border-gray-300 rounded px-3 py-1">
+                        <option>Todos</option>
+                        <option>Ganhos</option>
+                        <option>Gastos</option>
+                    </select>
+                    <select class="text-sm border border-gray-300 rounded px-3 py-1">
+                        <option>Últimos 30 dias</option>
+                        <option>Últimos 90 dias</option>
+                        <option>Todos</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="divide-y divide-gray-200">
+            <!-- Transação 1 -->
+            <div class="p-6 hover:bg-gray-50 transition-colors">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-lg">💬</span>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-900">Conversa atendida - Maria Clara</h3>
+                            <p class="text-sm text-gray-600">Atendimento via WhatsApp • Satisfação: 5★</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-sm font-bold text-green-600">+10 pontos</span>
+                        <p class="text-xs text-gray-500">há 2 horas</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transação 2 -->
+            <div class="p-6 hover:bg-gray-50 transition-colors">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-lg">🛒</span>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-900">Venda realizada - Plano Premium</h3>
+                            <p class="text-sm text-gray-600">R$ 299,00 • 5% convertido em pontos</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-sm font-bold text-green-600">+15 pontos</span>
+                        <p class="text-xs text-gray-500">há 4 horas</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transação 3 -->
+            <div class="p-6 hover:bg-gray-50 transition-colors">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-lg">🎁</span>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-900">Resgate - Desconto 10%</h3>
+                            <p class="text-sm text-gray-600">Recompensa utilizada na mensalidade</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-sm font-bold text-red-600">-300 pontos</span>
+                        <p class="text-xs text-gray-500">há 1 dia</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transação 4 -->
+            <div class="p-6 hover:bg-gray-50 transition-colors">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-lg">⭐</span>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-900">Avaliação 5★ - João Silva</h3>
+                            <p class="text-sm text-gray-600">Cliente avaliou atendimento como excelente</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-sm font-bold text-green-600">+50 pontos</span>
+                        <p class="text-xs text-gray-500">há 1 dia</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transação 5 -->
+            <div class="p-6 hover:bg-gray-50 transition-colors">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-lg">💬</span>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-900">Conversa atendida - Ana Santos</h3>
+                            <p class="text-sm text-gray-600">Atendimento via Instagram • Satisfação: 4★</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-sm font-bold text-green-600">+10 pontos</span>
+                        <p class="text-xs text-gray-500">há 2 dias</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Paginação -->
+        <div class="p-6 border-t border-gray-200">
+            <div class="flex items-center justify-between">
+                <p class="text-sm text-gray-700">
+                    Mostrando <span class="font-medium">1</span> a <span class="font-medium">5</span> de <span class="font-medium">47</span> transações
+                </p>
+                <div class="flex space-x-2">
+                    <button class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        Anterior
+                    </button>
+                    <button class="px-3 py-1 bg-blue-600 text-white border border-blue-600 rounded text-sm hover:bg-blue-700">
+                        1
+                    </button>
+                    <button class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50">
+                        2
+                    </button>
+                    <button class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50">
+                        3
+                    </button>
+                    <button class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50">
+                        Próximo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Níveis do Programa -->
+    <div class="mt-8 bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-6">Níveis do Programa</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="text-center p-4 border-2 border-gray-200 rounded-lg">
+                <div class="text-3xl mb-2">🥉</div>
+                <h3 class="font-medium text-gray-900">Bronze</h3>
+                <p class="text-sm text-gray-600">0 - 499 pontos</p>
+                <p class="text-xs text-gray-500 mt-2">Descontos básicos</p>
+            </div>
+            <div class="text-center p-4 border-2 border-gray-200 rounded-lg">
+                <div class="text-3xl mb-2">🥈</div>
+                <h3 class="font-medium text-gray-900">Prata</h3>
+                <p class="text-sm text-gray-600">500 - 1.499 pontos</p>
+                <p class="text-xs text-gray-500 mt-2">Suporte prioritário</p>
+            </div>
+            <div class="text-center p-4 border-2 border-blue-500 rounded-lg bg-blue-50">
+                <div class="text-3xl mb-2">🥇</div>
+                <h3 class="font-medium text-blue-900">Ouro</h3>
+                <p class="text-sm text-blue-600">1.500+ pontos</p>
+                <p class="text-xs text-blue-500 mt-2">Benefícios premium</p>
+            </div>
+            <div class="text-center p-4 border-2 border-gray-200 rounded-lg opacity-50">
+                <div class="text-3xl mb-2">💎</div>
+                <h3 class="font-medium text-gray-900">Diamante</h3>
+                <p class="text-sm text-gray-600">3.000+ pontos</p>
+                <p class="text-xs text-gray-500 mt-2">Em breve</p>
+            </div>
+        </div>
+    </div>
+</ClientLayout>

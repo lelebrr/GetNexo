@@ -1,0 +1,109 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Assinaturas e Recorrência: Estratégias para Maximizar o LTV em 2026",
+      "description": "Entenda como o modelo de assinaturas pode escalar seu ecommerce. Aprenda a gerir recorrência, reduzir churn e aumentar o Lifetime Value.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-21",
+      "image": "/images/blog/assinaturas_recorrencia_ecommerce.png",
+      "articleSection": "Modelos de Negócio",
+      "keywords": "assinaturas ecommerce, pagamentos recorrentes, ltv growth, churn reduction, economia da recorrência"
+    }
+  ]
+};
+---
+
+<Layout title="Assinaturas e Recorrência Ecommerce | GetNexo">
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta animate-fade-in">Business Model • Jan 2026</div>
+      <h1 class="animate-slide-up">Assinaturas & Recorrência:<br/><span class="text-primary">Ouro do Ecommerce</span></h1>
+      <p class="subtitle animate-fade-in delay-200">Por que vender uma vez se você pode vender todo mês? Maximize o valor de cada cliente.</p>
+      
+      <img src="/images/blog/assinaturas_recorrencia_ecommerce.png" alt="Pagamentos Recorrentes e Assinaturas" class="featured-image glass-panel" />
+    </header>
+
+    <div class="post-content">
+      <section id="recorrencia">
+        <h2>🔄 A Economia da Recorrência</h2>
+        <p>A previsibilidade de caixa é o sonho de qualquer empresário. O modelo de assinaturas transforma esse sonho em realidade, criando um fluxo constante de receita e fortalecendo o vínculo emocional com a marca.</p>
+        <div class="glass-panel mt-8">
+          <p><strong>Insight Financeiro:</strong> Adquirir um novo cliente custa até 7x mais do que manter um atual. A recorrência é a ferramenta definitiva de eficiência financeira.</p>
+        </div>
+      </section>
+
+      <section id="metrias">
+        <h2>📊 Métricas que Importam</h2>
+        
+        <div class="stack-grid">
+          <div class="stack-card glass-panel blur">
+            <h4>MRR (Receita Mensal)</h4>
+            <p>O valor total que sua base de assinantes gera todos os meses com previsibilidade.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Churn Rate</h4>
+            <p>A porcentagem de clientes que cancelam. Manter este número baixo é vital para a escala.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>LTV (Lifetime Value)</h4>
+            <p>O lucro líquido que um cliente traz durante todo o tempo de relacionamento com sua marca.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="automacao-flow">
+        <h2>🛠️ Automação de Cobrança e Retenção</h2>
+        <p>Com o <strong>Flow Editor</strong> da GetNexo, você automatiza avisos de renovação, lembretes de pagamento e, mais importante, campanhas de "Win-back" quando um assinante decide cancelar, oferecendo incentivos personalizados via IA.</p>
+      </section>
+
+      <div class="final-cta animate-scale-up">
+        <h3>Quer escalar com recorrência?</h3>
+        <p>Utilize nossa API de pagamentos e o Flow Editor para criar seu clube de assinaturas hoje.</p>
+        <div class="cta-buttons mt-8">
+          <a href="/loja" class="btn-primary">Explorar Flow Editor</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+</Layout>
+
+<style>
+  :root {
+    --primary: #818cf8;
+    --accent: #c084fc;
+    --glass: rgba(15, 23, 42, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.05);
+  }
+
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  .meta { color: var(--primary); font-size: 0.8rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem; display: inline-block; padding: 0.5rem 1rem; background: rgba(129, 140, 248, 0.05); border: 1px solid var(--glass-border); border-radius: 50px; }
+  h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; color: white; }
+  .text-primary { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .subtitle { font-size: 1.25rem; color: #94a3b8; max-width: 700px; margin: 0 auto; line-height: 1.6; }
+  .featured-image { width: 100%; border-radius: 24px; margin-top: 3rem; object-fit: cover; height: 500px; border: 1px solid var(--glass-border); }
+  .post-content { color: #cbd5e1; line-height: 1.8; font-size: 1.15rem; }
+  h2 { font-size: 2.2rem; color: white; margin: 6rem 0 2rem; font-weight: 800; }
+  .glass-panel { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 2.5rem; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+  .stack-card { background: var(--glass); border: 1px solid var(--glass-border); padding: 2rem; border-radius: 20px; text-align: left; }
+  .stack-card h4 { color: var(--primary); margin-bottom: 1rem; font-size: 1.3rem; }
+  .final-cta { background: linear-gradient(135deg, rgba(129, 140, 248, 0.1), rgba(192, 132, 252, 0.1)); border: 1px solid var(--primary); padding: 5rem 2rem; text-align: center; border-radius: 32px; margin-top: 8rem; }
+  .btn-primary { background: white; color: black; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; font-weight: 800; display: inline-block; transition: 0.3s; }
+  .btn-primary:hover { background: var(--primary); color: white; transform: translateY(-3px); box-shadow: 0 15px 30px rgba(129, 140, 248, 0.3); }
+  
+  strong { color: var(--accent); }
+
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade-in { animation: fade-in 1s ease forwards; }
+  .animate-slide-up { animation: slide-up 1s ease forwards; }
+</style>

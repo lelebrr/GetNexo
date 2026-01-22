@@ -1,0 +1,109 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Business Intelligence Enterprise: Dashboards Analíticos para Gestão 2026",
+      "description": "Saiba como dashboards inteligentes podem transformar a gestão da sua empresa. Aprenda a monitorar KPIs em tempo real e tomar decisões baseadas em dados.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-21",
+      "image": "/images/blog/placeholder-analytics-enterprise.png",
+      "articleSection": "Gestão & BI",
+      "keywords": "business intelligence, dashboard enterprise, kpi de vendas, analytics real-time, gestão baseada em dados"
+    }
+  ]
+};
+---
+
+<Layout title="Analytics Enterprise e Dashboards | GetNexo">
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta animate-fade-in">Management • Jan 2026</div>
+      <h1 class="animate-slide-up">BI Enterprise:<br/><span class="text-primary">Gestão por Dados</span></h1>
+      <p class="subtitle animate-fade-in delay-200">Informação não é conhecimento. Transforme dados brutos em decisões estratégicas.</p>
+      
+      <div class="placeholder-image glass-panel animate-fade-in">
+        <p>Imagem: Enterprise Dashboard & BI</p>
+      </div>
+    </header>
+
+    <div class="post-content">
+      <section id="bi-evolution">
+        <h2>📊 A Evolução do BI</h2>
+        <p>Planilhas estáticas morreram. O gestor de 2026 precisa de <strong>dashboards dinâmicos</strong> que rodam em tempo real, integrando dados de vendas, marketing e suporte em uma única visão holística.</p>
+        <div class="glass-panel mt-8">
+          <p><strong>Destaque:</strong> Gestores que utilizam dashboards em tempo real tomam decisões 40% mais rápidas e com 25% menos erro operacional.</p>
+        </div>
+      </section>
+
+      <section id="kpis">
+        <h2>🎯 Os KPIs que Realmente Importam</h2>
+        
+        <div class="stack-grid">
+          <div class="stack-card glass-panel blur">
+            <h4>Taxa de Conversão por Canal</h4>
+            <p>Onde seu dinheiro está rendendo mais? WhatsApp, Instagram ou Direto?</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Tempo Médio de Atendimento</h4>
+            <p>Sua IA está sendo eficiente ou o cliente está ficando preso em loops?</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>CAC vs LTV</h4>
+            <p>O equilíbrio vital para a saúde financeira do seu ecommerce a longo prazo.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="getnexo-bi">
+        <h2>🛠️ GetNexo Dashboard Pro</h2>
+        <p>Nosso dashboard enterprise foi desenhado para escalabilidade. Suportamos bilhões de eventos sem perda de performance, oferecendo drill-down detalhado para que você entenda exatamente o que está acontecendo em cada célula do seu negócio.</p>
+      </section>
+
+      <div class="final-cta animate-scale-up">
+        <h3>Assuma o controle total!</h3>
+        <p>Pare de agir por intuição. Use a inteligência de dados da GetNexo a seu favor.</p>
+        <div class="cta-buttons mt-8">
+          <a href="/dashboard-analytics" class="btn-primary">Conhecer o Dashboard</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+</Layout>
+
+<style>
+  :root {
+    --primary: #38bdf8;
+    --accent: #818cf8;
+    --glass: rgba(15, 23, 42, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.05);
+  }
+
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  .meta { color: var(--primary); font-size: 0.8rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem; display: inline-block; padding: 0.5rem 1rem; background: rgba(56, 189, 248, 0.05); border: 1px solid var(--glass-border); border-radius: 50px; }
+  h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; color: white; }
+  .text-primary { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .subtitle { font-size: 1.25rem; color: #94a3b8; max-width: 700px; margin: 0 auto; line-height: 1.6; }
+  .placeholder-image { width: 100%; border-radius: 24px; margin-top: 3rem; height: 500px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0f172a, #1e293b); color: var(--primary); font-weight: 800; border: 1px dashed var(--primary); }
+  .post-content { color: #cbd5e1; line-height: 1.8; font-size: 1.15rem; }
+  h2 { font-size: 2.2rem; color: white; margin: 6rem 0 2rem; font-weight: 800; }
+  .glass-panel { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 2.5rem; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+  .stack-card { background: var(--glass); border: 1px solid var(--glass-border); padding: 2rem; border-radius: 20px; text-align: left; }
+  .stack-card h4 { color: var(--primary); margin-bottom: 1rem; font-size: 1.3rem; }
+  .final-cta { background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(129, 140, 248, 0.1)); border: 1px solid var(--primary); padding: 5rem 2rem; text-align: center; border-radius: 32px; margin-top: 8rem; }
+  .btn-primary { background: white; color: black; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; font-weight: 800; display: inline-block; transition: 0.3s; }
+  .btn-primary:hover { background: var(--primary); color: white; transform: translateY(-3px); box-shadow: 0 15px 30px rgba(56, 189, 248, 0.3); }
+
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade-in { animation: fade-in 1s ease forwards; }
+  .animate-slide-up { animation: slide-up 1s ease forwards; }
+</style>

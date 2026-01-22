@@ -27,7 +27,7 @@ export const ThemeConfig = {
 };
 
 // Theme context
-const ThemeContext = createContext({
+export const ThemeContext = createContext({
     theme: ThemeConfig,
     setTheme: () => { },
     toggleTheme: () => { },

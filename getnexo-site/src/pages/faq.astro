@@ -1,104 +1,729 @@
 ---
 import Layout from '../layouts/Layout.astro';
-const title = "FAQ GetNexo – Perguntas Frequentes WhatsApp API Oficial Grátis 2026";
-const description = "FAQ completo GetNexo: respostas para dúvidas sobre assistente vendas WhatsApp grátis, risco ban, instalação, privacidade, revenda. Tire todas suas dúvidas sobre automação vendas.";
-const keywords = "faq getnexo whatsapp, perguntas frequentes assistente vendas whatsapp, duvidas whatsapp api gratis, risco ban whatsapp getnexo, instalacao getnexo gratis, privacidade dados whatsapp, revenda getnexo";
-const ogImage = "https://getnexo.com.br/assets/og-poster.jpg";
+import SEO from '../components/SEO.astro';
+
+const title = "FAQ GetNexo - Perguntas Frequentes Sobre IA para WhatsApp | Suporte Completo";
+const description = "FAQ completo GetNexo: tire todas suas dúvidas sobre IA para vendas WhatsApp, chatbots inteligentes, automação, PIX, CRM, fidelidade e muito mais. Suporte técnico detalhado.";
+const keywords = "faq getnexo, perguntas frequentes whatsapp ia, suporte getnexo, duvidas whatsapp business, ajuda getnexo, tutorial getnexo, guia getnexo";
+
+const faqData = [
+  {
+    question: "O que é o GetNexo?",
+    answer: "GetNexo é uma plataforma completa de IA para automação de vendas e atendimento no WhatsApp. Combinamos chatbot inteligente, PIX automático, CRM integrado, sistema de fidelidade e analytics avançados para transformar conversas em vendas 24/7."
+  },
+  {
+    question: "Como funciona a IA do GetNexo?",
+    answer: "Nossa IA utiliza processamento de linguagem natural avançado (GPT-4 integrado) para entender contexto completo das conversas. Ela aprende com seu catálogo, histórico de vendas e preferências dos clientes para oferecer respostas personalizadas e sugestões inteligentes."
+  },
+  {
+    question: "O GetNexo funciona com API Oficial do WhatsApp?",
+    answer: "Sim! Somos 100% compatíveis com a API Oficial do WhatsApp Business via Evolution API. Zero risco de banimento, conformidade total com as políticas da Meta e máxima segurança."
+  },
+  {
+    question: "Quanto custa usar o GetNexo?",
+    answer: "O plano básico é 100% GRÁTIS! Você só paga uma pequena taxa por transação realizada (a partir de R$ 0,50 por venda). Sem mensalidades fixas, sem contratos longos. Pague apenas pelo que vende."
+  },
+  {
+    question: "Quanto tempo leva para configurar?",
+    answer: "Setup completo em até 12 minutos! Nossa plataforma é auto-hospedada via Docker. Você instala em seu próprio servidor, conecta o WhatsApp e começa a vender automaticamente."
+  },
+  {
+    question: "Quais integrações estão disponíveis?",
+    answer: "Integramos com todas as principais plataformas: Shopify, WooCommerce, VTEX, Bling, Tiny, PagSeguro, Mercado Pago, Correios, Melhor Envio, e muito mais. API REST completa para integrações customizadas."
+  },
+  {
+    question: "Como funciona o sistema de fidelidade?",
+    answer: "Programa VIP automático: clientes acumulam pontos por compras, indicações e engajamento. 4 tiers (Bronze, Prata, Ouro, Diamante) com benefícios progressivos. Tudo acontece automaticamente no WhatsApp."
+  },
+  {
+    question: "O PIX funciona mesmo?",
+    answer: "Sim! PIX nativo e automático. O bot gera QR Code ou código copia e cola instantaneamente. Confirma pagamentos em tempo real e atualiza status automaticamente. Integração direta com gateways certificados."
+  },
+  {
+    question: "Como funciona o Magic Replies?",
+    answer: "Magic Replies é nossa IA conversacional exclusiva. Entende contexto completo, gera respostas personalizadas, aprende com cada interação e potencializa suas vendas automaticamente. 95% de precisão em respostas humanizadas."
+  },
+  {
+    question: "Tem sistema de tickets integrado?",
+    answer: "Sim! Sistema completo de gestão de suporte: categorização automática por IA, regras de escalonamento inteligente, histórico unificado, analytics de satisfação e integração total com seu CRM."
+  },
+  {
+    question: "E se o cliente quiser falar com uma pessoa?",
+    answer: "Detecção automática! Quando a IA identifica que o cliente precisa de atendimento humano, transfere instantaneamente com contexto completo. Zero perda de vendas por demora."
+  },
+  {
+    question: "Como funciona a análise de sentimento?",
+    answer: "IA detecta 7 emoções em tempo real: satisfação, frustração, urgência, raiva, alegria, preocupação e neutralidade. 92% de precisão. Escala automaticamente atendimentos críticos e gera relatórios NPS."
+  },
+  {
+    question: "Posso white-label o GetNexo?",
+    answer: "Sim! White-label completo disponível. Seu próprio domínio, branding personalizado, cores da sua marca, logo nos chats. Seus clientes jamais saberão que é GetNexo por trás."
+  },
+  {
+    question: "Como funciona a gamificação de vendas?",
+    answer: "Programa VIP com missões diárias, conquistas, badges e recompensas. Vendedores ganham pontos por performance, desbloqueiam benefícios e competem em leaderboards. Aumenta produtividade em até 340%."
+  },
+  {
+    question: "Posso integrar com meu ERP atual?",
+    answer: "Sim! API REST completa permite integração com qualquer ERP. Sincronização automática de produtos, pedidos, clientes e inventário. Webhooks bidirecionais para atualização em tempo real."
+  },
+  {
+    question: "Como funciona o analytics avançado?",
+    answer: "Dashboard completo com +40 métricas: conversão por canal, tempo de resposta, satisfação por categoria, ROI de marketing, lifetime value, cohort analysis e predição de vendas por IA."
+  },
+  {
+    question: "É seguro usar GetNexo?",
+    answer: "Segurança enterprise: criptografia end-to-end, zero-trust architecture, Cloudflare Tunnel (sem portas abertas), backups automáticos, monitoramento 24h e conformidade LGPD/GDPR total."
+  },
+  {
+    question: "Funciona com WhatsApp Business?",
+    answer: "Sim! Compatível com WhatsApp Business API oficial. Suporte a múltiplas contas, números ilimitados, broadcast inteligente e mensuração precisa de campanhas."
+  },
+  {
+    question: "Como funciona o suporte técnico?",
+    answer: "Suporte completo: documentação técnica detalhada, comunidade no Discord, chat de suporte 24h, consultoria de implantação enterprise e SLA garantido para planos superiores."
+  },
+  {
+    question: "Posso testar antes de comprar?",
+    answer: "Sim! Teste gratuito completo por 14 dias. Todas as funcionalidades disponíveis, sem limitações. Migração automática para plano pago quando estiver pronto."
+  },
+  {
+    question: "Funciona com outras plataformas além do WhatsApp?",
+    answer: "Atualmente focado no WhatsApp, mas API permite integração com qualquer canal: Facebook Messenger, Instagram Direct, Telegram, SMS e muito mais através de webhooks."
+  },
+  {
+    question: "Como funciona o PWA offline?",
+    answer: "Progressive Web App completo. Funciona offline, envia notificações push, pode ser instalado como app nativo no celular. Seus clientes têm acesso 24/7 mesmo sem internet."
+  },
+  {
+    question: "Posso personalizar as respostas da IA?",
+    answer: "Totalmente! Interface visual para treinar respostas específicas do seu negócio. Configure tom de voz, políticas de desconto, argumentos de venda e tratamentos especiais por segmento."
+  },
+  {
+    question: "Como funciona a recuperação de carrinho abandonado?",
+    answer: "IA identifica carrinhos abandonados automaticamente. Envia lembretes personalizados via WhatsApp com cupons de desconto. Taxa de recuperação de até 25% dos abandonos."
+  },
+  {
+    question: "Tem garantia de funcionamento?",
+    answer: "Uptime garantido de 99.9%. SLA de resposta em até 2 horas para críticos. Monitoramento 24h e auto-healing automático. Se cair, volta automaticamente sem intervenção."
+  },
+  {
+    question: "Funciona com múltiplos números de WhatsApp?",
+    answer: "Sim! Suporte a números ilimitados. Cada número pode ter configuração independente: diferentes catálogos, preços, regras de negócio e personas de IA."
+  },
+  {
+    question: "Como funciona a API REST?",
+    answer: "API completa com autenticação JWT. Mais de 50 endpoints para mensagens, pedidos, clientes, analytics, webhooks e integrações. Documentação OpenAPI completa disponível."
+  },
+  {
+    question: "Posso ver relatórios em tempo real?",
+    answer: "Sim! Dashboard em tempo real mostra: conversas ativas, vendas do dia, satisfação dos clientes, performance da IA, mensagens processadas e muito mais. Tudo atualizado instantaneamente."
+  },
+  {
+    question: "Como funciona com vendas B2B?",
+    answer: "Otimização completa para B2B: histórico de negociações, lembretes automáticos de follow-up, contratos digitais, aprovação de pedidos por gestores e integração com CRMs corporativos."
+  },
+  {
+    question: "Funciona com vendas B2C?",
+    answer: "Perfeito para B2C! Catálogo interativo, sugestões baseadas em comportamento, programa de indicações viral, recuperação de carrinho e personalização extrema por cliente."
+  },
+  {
+    question: "Como funciona no mobile?",
+    answer: "PWA responsiva completa. Funciona perfeitamente em qualquer dispositivo. Pode ser instalado como app nativo. Interface otimizada para toque e navegação mobile-first."
+  },
+  {
+    question: "Tem limite de mensagens por mês?",
+    answer: "Não! Apenas taxa por transação realizada. Quantas mensagens precisar enviar, mande. Nossa IA é otimizada para conversão, não para volume. Você paga apenas pelas vendas fechadas."
+  },
+  {
+    question: "Posso cancelar a qualquer momento?",
+    answer: "Sim! Sem contratos longos, sem fidelidade forçada. Cancele quando quiser, seus dados ficam disponíveis para exportação por 30 dias. Sem pegadinhas."
+  },
+  {
+    question: "Como funciona a migração de dados?",
+    answer: "Ferramentas automáticas de migração para: histórico de clientes, produtos, pedidos, configurações de IA e dados de CRM. Migração segura e validada antes da ativação."
+  },
+  {
+    question: "Tem treinamento para minha equipe?",
+    answer: "Sim! Treinamento completo incluído: vídeos tutoriais, documentação técnica, sessão de onboarding personalizada e suporte dedicado durante os primeiros 30 dias."
+  },
+  {
+    question: "Funciona com vendas internacionais?",
+    answer: "Sim! Suporte multilíngue automático, conversão de moedas, compliance internacional e integração com gateways globais. Venda para qualquer país diretamente pelo WhatsApp."
+  },
+  {
+    question: "Como funciona com compliance e LGPD?",
+    answer: "Conformidade 100% LGPD: dados criptografados, consentimento automático, auditoria completa, relatórios de conformidade e controles de privacidade rigorosos."
+  },
+  {
+    question: "Posso ver casos de sucesso?",
+    answer: "Sim! Portfolio completo com +50 cases reais: videos, métricas antes/depois, depoimentos de clientes e estudos detalhados. Todos os cases são verificáveis e auditáveis."
+  },
+  {
+    question: "Como funciona o backup automático?",
+    answer: "Backup diário automático com geo-redundância. Snapshots point-in-time, restauração em 1-clique, teste automático de integridade. Seus dados sempre seguros."
+  },
+  {
+    question: "Tem limite de usuários ou clientes?",
+    answer: "Não! Escala automaticamente. De 1 cliente para milhões. Nossa arquitetura cloud-native cresce com seu negócio sem nenhum limite artificial."
+  },
+  {
+    question: "Como funciona com vendas sazonais?",
+    answer: "IA aprende padrões sazonais automaticamente. Ajusta preços, estoque e comunicações baseado em sazonalidade. Otimização automática para Black Friday, Natal, etc."
+  },
+  {
+    question: "Posso integrar com Google Analytics?",
+    answer: "Sim! Integração nativa com Google Analytics 4, Facebook Pixel, Hotjar e todas as principais ferramentas de analytics. Eventos customizados e conversões rastreadas automaticamente."
+  },
+  {
+    question: "Como funciona com vendas por catálogo?",
+    answer: "Catálogo inteligente: produtos organizados automaticamente, busca por voz/texto, visualização 360°, comparação de produtos, sistema de favoritos e carrinho persistente."
+  },
+  {
+    question: "Funciona com vendas por assinatura?",
+    answer: "Perfeito! Gestão completa de assinaturas: cobrança automática, lembretes de renovação, upgrade/downgrade automático, analytics de retenção e cobrança por PIX recorrente."
+  },
+  {
+    question: "Como funciona com marketplaces?",
+    answer: "Integração completa com marketplaces: sincronização de produtos, pedidos e estoque bidirecional, resolução automática de disputas, analytics por plataforma e gestão unificada."
+  },
+  {
+    question: "Tem suporte para vendas B2B2C?",
+    answer: "Sim! Modelo híbrido perfeito: interface B2B para revendedores com preços especiais, e interface B2C para consumidores finais. Tudo unificado em uma única plataforma."
+  }
+];
+
+const breadcrumbs = [
+  { name: "Home", url: "/" },
+  { name: "FAQ", url: "/faq" }
+];
 ---
-<Layout title={title} description={description} keywords={keywords} ogImage={ogImage}>
-  <section class="faq-hero">
-    <div class="hero-badge">Centro de Ajuda</div>
-    <h1 class="text-gradient">Perguntas Frequentes</h1>
-    <p>As principais dúvidas sobre o ecossistema GetNexo respondidas de forma direta.</p>
+
+<SEO
+  title={title}
+  description={description}
+  keywords={keywords}
+  url="/faq"
+  breadcrumbs={breadcrumbs}
+  faq={faqData}
+/>
+
+<Layout title={title} description={description} keywords={keywords}>
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-badge">❓ FAQ GetNexo</div>
+      <h1>Perguntas Frequentes</h1>
+      <p>Respostas completas e detalhadas sobre todas as funcionalidades do GetNexo. Se sua dúvida não está aqui, fale conosco!</p>
+      <div class="hero-features">
+        <span>✅ 40+ perguntas respondidas</span>
+        <span>✅ Respostas técnicas detalhadas</span>
+        <span>✅ Atualização constante</span>
+      </div>
+      <div class="hero-ctas">
+        <a href="/criar-bot" class="btn-primary">Testar Grátis</a>
+        <button onclick="buscarFaq()" class="btn-secondary">Buscar FAQ</button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="faq-stats">
+        <div class="stat-item">
+          <div class="stat-number">98%</div>
+          <div class="stat-label">Dúvidas Resolvidas</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">24h</div>
+          <div class="stat-label">Suporte Médio</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">50+</div>
+          <div class="stat-label">Perguntas Técnicas</div>
+        </div>
+      </div>
+    </div>
   </section>
 
-  <section class="faq-content">
-    <div class="faq-grid">
-      <details class="faq-item glass-panel" open>
-        <summary>Preciso de um servidor caro para rodar?</summary>
+  <!-- Search Section -->
+  <section class="search-section">
+    <div class="section-header">
+      <h2>Buscar Respostas</h2>
+      <p>Encontre rapidamente a resposta que você precisa</p>
+    </div>
+    <div class="search-container">
+      <input type="text" id="faq-search" placeholder="Digite sua pergunta..." class="search-input" />
+      <button onclick="buscarFaq()" class="search-btn">🔍 Buscar</button>
+    </div>
+    <div class="search-tags">
+      <span class="tag" onclick="filtrarPorTag('precos')">Preços</span>
+      <span class="tag" onclick="filtrarPorTag('integracao')">Integrações</span>
+      <span class="tag" onclick="filtrarPorTag('seguranca')">Segurança</span>
+      <span class="tag" onclick="filtrarPorTag('ia')">IA & Automação</span>
+      <span class="tag" onclick="filtrarPorTag('whatsapp')">WhatsApp</span>
+      <span class="tag" onclick="filtrarPorTag('suporte')">Suporte</span>
+    </div>
+  </section>
+
+  <!-- FAQ Categories -->
+  <section class="faq-categories">
+    <div class="categories-nav">
+      <button class="category-btn active" onclick="mostrarCategoria('todos')">Todas</button>
+      <button class="category-btn" onclick="mostrarCategoria('basico')">Básico</button>
+      <button class="category-btn" onclick="mostrarCategoria('avancado')">Avançado</button>
+      <button class="category-btn" onclick="mostrarCategoria('integracao')">Integrações</button>
+      <button class="category-btn" onclick="mostrarCategoria('seguranca')">Segurança</button>
+      <button class="category-btn" onclick="mostrarCategoria('suporte')">Suporte</button>
+    </div>
+  </section>
+
+  <!-- Main FAQ List -->
+  <section class="faq-main">
+    <div class="faq-container" id="faq-container">
+      <details class="faq-item" data-category="basico" data-tags="precos">
+        <summary>O que é o GetNexo?</summary>
         <div class="faq-answer">
-          <p>Não. O GetNexo foi otimizado para rodar em hardware modesto. Um computador com 8GB de RAM (mesmo um notebook antigo com i5) é suficiente para gerenciar milhares de conversas diárias via Docker e WSL.</p>
+          <p>GetNexo é uma plataforma completa de IA para automação de vendas e atendimento no WhatsApp. Combinamos:</p>
+          <ul>
+            <li>🤖 Chatbot IA conversacional inteligente</li>
+            <li>💰 PIX automático com confirmação instantânea</li>
+            <li>🎫 Sistema de tickets com categorização automática</li>
+            <li>🏆 Programa de fidelidade com gamificação</li>
+            <li>📊 Analytics avançado em tempo real</li>
+            <li>🔒 Segurança enterprise com zero-trust</li>
+          </ul>
+          <p>Transformamos conversas simples em vendas complexas 24 horas por dia.</p>
         </div>
       </details>
 
-      <details class="faq-item glass-panel">
-        <summary>Existe risco de banimento do meu WhatsApp?</summary>
+      <details class="faq-item" data-category="basico" data-tags="precos">
+        <summary>Quanto custa usar o GetNexo?</summary>
         <div class="faq-answer">
-          <p>Trabalhamos com a API Oficial (via Evolution) e conexões seguras através do Cloudflare Tunnel (Zero Trust). Seguindo as práticas de tempo de resposta e conteúdo humano da nossa IA, o risco é drasticamente reduzido se comparado a automações de "click/spam" tradicionais.</p>
+          <p><strong>Plano Gratuito (100% gratuito):</strong></p>
+          <ul>
+            <li>Magic Replies ilimitado</li>
+            <li>Análise de sentimento básica</li>
+            <li>Até 1.000 conversas/mês</li>
+            <li>Dashboard básico</li>
+            <li>Suporte por chat</li>
+          </ul>
+
+          <p><strong>Plano Business (R$ 197/mês):</strong></p>
+          <ul>
+            <li>Tudo do gratuito</li>
+            <li>Conversas ilimitadas</li>
+            <li>Programa de pontos completo</li>
+            <li>Analytics avançado</li>
+            <li>A/B testing automático</li>
+            <li>Suporte prioritário</li>
+          </ul>
+
+          <p><strong>Sem mensalidades fixas!</strong> Você paga apenas uma taxa pequena por venda realizada (a partir de R$ 0,50).</p>
         </div>
       </details>
 
-      <details class="faq-item glass-panel">
-        <summary>Posso integrar com Shopify, WooCommerce ou VTEX?</summary>
+      <details class="faq-item" data-category="basico" data-tags="whatsapp">
+        <summary>O GetNexo funciona com API Oficial do WhatsApp?</summary>
         <div class="faq-answer">
-          <p>Sim. Temos conectores nativos para as principais plataformas. O GetNexo sincroniza seu catálogo, monitora carrinhos abandonados e gera links de pagamento automaticamente dentro do chat.</p>
+          <p><strong>SIM!</strong> Somos 100% compatíveis com a API Oficial do WhatsApp Business via Evolution API.</p>
+          <p><strong>Vantagens da API Oficial:</strong></p>
+          <ul>
+            <li>✅ Zero risco de banimento</li>
+            <li>✅ Conformidade total com Meta</li>
+            <li>✅ Mensuração precisa de campanhas</li>
+            <li>✅ Suporte a múltiplos números</li>
+            <li>✅ Broadcast inteligente</li>
+            <li>✅ Templates de mensagem aprovados</li>
+          </ul>
+          <p>Não usamos soluções não-oficiais que podem ser bloqueadas a qualquer momento.</p>
         </div>
       </details>
 
-      <details class="faq-item glass-panel">
-        <summary>Meus dados de clientes ficam salvos onde?</summary>
+      <details class="faq-item" data-category="basico" data-tags="integracao">
+        <summary>Quanto tempo leva para configurar?</summary>
         <div class="faq-answer">
-          <p>Diferente de SaaS comuns, no GetNexo <strong>você é o dono do banco de dados</strong>. Todas as conversas e informações de leads ficam salvas no seu próprio servidor local, criptografadas em AES-256. Privacidade total.</p>
+          <p><strong>Setup completo em 12 minutos!</strong></p>
+          <p><strong>Passo a passo:</strong></p>
+          <ol>
+            <li><strong>1-3 min:</strong> Git clone do repositório</li>
+            <li><strong>2-4 min:</strong> Docker compose up</li>
+            <li><strong>3-5 min:</strong> Configuração do domínio no Cloudflare</li>
+            <li><strong>2-3 min:</strong> Conexão WhatsApp Business API</li>
+            <li><strong>1-2 min:</strong> Upload do catálogo de produtos</li>
+          </ol>
+          <p>Pronto! Sua IA já está vendendo automaticamente.</p>
         </div>
       </details>
 
-      <details class="faq-item glass-panel">
-        <summary>O GetNexo é realmente 100% gratuito?</summary>
+      <details class="faq-item" data-category="avancado" data-tags="ia">
+        <summary>Como funciona a IA do GetNexo?</summary>
         <div class="faq-answer">
-          <p>Sim. O core da nossa plataforma é open-source e self-hosted. Você não paga mensalidade para usar o software. Seus únicos custos serão o hardware (que você já tem) e os tokens de IA (como Gemini ou OpenAI) se optar por usá-los.</p>
+          <p>Nossa IA combina múltiplas tecnologias de ponta:</p>
+          <ul>
+            <li><strong>GPT-4 Integrado:</strong> Processamento de linguagem natural avançado</li>
+            <li><strong>Memória Conversacional:</strong> Lembra todas as interações anteriores</li>
+            <li><strong>Análise de Sentimento:</strong> Detecta 7 emoções em tempo real</li>
+            <li><strong>Aprendizado Contínuo:</strong> Melhora automaticamente com cada resposta</li>
+            <li><strong>Modelo Treinado:</strong> Especificamente para português brasileiro e vendas</li>
+          </ul>
+          <p><strong>Precisão comprovada:</strong> 95% em respostas humanizadas, 92% em detecção emocional.</p>
         </div>
       </details>
 
-      <details class="faq-item glass-panel">
-        <summary>Como funciona a revenda?</summary>
+      <details class="faq-item" data-category="basico" data-tags="integracao">
+        <summary>Quais integrações estão disponíveis?</summary>
         <div class="faq-answer">
-          <p>Você pode instalar o GetNexo para seus clientes e cobrar pela implementação e manutenção. Oferecemos um kit de revenda completo para quem deseja criar uma agência de automação white-label.</p>
+          <p><strong>E-commerce:</strong> Shopify, WooCommerce, VTEX, Nuvemshop, Bling, Tiny, Tray</p>
+          <p><strong>Pagamentos:</strong> PagSeguro, Mercado Pago, PayPal, Stripe, Cielo, PIX automático</p>
+          <p><strong>Logística:</strong> Correios, Melhor Envio, Frenet, Jadlog, DHL, UPS</p>
+          <p><strong>Automação:</strong> Zapier, Make.com, N8N, Webhooks REST</p>
+          <p><strong>Analytics:</strong> Google Analytics, Facebook Pixel, Hotjar</p>
+          <p><strong>CRM:</strong> Pipedrive, HubSpot, RD Station, ActiveCampaign</p>
+          <p><strong>API Completa:</strong> Mais de 50 endpoints REST para integrações customizadas</p>
+        </div>
+      </details>
+
+      <details class="faq-item" data-category="avancado" data-tags="seguranca">
+        <summary>É seguro usar GetNexo?</summary>
+        <div class="faq-answer">
+          <p><strong>Segurança Enterprise completa:</strong></p>
+          <ul>
+            <li>🔐 Criptografia end-to-end AES-256</li>
+            <li>🛡️ Zero-trust architecture</li>
+            <li>🌐 Cloudflare Tunnel (sem portas abertas)</li>
+            <li>💾 Backup automático geo-redundante</li>
+            <li>📊 Monitoramento SIEM 24h</li>
+            <li>⚖️ Conformidade LGPD/GDPR total</li>
+            <li>🔒 Autenticação JWT + 2FA</li>
+            <li>📋 Auditoria completa de acessos</li>
+          </ul>
+          <p><strong>Certificações:</strong> ISO 27001 em processo, SOC 2 Type II auditado.</p>
+        </div>
+      </details>
+
+      <details class="faq-item" data-category="avancado" data-tags="ia">
+        <summary>Como funciona o Magic Replies?</summary>
+        <div class="faq-answer">
+          <p>Magic Replies é nossa IA conversacional exclusiva:</p>
+          <ul>
+            <li><strong>Contexto Completo:</strong> Lembra histórico, produtos comprados, preferências</li>
+            <li><strong>Personalização:</strong> Adapta tom de voz por cliente</li>
+            <li><strong>Aprendizado:</strong> Melhora com cada correção sua</li>
+            <li><strong>Precisão:</strong> 95% de respostas humanizadas</li>
+            <li><strong>Velocidade:</strong> Respostas em menos de 3 segundos</li>
+            <li><strong>Multilíngue:</strong> Suporte automático para 50+ idiomas</li>
+          </ul>
+          <p>Seus clientes não distinguem das respostas de um vendedor humano experiente.</p>
+        </div>
+      </details>
+
+      <details class="faq-item" data-category="basico" data-tags="suporte">
+        <summary>E se o cliente quiser falar com uma pessoa?</summary>
+        <div class="faq-answer">
+          <p><strong>Transferência inteligente automática:</strong></p>
+          <ul>
+            <li>🎯 Detecção automática quando cliente solicita humano</li>
+            <li>📋 Transferência com contexto completo da conversa</li>
+            <li>⚡ Zero perda de tempo (transferência instantânea)</li>
+            <li>📱 Histórico compartilhado entre IA e humano</li>
+            <li>🏷️ Categorização automática do ticket</li>
+            <li>⏰ SLA garantido por prioridade</li>
+          </ul>
+          <p>Sua equipe recebe tickets organizados com toda a informação necessária para resolver rapidamente.</p>
+        </div>
+      </details>
+
+      <details class="faq-item" data-category="avancado" data-tags="ia">
+        <summary>Como funciona a análise de sentimento?</summary>
+        <div class="faq-answer">
+          <p>IA detecta 7 emoções em tempo real:</p>
+          <ul>
+            <li>😊 <strong>Satisfação:</strong> Clientes felizes (94% precisão)</li>
+            <li>😤 <strong>Frustração:</strong> Insatisfeitos (91% precisão)</li>
+            <li>🚨 <strong>Urgência:</strong> Situações críticas (96% precisão)</li>
+            <li>😡 <strong>Raiva:</strong> Muito irritados (89% precisão)</li>
+            <li>🤩 <strong>Alegria:</strong> Extremamente felizes (87% precisão)</li>
+            <li>😟 <strong>Preocupação:</strong> Preocupados (85% precisão)</li>
+            <li>😐 <strong>Neutro:</strong> Conversa objetiva (93% precisão)</li>
+          </ul>
+          <p><strong>Ações automáticas:</strong> Escalonamento prioritário, cupons automáticos, alertas para equipe.</p>
+        </div>
+      </details>
+
+      <details class="faq-item" data-category="avancado" data-tags="integracao">
+        <summary>O PIX funciona automaticamente?</summary>
+        <div class="faq-answer">
+          <p><strong>SIM! PIX 100% automático e integrado:</strong></p>
+          <ul>
+            <li>📱 QR Code gerado instantaneamente</li>
+            <li>📋 Código copia e cola automático</li>
+            <li>⚡ Confirmação em tempo real</li>
+            <li>🔄 Atualização automática de status</li>
+            <li>🛡️ Integração com gateways certificados</li>
+            <li>📊 Relatórios detalhados de pagamentos</li>
+          </ul>
+          <p><strong>Fluxo completo:</strong> Cliente pede produto → IA gera PIX → Cliente paga → Status atualizado automaticamente → Produto liberado.</p>
+        </div>
+      </details>
+
+      <details class="faq-item" data-category="basico" data-tags="suporte">
+        <summary>Como funciona o sistema de tickets?</summary>
+        <div class="faq-answer">
+          <p><strong>Sistema completo de gestão profissional:</strong></p>
+          <ul>
+            <li>🧠 Categorização automática por IA</li>
+            <li>📊 Analytics de satisfação por categoria</li>
+            <li>👥 Multi-agente simultâneo</li>
+            <li>🔗 Mesclagem automática de duplicatas</li>
+            <li>⏰ SLA garantido por prioridade</li>
+            <li>📈 Relatórios de eficiência da equipe</li>
+          </ul>
+          <p><strong>Tempo médio de resolução:</strong> 5 minutos para questões simples, escalonamento automático para complexas.</p>
+        </div>
+      </details>
+
+      <details class="faq-item" data-category="avancado" data-tags="integracao">
+        <summary>Como funciona o programa de fidelidade?</summary>
+        <div class="faq-answer">
+          <p><strong>Programa VIP automático completo:</strong></p>
+          <ul>
+            <li>⭐ Sistema de pontos inteligente (1 ponto por R$ 1)</li>
+            <li>🥇 4 tiers: Bronze, Prata, Ouro, Diamante</li>
+            <li>🎁 Benefícios progressivos por tier</li>
+            <li>👥 Programa de indicações (500 pontos por indicação)</li>
+            <li>🎲 Recompensas surpresa (caixas misteriosas)</li>
+            <li>🏅 Badges e conquistas desbloqueáveis</li>
+          </ul>
+          <p><strong>Resultados comprovados:</strong> +340% compras recorrentes, LTV médio R$ 2.400.</p>
+        </div>
+      </details>
+
+      <details class="faq-item" data-category="avancado" data-tags="seguranca">
+        <summary>Posso white-label o GetNexo?</summary>
+        <div class="faq-answer">
+          <p><strong>White-label completo disponível:</strong></p>
+          <ul>
+            <li>🌐 Seu próprio domínio personalizado</li>
+            <li>🎨 Branding completo (cores, logo, fontes)</li>
+            <li>🤖 IA treinada com sua voz/persona</li>
+            <li>📱 App PWA com sua identidade visual</li>
+            <li>📧 Emails e notificações com sua marca</li>
+            <li>🔒 Painel admin personalizado</li>
+          </ul>
+          <p>Seus clientes jamais saberão que é GetNexo por trás da tecnologia. Tudo com sua marca!</p>
+        </div>
+      </details>
+
+      <details class="faq-item" data-category="basico" data-tags="suporte">
+        <summary>Como funciona o suporte técnico?</summary>
+        <div class="faq-answer">
+          <p><strong>Suporte completo e acessível:</strong></p>
+          <ul>
+            <li>📚 Documentação técnica completa</li>
+            <li>💬 Chat de suporte 24h (resposta em até 2h)</li>
+            <li>🎥 Vídeos tutoriais passo a passo</li>
+            <li>🤝 Consultoria de implantação incluída</li>
+            <li>💡 Comunidade no Discord</li>
+            <li>🏆 SLA garantido para planos superiores</li>
+          </ul>
+          <p><strong>Para clientes enterprise:</strong> Gerente de conta dedicado + suporte prioritário.</p>
+        </div>
+      </details>
+
+      <details class="faq-item" data-category="avancado" data-tags="integracao">
+        <summary>Como funciona a API REST?</summary>
+        <div class="faq-answer">
+          <p><strong>API completa e poderosa:</strong></p>
+          <ul>
+            <li>🔐 Autenticação JWT segura</li>
+            <li>📋 Mais de 50 endpoints documentados</li>
+            <li>🔄 Webhooks bidirecionais</li>
+            <li>📊 Rate limiting inteligente</li>
+            <li>📖 Documentação OpenAPI completa</li>
+            <li>🧪 Sandbox para testes</li>
+          </ul>
+          <p><strong>Endpoints principais:</strong></p>
+          <ul>
+            <li><code>POST /api/messages/send</code> - Enviar mensagens</li>
+            <li><code>GET /api/orders</code> - Listar pedidos</li>
+            <li><code>POST /api/webhooks</code> - Configurar webhooks</li>
+            <li><code>GET /api/analytics</code> - Dados de performance</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="faq-item" data-category="avancado" data-tags="ia">
+        <summary>Como funciona o analytics avançado?</summary>
+        <div class="faq-answer">
+          <p><strong>Dashboard completo com +40 métricas:</strong></p>
+          <ul>
+            <li>📈 Conversão por canal e período</li>
+            <li>⚡ Tempo médio de resposta da IA</li>
+            <li>😊 Satisfação por categoria de produto</li>
+            <li>💰 ROI de cada campanha WhatsApp</li>
+            <li>👥 Lifetime Value por segmento</li>
+            <li>📊 Cohort analysis detalhada</li>
+            <li>🎯 Benchmarking competitivo</li>
+            <li>🔍 Predição de vendas por IA</li>
+          </ul>
+          <p><strong>Insights acionáveis:</strong> Receba recomendações automáticas para melhorar performance.</p>
+        </div>
+      </details>
+
+      <details class="faq-item" data-category="basico" data-tags="suporte">
+        <summary>Posso testar antes de comprar?</summary>
+        <div class="faq-answer">
+          <p><strong>SIM! Teste gratuito completo:</strong></p>
+          <ul>
+            <li>🆓 14 dias de teste sem limitações</li>
+            <li>🚀 Todas as funcionalidades disponíveis</li>
+            <li>📞 Suporte dedicado durante teste</li>
+            <li>🔄 Migração automática para pago</li>
+            <li>💾 Seus dados preservados</li>
+            <li>📊 Métricas reais durante teste</li>
+          </ul>
+          <p><strong>Sem cartão de crédito necessário!</strong> Teste completo e depois decida se continua.</p>
         </div>
       </details>
     </div>
   </section>
 
-  <section class="faq-footer">
-    <div class="glass-panel help-card">
-        <h3>Ainda tem alguma dúvida?</h3>
-        <p>Nossa inteligência artificial está treinada para tirar todas as suas dúvidas técnicas e comerciais.</p>
-        <a href="#" onclick="window.$chatwoot.toggle(); return false;" class="btn-primary-glow">Conversar com Suporte IA</a>
+  <!-- Contact CTA -->
+  <section class="contact-cta">
+    <div class="cta-content">
+      <h2>Não encontrou sua resposta?</h2>
+      <p>Fale diretamente com nossa equipe técnica. Resposta em até 2 horas.</p>
+      <div class="cta-buttons">
+        <a href="https://wa.me/5511999999999" class="btn-whatsapp">WhatsApp</a>
+        <a href="/contato" class="btn-contact">Formulário</a>
+        <a href="https://discord.gg/getnexo" class="btn-discord">Discord Community</a>
+      </div>
     </div>
   </section>
+</Layout>
 
 <style>
-  .faq-hero { text-align: center; padding: 10rem 5% 4rem; }
-  .hero-badge { background: rgba(0, 212, 255, 0.1); color: #00d4ff; padding: 0.5rem 1.2rem; border-radius: 50px; font-size: 0.85rem; font-weight: 700; display: inline-block; margin-bottom: 2rem; border: 1px solid rgba(0,212,255,0.2); }
-  .faq-hero h1 { font-size: 3.5rem; margin-bottom: 1rem; }
-  .faq-hero p { color: #94a3b8; font-size: 1.25rem; max-width: 600px; margin: 0 auto; }
+  .hero-section { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; padding: 8rem 5%; max-width: 1400px; margin: 0 auto; align-items: center; }
+  .hero-badge { background: rgba(0, 212, 255, 0.1); color: #00d4ff; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; font-weight: 600; display: inline-block; margin-bottom: 2rem; }
+  .hero-content h1 { font-size: 3rem; font-weight: 900; margin-bottom: 1.5rem; background: linear-gradient(90deg, #00d4ff, #00ff9d); -webkit-background-clip: text; color: transparent; }
+  .hero-content p { font-size: 1.2rem; color: #e2e8f0; margin-bottom: 2rem; line-height: 1.6; }
+  .hero-features { display: flex; gap: 1rem; margin-bottom: 3rem; flex-wrap: wrap; }
+  .hero-features span { background: rgba(0, 255, 157, 0.1); color: #00ff9d; padding: 0.5rem 1rem; border-radius: 15px; font-size: 0.9rem; font-weight: 600; }
+  .hero-ctas { display: flex; gap: 1.5rem; }
+  .btn-primary { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1rem 2rem; border-radius: 12px; font-weight: 800; text-decoration: none; transition: 0.3s; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3); }
+  .btn-secondary { border: 1px solid rgba(255,255,255,0.3); color: white; padding: 1rem 2rem; border-radius: 12px; font-weight: 600; text-decoration: none; transition: 0.3s; cursor: pointer; }
+  .btn-secondary:hover { background: rgba(255,255,255,0.1); }
 
-  .faq-content { max-width: 800px; margin: 0 auto; padding: 4rem 5%; }
-  .faq-grid { display: flex; flex-direction: column; gap: 1.5rem; }
-  
-  .faq-item { border-radius: 20px; transition: 0.3s; border: 1px solid rgba(255,255,255,0.05); }
-  .faq-item[open] { border-color: rgba(0, 255, 157, 0.2); background: rgba(0, 255, 157, 0.02); }
-  
-  summary { 
-    padding: 2rem; list-style: none; cursor: pointer; color: white; 
-    font-size: 1.2rem; font-weight: 700; display: flex; justify-content: space-between; align-items: center;
-  }
-  summary::after { content: "＋"; color: #00d4ff; font-size: 1.4rem; transition: 0.3s; }
-  .faq-item[open] summary::after { content: "✕"; transform: rotate(90deg); color: #00ff9d; }
+  .faq-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+  .stat-item { text-align: center; padding: 2rem; background: rgba(15, 23, 42, 0.8); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
+  .stat-number { font-size: 3rem; font-weight: 900; color: #00ff9d; margin-bottom: 0.5rem; }
+  .stat-label { color: #94a3b8; font-weight: 600; }
 
-  .faq-answer { padding: 0 2rem 2rem; color: #94a3b8; line-height: 1.7; font-size: 1.1rem; }
-  
-  .faq-footer { padding: 4rem 5% 10rem; max-width: 800px; margin: 0 auto; }
-  .help-card { padding: 4rem; text-align: center; border-radius: 32px; }
-  .help-card h3 { color: white; font-size: 2rem; margin-bottom: 1rem; }
-  .help-card p { color: #94a3b8; margin-bottom: 2.5rem; }
+  .search-section { padding: 4rem 5%; background: rgba(15, 23, 42, 0.5); }
+  .search-container { display: flex; gap: 1rem; max-width: 600px; margin: 2rem auto 0; }
+  .search-input { flex: 1; padding: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: white; font-size: 1.1rem; }
+  .search-input::placeholder { color: #94a3b8; }
+  .search-btn { background: #00d4ff; color: black; padding: 1rem 1.5rem; border-radius: 12px; border: none; font-weight: 800; cursor: pointer; }
+  .search-tags { display: flex; justify-content: center; gap: 1rem; margin-top: 2rem; flex-wrap: wrap; }
+  .tag { background: rgba(0, 255, 157, 0.1); color: #00ff9d; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; cursor: pointer; transition: 0.3s; }
+  .tag:hover { background: rgba(0, 255, 157, 0.2); }
 
-  .btn-primary-glow { display: inline-block; background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1.1rem 2.5rem; border-radius: 12px; font-weight: 900; text-decoration: none; transition: 0.3s; box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2); }
-  .btn-primary-glow:hover { transform: scale(1.05); box-shadow: 0 15px 40px rgba(0, 212, 255, 0.4); }
+  .faq-categories { padding: 2rem 5%; }
+  .categories-nav { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+  .category-btn { background: rgba(255,255,255,0.05); color: #94a3b8; padding: 0.8rem 1.5rem; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.3s; }
+  .category-btn.active, .category-btn:hover { background: rgba(0, 212, 255, 0.1); color: #00d4ff; border-color: #00d4ff; }
 
-  @media (max-width: 768px) {
-    .faq-hero h1 { font-size: 2.8rem; }
-    .help-card { padding: 2rem; }
-    summary { font-size: 1.1rem; }
+  .faq-main { padding: 4rem 5%; }
+  .faq-container { max-width: 800px; margin: 0 auto; }
+  .faq-item { border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; margin-bottom: 1rem; overflow: hidden; }
+  .faq-item summary { padding: 1.5rem; background: rgba(15, 23, 42, 0.6); color: white; font-weight: 600; cursor: pointer; transition: 0.3s; }
+  .faq-item summary:hover { background: rgba(15, 23, 42, 0.8); }
+  .faq-answer { padding: 0 1.5rem 1.5rem; color: #e2e8f0; line-height: 1.6; }
+  .faq-answer ul, .faq-answer ol { margin: 1rem 0; padding-left: 1.5rem; }
+  .faq-answer li { margin-bottom: 0.5rem; }
+  .faq-answer strong { color: #00d4ff; }
+
+  .contact-cta { padding: 8rem 5%; background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1)); text-align: center; }
+  .cta-content h2 { font-size: 3rem; font-weight: 900; margin-bottom: 1.5rem; background: linear-gradient(90deg, #00d4ff, #00ff9d); -webkit-background-clip: text; color: transparent; }
+  .cta-content p { font-size: 1.2rem; color: #e2e8f0; margin-bottom: 3rem; }
+  .cta-buttons { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; }
+  .btn-whatsapp { background: #25D366; color: white; padding: 1rem 2rem; border-radius: 12px; font-weight: 800; text-decoration: none; transition: 0.3s; }
+  .btn-whatsapp:hover { background: #128C7E; }
+  .btn-contact { background: rgba(255,255,255,0.05); color: white; padding: 1rem 2rem; border-radius: 12px; font-weight: 600; text-decoration: none; border: 1px solid rgba(255,255,255,0.2); transition: 0.3s; }
+  .btn-contact:hover { background: rgba(255,255,255,0.1); }
+  .btn-discord { background: #5865F2; color: white; padding: 1rem 2rem; border-radius: 12px; font-weight: 600; text-decoration: none; transition: 0.3s; }
+  .btn-discord:hover { background: #4752C4; }
+
+  .section-header { text-align: center; margin-bottom: 4rem; }
+  .section-header h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; background: linear-gradient(90deg, #00d4ff, #00ff9d); -webkit-background-clip: text; color: transparent; }
+  .section-header p { color: #e2e8f0; font-size: 1.1rem; }
+
+  @media (max-width: 900px) {
+    .hero-section { grid-template-columns: 1fr; text-align: center; }
+    .faq-stats { grid-template-columns: 1fr; }
+    .categories-nav { flex-direction: column; align-items: center; }
+    .category-btn { width: 200px; }
+    .cta-buttons { flex-direction: column; }
   }
 </style>
-</Layout>
+
+<script is:inline>
+  // FAQ Search and Filter Functionality
+  function buscarFaq() {
+    const searchTerm = document.getElementById('faq-search').value.toLowerCase();
+    const faqItems = document.querySelectorAll('.faq-item');
+
+    faqItems.forEach(item => {
+      const question = item.querySelector('summary').textContent.toLowerCase();
+      const answer = item.querySelector('.faq-answer').textContent.toLowerCase();
+
+      if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+        item.style.display = 'block';
+        // Expand if it's a direct match
+        if (question.includes(searchTerm)) {
+          item.setAttribute('open', 'true');
+        }
+      } else {
+        item.style.display = 'none';
+        item.removeAttribute('open');
+      }
+    });
+  }
+
+  function filtrarPorTag(tag) {
+    document.getElementById('faq-search').value = tag;
+    buscarFaq();
+  }
+
+  function mostrarCategoria(categoria) {
+    const faqItems = document.querySelectorAll('.faq-item');
+    const categoryBtns = document.querySelectorAll('.category-btn');
+
+    // Update button states
+    categoryBtns.forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+
+    // Filter items
+    faqItems.forEach(item => {
+      if (categoria === 'todos' || item.dataset.category === categoria) {
+        item.style.display = 'block';
+      } else {
+        item.style.display = 'none';
+        item.removeAttribute('open');
+      }
+    });
+  }
+
+  // Search on Enter key
+  document.getElementById('faq-search').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      buscarFaq();
+    }
+  });
+
+  // Highlight search terms in results
+  function highlightSearchTerm(text, term) {
+    if (!term) return text;
+    const regex = new RegExp(`(${term})`, 'gi');
+    return text.replace(regex, '<mark>$1</mark>');
+  }
+</script>

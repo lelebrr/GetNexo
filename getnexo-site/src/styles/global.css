@@ -855,3 +855,1676 @@ body.a11y-reduced-motion *::after {
     border-left: 3px solid #00d4ff;
     padding-left: 0.8rem;
 }
+
+/* === EFEITOS FESTIVOS - CSS PURO & OTIMIZADO === */
+
+/* Confete Caindo */
+.confete_caindo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='2' fill='%23ff6b6b'/%3E%3Ccircle cx='30' cy='30' r='1.5' fill='%234ecdc4'/%3E%3Ccircle cx='70' cy='20' r='1' fill='%2345b7d1'/%3E%3Ccircle cx='20' cy='70' r='1.5' fill='%23f9ca24'/%3E%3Ccircle cx='80' cy='80' r='2' fill='%23f0932b'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 50px 50px;
+    animation: confete-fall 20s linear infinite;
+    z-index: 0;
+}
+
+@keyframes confete-fall {
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: 0 100vh;
+    }
+}
+
+/* Ovos Pulando */
+.ovos_pulando {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cellipse cx='50' cy='60' rx='8' ry='12' fill='%23ff7675'/%3E%3Cellipse cx='20' cy='40' rx='6' ry='9' fill='%23fd79a8'/%3E%3Cellipse cx='80' cy='70' rx='7' ry='10' fill='%23e17055'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 80px 80px;
+    animation: ovos-jump 12s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes ovos-jump {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    25% {
+        transform: translateY(-20px) rotate(5deg);
+    }
+
+    50% {
+        transform: translateY(0);
+    }
+
+    75% {
+        transform: translateY(-10px) rotate(-5deg);
+    }
+}
+
+/* Martelo Girando */
+.martelo_girando {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23ffd93d'%3E%3Crect x='40' y='10' width='20' height='40'/%3E%3Ccircle cx='50' cy='60' r='15' fill='%23855'%3E%3C/svg%3E") center/contain no-repeat;
+    animation: martelo-spin 3s linear infinite;
+    z-index: 0;
+}
+
+@keyframes martelo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Flores Rosa */
+.flores_rosa {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23fd79a8'%3E%3Ccircle cx='50' cy='30' r='8'/%3E%3Ccircle cx='50' cy='70' r='8'/%3E%3Ccircle cx='30' cy='50' r='8'/%3E%3Ccircle cx='70' cy='50' r='8'/%3E%3Ccircle cx='35' cy='35' r='5' fill='%23e84393'/%3E%3Ccircle cx='65' cy='35' r='5' fill='%23e84393'/%3E%3Ccircle cx='35' cy='65' r='5' fill='%23e84393'/%3E%3Ccircle cx='65' cy='65' r='5' fill='%23e84393'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 100px 100px;
+    animation: flores-float 15s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes flores-float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Corações Flutuando */
+.corações_flutuando {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 30c-5-10-15-10-20 0-5 10 0 20 10 30 10-10 15-20 10-30z' fill='%23ff7675'/%3E%3Cpath d='M20 50c-3-6-9-6-12 0-3 6 0 12 6 18 6-6 9-12 6-18z' fill='%23fd79a8'/%3E%3Cpath d='M80 40c-3-6-9-6-12 0-3 6 0 12 6 18 6-6 9-12 6-18z' fill='%23e17055'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 120px 120px;
+    animation: coracoes-heartbeat 8s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes coracoes-heartbeat {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    25% {
+        transform: scale(1.1) rotate(2deg);
+    }
+
+    50% {
+        transform: scale(1);
+    }
+
+    75% {
+        transform: scale(1.05) rotate(-2deg);
+    }
+}
+
+/* Bandeira BR */
+.bandeira_br {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    width: 80px;
+    height: 60px;
+    pointer-events: none;
+    background: linear-gradient(to bottom, #009b3a 33%, #fedf00 33% 66%, #002776 66%);
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    animation: bandeira-wave 3s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes bandeira-wave {
+
+    0%,
+    100% {
+        transform: rotateY(0deg);
+    }
+
+    50% {
+        transform: rotateY(15deg);
+    }
+}
+
+/* Neve Luzes */
+.neve_luzes {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    pointer-events: none;
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='1' fill='%23fff'/%3E%3Ccircle cx='20' cy='20' r='0.8' fill='%23fff'/%3E%3Ccircle cx='80' cy='30' r='1.2' fill='%23fff'/%3E%3Cpolygon points='45,40 50,30 55,40 45,45 55,45' fill='%23ffd93d'/%3E%3Cpolygon points='25,20 27,15 29,20 25,22 29,22' fill='%23ff6b6b'/%3E%3C/svg%3E"),
+        radial-gradient(circle at 30% 40%, rgba(255, 255, 0, 0.8) 0%, transparent 50%),
+        radial-gradient(circle at 70% 60%, rgba(255, 0, 0, 0.6) 0%, transparent 50%);
+    background-repeat: repeat, no-repeat, no-repeat;
+    background-size: 80px 80px, 200px 200px, 150px 150px;
+    animation: neve-fall 25s linear infinite, luzes-twinkle 4s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes neve-fall {
+    from {
+        background-position: 0 0, 30% 40%, 70% 60%;
+    }
+
+    to {
+        background-position: 0 100vh, 30% calc(40% + 100vh), 70% calc(60% + 100vh);
+    }
+}
+
+@keyframes luzes-twinkle {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* Fogos Contagem */
+.fogos_contagem {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    pointer-events: none;
+    background: radial-gradient(circle at 20% 80%, rgba(255, 215, 0, 0.8) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 69, 0, 0.6) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(0, 191, 255, 0.7) 0%, transparent 50%);
+    animation: fogos-explode 10s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes fogos-explode {
+
+    0%,
+    100% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+/* Desconto Explosão */
+.desconto_explosao {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 100px;
+    height: 100px;
+    margin: -50px 0 0 -50px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23ff4d4d'%3E%3Ccircle cx='50' cy='50' r='20'/%3E%3Ctext x='50' y='56' text-anchor='middle' fill='%23fff' font-size='12'%3E-50%25%3C/text%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+    animation: desconto-boom 5s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes desconto-boom {
+
+    0%,
+    100% {
+        transform: scale(0.8) rotate(0deg);
+        opacity: 0.5;
+    }
+
+    50% {
+        transform: scale(1.5) rotate(180deg);
+        opacity: 1;
+    }
+}
+
+/* Balões Brinquedos */
+.baloes_brinquedos {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23ff7675'%3E%3Ccircle cx='30' cy='20' r='8'/%3E%3Ccircle cx='70' cy='40' r='6' fill='%234ecdc4'/%3E%3Ccircle cx='50' cy='60' r='7' fill='%23f9ca24'/%3E%3C/g%3E%3Cg fill='%23855'%3E%3Crect x='25' y='28' width='10' height='12'/%3E%3Crect x='65' y='46' width='8' height='10'/%3E%3Crect x='45' y='67' width='9' height='11'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 100px 100px;
+    animation: baloes-rise 18s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes baloes-rise {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-30px);
+    }
+}
+
+/* Hostia Luz */
+.hostia_luz {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 80px;
+    height: 80px;
+    margin: -40px 0 0 -40px;
+    pointer-events: none;
+    background: radial-gradient(circle, #ffd93d 0%, #ff9f43 50%, transparent 70%);
+    border-radius: 50%;
+    animation: hostia-glow 6s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes hostia-glow {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: scale(1.3);
+        opacity: 1;
+    }
+}
+
+/* Flores Roxa */
+.flores_roxa {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%239c88ff'%3E%3Ccircle cx='50' cy='30' r='8'/%3E%3Ccircle cx='50' cy='70' r='8'/%3E%3Ccircle cx='30' cy='50' r='8'/%3E%3Ccircle cx='70' cy='50' r='8'/%3E%3Ccircle cx='35' cy='35' r='5' fill='%237348d1'/%3E%3Ccircle cx='65' cy='35' r='5' fill='%237348d1'/%3E%3Ccircle cx='35' cy='65' r='5' fill='%237348d1'/%3E%3Ccircle cx='65' cy='65' r='5' fill='%237348d1'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 100px 100px;
+    animation: flores-roxa-float 15s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes flores-roxa-float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Bandeira Histórica */
+.bandeira_historica {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    width: 80px;
+    height: 60px;
+    pointer-events: none;
+    background: linear-gradient(to bottom, #009b3a 33%, #fedf00 33% 66%, #002776 66%);
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    animation: bandeira-historica-wave 3s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes bandeira-historica-wave {
+
+    0%,
+    100% {
+        transform: rotateY(0deg);
+    }
+
+    50% {
+        transform: rotateY(15deg);
+    }
+}
+
+/* Luz Azul */
+.luz_azul {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 100px;
+    height: 100px;
+    margin: -50px 0 0 -50px;
+    pointer-events: none;
+    background: radial-gradient(circle, #74b9ff 0%, #0984e3 50%, transparent 70%);
+    border-radius: 50%;
+    animation: luz-azul-glow 6s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes luz-azul-glow {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: scale(1.3);
+        opacity: 1;
+    }
+}
+
+/* Velas Cinza */
+.velas_cinza {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23dfe6e9'%3E%3Crect x='48' y='50' width='4' height='30'/%3E%3Ccircle cx='50' cy='45' r='3' fill='%23fd79a8'/%3E%3C/g%3E%3Crect x='28' y='60' width='3' height='25' fill='%23b2bec3'/%3E%3Ccircle cx='29.5' cy='55' r='2' fill='%23fd79a8'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 120px 120px;
+    animation: velas-flicker 4s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes velas-flicker {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    25% {
+        opacity: 0.8;
+    }
+
+    50% {
+        opacity: 0.9;
+    }
+
+    75% {
+        opacity: 0.85;
+    }
+}
+
+/* Bandeira República */
+.bandeira_republica {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    width: 80px;
+    height: 60px;
+    pointer-events: none;
+    background: linear-gradient(to bottom, #009b3a 33%, #fedf00 33% 66%, #002776 66%);
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    animation: bandeira-republica-wave 3s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes bandeira-republica-wave {
+
+    0%,
+    100% {
+        transform: rotateY(0deg);
+    }
+
+    50% {
+        transform: rotateY(15deg);
+    }
+}
+
+/* Pantera Preta */
+.pantera_preta {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23000'%3E%3Ccircle cx='50' cy='40' r='15'/%3E%3Ccircle cx='40' cy='50' r='10'/%3E%3Ccircle cx='60' cy='50' r='10'/%3E%3Ccircle cx='50' cy='60' r='12'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+    animation: pantera-prowl 8s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes pantera-prowl {
+
+    0%,
+    100% {
+        transform: translateX(0px);
+    }
+
+    25% {
+        transform: translateX(10px) rotate(2deg);
+    }
+
+    50% {
+        transform: translateX(0px);
+    }
+
+    75% {
+        transform: translateX(-10px) rotate(-2deg);
+    }
+}
+
+/* Carrinho Desconto */
+.carrinho_desconto {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 80px;
+    height: 80px;
+    margin: -40px 0 0 -40px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23ff7675'%3E%3Crect x='20' y='40' width='40' height='20'/%3E%3Ccircle cx='30' cy='70' r='8'/%3E%3Ccircle cx='70' cy='70' r='8'/%3E%3Crect x='50' y='30' width='20' height='15'/%3E%3C/g%3E%3Ctext x='70' y='45' fill='%23fff' font-size='10'%3E-20%25%3C/text%3E%3C/svg%3E") center/contain no-repeat;
+    animation: carrinho-roll 6s linear infinite;
+    z-index: 0;
+}
+
+@keyframes carrinho-roll {
+    from {
+        transform: translateX(-100px);
+    }
+
+    to {
+        transform: translateX(calc(100vw + 100px));
+    }
+}
+
+/* Loja Aberta */
+.loja_aberta {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%2300d4ff'%3E%3Crect x='20' y='30' width='60' height='40'/%3E%3Crect x='30' y='40' width='40' height='20' fill='%23fff'/%3E%3C/g%3E%3Ctext x='50' y='52' text-anchor='middle' fill='%23000' font-size='8'%3E24H%3C/text%3E%3C/svg%3E") center/contain no-repeat;
+    animation: loja-open 4s step-end infinite;
+    z-index: 0;
+}
+
+@keyframes loja-open {
+
+    0%,
+    50% {
+        opacity: 1;
+    }
+
+    51%,
+    100% {
+        opacity: 0.7;
+    }
+}
+
+/* Chave Fenda */
+.chave_fenda {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%230855'%3E%3Crect x='40' y='20' width='20' height='40'/%3E%3Crect x='45' y='10' width='10' height='20'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+    animation: chave-turn 3s linear infinite;
+    z-index: 0;
+}
+
+@keyframes chave-turn {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Fogos Estrelas */
+.fogos_estrelas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    pointer-events: none;
+    background: radial-gradient(circle at 20% 80%, rgba(255, 215, 0, 0.8) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 69, 0, 0.6) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(0, 191, 255, 0.7) 0%, transparent 50%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23fff'%3E%3Cpolygon points='50,20 52,35 67,35 55,45 59,60 50,50 41,60 45,45 33,35 48,35'/%3E%3C/g%3E%3C/svg%3E") repeat;
+    background-size: 200px 200px, 150px 150px, 180px 180px, 50px 50px;
+    animation: fogos-estrelas-explode 10s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes fogos-estrelas-explode {
+
+    0%,
+    100% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+/* Bandeira FR */
+.bandeira_fr {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    width: 80px;
+    height: 60px;
+    pointer-events: none;
+    background: linear-gradient(to right, #002654 33%, #fff 33% 66%, #ed2939 66%);
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    animation: bandeira-fr-wave 3s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes bandeira-fr-wave {
+
+    0%,
+    100% {
+        transform: rotateY(0deg);
+    }
+
+    50% {
+        transform: rotateY(15deg);
+    }
+}
+
+/* Abóbora Fantasma */
+.fantasma_abobora {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23ff8c00'%3E%3Ccircle cx='50' cy='50' r='20'/%3E%3Crect x='45' y='40' width='10' height='5'/%3E%3Ccircle cx='45' cy='45' r='2' fill='%23000'/%3E%3Ccircle cx='55' cy='45' r='2' fill='%23000'/%3E%3C/g%3E%3Cpath d='M35 65 Q50 75 65 65 L65 80 Q50 85 35 80 Z' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+    animation: fantasma-float 6s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes fantasma-float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+/* Reveillon Fogos */
+.fogos_reveillon {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    pointer-events: none;
+    background: radial-gradient(circle at 20% 80%, rgba(255, 215, 0, 0.8) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 69, 0, 0.6) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(0, 191, 255, 0.7) 0%, transparent 50%);
+    animation: fogos-reveillon-explode 10s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes fogos-reveillon-explode {
+
+    0%,
+    100% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+/* Trevo Verde */
+.trevo_verde {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23009000'%3E%3Ccircle cx='30' cy='30' r='15'/%3E%3Ccircle cx='70' cy='30' r='15'/%3E%3Ccircle cx='50' cy='50' r='15'/%3E%3Crect x='45' y='30' width='10' height='20'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+    animation: trevo-lucky 5s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes trevo-lucky {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2) rotate(45deg);
+    }
+}
+
+/* Planeta Azul */
+.planeta_azul {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    background: radial-gradient(circle, #0984e3 40%, #74b9ff 60%, transparent 80%);
+    border-radius: 50%;
+    animation: planeta-spin 20s linear infinite;
+    z-index: 0;
+}
+
+@keyframes planeta-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Sombrero Mariachi */
+.sombrero_mariachi {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23ff8c00'%3E%3Ccircle cx='50' cy='60' r='25'/%3E%3Crect x='25' y='35' width='50' height='10' fill='%23d63031'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+    animation: sombrero-dance 4s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes sombrero-dance {
+
+    0%,
+    100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+
+    25% {
+        transform: translateY(-5px) rotate(5deg);
+    }
+
+    50% {
+        transform: translateY(0px) rotate(0deg);
+    }
+
+    75% {
+        transform: translateY(-5px) rotate(-5deg);
+    }
+}
+
+/* Bandeira Russia */
+.bandeira_russia {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    width: 80px;
+    height: 60px;
+    pointer-events: none;
+    background: linear-gradient(to bottom, #fff 33%, #0052b4 33% 66%, #d52b1e 66%);
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    animation: bandeira-russia-wave 3s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes bandeira-russia-wave {
+
+    0%,
+    100% {
+        transform: rotateY(0deg);
+    }
+
+    50% {
+        transform: rotateY(15deg);
+    }
+}
+
+/* Arco Iris */
+.arco_iris {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    pointer-events: none;
+    background: linear-gradient(45deg, #ff0000, #ff8000, #ffff00, #00ff00, #0080ff, #8000ff);
+    opacity: 0.3;
+    animation: arco-rainbow 10s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes arco-rainbow {
+
+    0%,
+    100% {
+        opacity: 0.2;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Familia Cinza */
+.familia_cinza {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    width: 70px;
+    height: 70px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23b2bec3'%3E%3Ccircle cx='50' cy='25' r='8'/%3E%3Ccircle cx='35' cy='45' r='6'/%3E%3Ccircle cx='65' cy='45' r='6'/%3E%3Ccircle cx='50' cy='65' r='5'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+    animation: familia-warm 8s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes familia-warm {
+
+    0%,
+    100% {
+        opacity: 0.8;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Cliente Rei */
+.cliente_rei {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23ffd93d'%3E%3Ccircle cx='50' cy='40' r='15'/%3E%3Cpolygon points='35,35 50,20 65,35 60,50 40,50' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+    animation: cliente-crown 5s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes cliente-crown {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Mala Viagem */
+.mala_viagem {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23855'%3E%3Crect x='20' y='20' width='60' height='50'/%3E%3Crect x='30' y='10' width='40' height='20'/%3E%3Ccircle cx='35' cy='75' r='5'/%3E%3Ccircle cx='65' cy='75' r='5'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+    animation: mala-travel 6s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes mala-travel {
+
+    0%,
+    100% {
+        transform: translateX(0px);
+    }
+
+    50% {
+        transform: translateX(20px);
+    }
+}
+
+/* Arvore Verde */
+.arvore_verde {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23009000'%3E%3Ccircle cx='50' cy='25' r='15'/%3E%3Ccircle cx='40' cy='40' r='12'/%3E%3Ccircle cx='60' cy='40' r='12'/%3E%3Crect x='48' y='50' width='4' height='20' fill='%23855'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+    animation: arvore-grow 8s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes arvore-grow {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* Comida Colorida */
+.comida_colorida {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg%3E%3Ccircle cx='25' cy='25' r='8' fill='%23ff7675'/%3E%3Ccircle cx='75' cy='35' r='6' fill='%23ffd93d'/%3E%3Ccircle cx='40' cy='70' r='7' fill='%2300d4ff'/%3E%3Ccircle cx='60' cy='60' r='5' fill='%2300ff9d'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 100px 100px;
+    animation: comida-bounce 12s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes comida-bounce {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+/* Cerebro Azul */
+.cerebro_azul {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%230984e3'%3E%3Cpath d='M50 20c-10 0-18 8-18 18v24c0 10 8 18 18 18s18-8 18-18V38c0-10-8-18-18-18z'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+    animation: cerebro-pulse 4s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes cerebro-pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* Lapis Livro */
+.lapis_livro {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23855'%3E%3Crect x='30' y='30' width='40' height='35'/%3E%3Crect x='35' y='35' width='30' height='25' fill='%23fff'/%3E%3C/g%3E%3Crect x='20' y='15' width='4' height='25' fill='%23ffd93d'/%3E%3C/svg%3E") center/contain no-repeat;
+    animation: lapis-write 6s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes lapis-write {
+
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    50% {
+        transform: rotate(5deg);
+    }
+}
+
+/* Microscopio Atomo */
+.microscopio_atomo {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%2300d4ff'%3E%3Ccircle cx='50' cy='50' r='8'/%3E%3Ccircle cx='35' cy='35' r='3'/%3E%3Ccircle cx='65' cy='35' r='3'/%3E%3Ccircle cx='35' cy='65' r='3'/%3E%3Ccircle cx='65' cy='65' r='3'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+    animation: atomo-orbit 8s linear infinite;
+    z-index: 0;
+}
+
+@keyframes atomo-orbit {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Crianca Feliz */
+.crianca_feliz {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23ffd93d'%3E%3Ccircle cx='50' cy='40' r='12'/%3E%3Ccircle cx='45' cy='38' r='2' fill='%23000'/%3E%3Ccircle cx='55' cy='38' r='2' fill='%23000'/%3E%3Cpath d='M45 45 Q50 50 55 45' stroke='%23000' stroke-width='2' fill='none'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+    animation: crianca-smile 5s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes crianca-smile {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Reciclagem Verde */
+.reciclagem_verde {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23009000'%3E%3Cpath d='M50 20 L60 35 L55 40 L45 25 Z'/%3E%3Cpath d='M50 80 L40 65 L45 60 L55 75 Z'/%3E%3Cpath d='M20 50 L35 40 L40 45 L25 55 Z'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+    animation: reciclar-spin 6s linear infinite;
+    z-index: 0;
+}
+
+@keyframes reciclar-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Pulmao Limpo */
+.pulmao_livre {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23ff7675'%3E%3Cpath d='M50 20c-10 0-18 8-18 18v24c0 10 8 18 18 18s18-8 18-18V38c0-10-8-18-18-18z'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+    animation: pulmao-breathe 4s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes pulmao-breathe {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* Gota Azul */
+.gota_azul {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 20 Q60 40 50 70 Q40 40 50 20 Z' fill='%230984e3'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 120px 120px;
+    animation: gota-fall 15s linear infinite;
+    z-index: 0;
+}
+
+@keyframes gota-fall {
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: 0 100vh;
+    }
+}
+
+/* Pena Livro */
+.pena_livro {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23855'%3E%3Crect x='30' y='30' width='40' height='35'/%3E%3Crect x='35' y='35' width='30' height='25' fill='%23fff'/%3E%3C/g%3E%3Cpath d='M20 15 L25 25 L15 25 Z' fill='%23ffd93d'/%3E%3C/svg%3E") center/contain no-repeat;
+    animation: pena-write 6s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes pena-write {
+
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    50% {
+        transform: rotate(5deg);
+    }
+}
+
+/* Pomba Branca */
+.pomba_branca {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23fff'%3E%3Cpath d='M50 30c-5-5-10-5-15 0-5 5-5 15 0 20 5-5 10-5 15 0 5-5 5-15 0-20z'/%3E%3Ccircle cx='45' cy='35' r='2' fill='%23000'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+    animation: pomba-fly 10s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes pomba-fly {
+
+    0%,
+    100% {
+        transform: translateY(0px) translateX(0px);
+    }
+
+    50% {
+        transform: translateY(-20px) translateX(30px);
+    }
+}
+
+/* Livro Aberto */
+.livro_aberto {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23855'%3E%3Crect x='30' y='25' width='40' height='50'/%3E%3Crect x='35' y='30' width='15' height='40' fill='%23fff'/%3E%3Crect x='50' y='30' width='15' height='40' fill='%23fff'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+    animation: livro-open 5s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes livro-open {
+
+    0%,
+    100% {
+        transform: scaleX(1);
+    }
+
+    50% {
+        transform: scaleX(1.1);
+    }
+}
+
+/* Nota Musical */
+.nota_musical {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23ff7675'%3E%3Ccircle cx='30' cy='40' r='3'/%3E%3Cpath d='M30 43 L30 60 M25 55 L35 55'/%3E%3C/g%3E%3Ccircle cx='70' cy='50' r='2' fill='%2300d4ff'/%3E%3Cpath d='M70 52 L70 65 M66 60 L74 60'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 120px 120px;
+    animation: nota-play 8s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes nota-play {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Livro Pensador */
+.livro_pensador {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23855'%3E%3Crect x='30' y='35' width='40' height='30'/%3E%3Crect x='35' y='40' width='30' height='20' fill='%23fff'/%3E%3C/g%3E%3Ccircle cx='55' cy='25' r='8' fill='%23ffd93d'/%3E%3Ctext x='55' y='30' text-anchor='middle' fill='%23000' font-size='6'%3Eφ%3C/text%3E%3C/svg%3E") center/contain no-repeat;
+    animation: pensador-think 7s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes pensador-think {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+/* Mascara Teatro */
+.mascara_teatro {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23ffd93d'%3E%3Cpath d='M30 25 Q50 15 70 25 L70 45 Q50 55 30 45 Z'/%3E%3Ccircle cx='45' cy='35' r='3' fill='%23000'/%3E%3Ccircle cx='55' cy='35' r='3' fill='%23000'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+    animation: mascara-drama 6s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes mascara-drama {
+
+    0%,
+    100% {
+        transform: rotateY(0deg);
+    }
+
+    50% {
+        transform: rotateY(180deg);
+    }
+}
+
+/* Forma Geometrica */
+.forma_geometrica {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%2300d4ff'%3E%3Ccircle cx='50' cy='50' r='10'/%3E%3Crect x='20' y='20' width='20' height='20'/%3E%3Cpolygon points='70,20 80,40 60,40'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 100px 100px;
+    animation: forma-rotate 12s linear infinite;
+    z-index: 0;
+}
+
+@keyframes forma-rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Lua Olhos */
+.lua_olhos {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23fff'%3E%3Cpath d='M50 20c-10 0-18 8-18 18v24c0 10 8 18 18 18s18-8 18-18V38c0-10-8-18-18-18z'/%3E%3C/g%3E%3Ccircle cx='45' cy='45' r='3' fill='%23000'/%3E%3Ccircle cx='55' cy='45' r='3' fill='%23000'/%3E%3C/svg%3E") center/contain no-repeat;
+    animation: lua-sleep 8s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes lua-sleep {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+}
+
+/* Corpus Christi - Hostia Luz */
+.variavel_corpus {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 80px;
+    height: 80px;
+    margin: -40px 0 0 -40px;
+    pointer-events: none;
+    background: radial-gradient(circle, #ffd93d 0%, #ff9f43 50%, transparent 70%);
+    border-radius: 50%;
+    animation: corpus-glow 6s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes corpus-glow {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: scale(1.3);
+        opacity: 1;
+    }
+}
+
+/* Orgulho LGBTQ+ - Arco Iris */
+.variavel_orgulho {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    pointer-events: none;
+    background: linear-gradient(45deg, #ff0000, #ff8000, #ffff00, #00ff00, #0080ff, #8000ff);
+    opacity: 0.3;
+    animation: orgulho-rainbow 10s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes orgulho-rainbow {
+
+    0%,
+    100% {
+        opacity: 0.2;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Segundo Domingo Maio */
+.segundo_domingo_maio {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23fd79a8'%3E%3Ccircle cx='50' cy='30' r='8'/%3E%3Ccircle cx='50' cy='70' r='8'/%3E%3Ccircle cx='30' cy='50' r='8'/%3E%3Ccircle cx='70' cy='50' r='8'/%3E%3Ccircle cx='35' cy='35' r='5' fill='%23e84393'/%3E%3Ccircle cx='65' cy='35' r='5' fill='%23e84393'/%3E%3Ccircle cx='35' cy='65' r='5' fill='%23e84393'/%3E%3Ccircle cx='65' cy='65' r='5' fill='%23e84393'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 100px 100px;
+    animation: mae-float 15s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes mae-float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Segundo Domingo Agosto */
+.segundo_domingo_agosto {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%230855'%3E%3Crect x='40' y='20' width='20' height='40'/%3E%3Crect x='45' y='10' width='10' height='20'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+    animation: pai-turn 3s linear infinite;
+    z-index: 0;
+}
+
+@keyframes pai-turn {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Segundo Domingo Setembro */
+.segundo_domingo_setembro {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23009000'%3E%3Ccircle cx='50' cy='25' r='15'/%3E%3Ccircle cx='40' cy='40' r='12'/%3E%3Ccircle cx='60' cy='40' r='12'/%3E%3Crect x='48' y='50' width='4' height='20' fill='%23855'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+    animation: setembro-grow 8s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes setembro-grow {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* Terceira Quinta Novembro */
+.terceira_quinta_novembro {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23855'%3E%3Crect x='30' y='35' width='40' height='30'/%3E%3Crect x='35' y='40' width='30' height='20' fill='%23fff'/%3E%3C/g%3E%3Ccircle cx='55' cy='25' r='8' fill='%23ffd93d'/%3E%3Ctext x='55' y='30' text-anchor='middle' fill='%23000' font-size='6'%3Eφ%3C/text%3E%3C/svg%3E") center/contain no-repeat;
+    animation: filosofia-think 7s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes filosofia-think {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+/* Terceira Segunda Abril */
+.terceira_segunda_abril {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%2300d4ff'%3E%3Ccircle cx='50' cy='50' r='10'/%3E%3Crect x='20' y='20' width='20' height='20'/%3E%3Cpolygon points='70,20 80,40 60,40'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 100px 100px;
+    animation: design-rotate 12s linear infinite;
+    z-index: 0;
+}
+
+@keyframes design-rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Sexta Antes Primavera */
+.sexta_antes_primavera {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23fff'%3E%3Cpath d='M50 20c-10 0-18 8-18 18v24c0 10 8 18 18 18s18-8 18-18V38c0-10-8-18-18-18z'/%3E%3C/g%3E%3Ccircle cx='45' cy='45' r='3' fill='%23000'/%3E%3Ccircle cx='55' cy='45' r='3' fill='%23000'/%3E%3C/svg%3E") center/contain no-repeat;
+    animation: sono-sleep 8s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes sono-sleep {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+}
+
+/* Fogueira Baloes */
+.fogueira_baloes {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23ff8c00'%3E%3Ccircle cx='50' cy='60' r='25'/%3E%3Crect x='25' y='35' width='50' height='10' fill='%23d63031'/%3E%3C/g%3E%3Cg fill='%23ff7675'%3E%3Ccircle cx='30' cy='20' r='8'/%3E%3Ccircle cx='70' cy='40' r='6' fill='%234ecdc4'/%3E%3Ccircle cx='50' cy='10' r='7' fill='%23f9ca24'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 100px 100px;
+    animation: sao-joao-party 10s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes sao-joao-party {
+
+    0%,
+    100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-15px) rotate(2deg);
+    }
+}
+
+/* Continuação dos efeitos - 45-50 */
+
+/* 45. Dia do Sushi – sushi rolando */
+body.efeito-sushi_rolando::before {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="40"><ellipse cx="30" cy="20" rx="25" ry="15" fill="%23ffffff"/><rect width="50" height="5" x="5" y="20" fill="%23ff0000"/></svg>') repeat;
+    background-size: 120px 80px;
+    animation: sushi 15s linear infinite;
+    opacity: 0.5;
+}
+
+@keyframes sushi {
+    0% {
+        transform: rotateY(0deg);
+    }
+
+    100% {
+        transform: rotateY(360deg);
+    }
+}
+
+/* 46. Dia da Cerveja – copo espumando */
+body.efeito-copo_espumando::before {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="60"><rect width="30" height="45" x="5" y="10" fill="%23ffffff"/><path d="M5 10 Q15 5 25 10" fill="none" stroke="%23ffff00" stroke-width="3"/><path d="M35 10 Q45 5 55 10" fill="none" stroke="%23ffff00" stroke-width="3"/></svg>') repeat;
+    background-size: 80px 120px;
+    animation: cerveja 12s linear infinite;
+    opacity: 0.5;
+}
+
+@keyframes cerveja {
+    0% {
+        transform: translateY(120px);
+    }
+
+    100% {
+        transform: translateY(-120px);
+    }
+}
+
+/* 47. Dia do Vinho – taça girando */
+body.efeito-taca_girando::before {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="50" height="70"><path d="M25 5 L15 50 L35 50 Z" fill="%23ff1493"/><ellipse cx="25" cy="50" rx="15" ry="5" fill="%23ff1493"/></svg>') repeat;
+    background-size: 100px 140px;
+    animation: vinho 20s linear infinite;
+    opacity: 0.5;
+}
+
+@keyframes vinho {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* 48. Dia do Pet – patinha piscando */
+body.efeito-patinha_piscando::before {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60"><circle cx="20" cy="40" r="8" fill="%23a0522d"/><circle cx="40" cy="40" r="8" fill="%23a0522d"/><path d="M15 45 Q30 35 45 45" stroke="%23a0522d" stroke-width="5" fill="none"/></svg>') repeat;
+    background-size: 120px 120px;
+    animation: patinha 6s ease-in-out infinite;
+    opacity: 0.5;
+}
+
+@keyframes patinha {
+
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* 49. Dia do Idoso – coração velho */
+body.efeito-coracao_velho::before {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60"><path d="M30 15 C35 10 45 15 45 25 C45 35 30 45 30 45 C30 45 15 35 15 25 C15 15 25 10 30 15" fill="%23d2691e"/></svg>') repeat;
+    background-size: 120px 120px;
+    animation: coracao-velho 10s linear infinite;
+    opacity: 0.4;
+}
+
+@keyframes coracao-velho {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* 50. Dia do Médico – estetoscópio */
+body.efeito-estetoscopio::before {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60"><circle cx="30" cy="20" r="8" fill="%23000000"/><path d="M30 28 L30 45" stroke="%23000000" stroke-width="4"/><path d="M30 45 L25 50 L35 50" stroke="%23000000" stroke-width="4"/></svg>') repeat;
+    background-size: 120px 120px;
+    animation: esteto 15s linear infinite;
+    opacity: 0.4;
+}
+
+@keyframes esteto {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card } from '../design-system/components/Card';
+import { Card } from '../../design-system/components/Card';
 
 const GameAnalyticsDashboard = () => {
     const [analytics, setAnalytics] = useState({});

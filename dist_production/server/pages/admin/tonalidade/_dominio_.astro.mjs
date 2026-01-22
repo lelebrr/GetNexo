@@ -1,0 +1,63 @@
+import { e as createAstro, f as createComponent, k as renderComponent, r as renderTemplate, m as maybeRenderHead, h as addAttribute } from "../../../assets/astro/server-MCYX8tFF.js";
+import "piccolore";
+import { $ as $$Layout } from "../../../assets/Layout-DScI-qCd.js";
+import fs from "fs";
+import path from "path";
+/* empty css                                          */
+import { renderers } from "../../../renderers.mjs";
+const $$Astro = createAstro("https://getnexo.com.br");
+const $$dominio = createComponent(async ($$result, $$props, $$slots) => {
+  const Astro2 = $$result.createAstro($$Astro, $$props, $$slots);
+  Astro2.self = $$dominio;
+  const { dominio = "geral" } = Astro2.params;
+  const SESSIONS_DIR = path.join(process.cwd(), "..", "sessions");
+  const caminho = path.join(SESSIONS_DIR, `${dominio}.json`);
+  let ton = "amigo";
+  let dadosSessao = {};
+  if (fs.existsSync(caminho)) {
+    try {
+      const fileContent = fs.readFileSync(caminho, "utf-8");
+      dadosSessao = JSON.parse(fileContent);
+      ton = dadosSessao.tom || "amigo";
+    } catch (e) {
+    }
+  }
+  if (Astro2.request.method === "POST") {
+    try {
+      const formData = await Astro2.request.formData();
+      const novoTom = formData.get("tom");
+      if (novoTom) {
+        ton = novoTom.toString();
+        dadosSessao.tom = ton;
+        if (!fs.existsSync(SESSIONS_DIR)) {
+          fs.mkdirSync(SESSIONS_DIR, { recursive: true });
+        }
+        fs.writeFileSync(caminho, JSON.stringify(dadosSessao, null, 2));
+        return Astro2.redirect(Astro2.url.pathname + "?saved=true");
+      }
+    } catch (e) {
+    }
+  }
+  const isSaved = Astro2.url.searchParams.get("saved") === "true";
+  return renderTemplate`${renderComponent($$result, "Layout", $$Layout, { "title": `Tonalidade - ${dominio}`, "data-astro-cid-oy4tx6xs": true }, { "default": async ($$result2) => renderTemplate` ${maybeRenderHead()}<main class="min-h-screen bg-void p-8 font-sans" data-astro-cid-oy4tx6xs> <header class="text-neon-blue text-3xl font-bold mb-8 flex items-center gap-4" data-astro-cid-oy4tx6xs> <div class="h-10 w-2 bg-neon-blue shadow-[0_0_15px_#00f7ff]" data-astro-cid-oy4tx6xs></div>
+Tonalidade do Bot – <span class="text-white" data-astro-cid-oy4tx6xs>${dominio}</span> </header> <div class="bg-black border-2 border-cyan-500 rounded-xl p-8 max-w-lg shadow-[0_0_30px_rgba(0,247,255,0.1)] relative overflow-hidden" data-astro-cid-oy4tx6xs> <!-- Glassmorphism effect --> <div class="absolute top-0 right-0 -mt-10 -mr-10 h-40 w-40 bg-cyan-500/10 blur-3xl rounded-full" data-astro-cid-oy4tx6xs></div> <h2 class="text-gold text-xl font-semibold mb-6 flex items-center gap-2" data-astro-cid-oy4tx6xs> <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-astro-cid-oy4tx6xs> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" data-astro-cid-oy4tx6xs></path> </svg>
+Como ele fala?
+</h2> <form method="POST" class="space-y-6 relative z-10" data-astro-cid-oy4tx6xs> <!-- Toggle Tom --> <div class="flex justify-between items-center bg-gray-900/50 p-4 rounded-lg border border-cyan-900/50" data-astro-cid-oy4tx6xs> <label class="text-cyan-400 font-medium" data-astro-cid-oy4tx6xs>Estilo de Voz</label> <select name="tom" class="bg-black text-cyan-300 border border-cyan-500 rounded-md px-4 py-2 focus:ring-2 focus:ring-neon-blue outline-none transition-all cursor-pointer" onchange="this.form.submit()" data-astro-cid-oy4tx6xs> <option value="amigo"${addAttribute(ton === "amigo", "selected")} data-astro-cid-oy4tx6xs>Amigo</option> <option value="certinho"${addAttribute(ton === "certinho", "selected")} data-astro-cid-oy4tx6xs>Certinho</option> <option value="empresarial"${addAttribute(ton === "empresarial", "selected")} data-astro-cid-oy4tx6xs>Empresarial</option> </select> </div> ${isSaved && renderTemplate`<div class="bg-green-500/20 border border-green-500 text-green-400 px-4 py-2 rounded-lg text-sm animate-pulse" data-astro-cid-oy4tx6xs>
+Configuração salva com sucesso!
+</div>`} <!-- Preview --> <div class="pt-6 border-t border-cyan-900/50" data-astro-cid-oy4tx6xs> <h3 class="text-gray-500 text-xs uppercase tracking-widest font-bold mb-4" data-astro-cid-oy4tx6xs>Preview em Tempo Real</h3> <div class="bg-gray-900 rounded-lg p-4 space-y-4" data-astro-cid-oy4tx6xs> <div class="flex gap-3" data-astro-cid-oy4tx6xs> <div class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-xs text-gray-400 font-bold" data-astro-cid-oy4tx6xs>U</div> <div class="bg-gray-800 rounded-2xl rounded-tl-none px-4 py-2 text-sm text-gray-300" data-astro-cid-oy4tx6xs>
+tem bermuda azul?
+</div> </div> <div class="flex gap-3 justify-end" data-astro-cid-oy4tx6xs> <div class="bg-cyan-900/30 border border-cyan-500/30 rounded-2xl rounded-tr-none px-4 py-2 text-sm text-cyan-100 max-w-[80%]" data-astro-cid-oy4tx6xs> <span class="text-gold text-[10px] block mb-1 uppercase font-bold" data-astro-cid-oy4tx6xs>Bot Nexo</span> ${ton === "amigo" ? "E aí, Leandro? Tem sim, R$89!" : ton === "certinho" ? "Olá, Leandro. Sim, temos a bermuda azul, R$89." : "Sr. Leandro, disponível a bermuda azul ao valor de R$89,00."} </div> <div class="w-8 h-8 rounded-full bg-cyan-600 flex items-center justify-center text-xs text-white font-bold" data-astro-cid-oy4tx6xs>AI</div> </div> </div> </div> </form> </div> </main> ` })} `;
+}, "/home/lele/usenexo/getnexo-site/src/pages/admin/tonalidade/[dominio].astro", void 0);
+const $$file = "/home/lele/usenexo/getnexo-site/src/pages/admin/tonalidade/[dominio].astro";
+const $$url = "/admin/tonalidade/[dominio]";
+const _page = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: $$dominio,
+  file: $$file,
+  url: $$url
+}, Symbol.toStringTag, { value: "Module" }));
+const page = () => _page;
+export {
+  page,
+  renderers
+};

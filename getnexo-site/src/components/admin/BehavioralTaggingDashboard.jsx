@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Input, Select, Badge, Table, Modal, Tabs, Alert, Progress, Tag } from '../design-system';
+import { Card, Button, Input, Select, Badge, Table, Modal, Tabs, Alert, Progress, Tag } from '../../design-system';
 import { apiRequest } from '../../lib/api';
 
 const BehavioralTaggingDashboard = () => {

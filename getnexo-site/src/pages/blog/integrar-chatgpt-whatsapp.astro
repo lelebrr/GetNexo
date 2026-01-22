@@ -1,0 +1,115 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Como Integrar ChatGPT no WhatsApp para Vendas Automáticas em 2026",
+      "description": "Transforme seu WhatsApp em uma máquina de vendas com a integração do ChatGPT. Aprenda como automatizar o atendimento e fechar negócios 24/7 com IA Generativa.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-21",
+      "image": "/images/blog/chatgpt-whatsapp-vendas.png",
+      "articleSection": "Inteligência Artificial",
+      "keywords": "chatgpt whatsapp, integração chatgpt whatsapp, automação de vendas, ia no whatsapp, chatbot inteligente"
+    }
+  ]
+};
+---
+
+<Layout title="ChatGPT + WhatsApp: Vendas Automáticas em 2026 | GetNexo">
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta animate-fade-in">IA & Vendas • Jan 2026</div>
+      <h1 class="animate-slide-up">ChatGPT no WhatsApp:<br/><span class="text-primary">Vendas Automáticas 24/7</span></h1>
+      <p class="subtitle animate-fade-in delay-200">A era dos chatbots robóticos acabou. Descubra como a IA Generativa está fechando vendas reais enquanto você dorme.</p>
+      
+      <div class="placeholder-image glass-panel animate-fade-in">
+        <p>Image: ChatGPT Interface interacting with WhatsApp Business</p>
+      </div>
+    </header>
+
+    <div class="post-content">
+      <section id="revolucao">
+        <h2>🚀 A Revolução do Atendimento Conversacional</h2>
+        <p>Em 2026, atender bem não é mais um diferencial, é o básico. O verdadeiro salto está na <strong>capacidade de conversão</strong>. Integrar o ChatGPT ao seu WhatsApp permite que sua empresa tenha um vendedor sênior disponível para milhares de pessoas simultaneamente, com contexto, empatia e, acima de tudo, foco em fechamento.</p>
+        
+        <div class="glass-panel mt-8">
+          <p><strong>Destaque:</strong> Empresas que utilizam IA Generativa no WhatsApp reportam um aumento de até 40% na taxa de conversão de leads frios.</p>
+        </div>
+      </section>
+
+      <section id="como-fazer">
+        <h2>🧠 Como a Integração Funciona na Prática?</h2>
+        <p>Não se trata apenas de conectar uma API. O segredo está no <strong>Prompt Engineering</strong> e na base de conhecimento. A GetNexo facilita esse processo conectando o cérebro do GPT-4o diretamente ao seu fluxo de conversa oficial.</p>
+        
+        <div class="stack-grid">
+          <div class="stack-card glass-panel blur">
+            <h4>Conexão Oficial</h4>
+            <p>Utilizamos a API Cloud do WhatsApp para garantir estabilidade e evitar banimentos de conta.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Treinamento Customizado</h4>
+            <p>Sua IA aprende sobre seus produtos, preços e tom de voz, agindo como um especialista da marca.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Transbordo Humano</h4>
+            <p>A IA identifica quando o cliente está pronto para o fechamento humano ou se há um problema complexo.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="beneficios">
+        <h2>💰 Benefícios que Vão Direto para o Caixa</h2>
+        <ul>
+          <li><strong>Resposta Instantânea:</strong> Leads que esperam mais de 5 minutos perdem o interesse em 80%.</li>
+          <li><strong>Escalabilidade Infinita:</strong> Atenda 10 ou 10.000 pessoas com a mesma qualidade de serviço.</li>
+          <li><strong>Qualificação em Tempo Real:</strong> A IA já separa o curioso do potencial comprador antes de chegar ao seu time sênior.</li>
+        </ul>
+      </section>
+
+      <div class="final-cta animate-scale-up">
+        <h3>Pronto para automatizar seu lucro?</h3>
+        <p>Agende uma demonstração gratuita e veja o ChatGPT vendendo seus produtos ao vivo.</p>
+        <div class="cta-buttons mt-8">
+          <a href="/demo" class="btn-primary">Testar Demo IA</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+</Layout>
+
+<style>
+  :root {
+    --primary: #00d4ff;
+    --accent: #00ff9d;
+    --glass: rgba(15, 23, 42, 0.7);
+    --glass-border: rgba(0, 212, 255, 0.1);
+  }
+
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  .meta { color: var(--primary); font-size: 0.8rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem; display: inline-block; padding: 0.5rem 1rem; background: rgba(0, 212, 255, 0.05); border: 1px solid var(--glass-border); border-radius: 50px; }
+  h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; color: white; }
+  .text-primary { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .subtitle { font-size: 1.25rem; color: #94a3b8; max-width: 700px; margin: 0 auto; line-height: 1.6; }
+  .placeholder-image { width: 100%; border-radius: 24px; margin-top: 3rem; height: 500px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0f172a, #020617); color: var(--primary); font-weight: 800; border: 1px dashed var(--primary); }
+  .post-content { color: #cbd5e1; line-height: 1.8; font-size: 1.15rem; }
+  h2 { font-size: 2.2rem; color: white; margin: 6rem 0 2rem; font-weight: 800; }
+  .glass-panel { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 2.5rem; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+  .stack-card { background: var(--glass); border: 1px solid var(--glass-border); padding: 2rem; border-radius: 20px; text-align: left; }
+  .stack-card h4 { color: var(--primary); margin-bottom: 1rem; font-size: 1.3rem; }
+  .final-cta { background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1)); border: 1px solid var(--primary); padding: 5rem 2rem; text-align: center; border-radius: 32px; margin-top: 8rem; }
+  .btn-primary { background: white; color: black; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; font-weight: 800; display: inline-block; transition: 0.3s; }
+  .btn-primary:hover { background: var(--primary); color: white; transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0, 212, 255, 0.3); }
+
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade-in { animation: fade-in 1s ease forwards; }
+  .animate-slide-up { animation: slide-up 1s ease forwards; }
+</style>

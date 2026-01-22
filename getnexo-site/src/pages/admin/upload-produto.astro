@@ -1,0 +1,259 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const pageTitle = "Gerenciar Produtos 360°/3D | GetNexo Admin";
+---
+
+<Layout title={pageTitle}>
+    <div class="admin-products-page">
+        <header class="admin-header">
+            <div class="container">
+                <span class="badge">Módulo Imersivo</span>
+                <h1>Upload de Produtos <span class="text-primary">360° & 3D</span></h1>
+                <p class="subtitle">Adicione visualização imersiva para alavancar suas vendas no WhatsApp e Instagram.</p>
+            </div>
+        </header>
+
+        <main class="container">
+            <div class="grid-layout">
+                <!-- Upload Form -->
+                <section class="upload-section glass-panel">
+                    <h3>Novo Produto</h3>
+                    <form id="uploadForm" class="form-stack">
+                        <div class="form-group">
+                            <label for="productId">ID Único (ex: nike-air-zoom)</label>
+                            <input type="text" id="productId" name="id" placeholder="id-do-produto" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productName">Nome do Produto</label>
+                            <input type="text" id="productName" name="nome" placeholder="Ex: Tênis Nike Air Max" required />
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group flex-1">
+                                <label for="productPrice">Preço (R$)</label>
+                                <input type="number" id="productPrice" name="preco" step="0.01" value="299.00" />
+                            </div>
+                            <div class="form-group flex-1">
+                                <label for="autoRotate">Girar automático?</label>
+                                <select id="autoRotate" name="autoRotate">
+                                    <option value="true">Sim</option>
+                                    <option value="false">Não</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productDesc">Descrição para IA (Insights de venda)</label>
+                            <textarea id="productDesc" name="desc" rows="3" placeholder="Ex: Tecido respirável, frete grátis para SP..."></textarea>
+                        </div>
+
+                        <hr class="divider" />
+
+                        <!-- 360 Section -->
+                        <div class="upload-zone" id="drop360">
+                            <div class="zone-content">
+                                <span class="icon">🔄</span>
+                                <div>
+                                    <p class="title">Imagens 360° (ZIP com 72 fotos)</p>
+                                    <p class="limit">Só JPG/PNG sequenciais (001.jpg...072.jpg). Max 1MB/foto.</p>
+                                </div>
+                                <input type="file" id="zip360" name="zip360" accept=".zip" class="hidden-input" />
+                                <button type="button" class="btn-outline" onclick="document.getElementById('zip360').click()">Selecionar ZIP</button>
+                            </div>
+                            <div class="file-info" id="info360"></div>
+                        </div>
+
+                        <!-- 3D Section -->
+                        <div class="upload-zone" id="drop3D">
+                            <div class="zone-content">
+                                <span class="icon">📱</span>
+                                <div>
+                                    <p class="title">Modelo 3D (AR / Spatial)</p>
+                                    <p class="limit">Arraste .glb (obrigatório) e .usdz (iOS). <br/>Max 10MB (GLB) / 15MB (USDZ).</p>
+                                </div>
+                                <input type="file" id="model3d" name="model3d" accept=".glb" class="hidden-input" />
+                                <input type="file" id="modelUsdz" name="modelUsdz" accept=".usdz" class="hidden-input" />
+                                <div class="btn-group">
+                                    <button type="button" class="btn-outline" onclick="document.getElementById('model3d').click()">GLB</button>
+                                    <button type="button" class="btn-outline" onclick="document.getElementById('modelUsdz').click()">USDZ</button>
+                                </div>
+                            </div>
+                            <div class="file-info" id="info3D"></div>
+                        </div>
+
+                        <div id="progressContainer" class="progress-container hidden">
+                            <div class="progress-bar">
+                                <div id="progressBar" class="progress-fill"></div>
+                            </div>
+                            <p id="progressStatus">Enviando...</p>
+                        </div>
+
+                        <button type="submit" class="btn-primary-glow w-full mt-4">Salvar Produto e Mídia</button>
+                    </form>
+                </section>
+
+                <!-- Status & Activation -->
+                <aside class="sidebar-stack">
+                    <div class="glass-panel status-card">
+                        <h3>Módulo 360° + AR</h3>
+                        <div id="activationBanner" class="activation-banner active">
+                            <span class="pulse-icon">✓</span>
+                            <div>
+                                <p class="status-title">Ativo (Modo Trial 36h)</p>
+                                <p class="status-desc">Aproveite para subir todo o seu catálogo!</p>
+                            </div>
+                        </div>
+                        <div id="paidBanner" class="activation-banner hidden">
+                             <span class="lock-icon">🔒</span>
+                             <div>
+                                 <p class="status-title">Módulo Bloqueado</p>
+                                 <p class="status-desc">Ative o módulo imersivo por apenas R$ 97.</p>
+                                 <button class="btn-small mt-2">Ativar Agora</button>
+                             </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel logs-card">
+                        <h3>Últimos Uploads</h3>
+                        <ul id="uploadLogs" class="log-list">
+                            <li class="empty">Nenhum upload recente.</li>
+                        </ul>
+                    </div>
+                </aside>
+            </div>
+        </main>
+    </div>
+
+    <script is:inline>
+        const form = document.getElementById('uploadForm');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        const progressStatus = document.getElementById('progressStatus');
+        const logsList = document.getElementById('uploadLogs');
+
+        // File Selection Feedback
+        document.getElementById('zip360').addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (file) document.getElementById('info360').innerHTML = `📦 ${file.name} (${(file.size/1024/1024).toFixed(2)}MB)`;
+        });
+
+        document.getElementById('model3d').addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 10 * 1024 * 1024) alert('Erro: GLB não pode passar de 10MB!');
+                document.getElementById('info3D').innerHTML += `<div>🟢 GLB: ${file.name}</div>`;
+            }
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            progressContainer.classList.remove('hidden');
+            
+            try {
+                const response = await fetch('http://localhost:3006/api/upload-product', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    addLog(result.product.id, 'Sucesso');
+                    alert('Produto salvo com sucesso!');
+                    form.reset();
+                    document.getElementById('info360').innerHTML = '';
+                    document.getElementById('info3D').innerHTML = '';
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (err) {
+                alert('Erro no upload: ' + err.message);
+                addLog(formData.get('id'), 'Erro: ' + err.message);
+            } finally {
+                progressContainer.classList.add('hidden');
+            }
+        });
+
+        function addLog(id, status) {
+            const li = document.createElement('li');
+            li.innerHTML = `<span>${id}</span> <span class="status">${status}</span>`;
+            if (logsList.querySelector('.empty')) logsList.innerHTML = '';
+            logsList.prepend(li);
+        }
+    </script>
+</Layout>
+
+<style>
+    :root {
+        --primary: #00f7ff;
+        --bg: #030712;
+        --glass: rgba(255, 255, 255, 0.03);
+        --glass-border: rgba(255, 255, 255, 0.1);
+    }
+
+    .admin-products-page { background: var(--bg); min-height: 100vh; color: white; padding-bottom: 5rem; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+    
+    .admin-header { padding: 8rem 0 4rem; text-align: center; }
+    .badge { background: rgba(0, 247, 255, 0.1); color: var(--primary); padding: 0.4rem 1rem; border-radius: 50px; font-weight: 800; font-size: 0.8rem; text-transform: uppercase; border: 1px solid var(--glass-border); margin-bottom: 1.5rem; display: inline-block; }
+    h1 { font-size: 3rem; font-weight: 900; margin-bottom: 1rem; }
+    .text-primary { color: var(--primary); }
+    .subtitle { color: #94a3b8; font-size: 1.2rem; max-width: 600px; margin: 0 auto; }
+
+    .grid-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: start; }
+    @media (max-width: 768px) { .grid-layout { grid-template-columns: 1fr; } }
+
+    .glass-panel { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 20px; padding: 2rem; backdrop-filter: blur(10px); }
+    
+    h3 { font-size: 1.5rem; font-weight: 800; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.5rem; }
+
+    .form-stack { display: flex; flex-direction: column; gap: 1.5rem; }
+    .form-row { display: flex; gap: 1.5rem; }
+    .flex-1 { flex: 1; }
+    
+    label { display: block; font-size: 0.9rem; font-weight: 700; color: #94a3b8; margin-bottom: 0.5rem; }
+    input, textarea, select { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 0.8rem 1.2rem; border-radius: 12px; color: white; width: 100%; outline: none; transition: 0.2s; }
+    input:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(0, 247, 255, 0.1); }
+
+    .divider { border: 0; border-top: 1px solid var(--glass-border); margin: 1rem 0; }
+
+    .upload-zone { border: 2px dashed var(--glass-border); border-radius: 16px; padding: 2rem; transition: 0.3s; cursor: pointer; }
+    .upload-zone:hover { border-color: var(--primary); background: rgba(0, 247, 255, 0.02); }
+    .zone-content { display: flex; align-items: center; gap: 1.5rem; }
+    .icon { font-size: 2.5rem; }
+    .title { font-weight: 800; margin-bottom: 0.2rem; }
+    .limit { font-size: 0.8rem; color: #64748b; line-height: 1.4; }
+    
+    .hidden-input { display: none; }
+    .btn-outline { background: transparent; border: 1px solid var(--glass-border); color: white; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 700; transition: 0.2s; }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-group { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+
+    .btn-primary-glow { background: linear-gradient(135deg, var(--primary), #7000ff); color: white; padding: 1.2rem; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 30px rgba(0, 247, 255, 0.2); }
+    .btn-primary-glow:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+    /* Sidebar Styles */
+    .sidebar-stack { display: flex; flex-direction: column; gap: 2rem; }
+    .activation-banner { display: flex; align-items: center; gap: 1rem; padding: 1.2rem; border-radius: 12px; margin-top: 1rem; }
+    .activation-banner.active { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); }
+    .pulse-icon { background: #10b981; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; box-shadow: 0 0 10px #10b981; animation: pulse 2s infinite; }
+    .status-title { font-weight: 800; font-size: 0.95rem; }
+    .status-desc { font-size: 0.8rem; color: #94a3b8; }
+
+    .log-list { list-style: none; padding: 0; }
+    .log-list li { display: flex; justify-content: space-between; padding: 0.8rem 0; border-bottom: 1px solid var(--glass-border); font-size: 0.9rem; }
+    .log-list .status { font-weight: 800; color: var(--primary); font-size: 0.75rem; text-transform: uppercase; }
+    .empty { color: #64748b; text-align: center; padding: 2rem 0 !important; }
+
+    .hidden { display: none; }
+    .progress-container { margin-top: 1rem; text-align: center; }
+    .progress-bar { background: rgba(255,255,255,0.05); height: 8px; border-radius: 4px; overflow: hidden; margin-top: 0.5rem; }
+    .progress-fill { background: var(--primary); height: 100%; width: 0%; transition: 0.3s; }
+    #progressStatus { font-size: 0.8rem; color: #94a3b8; margin-top: 0.5rem; }
+
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+</style>

@@ -1,0 +1,446 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SEO from '../components/SEO.astro';
+
+const title = "Gamificação de Vendas GetNexo - Programa de Fidelidade WhatsApp Completo";
+const description = "Gamificação completa para vendas no WhatsApp. Programa de fidelidade, recompensas diárias, tiers de benefícios, missões especiais. Aumente engajamento e vendas automaticamente com IA.";
+const keywords = "gamificação vendas whatsapp, programa fidelidade whatsapp, recompensas whatsapp, tiers benefícios, missões gamificação vendas, sistema pontos whatsapp, programa vip whatsapp, fidelidade automatica whatsapp, engajamento whatsapp";
+
+const breadcrumbs = [
+  { name: "Home", url: "/" },
+  { name: "Produtos", url: "/produtos" },
+  { name: "Gamificação", url: "/gamificacao-vendas" }
+];
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-badge">🎮 Gamificação</div>
+      <h1>Vendas que Viram um Jogo</h1>
+      <p>Transforme seus clientes em embaixadores da marca. Programa de fidelidade completo no WhatsApp com recompensas, missões e tiers exclusivos. Engajamento que vende sozinho.</p>
+      <div class="hero-features">
+        <span>✅ Programa VIP automático</span>
+        <span>✅ Recompensas diárias</span>
+        <span>✅ Missões especiais</span>
+      </div>
+      <div class="hero-ctas">
+        <a href="/criar-bot" class="btn-primary">Implementar Gamificação</a>
+        <a href="#demo" class="btn-secondary">Ver Programa VIP</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="loyalty-program">
+        <div class="tier bronze">
+          <div class="tier-name">🥉 Bronze</div>
+          <div class="tier-points">0-999 pts</div>
+          <div class="tier-benefits">
+            <span>🎁 5% desconto</span>
+            <span>🚚 Frete grátis > R$100</span>
+          </div>
+        </div>
+        <div class="tier silver">
+          <div class="tier-name">🥈 Prata</div>
+          <div class="tier-points">1.000-4.999 pts</div>
+          <div class="tier-benefits">
+            <span>🎁 10% desconto</span>
+            <span>🚚 Frete grátis > R$50</span>
+            <span>🎯 Acesso antecipado</span>
+          </div>
+        </div>
+        <div class="tier gold active">
+          <div class="tier-name">🥇 Ouro</div>
+          <div class="tier-points">5.000+ pts</div>
+          <div class="tier-benefits">
+            <span>🎁 15% desconto</span>
+            <span>🚚 Frete sempre grátis</span>
+            <span>🎯 Produtos exclusivos</span>
+            <span>👑 Atendimento VIP</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gamification Features -->
+  <section class="gamification-features">
+    <div class="section-header">
+      <h2>Mecânicas de Gamificação que Funcionam</h2>
+      <p>Cada elemento projetado para maximizar engajamento e fidelização</p>
+    </div>
+
+    <div class="features-showcase">
+      <div class="feature-block">
+        <div class="feature-icon">🏆</div>
+        <h3>Sistema de Pontos Inteligente</h3>
+        <p>Ganhe pontos por cada interação: compras, indicações, reviews, participação em missões. Pontos expiram estrategicamente para manter engajamento contínuo.</p>
+        <div class="feature-stats">
+          <span class="stat">3.2x</span>
+          <span class="stat-label">Mais compras recorrentes</span>
+        </div>
+      </div>
+
+      <div class="feature-block">
+        <div class="feature-icon">🎯</div>
+        <h3>Missões Diárias e Sazonais</h3>
+        <p>Missões personalizadas baseadas no perfil do cliente: "Compre hoje e ganhe 50pts extra", "Indique 3 amigos", "Avalie produtos comprados".</p>
+        <div class="feature-stats">
+          <span class="stat">85%</span>
+          <span class="stat-label">Taxa de conclusão</span>
+        </div>
+      </div>
+
+      <div class="feature-block">
+        <div class="feature-icon">🥇</div>
+        <h3>Tiers de Benefícios Exclusivos</h3>
+        <p>Quanto mais pontos, melhores benefícios: descontos progressivos, frete grátis, produtos exclusivos, atendimento prioritário, brindes especiais.</p>
+        <div class="feature-stats">
+          <span class="stat">R$ 2.400</span>
+          <span class="stat-label">Ticket médio VIP</span>
+        </div>
+      </div>
+
+      <div class="feature-block">
+        <div class="feature-icon">🎁</div>
+        <h3>Recompensas Surpresa</h3>
+        <p>Sistema de spin-the-wheel e caixas misteriosas. Clientes adoram a imprevisibilidade e voltam sempre para tentar a sorte novamente.</p>
+        <div class="feature-stats">
+          <span class="stat">40%</span>
+          <span class="stat-label">Aumento engajamento</span>
+        </div>
+      </div>
+
+      <div class="feature-block">
+        <div class="feature-icon">🏅</div>
+        <h3>Conquistas e Badges</h3>
+        <p>Badges por milestones: "Primeira compra", "Cliente fiel", "Embaixador", "Super comprador". Mostre conquistas no perfil e no WhatsApp.</p>
+        <div class="feature-stats">
+          <span class="stat">25</span>
+          <span class="stat-label">Badges disponíveis</span>
+        </div>
+      </div>
+
+      <div class="feature-block">
+        <div class="feature-icon">👥</div>
+        <h3>Programa de Indicações</h3>
+        <p>Ganhe pontos por cada amigo indicado que efetuar primeira compra. Sistema duplo: indicante e indicado recebem benefícios automaticamente.</p>
+        <div class="feature-stats">
+          <span class="stat">R$ 180</span>
+          <span class="stat-label">CAC reduzido</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="gamification-workflow">
+    <div class="section-header">
+      <h2>Jornada do Cliente Gamificado</h2>
+      <p>Do primeiro contato ao embaixador da marca</p>
+    </div>
+
+    <div class="journey-steps">
+      <div class="journey-step">
+        <div class="step-number">1</div>
+        <h3>Bem-vindo ao Programa</h3>
+        <p>Cliente recebe automaticamente mensagem de boas-vindas com primeiros pontos e explicação do programa.</p>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-number">2</div>
+        <h3>Primeiras Interações</h3>
+        <p>Cada pergunta respondida, cada produto visualizado, cada missão concluída gera pontos automaticamente.</p>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-number">3</div>
+        <h3>Primeira Compra</h3>
+        <p>Compra gera pontos extras. Cliente sobe de tier e recebe benefícios exclusivos imediatamente.</p>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-number">4</div>
+        <h3>Cliente Fiel</h3>
+        <p>Compras recorrentes, indicações, reviews. Cliente acumula pontos e desbloqueia benefícios premium.</p>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-number">5</div>
+        <h3>Embaixador</h3>
+        <p>Cliente indica amigos, participa de missões especiais, se torna porta-voz da marca voluntariamente.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Analytics & Optimization -->
+  <section class="gamification-analytics">
+    <div class="section-header">
+      <h2>Analytics de Gamificação</h2>
+      <p>Métricas específicas para otimizar seu programa de fidelidade</p>
+    </div>
+
+    <div class="analytics-grid">
+      <div class="analytic-card">
+        <div class="analytic-icon">📊</div>
+        <h4>Engajamento por Tier</h4>
+        <p>Veja quais tiers geram mais engajamento e otimize benefícios</p>
+      </div>
+
+      <div class="analytic-card">
+        <div class="analytic-icon">🎯</div>
+        <h4>Conversão de Missões</h4>
+        <p>Identifique missões que geram mais vendas e replique o sucesso</p>
+      </div>
+
+      <div class="analytic-card">
+        <div class="analytic-icon">💰</div>
+        <h4>LTV por Tier</h4>
+        <p>Clientes VIP valem muito mais. Foque nos que realmente importam</p>
+      </div>
+
+      <div class="analytic-card">
+        <div class="analytic-icon">🔄</div>
+        <h4>Taxa de Retenção</h4>
+        <p>Monitore retenção por tier e crie estratégias específicas</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Use Cases -->
+  <section class="use-cases-gamification">
+    <div class="section-header">
+      <h2>Gamificação que Funciona na Prática</h2>
+      <p>Casos reais de sucesso em diferentes segmentos</p>
+    </div>
+
+    <div class="cases-slider">
+      <div class="case-study">
+        <div class="case-header">
+          <h3>🛍️ E-commerce de Moda</h3>
+          <div class="case-results">
+            <span>+340% compras recorrentes</span>
+            <span>R$ 45 ticket médio</span>
+          </div>
+        </div>
+        <p>Programa VIP com tiers por valor gasto. Missões sazonais baseadas em lançamentos. Clientes disputam acesso antecipado a coleções exclusivas.</p>
+      </div>
+
+      <div class="case-study">
+        <div class="case-header">
+          <h3>🍕 Rede de Pizzarias</h3>
+          <div class="case-results">
+            <span>+280% frequência</span>
+            <span>4.2 pedidos/mês</span>
+          </div>
+        </div>
+        <p>Missões diárias: "Peça hoje e ganhe 50pts extra". Programa de indicações com pontos duplos. Tiers baseados em frequência de pedidos.</p>
+      </div>
+
+      <div class="case-study">
+        <div class="case-header">
+          <h3>💻 Loja de Informática</h3>
+          <div class="case-results">
+            <span>+420% cross-selling</span>
+            <span>R$ 180 valor médio</span>
+          </div>
+        </div>
+        <p>Missões técnicas: "Monte seu PC e ganhe desconto". Badges por tipo de produto. Indicações de upgrades geram pontos especiais.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="pricing-section">
+    <div class="section-header">
+      <h2>Planos de Gamificação</h2>
+      <p>Escolha baseado no tamanho da sua base de clientes</p>
+    </div>
+
+    <div class="pricing-cards">
+      <div class="pricing-card">
+        <div class="pricing-header">
+          <h3>Starter</h3>
+          <div class="price">R$ 67<span>/mês</span></div>
+          <p>Até 500 clientes</p>
+        </div>
+        <ul class="pricing-features">
+          <li>✅ Sistema básico de pontos</li>
+          <li>✅ 3 tiers de benefícios</li>
+          <li>✅ Missões simples</li>
+          <li>✅ Relatórios básicos</li>
+        </ul>
+        <a href="/criar-bot" class="pricing-cta">Começar Starter</a>
+      </div>
+
+      <div class="pricing-card featured">
+        <div class="pricing-badge">Mais Popular</div>
+        <div class="pricing-header">
+          <h3>Professional</h3>
+          <div class="price">R$ 127<span>/mês</span></div>
+          <p>Até 2.000 clientes</p>
+        </div>
+        <ul class="pricing-features">
+          <li>✅ Tudo do Starter</li>
+          <li>✅ Missões avançadas</li>
+          <li>✅ Programa indicações</li>
+          <li>✅ Recompensas surpresa</li>
+          <li>✅ Analytics completo</li>
+        </ul>
+        <a href="/criar-bot" class="pricing-cta">Escolher Professional</a>
+      </div>
+
+      <div class="pricing-card">
+        <div class="pricing-header">
+          <h3>Enterprise</h3>
+          <div class="price">R$ 247<span>/mês</span></div>
+          <p>Clientes ilimitados</p>
+        </div>
+        <ul class="pricing-features">
+          <li>✅ Tudo do Professional</li>
+          <li>✅ Tiers ilimitados</li>
+          <li>✅ Gamificação customizada</li>
+          <li>✅ API completa</li>
+          <li>✅ Consultoria dedicada</li>
+        </ul>
+        <a href="/contato" class="pricing-cta">Falar com Vendas</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section">
+    <div class="section-header">
+      <h2>Perguntas Sobre Gamificação</h2>
+    </div>
+
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>Quanto tempo leva para ver resultados?</summary>
+        <div class="faq-answer">
+          <p>Resultados aparecem em 30 dias. Primeiro mês: clientes descobrem o programa. Segundo mês: engajamento aumenta. Terceiro mês: vendas recorrentes explodem. Empresas típicas veem 200-400% mais compras recorrentes.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Posso personalizar tiers e benefícios?</summary>
+        <div class="faq-answer">
+          <p>Totalmente! Interface visual para criar tiers ilimitados com benefícios customizados: "Tier Diamante: 10.000+ pts, desconto 25%, consultoria gratuita, entrega express". Tudo integrado automaticamente ao WhatsApp.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>E se meus clientes não gostarem de gamificação?</summary>
+        <div class="faq-answer">
+          <p>Opt-in automático mas não intrusivo. Clientes podem participar ou não sem perder benefícios básicos. 95% dos clientes que experimentam continuam ativos. Aqueles que não gostam simplesmente não acumulam pontos extras.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Como evitar fraudes no sistema de pontos?</summary>
+        <div class="faq-answer">
+          <p>Sistema antifraude inteligente: limite de pontos por dia, validação de compras reais, análise de padrões suspeitos. Indicações validadas por primeira compra do indicado. 99.9% de transações legítimas.</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta">
+    <div class="cta-content">
+      <h2>Transforme Clientes em Fãs</h2>
+      <p>Programa de fidelidade que vende enquanto você dorme. Clientes que voltam sempre e indicam amigos.</p>
+      <a href="/criar-bot" class="btn-primary-large">Implementar Gamificação →</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero-section { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; padding: 8rem 5%; max-width: 1400px; margin: 0 auto; align-items: center; }
+  .hero-badge { background: rgba(0, 212, 255, 0.1); color: #00d4ff; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; font-weight: 600; display: inline-block; margin-bottom: 2rem; }
+  .hero-content h1 { font-size: 3rem; font-weight: 900; margin-bottom: 1.5rem; background: linear-gradient(90deg, #00d4ff, #00ff9d); -webkit-background-clip: text; color: transparent; }
+  .hero-content p { font-size: 1.2rem; color: #e2e8f0; margin-bottom: 2rem; line-height: 1.6; }
+  .hero-features { display: flex; gap: 1rem; margin-bottom: 3rem; flex-wrap: wrap; }
+  .hero-features span { background: rgba(0, 255, 157, 0.1); color: #00ff9d; padding: 0.5rem 1rem; border-radius: 15px; font-size: 0.9rem; font-weight: 600; }
+  .hero-ctas { display: flex; gap: 1.5rem; }
+
+  .loyalty-program { display: flex; flex-direction: column; gap: 1rem; }
+  .tier { background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 1.5rem; transition: 0.3s; }
+  .tier.active { border-color: #00d4ff; box-shadow: 0 0 20px rgba(0, 212, 255, 0.3); }
+  .tier-name { font-size: 1.2rem; font-weight: 800; color: #00d4ff; margin-bottom: 0.5rem; }
+  .tier-points { color: #94a3b8; font-size: 0.9rem; margin-bottom: 1rem; }
+  .tier-benefits { display: flex; flex-direction: column; gap: 0.5rem; }
+  .tier-benefits span { color: #e2e8f0; font-size: 0.85rem; }
+
+  .gamification-features { padding: 8rem 5%; background: rgba(15, 23, 42, 0.5); }
+  .features-showcase { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-top: 4rem; }
+  .feature-block { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 3rem; text-align: center; }
+  .feature-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .feature-block h3 { color: white; font-size: 1.4rem; margin-bottom: 1rem; }
+  .feature-block p { color: #e2e8f0; line-height: 1.6; margin-bottom: 2rem; }
+  .feature-stats { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem; }
+  .stat { font-size: 2rem; font-weight: 900; color: #00ff9d; }
+  .stat-label { color: #94a3b8; font-size: 0.9rem; }
+
+  .gamification-workflow { padding: 8rem 5%; max-width: 1400px; margin: 0 auto; }
+  .journey-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-top: 4rem; }
+  .journey-step { text-align: center; background: rgba(15, 23, 42, 0.6); border-radius: 20px; padding: 2rem; position: relative; }
+  .step-number { font-size: 2rem; font-weight: 900; color: #00d4ff; margin-bottom: 1rem; }
+  .journey-step h3 { color: white; margin-bottom: 1rem; }
+  .journey-step p { color: #e2e8f0; line-height: 1.6; }
+
+  .gamification-analytics { padding: 8rem 5%; background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1)); }
+  .analytics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; max-width: 1000px; margin: 0 auto; }
+  .analytic-card { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 2rem; text-align: center; }
+  .analytic-icon { font-size: 2rem; margin-bottom: 1rem; }
+  .analytic-card h4 { color: white; margin-bottom: 1rem; }
+  .analytic-card p { color: #e2e8f0; line-height: 1.6; }
+
+  .use-cases-gamification { padding: 8rem 5%; background: rgba(15, 23, 42, 0.5); }
+  .cases-slider { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-top: 4rem; }
+  .case-study { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 2.5rem; }
+  .case-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; }
+  .case-header h3 { color: white; margin: 0; }
+  .case-results { display: flex; flex-direction: column; gap: 0.5rem; }
+  .case-results span { background: rgba(0, 255, 157, 0.1); color: #00ff9d; padding: 0.3rem 0.8rem; border-radius: 10px; font-size: 0.8rem; font-weight: 600; }
+  .case-study p { color: #e2e8f0; line-height: 1.6; }
+
+  .pricing-section { padding: 8rem 5%; max-width: 1200px; margin: 0 auto; }
+  .pricing-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 4rem; }
+  .pricing-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 3rem; text-align: center; position: relative; }
+  .pricing-card.featured { border-color: #00d4ff; box-shadow: 0 0 30px rgba(0, 212, 255, 0.2); }
+  .pricing-badge { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #00d4ff; color: black; padding: 0.5rem 1rem; border-radius: 15px; font-weight: 800; font-size: 0.8rem; }
+  .pricing-header h3 { color: white; font-size: 1.5rem; margin-bottom: 1rem; }
+  .price { font-size: 3rem; font-weight: 900; color: #00ff9d; }
+  .price span { font-size: 1rem; color: #94a3b8; }
+  .pricing-features { list-style: none; text-align: left; margin: 2rem 0; }
+  .pricing-features li { color: #e2e8f0; margin-bottom: 0.8rem; }
+  .pricing-cta { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1rem 2rem; border-radius: 12px; font-weight: 800; text-decoration: none; display: inline-block; margin-top: 2rem; }
+
+  .faq-section { padding: 8rem 5%; max-width: 800px; margin: 0 auto; }
+  .faq-list { margin-top: 4rem; }
+  .faq-item { border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; margin-bottom: 1rem; overflow: hidden; }
+  .faq-item summary { padding: 1.5rem; background: rgba(15, 23, 42, 0.6); color: white; font-weight: 600; cursor: pointer; }
+  .faq-item summary:hover { background: rgba(15, 23, 42, 0.8); }
+  .faq-answer { padding: 0 1.5rem 1.5rem; color: #e2e8f0; line-height: 1.6; }
+
+  .final-cta { padding: 8rem 5%; background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1)); text-align: center; }
+  .cta-content h2 { font-size: 3rem; font-weight: 900; margin-bottom: 1.5rem; background: linear-gradient(90deg, #00d4ff, #00ff9d); -webkit-background-clip: text; color: transparent; }
+  .cta-content p { font-size: 1.2rem; color: #e2e8f0; margin-bottom: 3rem; }
+  .btn-primary { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1rem 2rem; border-radius: 12px; font-weight: 800; text-decoration: none; transition: 0.3s; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3); }
+  .btn-secondary { border: 1px solid rgba(255,255,255,0.3); color: white; padding: 1rem 2rem; border-radius: 12px; font-weight: 600; text-decoration: none; transition: 0.3s; }
+  .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+  .btn-primary-large { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1.5rem 3rem; border-radius: 15px; font-weight: 900; font-size: 1.2rem; text-decoration: none; transition: 0.3s; }
+  .btn-primary-large:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(0, 212, 255, 0.4); }
+
+  .section-header { text-align: center; margin-bottom: 4rem; }
+  .section-header h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; background: linear-gradient(90deg, #00d4ff, #00ff9d); -webkit-background-clip: text; color: transparent; }
+  .section-header p { color: #e2e8f0; font-size: 1.1rem; }
+
+  @media (max-width: 900px) {
+    .hero-section { grid-template-columns: 1fr; text-align: center; }
+    .loyalty-program { flex-direction: row; overflow-x: auto; }
+    .tier { min-width: 250px; }
+  }
+</style>

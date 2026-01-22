@@ -1,0 +1,119 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "O Custo Oculto do Atendimento 100% Humano: Eficiência vs. Tradição 2026",
+      "description": "Descubra por que depender apenas de humanos no atendimento pode estar drenando o lucro da sua empresa. Um comparativo de custos entre equipes humanas e IA.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-21",
+      "image": "/images/blog/custo-humano-vs-ia.png",
+      "articleSection": "Eficiência Operacional",
+      "keywords": "custo atendimento humano, roi ia atendimento, inteligência artificial suporte, headcount vs automação, eficiência suporte"
+    }
+  ]
+};
+---
+
+<Layout title="Custo Atendimento Humano vs IA | GetNexo">
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta animate-fade-in">Negócios • Jan 2026</div>
+      <h1 class="animate-slide-up">O Custo Oculto:<br/><span class="text-primary">Atendimento Humano vs. IA</span></h1>
+      <p class="subtitle animate-fade-in delay-200">Em 2026, manter uma operação 100% humana não é só tradicional, é caro e ineficiente.</p>
+      
+      <div class="premium-hero-card glass-panel animate-fade-in">
+        <div class="visual-glow"></div>
+        <div class="visual-content">
+          <span class="visual-icon">💰</span>
+          <h2 class="visual-title">Custo: Humano vs IA</h2>
+          <div class="visual-stats">
+            <div class="stat"><span>-70%</span> custo operacional</div>
+            <div class="stat"><span>ZERO</span> escala humana</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="post-content">
+      <section id="headcount">
+        <h2>💸 O Mito da Humanização a Qualquer Custo</h2>
+        <p>Muitas empresas temem que a automação afaste o cliente. Mas a realidade em 2026 é inversa: o cliente prefere <strong>resolução imediata por IA</strong> do que esperar 20 minutos por um humano que não tem as respostas. O custo de um atendente humano envolve salários, encargos, treinamento e, principalmente, a limitação de escala.</p>
+        
+        <div class="glass-panel mt-8">
+          <p><strong>Cálculo Real:</strong> Um atendente humano gerencia no máximo 3 janelas simultâneas com qualidade. A IA da GetNexo gerencia 3.000 com o mesmo tempo de resposta.</p>
+        </div>
+      </section>
+
+      <section id="comparativo-custos">
+        <h2>📊 Comparativo de Eficiência</h2>
+        <p>Veja onde estão os vazamentos financeiros da sua operação atual:</p>
+        
+        <div class="stack-grid">
+          <div class="stack-card glass-panel blur">
+            <h4>Tempo de Ociosidade</h4>
+            <p>Humanos têm picos e vales. Você paga pelo tempo parado. A IA só custa quando é utilizada.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Treinamento e Turnover</h4>
+            <p>O custo de substituir um atendente é alto. A IA retém 100% do conhecimento da sua empresa para sempre.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Erros e Retrabalho</h4>
+            <p>Fadiga humana gera erros. A IA mantém a precisão técnica 24 horas por dia, 7 dias por semana.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="modelo-hibrido">
+        <h2>🤝 O Modelo Híbrido: O Melhor dos Dois Mundos</h2>
+        <p>O objetivo não é demitir sua equipe, mas sim <strong>empoderá-la</strong>. Ao deixar os 80% de dúvidas repetitivas com a IA, seus humanos podem focar em negociações complexas e atendimento emocional, onde o toque humano realmente agrega valor e gera lucro.</p>
+      </section>
+
+      <div class="final-cta animate-scale-up">
+        <h3>Sua empresa está pronta para a eficiência?</h3>
+        <p>Analise seus dados de atendimento com nossos especialistas.</p>
+        <div class="cta-buttons mt-8">
+          <a href="/dashboard-analytics" class="btn-primary">Ver Analytics Enterprise</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+</Layout>
+
+<style>
+  :root {
+    --primary: #94a3b8;
+    --accent: #0f172a;
+    --glass: rgba(15, 23, 42, 0.7);
+    --glass-border: rgba(148, 163, 184, 0.1);
+  }
+
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  .meta { color: var(--primary); font-size: 0.8rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem; display: inline-block; padding: 0.5rem 1rem; background: rgba(148, 163, 184, 0.05); border: 1px solid var(--glass-border); border-radius: 50px; }
+  h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; color: white; }
+  .text-primary { background: linear-gradient(90deg, #f1f5f9, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .subtitle { font-size: 1.25rem; color: #94a3b8; max-width: 700px; margin: 0 auto; line-height: 1.6; }
+  .placeholder-image { width: 100%; border-radius: 24px; margin-top: 3rem; height: 500px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1e293b, #020617); color: var(--primary); font-weight: 800; border: 1px dashed var(--primary); }
+  .post-content { color: #cbd5e1; line-height: 1.8; font-size: 1.15rem; }
+  h2 { font-size: 2.2rem; color: white; margin: 6rem 0 2rem; font-weight: 800; }
+  .glass-panel { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 2.5rem; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+  .stack-card { background: var(--glass); border: 1px solid var(--glass-border); padding: 2rem; border-radius: 20px; text-align: left; }
+  .stack-card h4 { color: var(--primary); margin-bottom: 1rem; font-size: 1.3rem; }
+  .final-cta { background: linear-gradient(135deg, rgba(148, 163, 184, 0.1), rgba(15, 23, 42, 0.1)); border: 1px solid var(--primary); padding: 5rem 2rem; text-align: center; border-radius: 32px; margin-top: 8rem; }
+  .btn-primary { background: white; color: black; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; font-weight: 800; display: inline-block; transition: 0.3s; }
+  .btn-primary:hover { background: var(--primary); color: white; transform: translateY(-3px); box-shadow: 0 15px 30px rgba(148, 163, 184, 0.3); }
+
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade-in { animation: fade-in 1s ease forwards; }
+  .animate-slide-up { animation: slide-up 1s ease forwards; }
+</style>

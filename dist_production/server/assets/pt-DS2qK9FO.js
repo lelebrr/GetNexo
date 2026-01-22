@@ -1,0 +1,23 @@
+const menu = { "home": "Início", "features": "Recursos", "solutions": "Soluções", "pricing": "Preços", "integrations": "Integrações", "store": "Loja", "loyalty": "Fidelidade", "analytics": "Analytics", "how_it_works": "Como Funciona", "blog": "Blog", "contact": "Contato" };
+const nav = { "login": "Entrar", "start_free": "Testar Grátis" };
+const hero = { "title": "A Inteligência Artificial que escala seu atendimento", "subtitle": "Automatize conversas, gere leads e venda mais com o GetNexo. A plataforma completa de IA para o seu negócio.", "cta_primary": "Começar Agora", "cta_secondary": "Ver Demonstração" };
+const footer = { "description": "GetNexo - A próxima geração de atendimento com IA.", "rights": "© 2026 GetNexo. Todos os direitos reservados.", "platform": "Plataforma", "resources": "Recursos", "company": "Empresa" };
+const blog = { "title": "Blog GetNexo", "subtitle": "Aprenda a escalar sua operação com IA, automação avançada e tráfego de alta performance no WhatsApp.", "badge": "Estratégias & Insights", "read_more": "Ler Artigo", "newsletter_title": "Escala no WhatsApp Toda Semana", "newsletter_subtitle": "Receba scripts e táticas de automação direto no seu e-mail.", "newsletter_button": "Inscrever-me", "placeholder_email": "Seu melhor e-mail" };
+const features_giant = { "magic_replies": { "title": "Magic Replies: IA que Pensa e Vende", "description": "Nossa IA não apenas responde, ela entende o contexto, a intenção e o sentimento do cliente para fechar vendas de forma autônoma.", "f1": "Respostas Humanizadas 24/7", "f2": "Treinamento Personalizado", "f3": "Conversão em Escala" }, "loyalty": { "title": "Sistema de Fidelidade Nativo", "description": "Transforme clientes esporádicos em fãs apaixonados com pontos, recompensas e gamificação integrada ao WhatsApp.", "f1": "Pontuação Automática", "f2": "Resgate no Chat", "f3": "Retenção de Clientes" }, "analytics": { "title": "Power Analytics & BI em Tempo Real", "description": "Decisões baseadas em dados com dashboards avançados que mostram ROI, performance de canais e métricas de conversão instantâneas.", "f1": "ROI de Campanhas", "f2": "Relatórios de Vendas", "f3": "Métricas Geográficas" }, "clustering": { "title": "Segmentação Inteligente (Clustering)", "description": "Agrupe seus clientes automaticamente por comportamento de compra e interesse, permitindo envios ultra-personalizados.", "f1": "IA de Comportamento", "f2": "Tags Automáticas", "f3": "Análise de Sentimento" }, "integrations": { "title": "Ecossistema de 100+ Integrações", "description": "Conecte o GetNexo com as ferramentas que você já usa: Google Sheets, Calendar, Slack, Webhooks e muito mais.", "f1": "Sincronização em Tempo Real", "f2": "Automação via n8n", "f3": "API Oficial e Robusta" } };
+const pt = {
+  menu,
+  nav,
+  hero,
+  footer,
+  blog,
+  features_giant
+};
+export {
+  blog,
+  pt as default,
+  features_giant,
+  footer,
+  hero,
+  menu,
+  nav
+};

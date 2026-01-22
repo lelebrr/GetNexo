@@ -1,0 +1,191 @@
+---
+// src/pages/admin/sentinel.astro
+// APENAS ADMIN MÁXIMO - AUTENTICAÇÃO OBRIGATÓRIA
+
+// Verificação de autenticação admin máxima
+const isAdminMaximo = Astro.request.headers.get('x-admin-token') === 'sentinel-admin-max-2026';
+if (!isAdminMaximo) {
+  return Astro.redirect('/admin/login?error=acesso-negado');
+}
+
+// Dados simulados – na real puxa de /api/sentinel-status (Node backend)
+
+const dados = {
+  uptime: "14 dias 8h",
+  ciclos: 1432,
+  cpu: 72,
+  ram: 4.1,
+  tokens: 22500,
+  postsHoje: 6,
+  backlinks: 523,
+  reels: 9,
+  rankMedio: { pt: 3.2, es: 7.1, fr: 5.4, en: 6.8 },
+  keywordsTop: [
+    { palavra: "automação whatsapp", pos: 2, var: +1, ctr: 8.1 },
+    { palavra: "chatbot loja", pos: 3, var: -1, ctr: 5.6 },
+    { palavra: "pix whatsapp", pos: 1, var: 0, ctr: 12.3 }
+  ],
+  outreach: [
+    { site: "blogtech.com.br", status: "Enviado", tempo: "3h" },
+    { site: "ecommercetips.com", status: "Aceito", tempo: "0" }
+  ],
+  conteudo: [
+    { id: "0123", titulo: "O chatbot que vende sozinho", idioma: "pt", status: "Pronto" },
+    { id: "0124", titulo: "El chatbot que cierra ventas", idioma: "es", status: "Traduzindo" }
+  ],
+  social: { reels: 9, views: 3800, engaj: 14.2 },
+  velocidade: { pt: 1.1, es: 1.6, fr: 2.0, en: 1.4 },
+  rebuilds: [
+    { hora: "14:22", motivo: "LCP > 2s FR", tempo: "45s" }
+  ],
+  local: { perfis: 20, reviews: 74 },
+  trend: { trend: "PIX IA", origem: "TikTok", tempo: "23min" },
+  ab: { a: "Chatbot que vende sozinho", ctrA: 8.3, b: "Automatize vendas agora", ctrB: 2.7 },
+  alerta: [
+    { hora: "17:45", msg: "Mercado subiu 1.9% em 'chatbot loja' → post gerado em 7min" },
+    { hora: "16:33", msg: "Backlink aceito – +1 DR 45" }
+  ],
+  repair: [
+    { evento: "404 detectado", correcao: "redirect 301", tempo: "3s" }
+  ],
+  recursos: { cpu: 72, ram: 4.1, disco: 2.3, rede: 1.2 }
+};
+---
+
+<div class="min-h-screen bg-void-black text-white p-8">
+  <h1 class="text-4xl font-jetbrains text-neon-blue mb-8">Sentinel v8 – SEO War Machine</h1>
+
+  {/* Visão Geral */}
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+    <div class="bg-gray-900 border border-cyan-500 rounded p-6">
+      <h2 class="text-cyan-400 mb-2">Uptime & Ciclos</h2>
+      <p class="text-3xl text-gold">{dados.uptime}</p>
+      <p class="text-sm text-gray-400">Ciclos: {dados.ciclos}</p>
+    </div>
+    <div class="bg-gray-900 border border-cyan-500 rounded p-6">
+      <h2 class="text-cyan-400 mb-2">Recursos</h2>
+      <p class="text-2xl">CPU {dados.recursos.cpu}% | RAM {dados.recursos.ram} GB</p>
+      <p class="text-sm">Disco {dados.recursos.disco} GB | Rede {dados.recursos.rede} Mb/s</p>
+    </div>
+    <div class="bg-gray-900 border border-cyan-500 rounded p-6">
+      <h2 class="text-cyan-400 mb-2">Tokens IA</h2>
+      <p class="text-3xl text-gold">{dados.tokens.toLocaleString()}</p>
+      <p class="text-sm text-gray-400">Economia estimada: R$ 2.430</p>
+    </div>
+  </div>
+
+  {/* Rank Tracker */}
+  <section class="mb-12">
+    <h2 class="text-2xl text-neon-blue mb-4">Rank Tracker – 300 Keywords</h2>
+    <div class="bg-gray-900 border border-cyan-500 rounded p-6">
+      <canvas id="rankChart"></canvas>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script define:vars={{ rankData: [dados.rankMedio.pt, dados.rankMedio.es, dados.rankMedio.fr, dados.rankMedio.en] }}>
+        new Chart(document.getElementById('rankChart'), {
+          type: 'radar',
+          data: {
+            labels: ['PT', 'ES', 'FR', 'EN'],
+            datasets: [{
+              label: 'Posição Média',
+              data: rankData,
+              backgroundColor: 'rgba(0, 247, 255, 0.2)',
+              borderColor: '#00f7ff'
+            }]
+          }
+        });
+      </script>
+    </div>
+  </section>
+
+  {/* Top Keywords */}
+  <section class="mb-12">
+    <h2 class="text-2xl text-neon-blue mb-4">Top Keywords</h2>
+    <table class="w-full border border-cyan-500">
+      <thead class="bg-gray-900">
+        <tr><th>Palavra</th><th>Pos</th><th>Var</th><th>CTR</th></tr>
+      </thead>
+      <tbody>
+        {dados.keywordsTop.map((k) => (
+          <tr class="border-b border-cyan-800">
+            <td>{k.palavra}</td>
+            <td class="text-gold">{k.pos}</td>
+            <td class={k.var > 0 ? 'text-green-400' : 'text-red-400'}>{k.var > 0 ? '+' : ''}{k.var}</td>
+            <td>{k.ctr}%</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </section>
+
+  {/* Backlink & Outreach */}
+  <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+    <div class="bg-gray-900 border border-cyan-500 rounded p-6">
+      <h2 class="text-cyan-400 mb-4">Backlinks</h2>
+      <p class="text-3xl text-gold">{dados.backlinks}</p>
+      <p>Pendentes: 1.200</p>
+    </div>
+    <div class="bg-gray-900 border border-cyan-500 rounded p-6">
+      <h2 class="text-cyan-400 mb-4">Outreach Ativo</h2>
+      <ul>
+        {dados.outreach.map((o) => (
+          <li>{o.site} – {o.status} ({o.tempo})</li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  {/* Conteúdo & Social */}
+  <section class="mb-12">
+    <h2 class="text-2xl text-neon-blue mb-4">Produção Hoje</h2>
+    <div class="grid grid-cols-3 gap-4">
+      <div class="bg-gray-900 border border-cyan-500 rounded p-4 text-center">
+        <p class="text-gold text-3xl">{dados.postsHoje}</p>
+        <p>Posts</p>
+      </div>
+      <div class="bg-gray-900 border border-cyan-500 rounded p-4 text-center">
+        <p class="text-gold text-3xl">{dados.reels}</p>
+        <p>Reels</p>
+      </div>
+      <div class="bg-gray-900 border border-cyan-500 rounded p-4 text-center">
+        <p class="text-gold text-3xl">{dados.social.views.toLocaleString()}</p>
+        <p>Views</p>
+      </div>
+    </div>
+  </section>
+
+  {/* Velocidade */}
+  <section class="mb-12">
+    <h2 class="text-2xl text-neon-blue mb-4">Velocidade (LCP)</h2>
+    <div class="grid grid-cols-4 gap-4">
+      {Object.entries(dados.velocidade).map(([lang, tempo]) => (
+        <div class="bg-gray-900 border border-cyan-500 rounded p-4 text-center">
+          <p class="text-sm">{lang.toUpperCase()}</p>
+          <p class="text-3xl text-gold">{tempo}s</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {/* Alerta de Guerra */}
+  <section class="mb-12">
+    <h2 class="text-2xl text-neon-blue mb-4">Alerta de Guerra (ao vivo)</h2>
+    <div class="bg-gray-900 border border-red-500 rounded p-6 max-h-96 overflow-y-auto">
+      <ul class="space-y-2">
+        {dados.alerta.map((a) => (
+          <li class="text-sm">[ {a.hora} ] {a.msg}</li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  {/* Controle */}
+  <div class="fixed bottom-8 right-8 space-x-4">
+    <button class="bg-red-600 hover:bg-red-700 px-6 py-3 rounded text-xl">🔴 PARAR TUDO</button>
+    <button class="bg-yellow-600 hover:bg-yellow-700 px-6 py-3 rounded text-xl">🟡 PAUSAR</button>
+    <button class="bg-green-600 hover:bg-green-700 px-6 py-3 rounded text-xl">🟢 FORÇAR CICLO</button>
+  </div>
+</div>
+
+<style>
+  .bg-void-black { background: #000; }
+</style>

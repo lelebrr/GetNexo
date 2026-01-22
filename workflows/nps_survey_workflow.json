@@ -1,0 +1,556 @@
+{
+    "name": "Pesquisa NPS Pós-Venda",
+    "nodes": [
+        {
+            "parameters": {
+                "path": "order-completed",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "name": "Order Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                240,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "database",
+                "operation": "insert",
+                "tableName": "nps_surveys",
+                "columns": "order_id,customer_email,customer_name,order_value,order_date,survey_status",
+                "valuesToInsert": "=order.id,=customer.email,=customer.name,=order.total,=NOW(),'scheduled'"
+            },
+            "name": "Save Survey Data",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                460,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "postgres_credentials",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "amount": 24,
+                "unit": "hours"
+            },
+            "name": "Wait 24 Hours",
+            "type": "n8n-nodes-base.wait",
+            "typeVersion": 1,
+            "position": [
+                680,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "database",
+                "operation": "select",
+                "tableName": "nps_surveys",
+                "conditions": "survey_status = 'scheduled' AND order_date < NOW() - INTERVAL '24 hours'",
+                "limit": 50
+            },
+            "name": "Get Pending Surveys",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                900,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "postgres_credentials",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "functionCode": "const surveyLink = `https://getnexo.com.br/nps-survey?token=${$node[\"Get Pending Surveys\"].json[\"order_id\"]}_${Date.now()}`;\n\nconst emailHtml = `\n<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <title>Sua Opinião é Importante</title>\n</head>\n<body style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;\">\n  <div style=\"text-align: center; margin-bottom: 30px;\">\n    <img src=\"https://getnexo.com.br/logo.png\" alt=\"GetNexo\" style=\"max-width: 200px;\">\n  </div>\n  \n  <h1 style=\"color: #333; text-align: center;\">Olá ${$node[\"Get Pending Surveys\"].json[\"customer_name\"]}! 👋</h1>\n  \n  <p style=\"font-size: 16px; line-height: 1.6; color: #666;\">\n    Esperamos que tenha ficado satisfeito com sua compra recente em nossa loja!\n  </p>\n  \n  <p style=\"font-size: 16px; line-height: 1.6; color: #666;\">\n    Sua opinião é muito importante para nós. Por favor, responda esta rápida pesquisa de satisfação:\n  </p>\n  \n  <div style=\"text-align: center; margin: 40px 0;\">\n    <a href=\"${surveyLink}\" style=\"background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.2);\">Responder Pesquisa Agora</a>\n  </div>\n  \n  <p style=\"font-size: 14px; color: #888; text-align: center;\">\n    ⏰ A pesquisa leva menos de 1 minuto para responder\n  </p>\n  \n  <hr style=\"border: none; border-top: 1px solid #eee; margin: 30px 0;\">\n  \n  <p style=\"font-size: 16px; line-height: 1.6; color: #666;\">\n    <strong>Pedido #${$node[\"Get Pending Surveys\"].json[\"order_id\"]}</strong><br>\n    Valor: R$ ${$node[\"Get Pending Surveys\"].json[\"order_value\"].toFixed(2)}\n  </p>\n  \n  <p style=\"font-size: 14px; color: #666;\">\n    Atenciosamente,<br>\n    <strong>Equipe GetNexo</strong>\n  </p>\n  \n  <div style=\"text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;\">\n    <p style=\"font-size: 12px; color: #999;\">\n      Esta é uma mensagem automática. Para falar conosco, responda este email ou visite nosso site.\n    </p>\n  </div>\n</body>\n</html>`;\n\nconst emailText = `Olá ${$node[\"Get Pending Surveys\"].json[\"customer_name\"]}!\n\nEsperamos que tenha ficado satisfeito com sua compra recente!\n\nSua opinião é muito importante. Responda nossa rápida pesquisa:\n${surveyLink}\n\nPedido: #${$node[\"Get Pending Surveys\"].json[\"order_id\"]} - R$ ${$node[\"Get Pending Surveys\"].json[\"order_value\"].toFixed(2)}\n\nAtenciosamente,\nEquipe GetNexo`;\n\nreturn {\n  surveyLink,\n  emailHtml,\n  emailText\n};"
+            },
+            "name": "Generate Survey Email",
+            "type": "n8n-nodes-base.function",
+            "typeVersion": 1,
+            "position": [
+                1120,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "fromEmail": "pesquisa@getnexo.com.br",
+                "toEmail": "={{ $json.customer_email }}",
+                "subject": "Sua Opinião é Importante! ⭐",
+                "html": "={{ $json.emailHtml }}",
+                "text": "={{ $json.emailText }}",
+                "options": {
+                    "priority": "normal"
+                }
+            },
+            "name": "Send Survey Email",
+            "type": "n8n-nodes-base.emailSend",
+            "typeVersion": 1,
+            "position": [
+                1340,
+                300
+            ],
+            "credentials": {
+                "smtp": {
+                    "id": "smtp_credentials",
+                    "name": "SMTP account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "resource": "database",
+                "operation": "update",
+                "tableName": "nps_surveys",
+                "updateFields": "survey_status,survey_sent_at",
+                "updateValues": "'sent',NOW()",
+                "conditions": "order_id = '{{ $json.order_id }}'"
+            },
+            "name": "Update Survey Status",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                1560,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "postgres_credentials",
+                    "name": "SMTP account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "path": "nps-response",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "name": "Survey Response Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                1780,
+                100
+            ]
+        },
+        {
+            "parameters": {
+                "functionCode": "// Parse survey response\nconst score = parseInt($node[\"Survey Response Webhook\"].json[\"score\"]);\nconst feedback = $node[\"Survey Response Webhook\"].json[\"feedback\"] || '';\nconst token = $node[\"Survey Response Webhook\"].json[\"token\"];\n\n// Extract order_id from token\nconst orderId = token.split('_')[0];\n\n// Calculate NPS category\nlet npsCategory = 'neutro';\nif (score >= 9) npsCategory = 'promotor';\nelse if (score <= 6) npsCategory = 'detrator';\n\n// Generate insights\nconst insights = {\n  urgency: score <= 6 ? 'high' : score >= 9 ? 'low' : 'medium',\n  sentiment: score <= 6 ? 'negative' : score >= 9 ? 'positive' : 'neutral',\n  action_needed: score <= 6,\n  referral_potential: score >= 9\n};\n\nreturn {\n  orderId,\n  score,\n  feedback,\n  npsCategory,\n  insights\n};"
+            },
+            "name": "Process Survey Response",
+            "type": "n8n-nodes-base.function",
+            "typeVersion": 1,
+            "position": [
+                2000,
+                100
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "database",
+                "operation": "update",
+                "tableName": "nps_surveys",
+                "updateFields": "survey_status,nps_score,nps_category,feedback,response_date",
+                "updateValues": "'completed',{{$json.score}},'{{$json.npsCategory}}','{{$json.feedback}}',NOW()",
+                "conditions": "order_id = '{{ $json.orderId }}'"
+            },
+            "name": "Save Survey Response",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                2220,
+                100
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "postgres_credentials",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "value": "={{ $json.npsCategory }}",
+                "rules": {
+                    "rules": [
+                        {
+                            "conditions": [
+                                {
+                                    "id": "category",
+                                    "value": "detrator"
+                                }
+                            ],
+                            "output": "handle_detrator"
+                        },
+                        {
+                            "conditions": [
+                                {
+                                    "id": "category",
+                                    "value": "promotor"
+                                }
+                            ],
+                            "output": "handle_promotor"
+                        },
+                        {
+                            "conditions": [
+                                {
+                                    "id": "category",
+                                    "value": "neutro"
+                                }
+                            ],
+                            "output": "handle_neutro"
+                        }
+                    ]
+                }
+            },
+            "name": "Route by NPS Category",
+            "type": "n8n-nodes-base.switch",
+            "typeVersion": 1,
+            "position": [
+                2440,
+                100
+            ]
+        },
+        {
+            "parameters": {
+                "functionCode": "// Get customer data from database\nconst orderId = $node[\"Process Survey Response\"].json[\"orderId\"];\n\n// This would typically query the database for customer details\n// For now, we'll use placeholder data\nconst customerData = {\n  name: \"Cliente\",\n  email: \"cliente@email.com\",\n  phone: \"+5511999999999\",\n  order_value: 299.99,\n  last_purchase: \"2024-01-15\"\n};\n\nreturn customerData;"
+            },
+            "name": "Get Customer Data",
+            "type": "n8n-nodes-base.function",
+            "typeVersion": 1,
+            "position": [
+                2660,
+                0
+            ]
+        },
+        {
+            "parameters": {
+                "fromEmail": "suporte@getnexo.com.br",
+                "toEmail": "={{ $json.email }}",
+                "subject": "Sentimos Muito - Como Podemos Melhorar? 💙",
+                "text": "Olá {{ $json.name }},\n\nRecebemos seu feedback (NPS: {{ $node[\"Process Survey Response\"].json[\"score\"] }}/10) e lamentamos que não tenha ficado completamente satisfeito.\n\nSeu comentário: \"{{ $node[\"Process Survey Response\"].json[\"feedback\"] }}\"\n\nQueremos melhorar! Podemos conversar sobre sua experiência?\n\n📞 Ligue: {{ $json.phone }}\n💬 WhatsApp: https://wa.me/{{ $json.phone.replace('+', '') }}\n📧 Email: suporte@getnexo.com.br\n\nSua opinião nos ajuda a melhorar!\n\nAtenciosamente,\nEquipe GetNexo",
+                "html": "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'><h2 style='color: #dc3545;'>Sentimos Muito 😔</h2><p>Olá <strong>{{ $json.name }}</strong>,</p><p>Recebemos seu feedback (<strong>NPS: {{ $node[\"Process Survey Response\"].json[\"score\"] }}/10</strong>) e lamentamos que não tenha ficado completamente satisfeito.</p><blockquote style='border-left: 4px solid #dc3545; padding-left: 16px; margin: 20px 0; font-style: italic;'>\"{{ $node[\"Process Survey Response\"].json[\"feedback\"] }}\"</blockquote><p>Queremos melhorar! Podemos conversar sobre sua experiência?</p><div style='background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;'><p><strong>📞 Ligue:</strong> {{ $json.phone }}</p><p><strong>💬 WhatsApp:</strong> <a href='https://wa.me/{{ $json.phone.replace(\"+\", \"\") }}'>{{ $json.phone }}</a></p><p><strong>📧 Email:</strong> <a href='mailto:suporte@getnexo.com.br'>suporte@getnexo.com.br</a></p></div><p>Sua opinião nos ajuda a melhorar!</p><p>Atenciosamente,<br><strong>Equipe GetNexo</strong></p></div>"
+            },
+            "name": "Send Detrator Response",
+            "type": "n8n-nodes-base.emailSend",
+            "typeVersion": 1,
+            "position": [
+                2880,
+                0
+            ],
+            "credentials": {
+                "smtp": {
+                    "id": "smtp_credentials",
+                    "name": "SMTP account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "resource": "database",
+                "operation": "insert",
+                "tableName": "customer_support_tickets",
+                "columns": "customer_email,order_id,priority,issue_type,description,status",
+                "valuesToInsert": "'{{$json.email}}','{{$json.orderId}}','high','nps_detrator','Feedback NPS: {{$node[\"Process Survey Response\"].json[\"feedback\"]}}','open'"
+            },
+            "name": "Create Support Ticket",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                3100,
+                0
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "postgres_credentials",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "fromEmail": "agradecimento@getnexo.com.br",
+                "toEmail": "={{ $json.email }}",
+                "subject": "Obrigado por Sua Recomendação! 🌟",
+                "text": "Olá {{ $json.name }},\n\nRecebemos seu feedback (NPS: {{ $node[\"Process Survey Response\"].json[\"score\"] }}/10) e ficamos muito felizes!\n\nSeu comentário: \"{{ $node[\"Process Survey Response\"].json[\"feedback\"] }}\"\n\nQueremos agradecer por sua recomendação! 🎉\n\nComo forma de agradecimento, aqui está um cupom especial para você indicar um amigo:\n\n🎁 CUPOM: AMIGO{{ $json.orderId }}\n📉 Desconto: 20% OFF\n\nCompartilhe este link: https://getnexo.com.br?ref={{ $json.orderId }}\n\nAtenciosamente,\nEquipe GetNexo",
+                "html": "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'><div style='text-align: center; margin-bottom: 30px;'><h1 style='color: #28a745;'>Obrigado! 🎉</h1></div><p>Olá <strong>{{ $json.name }}</strong>,</p><p>Recebemos seu feedback (<strong>NPS: {{ $node[\"Process Survey Response\"].json[\"score\"] }}/10</strong>) e ficamos muito felizes! 😊</p><blockquote style='border-left: 4px solid #28a745; padding-left: 16px; margin: 20px 0; font-style: italic;'>\"{{ $node[\"Process Survey Response\"].json[\"feedback\"] }}\"</blockquote><p>Como forma de agradecimento, aqui está um cupom especial para você indicar um amigo:</p><div style='background: linear-gradient(135deg, #28a745, #20c997); color: white; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;'><h3>🎁 CUPOM: AMIGO{{ $json.orderId }}</h3><p>📉 <strong>20% OFF</strong> para seu amigo</p><p>Compartilhe: <a href='https://getnexo.com.br?ref={{ $json.orderId }}' style='color: white; text-decoration: underline;'>https://getnexo.com.br?ref={{ $json.orderId }}</a></p></div><p>Atenciosamente,<br><strong>Equipe GetNexo</strong></p></div>"
+            },
+            "name": "Send Promotor Thank You",
+            "type": "n8n-nodes-base.emailSend",
+            "typeVersion": 1,
+            "position": [
+                2880,
+                100
+            ],
+            "credentials": {
+                "smtp": {
+                    "id": "smtp_credentials",
+                    "name": "SMTP account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "resource": "database",
+                "operation": "insert",
+                "tableName": "referral_coupons",
+                "columns": "order_id,customer_email,coupon_code,discount_percent,expires_at,status",
+                "valuesToInsert": "'{{$json.orderId}}','{{$json.email}}','AMIGO{{$json.orderId}}',20,NOW() + INTERVAL '30 days','active'"
+            },
+            "name": "Generate Referral Coupon",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                3100,
+                100
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "postgres_credentials",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "fromEmail": "feedback@getnexo.com.br",
+                "toEmail": "={{ $json.email }}",
+                "subject": "Obrigado pelo Seu Feedback! 📝",
+                "text": "Olá {{ $json.name }},\n\nRecebemos seu feedback (NPS: {{ $node[\"Process Survey Response\"].json[\"score\"] }}/10) e agradecemos por compartilhar sua opinião!\n\nSeu comentário: \"{{ $node[\"Process Survey Response\"].json[\"feedback\"] }}\"\n\nValorizamos cada feedback pois nos ajuda a melhorar continuamente.\n\nSe quiser compartilhar mais detalhes ou sugestões, estamos aqui!\n\nAtenciosamente,\nEquipe GetNexo",
+                "html": "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'><h2 style='color: #17a2b8; text-align: center;'>Obrigado pelo Feedback! 📝</h2><p>Olá <strong>{{ $json.name }}</strong>,</p><p>Recebemos sua avaliação (<strong>NPS: {{ $node[\"Process Survey Response\"].json[\"score\"] }}/10</strong>) e agradecemos por compartilhar sua opinião!</p><blockquote style='border-left: 4px solid #17a2b8; padding-left: 16px; margin: 20px 0; font-style: italic;'>\"{{ $node[\"Process Survey Response\"].json[\"feedback\"] }}\"</blockquote><p>Valorizamos cada feedback pois nos ajuda a melhorar continuamente.</p><p>Se quiser compartilhar mais detalhes ou sugestões, estamos aqui!</p><p>Atenciosamente,<br><strong>Equipe GetNexo</strong></p></div>"
+            },
+            "name": "Send Neutral Thank You",
+            "type": "n8n-nodes-base.emailSend",
+            "typeVersion": 1,
+            "position": [
+                2880,
+                200
+            ],
+            "credentials": {
+                "smtp": {
+                    "id": "smtp_credentials",
+                    "name": "SMTP account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "resource": "analytics",
+                "operation": "track",
+                "event": "nps_response",
+                "properties": "order_id={{ $json.orderId }},nps_score={{ $json.score }},nps_category={{ $json.npsCategory }},feedback_length={{ $json.feedback.length }}"
+            },
+            "name": "Track NPS Analytics",
+            "type": "n8n-nodes-base.analytics",
+            "typeVersion": 1,
+            "position": [
+                3320,
+                100
+            ]
+        }
+    ],
+    "connections": {
+        "Order Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Save Survey Data",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Save Survey Data": {
+            "main": [
+                [
+                    {
+                        "node": "Wait 24 Hours",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Wait 24 Hours": {
+            "main": [
+                [
+                    {
+                        "node": "Get Pending Surveys",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Get Pending Surveys": {
+            "main": [
+                [
+                    {
+                        "node": "Generate Survey Email",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Generate Survey Email": {
+            "main": [
+                [
+                    {
+                        "node": "Send Survey Email",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Send Survey Email": {
+            "main": [
+                [
+                    {
+                        "node": "Update Survey Status",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Survey Response Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Process Survey Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Process Survey Response": {
+            "main": [
+                [
+                    {
+                        "node": "Save Survey Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Save Survey Response": {
+            "main": [
+                [
+                    {
+                        "node": "Route by NPS Category",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Route by NPS Category": {
+            "main": [
+                [
+                    {
+                        "node": "Get Customer Data",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Get Customer Data",
+                        "type": "main",
+                        "index": 1
+                    },
+                    {
+                        "node": "Get Customer Data",
+                        "type": "main",
+                        "index": 2
+                    }
+                ]
+            ]
+        },
+        "Get Customer Data": {
+            "main": [
+                [
+                    {
+                        "node": "Send Detrator Response",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Send Promotor Thank You",
+                        "type": "main",
+                        "index": 1
+                    },
+                    {
+                        "node": "Send Neutral Thank You",
+                        "type": "main",
+                        "index": 2
+                    }
+                ]
+            ]
+        },
+        "Send Detrator Response": {
+            "main": [
+                [
+                    {
+                        "node": "Create Support Ticket",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Send Promotor Thank You": {
+            "main": [
+                [
+                    {
+                        "node": "Generate Referral Coupon",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Generate Referral Coupon": {
+            "main": [
+                [
+                    {
+                        "node": "Track NPS Analytics",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Send Neutral Thank You": {
+            "main": [
+                [
+                    {
+                        "node": "Track NPS Analytics",
+                        "type": "main",
+                        "index": 1
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "executionOrder": "v1"
+    },
+    "staticData": null
+}

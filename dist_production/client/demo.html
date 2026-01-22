@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loja Exemplo (Cliente OmniNexo)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f3f4f6;
+        }
+
+        header {
+            background: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero {
+            background: #3b82f6;
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .products {
+            padding: 40px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .product {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Minha Loja Virtual</h1>
+        <p>Um site qualquer usando OmniNexo</p>
+    </header>
+
+    <div class="hero">
+        <h2>Ofertas de Verão</h2>
+        <p>Descontos de até 50%</p>
+    </div>
+
+    <div class="products">
+        <div class="product">
+            <h3>Tênis Esportivo</h3>
+            <p>R$ 299,90</p>
+            <button class="btn">Comprar</button>
+        </div>
+        <div class="product">
+            <h3>Camiseta Casual</h3>
+            <p>R$ 89,90</p>
+            <button class="btn">Comprar</button>
+        </div>
+        <div class="product">
+            <h3>Relógio Smart</h3>
+            <p>R$ 499,90</p>
+            <button class="btn">Comprar</button>
+        </div>
+    </div>
+
+    <!-- WIDGET DO OMNINEXO (Simulando a Instalação) -->
+    <!-- Na vida real, o domínio seria cdn.getnexo.com.br -->
+    <script src="/widget.js" data-bot="CLIENTE_DEMO_01" data-theme="neon"></script>
+
+</body>
+
+</html>

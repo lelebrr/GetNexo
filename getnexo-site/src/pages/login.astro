@@ -253,6 +253,60 @@ import ClientLayout from '../layouts/ClientLayout.astro';
             </button>
         </form>
 
+        <div style="text-align: center; margin-top: 1rem;">
+            <a href="#" id="forgot-password-link" style="color: #00d4ff; text-decoration: none; font-size: 0.9rem;">Esqueci a senha</a>
+        </div>
+
+        <!-- Forgot Password Modal -->
+        <div id="forgot-password-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1000; align-items: center; justify-content: center;">
+            <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 2rem; width: 100%; max-width: 400px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);">
+                <h3 style="color: #00d4ff; text-align: center; margin-bottom: 1rem;">Redefinir Senha</h3>
+                <p style="color: #94a3b8; text-align: center; margin-bottom: 1.5rem; font-size: 0.9rem;">Digite seu email para receber um link de redefinição</p>
+
+                <div id="forgot-error-message" class="error-message"></div>
+                <div id="forgot-success-message" class="success-message"></div>
+
+                <div class="form-group">
+                    <label for="forgot-email" style="color: #cbd5e1; font-weight: 600; font-size: 0.9rem;">Email</label>
+                    <input type="email" id="forgot-email" placeholder="seu@email.com" required style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: white; font-size: 1rem; transition: all 0.3s ease;">
+                </div>
+
+                <button id="send-reset-link-btn" style="width: 100%; padding: 0.75rem 1rem; background: linear-gradient(135deg, #00d4ff, #00ff9d); border: none; border-radius: 8px; color: black; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin-bottom: 1rem;">Enviar Link</button>
+
+                <button id="close-forgot-modal" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: #94a3b8; font-size: 1rem; cursor: pointer; transition: all 0.3s ease;">Cancelar</button>
+            </div>
+        </div>
+
+        <!-- Panel Selection Modal -->
+        <div id="panel-selection-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1000; align-items: center; justify-content: center;">
+            <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 2rem; width: 100%; max-width: 500px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);">
+                <h3 style="color: #00d4ff; text-align: center; margin-bottom: 1rem;">Selecione o Painel Administrativo</h3>
+                <p style="color: #94a3b8; text-align: center; margin-bottom: 2rem; font-size: 0.9rem;">Escolha qual painel você deseja acessar</p>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+                    <button id="select-admin-panel" class="panel-option" data-panel="admin" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 1rem; cursor: pointer; transition: all 0.3s ease; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🛡️</div>
+                        <div style="color: #00d4ff; font-weight: 600; font-size: 0.9rem;">Admin</div>
+                        <div style="color: #94a3b8; font-size: 0.8rem; margin-top: 0.25rem;">Sistema Completo</div>
+                    </button>
+
+                    <button id="select-reseller-panel" class="panel-option" data-panel="reseller" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 1rem; cursor: pointer; transition: all 0.3s ease; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏪</div>
+                        <div style="color: #00d4ff; font-weight: 600; font-size: 0.9rem;">Revendedor</div>
+                        <div style="color: #94a3b8; font-size: 0.8rem; margin-top: 0.25rem;">Gestão de Vendas</div>
+                    </button>
+
+                    <button id="select-client-panel" class="panel-option" data-panel="client" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem 1rem; cursor: pointer; transition: all 0.3s ease; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">👤</div>
+                        <div style="color: #00d4ff; font-weight: 600; font-size: 0.9rem;">Cliente</div>
+                        <div style="color: #94a3b8; font-size: 0.8rem; margin-top: 0.25rem;">Painel do Usuário</div>
+                    </button>
+                </div>
+
+                <button id="logout-btn" style="width: 100%; padding: 0.75rem 1rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px; color: #ef4444; font-size: 1rem; cursor: pointer; transition: all 0.3s ease;">Sair</button>
+            </div>
+        </div>
+
         <div class="divider">
             <span>Contas de Demonstração</span>
         </div>
@@ -260,9 +314,9 @@ import ClientLayout from '../layouts/ClientLayout.astro';
         <div class="demo-accounts">
             <h3>👤 Clique para preencher automaticamente:</h3>
 
-            <div class="demo-account" onclick="(function(){const demoAccounts={admin:{email:'admin@getnexo.local',password:'admin123'},reseller:{email:'revendedor@getnexo.com',password:'reseller123'},client:{email:'cliente@getnexo.com',password:'cliente123'}};const account=demoAccounts.admin;if(account){document.getElementById('email').value=account.email;document.getElementById('password').value=account.password;}})()">
+            <div class="demo-account" onclick="(function(){const demoAccounts={admin:{email:'admin@getnexo.com.br',password:'password123'},reseller:{email:'revendedor@getnexo.com',password:'reseller123'},client:{email:'cliente@getnexo.com',password:'cliente123'}};const account=demoAccounts.admin;if(account){document.getElementById('email').value=account.email;document.getElementById('password').value=account.password;}})()">
                 <div class="demo-label">Admin</div>
-                <div class="demo-creds">admin@getnexo.local</div>
+                <div class="demo-creds">admin@getnexo.com.br</div>
             </div>
 
             <div class="demo-account" onclick="(function(){const demoAccounts={admin:{email:'admin@getnexo.local',password:'admin123'},reseller:{email:'revendedor@getnexo.com',password:'reseller123'},client:{email:'cliente@getnexo.com',password:'cliente123'}};const account=demoAccounts.reseller;if(account){document.getElementById('email').value=account.email;document.getElementById('password').value=account.password;}})()">
@@ -281,7 +335,7 @@ import ClientLayout from '../layouts/ClientLayout.astro';
     <script is:inline src="/fillDemo.js"></script>
 
     <script>
-        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:8080' : '/api';
+        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:4322' : '';
 
         async function login(email, password) {
             try {
@@ -301,18 +355,30 @@ import ClientLayout from '../layouts/ClientLayout.astro';
                     localStorage.setItem('user', JSON.stringify(data.user));
 
                     // Show success message
-                    showMessage('success', 'Login realizado com sucesso! Redirecionando...');
+                    showMessage('success', 'Login realizado com sucesso!');
 
-                    // Redirect based on user type
-                    setTimeout(() => {
-                        if (data.user.email === 'lelebrr@gmail.com') {
-                            window.location.href = '/admin';
-                        } else if (data.user.email === 'revendedor@getnexo.com') {
-                            window.location.href = '/revenda/dash';
-                        } else {
-                            window.location.href = '/dashboard';
-                        }
-                    }, 1500);
+                    // Check if user is superadmin
+                    const userRole = data.user.role || data.user.type || 'client';
+                    const isSuperAdmin = userRole === 'superadmin' || data.user.email === 'lelebrr@gmail.com';
+
+                    if (isSuperAdmin) {
+                        // Show panel selection for superadmin
+                        setTimeout(() => {
+                            document.getElementById('panel-selection-modal').style.display = 'flex';
+                            setLoading(false);
+                        }, 1000);
+                    } else {
+                        // Normal redirect for regular users
+                        setTimeout(() => {
+                            if (userRole === 'admin') {
+                                window.location.href = '/admin';
+                            } else if (userRole === 'reseller' || userRole === 'partner' || data.user.email === 'revendedor@getnexo.com') {
+                                window.location.href = '/revenda/dash';
+                            } else {
+                                window.location.href = '/dashboard';
+                            }
+                        }, 1500);
+                    }
 
                     return true;
                 } else {
@@ -366,14 +432,23 @@ import ClientLayout from '../layouts/ClientLayout.astro';
                     headers: { 'Authorization': token }
                 }).then(response => {
                     if (response.ok) {
-                        // Token is valid, redirect to dashboard
+                        // Token is valid
                         const user = JSON.parse(localStorage.getItem('user') || '{}');
-                        if (user.email === 'lelebrr@gmail.com') {
-                            window.location.href = '/admin';
-                        } else if (user.email === 'revendedor@getnexo.com') {
-                            window.location.href = '/revenda/dash';
+                        const userRole = user.role || user.type || 'client';
+                        const isSuperAdmin = userRole === 'superadmin' || user.email === 'lelebrr@gmail.com';
+
+                        if (isSuperAdmin) {
+                            // Show panel selection for superadmin
+                            document.getElementById('panel-selection-modal').style.display = 'flex';
                         } else {
-                            window.location.href = '/dashboard';
+                            // Normal redirect for regular users
+                            if (userRole === 'admin') {
+                                window.location.href = '/admin';
+                            } else if (userRole === 'reseller' || userRole === 'partner' || user.email === 'revendedor@getnexo.com') {
+                                window.location.href = '/revenda/dash';
+                            } else {
+                                window.location.href = '/dashboard';
+                            }
                         }
                     }
                 }).catch(() => {
@@ -407,6 +482,115 @@ import ClientLayout from '../layouts/ClientLayout.astro';
                 showMessage('error', error.message || 'Erro ao fazer login. Verifique suas credenciais.');
                 setLoading(false);
             }
+        });
+
+        // Forgot password functionality
+        document.getElementById('forgot-password-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('forgot-password-modal').style.display = 'flex';
+            document.getElementById('forgot-email').focus();
+        });
+
+        document.getElementById('close-forgot-modal').addEventListener('click', () => {
+            document.getElementById('forgot-password-modal').style.display = 'none';
+            document.getElementById('forgot-email').value = '';
+            showForgotMessage('error', '');
+            showForgotMessage('success', '');
+        });
+
+        document.getElementById('send-reset-link-btn').addEventListener('click', async () => {
+            const email = document.getElementById('forgot-email').value;
+
+            if (!email) {
+                showForgotMessage('error', 'Digite seu email');
+                return;
+            }
+
+            // Set loading state
+            const btn = document.getElementById('send-reset-link-btn');
+            const originalText = btn.textContent;
+            btn.textContent = 'Enviando...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/forgot-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showForgotMessage('success', 'Link de redefinição enviado! Verifique seu email.');
+                    setTimeout(() => {
+                        document.getElementById('forgot-password-modal').style.display = 'none';
+                        document.getElementById('forgot-email').value = '';
+                        showForgotMessage('success', '');
+                    }, 3000);
+                } else {
+                    throw new Error(data.error || 'Erro ao enviar link');
+                }
+            } catch (error) {
+                showForgotMessage('error', error.message || 'Erro ao enviar link de redefinição');
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        function showForgotMessage(type, message) {
+            const errorDiv = document.getElementById('forgot-error-message');
+            const successDiv = document.getElementById('forgot-success-message');
+
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+
+            if (type === 'error') {
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+            } else if (type === 'success') {
+                successDiv.textContent = message;
+                successDiv.style.display = 'block';
+            }
+        }
+
+        // Panel selection functionality
+        document.getElementById('select-admin-panel').addEventListener('click', () => {
+            window.location.href = '/admin';
+        });
+
+        document.getElementById('select-reseller-panel').addEventListener('click', () => {
+            window.location.href = '/revenda/dash';
+        });
+
+        document.getElementById('select-client-panel').addEventListener('click', () => {
+            window.location.href = '/dashboard';
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            document.getElementById('panel-selection-modal').style.display = 'none';
+            // Reset form
+            document.getElementById('login-form').reset();
+            showMessage('success', '');
+            showMessage('error', '');
+        });
+
+        // Add hover effects for panel options
+        document.querySelectorAll('.panel-option').forEach(option => {
+            option.addEventListener('mouseenter', () => {
+                option.style.transform = 'translateY(-5px)';
+                option.style.boxShadow = '0 10px 25px rgba(0, 212, 255, 0.2)';
+            });
+
+            option.addEventListener('mouseleave', () => {
+                option.style.transform = 'translateY(0)';
+                option.style.boxShadow = 'none';
+            });
         });
     </script>
 </body>

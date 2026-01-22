@@ -1,0 +1,146 @@
+import { v as verifyToken } from "../../assets/auth-bbOfVkaL.js";
+import { renderers } from "../../renderers.mjs";
+const mockData = {
+  users: [
+    { id: 1, name: "João Silva", email: "joao@example.com", age: 30, city: "São Paulo", signupDate: "2024-01-15" },
+    { id: 2, name: "Maria Santos", email: "maria@example.com", age: 25, city: "Rio de Janeiro", signupDate: "2024-02-20" },
+    { id: 3, name: "Pedro Oliveira", email: "pedro@example.com", age: 35, city: "Belo Horizonte", signupDate: "2024-03-10" }
+  ],
+  analytics: [
+    { date: "2024-01-01", pageViews: 1200, uniqueVisitors: 800, bounceRate: 0.45 },
+    { date: "2024-01-02", pageViews: 1350, uniqueVisitors: 850, bounceRate: 0.42 },
+    { date: "2024-01-03", pageViews: 1100, uniqueVisitors: 720, bounceRate: 0.48 }
+  ],
+  files: [
+    { id: 1, name: "documento.pdf", size: 2048576, uploadDate: "2024-01-15", type: "pdf" },
+    { id: 2, name: "imagem.jpg", size: 1048576, uploadDate: "2024-01-20", type: "image" },
+    { id: 3, name: "video.mp4", size: 5242880, uploadDate: "2024-01-25", type: "video" }
+  ]
+};
+function arrayToCSV(data) {
+  if (data.length === 0) return "";
+  const headers = Object.keys(data[0]);
+  const csvRows = [];
+  csvRows.push(headers.join(","));
+  data.forEach((row) => {
+    const values = headers.map((header) => {
+      const value = row[header];
+      if (typeof value === "string" && (value.includes(",") || value.includes('"'))) {
+        return `"${value.replace(/"/g, '""')}"`;
+      }
+      return value;
+    });
+    csvRows.push(values.join(","));
+  });
+  return csvRows.join("\n");
+}
+function generateHTMLReport(data, type) {
+  const title = type === "users" ? "Relatório de Usuários" : type === "analytics" ? "Relatório de Analytics" : "Relatório de Arquivos";
+  let tableHTML = '<table border="1" style="border-collapse: collapse; width: 100%;">';
+  tableHTML += "<thead><tr>";
+  if (data.length > 0) {
+    Object.keys(data[0]).forEach((header) => {
+      tableHTML += `<th style="padding: 8px; background-color: #f2f2f2;">${header}</th>`;
+    });
+    tableHTML += "</tr></thead><tbody>";
+    data.forEach((row) => {
+      tableHTML += "<tr>";
+      Object.values(row).forEach((value) => {
+        tableHTML += `<td style="padding: 8px;">${value}</td>`;
+      });
+      tableHTML += "</tr>";
+    });
+  }
+  tableHTML += "</tbody></table>";
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>${title}</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            h1 { color: #333; }
+            table { margin-top: 20px; }
+            th, td { padding: 8px; text-align: left; }
+            th { background-color: #f2f2f2; }
+        </style>
+    </head>
+    <body>
+        <h1>${title}</h1>
+        <p>Gerado em: ${(/* @__PURE__ */ new Date()).toLocaleString("pt-BR")}</p>
+        ${tableHTML}
+    </body>
+    </html>
+  `;
+}
+const GET = async ({ request, url }) => {
+  const authHeader = request.headers.get("Authorization");
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return new Response(JSON.stringify({ error: "Token não fornecido" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" }
+    });
+  }
+  const token = authHeader.slice(7);
+  const decoded = verifyToken(token);
+  if (!decoded) {
+    return new Response(JSON.stringify({ error: "Token inválido" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" }
+    });
+  }
+  const dataType = url.searchParams.get("type") || "users";
+  const format = url.searchParams.get("format") || "json";
+  try {
+    const data = mockData[dataType] || mockData.users;
+    if (!data || data.length === 0) {
+      return new Response(JSON.stringify({ error: "Dados não encontrados" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+    let content = "";
+    let contentType = "";
+    let filename = `${dataType}_report_${(/* @__PURE__ */ new Date()).toISOString().split("T")[0]}`;
+    switch (format) {
+      case "csv":
+        content = arrayToCSV(data);
+        contentType = "text/csv";
+        filename += ".csv";
+        break;
+      case "html":
+        content = generateHTMLReport(data, dataType);
+        contentType = "text/html";
+        filename += ".html";
+        break;
+      case "json":
+      default:
+        content = JSON.stringify(data, null, 2);
+        contentType = "application/json";
+        filename += ".json";
+        break;
+    }
+    return new Response(content, {
+      status: 200,
+      headers: {
+        "Content-Type": contentType,
+        "Content-Disposition": `attachment; filename="${filename}"`
+      }
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: "Erro interno do servidor" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" }
+    });
+  }
+};
+const _page = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  GET
+}, Symbol.toStringTag, { value: "Module" }));
+const page = () => _page;
+export {
+  page,
+  renderers
+};

@@ -16,24 +16,81 @@ const { title } = Astro.props;
         <title>{title}</title>
     </head>
     <body class="bg-gray-50 text-gray-900">
-        <header class="bg-white shadow-sm border-b">
+        <!-- Neural Background -->
+        <div class="fixed inset-0 z-0">
+            <NeuralBackground client:load />
+        </div>
+
+        <!-- Header -->
+        <header class="relative z-10 bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-200">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center py-4">
                     <div class="flex items-center">
-                        <h1 class="text-2xl font-bold text-gray-900">Portal do Cliente</h1>
+                        <a href="/cliente/hub" class="flex items-center">
+                            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
+                                <span class="text-white font-bold text-sm">GN</span>
+                            </div>
+                            <h1 class="text-xl font-bold text-gray-900">GetNexo</h1>
+                        </a>
                     </div>
-                    <nav class="flex space-x-4">
-                        <a href="/cliente/hub" class="text-gray-600 hover:text-gray-900">Hub</a>
-                        <a href="/cliente/chamados" class="text-gray-600 hover:text-gray-900">Chamados</a>
-                        <a href="/cliente/compras" class="text-gray-600 hover:text-gray-900">Compras</a>
-                        <a href="/cliente/pontos" class="text-gray-600 hover:text-gray-900">Pontos</a>
-                        <button class="text-gray-600 hover:text-gray-900">Sair</button>
+                    <nav class="hidden md:flex space-x-1">
+                        <a href="/cliente/hub" class="px-3 py-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors font-medium">Dashboard</a>
+                        <a href="/cliente/atendentes" class="px-3 py-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors font-medium">Atendentes</a>
+                        <a href="/cliente/chat" class="px-3 py-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors font-medium">Conversas</a>
+                        <a href="/cliente/analytics" class="px-3 py-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors font-medium">Analytics</a>
+                        <a href="/cliente/fidelidade" class="px-3 py-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors font-medium">Fidelidade</a>
+                    </nav>
+                    <div class="flex items-center space-x-4">
+                        <!-- Status do Sistema -->
+                        <div class="hidden md:flex items-center space-x-2">
+                            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <span class="text-sm text-gray-600">Sistema Online</span>
+                        </div>
+
+                        <!-- Menu Mobile -->
+                        <button id="mobile-menu-button" class="md:hidden p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                        </button>
+
+                        <!-- User Menu -->
+                        <div class="relative">
+                            <button id="user-menu-button" class="flex items-center space-x-2 p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <span class="text-sm font-medium text-blue-600">U</span>
+                                </div>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+
+                            <!-- Dropdown Menu -->
+                            <div id="user-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20">
+                                <a href="/cliente/configuracoes" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Configurações</a>
+                                <a href="/cliente/suporte" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Suporte</a>
+                                <hr class="my-1">
+                                <button class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Sair</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu -->
+                <div id="mobile-menu" class="hidden md:hidden pb-4">
+                    <nav class="flex flex-col space-y-1">
+                        <a href="/cliente/hub" class="px-3 py-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors font-medium">Dashboard</a>
+                        <a href="/cliente/atendentes" class="px-3 py-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors font-medium">Atendentes</a>
+                        <a href="/cliente/chat" class="px-3 py-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors font-medium">Conversas</a>
+                        <a href="/cliente/analytics" class="px-3 py-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors font-medium">Analytics</a>
+                        <a href="/cliente/fidelidade" class="px-3 py-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors font-medium">Fidelidade</a>
+                        <a href="/cliente/configuracoes" class="px-3 py-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors font-medium">Configurações</a>
                     </nav>
                 </div>
             </div>
         </header>
 
-        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <main class="relative z-10 max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
             <slot />
         </main>
 
@@ -50,6 +107,34 @@ const { title } = Astro.props;
         </style>
 
         <script>
+            // Mobile menu toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+
+            // User menu dropdown
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userMenu = document.getElementById('user-menu');
+
+            if (userMenuButton && userMenu) {
+                userMenuButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    userMenu.classList.toggle('hidden');
+                });
+
+                // Close menu when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!userMenuButton.contains(e.target) && !userMenu.contains(e.target)) {
+                        userMenu.classList.add('hidden');
+                    }
+                });
+            }
+
             // Ghost mode: show button briefly then hide
             const ghostBtn = document.getElementById('ghost-support');
             if (ghostBtn) {
@@ -60,6 +145,17 @@ const { title } = Astro.props;
                     }, 3000);
                 }, 2000);
             }
+
+            // Highlight current page in navigation
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('nav a');
+
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('bg-blue-100', 'text-blue-700');
+                    link.classList.remove('text-gray-600', 'hover:text-gray-900', 'hover:bg-gray-100');
+                }
+            });
         </script>
     </body>
 </html>

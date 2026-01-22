@@ -1,0 +1,167 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const title = "Buscar no GetNexo – Encontre o que precisa";
+const description = "Busque por tutoriais, documentação e recursos no GetNexo";
+const keywords = "buscar getnexo, busca site, encontrar conteudo";
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  <div class="search-page">
+    <div class="container animate-fade-in">
+      <h1 class="text-gradient">O que você está procurando?</h1>
+      <p>Explore nosso ecossistema de inteligência e automação.</p>
+  
+      <div class="search-box glass-panel">
+        <input type="text" id="search-input" placeholder="Ex: Automação Imobiliária, Meta Ads, PIX..." autofocus />
+        <button id="search-btn">Buscar Agora 🔍</button>
+      </div>
+  
+      <div class="popular-searches reveal">
+        <h2>Buscas Recomendadas</h2>
+        <div class="tags">
+          <a href="/blog/integrar-chatgpt-whatsapp" class="tag">ChatGPT no WhatsApp</a>
+          <a href="/blog/whatsapp-automação-imobiliaria" class="tag">Setor Imobiliário</a>
+          <a href="/blog/seguranca-lgpd-whatsapp-2026" class="tag">LGPD & Segurança</a>
+          <a href="/precos" class="tag">Tabela de Preços</a>
+          <a href="/integracoes" class="tag">Integrações API</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<style>
+  .search-page {
+    padding: 12rem 5% 8rem;
+    background: #030712;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  h1 {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 900;
+    margin-bottom: 1rem;
+    letter-spacing: -2px;
+  }
+
+  p {
+    color: #94a3b8;
+    font-size: 1.25rem;
+    margin-bottom: 4rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .search-box {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 5rem;
+    padding: 1rem;
+    border-radius: 24px;
+    background: rgba(15, 23, 42, 0.4);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  }
+
+  #search-input {
+    flex: 1;
+    padding: 1.5rem;
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: 16px;
+    background: #020617;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 600;
+    transition: 0.3s;
+  }
+
+  #search-input:focus {
+    outline: none;
+    border-color: #00d4ff;
+    box-shadow: 0 0 25px rgba(0, 212, 255, 0.1);
+  }
+
+  #search-btn {
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    color: black;
+    border: none;
+    padding: 1rem 2.5rem;
+    border-radius: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    font-size: 1rem;
+  }
+
+  #search-btn:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+  }
+
+  .popular-searches h2 {
+    color: white;
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-bottom: 2rem;
+    opacity: 0.6;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .tags {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: #cbd5e1;
+    padding: 0.6rem 1.5rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: 0.3s;
+  }
+
+  .tag:hover {
+    background: rgba(0, 212, 255, 0.1);
+    border-color: #00d4ff;
+    color: #00d4ff;
+    transform: translateY(-3px);
+  }
+
+  @media (max-width: 640px) {
+    .search-box { flex-direction: column; }
+    #search-btn { width: 100%; }
+    .search-page { padding-top: 8rem; }
+  }
+</style>
+
+<script is:inline>
+  document.getElementById('search-btn').addEventListener('click', () => {
+    const query = document.getElementById('search-input').value.trim();
+    if (query) {
+      window.location.href = `/blog?q=${encodeURIComponent(query)}`;
+    }
+  });
+
+  document.getElementById('search-input').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      document.getElementById('search-btn').click();
+    }
+  });
+</script>
+</Layout>

@@ -1,0 +1,599 @@
+---
+// Painel Administrativo de Feriados GetNexo
+// Controle total dos efeitos festivos com preview e toggle
+
+const feriadosData = await fetch('/data/feriados.json').then(r => r.json());
+const configData = await fetch('/data/feriados-config.json').then(r => r.json());
+
+// Funções para calcular datas variáveis (mesmo que no lib/feriados.js)
+function calculaCarnaval(ano) {
+  const pascoa = calculaPascoa(ano);
+  const carnaval = new Date(pascoa);
+  carnaval.setDate(carnaval.getDate() - 47);
+  return carnaval.toISOString().slice(0,10);
+}
+
+function calculaPascoa(ano) {
+  const a = ano % 19;
+  const b = Math.floor(ano / 100);
+  const c = ano % 100;
+  const d = Math.floor(b / 4);
+  const e = b % 4;
+  const f = Math.floor((b + 8) / 25);
+  const g = Math.floor((b - f + 1) / 3);
+  const h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4);
+  const k = c % 4;
+  const l = (32 + 2 * e + 2 * i - h - k) % 7;
+  const m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const mes = Math.floor((h + l - 7 * m + 114) / 31);
+  const dia = ((h + l - 7 * m + 114) % 31) + 1;
+  return new Date(ano, mes - 1, dia);
+}
+
+function calculaCorpus(ano) {
+  const pascoa = calculaPascoa(ano);
+  const corpus = new Date(pascoa);
+  corpus.setDate(corpus.getDate() + 60);
+  return corpus.toISOString().slice(0,10);
+}
+
+function blackFriday(ano) {
+  const nov = new Date(ano, 10, 1);
+  const diaSemana = nov.getDay();
+  const ultimaSexta = new Date(nov);
+  ultimaSexta.setDate(nov.getDate() + (5 - diaSemana + 26) % 7);
+  return ultimaSexta.toISOString().slice(0,10);
+}
+
+function segundoDomingo(mes, ano) {
+  const primeiroDia = new Date(ano, mes, 1);
+  const primeiroDomingo = new Date(primeiroDia);
+  primeiroDomingo.setDate(primeiroDia.getDate() + (7 - primeiroDia.getDay()));
+  const segundoDomingo = new Date(primeiroDomingo);
+  segundoDomingo.setDate(primeiroDomingo.getDate() + 7);
+  return segundoDomingo.toISOString().slice(0,10);
+}
+
+function terceiroQuintaNovembro(ano) {
+  const nov = new Date(ano, 10, 1);
+  const primeiraQuinta = new Date(nov);
+  primeiraQuinta.setDate(nov.getDate() + (4 - nov.getDay() + 7) % 7);
+  const terceiraQuinta = new Date(primeiraQuinta);
+  terceiraQuinta.setDate(primeiraQuinta.getDate() + 14);
+  return terceiraQuinta.toISOString().slice(0,10);
+}
+
+function terceiraSegundaAbril(ano) {
+  const abr = new Date(ano, 3, 1);
+  const primeiraSegunda = new Date(abr);
+  primeiraSegunda.setDate(abr.getDate() + (1 - abr.getDay() + 7) % 7);
+  const terceiraSegunda = new Date(primeiraSegunda);
+  terceiraSegunda.setDate(primeiraSegunda.getDate() + 14);
+  return terceiraSegunda.toISOString().slice(0,10);
+}
+
+function sextaAntesPrimavera(ano) {
+  const primavera = new Date(ano, 8, 22);
+  if (primavera.getDay() === 5) primavera.setDate(primavera.getDate() - 7);
+  while (primavera.getDay() !== 5) primavera.setDate(primavera.getDate() - 1);
+  return primavera.toISOString().slice(0,10);
+}
+
+function variavelOrgulho(ano) {
+  return `${ano}-06-28`;
+}
+
+function calculaDataFeriado(feriado, ano = new Date().getFullYear()) {
+  switch(feriado.data) {
+    case 'variavel_carnaval': return calculaCarnaval(ano);
+    case 'variavel_pascoa': return calculaPascoa(ano).toISOString().slice(0,10);
+    case 'variavel_corpus': return calculaCorpus(ano);
+    case 'variavel_blackfriday': return blackFriday(ano);
+    case 'segundo_domingo_maio': return segundoDomingo(4, ano);
+    case 'segundo_domingo_agosto': return segundoDomingo(7, ano);
+    case 'segundo_domingo_setembro': return segundoDomingo(8, ano);
+    case 'primeiro_domingo_julho': return segundoDomingo(6, ano);
+    case 'terceira_quinta_novembro': return terceiroQuintaNovembro(ano);
+    case 'terceira_segunda_abril': return terceiraSegundaAbril(ano);
+    case 'sexta_antes_primavera': return sextaAntesPrimavera(ano);
+    case 'variavel_orgulho': return variavelOrgulho(ano);
+    default: return feriado.data;
+  }
+}
+---
+
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel Feriados - GetNexo Admin</title>
+  <meta name="description" content="Controle dos efeitos festivos do site GetNexo" />
+
+  <style>
+    /* Cyberpunk Dark Theme */
+    :root {
+      --void-black: #0a0a0a;
+      --neon-blue: #00f7ff;
+      --cyber-gold: #ffd500;
+      --dark-gray: #1a1a1a;
+      --light-gray: #333;
+      --text-light: #e0e0e0;
+      --text-muted: #888;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Courier New', monospace;
+      background: var(--void-black);
+      color: var(--text-light);
+      overflow-x: hidden;
+    }
+
+    /* Header Cyber */
+    .cyber-header {
+      background: linear-gradient(45deg, var(--void-black), #1a0a2e);
+      border-bottom: 2px solid var(--neon-blue);
+      padding: 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cyber-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 247, 255, 0.1), transparent);
+      animation: scan-line 3s linear infinite;
+    }
+
+    @keyframes scan-line {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    .cyber-title {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: var(--neon-blue);
+      text-shadow: 0 0 20px var(--neon-blue);
+      margin: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cyber-subtitle {
+      color: var(--cyber-gold);
+      font-size: 1.1rem;
+      margin: 0.5rem 0 0;
+      opacity: 0.8;
+    }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin: 2rem 0;
+      flex-wrap: wrap;
+    }
+
+    .control-btn {
+      background: linear-gradient(45deg, var(--neon-blue), var(--cyber-gold));
+      border: none;
+      color: black;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 0 20px rgba(0, 247, 255, 0.3);
+    }
+
+    .control-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(0, 247, 255, 0.5);
+    }
+
+    .control-btn.secondary {
+      background: rgba(255, 213, 0, 0.1);
+      border: 2px solid var(--cyber-gold);
+      color: var(--cyber-gold);
+    }
+
+    /* Table */
+    .feriados-table {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      background: rgba(26, 26, 26, 0.9);
+      border: 1px solid var(--neon-blue);
+      border-radius: 12px;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .table-header {
+      background: linear-gradient(45deg, var(--neon-blue), var(--cyber-gold));
+      color: black;
+      padding: 1rem;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .feriado-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1.5fr 1fr 1fr;
+      gap: 1rem;
+      padding: 1rem;
+      border-bottom: 1px solid rgba(0, 247, 255, 0.1);
+      align-items: center;
+      transition: background 0.3s;
+    }
+
+    .feriado-row:hover {
+      background: rgba(0, 247, 255, 0.05);
+    }
+
+    .feriado-name {
+      font-weight: bold;
+      color: var(--text-light);
+    }
+
+    .feriado-date {
+      color: var(--cyber-gold);
+      font-family: monospace;
+    }
+
+    .feriado-lang {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .feriado-effect {
+      color: var(--neon-blue);
+      font-family: monospace;
+      font-size: 0.9rem;
+    }
+
+    /* Toggle Switch */
+    .toggle-switch {
+      position: relative;
+      width: 60px;
+      height: 30px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .toggle-switch.active {
+      background: var(--neon-blue);
+    }
+
+    .toggle-slider {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 26px;
+      height: 26px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.3s;
+    }
+
+    .toggle-switch.active .toggle-slider {
+      transform: translateX(30px);
+    }
+
+    /* Preview Button */
+    .preview-btn {
+      background: linear-gradient(45deg, var(--cyber-gold), var(--neon-blue));
+      border: none;
+      color: black;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .preview-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(255, 213, 0, 0.5);
+    }
+
+    /* Status */
+    .status {
+      padding: 0.5rem;
+      border-radius: 4px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+    }
+
+    .status.ativo {
+      background: rgba(0, 247, 255, 0.2);
+      color: var(--neon-blue);
+    }
+
+    .status.inativo {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+    }
+
+    /* Variable indicator */
+    .variable-badge {
+      background: rgba(255, 213, 0, 0.2);
+      color: var(--cyber-gold);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: bold;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .feriado-row {
+        grid-template-columns: 1.5fr 1fr 1fr 1fr 0.8fr 0.8fr;
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .cyber-title {
+        font-size: 2rem;
+      }
+
+      .controls {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .feriado-row {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+        text-align: center;
+      }
+
+      .feriados-table {
+        margin: 0 1rem;
+      }
+    }
+
+    /* Loading animation */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--neon-blue);
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Notification */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--neon-blue);
+      color: black;
+      padding: 1rem;
+      border-radius: 8px;
+      font-weight: bold;
+      z-index: 1000;
+      animation: slide-in 0.3s ease-out;
+    }
+
+    @keyframes slide-in {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <header class="cyber-header">
+    <h1 class="cyber-title">🎯 PAINEL FERIADOS GETNEXO</h1>
+    <p class="cyber-subtitle">Controle Total dos Efeitos Festivos • Calendário Vivo do Site</p>
+  </header>
+
+  <main style="padding: 2rem;">
+    <div class="controls">
+      <button id="activate-all" class="control-btn">⚡ ATIVAR TODOS</button>
+      <button id="deactivate-all" class="control-btn secondary">🚫 DESATIVAR TODOS</button>
+      <button id="save-config" class="control-btn" style="background: linear-gradient(45deg, #00ff88, var(--neon-blue));">
+        💾 SALVAR CONFIGURAÇÃO
+      </button>
+    </div>
+
+    <div class="feriados-table">
+      <div class="table-header">
+        CONTROLE DOS EFEITOS FESTIVOS • {feriadosData.feriados.length} FERIADOS CONFIGURADOS
+      </div>
+
+      {feriadosData.feriados.map((feriado, index) => (
+        <div class="feriado-row" data-feriado={feriado.nome}>
+          <div class="feriado-name">{feriado.nome}</div>
+          <div class="feriado-date">
+            {feriado.data.startsWith('variavel') || feriado.data.includes('_') ?
+              <span class="variable-badge">VARIÁVEL</span> :
+              feriado.data
+            }
+            {feriado.data.startsWith('variavel') && (
+              <div style="font-size: 0.7rem; margin-top: 0.2rem; color: var(--text-muted);">
+                {calculaDataFeriado(feriado)}
+              </div>
+            )}
+          </div>
+          <div class="feriado-lang">
+            <div>{feriado.idiomas.pt}</div>
+            <div style="font-size: 0.7rem; color: var(--text-muted);">
+              EN/ES/FR disponíveis
+            </div>
+          </div>
+          <div class="feriado-effect">{feriado.efeito.replace(/_/g, ' ')}</div>
+          <div class="toggle-switch" data-feriado={feriado.nome}>
+            <div class="toggle-slider"></div>
+          </div>
+          <div>
+            <button class="preview-btn" data-effect={feriado.efeito}>
+              👁️ PREVIEW
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  </main>
+
+  <script>
+    // Estado da configuração
+    let feriadosConfig = configData.config.feriados;
+
+    // Inicializar toggles
+    document.addEventListener('DOMContentLoaded', () => {
+      // Aplicar estado inicial dos toggles
+      Object.keys(feriadosConfig).forEach(feriadoNome => {
+        const toggle = document.querySelector(`.toggle-switch[data-feriado="${feriadoNome}"]`);
+        if (toggle && feriadosConfig[feriadoNome].ativo) {
+          toggle.classList.add('active');
+        }
+      });
+
+      // Event listeners para toggles individuais
+      document.querySelectorAll('.toggle-switch').forEach(toggle => {
+        toggle.addEventListener('click', () => {
+          const feriadoNome = toggle.dataset.feriado;
+          const isActive = toggle.classList.toggle('active');
+          feriadosConfig[feriadoNome].ativo = isActive;
+        });
+      });
+
+      // Botão ativar todos
+      document.getElementById('activate-all').addEventListener('click', () => {
+        document.querySelectorAll('.toggle-switch').forEach(toggle => {
+          toggle.classList.add('active');
+          const feriadoNome = toggle.dataset.feriado;
+          feriadosConfig[feriadoNome].ativo = true;
+        });
+        showNotification('🎯 Todos os feriados ativados!', 'success');
+      });
+
+      // Botão desativar todos
+      document.getElementById('deactivate-all').addEventListener('click', () => {
+        document.querySelectorAll('.toggle-switch').forEach(toggle => {
+          toggle.classList.remove('active');
+          const feriadoNome = toggle.dataset.feriado;
+          feriadosConfig[feriadoNome].ativo = false;
+        });
+        showNotification('🚫 Todos os feriados desativados!', 'warning');
+      });
+
+      // Preview dos efeitos
+      document.querySelectorAll('.preview-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const effect = btn.dataset.effect;
+          document.body.classList.add('feriado-ativo', effect);
+
+          // Feedback visual
+          btn.innerHTML = '⏱️ 10s...';
+          btn.disabled = true;
+
+          // Contador regressivo
+          let countdown = 10;
+          const countdownInterval = setInterval(() => {
+            countdown--;
+            btn.innerHTML = `⏱️ ${countdown}s...`;
+            if (countdown <= 0) {
+              clearInterval(countdownInterval);
+              document.body.classList.remove('feriado-ativo', effect);
+              btn.innerHTML = '👁️ PREVIEW';
+              btn.disabled = false;
+            }
+          }, 1000);
+        });
+      });
+
+      // Salvar configuração
+      document.getElementById('save-config').addEventListener('click', async () => {
+        const btn = document.getElementById('save-config');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<span class="loading"></span>SALVANDO...';
+        btn.disabled = true;
+
+        try {
+          const response = await fetch('/api/admin/save-feriados-config', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              config: {
+                feriados_ativos: true,
+                feriados: feriadosConfig
+              }
+            })
+          });
+
+          if (response.ok) {
+            showNotification('💾 Configuração salva com sucesso!', 'success');
+          } else {
+            throw new Error('Erro ao salvar');
+          }
+        } catch (error) {
+          showNotification('❌ Erro ao salvar configuração!', 'error');
+          console.error('Erro:', error);
+        } finally {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }
+      });
+    });
+
+    // Função para mostrar notificações
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.innerHTML = message;
+
+      // Estilizar baseado no tipo
+      if (type === 'success') {
+        notification.style.background = 'var(--neon-blue)';
+      } else if (type === 'error') {
+        notification.style.background = '#ff4d4d';
+      } else if (type === 'warning') {
+        notification.style.background = 'var(--cyber-gold)';
+        notification.style.color = 'black';
+      }
+
+      document.body.appendChild(notification);
+
+      // Remover após 3 segundos
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.parentNode.removeChild(notification);
+        }
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

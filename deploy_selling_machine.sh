@@ -20,6 +20,8 @@ echo "🚀 Deploying to Production (Simulated)..."
 # In real life: rsync -avdist/ user@server:/var/www/html
 mkdir -p ../dist_production
 cp -r dist/* ../dist_production/
+cp package*.json ../dist_production/
+cd ../dist_production && npm install --production --silent
 
 echo "✅ SUCCESS: The Selling Machine is LIVE."
 echo "👉 URL: https://getnexo.com.br"

@@ -1,0 +1,66 @@
+import { v as verifyToken } from "../../assets/auth-bbOfVkaL.js";
+import { renderers } from "../../renderers.mjs";
+const mockData = {
+  popular: [
+    { id: 1, title: "Produto Popular 1", category: "eletronicos", rating: 4.5, image: "/uploads/sample1.jpg" },
+    { id: 2, title: "Produto Popular 2", category: "roupas", rating: 4.2, image: "/uploads/sample2.jpg" },
+    { id: 3, title: "Produto Popular 3", category: "livros", rating: 4.8, image: "/uploads/sample3.jpg" }
+  ],
+  similar: [
+    { id: 4, title: "Similar 1", category: "eletronicos", rating: 4.1, image: "/uploads/sample4.jpg" },
+    { id: 5, title: "Similar 2", category: "eletronicos", rating: 4.3, image: "/uploads/sample5.jpg" }
+  ],
+  trending: [
+    { id: 6, title: "Tendência 1", category: "beleza", rating: 4.6, image: "/uploads/sample6.jpg" },
+    { id: 7, title: "Tendência 2", category: "casa", rating: 4.4, image: "/uploads/sample7.jpg" }
+  ]
+};
+const GET = async ({ request, url }) => {
+  const authHeader = request.headers.get("Authorization");
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return new Response(JSON.stringify({ error: "Token não fornecido" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" }
+    });
+  }
+  const token = authHeader.slice(7);
+  const decoded = verifyToken(token);
+  if (!decoded) {
+    return new Response(JSON.stringify({ error: "Token inválido" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" }
+    });
+  }
+  const type = url.searchParams.get("type") || "popular";
+  const category = url.searchParams.get("category");
+  const limit = parseInt(url.searchParams.get("limit") || "6");
+  try {
+    let recommendations = mockData[type] || mockData.popular;
+    if (category) {
+      recommendations = recommendations.filter((item) => item.category === category);
+    }
+    recommendations = recommendations.slice(0, limit);
+    return new Response(JSON.stringify({
+      recommendations,
+      type,
+      total: recommendations.length
+    }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" }
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: "Erro interno do servidor" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" }
+    });
+  }
+};
+const _page = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  GET
+}, Symbol.toStringTag, { value: "Module" }));
+const page = () => _page;
+export {
+  page,
+  renderers
+};

@@ -1,7 +1,7 @@
 // Global function for demo account filling
 window.fillDemo = function (type) {
     const demoAccounts = {
-        admin: { email: 'admin@getnexo.local', password: 'admin123' },
+        admin: { email: 'admin@getnexo.com.br', password: 'password123' },
         reseller: { email: 'revendedor@getnexo.com', password: 'reseller123' },
         client: { email: 'cliente@getnexo.com', password: 'cliente123' }
     };

@@ -1,0 +1,444 @@
+---
+// Neural Background Component - Advanced Animated Background
+---
+
+<div id="neural-background" class="neural-background">
+  <!-- Primary Neural Network Layer -->
+  <canvas id="neural-canvas-primary" class="neural-canvas"></canvas>
+
+  <!-- Secondary Floating Elements -->
+  <div class="floating-elements">
+    <div class="neural-node node-1"></div>
+    <div class="neural-node node-2"></div>
+    <div class="neural-node node-3"></div>
+    <div class="neural-node node-4"></div>
+    <div class="neural-node node-5"></div>
+    <div class="neural-node node-6"></div>
+    <div class="neural-connection connection-1"></div>
+    <div class="neural-connection connection-2"></div>
+    <div class="neural-connection connection-3"></div>
+  </div>
+
+  <!-- Particle System Overlay -->
+  <div class="particle-system">
+    <div class="particle particle-1"></div>
+    <div class="particle particle-2"></div>
+    <div class="particle particle-3"></div>
+    <div class="particle particle-4"></div>
+    <div class="particle particle-5"></div>
+    <div class="particle particle-6"></div>
+    <div class="particle particle-7"></div>
+    <div class="particle particle-8"></div>
+  </div>
+
+  <!-- Gradient Overlays -->
+  <div class="gradient-overlay gradient-primary"></div>
+  <div class="gradient-overlay gradient-secondary"></div>
+  <div class="gradient-overlay gradient-tertiary"></div>
+</div>
+
+<style>
+  .neural-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    background: linear-gradient(135deg, #030712 0%, #0f172a 50%, #1e293b 100%);
+    overflow: hidden;
+  }
+
+  .neural-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.6;
+  }
+
+  /* Neural Nodes - Floating Brain-like Elements */
+  .floating-elements {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .neural-node {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(0, 212, 255, 0.15) 0%, rgba(0, 255, 157, 0.08) 50%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(40px);
+    animation: neuralFloat 20s infinite ease-in-out;
+  }
+
+  .neural-node.node-1 {
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+    background: radial-gradient(circle, rgba(0, 212, 255, 0.2) 0%, rgba(0, 255, 157, 0.1) 40%, transparent 70%);
+  }
+
+  .neural-node.node-2 {
+    top: 60%;
+    right: 15%;
+    animation-delay: -5s;
+    background: radial-gradient(circle, rgba(0, 255, 157, 0.18) 0%, rgba(0, 212, 255, 0.09) 45%, transparent 70%);
+  }
+
+  .neural-node.node-3 {
+    bottom: 20%;
+    left: 20%;
+    animation-delay: -10s;
+    background: radial-gradient(circle, rgba(255, 107, 53, 0.12) 0%, rgba(0, 212, 255, 0.08) 50%, transparent 70%);
+  }
+
+  .neural-node.node-4 {
+    top: 30%;
+    right: 25%;
+    animation-delay: -15s;
+    background: radial-gradient(circle, rgba(0, 212, 255, 0.15) 0%, rgba(255, 107, 53, 0.07) 55%, transparent 70%);
+  }
+
+  .neural-node.node-5 {
+    bottom: 40%;
+    left: 60%;
+    animation-delay: -8s;
+    background: radial-gradient(circle, rgba(0, 255, 157, 0.16) 0%, rgba(0, 212, 255, 0.08) 45%, transparent 70%);
+  }
+
+  .neural-node.node-6 {
+    top: 80%;
+    right: 60%;
+    animation-delay: -12s;
+    background: radial-gradient(circle, rgba(255, 107, 53, 0.14) 0%, rgba(0, 255, 157, 0.07) 50%, transparent 70%);
+  }
+
+  @keyframes neuralFloat {
+    0%, 100% {
+      transform: translate(0, 0) rotate(0deg) scale(1);
+      opacity: 0.6;
+    }
+    25% {
+      transform: translate(30px, -20px) rotate(90deg) scale(1.1);
+      opacity: 0.8;
+    }
+    50% {
+      transform: translate(-20px, 30px) rotate(180deg) scale(0.9);
+      opacity: 0.7;
+    }
+    75% {
+      transform: translate(40px, 20px) rotate(270deg) scale(1.05);
+      opacity: 0.9;
+    }
+  }
+
+  /* Neural Connections - Animated Lines */
+  .neural-connection {
+    position: absolute;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.4), transparent);
+    border-radius: 1px;
+    animation: neuralPulse 8s infinite ease-in-out;
+  }
+
+  .neural-connection.connection-1 {
+    top: 25%;
+    left: 15%;
+    width: 200px;
+    transform: rotate(45deg);
+    animation-delay: 0s;
+  }
+
+  .neural-connection.connection-2 {
+    top: 45%;
+    right: 20%;
+    width: 150px;
+    transform: rotate(-30deg);
+    animation-delay: -3s;
+  }
+
+  .neural-connection.connection-3 {
+    bottom: 35%;
+    left: 35%;
+    width: 180px;
+    transform: rotate(60deg);
+    animation-delay: -6s;
+  }
+
+  @keyframes neuralPulse {
+    0%, 100% {
+      opacity: 0.2;
+      transform: scaleX(0.8);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scaleX(1.2);
+    }
+  }
+
+  /* Particle System */
+  .particle-system {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(0, 212, 255, 0.8);
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.6);
+    animation: particleFloat 15s infinite linear;
+  }
+
+  .particle.particle-1 { top: 20%; left: 10%; animation-delay: 0s; }
+  .particle.particle-2 { top: 40%; right: 15%; animation-delay: -2s; background: rgba(0, 255, 157, 0.8); }
+  .particle.particle-3 { top: 60%; left: 70%; animation-delay: -4s; }
+  .particle.particle-4 { bottom: 30%; right: 40%; animation-delay: -6s; background: rgba(255, 107, 53, 0.8); }
+  .particle.particle-5 { top: 10%; right: 70%; animation-delay: -8s; }
+  .particle.particle-6 { bottom: 50%; left: 20%; animation-delay: -10s; background: rgba(0, 255, 157, 0.8); }
+  .particle.particle-7 { top: 70%; right: 10%; animation-delay: -12s; }
+  .particle.particle-8 { bottom: 20%; left: 80%; animation-delay: -14s; background: rgba(255, 107, 53, 0.8); }
+
+  @keyframes particleFloat {
+    0% {
+      transform: translate(0, 0) rotate(0deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      transform: translate(100px, -50px) rotate(360deg);
+      opacity: 0;
+    }
+  }
+
+  /* Gradient Overlays */
+  .gradient-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .gradient-primary {
+    background: radial-gradient(circle at 20% 50%, rgba(0, 212, 255, 0.03) 0%, transparent 50%);
+    animation: gradientShift 25s infinite ease-in-out;
+  }
+
+  .gradient-secondary {
+    background: radial-gradient(circle at 80% 20%, rgba(0, 255, 157, 0.03) 0%, transparent 50%);
+    animation: gradientShift 30s infinite ease-in-out reverse;
+  }
+
+  .gradient-tertiary {
+    background: radial-gradient(circle at 60% 80%, rgba(255, 107, 53, 0.02) 0%, transparent 50%);
+    animation: gradientShift 35s infinite ease-in-out;
+  }
+
+  @keyframes gradientShift {
+    0%, 100% {
+      transform: scale(1) rotate(0deg);
+      opacity: 0.7;
+    }
+    50% {
+      transform: scale(1.2) rotate(180deg);
+      opacity: 0.9;
+    }
+  }
+
+  /* Performance Optimizations */
+  @media (prefers-reduced-motion: reduce) {
+    .neural-node,
+    .neural-connection,
+    .particle,
+    .gradient-overlay {
+      animation: none;
+    }
+  }
+
+  /* Mobile Optimizations */
+  @media (max-width: 768px) {
+    .neural-node {
+      width: 80px;
+      height: 80px;
+      filter: blur(30px);
+    }
+
+    .neural-connection {
+      width: 120px;
+      height: 1px;
+    }
+
+    .particle {
+      width: 3px;
+      height: 3px;
+    }
+  }
+
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    .neural-background {
+      background: linear-gradient(135deg, #000000 0%, #0f172a 50%, #1e293b 100%);
+    }
+  }
+</style>
+
+<script>
+  class NeuralBackground {
+    constructor() {
+      this.canvas = document.getElementById('neural-canvas-primary');
+      if (!this.canvas) return;
+
+      this.ctx = this.canvas.getContext('2d');
+      this.nodes = [];
+      this.connections = [];
+      this.animationId = null;
+      this.mouse = { x: 0, y: 0 };
+
+      this.init();
+      this.animate();
+      this.bindEvents();
+    }
+
+    init() {
+      this.resize();
+      this.createNodes();
+      this.createConnections();
+    }
+
+    resize() {
+      const rect = this.canvas.getBoundingClientRect();
+      this.canvas.width = rect.width * window.devicePixelRatio;
+      this.canvas.height = rect.height * window.devicePixelRatio;
+      this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      this.canvas.style.width = rect.width + 'px';
+      this.canvas.style.height = rect.height + 'px';
+    }
+
+    createNodes() {
+      this.nodes = [];
+      for (let i = 0; i < 15; i++) {
+        this.nodes.push({
+          x: Math.random() * this.canvas.offsetWidth,
+          y: Math.random() * this.canvas.offsetHeight,
+          vx: (Math.random() - 0.5) * 0.5,
+          vy: (Math.random() - 0.5) * 0.5,
+          radius: Math.random() * 3 + 1,
+          alpha: Math.random() * 0.5 + 0.2
+        });
+      }
+    }
+
+    createConnections() {
+      this.connections = [];
+      for (let i = 0; i < this.nodes.length; i++) {
+        for (let j = i + 1; j < this.nodes.length; j++) {
+          const dx = this.nodes[i].x - this.nodes[j].x;
+          const dy = this.nodes[i].y - this.nodes[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < 150) {
+            this.connections.push({
+              from: i,
+              to: j,
+              alpha: (150 - distance) / 150 * 0.3
+            });
+          }
+        }
+      }
+    }
+
+    animate() {
+      this.ctx.clearRect(0, 0, this.canvas.offsetWidth, this.canvas.offsetHeight);
+
+      // Update nodes
+      this.nodes.forEach(node => {
+        node.x += node.vx;
+        node.y += node.vy;
+
+        // Bounce off edges
+        if (node.x <= 0 || node.x >= this.canvas.offsetWidth) node.vx *= -1;
+        if (node.y <= 0 || node.y >= this.canvas.offsetHeight) node.vy *= -1;
+
+        // Mouse interaction
+        const dx = node.x - this.mouse.x;
+        const dy = node.y - this.mouse.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < 100) {
+          node.vx += dx * 0.0001;
+          node.vy += dy * 0.0001;
+        }
+
+        // Draw node
+        this.ctx.beginPath();
+        this.ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+        this.ctx.fillStyle = `rgba(0, 212, 255, ${node.alpha})`;
+        this.ctx.fill();
+      });
+
+      // Draw connections
+      this.connections.forEach(conn => {
+        const from = this.nodes[conn.from];
+        const to = this.nodes[conn.to];
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(from.x, from.y);
+        this.ctx.lineTo(to.x, to.y);
+        this.ctx.strokeStyle = `rgba(0, 255, 157, ${conn.alpha})`;
+        this.ctx.lineWidth = 0.5;
+        this.ctx.stroke();
+      });
+
+      this.animationId = requestAnimationFrame(() => this.animate());
+    }
+
+    bindEvents() {
+      const handleMouseMove = (e) => {
+        const rect = this.canvas.getBoundingClientRect();
+        this.mouse.x = e.clientX - rect.left;
+        this.mouse.y = e.clientY - rect.top;
+      };
+
+      const handleResize = () => {
+        this.resize();
+        this.createNodes();
+      };
+
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('resize', handleResize);
+
+      // Cleanup on page unload
+      window.addEventListener('beforeunload', () => {
+        if (this.animationId) {
+          cancelAnimationFrame(this.animationId);
+        }
+      });
+    }
+  }
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => new NeuralBackground());
+  } else {
+    new NeuralBackground();
+  }
+</script>

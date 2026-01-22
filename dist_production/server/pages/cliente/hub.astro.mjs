@@ -1,0 +1,93 @@
+import { f as createComponent, k as renderComponent, r as renderTemplate, m as maybeRenderHead } from "../../assets/astro/server-MCYX8tFF.js";
+import "piccolore";
+import { $ as $$ClientLayout } from "../../assets/ClientLayout-Cg0S0bz6.js";
+import { jsx, jsxs } from "react/jsx-runtime";
+import { useState, useEffect } from "react";
+import { renderers } from "../../renderers.mjs";
+const Timeline = () => {
+  const [timeline, setTimeline] = useState([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    fetch("/api/cliente/timeline").then((res) => res.json()).then((data) => {
+      setTimeline(data.timeline);
+      setLoading(false);
+    }).catch((err) => {
+      setLoading(false);
+    });
+  }, []);
+  const getIcon = (type) => {
+    const icons = {
+      purchase: "🛒",
+      ticket: "🎫",
+      coupon: "🎟️",
+      points: "⭐",
+      wishlist: "❤️"
+    };
+    return icons[type] || "📅";
+  };
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const now = /* @__PURE__ */ new Date();
+    const diff = now - date;
+    const days = Math.floor(diff / (1e3 * 60 * 60 * 24));
+    if (days === 0) return "Hoje";
+    if (days === 1) return "Ontem";
+    if (days < 7) return `${days} dias atrás`;
+    return date.toLocaleDateString("pt-BR");
+  };
+  if (loading) {
+    return /* @__PURE__ */ jsx("div", { className: "text-center py-8", children: "Carregando timeline..." });
+  }
+  return /* @__PURE__ */ jsx("div", { className: "space-y-4", children: timeline.map((item, index) => /* @__PURE__ */ jsxs("div", { className: "flex items-start space-x-4 p-4 bg-gray-50 rounded-lg", children: [
+    /* @__PURE__ */ jsx("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsx("div", { className: "w-10 h-10 bg-white rounded-full flex items-center justify-center text-xl shadow", children: getIcon(item.type) }) }),
+    /* @__PURE__ */ jsxs("div", { className: "flex-1", children: [
+      /* @__PURE__ */ jsx("h3", { className: "font-medium text-gray-900", children: item.title }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-600 text-sm", children: item.description }),
+      /* @__PURE__ */ jsx("p", { className: "text-gray-400 text-xs mt-1", children: formatDate(item.date) })
+    ] })
+  ] }, item.id)) });
+};
+const $$Hub = createComponent(($$result, $$props, $$slots) => {
+  return renderTemplate`${renderComponent($$result, "ClientLayout", $$ClientLayout, { "title": "Painel do Cliente - GetNexo" }, { "default": ($$result2) => renderTemplate`  ${maybeRenderHead()}<div class="mb-8"> <h1 class="text-3xl font-bold text-gray-900 mb-2">Bem-vindo ao seu Painel, Cliente!</h1> <p class="text-gray-600">Gerencie seu negócio, converse com clientes e otimize suas vendas automaticamente.</p> </div>  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8"> <div class="bg-white rounded-lg shadow p-6"> <div class="flex items-center"> <div class="p-3 rounded-full bg-blue-100"> <span class="text-2xl">💬</span> </div> <div class="ml-4"> <p class="text-sm font-medium text-gray-600">Conversas Hoje</p> <p class="text-2xl font-bold text-gray-900">127</p> </div> </div> </div> <div class="bg-white rounded-lg shadow p-6"> <div class="flex items-center"> <div class="p-3 rounded-full bg-green-100"> <span class="text-2xl">🛒</span> </div> <div class="ml-4"> <p class="text-sm font-medium text-gray-600">Vendas Hoje</p> <p class="text-2xl font-bold text-gray-900">23</p> </div> </div> </div> <div class="bg-white rounded-lg shadow p-6"> <div class="flex items-center"> <div class="p-3 rounded-full bg-yellow-100"> <span class="text-2xl">⭐</span> </div> <div class="ml-4"> <p class="text-sm font-medium text-gray-600">Satisfação</p> <p class="text-2xl font-bold text-gray-900">4.8</p> </div> </div> </div> <div class="bg-white rounded-lg shadow p-6"> <div class="flex items-center"> <div class="p-3 rounded-full bg-purple-100"> <span class="text-2xl">💰</span> </div> <div class="ml-4"> <p class="text-sm font-medium text-gray-600">Receita Hoje</p> <p class="text-2xl font-bold text-gray-900">R$ 4.750</p> </div> </div> </div> </div>  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8"> <!-- Main Content Area --> <div class="lg:col-span-2 space-y-8"> <!-- Atendentes Virtuais --> <div class="bg-white rounded-lg shadow"> <div class="p-6 border-b border-gray-200"> <div class="flex justify-between items-center"> <h2 class="text-xl font-semibold text-gray-900">Seus Atendentes Virtuais</h2> <a href="/cliente/atendentes" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+Gerenciar Atendentes
+</a> </div> </div> <div class="p-6"> <div class="grid grid-cols-1 md:grid-cols-2 gap-4"> <div class="border border-gray-200 rounded-lg p-4"> <div class="flex items-center mb-3"> <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3"> <span class="text-lg">🤖</span> </div> <div> <h3 class="font-medium text-gray-900">Atendente Principal</h3> <p class="text-sm text-gray-600">Online • Respondendo</p> </div> </div> <div class="flex justify-between text-sm"> <span>Conversas hoje: 89</span> <span class="text-green-600">94% satisfação</span> </div> </div> <div class="border border-gray-200 rounded-lg p-4"> <div class="flex items-center mb-3"> <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3"> <span class="text-lg">💼</span> </div> <div> <h3 class="font-medium text-gray-900">Especialista Vendas</h3> <p class="text-sm text-gray-600">Online • Vendendo</p> </div> </div> <div class="flex justify-between text-sm"> <span>Vendas hoje: 15</span> <span class="text-green-600">R$ 2.340</span> </div> </div> </div> <div class="mt-4"> <a href="/cliente/atendentes/novo" class="text-blue-600 hover:text-blue-800 font-medium">
++ Criar novo atendente virtual
+</a> </div> </div> </div> <!-- Conversas Ativas --> <div class="bg-white rounded-lg shadow"> <div class="p-6 border-b border-gray-200"> <div class="flex justify-between items-center"> <h2 class="text-xl font-semibold text-gray-900">Conversas Ativas</h2> <a href="/cliente/chat" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+Ver Todas
+</a> </div> </div> <div class="p-6"> <div class="space-y-4"> <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg"> <div class="flex items-center"> <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-3"> <span class="text-sm font-medium">MC</span> </div> <div> <p class="font-medium text-gray-900">Maria Clara</p> <p class="text-sm text-gray-600">"Gostaria de saber sobre os produtos..."</p> </div> </div> <div class="text-right"> <p class="text-sm text-gray-500">2 min atrás</p> <span class="inline-block w-3 h-3 bg-green-500 rounded-full"></span> </div> </div> <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg"> <div class="flex items-center"> <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-3"> <span class="text-sm font-medium">JS</span> </div> <div> <p class="font-medium text-gray-900">João Silva</p> <p class="text-sm text-gray-600">"Quando chega meu pedido?"</p> </div> </div> <div class="text-right"> <p class="text-sm text-gray-500">5 min atrás</p> <span class="inline-block w-3 h-3 bg-yellow-500 rounded-full"></span> </div> </div> <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg"> <div class="flex items-center"> <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-3"> <span class="text-sm font-medium">AS</span> </div> <div> <p class="font-medium text-gray-900">Ana Santos</p> <p class="text-sm text-gray-600">"Produto com defeito..."</p> </div> </div> <div class="text-right"> <p class="text-sm text-gray-500">8 min atrás</p> <span class="inline-block w-3 h-3 bg-red-500 rounded-full"></span> </div> </div> </div> </div> </div> <!-- Timeline de Atividades --> <div class="bg-white rounded-lg shadow"> <div class="p-6 border-b border-gray-200"> <h2 class="text-xl font-semibold text-gray-900">Timeline de Atividades</h2> </div> <div class="p-6"> ${renderComponent($$result2, "Timeline", Timeline, { "client:load": true, "client:component-hydration": "load", "client:component-path": "/home/lele/usenexo/getnexo-site/src/components/cliente/Timeline.jsx", "client:component-export": "default" })} </div> </div> </div> <!-- Sidebar --> <div class="space-y-6"> <!-- Ações Rápidas --> <div class="bg-white rounded-lg shadow p-6"> <h3 class="text-lg font-medium text-gray-900 mb-4">Ações Rápidas</h3> <div class="space-y-3"> <a href="/cliente/chat/novo" class="block w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors text-center font-medium">
+💬 Iniciar Nova Conversa
+</a> <a href="/cliente/atendentes/novo" class="block w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors text-center font-medium">
+🤖 Criar Atendente Virtual
+</a> <a href="/cliente/analytics" class="block w-full bg-purple-600 text-white py-3 px-4 rounded-lg hover:bg-purple-700 transition-colors text-center font-medium">
+📊 Ver Relatórios
+</a> <a href="/cliente/configuracoes" class="block w-full bg-gray-600 text-white py-3 px-4 rounded-lg hover:bg-gray-700 transition-colors text-center font-medium">
+⚙️ Configurações
+</a> </div> </div> <!-- Status do Sistema --> <div class="bg-white rounded-lg shadow p-6"> <h3 class="text-lg font-medium text-gray-900 mb-4">Status do Sistema</h3> <div class="space-y-3"> <div class="flex items-center justify-between"> <span class="text-sm">WhatsApp API</span> <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+Online
+</span> </div> <div class="flex items-center justify-between"> <span class="text-sm">IA de Vendas</span> <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+Online
+</span> </div> <div class="flex items-center justify-between"> <span class="text-sm">Analytics</span> <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+Online
+</span> </div> <div class="flex items-center justify-between"> <span class="text-sm">Última atualização</span> <span class="text-xs text-gray-500">há 2 min</span> </div> </div> </div> <!-- Programa de Fidelidade --> <div class="bg-white rounded-lg shadow p-6"> <h3 class="text-lg font-medium text-gray-900 mb-4">Programa de Fidelidade</h3> <div class="text-center mb-4"> <div class="text-3xl mb-2">🥈</div> <p class="font-medium text-gray-900">Nível Prata</p> <p class="text-sm text-gray-600">1.250 / 2.000 pontos</p> </div> <div class="w-full bg-gray-200 rounded-full h-2 mb-4"> <div class="bg-yellow-500 h-2 rounded-full" style="width: 62.5%"></div> </div> <p class="text-xs text-gray-600 mb-4">750 pontos para alcançar Ouro</p> <a href="/cliente/fidelidade" class="block w-full bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-600 transition-colors text-center font-medium">
+Ver Recompensas
+</a> </div> <!-- Suporte --> <div class="bg-white rounded-lg shadow p-6"> <h3 class="text-lg font-medium text-gray-900 mb-4">Precisa de Ajuda?</h3> <div class="space-y-3"> <a href="/suporte" class="block text-blue-600 hover:text-blue-800 text-sm">
+📚 Central de Ajuda
+</a> <a href="/faq" class="block text-blue-600 hover:text-blue-800 text-sm">
+❓ Perguntas Frequentes
+</a> <button onclick="window.$chatwoot?.toggle()" class="block w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
+💬 Chat com Suporte
+</button> </div> </div> </div> </div> ` })}`;
+}, "/home/lele/usenexo/getnexo-site/src/pages/cliente/hub.astro", void 0);
+const $$file = "/home/lele/usenexo/getnexo-site/src/pages/cliente/hub.astro";
+const $$url = "/cliente/hub";
+const _page = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: $$Hub,
+  file: $$file,
+  url: $$url
+}, Symbol.toStringTag, { value: "Module" }));
+const page = () => _page;
+export {
+  page,
+  renderers
+};

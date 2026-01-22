@@ -1,0 +1,110 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Como Dobrar o ROI no WhatsApp Marketing em 2026: Estratégias de Escala",
+      "description": "Descubra como maximizar o retorno sobre investimento (ROI) em suas campanhas de WhatsApp. Guia completo sobre CPA, conversão e automação.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-21",
+      "image": "/images/blog/roi-whatsapp-ia.png",
+      "articleSection": "Marketing Conversacional",
+      "keywords": "roi whatsapp, marketing whatsapp 2026, cpa whatsapp, conversão vendas whatsapp, automação de marketing"
+    }
+  ]
+};
+---
+
+<Layout title="Dobrar ROI WhatsApp Marketing | GetNexo">
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta animate-fade-in">Marketing • Jan 2026</div>
+      <h1 class="animate-slide-up">Dobrando o ROI:<br/><span class="text-primary">WhatsApp Marketing 2026</span></h1>
+      <p class="subtitle animate-fade-in delay-200">Pare de queimar dinheiro em anúncios. Aprenda a transformar cliques em clientes fiéis.</p>
+      
+      <div class="placeholder-image glass-panel animate-fade-in">
+        <p>Imagem: WhatsApp Marketing ROI Analytics</p>
+      </div>
+    </header>
+
+    <div class="post-content">
+      <section id="metrica-rei">
+        <h2>📊 A Única Métrica que Importa</h2>
+        <p>No marketing conversacional, o ROI não é apenas sobre o custo do clique (CPC), mas sobre o <strong>Custo por Cliente Convertido (CAC)</strong>. Em 2026, empresas que não utilizam IA para triagem inicial perdem até 60% do orçamento com leads desqualificados.</p>
+        <div class="glass-panel mt-8">
+          <p><strong>Insight:</strong> Campanhas que utilizam a API Oficial do WhatsApp têm uma entrega 20% superior e permitem rastreamento direto de conversão por pixel.</p>
+        </div>
+      </section>
+
+      <section id="funil-conversao">
+        <h2>🌪️ O Funil de Alta Conversão</h2>
+        <p>Para dobrar seu ROI, você precisa de um fluxo que remova o atrito. Veja a estrutura ideal:</p>
+        
+        <div class="stack-grid">
+          <div class="stack-card glass-panel blur">
+            <h4>Anúncios 'Click-to-WhatsApp'</h4>
+            <p>Direcionamento preciso para o chat, reduzindo etapas de landing page.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Triagem IA Instantânea</h4>
+            <p>Sua IA identifica a intenção em segundos e qualifica o lead antes do humano.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Retargeting Ativo</h4>
+            <p>Mensagens personalizadas automáticas para quem não comprou no primeiro contato.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="copywriting">
+        <h2>✍️ Copywriting Conversacional</h2>
+        <p>Esqueça os textos formais. No WhatsApp, vence a proximidade. A GetNexo ajuda você a criar roteiros que soam naturais e geram urgência sem ser invasivo, utilizando gatilhos mentais validados por nossa base de big data.</p>
+      </section>
+
+      <div class="final-cta animate-scale-up">
+        <h3>Quer escalar seu ROI?</h3>
+        <p>Teste nossa calculadora de ROI e veja o potencial do seu negócio.</p>
+        <div class="cta-buttons mt-8">
+          <a href="/magic-replies" class="btn-primary">Ativar Magic Replies</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+</Layout>
+
+<style>
+  :root {
+    --primary: #c084fc;
+    --accent: #818cf8;
+    --glass: rgba(15, 23, 42, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.05);
+  }
+
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  .meta { color: var(--primary); font-size: 0.8rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem; display: inline-block; padding: 0.5rem 1rem; background: rgba(192, 132, 252, 0.05); border: 1px solid var(--glass-border); border-radius: 50px; }
+  h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; color: white; }
+  .text-primary { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .subtitle { font-size: 1.25rem; color: #94a3b8; max-width: 700px; margin: 0 auto; line-height: 1.6; }
+  .placeholder-image { width: 100%; border-radius: 24px; margin-top: 3rem; height: 500px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1e293b, #0f172a); color: var(--primary); font-weight: 800; border: 1px dashed var(--primary); }
+  .post-content { color: #cbd5e1; line-height: 1.8; font-size: 1.15rem; }
+  h2 { font-size: 2.2rem; color: white; margin: 6rem 0 2rem; font-weight: 800; }
+  .glass-panel { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 2.5rem; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+  .stack-card { background: var(--glass); border: 1px solid var(--glass-border); padding: 2rem; border-radius: 20px; text-align: left; }
+  .stack-card h4 { color: var(--primary); margin-bottom: 1rem; font-size: 1.3rem; }
+  .final-cta { background: linear-gradient(135deg, rgba(192, 132, 252, 0.1), rgba(129, 140, 248, 0.1)); border: 1px solid var(--primary); padding: 5rem 2rem; text-align: center; border-radius: 32px; margin-top: 8rem; }
+  .btn-primary { background: white; color: black; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; font-weight: 800; display: inline-block; transition: 0.3s; }
+  .btn-primary:hover { background: var(--primary); color: white; transform: translateY(-3px); box-shadow: 0 15px 30px rgba(192, 132, 252, 0.3); }
+
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade-in { animation: fade-in 1s ease forwards; }
+  .animate-slide-up { animation: slide-up 1s ease forwards; }
+</style>

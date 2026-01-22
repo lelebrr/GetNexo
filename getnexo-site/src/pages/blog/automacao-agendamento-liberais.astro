@@ -1,0 +1,140 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Automação de Agendamentos para Profissionais Liberais",
+      "description": "Reduza faltas e otimize sua agenda. Saiba como o agendamento automático via WhatsApp transforma o consultório de médicos, dentistas e advogados.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-21",
+      "image": "/images/blog/agendamento-automatico-whatsapp.png",
+      "articleSection": "Serviços",
+      "keywords": "agendamento whatsapp, automação consultório, confirmar consulta whatsapp, agenda medica automatica"
+    }
+  ]
+};
+---
+
+<Layout title="Automação de Agendamentos por WhatsApp | GetNexo">
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta animate-fade-in">Produtividade • Jan 2026</div>
+      <h1 class="animate-slide-up">Agendamento Automático:<br/><span class="text-primary">Sua Agenda Sempre Cheia</span></h1>
+      <p class="subtitle animate-fade-in delay-200">Pare de perder tempo confirmando consultas manualmente. Deixe a IA cuidar do seu horário enquanto você atende seus clientes.</p>
+      
+      <div class="premium-hero-card glass-panel animate-fade-in">
+        <div class="visual-glow"></div>
+        <div class="visual-content">
+          <span class="visual-icon">🗓️</span>
+          <h2 class="visual-title">Agendamento: Foco & Produtividade</h2>
+          <div class="visual-stats">
+            <div class="stat"><span>-80%</span> no-shows</div>
+            <div class="stat"><span>100%</span> automático</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="post-content">
+      <section id="problema">
+        <h2>🗓️ O Desafio da Agenda Humana</h2>
+        <p>Para profissionais liberais — médicos, dentistas, advogados ou consultores — o tempo é o ativo mais valioso. O problema é que <strong>20 a 30% dos agendamentos</strong> resultam em faltas (no-shows) quando não há uma confirmação ativa. Fazer isso manualmente consome horas da sua secretária ou do seu próprio dia.</p>
+        
+        <div class="glass-panel mt-8">
+          <p><strong>Fato:</strong> O agendamento via WhatsApp tem uma taxa de conveniência 90% maior que ligações telefônicas, preferida por 8 em cada 10 pacientes.</p>
+        </div>
+      </section>
+
+      <section id="solucao">
+        <h2>🛠️ Como Funciona o Fluxo de Agendamento IA</h2>
+        <p>Com a GetNexo, o processo de agendamento torna-se uma conversa fluida e sem atritos.</p>
+        
+        <div class="stack-grid">
+          <div class="stack-card glass-panel blur">
+            <h4>Sincronização com Google Calendar</h4>
+            <p>O robô lê seus horários livres em tempo real e oferece apenas as janelas disponíveis no WhatsApp.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Confirmação Ativa</h4>
+            <p>Disparo automático 24h antes. Se o cliente desmarcar, a IA oferece o horário para a lista de espera instantaneamente.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Check-in e Pagamento</h4>
+            <p>Gere o link de pagamento da consulta diretamente na conversa, garantindo o compromisso financeiro do cliente.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="setores">
+        <h2>🚀 Benefícios por Área</h2>
+        <ul>
+          <li><strong>Saúde:</strong> Redução drástica de no-shows e agilidade no envio de orientações pré-exame.</li>
+          <li><strong>Direito:</strong> Triagem inicial de casos e agendamento de consultas jurídicas sem interrupções.</li>
+          <li><strong>Beleza/Estética:</strong> Gestão de recorrência e lembretes de retorno automático após 30 dias.</li>
+        </ul>
+      </section>
+
+      <div class="final-cta animate-scale-up">
+        <h3>Sua secretária eletrônica evoluiu.</h3>
+        <p>Libere seu time para o que importa e deixe a GetNexo gerenciar sua agenda com perfeição.</p>
+        <div class="cta-buttons mt-8">
+          <a href="/demo" class="btn-primary">Ver Agenda Pro</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+</Layout>
+
+<style>
+  :root {
+    --primary: #00d4ff;
+    --accent: #00ff9d;
+    --glass: rgba(15, 23, 42, 0.7);
+    --glass-border: rgba(0, 212, 255, 0.1);
+  }
+
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  .meta { color: var(--primary); font-size: 0.8rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem; display: inline-block; padding: 0.5rem 1rem; background: rgba(0, 212, 255, 0.05); border: 1px solid var(--glass-border); border-radius: 50px; }
+  h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; color: white; }
+  .text-primary { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .subtitle { font-size: 1.25rem; color: #94a3b8; max-width: 700px; margin: 0 auto; line-height: 1.6; }
+  .premium-hero-card { 
+    width: 100%; border-radius: 32px; margin-top: 3rem; height: 450px; 
+    display: flex; align-items: center; justify-content: center; 
+    background: radial-gradient(circle at center, #020617, #0f172a); 
+    border: 1px solid var(--glass-border); position: relative; overflow: hidden;
+  }
+  .visual-glow {
+    position: absolute; width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(0, 212, 255, 0.1), transparent);
+    filter: blur(60px); top: -100px; right: -100px;
+  }
+  .visual-content { text-align: center; z-index: 2; }
+  .visual-icon { font-size: 5rem; display: block; margin-bottom: 1.5rem; filter: drop-shadow(0 0 20px var(--primary)); }
+  .visual-title { font-size: 2.5rem; font-weight: 900; color: white; margin-bottom: 1.5rem; }
+  .visual-stats { display: flex; gap: 2rem; justify-content: center; }
+  .stat { font-size: 0.9rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
+  .stat span { display: block; font-size: 1.5rem; color: white; }
+
+  .post-content { color: #cbd5e1; line-height: 1.8; font-size: 1.15rem; }
+  h2 { font-size: 2.2rem; color: white; margin: 6rem 0 2rem; font-weight: 800; }
+  .glass-panel { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 2.5rem; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+  .stack-card { background: var(--glass); border: 1px solid var(--glass-border); padding: 2rem; border-radius: 20px; text-align: left; }
+  .stack-card h4 { color: var(--primary); margin-bottom: 1rem; font-size: 1.3rem; }
+  .final-cta { background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1)); border: 1px solid var(--primary); padding: 5rem 2rem; text-align: center; border-radius: 32px; margin-top: 8rem; }
+  .btn-primary { background: white; color: black; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; font-weight: 800; display: inline-block; transition: 0.3s; }
+  .btn-primary:hover { background: var(--primary); color: white; transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0, 212, 255, 0.3); }
+
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade-in { animation: fade-in 1s ease forwards; }
+  .animate-slide-up { animation: slide-up 1s ease forwards; }
+</style>

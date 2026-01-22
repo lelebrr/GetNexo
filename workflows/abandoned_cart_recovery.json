@@ -1,0 +1,461 @@
+{
+    "name": "Recuperação Carrinho Abandonado",
+    "nodes": [
+        {
+            "parameters": {
+                "path": "cart-abandoned",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                240,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "values": {
+                    "boolean": [
+                        {
+                            "name": "cart.active",
+                            "value": true
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "name": "Set Cart Active",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.2,
+            "position": [
+                460,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "database",
+                "operation": "insert",
+                "tableName": "abandoned_carts",
+                "columns": "cart_id,customer_email,customer_name,cart_value,cart_items,abandoned_at,recovery_status",
+                "valuesToInsert": "=cart.id,=customer.email,=customer.name,=cart.total,=JSON.stringify(cart.items),=NOW(),'pending'"
+            },
+            "name": "Save to Database",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                680,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "postgres_credentials",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "amount": 1,
+                "unit": "hours"
+            },
+            "name": "Wait 1 Hour",
+            "type": "n8n-nodes-base.wait",
+            "typeVersion": 1,
+            "position": [
+                900,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "database",
+                "operation": "select",
+                "tableName": "abandoned_carts",
+                "conditions": "recovery_status = 'pending' AND abandoned_at < NOW() - INTERVAL '1 hour'",
+                "limit": 50
+            },
+            "name": "Check Recovery Status",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                1120,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "postgres_credentials",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "value": "={{ $json.recovery_status }}",
+                "rules": {
+                    "rules": [
+                        {
+                            "conditions": [
+                                {
+                                    "id": "recovery_status",
+                                    "value": "pending"
+                                }
+                            ],
+                            "output": "send_recovery_email"
+                        }
+                    ]
+                }
+            },
+            "name": "Filter Pending Carts",
+            "type": "n8n-nodes-base.switch",
+            "typeVersion": 1,
+            "position": [
+                1340,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "fromEmail": "recuperacao@getnexo.com.br",
+                "toEmail": "={{ $json.customer_email }}",
+                "subject": "Não esqueça seu carrinho! 🎁",
+                "text": "Olá {{ $json.customer_name }},\n\nNotamos que você deixou alguns itens incríveis no carrinho:\n\n{{ $json.cart_items.map(item => `- ${item.name} (R$ ${item.price})`).join('\\n') }}\n\nTotal: R$ {{ $json.cart_value }}\n\nClique aqui para completar sua compra: https://getnexo.com.br/carrinho?recovery={{ $json.cart_id }}\n\nEsta oferta expira em 24 horas!\n\nAtenciosamente,\nEquipe GetNexo",
+                "html": "<h2>Olá {{ $json.customer_name }}! 👋</h2><p>Notamos que você deixou alguns itens incríveis no carrinho:</p><ul>{{ $json.cart_items.map(item => `<li>${item.name} - R$ ${item.price}</li>`).join('') }}</ul><p><strong>Total: R$ {{ $json.cart_value }}</strong></p><p><a href='https://getnexo.com.br/carrinho?recovery={{ $json.cart_id }}' style='background:#007bff;color:white;padding:12px 24px;text-decoration:none;border-radius:5px;'>Completar Compra Agora</a></p><p>⏰ Esta oferta expira em 24 horas!</p><p>Atenciosamente,<br>Equipe GetNexo</p>"
+            },
+            "name": "Send Recovery Email",
+            "type": "n8n-nodes-base.emailSend",
+            "typeVersion": 1,
+            "position": [
+                1560,
+                200
+            ],
+            "credentials": {
+                "smtp": {
+                    "id": "smtp_credentials",
+                    "name": "SMTP account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "amount": 24,
+                "unit": "hours"
+            },
+            "name": "Wait 24 Hours",
+            "type": "n8n-nodes-base.wait",
+            "typeVersion": 1,
+            "position": [
+                1780,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "database",
+                "operation": "select",
+                "tableName": "orders",
+                "conditions": "customer_email = '{{ $json.customer_email }}' AND created_at > '{{ $json.abandoned_at }}'"
+            },
+            "name": "Check if Purchased",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                2000,
+                200
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "postgres_credentials",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "value": "={{ $json.length > 0 ? 'purchased' : 'not_purchased' }}",
+                "rules": {
+                    "rules": [
+                        {
+                            "conditions": [
+                                {
+                                    "id": "purchased",
+                                    "value": "purchased"
+                                }
+                            ],
+                            "output": "update_successful_recovery"
+                        },
+                        {
+                            "conditions": [
+                                {
+                                    "id": "not_purchased",
+                                    "value": "not_purchased"
+                                }
+                            ],
+                            "output": "send_discount_offer"
+                        }
+                    ]
+                }
+            },
+            "name": "Check Purchase Status",
+            "type": "n8n-nodes-base.switch",
+            "typeVersion": 1,
+            "position": [
+                2220,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "database",
+                "operation": "update",
+                "tableName": "abandoned_carts",
+                "updateFields": "recovery_status,last_contact",
+                "updateValues": "'recovered',NOW()",
+                "conditions": "cart_id = '{{ $json.cart_id }}'"
+            },
+            "name": "Update Successful Recovery",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                2440,
+                100
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "postgres_credentials",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "fromEmail": "ofertas@getnexo.com.br",
+                "toEmail": "={{ $json.customer_email }}",
+                "subject": "Última Chance! 15% OFF no seu carrinho 🏷️",
+                "text": "Olá {{ $json.customer_name }},\n\nAinda não desistimos de você! 😊\n\nOferecemos 15% de desconto em TODOS os itens do seu carrinho:\n\n{{ $json.cart_items.map(item => `- ${item.name} (R$ ${item.price * 0.85})`).join('\\n') }}\n\nNovo Total: R$ {{ ($json.cart_value * 0.85).toFixed(2) }}\n\nCupom: ABANDONADO15\n\nClique aqui: https://getnexo.com.br/carrinho?recovery={{ $json.cart_id }}&coupon=ABANDONADO15\n\nAtenciosamente,\nEquipe GetNexo",
+                "html": "<h2>Olá {{ $json.customer_name }}! 😊</h2><p>Ainda não desistimos de você!</p><p><strong>Oferecemos 15% de desconto em TODOS os itens do seu carrinho:</strong></p><ul>{{ $json.cart_items.map(item => `<li>${item.name} - <del>R$ ${item.price}</del> <strong>R$ ${(item.price * 0.85).toFixed(2)}</strong></li>`).join('') }}</ul><p><strong>Novo Total: R$ {{ ($json.cart_value * 0.85).toFixed(2) }}</strong></p><p><strong>Cupom: ABANDONADO15</strong></p><p><a href='https://getnexo.com.br/carrinho?recovery={{ $json.cart_id }}&coupon=ABANDONADO15' style='background:#28a745;color:white;padding:12px 24px;text-decoration:none;border-radius:5px;'>Usar Desconto Agora</a></p><p>Atenciosamente,<br>Equipe GetNexo</p>"
+            },
+            "name": "Send Discount Offer",
+            "type": "n8n-nodes-base.emailSend",
+            "typeVersion": 1,
+            "position": [
+                2440,
+                300
+            ],
+            "credentials": {
+                "smtp": {
+                    "id": "smtp_credentials",
+                    "name": "SMTP account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "amount": 72,
+                "unit": "hours"
+            },
+            "name": "Wait 72 Hours",
+            "type": "n8n-nodes-base.wait",
+            "typeVersion": 1,
+            "position": [
+                2660,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "database",
+                "operation": "update",
+                "tableName": "abandoned_carts",
+                "updateFields": "recovery_status,last_contact",
+                "updateValues": "'failed',NOW()",
+                "conditions": "cart_id = '{{ $json.cart_id }}'"
+            },
+            "name": "Mark as Failed",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 1,
+            "position": [
+                2880,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "postgres_credentials",
+                    "name": "Postgres account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "resource": "analytics",
+                "operation": "track",
+                "event": "cart_recovery_attempt",
+                "properties": "cart_id={{ $json.cart_id }},customer_email={{ $json.customer_email }},cart_value={{ $json.cart_value }},stage=final_attempt,status=failed"
+            },
+            "name": "Track Failed Recovery",
+            "type": "n8n-nodes-base.analytics",
+            "typeVersion": 1,
+            "position": [
+                3100,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Set Cart Active",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Set Cart Active": {
+            "main": [
+                [
+                    {
+                        "node": "Save to Database",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Save to Database": {
+            "main": [
+                [
+                    {
+                        "node": "Wait 1 Hour",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Wait 1 Hour": {
+            "main": [
+                [
+                    {
+                        "node": "Check Recovery Status",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check Recovery Status": {
+            "main": [
+                [
+                    {
+                        "node": "Filter Pending Carts",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Filter Pending Carts": {
+            "main": [
+                [
+                    {
+                        "node": "Send Recovery Email",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Send Recovery Email": {
+            "main": [
+                [
+                    {
+                        "node": "Wait 24 Hours",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Wait 24 Hours": {
+            "main": [
+                [
+                    {
+                        "node": "Check if Purchased",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check if Purchased": {
+            "main": [
+                [
+                    {
+                        "node": "Check Purchase Status",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check Purchase Status": {
+            "main": [
+                [
+                    {
+                        "node": "Update Successful Recovery",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Send Discount Offer",
+                        "type": "main",
+                        "index": 1
+                    }
+                ]
+            ]
+        },
+        "Send Discount Offer": {
+            "main": [
+                [
+                    {
+                        "node": "Wait 72 Hours",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Wait 72 Hours": {
+            "main": [
+                [
+                    {
+                        "node": "Mark as Failed",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Mark as Failed": {
+            "main": [
+                [
+                    {
+                        "node": "Track Failed Recovery",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "executionOrder": "v1"
+    },
+    "staticData": null
+}

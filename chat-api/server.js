@@ -1,4 +1,6 @@
 const express = require('express');
+const { streamChat, monitorPing } = require('./api/chat');
+const { uploadProduct } = require('./api/upload-product');
 const http = require('http');
 const { Server } = require('socket.io');
 const Database = require('better-sqlite3');
@@ -43,6 +45,9 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
+// --- STATIC FILES ---
+app.use('/products', express.static(path.join(__dirname, 'public/products')));
+
 // Headers
 app.use((req, res, next) => {
     res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
@@ -68,14 +73,24 @@ try {
     if (fsSync.existsSync(AI_CONFIG_PATH)) {
         aiConfig = JSON.parse(fsSync.readFileSync(AI_CONFIG_PATH, 'utf8'));
     }
+    global.aiConfig = aiConfig;
 } catch (e) {
     console.error('[AI CONFIG] Error:', e);
 }
 
 // Get AI key helper
 const getAiKey = (provider) => {
-    if (provider === 'gemini') return aiConfig.geminiKey || process.env.GEMINI_API_KEY;
-    if (provider === 'openrouter') return aiConfig.openRouterKey || process.env.OPENROUTER_API_KEY;
+    // Check root level first (flat config)
+    if (provider === 'gemini' && (aiConfig.geminiKey || process.env.GEMINI_API_KEY)) return aiConfig.geminiKey || process.env.GEMINI_API_KEY;
+    if (provider === 'openrouter' && (aiConfig.openRouterKey || process.env.OPENROUTER_API_KEY)) return aiConfig.openRouterKey || process.env.OPENROUTER_API_KEY;
+    if (provider === 'grok' && (aiConfig.grokKey || process.env.GROK_API_KEY)) return aiConfig.grokKey || process.env.GROK_API_KEY;
+    if (provider === 'deepseek' && (aiConfig.deepseekKey || process.env.DEEPSEEK_API_KEY)) return aiConfig.deepseekKey || process.env.DEEPSEEK_API_KEY;
+
+    // Check nested providers level (full config)
+    if (aiConfig.providers && aiConfig.providers[provider]) {
+        return aiConfig.providers[provider].key;
+    }
+
     return null;
 };
 
@@ -135,7 +150,7 @@ const magicRepliesRoutes = require('./routes/magic-replies');
 const clusteringRoutes = require('./routes/clustering');
 
 // Sales templates routes
-// const salesTemplatesRoutes = require('./routes/sales-templates');
+const salesTemplatesRoutes = require('./routes/sales-templates');
 
 // Sentiment Analysis routes
 const sentimentRoutes = require('./routes/sentiment');
@@ -149,11 +164,70 @@ const dockerRoutes = require('./routes/docker');
 // Loyalty routes
 const loyaltyRoutes = require('./routes/loyalty');
 
+// Support voice routes
+app.post('/api/support/voice', async (req, res) => {
+    try {
+        const { message, userAgent, timestamp, language = 'pt-BR' } = req.body;
+
+        if (!message || typeof message !== 'string') {
+            return res.status(400).json({ error: 'Mensagem é obrigatória' });
+        }
+
+        // Analizar sentimento da mensagem de voz
+        const sentimentAnalysis = mlModel.analyzeSentiment(message);
+
+        // Preparar resposta baseada no sentimento
+        let responseText = '';
+        let confidence = 0;
+
+        if (sentimentAnalysis.sentiment === 'positive') {
+            responseText = 'Que bom ouvir isso! Como posso ajudar você melhor?';
+            confidence = 0.9;
+        } else if (sentimentAnalysis.sentiment === 'negative') {
+            responseText = 'Sinto muito que você esteja enfrentando dificuldades. Vamos resolver isso juntos.';
+            confidence = 0.85;
+        } else {
+            responseText = 'Entendi. Como posso ajudar você hoje?';
+            confidence = 0.8;
+        }
+
+        // Log da interação de voz
+        db.prepare('INSERT INTO system_logs (level, message, details) VALUES (?, ?, ?)').run(
+            'SUPPORT_VOICE',
+            'Voice message processed',
+            JSON.stringify({
+                messageLength: message.length,
+                sentiment: sentimentAnalysis.sentiment,
+                confidence: sentimentAnalysis.confidence,
+                language,
+                userAgent,
+                timestamp: timestamp || new Date().toISOString()
+            })
+        );
+
+        res.json({
+            response: responseText,
+            sentimentAnalysis,
+            confidence,
+            language,
+            processed_at: new Date().toISOString(),
+            message_length: message.length
+        });
+
+    } catch (error) {
+        console.error('[SUPPORT VOICE ERROR]:', error);
+        res.status(500).json({
+            error: 'Erro ao processar mensagem de voz',
+            fallback: 'Olá! Como posso ajudar você hoje?'
+        });
+    }
+});
+
 // Register routes
 app.use('/api/magic-replies', magicRepliesRoutes);
 app.use('/webhook', webhooksRoutes);
 app.use('/api/clustering', clusteringRoutes);
-// app.use('/api/sales-templates', salesTemplatesRoutes);
+app.use('/api/sales-templates', salesTemplatesRoutes);
 app.use('/api/sentiment', sentimentRoutes);
 app.use('/api/series', seriesRoutes);
 app.use('/api/docker', dockerRoutes);
@@ -874,8 +948,10 @@ const configSchemas = {
     ai: {
         geminiKey: { type: 'string', pattern: /^AIza[0-9A-Za-z-_]{35}$/, required: false },
         openRouterKey: { type: 'string', minLength: 20, required: false },
-        grokKey: { type: 'string', minLength: 20, required: false },
         deepseekKey: { type: 'string', minLength: 20, required: false },
+        deepseekModel: { type: 'string', enum: ['deepseek-chat', 'deepseek-reasoner'], required: false },
+        grokKey: { type: 'string', minLength: 20, required: false },
+        grokModel: { type: 'string', enum: ['grok-beta', 'grok-2'], required: false },
         activeAI: { type: 'string', enum: ['gemini', 'openrouter', 'grok', 'deepseek'], required: false },
         industry: { type: 'string', maxLength: 100, required: false },
         leadName: { type: 'string', maxLength: 50, required: false }
@@ -1101,6 +1177,27 @@ app.post('/api/config/:category', authenticate, (req, res) => {
     }
 });
 
+// POST /api/admin/config - Legacy route for Frontend compatibility
+app.post('/api/admin/config', authenticate, (req, res) => {
+    try {
+        const newConfig = req.body;
+        // Merge with existing config
+        aiConfig = { ...aiConfig, ...newConfig };
+
+        // Save to file
+        fsSync.writeFileSync(AI_CONFIG_PATH, JSON.stringify(aiConfig, null, 2));
+
+        res.json({
+            success: true,
+            message: 'Configuração atualizada via rota legado',
+            timestamp: new Date().toISOString()
+        });
+    } catch (e) {
+        console.error('[LEGACY CONFIG ERROR]:', e.message);
+        res.status(500).json({ error: e.message });
+    }
+});
+
 // DELETE /api/config/:category - Reset configuration to defaults
 app.delete('/api/config/:category', authenticate, (req, res) => {
     try {
@@ -1298,6 +1395,34 @@ Adapte sua resposta ao sentimento detectado: seja empático com mensagens negati
                 }]
             });
             aiResponse = response.data.candidates?.[0]?.content?.parts?.[0]?.text || 'Erro na geração da resposta.';
+        } else if (provider === 'deepseek') {
+            const model = aiConfig.deepseekModel || 'deepseek-chat';
+            const response = await axios.post('https://api.deepseek.com/chat/completions', {
+                model: model,
+                messages,
+                temperature: 0.7,
+                max_tokens: 1000
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${aiKey}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            aiResponse = response.data.choices?.[0]?.message?.content || 'Erro na resposta do DeepSeek.';
+        } else if (provider === 'grok') {
+            const model = aiConfig.grokModel || 'grok-beta';
+            const response = await axios.post('https://api.x.ai/v1/chat/completions', {
+                model: model,
+                messages,
+                temperature: 0.7,
+                max_tokens: 1000
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${aiKey}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            aiResponse = response.data.choices?.[0]?.message?.content || 'Erro na resposta do Grok.';
         }
 
         // Enhance response with sentiment awareness
@@ -1342,6 +1467,35 @@ Adapte sua resposta ao sentimento detectado: seja empático com mensagens negati
             fallback: 'Olá! Como posso ajudar você hoje?',
             sentimentAnalysis: mlModel.analyzeSentiment(message)
         });
+    }
+});
+
+app.get('/api/ai/balance/:provider', authenticate, async (req, res) => {
+    try {
+        const { provider } = req.params;
+        const aiKey = getAiKey(provider);
+
+        if (!aiKey) {
+            return res.status(400).json({ error: 'Provider API Key not configured' });
+        }
+
+        if (provider === 'deepseek') {
+            const response = await axios.get('https://api.deepseek.com/user/balance', {
+                headers: { 'Authorization': `Bearer ${aiKey}` }
+            });
+
+            // DeepSeek returns { is_available: true, balance_infos: [...] }
+            return res.json({
+                provider,
+                success: true,
+                balance: response.data
+            });
+        }
+
+        res.status(400).json({ error: `Balance check not implemented for ${provider}` });
+    } catch (e) {
+        console.error('[AI BALANCE ERROR]:', e.message);
+        res.status(500).json({ error: e.message });
     }
 });
 
@@ -5583,6 +5737,11 @@ app.get('/api/games/analytics/dashboard', authenticate, async (req, res) => {
 app.get('/', (req, res) => {
     res.send('GetNexo API is running. If you are looking for the widget, it is at /widget.js');
 });
+
+// --- ADVANCED AI ROUTES ---
+app.post('/api/chat/stream', streamChat);
+app.post('/api/monitor/ping', monitorPing);
+app.post('/api/upload-product', uploadProduct);
 
 // --- START SERVER ---
 server.listen(3006, () => {

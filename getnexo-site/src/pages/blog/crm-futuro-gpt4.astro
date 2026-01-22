@@ -1,0 +1,97 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "O Futuro do CRM: Integração GPT-4 e IA Generativa 2026",
+      "description": "Como a integração de modelos como GPT-4 está transformando o CRM de um banco de dados para um centro de insights e automação.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-21",
+      "image": "/images/blog/crm_futuro_gpt4_ia.png"
+    }
+  ]
+};
+---
+
+<Layout title="Futuro do CRM e GPT-4 | GetNexo">
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta animate-fade-in">Tecnologia • Jan 2026</div>
+      <h1 class="animate-slide-up">O CRM Inteligente:<br/><span class="text-primary">A Era do GPT-4</span></h1>
+      <p class="subtitle animate-fade-in delay-200">Deixe que a IA escreva seus e-mails, qualifique seus leads e preveja suas vendas com precisão cirúrgica.</p>
+      
+      <img src="/images/blog/crm_futuro_gpt4_ia.png" alt="O Futuro do CRM com GPT-4" class="featured-image glass-panel" />
+    </header>
+
+    <div class="post-content">
+      <section id="evolucao">
+        <h2>🧠 O Fim da Digitação Manual</h2>
+        <p>Lembra quando você tinha que preencher cada campo do CRM? Isso acabou. Com o Magic Replies e a integração GPT-4 da GetNexo, a IA extrai informações das conversas e atualiza o perfil do cliente automaticamente.</p>
+        <div class="glass-panel mt-8">
+          <p><strong>Inovação:</strong> Nosso sistema sugere a melhor resposta baseada no tom de voz da sua marca e no histórico de compras do cliente.</p>
+        </div>
+      </section>
+
+      <section id="capacidades">
+        <h2>🛠️ O que um CRM com GPT-4 pode fazer?</h2>
+        <div class="stack-grid">
+          <div class="stack-card glass-panel blur">
+            <h4>Qualificação de Leads</h4>
+            <p>Score automático baseado na probabilidade real de fechamento.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Forecasting Preditivo</h4>
+            <p>Previsão de faturamento baseada no comportamento atual do pipeline.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="getnexo-magic">
+        <h2>🚀 Magic Replies: Sua Arma Secreta</h2>
+        <p>Utilizamos os modelos mais avançados do mundo para garantir que sua equipe de vendas seja 10x mais produtiva. Menos tempo escrevendo, mais tempo fechando.</p>
+      </section>
+
+      <div class="final-cta animate-scale-up">
+        <h3>Pronto para o próximo nível de CRM?</h3>
+        <p>Experimente o CRM que pensa por você. Conheça as funcionalidades de IA da GetNexo.</p>
+        <div class="cta-buttons mt-8">
+          <a href="/magic-replies" class="btn-primary">Conhecer Magic Replies</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+</Layout>
+
+<style>
+  :root {
+    --primary: #00f7ff;
+    --accent: #7000ff;
+    --glass: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+  }
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  .meta { color: var(--primary); font-size: 0.8rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem; display: inline-block; padding: 0.5rem 1rem; background: rgba(0, 247, 255, 0.05); border: 1px solid var(--glass-border); border-radius: 50px; }
+  h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; color: white; }
+  .text-primary { color: var(--primary); }
+  .subtitle { font-size: 1.25rem; color: #a0a0a0; max-width: 700px; margin: 0 auto; line-height: 1.6; }
+  .featured-image { width: 100%; border-radius: 24px; margin-top: 3rem; object-fit: cover; height: 500px; }
+  .post-content { color: #ccc; line-height: 1.8; font-size: 1.15rem; }
+  h2 { font-size: 2.2rem; color: white; margin: 6rem 0 2rem; font-weight: 800; }
+  .glass-panel { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 24px; padding: 2.5rem; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+  .stack-card { background: var(--glass); border: 1px solid var(--glass-border); padding: 1.5rem; border-radius: 20px; text-align: center; backdrop-filter: blur(10px); }
+  .final-cta { background: linear-gradient(135deg, rgba(0, 247, 255, 0.1), rgba(112, 0, 255, 0.1)); border: 1px solid var(--primary); padding: 5rem 2rem; text-align: center; border-radius: 32px; margin-top: 8rem; }
+  .btn-primary { background: var(--primary); color: black; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; font-weight: 800; display: inline-block; transition: 0.3s; }
+  .btn-primary:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(0, 247, 255, 0.4); }
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade-in { animation: fade-in 1s ease forwards; }
+  .animate-slide-up { animation: slide-up 1s ease forwards; }
+</style>

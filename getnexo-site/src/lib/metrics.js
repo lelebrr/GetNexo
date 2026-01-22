@@ -7,35 +7,7 @@ const register = new promClient.Registry();
 // Adicionar métricas padrão
 promClient.collectDefaultMetrics({ register });
 
-// Métricas customizadas
-const httpRequestDuration = new promClient.Histogram({
-    name: 'http_request_duration_seconds',
-    help: 'Duration of HTTP requests in microseconds',
-    labelNames: ['method', 'route', 'status_code'],
-    buckets: [0.1, 0.5, 1, 2, 5]
-});
-
-const activeConnections = new promClient.Gauge({
-    name: 'active_connections',
-    help: 'Number of active connections'
-});
-
-const errorCounter = new promClient.Counter({
-    name: 'application_errors_total',
-    help: 'Total number of application errors',
-    labelNames: ['type', 'endpoint']
-});
-
-const uptimeGauge = new promClient.Gauge({
-    name: 'application_uptime_seconds',
-    help: 'Application uptime in seconds'
-});
-
-// Registrar métricas
-register.registerMetric(httpRequestDuration);
-register.registerMetric(activeConnections);
-register.registerMetric(errorCounter);
-register.registerMetric(uptimeGauge);
+// Métricas customizadas desabilitadas para evitar conflitos
 
 // Inicializar uptime
 uptimeGauge.set(process.uptime());
@@ -90,11 +62,7 @@ export {
     updateActiveConnections,
     getMetrics,
     metricsEndpoint,
-    register,
-    httpRequestDuration,
-    activeConnections,
-    errorCounter,
-    uptimeGauge
+    register
 };
 
 export default {
@@ -103,9 +71,5 @@ export default {
     updateActiveConnections,
     getMetrics,
     metricsEndpoint,
-    register,
-    httpRequestDuration,
-    activeConnections,
-    errorCounter,
-    uptimeGauge
+    register
 };

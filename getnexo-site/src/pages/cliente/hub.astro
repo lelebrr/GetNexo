@@ -1,89 +1,279 @@
 ---
 import ClientLayout from '../../layouts/ClientLayout.astro';
 import Timeline from '../../components/cliente/Timeline.jsx';
+import ProductViewer from '../../components/ProductViewer.astro';
 ---
 
-<ClientLayout title="Hub do Cliente - GetNexo">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Timeline Principal -->
-        <div class="lg:col-span-2">
-            <div class="bg-white rounded-lg shadow p-6">
-                <h2 class="text-xl font-semibold mb-4">Timeline Unificada</h2>
-                <Timeline client:load />
+<ClientLayout title="Painel do Cliente - GetNexo">
+    <!-- Dashboard Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Bem-vindo ao seu Painel, Cliente!</h1>
+        <p class="text-gray-600">Gerencie seu negócio, converse com clientes e otimize suas vendas automaticamente.</p>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-blue-100">
+                    <span class="text-2xl">💬</span>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Conversas Hoje</p>
+                    <p class="text-2xl font-bold text-gray-900">127</p>
+                </div>
             </div>
         </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-green-100">
+                    <span class="text-2xl">🛒</span>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Vendas Hoje</p>
+                    <p class="text-2xl font-bold text-gray-900">23</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-yellow-100">
+                    <span class="text-2xl">⭐</span>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Satisfação</p>
+                    <p class="text-2xl font-bold text-gray-900">4.8</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-purple-100">
+                    <span class="text-2xl">💰</span>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Receita Hoje</p>
+                    <p class="text-2xl font-bold text-gray-900">R$ 4.750</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <!-- Sidebar com ações rápidas -->
+    <!-- Main Dashboard Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <!-- Main Content Area -->
+        <div class="lg:col-span-2 space-y-8">
+
+            <!-- Atendentes Virtuais -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-semibold text-gray-900">Seus Atendentes Virtuais</h2>
+                        <a href="/cliente/atendentes" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                            Gerenciar Atendentes
+                        </a>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <div class="flex items-center mb-3">
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                    <span class="text-lg">🤖</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium text-gray-900">Atendente Principal</h3>
+                                    <p class="text-sm text-gray-600">Online • Respondendo</p>
+                                </div>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span>Conversas hoje: 89</span>
+                                <span class="text-green-600">94% satisfação</span>
+                            </div>
+                        </div>
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <div class="flex items-center mb-3">
+                                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                                    <span class="text-lg">💼</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium text-gray-900">Especialista Vendas</h3>
+                                    <p class="text-sm text-gray-600">Online • Vendendo</p>
+                                </div>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span>Vendas hoje: 15</span>
+                                <span class="text-green-600">R$ 2.340</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <a href="/cliente/atendentes/novo" class="text-blue-600 hover:text-blue-800 font-medium">
+                            + Criar novo atendente virtual
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conversas Ativas -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-semibold text-gray-900">Conversas Ativas</h2>
+                        <a href="/cliente/chat" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                            Ver Todas
+                        </a>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                                    <span class="text-sm font-medium">MC</span>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-900">Maria Clara</p>
+                                    <p class="text-sm text-gray-600">"Gostaria de saber sobre os produtos..."</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-gray-500">2 min atrás</p>
+                                <span class="inline-block w-3 h-3 bg-green-500 rounded-full"></span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                                    <span class="text-sm font-medium">JS</span>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-900">João Silva</p>
+                                    <p class="text-sm text-gray-600">"Quando chega meu pedido?"</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-gray-500">5 min atrás</p>
+                                <span class="inline-block w-3 h-3 bg-yellow-500 rounded-full"></span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                                    <span class="text-sm font-medium">AS</span>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-900">Ana Santos</p>
+                                    <p class="text-sm text-gray-600">"Produto com defeito..."</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-gray-500">8 min atrás</p>
+                                <span class="inline-block w-3 h-3 bg-red-500 rounded-full"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline de Atividades -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="p-6 border-b border-gray-200">
+                    <h2 class="text-xl font-semibold text-gray-900">Timeline de Atividades</h2>
+                </div>
+                <div class="p-6">
+                    <Timeline client:load />
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Sidebar -->
         <div class="space-y-6">
-            <!-- Pontos e Cupons -->
+
+            <!-- Ações Rápidas -->
             <div class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-lg font-medium mb-3">Pontos & Cupons</h3>
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Ações Rápidas</h3>
                 <div class="space-y-3">
-                    <div class="flex justify-between">
-                        <span>Saldo de Pontos:</span>
-                        <span class="font-semibold text-green-600">1.250 pts</span>
+                    <a href="/cliente/chat/novo" class="block w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors text-center font-medium">
+                        💬 Iniciar Nova Conversa
+                    </a>
+                    <a href="/cliente/atendentes/novo" class="block w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors text-center font-medium">
+                        🤖 Criar Atendente Virtual
+                    </a>
+                    <a href="/cliente/analytics" class="block w-full bg-purple-600 text-white py-3 px-4 rounded-lg hover:bg-purple-700 transition-colors text-center font-medium">
+                        📊 Ver Relatórios
+                    </a>
+                    <a href="/cliente/configuracoes" class="block w-full bg-gray-600 text-white py-3 px-4 rounded-lg hover:bg-gray-700 transition-colors text-center font-medium">
+                        ⚙️ Configurações
+                    </a>
+                </div>
+            </div>
+
+            <!-- Status do Sistema -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Status do Sistema</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm">WhatsApp API</span>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            Online
+                        </span>
                     </div>
-                    <div class="flex justify-between">
-                        <span>Faltam para Ouro:</span>
-                        <span class="font-semibold">750 pts</span>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm">IA de Vendas</span>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            Online
+                        </span>
                     </div>
-                    <button class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
-                        Ver Cupons
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm">Analytics</span>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            Online
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm">Última atualização</span>
+                        <span class="text-xs text-gray-500">há 2 min</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Programa de Fidelidade -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Programa de Fidelidade</h3>
+                <div class="text-center mb-4">
+                    <div class="text-3xl mb-2">🥈</div>
+                    <p class="font-medium text-gray-900">Nível Prata</p>
+                    <p class="text-sm text-gray-600">1.250 / 2.000 pontos</p>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
+                    <div class="bg-yellow-500 h-2 rounded-full" style="width: 62.5%"></div>
+                </div>
+                <p class="text-xs text-gray-600 mb-4">750 pontos para alcançar Ouro</p>
+                <a href="/cliente/fidelidade" class="block w-full bg-yellow-500 text-white py-2 px-4 rounded-lg hover:bg-yellow-600 transition-colors text-center font-medium">
+                    Ver Recompensas
+                </a>
+            </div>
+
+            <!-- Suporte -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Precisa de Ajuda?</h3>
+                <div class="space-y-3">
+                    <a href="/suporte" class="block text-blue-600 hover:text-blue-800 text-sm">
+                        📚 Central de Ajuda
+                    </a>
+                    <a href="/faq" class="block text-blue-600 hover:text-blue-800 text-sm">
+                        ❓ Perguntas Frequentes
+                    </a>
+                    <button onclick="window.$chatwoot?.toggle()" class="block w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
+                        💬 Chat com Suporte
                     </button>
                 </div>
             </div>
 
-            <!-- Lista de Desejos -->
-            <div class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-lg font-medium mb-3">Lista de Desejos</h3>
-                <div class="space-y-2">
-                    <div class="flex items-center justify-between">
-                        <span>iPhone 15 Pro</span>
-                        <span class="text-sm text-red-600">Preço caiu!</span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span>MacBook Air M3</span>
-                        <span class="text-sm text-gray-500">R$ 8.999</span>
-                    </div>
-                </div>
-                <button class="w-full mt-3 bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700">
-                    Ver Lista Completa
-                </button>
-            </div>
-
-            <!-- Mini Store -->
-            <div class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-lg font-medium mb-3">Reordenar Produtos</h3>
-                <div class="space-y-2">
-                    <div class="flex items-center justify-between">
-                        <span>Café Premium</span>
-                        <button class="bg-green-600 text-white px-3 py-1 rounded text-sm">Reordenar</button>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span>Shampoo Anticaspa</span>
-                        <button class="bg-green-600 text-white px-3 py-1 rounded text-sm">Reordenar</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Troféus -->
-            <div class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-lg font-medium mb-3">Seus Troféus</h3>
-                <div class="grid grid-cols-3 gap-2">
-                    <div class="text-center">
-                        <div class="w-12 h-12 bg-yellow-400 rounded-full mx-auto mb-1 flex items-center justify-center">🏆</div>
-                        <span class="text-xs">Cliente VIP</span>
-                    </div>
-                    <div class="text-center">
-                        <div class="w-12 h-12 bg-blue-400 rounded-full mx-auto mb-1 flex items-center justify-center">⭐</div>
-                        <span class="text-xs">5 anos</span>
-                    </div>
-                    <div class="text-center">
-                        <div class="w-12 h-12 bg-purple-400 rounded-full mx-auto mb-1 flex items-center justify-center">💎</div>
-                        <span class="text-xs">Tech Lover</span>
-                    </div>
-                </div>
-            </div>
         </div>
+
     </div>
 </ClientLayout>

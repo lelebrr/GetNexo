@@ -1,0 +1,112 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "IA Generativa no Atendimento: O Fim das Filas de Espera",
+      "description": "Reduza seus custos de suporte em até 80% usando IA Generativa. Descubra como acabar com as filas de espera e encantar seus clientes com respostas instantâneas.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-21",
+      "image": "/images/blog/ia-generativa-atendimento.png",
+      "articleSection": "Suporte",
+      "keywords": "ia no atendimento, chatbot suporte, redução de custos suporte, ia generativa whatsapp, atendimento instantâneo"
+    }
+  ]
+};
+---
+
+<Layout title="IA Generativa no Atendimento: O Fim das Filas | GetNexo">
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta animate-fade-in">Inovação • Jan 2026</div>
+      <h1 class="animate-slide-up">IA Generativa:<br/><span class="text-primary">O Fim das Filas de Espera</span></h1>
+      <p class="subtitle animate-fade-in delay-200">Seu cliente não quer esperar. Sua empresa não quer gastar fortunas com call centers. Conheça o futuro do suporte.</p>
+      
+      <div class="placeholder-image glass-panel animate-fade-in">
+        <p>Image: Futuristic AI Assistant solving customer queries in real-time</p>
+      </div>
+    </header>
+
+    <div class="post-content">
+      <section id="cenario">
+        <h2>⏱️ O Custo da Espera</h2>
+        <p>Em 2026, a tolerância para o 'Aguarde um momento' é zero. Estudos indicam que 65% dos clientes mudam de fornecedor após uma única experiência de suporte demorada. Ter uma equipe humana de prontidão 24/7 é financeiramente inviável para 90% das empresas. É aqui que a IA Generativa entra como sua aliada estratégica.</p>
+        
+        <div class="glass-panel mt-8">
+          <p><strong>Fato:</strong> IAs Generativas integradas à base de conhecimento da empresa resolvem até 80% dos chamados de nível 1 sem intervenção humana.</p>
+        </div>
+      </section>
+
+      <section id="vagas">
+        <h2>🤖 Como a IA Generativa Supera os Bots Antigos</h2>
+        <p>Esqueça os menus numéricos engessados ("Digite 1 para financeiro"). A IA Generativa entende a linguagem natural e resolve problemas reais.</p>
+        
+        <div class="stack-grid">
+          <div class="stack-card glass-panel blur">
+            <h4>Resolução de Problemas</h4>
+            <p>Ela lê manuais, políticas de reembolso e FAQs para dar soluções precisas, não apenas redirecionar o cliente.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Empatia em Escala</h4>
+            <p>A IA é capaz de identificar frustração e ajustar o tom de voz para ser acolhedora e eficiente.</p>
+          </div>
+          <div class="stack-card glass-panel blur">
+            <h4>Integração Técnica</h4>
+            <p>Consulta status de pedidos, altera datas de vencimento e envia segundas vias de boleto automaticamente via integração de banco de dados.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="futuro">
+        <h2>🚀 Suporte Híbrido: A Próxima Fronteira</h2>
+        <p>A GetNexo defende o modelo híbrido: a IA resolve o operacional massivo, enquanto seus melhores humanos focam em casos sensíveis e estratégicos que exigem julgamento complexo. O resultado é um CSAT (Customer Satisfaction Score) batendo recordes.</p>
+      </section>
+
+      <div class="final-cta animate-scale-up">
+        <h3>Zere sua fila hoje.</h3>
+        <p>Implemente a IA Generativa GetNexo no seu suporte e entregue o atendimento que seu cliente sempre sonhou.</p>
+        <div class="cta-buttons mt-8">
+          <a href="/demo" class="btn-primary">Ver IA em Ação</a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+</Layout>
+
+<style>
+  :root {
+    --primary: #00d4ff;
+    --accent: #00ff9d;
+    --glass: rgba(15, 23, 42, 0.7);
+    --glass-border: rgba(0, 212, 255, 0.1);
+  }
+
+  /* Standard Premium Styles */
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  .meta { color: var(--primary); font-size: 0.8rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem; display: inline-block; padding: 0.5rem 1rem; background: rgba(0, 212, 255, 0.05); border: 1px solid var(--glass-border); border-radius: 50px; }
+  h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; color: white; }
+  .text-primary { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .subtitle { font-size: 1.25rem; color: #94a3b8; max-width: 700px; margin: 0 auto; line-height: 1.6; }
+  .placeholder-image { width: 100%; border-radius: 24px; margin-top: 3rem; height: 500px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0f172a, #020617); color: var(--primary); font-weight: 800; border: 1px dashed var(--primary); }
+  .post-content { color: #cbd5e1; line-height: 1.8; font-size: 1.15rem; }
+  h2 { font-size: 2.2rem; color: white; margin: 6rem 0 2rem; font-weight: 800; }
+  .glass-panel { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 2.5rem; }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+  .stack-card { background: var(--glass); border: 1px solid var(--glass-border); padding: 2rem; border-radius: 20px; text-align: left; }
+  .stack-card h4 { color: var(--primary); margin-bottom: 1rem; font-size: 1.3rem; }
+  .final-cta { background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.1)); border: 1px solid var(--primary); padding: 5rem 2rem; text-align: center; border-radius: 32px; margin-top: 8rem; }
+  .btn-primary { background: white; color: black; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; font-weight: 800; display: inline-block; transition: 0.3s; }
+  .btn-primary:hover { background: var(--primary); color: white; transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0, 212, 255, 0.3); }
+
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slide-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade-in { animation: fade-in 1s ease forwards; }
+  .animate-slide-up { animation: slide-up 1s ease forwards; }
+</style>

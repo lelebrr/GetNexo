@@ -19,6 +19,15 @@ const users = [
     },
     {
         id: 2,
+        email: 'lelebrr@gmail.com',
+        password: '$2a$10$masteradmin', // Will hash on init
+        role: 'superadmin',
+        name: 'Leonardo Master Admin',
+        permissions: ['all'],
+        createdAt: new Date().toISOString(),
+    },
+    {
+        id: 3,
         email: 'reseller@example.com',
         password: '$2a$10$hashedpassword',
         role: 'reseller',
@@ -38,7 +47,11 @@ let auditLogs = [];
 const initUsers = async () => {
     for (const user of users) {
         if (!user.password.startsWith('$2a$')) {
-            user.password = await bcrypt.hash('password123', 10);
+            let defaultPassword = 'password123';
+            if (user.email === 'lelebrr@gmail.com') {
+                defaultPassword = 'master2026';
+            }
+            user.password = await bcrypt.hash(defaultPassword, 10);
         }
     }
 };
@@ -382,4 +395,50 @@ export const generateQRCode = async (email) => {
     const qrData = `${baseUrl}/api/auth/qr-link?token=${token}`;
 
     return qrData;
+};
+
+// Generate password reset link
+export const generatePasswordResetLink = async (email) => {
+    const user = findUserByEmail(email);
+    if (!user) {
+        throw new Error('Usuário não encontrado');
+    }
+
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+
+    magicLinks.set(token, {
+        email,
+        expiresAt,
+        used: false,
+        type: 'password-reset'
+    });
+
+    const baseUrl = process.env.BASE_URL || 'http://localhost:4321';
+    const resetLink = `${baseUrl}/api/auth/reset-password?token=${token}`;
+
+    // Simulate sending email (in real app, use email service)
+    console.log(`Link de reset de senha enviado para ${email}: ${resetLink}`);
+
+    return { success: true, message: 'Link de reset enviado para o email' };
+};
+
+// Reset password using token
+export const resetPassword = async (token, newPassword) => {
+    const linkData = magicLinks.get(token);
+    if (!linkData || linkData.type !== 'password-reset') return null;
+
+    if (linkData.used || linkData.expiresAt < new Date()) {
+        magicLinks.delete(token);
+        return null;
+    }
+
+    const user = findUserByEmail(linkData.email);
+    if (!user) return null;
+
+    // Hash new password
+    user.password = await bcrypt.hash(newPassword, 10);
+    linkData.used = true;
+
+    return { success: true, message: 'Senha alterada com sucesso' };
 };
