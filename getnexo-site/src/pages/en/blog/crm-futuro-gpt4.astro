@@ -1,0 +1,48 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "The Intelligent CRM: The Era of GPT-4",
+      "description": "Automatic lead qualification and predictive insights integrated into your CRM.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-22",
+      "articleSection": "CRM & IA"
+    }
+  ]
+};
+---
+<Layout
+  title="The Intelligent CRM: The Era of GPT-4 | GetNexo" articleSchema={schema}
+  type="article"
+>
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta">CRM & IA • Jan 2026</div>
+      <h1>The Intelligent CRM:<br/><span class="text-primary">The Era of GPT-4</span></h1>
+      <p class="subtitle">Automatic lead qualification and predictive insights integrated into your CRM.</p>
+    </header>
+    <div class="post-content">
+      <section>
+        <h2>🧠 GPT-4: The Brain of your CRM</h2>
+        <p>Traditional CRMs are just databases. In 2026, GPT-4 transforms your CRM into a proactive sales assistant that knows when to call and what to say.</p>
+      </section>
+      <div class="final-cta">
+        <h3>Upgrade your CRM today!</h3>
+        <p>GetNexo integrates seamlessly with major CRMs to bring AI to your workflow.</p>
+        <a href="/en/create-bot" class="btn-primary">Learn More</a>
+      </div>
+    </div>
+  </article>
+</Layout>
+<style>
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  h1 { font-size: 3.5rem; font-weight: 900; color: white; }
+  .text-primary { color: #00f7ff; }
+  .btn-primary { background: #00f7ff; color: black; padding: 1.2rem 3.5rem; border-radius: 50px; text-decoration: none; font-weight: 800; }
+</style>

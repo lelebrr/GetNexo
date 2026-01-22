@@ -1,20 +1,24 @@
-export default async function handler(req, res) {
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Método não permitido' });
-    }
+export const prerender = false;
 
+export async function POST({ request, params }) {
     try {
-        const { id } = req.query;
+        const { id } = params;
 
         if (!id) {
-            return res.status(400).json({ error: 'ID do adicional é obrigatório' });
+            return new Response(JSON.stringify({ error: 'ID do adicional é obrigatório' }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' }
+            });
         }
 
         // Simular ativação do adicional
         const ativacaoPermitida = ['360-ar', 'ia-plus', 'equipe']; // Apenas estes podem ser ativados
 
         if (!ativacaoPermitida.includes(id)) {
-            return res.status(400).json({ error: 'Este adicional não pode ser ativado manualmente' });
+            return new Response(JSON.stringify({ error: 'Este adicional não pode ser ativado manualmente' }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' }
+            });
         }
 
         // Mock de ativação
@@ -23,13 +27,19 @@ export default async function handler(req, res) {
         // Em produção, aqui seria feita a lógica de ativação no banco de dados
         // e atualização das permissões do usuário
 
-        res.status(200).json({
+        return new Response(JSON.stringify({
             success: true,
             message: `Adicional ${id} ativado com sucesso!`
+        }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
         });
 
     } catch (error) {
         console.error('Erro ao ativar adicional:', error);
-        res.status(500).json({ error: 'Erro interno do servidor' });
+        return new Response(JSON.stringify({ error: 'Erro interno do servidor' }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' }
+        });
     }
 }

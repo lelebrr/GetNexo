@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 const API_URL = 'https://api.getnexo.com.br';
 
 const AI_PROVIDERS = [
-    { id: 'deepseek', name: 'DeepSeek AI', icon: '🧠', color: '#00D4FF', models: ['deepseek-chat', 'deepseek-coder'], defaultKey: 'sk-1a3b6c5c91c349c2adc90fddc2b7bf27' },
+    { id: 'deepseek', name: 'DeepSeek AI', icon: '🧠', color: '#00D4FF', models: ['deepseek-chat', 'deepseek-coder'], defaultKey: '' },
     { id: 'openai', name: 'OpenAI', icon: '🤖', color: '#10A37F', models: ['gpt-4-turbo', 'gpt-4', 'gpt-3.5-turbo'], defaultKey: '' },
     { id: 'anthropic', name: 'Anthropic Claude', icon: '🎭', color: '#CC785C', models: ['claude-3-opus', 'claude-3-sonnet', 'claude-3-haiku'], defaultKey: '' },
     { id: 'gemini', name: 'Google Gemini', icon: '✨', color: '#4285F4', models: ['gemini-pro', 'gemini-pro-vision'], defaultKey: '' },
@@ -145,8 +145,8 @@ const AiSettings = () => {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`px-5 py-3 rounded-xl font-bold transition-all ${activeTab === tab.id
-                                    ? 'bg-neon-blue text-black'
-                                    : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'
+                                ? 'bg-neon-blue text-black'
+                                : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'
                                 }`}
                         >
                             {tab.label}
@@ -161,8 +161,8 @@ const AiSettings = () => {
                             <div
                                 key={provider.id}
                                 className={`glass-panel p-6 rounded-2xl border transition-all ${providers[provider.id].enabled
-                                        ? 'border-green-500/50 bg-green-500/5'
-                                        : 'border-gray-700/50'
+                                    ? 'border-green-500/50 bg-green-500/5'
+                                    : 'border-gray-700/50'
                                     }`}
                             >
                                 <div className="flex items-start justify-between">

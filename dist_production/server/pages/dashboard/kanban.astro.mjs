@@ -1080,7 +1080,7 @@ const AbandonedCartWidget = () => {
 };
 const API_URL$1 = "https://api.getnexo.com.br";
 const AI_PROVIDERS = [
-  { id: "deepseek", name: "DeepSeek AI", icon: "🧠", color: "#00D4FF", models: ["deepseek-chat", "deepseek-coder"], defaultKey: "sk-1a3b6c5c91c349c2adc90fddc2b7bf27" },
+  { id: "deepseek", name: "DeepSeek AI", icon: "🧠", color: "#00D4FF", models: ["deepseek-chat", "deepseek-coder"], defaultKey: "" },
   { id: "openai", name: "OpenAI", icon: "🤖", color: "#10A37F", models: ["gpt-4-turbo", "gpt-4", "gpt-3.5-turbo"], defaultKey: "" },
   { id: "anthropic", name: "Anthropic Claude", icon: "🎭", color: "#CC785C", models: ["claude-3-opus", "claude-3-sonnet", "claude-3-haiku"], defaultKey: "" },
   { id: "gemini", name: "Google Gemini", icon: "✨", color: "#4285F4", models: ["gemini-pro", "gemini-pro-vision"], defaultKey: "" },

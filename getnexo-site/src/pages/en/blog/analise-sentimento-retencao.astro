@@ -1,0 +1,48 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Sentiment Analysis: The Heart of Retention",
+      "description": "Understand how your customer feels in real-time and prevent churn with precision.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-22",
+      "articleSection": "Customer Experience"
+    }
+  ]
+};
+---
+<Layout
+  title="Sentiment Analysis: The Heart of Retention | GetNexo" articleSchema={schema}
+  type="article"
+>
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta">Customer Experience • Jan 2026</div>
+      <h1>Sentiment Analysis:<br/><span class="text-primary">The Heart of Retention</span></h1>
+      <p class="subtitle">Understand how your customer feels in real-time and prevent churn with precision.</p>
+    </header>
+    <div class="post-content">
+      <section>
+        <h2>❤️ Listening Beyond Words</h2>
+        <p>AI can now detect frustration, joy, and urgency. Using sentiment analysis allows you to prioritize angry customers and reward happy ones automatically.</p>
+      </section>
+      <div class="final-cta">
+        <h3>Improve your retention now!</h3>
+        <p>GetNexo's AI understands customer emotions in any language.</p>
+        <a href="/en/create-bot" class="btn-primary">Get Started</a>
+      </div>
+    </div>
+  </article>
+</Layout>
+<style>
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  h1 { font-size: 3.5rem; font-weight: 900; color: white; }
+  .text-primary { color: #00f7ff; }
+  .btn-primary { background: #00f7ff; color: black; padding: 1.2rem 3.5rem; border-radius: 50px; text-decoration: none; font-weight: 800; }
+</style>

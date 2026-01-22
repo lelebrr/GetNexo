@@ -1,0 +1,34 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "LGPD en WhatsApp Corporativo: Guía de Seguridad 2026",
+      "description": "LGPD en WhatsApp Corporativo: Guía 2026 | GetNexo",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-22",
+      "articleSection": "Strategy"
+    }
+  ]
+};
+---
+<Layout
+  title="LGPD en WhatsApp Corporativo: Guía 2026 | GetNexo" articleSchema={schema}
+  type="article"
+>
+  <article class="post-container">
+    <h1>LGPD en WhatsApp Corporativo:<br/><span class="text-primary">Guía de Seguridad 2026</span></h1>
+    <p>Guía completa de seguridad y cumplimiento para empresas en 2026.</p>
+    <a href="/es/crear-bot" class="btn-primary">Saber Más</a>
+  </article>
+</Layout>
+<style>
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  h1 { font-size: 3.5rem; font-weight: 900; color: white; }
+  .text-primary { color: #00f7ff; }
+  .btn-primary { background: #00f7ff; color: black; padding: 1.2rem 3.5rem; border-radius: 50px; text-decoration: none; font-weight: 800; }
+</style>

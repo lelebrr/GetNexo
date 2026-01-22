@@ -285,7 +285,10 @@ const schema = {
   ]
 };
 ---
-<Layout>
+<Layout
+  articleSchema={schema}
+  type="article"
+>
 
   <article class="post-container">
     <header class="post-header">
@@ -681,5 +684,5 @@ function selectWhatsAppInstance(message) {
     </div>
   </article>
 
-  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+  
 </Layout>

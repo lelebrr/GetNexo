@@ -1,0 +1,444 @@
+---
+import Layout from '../../layouts/Layout.astro';
+// Enhanced SEO Constants for Top Google Ranking
+const title = "Precios GetNexo | La mejor relación calidad-precio en automatización de WhatsApp";
+const description = "Compare los planes de GetNexo: Starter, Pro y Enterprise. Automatización de WhatsApp con IA, claves de API ilimitadas y soporte premium.";
+const keywords = "precio getnexo, planes whatsapp api, valor automatización whatsapp, costo beneficio whatsapp bot";
+
+const lang = 'es';
+const { default: t } = await import(`../../i18n/${lang}.json`);
+
+const plans = [
+  {
+    name: "Self-Hosted",
+    type: "Código Abierto",
+    price: "Gratis",
+    period: "",
+    description: "Ideal para desarrolladores y empresas con equipo técnico.",
+    features: [
+      { text: "Mensajes ilimitados", included: true, highlight: true },
+      { text: "Todas las funciones liberadas", included: true, highlight: false },
+      { text: "Tus datos, tu soberanía", included: true, highlight: false },
+      { text: "Multigagente ilimitado", included: true, highlight: false },
+      { text: "Actualizaciones de la comunidad", included: true, highlight: false },
+      { text: "Instalación por tu cuenta", included: false, highlight: false },
+      { text: "Soporte vía comunidad", included: false, highlight: false }
+    ],
+    cta: "Descargar en GitHub",
+    ctaLink: "https://github.com/lelebrr",
+    popular: false
+  },
+  {
+    name: "GetNexo Pro",
+    type: "Nube Gestionada",
+    price: "R$ 97",
+    period: "/mes",
+    description: "Nosotros nos encargamos de todo. Tú solo vendes.",
+    features: [
+      { text: "Todo del plan Gratis", included: true, highlight: true },
+      { text: "Servidores NVMe ultra-rápidos", included: true, highlight: false },
+      { text: "Activación en 5 minutos", included: true, highlight: false },
+      { text: "Copias de seguridad automáticas diarias", included: true, highlight: false },
+      { text: "SSL y dominio incluido", included: true, highlight: false },
+      { text: "Soporte VIP vía WhatsApp", included: true, highlight: true },
+      { text: "Actualizaciones automáticas", included: true, highlight: false }
+    ],
+    cta: "Comenzar Ahora",
+    ctaLink: "/es/crear-bot",
+    popular: true
+  },
+  {
+    name: "Enterprise",
+    type: "Grandes Operaciones",
+    price: "Personalizado",
+    period: "",
+    description: "Para operaciones de alto volumen y requisitos específicos.",
+    features: [
+      { text: "Múltiples instancias de IA", included: true, highlight: true },
+      { text: "API RESTful dedicada (Alta Capacidad)", included: true, highlight: false },
+      { text: "Consultoría de IA incluida", included: true, highlight: false },
+      { text: "SLA garantizado por contrato", included: true, highlight: false },
+      { text: "White Label completo", included: true, highlight: false },
+      { text: "Gerente de cuenta dedicado", included: true, highlight: true },
+      { text: "Capacitación para el equipo", included: true, highlight: false }
+    ],
+    cta: "Hablar con Consultor",
+    ctaLink: "/es/contacto",
+    popular: false
+  }
+];
+
+const comparison = [
+  { feature: "Mensajes/mes", selfhosted: "∞ Ilimitado", pro: "∞ Ilimitado", enterprise: "∞ Ilimitado" },
+  { feature: "IA Generativa", selfhosted: "OpenAI/Gemini", pro: "OpenAI/Gemini", enterprise: "Modelo personalizado" },
+  { feature: "Agentes simultáneos", selfhosted: "Ilimitado", pro: "Ilimitado", enterprise: "Ilimitado" },
+  { feature: "Checkout PIX", selfhosted: "✓", pro: "✓", enterprise: "✓" },
+  { feature: "CRM Kanban", selfhosted: "✓", pro: "✓", enterprise: "✓" },
+  { feature: "Broadcast", selfhosted: "✓", pro: "✓", enterprise: "Prioridad" },
+  { feature: "Integraciones", selfhosted: "Todas", pro: "Todas", enterprise: "Todas + Personalizadas" },
+  { feature: "Soporte", selfhosted: "Comunidad", pro: "VIP WhatsApp", enterprise: "Dedicado 24/7" },
+  { feature: "SLA uptime", selfhosted: "N/A", pro: "99.5%", enterprise: "99.9%" },
+  { feature: "Copias de seguridad", selfhosted: "Manual", pro: "Automáticas", enterprise: "Automáticas + Geo" }
+];
+
+const addons = [
+  { name: "Número WhatsApp Adicional", price: "R$ 47/mes", desc: "Cada número extra para múltiples negocios" },
+  { name: "Instalación Asistida", price: "R$ 297 pago único", desc: "Configuración completa self-hosted con capacitación" },
+  { name: "Consultoría de IA", price: "R$ 197/hora", desc: "Optimización de prompts y flujos" },
+  { name: "White Label", price: "Bajo consulta", desc: "Su marca, su dominio, interfaz personalizada" }
+];
+
+const guarantees = [
+  { icon: "💰", title: "7 días gratis", desc: "Prueba el plan Pro sin compromiso" },
+  { icon: "🔒", title: "Sin compromiso", desc: "Cancela cuando quieras, sin multas" },
+  { icon: "📊", title: "Sin tarifa por msg", desc: "Paga solo la mensualidad fija" },
+  { icon: "🔄", title: "Migración gratis", desc: "Te ayudamos a traer tus datos" }
+];
+
+const faqs = [
+  {
+    q: "¿Hay tarifa por mensaje enviado?",
+    a: "¡No! Solo pagas la mensualidad del plan Pro (R$ 97) o nada en el self-hosted. Las únicas tarifas adicionales son las cobradas por Meta si excedes el límite gratuito de la API Cloud (las primeras 1000 conversaciones/mes son gratuitas)."
+  },
+  {
+    q: "¿Cuál es la diferencia entre Self-Hosted y Pro?",
+    a: "En Self-Hosted tú instalas y mantienes todo en tu servidor. En Pro, nosotros nos encargamos de la infraestructura, copias de seguridad, SSL, actualizaciones y ofrecemos soporte VIP. Las funciones de IA y automatización son idénticas en ambos."
+  },
+  {
+    q: "¿Puedo empezar gratis y migrar a Pro después?",
+    a: "¡Sí! Muchos clientes empiezan self-hosted para probar y luego migran a la nube Pro cuando quieren practicidad. La migración es sencilla y ayudamos en el proceso."
+  },
+  {
+    q: "Si cancelo, ¿pierdo mis datos?",
+    a: "No. Puedes exportar todos tus datos antes de cancelar. En self-hosted, los datos ya son tuyos. En Pro, proporcionamos una copia de seguridad completa para descargar."
+  },
+  {
+    q: "¿Qué formas de pago aceptan?",
+    a: "PIX (con 5% de descuento), tarjeta de crédito (hasta 12x), boleto y transferencia bancaria."
+  }
+];
+
+const testimonialPricing = [
+  { name: "Ricardo", company: "Tienda Virtual", text: "Gastaba R$ 4.500/mes con 3 empleados. ¡Hoy pago R$ 97 y la IA hace más que ellos!", avatar: "👨‍💼" },
+  { name: "Fernanda", company: "Clínica Estética", text: "El ROI fue absurdo. En la primera semana ya había recuperado 6 meses de mensualidad.", avatar: "👩‍⚕️" }
+];
+
+const priceSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://getnexo.com.br/#organization",
+      "name": "GetNexo",
+      "url": "https://getnexo.com.br/es/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://getnexo.com.br/logo.svg"
+      }
+    }
+  ]
+};
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  
+  <!-- Hero Section -->
+  <section class="pricing-hero">
+    <div class="hero-badge">💰 ROI Imbatible</div>
+    <h1>Precios <span class="text-gradient">transparentes</span></h1>
+    <p class="hero-subtitle">
+      Sin sorpresas. Sin tarifas ocultas. Sin compromiso. Elige el plan que mejor te funcione.
+    </p>
+  </section>
+
+  <!-- Guarantees Bar -->
+  <section class="guarantees-section">
+    <div class="guarantees-grid">
+      {guarantees.map(g => (
+        <div class="guarantee-item">
+          <span class="g-icon">{g.icon}</span>
+          <div>
+            <strong>{g.title}</strong>
+            <span>{g.desc}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Pricing Cards -->
+  <section class="pricing-cards-section">
+    <div class="pricing-grid">
+      {plans.map(plan => (
+        <div class={`pricing-card glass-panel ${plan.popular ? 'featured' : ''}`}>
+          {plan.popular && <div class="popular-badge">Más Elegido</div>}
+          <div class="card-type">{plan.type}</div>
+          <h3>{plan.name}</h3>
+          <div class="card-price">
+            {plan.price}<span>{plan.period}</span>
+          </div>
+          <p class="card-desc">{plan.description}</p>
+          
+          <ul class="card-features">
+            {plan.features.map(f => (
+              <li class={f.highlight ? 'highlight' : ''}>
+                {f.included ? '✅' : '❌'} <span set:html={f.text}></span>
+              </li>
+            ))}
+          </ul>
+          
+          <a 
+            href={plan.ctaLink} 
+            class={plan.popular ? 'btn-xl-glow' : 'btn-outline-glow'}
+            target={plan.ctaLink.startsWith('http') ? '_blank' : '_self'}
+          >
+            {plan.cta}
+          </a>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="roi-calculator-section">
+    <h2>Calcula tu <span class="text-gradient">ahorro</span></h2>
+    <p class="section-subtitle">Mira cuánto puedes ahorrar reemplazando empleados o SaaS caros</p>
+    
+    <div class="roi-wrapper glass-panel">
+      <div class="roi-controls">
+        <div class="control-group">
+          <label>Leads Mensuales: <span id="lead-value">5.000</span></label>
+          <input type="range" id="lead-slider" min="500" max="50000" step="500" value="5000" class="premium-slider" />
+        </div>
+        <div class="control-group">
+          <label>Costo por Agente/SaaS: <span id="cost-value">R$ 1.500</span></label>
+          <input type="range" id="cost-slider" min="500" max="10000" step="100" value="1500" class="premium-slider" />
+        </div>
+      </div>
+      <div class="roi-result">
+        <div class="result-card">
+          <span class="res-label">Ahorro Mensual Estimado</span>
+          <span class="res-value" id="roi-savings">R$ 4.500,00</span>
+          <p>Basado en 1 IA reemplazando a 3 empleados.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="comparison-section">
+    <h2>Comparativa <span class="text-gradient">detallada</span></h2>
+    
+    <div class="comparison-table glass-panel">
+      <div class="table-header">
+        <span>Función</span>
+        <span>Self-Hosted</span>
+        <span class="highlight">Pro</span>
+        <span>Enterprise</span>
+      </div>
+      {comparison.map(row => (
+        <div class="table-row">
+          <span class="row-feature">{row.feature}</span>
+          <span>{row.selfhosted}</span>
+          <span class="highlight">{row.pro}</span>
+          <span>{row.enterprise}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="addons-section">
+    <h2>Complementos <span class="text-gradient">opcionales</span></h2>
+    
+    <div class="addons-grid">
+      {addons.map(addon => (
+        <div class="addon-card glass-panel">
+          <div class="addon-info">
+            <strong>{addon.name}</strong>
+            <span>{addon.desc}</span>
+          </div>
+          <span class="addon-price">{addon.price}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="faq-section">
+    <h2>Preguntas sobre <span class="text-gradient">precios</span></h2>
+    
+    <div class="faq-list">
+      {faqs.map(faq => (
+        <details class="faq-item glass-panel">
+          <summary>
+            <span class="faq-q">{faq.q}</span>
+            <span class="faq-toggle">+</span>
+          </summary>
+          <p class="faq-a">{faq.a}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <div class="glass-panel cta-box">
+      <h2>¿Listo para <span class="text-gradient">ahorrar</span>?</h2>
+      <p>Comienza gratis o elige el plan Pro para soporte VIP.</p>
+      <div class="cta-buttons">
+        <a href="/es/crear-bot" class="btn-primary-glow">Empezar Gratis</a>
+        <a href="/es/contacto" class="btn-outline">Hablar con Ventas</a>
+      </div>
+      <p class="cta-note">Prueba 7 días gratis • Sin tarjeta de crédito • Cancela cuando quieras</p>
+    </div>
+  </section>
+
+</Layout>
+
+<script is:inline>
+  const leadSlider = document.getElementById('lead-slider');
+  const costSlider = document.getElementById('cost-slider');
+  const leadVal = document.getElementById('lead-value');
+  const costVal = document.getElementById('cost-value');
+  const roiSavings = document.getElementById('roi-savings');
+
+  function updateROI() {
+    const leads = parseInt(leadSlider.value);
+    const costPerHuman = parseInt(costSlider.value);
+    
+    let humansSaved = 1;
+    if (leads > 2000) humansSaved = 3;
+    if (leads > 10000) humansSaved = 6;
+    if (leads > 30000) humansSaved = 12;
+
+    const totalCostSaved = (humansSaved * costPerHuman) - 97;
+    
+    leadVal.innerText = leads.toLocaleString();
+    costVal.innerText = `R$ ${costPerHuman.toLocaleString()}`;
+    roiSavings.innerText = `R$ ${Math.max(0, totalCostSaved).toLocaleString('es-ES', { minimumFractionDigits: 2 })}`;
+  }
+
+  leadSlider?.addEventListener('input', updateROI);
+  costSlider?.addEventListener('input', updateROI);
+  updateROI();
+</script>
+
+<style>
+/* Reusing styles from pricing.astro with adaptations if needed */
+  .pricing-hero {
+    text-align: center;
+    padding: 10rem 5% 4rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .hero-badge {
+    background: rgba(0, 212, 255, 0.1);
+    color: #00d4ff;
+    padding: 0.5rem 1.2rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: inline-block;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(0,212,255,0.2);
+  }
+  .pricing-hero h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 900;
+    color: white;
+  }
+  .hero-subtitle {
+    color: #94a3b8;
+    font-size: 1.3rem;
+    line-height: 1.6;
+  }
+  .guarantees-section {
+    padding: 2rem 5%;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .guarantees-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+  .guarantee-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(0, 255, 157, 0.03);
+    border: 1px solid rgba(0, 255, 157, 0.1);
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+  }
+  .g-icon { font-size: 1.5rem; }
+  .guarantee-item strong { display: block; color: white; font-size: 0.9rem; }
+  .guarantee-item span { color: #64748b; font-size: 0.8rem; }
+  .pricing-cards-section { padding: 4rem 5%; max-width: 1200px; margin: 0 auto; }
+  .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; align-items: stretch; }
+  .pricing-card { padding: 3rem 2rem; text-align: center; transition: 0.3s; position: relative; display: flex; flex-direction: column; }
+  .pricing-card:hover { border-color: #00d4ff; transform: translateY(-5px); }
+  .pricing-card.featured { border-color: rgba(0, 255, 157, 0.3); background: rgba(0, 255, 157, 0.03); transform: scale(1.05); z-index: 10; }
+  .popular-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #00ff9d; color: black; padding: 0.4rem 1.5rem; border-radius: 50px; font-size: 0.75rem; font-weight: 900; }
+  .card-type { color: #64748b; text-transform: uppercase; font-size: 0.7rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 1rem; }
+  .pricing-card h3 { color: white; font-size: 1.6rem; margin-bottom: 1rem; font-weight: 800; }
+  .card-price { font-size: 3rem; font-weight: 900; color: white; margin-bottom: 0.5rem; }
+  .card-price span { font-size: 1rem; color: #64748b; font-weight: 500; }
+  .card-desc { color: #94a3b8; margin-bottom: 2rem; font-size: 0.9rem; }
+  .card-features { list-style: none; padding: 0; text-align: left; margin-bottom: 2rem; flex: 1; }
+  .card-features li { color: #94a3b8; padding: 0.7rem 0; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.9rem; }
+  .card-features li.highlight { color: white; }
+  .btn-outline-glow, .btn-xl-glow { display: block; border-radius: 12px; text-decoration: none; font-weight: 700; transition: 0.3s; padding: 1rem; }
+  .btn-outline-glow { border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; background: rgba(255,255,255,0.02); }
+  .btn-outline-glow:hover { border-color: #00d4ff; background: rgba(0, 212, 255, 0.05); color: white; }
+  .btn-xl-glow { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; font-weight: 900; box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2); }
+  .btn-xl-glow:hover { transform: scale(1.03); box-shadow: 0 15px 40px rgba(0, 212, 255, 0.4); }
+  .roi-calculator-section { padding: 6rem 5%; max-width: 1000px; margin: 0 auto; text-align: center; }
+  .roi-calculator-section h2 { font-size: 2.5rem; color: white; font-weight: 800; margin-bottom: 1rem; }
+  .section-subtitle { color: #64748b; font-size: 1.1rem; margin-bottom: 3rem; }
+  .roi-wrapper { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 3rem; padding: 3rem; border-radius: 24px; align-items: center; }
+  .roi-controls { display: flex; flex-direction: column; gap: 2rem; }
+  .control-group label { display: block; color: white; font-weight: 700; margin-bottom: 1rem; font-size: 1rem; }
+  .control-group label span { color: #00d4ff; float: right; }
+  .premium-slider { -webkit-appearance: none; width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; outline: none; }
+  .premium-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; background: #00ff9d; border-radius: 50%; cursor: pointer; box-shadow: 0 0 10px rgba(0, 255, 157, 0.5); }
+  .result-card { background: rgba(0, 255, 157, 0.05); padding: 2.5rem; border-radius: 20px; border: 1px dashed rgba(0, 255, 157, 0.3); text-align: center; }
+  .res-label { display: block; color: #94a3b8; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; margin-bottom: 0.8rem; }
+  .res-value { display: block; font-size: 2.5rem; font-weight: 900; color: #00ff9d; margin-bottom: 0.5rem; }
+  .result-card p { color: #64748b; font-size: 0.8rem; }
+  .comparison-section { padding: 6rem 5%; max-width: 1000px; margin: 0 auto; text-align: center; }
+  .comparison-section h2 { font-size: 2.5rem; color: white; font-weight: 800; margin-bottom: 3rem; }
+  .comparison-table { padding: 2rem; border-radius: 20px; overflow: hidden; }
+  .table-header, .table-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 1rem; padding: 1rem; align-items: center; text-align: center; }
+  .table-header { font-weight: 700; color: #64748b; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .table-header .highlight { color: #00ff9d; }
+  .table-row { border-bottom: 1px solid rgba(255,255,255,0.03); }
+  .table-row span { color: #94a3b8; font-size: 0.9rem; }
+  .table-row span.highlight { color: #00ff9d; font-weight: 600; }
+  .row-feature { text-align: left; color: white !important; font-weight: 600; }
+  .addons-section { padding: 6rem 5%; max-width: 900px; margin: 0 auto; text-align: center; }
+  .addons-section h2 { font-size: 2.5rem; color: white; font-weight: 800; margin-bottom: 3rem; }
+  .addons-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+  .addon-card { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2rem; border-radius: 15px; }
+  .addon-info { text-align: left; }
+  .addon-info strong { display: block; color: white; font-size: 1.1rem; margin-bottom: 0.3rem; }
+  .addon-info span { color: #64748b; font-size: 0.9rem; }
+  .addon-price { color: #00ff9d; font-weight: 800; font-size: 1.2rem; }
+  .faq-section { padding: 6rem 5%; max-width: 800px; margin: 0 auto; text-align: center; }
+  .faq-section h2 { font-size: 2.5rem; color: white; font-weight: 800; margin-bottom: 3rem; }
+  .faq-list { display: flex; flex-direction: column; gap: 1rem; }
+  .faq-item { border-radius: 12px; overflow: hidden; text-align: left; }
+  .faq-item summary { padding: 1.5rem; list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 700; color: white; }
+  .faq-toggle { color: #00d4ff; font-size: 1.5rem; }
+  .faq-a { padding: 0 1.5rem 1.5rem; color: #94a3b8; line-height: 1.6; }
+  .final-cta { padding: 6rem 5% 10rem; max-width: 900px; margin: 0 auto; text-align: center; }
+  .cta-box { padding: 4rem 2rem; border-radius: 30px; border: 1px solid rgba(0, 212, 255, 0.2); }
+  .cta-box h2 { font-size: 2.5rem; color: white; font-weight: 900; margin-bottom: 1rem; }
+  .cta-box p { color: #94a3b8; font-size: 1.2rem; margin-bottom: 2.5rem; }
+  .cta-buttons { display: flex; gap: 1rem; justify-content: center; margin-bottom: 1.5rem; }
+  .cta-note { color: #64748b; font-size: 0.85rem; }
+  @media (max-width: 900px) {
+    .pricing-grid, .guarantees-grid { grid-template-columns: 1fr; }
+    .pricing-card.featured { transform: none; }
+    .roi-wrapper { grid-template-columns: 1fr; }
+    .table-header, .table-row { grid-template-columns: 1fr 1fr; }
+    .table-header span:nth-child(n+3), .table-row span:nth-child(n+3) { display: none; }
+  }
+</style>

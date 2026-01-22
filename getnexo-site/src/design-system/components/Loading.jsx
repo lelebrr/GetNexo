@@ -264,14 +264,14 @@ Loading.Skeleton = ({
     style = {},
 }) => {
     const { computedTheme } = useTheme();
-    const { getAnimation } = useMotion();
+    const { getAnimation, shouldAnimate } = useMotion();
     const animation = getAnimation('pulse');
 
     const skeletonStyles = {
         background: computedTheme.colors.background.tertiary,
         borderRadius: computedTheme.borderRadius,
         animation: shouldAnimate()
-            ? `${animation.duration} ${animation.timing} infinite`
+            ? `pulse ${animation.duration} ${animation.timing} infinite`
             : 'none',
         opacity: 0.5,
         ...style,

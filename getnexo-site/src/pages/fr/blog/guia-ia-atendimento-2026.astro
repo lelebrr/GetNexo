@@ -1,0 +1,57 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Le Guide Ultime de l'Intelligence Artificielle dans le Service Client 2026",
+      "description": "Découvrez comment l'IA transforme le service client. Guide complet sur les chatbots et l'automatisation.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-21",
+      "image": "/images/blog/guia_ia_atendimento_2026.png"
+    }
+  ]
+};
+---
+
+<Layout
+  title="Guide IA Service Client 2026 | GetNexo"
+  articleSchema={schema}
+  type="article"
+>
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta">Stratégie • Jan 2026</div>
+      <h1>L'IA dans le Service Client :<br/><span class="text-primary">Le Guide Ultime 2026</span></h1>
+      <p class="subtitle">Comment l'IA générative redéfinit la fidélité client.</p>
+      <img src="/images/blog/guia_ia_atendimento_2026.png" alt="IA dans le Service Client" class="featured-image" />
+    </header>
+
+    <div class="post-content">
+      <section id="introducao">
+        <h2>🚀 La Révolution Silencieuse de l'IA</h2>
+        <p>En 2026, le service client ne consiste plus à répondre à des questions ; il s'agit de prédire les besoins.</p>
+      </section>
+
+      <div class="final-cta">
+        <h3>Transformez votre service dès aujourd'hui !</h3>
+        <p>La technologie pour le futur de votre entreprise est déjà disponible chez GetNexo.</p>
+        <div class="cta-buttons mt-8">
+          <a href="/fr/creer-bot" class="btn-primary">Démarrer Maintenant</a>
+        </div>
+      </div>
+    </div>
+  </article>
+</Layout>
+
+<style>
+/* Reusing styles */
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  h1 { font-size: 3.5rem; font-weight: 900; color: white; }
+  .text-primary { color: #00f7ff; }
+  .btn-primary { background: #00f7ff; color: black; padding: 1.2rem 3.5rem; border-radius: 50px; text-decoration: none; font-weight: 800; }
+</style>

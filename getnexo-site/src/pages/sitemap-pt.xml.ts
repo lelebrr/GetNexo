@@ -1,4 +1,4 @@
-export async function get() {
+export const GET = async () => {
     const baseUrl = 'https://getnexo.com.br';
     const pages = [
         { url: `${baseUrl}/`, changefreq: 'daily', priority: 1.0 },
@@ -21,10 +21,9 @@ export async function get() {
   </url>`).join('')}
 </urlset>`;
 
-    return {
-        body,
+    return new Response(body, {
         headers: {
             'Content-Type': 'application/xml'
         }
-    };
-}
+    });
+};

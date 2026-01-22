@@ -1,0 +1,951 @@
+---
+import Layout from '../../layouts/Layout.astro';
+// Enhanced SEO Constants for Top Google Ranking
+const title = "GetNexo Plans and Pricing | Best Value in WhatsApp Automation";
+const description = "Compare GetNexo plans: Starter, Pro, and Enterprise. WhatsApp automation with AI, unlimited API keys, and premium support.";
+const keywords = "getnexo price, whatsapp api plans, whatsapp bot value, whatsapp automation cost";
+
+const lang = 'en';
+const { default: t } = await import(`../../i18n/${lang}.json`);
+
+const plans = [
+  {
+    name: "Self-Hosted",
+    type: "Open Source",
+    price: "Free",
+    period: "",
+    description: "Ideal for developers and companies with a technical team.",
+    features: [
+      { text: "Unlimited messages", included: true, highlight: true },
+      { text: "All features unlocked", included: true, highlight: false },
+      { text: "Your data, your sovereignty", included: true, highlight: false },
+      { text: "Unlimited multi-agent", included: true, highlight: false },
+      { text: "Community updates", included: true, highlight: false },
+      { text: "Self-installation", included: false, highlight: false },
+      { text: "Community support", included: false, highlight: false }
+    ],
+    cta: "Download on GitHub",
+    ctaLink: "https://github.com/lelebrr",
+    popular: false
+  },
+  {
+    name: "GetNexo Pro",
+    type: "Managed Cloud",
+    price: "$ 19",
+    period: "/month",
+    description: "We handle everything. You just sell.",
+    features: [
+      { text: "Everything in Free", included: true, highlight: true },
+      { text: "Ultra-fast NVMe servers", included: true, highlight: false },
+      { text: "Activation in 5 minutes", included: true, highlight: false },
+      { text: "Daily automatic backups", included: true, highlight: false },
+      { text: "SSL and domain included", included: true, highlight: false },
+      { text: "VIP Support via WhatsApp", included: true, highlight: true },
+      { text: "Automatic updates", included: true, highlight: false }
+    ],
+    cta: "Get Started Now",
+    ctaLink: "/en/create-bot",
+    popular: true
+  },
+  {
+    name: "Enterprise",
+    type: "Large Operations",
+    price: "Custom",
+    period: "",
+    description: "For high-volume operations and specific requirements.",
+    features: [
+      { text: "Multiple AI instances", included: true, highlight: true },
+      { text: "Dedicated RESTful API (High Throughput)", included: true, highlight: false },
+      { text: "AI Consulting included", included: true, highlight: false },
+      { text: "Contract-guaranteed SLA", included: true, highlight: false },
+      { text: "Full White Label", included: true, highlight: false },
+      { text: "Dedicated Account Manager", included: true, highlight: true },
+      { text: "Team training", included: true, highlight: false }
+    ],
+    cta: "Contact Consultant",
+    ctaLink: "/en/contact",
+    popular: false
+  }
+];
+
+const comparison = [
+  { feature: "Messages/month", selfhosted: "∞ Unlimited", pro: "∞ Unlimited", enterprise: "∞ Unlimited" },
+  { feature: "Generative AI", selfhosted: "OpenAI/Gemini", pro: "OpenAI/Gemini", enterprise: "Custom Model" },
+  { feature: "Simultaneous Agents", selfhosted: "Unlimited", pro: "Unlimited", enterprise: "Unlimited" },
+  { feature: "PIX Checkout", selfhosted: "✓", pro: "✓", enterprise: "✓" },
+  { feature: "CRM Kanban", selfhosted: "✓", pro: "✓", enterprise: "✓" },
+  { feature: "Broadcast", selfhosted: "✓", pro: "✓", enterprise: "Priority" },
+  { feature: "Integrations", selfhosted: "All", pro: "All", enterprise: "All + Custom" },
+  { feature: "Support", selfhosted: "Community", pro: "VIP WhatsApp", enterprise: "Dedicated 24/7" },
+  { feature: "SLA Uptime", selfhosted: "N/A", pro: "99.5%", enterprise: "99.9%" },
+  { feature: "Backups", selfhosted: "Manual", pro: "Automatic", enterprise: "Automatic + Geo" }
+];
+
+const addons = [
+  { name: "Additional WhatsApp Number", price: "$ 9/month", desc: "Each extra number for multiple businesses" },
+  { name: "Assisted Installation", price: "$ 59 one-time", desc: "Full self-hosted setup with training" },
+  { name: "AI Consulting", price: "$ 39/hour", desc: "Prompt and flow optimization" },
+  { name: "White Label", price: "Upon request", desc: "Your brand, your domain, custom interface" }
+];
+
+const guarantees = [
+  { icon: "💰", title: "7 days free", desc: "Test the Pro plan without commitment" },
+  { icon: "🔒", title: "No strings attached", desc: "Cancel anytime, no fees" },
+  { icon: "📊", title: "No fee per message", desc: "Pay only the fixed monthly fee" },
+  { icon: "🔄", title: "Free migration", desc: "We help bring your data" }
+];
+
+const faqs = [
+  {
+    q: "Is there a fee per message sent?",
+    a: "No! You only pay the Pro plan monthly fee ($ 19) or nothing for self-hosted. The only additional fees are those charged by Meta if you exceed the free Tier of the Cloud API (first 1000 conversations/month are free)."
+  },
+  {
+    q: "What is the difference between Self-Hosted and Pro?",
+    a: "On Self-Hosted, you install and maintain everything on your server. On Pro, we handle infrastructure, backups, SSL, updates, and offer VIP support. AI and automation features are identical in both."
+  },
+  {
+    q: "Can I start for free and migrate to Pro later?",
+    a: "Yes! Many customers start self-hosted to test and then migrate to the Pro cloud when they want convenience. Migration is simple and we help with the process."
+  },
+  {
+    q: "If I cancel, do I lose my data?",
+    a: "No. You can export all your data before canceling. On self-hosted, the data is already yours. On Pro, we provide a full backup for download."
+  },
+  {
+    q: "What forms of payment do you accept?",
+    a: "Credit Card, PayPal, and Bank Transfer. For Enterprise, special conditions are negotiated."
+  },
+  {
+    q: "What if I need more than 3 numbers?",
+    a: "No problem! Each additional number costs $ 9/month. For larger volumes (10+), we offer a progressive discount on the Enterprise plan."
+  }
+];
+
+const testimonialPricing = [
+  { name: "Richard", company: "Online Store", text: "I spent $ 1,000/month with 3 attendants. Today I pay $ 19 and the AI does more than they did!", avatar: "👨‍💼" },
+  { name: "Sarah", company: "Aesthetics Clinic", text: "The ROI was insane. Within the first week, I had already recovered 6 months of monthly fees.", avatar: "👩‍⚕️" }
+];
+
+const priceSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://getnexo.com.br/#organization",
+      "name": "GetNexo",
+      "url": "https://getnexo.com.br/en/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://getnexo.com.br/logo.svg"
+      }
+    }
+  ]
+};
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  
+  <!-- Hero Section -->
+  <section class="pricing-hero">
+    <div class="hero-badge">💰 Unbeatable ROI</div>
+    <h1>Transparent <span class="text-gradient">pricing</span></h1>
+    <p class="hero-subtitle">
+      No surprises. No hidden fees. No commitment. Choose the plan that works for you.
+    </p>
+  </section>
+
+  <!-- Guarantees Bar -->
+  <section class="guarantees-section">
+    <div class="guarantees-grid">
+      {guarantees.map(g => (
+        <div class="guarantee-item">
+          <span class="g-icon">{g.icon}</span>
+          <div>
+            <strong>{g.title}</strong>
+            <span>{g.desc}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Pricing Cards -->
+  <section class="pricing-cards-section">
+    <div class="pricing-grid">
+      {plans.map(plan => (
+        <div class={`pricing-card glass-panel ${plan.popular ? 'featured' : ''}`}>
+          {plan.popular && <div class="popular-badge">Most Chosen</div>}
+          <div class="card-type">{plan.type}</div>
+          <h3>{plan.name}</h3>
+          <div class="card-price">
+            {plan.price}<span>{plan.period}</span>
+          </div>
+          <p class="card-desc">{plan.description}</p>
+          
+          <ul class="card-features">
+            {plan.features.map(f => (
+              <li class={f.highlight ? 'highlight' : ''}>
+                {f.included ? '✅' : '❌'} <span set:html={f.text}></span>
+              </li>
+            ))}
+          </ul>
+          
+          <a 
+            href={plan.ctaLink} 
+            class={plan.popular ? 'btn-xl-glow' : 'btn-outline-glow'}
+            target={plan.ctaLink.startsWith('http') ? '_blank' : '_self'}
+          >
+            {plan.cta}
+          </a>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- ROI Calculator -->
+  <section class="roi-calculator-section">
+    <h2>Calculate your <span class="text-gradient">savings</span></h2>
+    <p class="section-subtitle">See how much you can save by replacing attendants or expensive SaaS</p>
+    
+    <div class="roi-wrapper glass-panel">
+      <div class="roi-controls">
+        <div class="control-group">
+          <label>Monthly Leads: <span id="lead-value">5.000</span></label>
+          <input type="range" id="lead-slider" min="500" max="50000" step="500" value="5000" class="premium-slider" />
+        </div>
+        <div class="control-group">
+          <label>Cost per Agent/SaaS: <span id="cost-value">$ 300</span></label>
+          <input type="range" id="cost-slider" min="100" max="2000" step="50" value="300" class="premium-slider" />
+        </div>
+      </div>
+      <div class="roi-result">
+        <div class="result-card">
+          <span class="res-label">Estimated Monthly Savings</span>
+          <span class="res-value" id="roi-savings">$ 881.00</span>
+          <p>Based on 1 AI replacing 3 attendants.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Comparison Table -->
+  <section class="comparison-section">
+    <h2>Detailed <span class="text-gradient">comparison</span></h2>
+    
+    <div class="comparison-table glass-panel">
+      <div class="table-header">
+        <span>Feature</span>
+        <span>Self-Hosted</span>
+        <span class="highlight">Pro</span>
+        <span>Enterprise</span>
+      </div>
+      {comparison.map(row => (
+        <div class="table-row">
+          <span class="row-feature">{row.feature}</span>
+          <span>{row.selfhosted}</span>
+          <span class="highlight">{row.pro}</span>
+          <span>{row.enterprise}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Add-ons -->
+  <section class="addons-section">
+    <h2>Optional <span class="text-gradient">add-ons</span></h2>
+    
+    <div class="addons-grid">
+      {addons.map(addon => (
+        <div class="addon-card glass-panel">
+          <div class="addon-info">
+            <strong>{addon.name}</strong>
+            <span>{addon.desc}</span>
+          </div>
+          <span class="addon-price">{addon.price}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonials-section">
+    <h2>What customers <span class="text-gradient">say about the price</span></h2>
+    
+    <div class="testimonials-grid">
+      {testimonialPricing.map(t => (
+        <div class="testimonial-card glass-panel">
+          <div class="t-header">
+            <span class="t-avatar">{t.avatar}</span>
+            <div class="t-info">
+              <strong>{t.name}</strong>
+              <span>{t.company}</span>
+            </div>
+          </div>
+          <p class="t-text">"{t.text}"</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <h2>Questions about <span class="text-gradient">pricing</span></h2>
+    
+    <div class="faq-list">
+      {faqs.map(faq => (
+        <details class="faq-item glass-panel">
+          <summary>
+            <span class="faq-q">{faq.q}</span>
+            <span class="faq-toggle">+</span>
+          </summary>
+          <p class="faq-a">{faq.a}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta">
+    <div class="glass-panel cta-box">
+      <h2>Ready to <span class="text-gradient">save</span>?</h2>
+      <p>Start for free or choose the Pro plan for VIP support.</p>
+      <div class="cta-buttons">
+        <a href="/en/create-bot" class="btn-primary-glow">Start Free</a>
+        <a href="/en/contact" class="btn-outline">Talk to Sales</a>
+      </div>
+      <p class="cta-note">7-day free trial • No credit card required • Cancel anytime</p>
+    </div>
+  </section>
+
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(priceSchema)}></script>
+
+</Layout>
+
+<script is:inline>
+  const leadSlider = document.getElementById('lead-slider');
+  const costSlider = document.getElementById('cost-slider');
+  const leadVal = document.getElementById('lead-value');
+  const costVal = document.getElementById('cost-value');
+  const roiSavings = document.getElementById('roi-savings');
+
+  function updateROI() {
+    const leads = parseInt(leadSlider.value);
+    const costPerHuman = parseInt(costSlider.value);
+    
+    let humansSaved = 1;
+    if (leads > 2000) humansSaved = 3;
+    if (leads > 10000) humansSaved = 6;
+    if (leads > 30000) humansSaved = 12;
+
+    const totalCostSaved = (humansSaved * costPerHuman) - 19;
+    
+    leadVal.innerText = leads.toLocaleString();
+    costVal.innerText = `$ ${costPerHuman.toLocaleString()}`;
+    roiSavings.innerText = `$ ${Math.max(0, totalCostSaved).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+  }
+
+  leadSlider?.addEventListener('input', updateROI);
+  costSlider?.addEventListener('input', updateROI);
+  updateROI();
+</script>
+
+<style>
+  /* Hero */
+  .pricing-hero {
+    text-align: center;
+    padding: 10rem 5% 4rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .hero-badge {
+    background: rgba(0, 212, 255, 0.1);
+    color: #00d4ff;
+    padding: 0.5rem 1.2rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: inline-block;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(0,212,255,0.2);
+  }
+
+  .pricing-hero h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 900;
+    color: white;
+  }
+
+  .hero-subtitle {
+    color: #94a3b8;
+    font-size: 1.3rem;
+    line-height: 1.6;
+  }
+
+  /* Guarantees */
+  .guarantees-section {
+    padding: 2rem 5%;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .guarantees-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+
+  .guarantee-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(0, 255, 157, 0.03);
+    border: 1px solid rgba(0, 255, 157, 0.1);
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+  }
+
+  .g-icon {
+    font-size: 1.5rem;
+  }
+
+  .guarantee-item strong {
+    display: block;
+    color: white;
+    font-size: 0.9rem;
+  }
+
+  .guarantee-item span {
+    color: #64748b;
+    font-size: 0.8rem;
+  }
+
+  /* Pricing Cards */
+  .pricing-cards-section {
+    padding: 4rem 5%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    align-items: stretch;
+  }
+
+  .pricing-card {
+    padding: 3rem 2rem;
+    text-align: center;
+    transition: 0.3s;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pricing-card:hover {
+    border-color: #00d4ff;
+    transform: translateY(-5px);
+  }
+
+  .pricing-card.featured {
+    border-color: rgba(0, 255, 157, 0.3);
+    background: rgba(0, 255, 157, 0.03);
+    transform: scale(1.05);
+    z-index: 10;
+  }
+
+  .popular-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #00ff9d;
+    color: black;
+    padding: 0.4rem 1.5rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 900;
+  }
+
+  .card-type {
+    color: #64748b;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+  }
+
+  .pricing-card h3 {
+    color: white;
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+    font-weight: 800;
+  }
+
+  .card-price {
+    font-size: 3rem;
+    font-weight: 900;
+    color: white;
+    margin-bottom: 0.5rem;
+  }
+
+  .card-price span {
+    font-size: 1rem;
+    color: #64748b;
+    font-weight: 500;
+  }
+
+  .card-desc {
+    color: #94a3b8;
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+  }
+
+  .card-features {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+    margin-bottom: 2rem;
+    flex: 1;
+  }
+
+  .card-features li {
+    color: #94a3b8;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    font-size: 0.9rem;
+  }
+
+  .card-features li.highlight {
+    color: white;
+  }
+
+  .btn-outline-glow {
+    display: block;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #cbd5e1;
+    padding: 1rem;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 700;
+    transition: 0.3s;
+    background: rgba(255,255,255,0.02);
+  }
+
+  .btn-outline-glow:hover {
+    border-color: #00d4ff;
+    background: rgba(0, 212, 255, 0.05);
+    color: white;
+  }
+
+  .btn-xl-glow {
+    display: block;
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    color: black;
+    padding: 1.2rem;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 900;
+    transition: 0.3s;
+    box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+  }
+
+  .btn-xl-glow:hover {
+    transform: scale(1.03);
+    box-shadow: 0 15px 40px rgba(0, 212, 255, 0.4);
+  }
+
+  /* ROI Calculator */
+  .roi-calculator-section {
+    padding: 6rem 5%;
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .roi-calculator-section h2 {
+    font-size: 2.5rem;
+    color: white;
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+
+  .section-subtitle {
+    color: #64748b;
+    font-size: 1.1rem;
+    margin-bottom: 3rem;
+  }
+
+  .roi-wrapper {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 3rem;
+    padding: 3rem;
+    border-radius: 24px;
+    align-items: center;
+  }
+
+  .roi-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .control-group label {
+    display: block;
+    color: white;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+
+  .control-group label span {
+    color: #00d4ff;
+    float: right;
+  }
+
+  .premium-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    outline: none;
+  }
+
+  .premium-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #00ff9d;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+  }
+
+  .result-card {
+    background: rgba(0, 255, 157, 0.05);
+    padding: 2.5rem;
+    border-radius: 20px;
+    border: 1px dashed rgba(0, 255, 157, 0.3);
+    text-align: center;
+  }
+
+  .res-label {
+    display: block;
+    color: #94a3b8;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+
+  .res-value {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #00ff9d;
+    margin-bottom: 0.5rem;
+  }
+
+  .result-card p {
+    color: #64748b;
+    font-size: 0.8rem;
+  }
+
+  /* Comparison */
+  .comparison-section {
+    padding: 6rem 5%;
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .comparison-section h2 {
+    font-size: 2.5rem;
+    color: white;
+    font-weight: 800;
+    margin-bottom: 3rem;
+  }
+
+  .comparison-table {
+    padding: 2rem;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .table-header, .table-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 1rem;
+    padding: 1rem;
+    align-items: center;
+    text-align: center;
+  }
+
+  .table-header {
+    font-weight: 700;
+    color: #64748b;
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .table-header .highlight {
+    color: #00ff9d;
+  }
+
+  .table-row {
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+
+  .table-row span {
+    color: #94a3b8;
+    font-size: 0.9rem;
+  }
+
+  .table-row span.highlight {
+    color: #00ff9d;
+    font-weight: 600;
+  }
+
+  .row-feature {
+    text-align: left;
+    color: white !important;
+    font-weight: 600;
+  }
+
+  /* Add-ons */
+  .addons-section {
+    padding: 6rem 5%;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .addons-section h2 {
+    font-size: 2.5rem;
+    color: white;
+    font-weight: 800;
+    margin-bottom: 3rem;
+  }
+
+  .addons-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .addon-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-radius: 15px;
+  }
+
+  .addon-info {
+    text-align: left;
+  }
+
+  .addon-info strong {
+    display: block;
+    color: white;
+    font-size: 1.1rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .addon-info span {
+    color: #64748b;
+    font-size: 0.9rem;
+  }
+
+  .addon-price {
+    color: #00ff9d;
+    font-weight: 800;
+    font-size: 1.2rem;
+  }
+
+  /* Testimonials */
+  .testimonials-section {
+    padding: 6rem 5%;
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .testimonials-section h2 {
+    font-size: 2.5rem;
+    color: white;
+    font-weight: 800;
+    margin-bottom: 3rem;
+  }
+
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+  .testimonial-card {
+    padding: 2rem;
+    border-radius: 20px;
+    text-align: left;
+  }
+
+  .t-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .t-avatar {
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .t-info strong {
+    display: block;
+    color: white;
+  }
+
+  .t-info span {
+    color: #64748b;
+    font-size: 0.8rem;
+  }
+
+  .t-text {
+    color: #cbd5e1;
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  /* FAQ */
+  .faq-section {
+    padding: 6rem 5%;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .faq-section h2 {
+    font-size: 2.5rem;
+    color: white;
+    font-weight: 800;
+    margin-bottom: 3rem;
+  }
+
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .faq-item {
+    border-radius: 12px;
+    overflow: hidden;
+    text-align: left;
+  }
+
+  .faq-item summary {
+    padding: 1.5rem;
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    color: white;
+  }
+
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-toggle {
+    color: #00d4ff;
+    font-size: 1.5rem;
+  }
+
+  .faq-a {
+    padding: 0 1.5rem 1.5rem;
+    color: #94a3b8;
+    line-height: 1.6;
+  }
+
+  /* Final CTA */
+  .final-cta {
+    padding: 6rem 5% 10rem;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .cta-box {
+    padding: 4rem 2rem;
+    border-radius: 30px;
+    border: 1px solid rgba(0, 212, 255, 0.2);
+  }
+
+  .cta-box h2 {
+    font-size: 2.5rem;
+    color: white;
+    font-weight: 900;
+    margin-bottom: 1rem;
+  }
+
+  .cta-box p {
+    color: #94a3b8;
+    font-size: 1.2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .cta-note {
+    color: #64748b;
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 900px) {
+    .pricing-grid, .guarantees-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .pricing-card.featured {
+      transform: none;
+    }
+
+    .roi-wrapper {
+      grid-template-columns: 1fr;
+    }
+
+    .table-header, .table-row {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .table-header span:nth-child(n+3), 
+    .table-row span:nth-child(n+3) {
+      display: none;
+    }
+
+    .testimonials-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

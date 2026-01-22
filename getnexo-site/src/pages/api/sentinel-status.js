@@ -1,21 +1,18 @@
-// getnexo-site/src/pages/api/sentinel-status.js
-// Node.js + Express – roda na porta 3000 ou integra no teu server Astro
+export const prerender = false;
 
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
+import fs from 'fs';
+import os from 'os';
 
-const app = express();
-app.use(express.json());
+export async function GET({ request }) {
+    // Rota protegida (opcional – JWT ou chave .env)
+    const API_KEY = process.env.SENTINEL_API_KEY || 'getnexo-secret-2026';
+    const auth = request.headers.get('x-api-key');
 
-// Rota protegida (opcional – JWT ou chave .env)
-const API_KEY = process.env.SENTINEL_API_KEY || 'getnexo-secret-2026'; // .env
-
-app.get('/api/sentinel-status', (req, res) => {
-    const auth = req.headers['x-api-key'];
     if (auth !== API_KEY) {
-        return res.status(401).json({ error: 'Chave inválida' });
+        return new Response(JSON.stringify({ error: 'Chave inválida' }), {
+            status: 401,
+            headers: { 'Content-Type': 'application/json' }
+        });
     }
 
     // Dados reais do sistema
@@ -25,7 +22,7 @@ app.get('/api/sentinel-status', (req, res) => {
     const freeMem = os.freemem() / 1024 / 1024 / 1024;
     const ramPct = ((totalMem - freeMem) / totalMem * 100).toFixed(1);
 
-    // Lê logs da Sentinel (ex: /logs/sentinel-diario.json)
+    // Lê logs da Sentinel
     let sentinelLog = {};
     try {
         sentinelLog = JSON.parse(fs.readFileSync('/logs/sentinel-diario.json', 'utf-8'));
@@ -33,7 +30,6 @@ app.get('/api/sentinel-status', (req, res) => {
         sentinelLog = { alertas: 0, fixes: 0 };
     }
 
-    // Dados simulados/real (ajusta com teu DB ou arquivos)
     const status = {
         uptime: `${Math.floor(uptime / 86400)}d ${Math.floor((uptime % 86400) / 3600)}h`,
         ciclos: sentinelLog.ciclos || 1432,
@@ -64,11 +60,8 @@ app.get('/api/sentinel-status', (req, res) => {
         recursos: { cpu: cpuLoad.toFixed(1), ram: ramPct, disco: sentinelLog.disco || 2.3, rede: sentinelLog.rede || 1.2 }
     };
 
-    res.json(status);
-});
-
-// Porta (ou integra no teu server principal)
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`Sentinel API rodando na porta ${PORT}`));
-
-module.exports = app;
+    return new Response(JSON.stringify(status), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+    });
+}

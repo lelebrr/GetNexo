@@ -642,24 +642,24 @@ import { motionGuidelines } from './design-system';
 
 function MyComponent() {
   const { keyframes } = motionGuidelines;
-  
+
   return (
     <div>
       {/* Spin animation */}
       <div style={{ animation: 'spin 1s linear infinite' }}>
         ⚙️
       </div>
-      
+
       {/* Pulse animation */}
       <div style={{ animation: 'pulse 2s ease-in-out infinite' }}>
         🔔
       </div>
-      
+
       {/* Bounce animation */}
       <div style={{ animation: 'bounce 1s ease-in-out infinite' }}>
         🏀
       </div>
-      
+
       {/* Shake animation */}
       <div style={{ animation: 'shake 400ms ease-in-out' }}>
         ⚠️
@@ -668,6 +668,83 @@ function MyComponent() {
   );
 }
 ```
+
+#### Keyframes Específicos
+
+```css
+/* Spin */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Pulse */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Bounce */
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-30px); }
+  60% { transform: translateY(-15px); }
+}
+
+/* Shake */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+  20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+```
+
+#### Performance de Animações
+
+##### Otimizações de Performance
+
+- **Hardware Acceleration**: Use `transform` e `opacity` ao invés de propriedades que causam repaint
+- **Will-Change**: Declare propriedades que serão animadas antecipadamente
+- **Containment**: Use `contain` para isolar elementos animados
+- **Reduce Motion**: Respeite a preferência do usuário com `prefers-reduced-motion`
+
+```javascript
+// Exemplo de animação otimizada
+const OptimizedAnimation = () => {
+  return (
+    <div
+      style={{
+        willChange: 'transform, opacity',
+        contain: 'layout style paint',
+        animation: 'optimizedFade 300ms ease-out',
+      }}
+    >
+      Conteúdo animado
+    </div>
+  );
+};
+
+// CSS otimizado
+const styles = `
+  @keyframes optimizedFade {
+    from {
+      opacity: 0;
+      transform: translateZ(0); /* Force hardware acceleration */
+    }
+    to {
+      opacity: 1;
+      transform: translateZ(0);
+    }
+  }
+`;
+```
+
+##### Métricas de Performance
+
+- **60 FPS**: Meta para todas as animações
+- **Layout Thrashing**: Evite leituras forçadas de layout durante animações
+- **Paint Time**: Mantenha abaixo de 16ms por frame
+- **Memory Usage**: Monitore vazamentos de memória em animações longas
 
 ## ⚙️ Configuração via Admin
 
@@ -966,12 +1043,36 @@ function Modal({ isOpen, onClose }) {
 ### Diretrizes de Design
 
 #### Cores
+
+##### Paleta Light Mode
 - **Primária**: Azul (#3b82f6) - Ações principais
+- **Primária Hover**: Azul escuro (#2563eb)
+- **Primária Active**: Azul mais escuro (#1d4ed8)
 - **Secundária**: Roxo (#8b5cf6) - Ações secundárias
+- **Secundária Hover**: Roxo escuro (#7c3aed)
 - **Acento**: Verde (#10b981) - Ações de destaque
+- **Acento Hover**: Verde escuro (#059669)
 - **Sucesso**: Verde (#22c55e) - Confirmações
 - **Aviso**: Amarelo (#f59e0b) - Alertas
 - **Erro**: Vermelho (#ef4444) - Erros
+
+##### Paleta Dark Mode
+- **Primária**: Azul claro (#60a5fa) - Ações principais
+- **Primária Hover**: Azul (#3b82f6)
+- **Primária Active**: Azul escuro (#2563eb)
+- **Secundária**: Roxo claro (#a78bfa) - Ações secundárias
+- **Secundária Hover**: Roxo (#8b5cf6)
+- **Acento**: Verde claro (#34d399) - Ações de destaque
+- **Acento Hover**: Verde (#10b981)
+- **Sucesso**: Verde claro (#4ade80) - Confirmações
+- **Aviso**: Amarelo (#fbbf24) - Alertas
+- **Erro**: Vermelho claro (#f87171) - Erros
+
+##### Tons de Fundo
+- **Light Background**: Branco (#ffffff)
+- **Light Surface**: Cinza muito claro (#f8fafc)
+- **Dark Background**: Preto (#09090b)
+- **Dark Surface**: Cinza escuro (#1a1a1a)
 
 #### Tipografia
 - **H1**: 3rem (48px) - Títulos principais
@@ -1004,15 +1105,61 @@ function Modal({ isOpen, onClose }) {
 ```javascript
 // Teste de contraste
 const contrast = getContrastColor('#ffffff'); // '#18181b'
+expect(getContrastRatio('#ffffff', '#18181b')).toBeGreaterThan(4.5);
 
 // Teste de foco
 const focusStyles = getFocusStyles();
+expect(focusStyles.outline).toBeDefined();
+expect(focusStyles.outlineWidth).toBe('2px');
 
 // Teste de skip links
 const skipLinkStyles = getSkipLinkStyles();
+expect(skipLinkStyles.position).toBe('absolute');
+expect(skipLinkStyles.left).toBe('-10000px');
 
 // Teste de redução de motion
 const { reducedMotion } = useMotionPreferences();
+if (reducedMotion) {
+  expect(animationDuration).toBe('0.01ms');
+}
+
+// Teste completo de acessibilidade com axe-core
+import { axe, toHaveNoViolations } from 'jest-axe';
+expect.extend(toHaveNoViolations);
+
+test('Button component is accessible', async () => {
+  const { container } = render(<Button>Click me</Button>);
+  const results = await axe(container);
+  expect(results).toHaveNoViolations();
+});
+
+// Teste de navegação por teclado
+test('Keyboard navigation works', () => {
+  render(<Button>Click me</Button>);
+  const button = screen.getByRole('button');
+
+  // Tab para o botão
+  userEvent.tab();
+  expect(button).toHaveFocus();
+
+  // Enter ativa o botão
+  userEvent.keyboard('{Enter}');
+  expect(mockOnClick).toHaveBeenCalled();
+});
+
+// Teste de ARIA labels
+test('ARIA labels are present', () => {
+  render(<Input label="Email" ariaRequired={true} />);
+  const input = screen.getByLabelText('Email');
+  expect(input).toHaveAttribute('aria-required', 'true');
+});
+
+// Teste de modo alto contraste
+test('High contrast mode works', () => {
+  render(<ThemeProvider theme="high-contrast"><Button>Click</Button></ThemeProvider>);
+  const button = screen.getByRole('button');
+  expect(button).toHaveStyle({ backgroundColor: '#000000', color: '#ffffff' });
+});
 ```
 
 ### Performance
@@ -1151,10 +1298,46 @@ MIT License - Copyright (c) 2026 Neuro Team
 
 ## 📞 Suporte
 
-- **Documentação**: `/design-system/README.md`
-- **Exemplos**: `/design-system/examples/`
-- **Testes**: `/design-system/__tests__/`
+- **Documentação**: `getnexo-site/src/design-system/README.md`
+- **Exemplos**: `getnexo-site/src/design-system/examples/` (disponível)
+- **Testes**: `getnexo-site/src/design-system/__tests__/` (disponível)
+- **Storybook**: `npm run storybook` (planejado para v2.0)
 - **Issues**: GitHub Issues
+
+#### Testes Visuais (Recomendado)
+
+```bash
+# Instalar Chromatic para testes visuais
+npm install --save-dev chromatic
+
+# Executar testes visuais
+npm run test:visual
+
+# Comparar mudanças visuais
+npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN
+```
+
+#### Storybook Integration
+
+```javascript
+// .storybook/main.js
+module.exports = {
+  stories: ['../src/design-system/**/*.stories.@(js|jsx|ts|tsx)'],
+  addons: ['@storybook/addon-essentials', '@storybook/addon-a11y'],
+  framework: '@storybook/react',
+};
+
+// .storybook/preview.js
+import { ThemeProvider } from '../src/design-system';
+
+export const decorators = [
+  (Story) => (
+    <ThemeProvider>
+      <Story />
+    </ThemeProvider>
+  ),
+];
+```
 
 ---
 

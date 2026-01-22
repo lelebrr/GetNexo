@@ -1,0 +1,50 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Análisis de Sentimiento: El Corazón de la Retención",
+      "description": "Entienda cómo se siente su cliente en tiempo real y anticipe el churn con precisión.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-22",
+      "articleSection": "Experiencia del Cliente"
+    }
+  ]
+};
+---
+<Layout
+  title="Análisis de Sentimiento: El Corazón de la Retención | GetNexo" articleSchema={schema}
+  type="article"
+>
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta">Experiencia del Cliente • Ene 2026</div>
+      <h1>Análisis de Sentimiento:<br/><span class="text-primary">El Corazón de la Retención</span></h1>
+      <p class="subtitle">Entienda cómo se siente su cliente en tiempo real y anticipe el churn con precisión.</p>
+    </header>
+    <div class="post-content">
+      <section>
+        <h2>❤️ Escuchar más allá de las palabras</h2>
+        <p>La IA ahora puede detectar frustración, alegría y urgencia. El uso del análisis de sentimiento permite priorizar automáticamente a los clientes molestos y recompensar a los felices.</p>
+      </section>
+      <div class="final-cta">
+        <h3>¡Mejore su retención ahora!</h3>
+        <p>La IA de GetNexo entiende las emociones de los clientes en cualquier idioma.</p>
+        <div class="cta-buttons mt-8">
+          <a href="/es/crear-bot" class="btn-primary">Empezar Ahora</a>
+        </div>
+      </div>
+    </div>
+  </article>
+</Layout>
+<style>
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  h1 { font-size: 3.5rem; font-weight: 900; color: white; }
+  .text-primary { color: #00f7ff; }
+  .btn-primary { background: #00f7ff; color: black; padding: 1.2rem 3.5rem; border-radius: 50px; text-decoration: none; font-weight: 800; }
+</style>

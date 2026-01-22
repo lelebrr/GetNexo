@@ -1,0 +1,34 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Récupération de Panier : Stratégies WhatsApp",
+      "description": "Récupération de Panier par WhatsApp | GetNexo",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-22",
+      "articleSection": "Strategy"
+    }
+  ]
+};
+---
+<Layout
+  title="Récupération de Panier par WhatsApp | GetNexo" articleSchema={schema}
+  type="article"
+>
+  <article class="post-container">
+    <h1>Récupération de Panier :<br/><span class="text-primary">Stratégies WhatsApp</span></h1>
+    <p>Comment récupérer jusqu'à 45% des ventes perdues avec l'automatisation intelligente.</p>
+    <a href="/fr/creer-bot" class="btn-primary">Démarrer</a>
+  </article>
+</Layout>
+<style>
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  h1 { font-size: 3.5rem; font-weight: 900; color: white; }
+  .text-primary { color: #00f7ff; }
+  .btn-primary { background: #00f7ff; color: black; padding: 1.2rem 3.5rem; border-radius: 50px; text-decoration: none; font-weight: 800; }
+</style>

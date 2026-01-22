@@ -7,6 +7,22 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme, useMotion, useAccessibility } from '../theme/ThemeContext';
 
+// CSS for animations (should be in global styles)
+const buttonAnimations = `
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+`;
+
+// Inject animations if not present
+if (typeof document !== 'undefined' && !document.getElementById('button-animations')) {
+    const style = document.createElement('style');
+    style.id = 'button-animations';
+    style.textContent = buttonAnimations;
+    document.head.appendChild(style);
+}
+
 export const Button = ({
     children,
     variant = 'primary',
@@ -158,6 +174,13 @@ export const Button = ({
         }
     };
 
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleClick(e);
+        }
+    };
+
     // Calculate dynamic styles
     const getButtonStyles = () => {
         const baseStyles = {
@@ -199,8 +222,7 @@ export const Button = ({
             baseStyles.boxShadow = computedTheme.spacing.shadow.sm;
         }
 
-        // Focus styles
-        baseStyles['&:focus-visible'] = getFocusStyles();
+        // Focus styles will be handled via CSS class or global styles
 
         // Loading state
         if (loading) {
@@ -271,6 +293,7 @@ export const Button = ({
         <button
             type={type}
             onClick={handleClick}
+            onKeyDown={handleKeyDown}
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}
             onMouseEnter={handleMouseEnter}

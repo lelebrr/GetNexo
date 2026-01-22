@@ -1,0 +1,244 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout title="Crear Plugin GetNexo – Instalar en cualquier sitio">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+
+  <div class="page-wrapper">
+    <div id="auth-gate" class="auth-gate hidden">
+      <div class="auth-card glass-panel reveal">
+        <div class="auth-header">
+           <div class="auth-logo">N</div>
+           <h1>Comienza tu Viaje</h1>
+           <p>Debes iniciar sesión para configurar tu plugin y acceder al soporte prioritario.</p>
+        </div>
+
+        <div id="auth-choice" class="auth-choice">
+          <button class="btn-auth-primary" onclick="showAuthMode('register')">Crear Cuenta Gratis</button>
+          <button class="btn-auth-secondary" onclick="showAuthMode('login')">Ya tengo cuenta (Entrar)</button>
+          <div class="auth-divider"><span>o continúa con</span></div>
+          <div class="social-auth">
+            <button class="social-btn" onclick="loginWithGoogle()">Google</button>
+            <button class="social-btn" onclick="loginWithGitHub()">GitHub</button>
+          </div>
+        </div>
+
+        <form id="login-form" class="auth-form hidden">
+          <div class="field">
+            <label>Correo electrónico</label>
+            <input type="email" name="email" required placeholder="tu@email.com" />
+          </div>
+          <div class="field">
+            <label>Contraseña</label>
+            <input type="password" name="password" required placeholder="••••••••" />
+          </div>
+          <button type="submit" class="btn-next">Entrar →</button>
+          <p class="auth-switch">¿Aún no tienes cuenta? <a href="#" onclick="showAuthMode('register')">Regístrate</a></p>
+        </form>
+
+        <form id="register-form" class="auth-form hidden">
+          <div class="form-grid">
+            <div class="field">
+              <label>Nombre Completo *</label>
+              <input type="text" name="name" id="reg-name" required placeholder="Juan Pérez" />
+            </div>
+            <div class="field">
+              <label>Correo electrónico *</label>
+              <input type="email" name="email" id="reg-email" required placeholder="juan@empresa.com" />
+            </div>
+            <div class="field">
+              <label>Crea una contraseña *</label>
+              <input type="password" name="password" id="reg-password" required placeholder="Mínimo 8 caracteres" minlength="8" />
+            </div>
+            <div class="field">
+               <label>Tipo de Persona *</label>
+               <select name="person_type" id="reg-person-type" required onchange="togglePersonFields()">
+                 <option value="">Seleccione...</option>
+                 <option value="pf">Persona Física</option>
+                 <option value="pj">Persona Jurídica</option>
+               </select>
+            </div>
+            <div class="field" id="cpf-field" style="display: none;">
+               <label>Identificación Fiscal Individual (CPF/ID) *</label>
+               <input type="text" name="cpf" id="reg-cpf" placeholder="000.000.000-00" />
+            </div>
+            <div class="field" id="cnpj-field" style="display: none;">
+               <label>Identificación Fiscal de Empresa (CNPJ) *</label>
+               <input type="text" name="cnpj" id="reg-cnpj" placeholder="00.000.000/0000-00" />
+            </div>
+            <div class="field">
+              <label>Nombre de la Empresa (Opcional)</label>
+              <input type="text" name="company" placeholder="Mi Empresa S.A." />
+            </div>
+            <div class="field">
+              <label>Tu sitio web principal *</label>
+              <input type="url" name="website" id="reg-site" required placeholder="https://tusitio.com" />
+            </div>
+            <div class="field">
+              <label>WhatsApp Corporativo *</label>
+              <input type="tel" name="whatsapp" id="reg-whatsapp" required />
+            </div>
+            <div class="field">
+              <label>Sector *</label>
+              <select name="segment" required>
+                <option value="">Seleccione...</option>
+                <option value="ecommerce">E-commerce / Retail</option>
+                <option value="servicos">Servicios / Consultoría</option>
+                <option value="saude">Salud / Bienestar</option>
+                <option value="infoproducts">Infoproductos / Educación</option>
+                <option value="outros">Otros</option>
+              </select>
+            </div>
+          </div>
+          <div class="auth-checks">
+            <label class="checkbox-container">
+              <input type="checkbox" required checked />
+              <span class="checkmark"></span>
+              Acepto los <a href="/termos">Términos de Uso</a> y la <a href="/privacidade">Privacidad</a>
+            </label>
+          </div>
+          <div id="reg-error" class="error-msg"></div>
+          <button type="submit" class="btn-next" id="btn-submit-register">Crear mi cuenta →</button>
+          <p class="auth-switch">¿Ya tienes cuenta? <a href="#" onclick="showAuthMode('login')">Iniciar sesión</a></p>
+        </form>
+
+        <div id="otp-section" class="auth-form hidden">
+           <h2>Validar WhatsApp</h2>
+           <p>Hemos enviado un código de 6 dígitos a tu WhatsApp. Ingrésalo a continuación para activar tu cuenta.</p>
+           <div class="otp-input-container">
+             <input type="text" id="otp-code" maxlength="6" placeholder="000000" />
+           </div>
+           <div id="otp-error" class="error-msg"></div>
+           <button class="btn-next" onclick="verifyOTP()">Validar Código ✅</button>
+           <p class="resend-text">¿No lo recibiste? <a href="#" onclick="resendOTP()">Reenviar en <span id="otp-timer">30</span>s</a></p>
+        </div>
+      </div>
+    </div>
+
+    <div id="wizard-section" class="wizard-container hidden">
+      <header class="wizard-header">
+        <h1>Crear Plugin</h1>
+        <p>Dashboard: <span id="user-display-name">Cargando...</span></p>
+        <div class="all-required-notice">Configuración finalizada con éxito</div>
+      </header>
+
+      <div class="step-indicators">
+        <div class="step-item active" data-step="1">
+          <span class="step-number">1</span>
+          <span class="step-label">Personalización</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-item" data-step="2">
+          <span class="step-number">2</span>
+          <span class="step-label">Visual</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-item" data-step="3">
+          <span class="step-number">3</span>
+          <span class="step-label">Código</span>
+        </div>
+      </div>
+
+      <div class="step-content" id="step1">
+        <h2>🎨 Configura tu Bot</h2>
+        <form id="wizard-form" class="wizard-form">
+           <div class="form-grid">
+             <div class="field">
+               <label>Nombre del asistente *</label>
+               <input type="text" id="bot-name" placeholder="Ej: Nexus Ventas" required />
+             </div>
+             <div class="field">
+               <label>Sitio web para el widget *</label>
+               <input type="url" id="bot-site" placeholder="https://tusitio.com" required />
+             </div>
+             <div class="field">
+                <label>Tono de voz</label>
+                <select id="bot-tone">
+                  <option value="formal">Formal y Profesional</option>
+                  <option value="casual" selected>Casual y Amigable</option>
+                  <option value="urgencia">Enfocado en Ventas/Urgencia</option>
+                </select>
+             </div>
+             <div class="field">
+                <label>Emoji destacado</label>
+                <input type="text" id="bot-emoji" value="🤖" placeholder="Elige un emoji" />
+             </div>
+           </div>
+           <button type="submit" class="btn-next">Generar Vista Previa →</button>
+        </form>
+      </div>
+
+      <div class="step-content hidden" id="step2">
+         <h2>✨ Vista Previa del Estilo</h2>
+         <div class="preview-area glass-panel">
+            <div class="mock-widget">
+               <div class="mock-header">
+                 <span id="preview-emoji">🤖</span>
+                 <strong id="preview-name">Nexus Bot</strong>
+               </div>
+               <div class="mock-body">
+                 <div class="mock-msg">¡Hola! ¿Cómo puedo ayudarte hoy?</div>
+               </div>
+            </div>
+            <div class="theme-choices">
+               <label>Tema de color:</label>
+               <div class="theme-dots">
+                 <div class="dot active" style="background:#00d4ff;" onclick="setTheme('neon')"></div>
+                 <div class="dot" style="background:#00ff9d;" onclick="setTheme('matrix')"></div>
+                 <div class="dot" style="background:#f43f5e;" onclick="setTheme('sunset')"></div>
+               </div>
+            </div>
+         </div>
+         <div class="step-actions">
+           <button class="btn-back" onclick="goToStep(1)">← Editar</button>
+           <button class="btn-next" onclick="generateFinalCode()" id="btn-final-step">Obtener código del plugin →</button>
+         </div>
+      </div>
+
+      <div class="step-content hidden" id="step3">
+        <h2>🚀 ¡Todo Listo!</h2>
+        <p>Instala el código a continuación dentro de la etiqueta <code>&lt;head&gt;</code> o antes del cierre de <code>&lt;/body&gt;</code> de tu sitio web.</p>
+        <div class="code-box">
+          <code id="widget-code">Cargando código...</code>
+          <button onclick="copiarCodigo()" class="btn-copy">Copiar</button>
+        </div>
+        <div class="wizard-footer">
+          <a href="/es/dashboard" class="btn-next">Acceder a Mi Panel →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+/* Reusing styles from create-bot.astro */
+  .page-wrapper { min-height: 90vh; padding: 100px 5% 50px; }
+  .auth-gate { display: flex; justify-content: center; align-items: flex-start; }
+  .auth-card { max-width: 900px; width: 100%; padding: 3rem; border-radius: 30px; }
+  .auth-header { text-align: center; margin-bottom: 3rem; }
+  .auth-logo { width: 60px; height: 60px; background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 2rem; border-radius: 15px; margin: 0 auto 1.5rem; box-shadow: 0 0 30px rgba(0, 212, 255, 0.4); }
+  .auth-choice { display: flex; flex-direction: column; gap: 1rem; max-width: 400px; margin: 0 auto; }
+  .btn-auth-primary { background: white; color: black; padding: 1.2rem; border-radius: 15px; font-weight: 800; border: none; cursor: pointer; transition: 0.3s; font-size: 1.1rem; }
+  .btn-auth-secondary { background: rgba(255,255,255,0.05); color: white; padding: 1.2rem; border-radius: 15px; font-weight: 700; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.3s; }
+  .btn-auth-primary:hover { background: #00ff9d; transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0, 255, 157, 0.3); }
+  .auth-divider { position: relative; text-align: center; margin: 2rem 0; }
+  .auth-divider span { background: #030712; padding: 0 1rem; color: #475569; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; position: relative; }
+  .social-auth { display: flex; gap: 1rem; }
+  .social-btn { flex: 1; background: #0f172a; border: 1px solid #334155; color: white; padding: 0.8rem; border-radius: 10px; cursor: pointer; transition: 0.2s; }
+  .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; text-align: left; }
+  .field { display: flex; flex-direction: column; gap: 0.5rem; }
+  .field label { font-size: 0.85rem; font-weight: 600; color: #e2e8f0; }
+  .field input, .field select { background: #020617; border: 1px solid #1e293b; color: white; padding: 0.8rem 1rem; border-radius: 10px; font-size: 0.95rem; outline: none; transition: 0.3s; }
+  .checkbox-container { display: flex; align-items: center; gap: 0.8rem; cursor: pointer; user-select: none; margin: 1.5rem 0; font-size: 0.85rem; color: #94a3b8; }
+  .checkmark { width: 22px; height: 22px; background: #020617; border: 2px solid #1e293b; border-radius: 6px; position: relative; }
+  .wizard-container { max-width: 1000px; margin: 0 auto; }
+  .wizard-header { text-align: center; margin-bottom: 3rem; }
+  .wizard-header h1 { font-size: 3rem; font-weight: 800; color: #00ff9d; margin: 0; }
+  .step-indicators { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 3rem; }
+  .step-number { width: 40px; height: 40px; border-radius: 50%; background: #1e293b; display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; }
+  .step-content { background: rgba(15, 23, 42, 0.6); padding: 4rem; border-radius: 30px; border: 1px solid rgba(255,255,255,0.05); }
+  .btn-next { width: 100%; border: none; padding: 1.2rem; border-radius: 15px; font-weight: 800; font-size: 1.1rem; background: linear-gradient(90deg, #00d4ff, #00ff9d); color: black; cursor: pointer; transition: 0.3s; margin-top: 1.5rem; }
+  .preview-area { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+  .mock-widget { background: #0f172a; border-radius: 15px; border: 1px solid #1e293b; overflow: hidden; height: 300px; display: flex; flex-direction: column; }
+</style>
+</Layout>

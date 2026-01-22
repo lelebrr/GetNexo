@@ -40,6 +40,23 @@ O Magic Map é um sistema completo de rastreamento de usuários em tempo real qu
 - **HeatmapChart Component** (`src/components/analytics/HeatmapChart.jsx`): Mapas de calor
 - **Admin Config** (`src/pages/admin/tracking-config.astro`): Interface administrativa
 
+## 🔗 Locais de API
+
+### Endpoints Principais
+- **Produção**: `https://api.getnexo.com.br/api/tracking/...`
+- **Desenvolvimento**: `http://localhost:3000/api/tracking/...`
+- **Admin Dashboard**: `https://getnexo.com.br/admin/tracking-config`
+
+### Credenciais de Acesso
+- **API Key**: Configure em `.env` como `TRACKING_API_KEY`
+- **Admin Username**: `admin`
+- **Admin Password**: Configure em `.env` como `ADMIN_PASSWORD`
+
+### Links Úteis
+- **Dashboard Admin**: https://getnexo.com.br/admin/tracking-config
+- **API Documentation**: https://api.getnexo.com.br/docs/tracking
+- **Privacy Policy**: https://getnexo.com.br/privacy
+
 ## 🚀 Como Usar
 
 ### 1. Configuração Inicial

@@ -19,7 +19,11 @@ const schema = {
 };
 ---
 
-<Layout title="SaaS Growth WhatsApp API | GetNexo">
+<Layout
+  title="SaaS Growth WhatsApp API | GetNexo"
+  articleSchema={schema}
+  type="article"
+>
   <article class="post-container">
     <header class="post-header">
       <div class="meta animate-fade-in">SaaS & B2B • Jan 2026</div>
@@ -37,7 +41,7 @@ const schema = {
         <p>O maior inimigo de um SaaS é o usuário que se cadastra e não utiliza a ferramenta. Em 2026, as melhores empresas utilizam <strong>webhooks da GetNexo</strong> para enviar mensagens automáticas de boas-vindas e tutoriais rápidos no WhatsApp assim que o usuário atinge (ou deixa de atingir) um marco crítico no software.</p>
         
         <div class="glass-panel mt-8">
-          <p><strong>Exemplo:</strong> Se um usuário criou a conta mas não configurou o perfil em 24h, a IA envia uma mensagem: "Olá {nome}, vi que você parou no passo X. Precisa de uma mãozinha?"</p>
+          <p><strong>Exemplo:</strong> Se um usuário criou a conta mas não configurou o perfil em 24h, a IA envia uma mensagem: "Olá [nome do usuário], vi que você parou no passo X. Precisa de uma mãozinha?"</p>
         </div>
       </section>
 
@@ -76,7 +80,7 @@ const schema = {
     </div>
   </article>
 
-  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+  
 </Layout>
 
 <style>

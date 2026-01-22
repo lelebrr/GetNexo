@@ -1,9 +1,25 @@
 ---
 // AMP Version of Blog Post
 // SEO Strategy: Mobile-first acceleration + E-A-T optimization
+export const prerender = false;
 const post = { title: 'Post Title', slug: 'post-slug' }; // Placeholder, will be replaced by actual logic if needed
-const canonicalUrl = 'https://getnexo.com.br/blog/post-slug';
-const ampUrl = 'https://getnexo.com.br/blog/post-slug.amp';
+const canonicalUrl = `https://getnexo.com.br/blog/${post.slug}`;
+const ampUrl = `https://getnexo.com.br/blog/${post.slug}.amp`;
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "{post.title}",
+      "description": "",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-22",
+      "articleSection": "Strategy"
+    }
+  ]
+};
 ---
 <!doctype html>
 <html ⚡ lang="pt-BR" class="dark">

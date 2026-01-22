@@ -1,0 +1,40 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Official WhatsApp API Guide: Everything Developers Need",
+      "description": "Everything you need for a robust and scalable integration.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-22",
+      "articleSection": "Dev"
+    }
+  ]
+};
+---
+<Layout
+  title="Official WhatsApp API Guide for Devs | GetNexo" articleSchema={schema}
+  type="article"
+>
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta">Dev • Jan 2026</div>
+      <h1>Official WhatsApp API Guide:<br/><span class="text-primary">Everything Developers Need</span></h1>
+      <p class="subtitle">Everything you need for a robust and scalable integration.</p>
+    </header>
+    <div class="post-content">
+      <p>Building on the Cloud API requires understanding rate limits, webhooks, and message templates. This guide covers it all.</p>
+      <a href="/en/create-bot" class="btn-primary">View Documentation</a>
+    </div>
+  </article>
+</Layout>
+<style>
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  h1 { font-size: 3.5rem; font-weight: 900; color: white; }
+  .text-primary { color: #00f7ff; }
+  .btn-primary { background: #00f7ff; color: black; padding: 1.2rem 3.5rem; border-radius: 50px; text-decoration: none; font-weight: 800; }
+</style>

@@ -20,7 +20,14 @@ export default function ChatBot() {
                 }));
                 setMessages(parsed);
             } catch (error) {
-                console.error('Error loading chat messages:', error);
+                // Error loading chat messages - using default welcome message
+                const welcomeMessage = {
+                    id: 1,
+                    type: 'bot',
+                    content: 'Olá! Sou o GetNexo AI. Como posso ajudar você hoje?',
+                    timestamp: new Date()
+                };
+                setMessages([welcomeMessage]);
             }
         } else {
             // Initialize with welcome message
@@ -87,7 +94,6 @@ export default function ChatBot() {
         try {
             // Analyze sentiment of user message
             const sentimentResult = window.sentiment ? window.sentiment.analyze(userMessage.content) : null;
-            console.log('User sentiment analysis:', sentimentResult);
 
             // Prepare context (last 10 messages)
             const context = messages.slice(-10).map(msg => ({
@@ -125,7 +131,7 @@ export default function ChatBot() {
                 setMessages(prev => [...prev, errorMessage]);
             }
         } catch (error) {
-            console.error('Chat error:', error);
+            // Chat error occurred - showing user-friendly message
             const errorMessage = {
                 id: Date.now() + 1,
                 type: 'bot',
@@ -234,9 +240,9 @@ export default function ChatBot() {
                     <div className="px-4 pb-2">
                         <div className="text-xs text-gray-500 mb-2">Sugestões rápidas:</div>
                         <div className="flex flex-wrap gap-2">
-                            {quickSuggestions.map((suggestion, index) => (
+                            {quickSuggestions.map((suggestion) => (
                                 <button
-                                    key={index}
+                                    key={`suggestion-${suggestion.replace(/\s+/g, '-').toLowerCase()}`}
                                     onClick={() => handleSuggestionClick(suggestion)}
                                     className="px-3 py-1 bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs rounded-full transition-colors"
                                 >

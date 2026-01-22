@@ -1,0 +1,40 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Loyalty 4.0: The Power of AI Rewards",
+      "description": "How to create loyalty programs that truly retain customers using AI.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-22",
+      "articleSection": "Growth"
+    }
+  ]
+};
+---
+<Layout
+  title="Loyalty 4.0: The Power of AI Rewards | GetNexo" articleSchema={schema}
+  type="article"
+>
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta">Growth • Jan 2026</div>
+      <h1>Loyalty 4.0:<br/><span class="text-primary">The Power of AI Rewards</span></h1>
+      <p class="subtitle">How to create loyalty programs that truly retain customers using AI.</p>
+    </header>
+    <div class="post-content">
+      <p>Points are boring. Personalized rewards based on behavior are the future of customer retention.</p>
+      <a href="/en/create-bot" class="btn-primary">Get Started</a>
+    </div>
+  </article>
+</Layout>
+<style>
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  h1 { font-size: 3.5rem; font-weight: 900; color: white; }
+  .text-primary { color: #00f7ff; }
+  .btn-primary { background: #00f7ff; color: black; padding: 1.2rem 3.5rem; border-radius: 50px; text-decoration: none; font-weight: 800; }
+</style>

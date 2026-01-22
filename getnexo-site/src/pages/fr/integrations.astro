@@ -1,0 +1,56 @@
+---
+import Layout from '../../layouts/Layout.astro';
+const title = "Intégrations GetNexo 2026 - Connectez WhatsApp IA avec +50 Plateformes";
+const description = "Intégrations complètes GetNexo : connectez WhatsApp IA avec Shopify, WooCommerce, Hotmart, VTEX, Bling, Make. Automatisation totale des ventes.";
+const keywords = "intégration whatsapp shopify, whatsapp woocommerce, whatsapp make, integrations getnexo";
+
+const integrations = [
+  { slug: "shopify", name: "Shopify", icon: "🛍️", category: "E-commerce", status: "active", desc: "Synchronisez vos produits et commandes automatiquement" },
+  { slug: "woocommerce", name: "WooCommerce", icon: "🔌", category: "E-commerce", status: "active", desc: "Plugin natif pour WordPress" },
+  { slug: "make", name: "Make", icon: "🔧", category: "Automation", status: "active", desc: "Intégrations visuelles complexes" },
+  { slug: "zapier", name: "Zapier", icon: "⚡", category: "Automation", status: "active", desc: "Connectez plus de 6000 apps sans code" }
+];
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  <section class="integrations-hero">
+    <div class="hero-badge">🔗 Écosystème Ouvert</div>
+    <h1>Intégrations GetNexo : Connectez WhatsApp IA avec <span class="text-gradient">+50 Plateformes</span></h1>
+    <p class="hero-desc">
+      Connectez GetNexo avec vos outils préférés. Automatisez vos ventes, commandes et paiements en temps réel.
+    </p>
+  </section>
+
+  <section class="integrations-grid-section">
+    <div class="integrations-grid">
+      {integrations.map(int => (
+        <a href={`/fr/integrations/${int.slug}`} class="integration-card glass-panel active">
+          <div class="int-header">
+            <span class="int-icon">{int.icon}</span>
+          </div>
+          <h3>{int.name}</h3>
+          <span class="int-category">{int.category}</span>
+          <p>{int.desc}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <h2>Besoin d'une intégration <span class="text-gradient">sur mesure</span> ?</h2>
+    <p>Notre équipe peut vous aider à connecter GetNexo avec n'importe quel système.</p>
+    <div class="cta-buttons">
+      <a href="/fr/contact" class="btn-primary">Parler à un Expert</a>
+      <a href="/fr/creer-bot" class="btn-outline">Démarrer Gratuitement</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+/* Reusing styles from integrations.astro */
+  .integrations-hero { padding: 8rem 5% 4rem; text-align: center; }
+  .integrations-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; max-width: 1200px; margin: 0 auto; padding: 0 5%; }
+  .integration-card { padding: 2rem; border-radius: 20px; text-decoration: none; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
+  .integration-card:hover { transform: translateY(-5px); border-color: #00d4ff; }
+  .btn-primary { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1rem 2.5rem; border-radius: 12px; font-weight: 800; border: none; text-decoration: none; }
+</style>

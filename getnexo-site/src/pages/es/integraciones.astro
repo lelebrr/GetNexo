@@ -1,0 +1,188 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import RelatedArticles from '../../components/RelatedArticles.astro';
+
+const title = "Integraciones GetNexo 2026 - Conecte WhatsApp IA con +50 Plataformas | Shopify, WooCommerce, Hotmart, VTEX, Bling, PagSeguro";
+const description = "Integraciones completas de GetNexo: conecte WhatsApp IA con Shopify, WooCommerce, Nuvemshop, Hotmart, Kiwify, VTEX, Bling, PagSeguro, n8n, Make. Automatización total de ventas, pedidos y atención en tiempo real.";
+const keywords = "integración whatsapp shopify, whatsapp woocommerce, whatsapp hotmart, whatsapp kiwify, whatsapp vtex, whatsapp bling, whatsapp pagseguro, n8n whatsapp, make whatsapp, zapier whatsapp, getnexo integraciones, api whatsapp integracion, automatización whatsapp ventas, e-commerce whatsapp, infoproductos whatsapp, erp whatsapp integracion, crm whatsapp sync, pagos whatsapp pix";
+
+const integrations = [
+  // E-commerce
+  { slug: "shopify", name: "Shopify", icon: "🛍️", category: "E-commerce", status: "active", desc: "Sincronice productos, pedidos y recupere carritos automáticamente" },
+  { slug: "woocommerce", name: "WooCommerce", icon: "🔌", category: "E-commerce", status: "active", desc: "Plugin nativo para tiendas WordPress con PIX en el checkout" },
+  { slug: "nuvemshop", name: "Nuvemshop", icon: "☁️", category: "E-commerce", status: "active", desc: "Integración oficial con la mayor plataforma de LATAM" },
+  { slug: "yampi", name: "Yampi", icon: "🛒", category: "E-commerce", status: "active", desc: "Checkouts transparentes de alta conversión" },
+  { slug: "cartx", name: "Cartx", icon: "📦", category: "E-commerce", status: "active", desc: "Automatización de carritos abandonados" },
+  { slug: "vtex", name: "VTEX", icon: "🚀", category: "E-commerce", status: "active", desc: "Enterprise commerce con automatización avanzada" },
+  { slug: "wake-commerce", name: "Wake Commerce", icon: "🏬", category: "E-commerce", status: "active", desc: "Plataforma robusta para grandes minoristas" },
+  { slug: "tray", name: "Tray", icon: "🛒", category: "E-commerce", status: "active", desc: "Ecosistema completo de ventas" },
+  { slug: "loja-integrada", name: "Loja Integrada", icon: "🏪", category: "E-commerce", status: "active", desc: "Popular entre Pymes, conexión fácil" },
+  { slug: "vnda", name: "Vnda", icon: "🛍️", category: "E-commerce", status: "active", desc: "Omnicanal nativo para marcas DNVB" },
+  { slug: "uappi", name: "Uappi", icon: "🆙", category: "E-commerce", status: "active", desc: "Rendimiento y flexibilidad en el checkout" },
+  { slug: "iset", name: "Iset", icon: "🔢", category: "E-commerce", status: "active", desc: "Plataforma completa para la gestión de tiendas virtuales" },
+
+  // ERPs
+  { slug: "bling", name: "Bling", icon: "📑", category: "ERP & Gestión", status: "active", desc: "Emisión de facturas y gestión de pedidos" },
+  { slug: "tiny", name: "Tiny", icon: "🐜", category: "ERP & Gestión", status: "active", desc: "Backoffice automatizado para e-commerce" },
+  { slug: "totvs-protheus", name: "Totvs Protheus", icon: "🏢", category: "ERP & Gestión", status: "active", desc: "El mayor ERP de Brasil integrado a WhatsApp" },
+  { slug: "linx", name: "Linx", icon: "🛒", category: "ERP & Gestión", status: "active", desc: "Líder en retail físico y digital" },
+  { slug: "sankhya", name: "Sankhya", icon: "🔄", category: "ERP & Gestión", status: "active", desc: "Gestión corporativa inteligente" },
+  { slug: "alterdata", name: "Alterdata", icon: "💻", category: "ERP & Gestión", status: "active", desc: "Soluciones contables y empresariales" },
+  { slug: "data-system", name: "Data System", icon: "📉", category: "ERP & Gestión", status: "active", desc: "Especialista en retail de calzado y ropa" },
+
+  // Pagos
+  { slug: "mercado-pago", name: "Mercado Pago", icon: "🤝", category: "Pagos", status: "active", desc: "Enlace de pago y PIX en el chat" },
+  { slug: "pagseguro", name: "PagSeguro", icon: "📱", category: "Pagos", status: "active", desc: "Ventas seguras con antifraude" },
+  { slug: "cielo", name: "Cielo", icon: "💳", category: "Pagos", status: "active", desc: "Líder en pagos electrónicos" },
+  { slug: "stone", name: "Stone", icon: "🟢", category: "Pagos", status: "active", desc: "Soluciones financieras completas" },
+  { slug: "pagar-me", name: "Pagar.me", icon: "🐦", category: "Pagos", status: "active", desc: "Infraestructura de pago digital" },
+
+  // CRM
+  { slug: "rd-station", name: "RD Station", icon: "📉", category: "CRM", status: "active", desc: "Líder en automatización de marketing en Brasil" },
+  { slug: "crm-bonus", name: "CRM&Bonus", icon: "🎁", category: "CRM", status: "active", desc: "Giftback y fidelización de clientes" },
+  { slug: "hubspot", name: "HubSpot", icon: "🧲", category: "CRM", status: "active", desc: "Sincronización bidireccional de Leads y Negocios" },
+
+  // Logística/Envios
+  { slug: "correios", name: "Correios", icon: "📦", category: "Logística", status: "active", desc: "Seguimiento nacional automatizado" },
+  { slug: "melhor-envio", name: "Melhor Envio", icon: "🚚", category: "Logística", status: "active", desc: "Cotización de fletes simultánea" },
+
+  // Infoproductos
+  { slug: "hotmart", name: "Hotmart", icon: "🔥", category: "Infoproductos", status: "active", desc: "Líder en recuperación de ventas" },
+  { slug: "kiwify", name: "Kiwify", icon: "🥝", category: "Infoproductos", status: "active", desc: "Checkout de alta conversión" },
+
+  // Automação & Outros
+  { slug: "n8n", name: "n8n", icon: "⚙️", category: "Automatización", status: "active", desc: "Flujos de trabajo low-code ilimitados" },
+  { slug: "make", name: "Make", icon: "🔧", category: "Automatización", status: "active", desc: "Integraciones visuales complejas" },
+  { slug: "zapier", name: "Zapier", icon: "⚡", category: "Automatización", status: "active", desc: "Conecta con más de 6000 aplicaciones sin código" },
+  { slug: "google-sheets", name: "Google Sheets", icon: "📊", category: "Datos", status: "active", desc: "Hojas de cálculo como base de datos" },
+  { slug: "calendly", name: "Calendly", icon: "📅", category: "Agendamiento", status: "active", desc: "Agendamiento de reuniones" }
+];
+
+const categories = [...new Set(integrations.map(i => i.category))];
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  <section class="integrations-hero">
+    <div class="hero-badge">🔗 Ecosistema Abierto</div>
+    <h1>Integraciones GetNexo: Conecte WhatsApp IA con <span class="text-gradient">+50 Plataformas</span></h1>
+    <p class="hero-desc">
+      Conecte GetNexo con Shopify, WooCommerce, Hotmart, VTEX, Bling, PagSeguro y mucho más. Automatice ventas, pedidos, pagos y atención en tiempo real. Configuración en minutos, resultados inmediatos.
+    </p>
+  </section>
+
+  <section class="intro-benefits">
+    <div class="container">
+      <h2>¿Por qué integrar GetNexo con sus herramientas? Potencie sus resultados</h2>
+      <p>GetNexo no es solo un chatbot: es un puente inteligente entre WhatsApp y todos sus sistemas. Nuestras integraciones van mucho más allá de conexiones básicas, ofreciendo una automatización completa que transforma las conversaciones en ventas reales.</p>
+
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <div class="benefit-icon">🚀</div>
+          <h3>Configuración Instantánea</h3>
+          <p>Configure las integraciones en menos de 5 minutos. Nuestras API plug-and-play eliminan la complejidad técnica y le permiten enfocarse en lo que realmente importa: vender más.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">💰</div>
+          <h3>Aumento de Ingresos</h3>
+          <p>Las empresas integradas reportan un aumento promedio del 300% en las conversiones de WhatsApp. Cada integración añade una capa de automatización inteligente a sus procesos.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">⚡</div>
+          <h3>Sincronización Bidireccional</h3>
+          <p>Los datos fluyen perfectamente entre sistemas. Las actualizaciones en el e-commerce se reflejan inmediatamente en WhatsApp, garantizando consistencia total.</p>
+        </div>
+      </div>
+
+      <p>Obtenga más información sobre cómo nuestras <a href="/es/sobre">tecnologías avanzadas</a> potencian cada integración y cómo ayudamos a las empresas a escalar sus resultados con <a href="/es/blog">WhatsApp a gran escala</a>.</p>
+    </div>
+  </section>
+
+  <section class="integrations-grid-section">
+    <div class="filter-tabs">
+      <button class="tab active" data-filter="all">Todas</button>
+      {categories.map(cat => (
+        <button class="tab" data-filter={cat}>{cat}</button>
+      ))}
+    </div>
+
+    <div class="integrations-grid">
+      {integrations.map(int => (
+        <a href={`/es/integraciones/${int.slug}`} class={`integration-card glass-panel ${int.status}`} data-category={int.category}>
+          <div class="int-header">
+            <span class="int-icon">{int.icon}</span>
+            {int.status === 'coming' && <span class="coming-badge">Próximamente</span>}
+          </div>
+          <h3>{int.name}</h3>
+          <span class="int-category">{int.category}</span>
+          <p>{int.desc}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <h2>¿Necesita una integración <span class="text-gradient">personalizada</span>?</h2>
+    <p>Nuestro equipo puede ayudarle a conectar GetNexo con cualquier sistema.</p>
+    <div class="cta-buttons">
+      <a href="/es/contacto" class="btn-primary">Hablar con Especialista</a>
+      <a href="/es/crear-bot" class="btn-outline">Comenzar Gratis</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+/* Reusing styles from integrations.astro */
+  .integrations-hero { padding: 8rem 5% 4rem; text-align: center; max-width: 900px; margin: 0 auto; }
+  .intro-benefits { padding: 4rem 5%; max-width: 1200px; margin: 0 auto; }
+  .intro-benefits h2 { font-size: 2.5rem; font-weight: 800; color: white; margin-bottom: 2rem; text-align: center; }
+  .intro-benefits p { font-size: 1.1rem; color: #94a3b8; line-height: 1.6; margin-bottom: 2rem; text-align: center; max-width: 800px; margin-left: auto; margin-right: auto; }
+  .benefits-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin: 3rem 0; }
+  .benefit-card { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 2rem; text-align: center; }
+  .benefit-card:hover { transform: translateY(-5px); border-color: rgba(0, 212, 255, 0.3); }
+  .benefit-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .benefit-card h3 { color: white; font-size: 1.3rem; margin-bottom: 1rem; }
+  .benefit-card p { color: #94a3b8; line-height: 1.6; margin: 0; }
+  .hero-badge { background: rgba(0, 212, 255, 0.1); color: #00d4ff; padding: 0.5rem 1.2rem; border-radius: 50px; font-size: 0.85rem; font-weight: 700; border: 1px solid rgba(0, 212, 255, 0.2); display: inline-block; margin-bottom: 2rem; }
+  .integrations-hero h1 { font-size: 3.5rem; color: white; margin-bottom: 1.5rem; font-weight: 900; }
+  .hero-desc { font-size: 1.3rem; color: #94a3b8; line-height: 1.6; }
+  .integrations-grid-section { padding: 2rem 5% 4rem; max-width: 1200px; margin: 0 auto; }
+  .filter-tabs { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; margin-bottom: 3rem; }
+  .tab { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; padding: 0.6rem 1.5rem; border-radius: 30px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+  .tab:hover, .tab.active { background: rgba(0, 212, 255, 0.1); border-color: #00d4ff; color: #00d4ff; }
+  .integrations-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+  .integration-card { padding: 2rem; transition: 0.3s; text-decoration: none; display: block; border: 1px solid rgba(255,255,255,0.05); }
+  .integration-card:hover { transform: translateY(-5px); border-color: rgba(0, 255, 157, 0.3); background: rgba(255,255,255,0.02); }
+  .coming-badge { background: #eab308; color: black; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
+  .integration-card h3 { color: white; font-size: 1.3rem; font-weight: 800; margin-bottom: 0.3rem; }
+  .int-category { color: #00d4ff; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .integration-card p { color: #64748b; font-size: 0.9rem; margin-top: 1rem; line-height: 1.5; }
+  .cta-section { padding: 6rem 5%; text-align: center; max-width: 800px; margin: 0 auto; }
+  .cta-section h2 { font-size: 2.5rem; color: white; font-weight: 800; margin-bottom: 1rem; }
+  .cta-section p { color: #64748b; font-size: 1.2rem; margin-bottom: 2.5rem; }
+  .btn-primary { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1rem 2.5rem; border-radius: 12px; font-weight: 800; text-decoration: none; transition: 0.3s; }
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3); }
+  .btn-outline { border: 1px solid rgba(255,255,255,0.1); color: white; padding: 1rem 2.5rem; border-radius: 12px; font-weight: 700; text-decoration: none; background: rgba(255,255,255,0.03); transition: 0.3s; }
+  @media (max-width: 900px) { .integrations-hero h1 { font-size: 2.5rem; } .benefits-grid { grid-template-columns: 1fr; } }
+</style>
+
+<script is:inline>
+  // Tab filtering
+  const tabs = document.querySelectorAll('.tab');
+  const cards = document.querySelectorAll('.integration-card');
+  if (tabs) {
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const filter = tab.dataset.filter;
+        cards.forEach(card => {
+          if (filter === 'all' || card.dataset.category === filter) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+  }
+</script>

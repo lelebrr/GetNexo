@@ -9,18 +9,12 @@ promClient.collectDefaultMetrics({ register });
 
 // Métricas customizadas desabilitadas para evitar conflitos
 
-// Inicializar uptime
-uptimeGauge.set(process.uptime());
-
 // Middleware para coletar métricas de requisições HTTP
 function metricsMiddleware(req, res, next) {
     const start = Date.now();
 
     res.on('finish', () => {
         const duration = (Date.now() - start) / 1000;
-        httpRequestDuration
-            .labels(req.method, req.route?.path || req.path, res.statusCode)
-            .observe(duration);
 
         // Log de performance
         if (duration > 2) {
@@ -38,22 +32,15 @@ function metricsMiddleware(req, res, next) {
 
 // Funções helper para atualizar métricas
 function incrementError(type, endpoint = 'unknown') {
-    errorCounter.inc({ type, endpoint });
     logger.error(`Error incremented: ${type} on ${endpoint}`);
 }
 
 function updateActiveConnections(count) {
-    activeConnections.set(count);
+    // Métricas desabilitadas
 }
 
 function getMetrics() {
     return register.metrics();
-}
-
-// Endpoint para Prometheus scraper
-function metricsEndpoint(req, res) {
-    res.set('Content-Type', register.contentType);
-    res.end(register.metrics());
 }
 
 export {
@@ -61,7 +48,6 @@ export {
     incrementError,
     updateActiveConnections,
     getMetrics,
-    metricsEndpoint,
     register
 };
 
@@ -70,6 +56,5 @@ export default {
     incrementError,
     updateActiveConnections,
     getMetrics,
-    metricsEndpoint,
     register
 };

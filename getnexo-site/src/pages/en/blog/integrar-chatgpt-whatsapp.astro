@@ -1,0 +1,40 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "ChatGPT + WhatsApp: The Future of 24/7 Sales",
+      "description": "How to integrate the most famous AI into your WhatsApp to sell around the clock.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-22",
+      "articleSection": "IA & Vendas"
+    }
+  ]
+};
+---
+<Layout
+  title="ChatGPT + WhatsApp: 24/7 Sales | GetNexo" articleSchema={schema}
+  type="article"
+>
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta">IA & Vendas • Jan 2026</div>
+      <h1>ChatGPT + WhatsApp:<br/><span class="text-primary">The Future of 24/7 Sales</span></h1>
+      <p class="subtitle">How to integrate the most famous AI into your WhatsApp to sell around the clock.</p>
+    </header>
+    <div class="post-content">
+      <p>GPT-4o is the ultimate sales closer. Learn how to connect it to your WhatsApp Business API for automated revenue.</p>
+      <a href="/en/create-bot" class="btn-primary">Build Your AI Bot</a>
+    </div>
+  </article>
+</Layout>
+<style>
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  h1 { font-size: 3.5rem; font-weight: 900; color: white; }
+  .text-primary { color: #00f7ff; }
+  .btn-primary { background: #00f7ff; color: black; padding: 1.2rem 3.5rem; border-radius: 50px; text-decoration: none; font-weight: 800; }
+</style>

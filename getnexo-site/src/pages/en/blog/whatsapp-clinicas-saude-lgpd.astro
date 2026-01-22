@@ -1,0 +1,40 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Digital Health: Clinics, Doctors & Compliance",
+      "description": "Secure scheduling and full compliance in the healthcare sector.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-22",
+      "articleSection": "Healthcare"
+    }
+  ]
+};
+---
+<Layout
+  title="Digital Health: WhatsApp for Clinics & Doctors | GetNexo" articleSchema={schema}
+  type="article"
+>
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta">Healthcare • Jan 2026</div>
+      <h1>Digital Health:<br/><span class="text-primary">Clinics, Doctors & Compliance</span></h1>
+      <p class="subtitle">Secure scheduling and full compliance in the healthcare sector.</p>
+    </header>
+    <div class="post-content">
+      <p>Handling patient data requires extra care. Our solution ensures all WhatsApp communications are secure and HIPAA/GDPR compliant.</p>
+      <a href="/en/create-bot" class="btn-primary">Healthcare AI</a>
+    </div>
+  </article>
+</Layout>
+<style>
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  h1 { font-size: 3.5rem; font-weight: 900; color: white; }
+  .text-primary { color: #00f7ff; }
+  .btn-primary { background: #00f7ff; color: black; padding: 1.2rem 3.5rem; border-radius: 50px; text-decoration: none; font-weight: 800; }
+</style>

@@ -1,0 +1,66 @@
+# Lista Gigante de Revisão de Arquivos do Workspace
+
+Esta lista contém itens para revisar todos os arquivos e pastas do workspace para erros, otimizações e implantações, incluindo locais de API, senhas, links, placeholders, demonstração e funcionalidades não funcionais.
+
+## Itens Concluídos
+
+- [x] Revisar .env para erros, otimizações e implantações - Erros encontrados: secrets hardcoded com valores reais (POSTGRES_PASSWORD, REDIS_PASSWORD, GEMINI_API_KEY=AIzaSyDplE-4AhMhMRC81TGNoirDTdOcf-WC9_g, OPENROUTER_API_KEY=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, DEEPSEEK_API_KEY=sk-9b64c1ecca7043819a392faad111aef5, CLOUDFLARED_TOKEN=eyJhIjoiYzdiOGI5NjBkYzExNGE4YTIyNTcyNGU5ZTkwMTIyYmUiLCJ0IjoiZDNmM2RkMmYtNmU0ZC00NWU1LWExODItYWEzNmNjOGRiMDZjIiwicyI6IllXUmhOVGM1TnpjdFltVTNNUzAwWWpaakxXRmhNR010T0Rnek5XUTVORFJtT1dVMCJ9, CLOUDFLARE_TUNNEL_TOKEN=idêntico), duplicata de GEMINI_API_KEY (linha comentada removida). Otimizações: substituir valores reais por placeholders para segurança. Implantações: implementar gerenciamento de secrets com dotenv-vault ou similar para produção.
+- [x] Revisar .env.example para erros, otimizações e implantações - Erros encontrados: EVOLUTION_API_KEY=evolution_key_forte parece valor real, não placeholder; POSTGRES_PASSWORD=strong_password é placeholder mas ainda exposto; algumas vars comentadas (# GROK_API_KEY=); INSTALL_DATE=2026-01-22 pode ser data futura incorreta se example for genérico. Otimizações: adicionar vars faltantes do .env (ex: AI providers adicionais, e-commerce tokens); usar placeholders consistentes. Implantações: sincronizar todas as vars do .env no example.
+- [x] Revisar .gitattributes para erros, otimizações e implantações - Erros encontrados: nenhum erro sintático óbvio, mas configuração muito básica. Otimizações: adicionar regras para arquivos binários (*.jpg binary, *.png binary, *.pdf binary) para evitar problemas de merge; especificar line endings para scripts (*.sh eol=lf, *.bat eol=crlf); adicionar *.md text para markdown. Implantações: expandir para cobrir tipos de arquivos comuns no projeto (ex: *.glb binary para modelos 3D, *.woff2 binary para fonts).
+- [x] Revisar .gitignore para erros, otimizações e implantações - Erros encontrados: nenhum erro óbvio de sintaxe ou omissões críticas. Otimizações: adicionar padrões comuns como .DS_Store, Thumbs.db, .env.local, .log, *.tmp; verificar se node_modules/ está coberto (sim); considerar ignorar dist/ adicionalmente se não for production. Implantações: adicionar seções comentadas para diferentes categorias (ex: # OS generated files, # IDE files).
+- [x] Revisar .gitmodules para erros, otimizações e implantações - Erros encontrados: submodule "jetnexo-site" definido mas não inicializado, diretório jetnexo-site não existe no workspace; git submodule status retorna vazio, indicando submodules inativos. Otimizações: verificar se submodule é necessário; se sim, inicializar com git submodule update --init; se não, remover entrada do .gitmodules. Implantações: decidir manter ou remover submodule baseado na arquitetura do projeto.
+- [x] Revisar BEHAVIORAL_TAGGING_README.md para erros, otimizações e implantações - Erros encontrados: faltam seções sobre locais de API (URLs para endpoints), senhas (credenciais de acesso), links (ex: link para dashboard admin), placeholders (exemplos de configuração), demonstração (vídeos, screenshots ou passo-a-passo visual), e funcionalidades não funcionais (ex: bugs ou features incompletas). Otimizações: adicionar essas seções para tornar o documento mais prático e completo. Implantações: incluir exemplos reais de URLs, links acessíveis, e indicar status de funcionalidades.
+- [x] Revisar chat-api.log para erros, otimizações e implantações - Erros encontrados: chave de API deepseek hardcoded no log (sk-1a3b6c5c91c349c2adc90fddc2b7bf27), expondo credenciais em logs; chaves vazias para outros providers podem indicar configuração incompleta. Otimizações: não logar secrets, usar mascaramento ou níveis de log seguros; implementar rotação de logs para evitar acumulação. Implantações: configurar logging para mascarar chaves sensíveis e adicionar monitoramento de logs para detectar exposições.
+- [x] Revisar clean_rebuild.sh para erros, otimizações e implantações - Erros encontrados: SUDO_PASS="kali" hardcoded, expondo senha em script; falta verificações de existência de diretórios antes de rm -rf; cd sem verificar se diretório existe; sleep 10 fixo pode ser insuficiente; stop de serviços do sistema pode ser perigoso sem confirmação. Otimizações: usar variável de ambiente para senha; adicionar verificações de erro e existência; paralelizar instalações se possível; melhorar mensagens de erro. Implantações: adicionar opções de dry-run, backup antes de limpar, e logs detalhados para troubleshooting.
+- [x] Revisar deploy_selling_machine.sh para erros, otimizações e implantações - Erros encontrados: cd getnexo-site sem verificar se diretório existe; npm install e npm run build sem tratamento de erro; cp -r dist/* assume que dist existe; npm install --production pode falhar; Build Time hardcoded (1.8s) pode ser incorreto. Otimizações: adicionar verificações de erro, medir tempo real de build, otimizar assets reais (não simulado), usar rsync comentado. Implantações: integrar com CI/CD, adicionar testes antes de deploy, usar variáveis para URL e destino.
+- [x] Revisar docker-compose.yml para erros, otimizações e implantações - Erros encontrados: senhas hardcoded compartilhadas (getnexo2026 usada em n8n, db, evolution); healthchecks usam curl que pode não estar instalado em imagens (ex: postgres); volumes bind podem sobrescrever containers; env_file para todos mas alguns não usam vars; ports expostos diretamente inseguro. Otimizações: usar docker secrets ou env vars seguras; definir networks customizadas; melhorar healthchecks com comandos nativos; usar named volumes para persistência. Implantações: adicionar reverse proxy (traefik), usar secrets, configurar monitoring e logging centralizado.
+- [x] Revisar install_all.sh para erros, otimizações e implantações - Erros encontrados: apt install sem verificação de sucesso individual; wget sem verificação de download; cd sem verificar diretórios extraídos; pip3 install sem sudo pode falhar; docker run sem verificar conflitos de portas; versões hardcoded desatualizadas; conflitos entre pacotes (mysql-server e postgresql); sudo sem verificação se necessário. Otimizações: usar apt install --no-install-recommends; verificar versões antes de instalar; separar em funções; usar docker-compose para containers. Implantações: modularizar script, adicionar rollback, usar ansible para automação avançada.
+- [x] Revisar MAGIC_MAP_README.md para erros, otimizações e implantações - Erros encontrados: faltam seções sobre locais de API (URLs como https://api.getnexo.com.br/api/tracking/...), senhas (credenciais para acesso admin), links (ex: https://getnexo.com.br/admin/tracking-config), placeholders (exemplos de config JSON completos), demonstração (screenshots do Magic Map, vídeos de uso), e funcionalidades não funcionais (ex: se heatmaps não estão carregando ou APIs retornam erro). Otimizações: adicionar essas seções para tornar o documento mais prático e completo. Implantações: incluir exemplos reais de URLs, links acessíveis, e indicar status de funcionalidades.
+- [x] Revisar .github/workflows/backup.yml para erros, otimizações e implantações - Erros encontrados: npm ci --only=prod pode não instalar deps necessárias para build; backup inclui src/ desnecessariamente, expondo código fonte; falta verificação se build falhou; mkdir backup-ia sem verificar se necessário; zip assume arquivos existem. Otimizações: usar npm ci sem --only=prod para build; backup apenas dist/ e dados essenciais; adicionar steps de verificação de sucesso; excluir arquivos sensíveis. Implantações: integrar com storage externo (S3, GCP); adicionar backup de database e logs; configurar retenção variável.
+- [x] Revisar .github/workflows/deploy.yml para erros, otimizações e implantações - Erros encontrados: node -c scripts/ads.js assume arquivo existe; python3 -m py_compile scripts/marketing_ab.py assume arquivo existe; deploy apenas linkedin-ads service, não completo; falta build steps; n8n import assume workflows existem. Otimizações: adicionar verificações de existência de arquivos; incluir build e testes antes de deploy; deploy all services necessários. Implantações: implementar blue-green deployment, rollback automático, health checks pós-deploy.
+- [x] Revisar getnexo-site/src/design-system/README.md para erros, otimizações e implantações - Erros encontrados: documentação muito extensa mas faltam detalhes sobre animações específicas (ex: keyframes para spin, bounce, shake); exemplos de motion podem ser insuficientes; falta seção sobre performance de animações; links internos como /design-system/README.md podem não existir; tokens de cores não especificam paletas dark/light completamente; acessibilidade menciona WCAG mas sem exemplos de teste. Otimizações: adicionar mais exemplos de animações CSS/JS; incluir seções sobre performance de motion; verificar e corrigir links internos; expandir tokens com mais variantes. Implantações: adicionar gifs/videos de animações; implementar testes visuais para componentes; criar storybook ou similar para demonstração interativa.
+
+## Itens Pendentes (por ordem de urgência)
+
+- [ ] Revisar todos os arquivos na pasta getnexo-site/src/components/ recursivamente para erros, otimizações e implantações
+- [ ] Revisar todos os arquivos na pasta getnexo-site/src/lib/ recursivamente para erros, otimizações e implantações
+- [ ] Revisar todos os arquivos na pasta getnexo-site/src/layouts/ recursivamente para erros, otimizações e implantações
+- [ ] Revisar todos os arquivos na pasta getnexo-site/src/pages/ recursivamente para erros, otimizações e implantações
+- [ ] Revisar todos os arquivos na pasta getnexo-site/src/scripts/ recursivamente para erros, otimizações e implantações
+- [ ] Revisar tokens/colors.js do design-system para erros de contraste e paletas
+- [ ] Revisar components/Button.jsx para acessibilidade e animações
+- [ ] Revisar motion-guidelines.js para animações adicionais
+- [ ] Revisar todos os arquivos na pasta chat-api/ recursivamente para erros, otimizações e implantações
+- [ ] Revisar todos os arquivos na pasta docs/ recursivamente para erros, otimizações e implantações
+- [ ] Revisar todos os arquivos na pasta config/ recursivamente para erros, otimizações e implantações
+- [ ] Revisar todos os arquivos na pasta assets/ recursivamente para erros, otimizações e implantações
+- [ ] Revisar todos os arquivos na pasta bot/ recursivamente para erros, otimizações e implantações
+- [ ] Revisar todos os arquivos na pasta cron/ recursivamente para erros, otimizações e implantações
+- [ ] Revisar todos os arquivos na pasta custom/ recursivamente para erros, otimizações e implantações
+- [ ] Revisar todos os arquivos na pasta data/ recursivamente para erros, otimizações e implantações
+- [ ] Revisar todos os arquivos na pasta database/ recursivamente para erros, otimizações e implantações
+- [ ] Revisar todos os arquivos na pasta dist_production/ recursivamente para erros, otimizações e implantações
+- [ ] Revisar todos os arquivos na pasta kubernetes/ recursivamente para erros, otimizações e implantações
+- [ ] Revisar todos os arquivos na pasta logs/ recursivamente para erros, otimizações e implantações
+- [ ] Revisar todos os arquivos na pasta plans/ recursivamente para erros, otimizações e implantações
+- [ ] Revisar todos os arquivos na pasta scripts/ recursivamente para erros, otimizações e implantações
+- [ ] Revisar todos os arquivos na pasta sessions/ recursivamente para erros, otimizações e implantações
+- [ ] Revisar todos os arquivos na pasta src/ recursivamente para erros, otimizações e implantações
+- [ ] Revisar todos os arquivos na pasta ssl/ recursivamente para erros, otimizações e implantações
+- [ ] Revisar todos os arquivos na pasta workflows/ recursivamente para erros, otimizações e implantações
+- [ ] Revisar .gitattributes para erros, otimizações e implantações (já feito, mas duplicado)
+- [ ] Revisar .gitignore para erros, otimizações e implantações (já feito)
+- [ ] Revisar Makefile para erros, otimizações e implantações
+- [ ] Revisar nginx.conf para erros, otimizações e implantações
+- [ ] Revisar omninchat.db para erros, otimizações e implantações
+- [ ] Revisar package-lock.json para erros, otimizações e implantações
+- [ ] Revisar package.json para erros, otimizações e implantações
+- [ ] Revisar README-GETNEXO-COMPLETO.md para erros, otimizações e implantações
+- [ ] Revisar README.md para erros, otimizações e implantações
+- [ ] Revisar restante.md para erros, otimizações e implantações
+- [ ] Revisar ROADMAP_UBUNTU.md para erros, otimizações e implantações
+- [ ] Revisar ROADMAP.md para erros, otimizações e implantações
+- [ ] Revisar SENTIMENT_ANALYSIS_README.md para erros, otimizações e implantações
+- [ ] Revisar SUMMARY.md para erros, otimizações e implantações
+- [ ] Revisar tunnel.log para erros, otimizações e implantações
+- [ ] Revisar vercel.json para erros, otimizações e implantações

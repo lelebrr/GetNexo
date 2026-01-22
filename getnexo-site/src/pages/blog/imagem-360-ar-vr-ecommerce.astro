@@ -19,7 +19,11 @@ const schema = {
 const pageTitle = "Imagem 360, AR e VR no Ecommerce | GetNexo";
 ---
 
-<Layout title={pageTitle}>
+<Layout
+  title={pageTitle}
+  articleSchema={schema}
+  type="article"
+>
   <article class="post-container">
     <header class="post-header">
       <div class="meta animate-fade-in">Tecnologia • Jan 2026</div>
@@ -106,7 +110,7 @@ const pageTitle = "Imagem 360, AR e VR no Ecommerce | GetNexo";
     </div>
   </article>
 
-  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+  
 </Layout>
 
 <style>

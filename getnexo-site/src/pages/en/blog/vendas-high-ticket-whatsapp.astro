@@ -1,0 +1,40 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "High-Ticket Sales: The Luxury Guide for WhatsApp",
+      "description": "How to close big deals and consultative sales through chat.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-22",
+      "articleSection": "Strategy"
+    }
+  ]
+};
+---
+<Layout
+  title="High-Ticket Sales on WhatsApp: Luxury Guide | GetNexo" articleSchema={schema}
+  type="article"
+>
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta">Strategy • Jan 2026</div>
+      <h1>High-Ticket Sales:<br/><span class="text-primary">The Luxury Guide for WhatsApp</span></h1>
+      <p class="subtitle">How to close big deals and consultative sales through chat.</p>
+    </header>
+    <div class="post-content">
+      <p>High-ticket sales require trust and authority. Learn how to use WhatsApp to nurture relationships and close premium contracts.</p>
+      <a href="/en/create-bot" class="btn-primary">Scale High-Ticket</a>
+    </div>
+  </article>
+</Layout>
+<style>
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  h1 { font-size: 3.5rem; font-weight: 900; color: white; }
+  .text-primary { color: #00f7ff; }
+  .btn-primary { background: #00f7ff; color: black; padding: 1.2rem 3.5rem; border-radius: 50px; text-decoration: none; font-weight: 800; }
+</style>

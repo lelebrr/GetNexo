@@ -13,8 +13,8 @@ const {
 ---
 
 <!-- No painel: <div id="nexo-360-${productId}" class="w-full h-96 rounded-lg"></div> -->
-<div id="nexo-360-${productId}" class="spin-360-container">
-  <canvas id="spin-360-canvas-${productId}" class="spin-360-canvas"></canvas>
+<div id={`nexo-360-${productId}`} class="spin-360-container">
+  <canvas id={`spin-360-canvas-${productId}`} class="spin-360-canvas"></canvas>
 
   <!-- Fallback -->
   <div class="spin-360-fallback">
@@ -27,7 +27,7 @@ const {
 </div>
 
 <style>
-  #nexo-360-${productId} {
+  .spin-360-container {
     width: 100%;
     height: 400px;
     position: relative;
@@ -97,7 +97,7 @@ const {
 
   /* Mobile responsive */
   @media (max-width: 768px) {
-    #nexo-360-${productId} {
+    .spin-360-container {
       height: 300px;
     }
   }

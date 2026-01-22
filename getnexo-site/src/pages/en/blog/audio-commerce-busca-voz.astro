@@ -1,0 +1,40 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Audio-Commerce: The Future of Voice Search",
+      "description": "The exponential growth of audio sales and voice searches.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-22",
+      "articleSection": "Innovation"
+    }
+  ]
+};
+---
+<Layout
+  title="Audio-Commerce: The Future of Voice Search | GetNexo" articleSchema={schema}
+  type="article"
+>
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta">Innovation • Jan 2026</div>
+      <h1>Audio-Commerce:<br/><span class="text-primary">The Future of Voice Search</span></h1>
+      <p class="subtitle">The exponential growth of audio sales and voice searches.</p>
+    </header>
+    <div class="post-content">
+      <p>Voice is the most natural way to communicate. Implement voice-first strategies to capture the next wave of shoppers.</p>
+      <a href="/en/create-bot" class="btn-primary">Explore Audio</a>
+    </div>
+  </article>
+</Layout>
+<style>
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  h1 { font-size: 3.5rem; font-weight: 900; color: white; }
+  .text-primary { color: #00f7ff; }
+  .btn-primary { background: #00f7ff; color: black; padding: 1.2rem 3.5rem; border-radius: 50px; text-decoration: none; font-weight: 800; }
+</style>

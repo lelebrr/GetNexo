@@ -222,13 +222,62 @@ export const getColor = (path, theme = 'light') => {
 };
 
 export const getContrastColor = (bgColor) => {
-    // Simple contrast calculation for accessibility
+    // WCAG 2.1 compliant contrast calculation
     const hex = bgColor.replace('#', '');
-    const r = parseInt(hex.substr(0, 2), 16);
-    const g = parseInt(hex.substr(2, 2), 16);
-    const b = parseInt(hex.substr(4, 2), 16);
+    const r = parseInt(hex.substr(0, 2), 16) / 255;
+    const g = parseInt(hex.substr(2, 2), 16) / 255;
+    const b = parseInt(hex.substr(4, 2), 16) / 255;
 
-    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    // Convert to linear RGB
+    const toLinear = (c) => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
 
-    return luminance > 0.5 ? '#18181b' : '#fafafa';
+    const rLinear = toLinear(r);
+    const gLinear = toLinear(g);
+    const bLinear = toLinear(b);
+
+    // Calculate relative luminance
+    const luminance = 0.2126 * rLinear + 0.7152 * gLinear + 0.0722 * bLinear;
+
+    return luminance > 0.179 ? colors.text.primary : colors.text.inverse;
+};
+
+// Calculate contrast ratio between two colors
+export const getContrastRatio = (color1, color2) => {
+    const lum1 = getRelativeLuminance(color1);
+    const lum2 = getRelativeLuminance(color2);
+
+    const lighter = Math.max(lum1, lum2);
+    const darker = Math.min(lum1, lum2);
+
+    return (lighter + 0.05) / (darker + 0.05);
+};
+
+// Get relative luminance for a color
+export const getRelativeLuminance = (color) => {
+    const hex = color.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16) / 255;
+    const g = parseInt(hex.substr(2, 2), 16) / 255;
+    const b = parseInt(hex.substr(4, 2), 16) / 255;
+
+    const toLinear = (c) => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+
+    const rLinear = toLinear(r);
+    const gLinear = toLinear(g);
+    const bLinear = toLinear(b);
+
+    return 0.2126 * rLinear + 0.7152 * gLinear + 0.0722 * bLinear;
+};
+
+// Check if contrast meets WCAG AA standards
+export const meetsWCAGAA = (bgColor, textColor, isLargeText = false) => {
+    const ratio = getContrastRatio(bgColor, textColor);
+    const minRatio = isLargeText ? 3 : 4.5; // AA standard
+    return ratio >= minRatio;
+};
+
+// Check if contrast meets WCAG AAA standards
+export const meetsWCAGAAA = (bgColor, textColor, isLargeText = false) => {
+    const ratio = getContrastRatio(bgColor, textColor);
+    const minRatio = isLargeText ? 4.5 : 7; // AAA standard
+    return ratio >= minRatio;
 };

@@ -1,8 +1,7 @@
-export async function get() {
+export const GET = async () => {
     const baseUrl = 'https://getnexo.com.br';
     const pages = [
-        { url: `${baseUrl}/`, changefreq: 'daily', priority: 1.0 },
-        { url: `${baseUrl}/en/`, changefreq: 'weekly', priority: 0.9 },
+        { url: `${baseUrl}/en/`, changefreq: 'weekly', priority: 1.0 },
         { url: `${baseUrl}/en/blog/`, changefreq: 'weekly', priority: 0.8 },
         { url: `${baseUrl}/en/pricing/`, changefreq: 'monthly', priority: 0.7 },
         { url: `${baseUrl}/en/how-it-works/`, changefreq: 'monthly', priority: 0.7 },
@@ -21,10 +20,9 @@ export async function get() {
   </url>`).join('')}
 </urlset>`;
 
-    return {
-        body,
+    return new Response(body, {
         headers: {
             'Content-Type': 'application/xml'
         }
-    };
-}
+    });
+};

@@ -1,0 +1,50 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "WhatsApp a Escala: Automatización 2026",
+      "description": "Gestione miles de conversaciones con la precisión de una atención individual.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-22",
+      "articleSection": "Tecnología"
+    }
+  ]
+};
+---
+<Layout
+  title="WhatsApp a Escala: Automatización 2026 | GetNexo" articleSchema={schema}
+  type="article"
+>
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta">Tecnología • Ene 2026</div>
+      <h1>WhatsApp a Escala:<br/><span class="text-primary">Automatización 2026</span></h1>
+      <p class="subtitle">Gestione miles de conversaciones con la precisión de una atención individual.</p>
+    </header>
+    <div class="post-content">
+      <section>
+        <h2>🚀 Escalando sin perder la calidad</h2>
+        <p>En 2026, el desafío no es solo enviar mensajes, sino mantener la relevancia. Con GetNexo, puede automatizar flujos complejos de ventas y soporte, asegurando que cada cliente reciba la atención que merece, sin importar el volumen.</p>
+      </section>
+      <div class="final-cta">
+        <h3>¿Listo para escalar?</h3>
+        <p>Únase a las empresas que ya están dominando el mercado con IA.</p>
+        <div class="cta-buttons mt-8">
+          <a href="/es/crear-bot" class="btn-primary">Crear mi Bot</a>
+        </div>
+      </div>
+    </div>
+  </article>
+</Layout>
+<style>
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  h1 { font-size: 3.5rem; font-weight: 900; color: white; }
+  .text-primary { color: #00f7ff; }
+  .btn-primary { background: #00f7ff; color: black; padding: 1.2rem 3.5rem; border-radius: 50px; text-decoration: none; font-weight: 800; }
+</style>

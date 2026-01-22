@@ -1,0 +1,40 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Meta Ads for WhatsApp: Elite Strategies for 2026",
+      "description": "Advanced traffic strategies for conversational scaling.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-22",
+      "articleSection": "Marketing"
+    }
+  ]
+};
+---
+<Layout
+  title="Meta Ads for WhatsApp: Elite Strategies | GetNexo" articleSchema={schema}
+  type="article"
+>
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta">Marketing • Jan 2026</div>
+      <h1>Meta Ads for WhatsApp:<br/><span class="text-primary">Elite Strategies for 2026</span></h1>
+      <p class="subtitle">Advanced traffic strategies for conversational scaling.</p>
+    </header>
+    <div class="post-content">
+      <p>Facebook and Instagram are the biggest traffic sources for WhatsApp. Learn the elite tactics to scale your funnel.</p>
+      <a href="/en/create-bot" class="btn-primary">Scale Elite</a>
+    </div>
+  </article>
+</Layout>
+<style>
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  h1 { font-size: 3.5rem; font-weight: 900; color: white; }
+  .text-primary { color: #00f7ff; }
+  .btn-primary { background: #00f7ff; color: black; padding: 1.2rem 3.5rem; border-radius: 50px; text-decoration: none; font-weight: 800; }
+</style>

@@ -1,11 +1,14 @@
 ---
 import '../styles/global.css';
+import SEO from '../components/SEO.astro';
 import PreSupportModal from '../components/PreSupportModal.astro';
 import AccessibilityControls from '../components/AccessibilityControls.astro';
 import CookieConsent from '../components/CookieConsent.astro';
 import NeuralBackground from '../components/NeuralBackground.astro';
 import ClippyAssistants from '../components/ClippyAssistants.astro';
 import WhatsAppFloat from '../components/WhatsAppFloat.astro';
+import TourGuided from '../components/TourGuided.astro';
+
 const {
   title = "Chatbot WhatsApp IA Grátis Self-Hosted – Fecha Vendas 24h | GetNexo PIX Automático",
   description = "Chatbot WhatsApp IA grátis self-hosted: fecha vendas sozinho 24/7 no seu domínio. Sem taxa por mensagem, integra PIX automático, estoque, frete. Teste 7 dias grátis. API Meta Oficial + CRM IA.",
@@ -13,7 +16,8 @@ const {
   isLanding = false,
   preloadImage,
   ogImage = "https://getnexo.com.br/assets/og-poster.jpg",
-  articleSchema = null
+  articleSchema = null,
+  type = "website"
 } = Astro.props;
 
 const lang = Astro.url.pathname.split('/')[1] || 'pt';
@@ -28,37 +32,19 @@ try {
 
 const nonce = Astro.locals.nonce;
 const clientId = Astro.locals.clientId || 'default';
-
-const baseUrl = "https://getnexo.com.br";
-const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
 ---
 <!doctype html>
 <html lang={lang}>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{title}</title>
-  <meta name="description" content={description} />
-  <meta name="keywords" content={keywords} />
-  <meta name="author" content="GetNexo" />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href={`https://getnexo.com.br${Astro.url.pathname}`} />
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="GetNexo" />
-  <meta property="og:title" content={title} />
-  <meta property="og:description" content={description} />
-  <meta property="og:image" content={ogImage} />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content={title} />
-  <meta name="twitter:description" content={description} />
-  <meta name="twitter:image" content={ogImage} />
-  
-  <!-- i18n Alternate Links -->
-  <link rel="alternate" hreflang="pt" href={`${baseUrl}/pt${currentPath}`} />
-  <link rel="alternate" hreflang="es" href={`${baseUrl}/es${currentPath}`} />
-  <link rel="alternate" hreflang="fr" href={`${baseUrl}/fr${currentPath}`} />
-  <link rel="alternate" hreflang="en" href={`${baseUrl}/en${currentPath}`} />
-  <link rel="alternate" hreflang="x-default" href={`${baseUrl}/pt${currentPath}`} />
+  <SEO 
+    title={title}
+    description={description}
+    keywords={keywords}
+    image={ogImage}
+    lang={lang}
+    type={type}
+    structuredData={articleSchema}
+  />
   
   <!-- PWA Manifest -->
   <link rel="manifest" href="/manifest.json">
@@ -68,143 +54,21 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
     <link rel="stylesheet" href={`https://api.getnexo.com.br/api/whitelabel/css/${clientId}`} />
   )}
 
-  <!-- Verification Tags (Replace content with your codes) -->
-    <!-- Critical Resources Preload -->
-    <!-- Script preloads removed to avoid warnings -->
-    
-    <!-- Fix Rocket Loader preload warning & Crossorigin issues -->
-    <!-- This script runs immediately in the head to set crossorigin attributes before browser processes preloads -->
-    <script is:inline>
-      (function() {
-        // Wait for the DOM to be ready
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', fixCrossorigin);
-        } else {
-          fixCrossorigin();
-        }
-        
-        function fixCrossorigin() {
-          // Handle all hoisted scripts
-          document.querySelectorAll('script[src*="_astro/hoisted"]').forEach(s => {
-            s.crossOrigin = 'anonymous';
-          });
-          
-          // Handle preloads - add crossorigin attribute to prevent credential mode mismatch
-          document.querySelectorAll('link[rel="preload"][as="script"]').forEach(l => {
-            l.crossOrigin = 'anonymous';
-          });
-          
-          // Also handle any other scripts that might be affected by Rocket Loader
-          document.querySelectorAll('script[src]').forEach(s => {
-            if (!s.crossOrigin) {
-              s.crossOrigin = 'anonymous';
-            }
-          });
-        }
-      })();
-    </script>
-
-  <meta name="google-site-verification" content="getnexo-verification-2026" />
-  <meta name="msvalidate.01" content="getnexo-ms-2026" />
+  <slot name="head" />
 
   <!-- AOS (Animate On Scroll) -->
   <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <script>AOS.init({duration: 800, once: true});</script>
-
-  <slot name="head" />
-
-<!--   <!-- Google Analytics 4 (Partytown) --> -->
-<!--   <script type="text/partytown" nonce={nonce} src="https://www.googletagmanager.com/gtag/js?id=G-F8P994EX00"></script> -->
-<!--    -->
-<!--   <script type="text/partytown" nonce={nonce}> -->
-<!--     // Core Web Vitals Monitoring -->
-<!--     function sendToAnalytics(metric) { -->
-<!--       if (window.gtag) { -->
-<!--         gtag('event', metric.name, { -->
-<!--           event_category: 'Web Vitals', -->
-<!--           event_label: metric.id, -->
-<!--           value: Math.round(metric.value), -->
-<!--           custom_map: { metric_value: metric.value } -->
-<!--         }); -->
-<!--       } -->
-<!--     } -->
-<!--  -->
-<!--     // Performance Observers with Safety Checks -->
-<!--     const observeSafe = (type, callback) => { -->
-<!--       if (typeof PerformanceObserver !== 'undefined' && PerformanceObserver.supportedEntryTypes && PerformanceObserver.supportedEntryTypes.includes(type)) { -->
-<!--         new PerformanceObserver((list) => callback(list)).observe({ type, buffered: true }); -->
-<!--       } -->
-<!--     }; -->
-<!--  -->
-<!--     observeSafe('layout-shift', (list) => { -->
-<!--       for (const entry of list.getEntries()) { -->
-<!--         if (!entry.hadRecentInput) { -->
-<!--           sendToAnalytics({ name: 'CLS', value: entry.value, id: 'v3-' + Date.now() }); -->
-<!--         } -->
-<!--       } -->
-<!--     }); -->
-<!--  -->
-<!--     observeSafe('first-input', (list) => { -->
-<!--       for (const entry of list.getEntries()) { -->
-<!--         sendToAnalytics({ name: 'FID', value: entry.processingStart - entry.startTime, id: 'v3-' + Date.now() }); -->
-<!--       } -->
-<!--     }); -->
-<!--  -->
-<!--     observeSafe('largest-contentful-paint', (list) => { -->
-<!--       const entries = list.getEntries(); -->
-<!--       const lastEntry = entries[entries.length - 1]; -->
-<!--       sendToAnalytics({ name: 'LCP', value: lastEntry.startTime, id: 'v3-' + Date.now() }); -->
-<!--     }); -->
-<!--  -->
-<!--     observeSafe('paint', (list) => { -->
-<!--       for (const entry of list.getEntries()) { -->
-<!--         if (entry.name === 'first-contentful-paint') { -->
-<!--           sendToAnalytics({ name: 'FCP', value: entry.startTime, id: 'v3-' + Date.now() }); -->
-<!--         } -->
-<!--       } -->
-<!--     }); -->
-<!--   </script> -->
-<!--  -->
-<!--   <script type="text/partytown" nonce={nonce}> -->
-<!--     window.dataLayer = window.dataLayer || []; -->
-<!--     function gtag(){dataLayer.push(arguments);} -->
-<!--     gtag('js', new Date()); -->
-<!--  -->
-<!--     gtag('consent', 'default', { -->
-<!--       analytics_storage: 'denied', -->
-<!--       ad_storage: 'denied' -->
-<!--     }); -->
-<!--  -->
-<!--     gtag('config', 'G-F8P994EX00', { -->
-<!--       send_page_view: false -->
-<!--     }); -->
-<!--   </script> -->
-  
-  <!-- Schema.org JSON-LD -->
-  <script type="application/ld+json" nonce={nonce}>
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "GetNexo",
-      "applicationCategory": "BusinessApplication",
-      "operatingSystem": "Web",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "BRL"
-      },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.8",
-        "ratingCount": "150"
-      },
-      "description": "Assistente de Vendas WhatsApp 100% Grátis. Zero nuvem. Zero risco. Otimize seu atendimento com IA self-hosted."
-    }
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      if (typeof AOS !== 'undefined') {
+        AOS.init({duration: 800, once: true});
+      }
+    });
   </script>
-  
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style is:inline>
       /* Critical LCP Styles */
@@ -1010,6 +874,9 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
   <!-- Clippy-style Assistants -->
   <ClippyAssistants />
 
+  <!-- Tour Guided Component -->
+  <TourGuided />
+
   <!-- WhatsApp Floating Button -->
   <WhatsAppFloat />
 
@@ -1285,11 +1152,17 @@ const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
   </style>
 
 
+  <!-- Confetti Cannon Effect -->
+  <script is:inline src="/custom/js/confetti_cannon.js" defer></script>
+
   <!-- Global Effects & Interactivity -->
   <script is:inline src="/scripts/layout-effects.js" defer></script>
 
   <!-- PWA Install Prompt -->
   <script is:inline src="/custom/js/pwa-install.js" defer></script>
+
+  <!-- Preload Fix for Cloudflare compatibility -->
+  <script is:inline src="/src/scripts/preload-fix.js" defer></script>
 
   <!-- Magic Map User Tracking - Temporarily disabled -->
   <!-- <script src="/tracking.js" defer></script> -->

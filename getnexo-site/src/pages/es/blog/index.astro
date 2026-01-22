@@ -1,0 +1,353 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const pageTitle = "Blog GetNexo | Estrategias de Automatización e IA";
+const pageDescription = "Artículos sobre automatización de WhatsApp, ventas con IA y estrategias de escala para negocios digitales.";
+
+const posts = [
+  {
+    slug: "guia-ia-atendimento-2026",
+    title: "IA en la Atención: La Guía Definitiva 2026",
+    category: "Inteligencia Artificial",
+    date: "Ene 2026",
+    excerpt: "Cómo la IA Generativa está redefiniendo la lealtad del cliente y la eficiencia operativa.",
+    featured: true
+  },
+  {
+    slug: "gamificacao-vendas-estrategias",
+    title: "Gamificación de Ventas: Estrategias de Elite",
+    category: "Productividad",
+    date: "Ene 2026",
+    excerpt: "Transforme metas en logros y vendedores en campeones a través de la psicología del juego.",
+    featured: true
+  },
+  {
+    slug: "analise-sentimento-retencao",
+    title: "Análisis de Sentimiento: El Corazón de la Retención",
+    category: "Customer Experience",
+    date: "Ene 2026",
+    excerpt: "Entienda cómo se siente su cliente en tiempo real y anticipe el churn con precisión.",
+    featured: true
+  },
+  {
+    slug: "tickets-inteligentes-evolucao",
+    title: "Tickets Inteligentes: El Futuro del Soporte",
+    category: "Operaciones",
+    date: "Ene 2026",
+    excerpt: "Evolucione de pilas de tickets a flujos automatizados de resolución inteligente.",
+    featured: true
+  },
+  {
+    slug: "programa-fidelidade-4-0",
+    title: "Fidelización 4.0: El Poder de la Recompensa IA",
+    category: "Growth",
+    date: "Ene 2026",
+    excerpt: "Cómo crear programas de fidelidad que realmente retengan a los clientes usando IA.",
+    featured: false
+  },
+  {
+    slug: "whatsapp-automacao-escala",
+    title: "WhatsApp a Escala: Automatización 2026",
+    category: "WhatsApp",
+    date: "Ene 2026",
+    excerpt: "Gestione miles de conversaciones con la precisión de una atención individual.",
+    featured: false
+  },
+  {
+    slug: "crm-futuro-gpt4",
+    title: "El CRM Inteligente: La Era del GPT-4",
+    category: "CRM & IA",
+    date: "Ene 2026",
+    excerpt: "Calificación automática de leads e insights predictivos integrados en su CRM.",
+    featured: false
+  },
+  {
+    slug: "vendas-preditivas-ia",
+    title: "Ventas Predictivas: IA en el Ecommerce",
+    category: "Data Science",
+    date: "Ene 2026",
+    excerpt: "Sepa qué quiere comprar su cliente antes de que él mismo lo sepa.",
+    featured: true
+  },
+  {
+    slug: "recuperacao-carrinho-whatsapp",
+    title: "Recuperación de Carrito: WhatsApp",
+    category: "Conversión",
+    date: "Ene 2026",
+    excerpt: "Cómo recuperar hasta el 45% de las ventas perdidas con automatización inteligente.",
+    featured: true
+  },
+  {
+    slug: "omnichannel-pdv-whatsapp",
+    title: "Omnichannel 2026: Guía Completa",
+    category: "Arquitectura",
+    date: "Ene 2026",
+    excerpt: "Integre su tienda física, su sitio y su WhatsApp en una única red.",
+    featured: false
+  },
+  {
+    slug: "seguranca-lgpd-whatsapp-2026",
+    title: "LGPD en WhatsApp Corporativo: Guía 2026",
+    category: "Compliance",
+    date: "Ene 2026",
+    excerpt: "Guía completa de seguridad y cumplimiento para empresas en 2026.",
+    featured: false
+  },
+  {
+    slug: "scripts-vendas-whatsapp-gatilhos",
+    title: "7 Scripts de Ventas Elite para WhatsApp",
+    category: "Ventas",
+    date: "Ene 2026",
+    excerpt: "Plantillas listas para usar con gatillos mentales para conversión inmediata.",
+    featured: true
+  },
+  {
+    slug: "ia-generativa-atendimento-futuro",
+    title: "Soporte con IA Generativa: Fin de Filas",
+    category: "Inovación",
+    date: "Ene 2026",
+    excerpt: "Acabe con las esperas y reduzca costos drásticamente con IA.",
+    featured: true
+  },
+  {
+    slug: "comparativo-getnexo-blip-zenvia",
+    title: "GetNexo vs Blip vs Zenvia: Comparativo 2026",
+    category: "Comparativo",
+    date: "Ene 2026",
+    excerpt: "El guía definitivo para elegir su plataforma de WhatsApp API.",
+    featured: true
+  },
+  {
+    slug: "dobrar-roi-whatsapp-marketing",
+    title: "Duplicar ROI en WhatsApp Marketing",
+    category: "Marketing",
+    date: "Ene 2026",
+    excerpt: "Estrategias avanzadas para maximizar el retorno de sus campañas.",
+    featured: true
+  },
+  {
+    slug: "guia-api-oficial-whatsapp-devs",
+    title: "Guía API Oficial de WhatsApp para Devs",
+    category: "Dev",
+    date: "Ene 2026",
+    excerpt: "Todo lo que necesita para una integración robusta y escalable.",
+    featured: false
+  },
+  {
+    slug: "integrar-chatgpt-whatsapp",
+    title: "ChatGPT + WhatsApp: Ventas 24/7",
+    category: "IA & Ventas",
+    date: "Ene 2026",
+    excerpt: "Cómo integrar la IA más famosa en su WhatsApp para vender a toda hora.",
+    featured: true
+  },
+  {
+    slug: "lead-scoring-ia-qualificacao",
+    title: "AI Lead Scoring: Identifique Leads Oro",
+    category: "Inteligencia",
+    date: "Ene 2026",
+    excerpt: "Identifique y priorice leads de alta intención automáticamente con IA.",
+    featured: false
+  },
+  {
+    slug: "whatsapp-api-vs-web-2026",
+    title: "WhatsApp API vs Web: Guía 2026",
+    category: "Tecnología",
+    date: "Ene 2026",
+    excerpt: "Descubra la mejor opción para la escala profesional de su negocio.",
+    featured: false
+  },
+  {
+    slug: "reduzindo-cpl-qualificacao-ia",
+    title: "Reducción de CPL con Calificación IA",
+    category: "Performance",
+    date: "Ene 2026",
+    excerpt: "Cómo calificar leads automáticamente y reducir sus costos de adquisición.",
+    featured: true
+  },
+  {
+    slug: "vendas-high-ticket-whatsapp",
+    title: "Ventas High-Ticket: Guía Lujo",
+    category: "Estrategia",
+    date: "Ene 2026",
+    excerpt: "Cómo cerrar grandes negocios y ventas consultivas por el chat.",
+    featured: false
+  },
+  {
+    slug: "whatsapp-automacao-imobiliaria",
+    title: "WhatsApp para Inmobiliarias",
+    category: "Inmobiliaria",
+    date: "Ene 2026",
+    excerpt: "Automatice captación y agendamiento de visitas con eficiencia.",
+    featured: false
+  },
+  {
+    slug: "whatsapp-clinicas-saude-lgpd",
+    title: "Salud Digital: Clínicas & Cumplimiento",
+    category: "Salud",
+    date: "Ene 2026",
+    excerpt: "Agendamiento seguro y cumplimiento completo en el sector salud.",
+    featured: false
+  },
+  {
+    slug: "black-friday-2026-automacao",
+    title: "Black Friday 2026: Guía de Batalla",
+    category: "Estacional",
+    date: "Ene 2026",
+    excerpt: "Prepare su operación para la mayor guerra de ventas del año.",
+    featured: false
+  },
+  {
+    slug: "saas-growth-whatsapp-api",
+    title: "SaaS Growth: Onboarding IA",
+    category: "SaaS",
+    date: "Ene 2026",
+    excerpt: "Escalando su software con automatización inteligente en el WhatsApp.",
+    featured: false
+  },
+  {
+    slug: "carrinho-abandonado",
+    title: "Guía de Carrito Abandonado: Recuperación",
+    category: "E-commerce",
+    date: "Ene 2026",
+    excerpt: "Scripts y estrategias para traer de vuelta a los clientes perdidos.",
+    featured: false
+  },
+  {
+    slug: "casos-sucesso",
+    title: "Casos de Éxito: Resultados Reales",
+    category: "Casos",
+    date: "Ene 2026",
+    excerpt: "Vea cómo empresas aumentaron su facturación en un 300% usando nuestra plataforma.",
+    featured: false
+  },
+  {
+    slug: "comparacao-blog",
+    title: "Guía de Comparación: Mejor Plataforma",
+    category: "Comparación",
+    date: "Ene 2026",
+    excerpt: "¿Por qué GetNexo es la elección para equipos de alto rendimiento?",
+    featured: false
+  },
+  {
+    slug: "crm-whatsapp-combo-escala",
+    title: "CRM + WhatsApp: El Combo de Escala",
+    category: "Estrategia",
+    date: "Ene 2026",
+    excerpt: "El secreto de las empresas que escalan con organización y datos.",
+    featured: false
+  },
+  {
+    slug: "custo-api",
+    title: "Precios API WhatsApp: Costos Reales",
+    category: "Costos",
+    date: "Ene 2026",
+    excerpt: "Desglose del modelo de precios basado en conversaciones de Meta.",
+    featured: false
+  },
+  {
+    slug: "custo-atendimento-humano-vs-ia",
+    title: "Humano vs IA: El Costo Real",
+    category: "Análisis",
+    date: "Ene 2026",
+    excerpt: "Por qué el modelo híbrido es el secreto de la rentabilidad en 2026.",
+    featured: false
+  },
+  {
+    slug: "ads-whatsapp",
+    title: "Guía de Ads en WhatsApp: Escala 2026",
+    category: "Ads",
+    date: "Ene 2026",
+    excerpt: "Aprenda a crear anuncios que conviertan directamente en conversaciones.",
+    featured: false
+  },
+  {
+    slug: "google-ads-whatsapp",
+    title: "Google Ads para WhatsApp: Estrategia",
+    category: "Ads",
+    date: "Ene 2026",
+    excerpt: "Capture la intención de búsqueda y muévala directamente a una conversación personal.",
+    featured: false
+  },
+  {
+    slug: "estrategias-meta-ads-whatsapp",
+    title: "Meta Ads para WhatsApp 2026",
+    category: "Marketing",
+    date: "Ene 2026",
+    excerpt: "Estrategias avanzadas de tráfico para el escalado conversacional.",
+    featured: true
+  },
+  {
+    slug: "imagem-360-ar-vr-ecommerce",
+    title: "Ecommerce Inmersivo: 360°, AR, VR",
+    category: "Spatial Commerce",
+    date: "Ene 2026",
+    excerpt: "Transforme su ecommerce con experiencias inmersivas.",
+    featured: true
+  },
+  {
+    slug: "otimizacao-atendimento-ia-2026",
+    title: "Optimización de Atención: IA 2026",
+    category: "Operaciones",
+    date: "Ene 2026",
+    excerpt: "Cómo agilizar su operación con flujos de IA avanzados.",
+    featured: false
+  },
+  {
+    slug: "audio-commerce-busca-voz",
+    title: "Audio-Commerce: Futuro de la Voz",
+    category: "Inovación",
+    date: "Ene 2026",
+    excerpt: "El crecimiento exponencial de las ventas por audio y búsquedas por voz.",
+    featured: false
+  }
+];
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <div class="blog-index-page">
+    <header class="blog-header">
+      <div class="custom-container">
+        <h1 class="hero-title">Blog <span class="text-gradient">GetNexo</span></h1>
+        <p class="hero-subtitle">
+          Aprenda a escalar su operación con IA, automatización avanzada y tráfico de alto rendimiento en WhatsApp.
+        </p>
+      </div>
+    </header>
+
+    <main class="blog-main">
+      <div class="custom-container">
+        <div class="blog-grid">
+          {posts.map(post => (
+            <article class:list={["blog-card glass-panel", { "featured": post.featured }]}>
+              <div class="card-content">
+                <div class="card-meta">
+                  <span class="card-category">{post.category}</span>
+                  <span class="card-date">{post.date}</span>
+                </div>
+                <h2><a href={`/es/blog/${post.slug}`}>{post.title}</a></h2>
+                <p>{post.excerpt}</p>
+                <a href={`/es/blog/${post.slug}`} class="read-more">
+                   Leer Artículo <span class="arrow">→</span>
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </main>
+  </div>
+</Layout>
+
+<style>
+/* Reusing styles */
+  .blog-index-page { background: #030712; min-height: 100vh; padding-bottom: 8rem; }
+  .custom-container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+  .blog-header { padding: 10rem 0 6rem; text-align: center; }
+  .hero-title { font-size: 4rem; font-weight: 800; margin-bottom: 1.5rem; }
+  .blog-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 2rem; }
+  .blog-card { padding: 2.5rem; display: flex; flex-direction: column; justify-content: space-between; height: 100%; transition: 0.4s; }
+  .blog-card h2 { font-size: 1.6rem; font-weight: 800; margin-bottom: 1rem; }
+  .blog-card h2 a { color: white; text-decoration: none; }
+  .read-more { font-weight: 700; color: #fff; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+</style>

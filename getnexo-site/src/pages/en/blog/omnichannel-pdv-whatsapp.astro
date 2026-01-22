@@ -1,0 +1,40 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Omnichannel 2026: The Bridge from Store to WhatsApp",
+      "description": "Integrate your physical store, website, and WhatsApp into a single network.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-22",
+      "articleSection": "Architecture"
+    }
+  ]
+};
+---
+<Layout
+  title="Omnichannel 2026: Complete Guide | GetNexo" articleSchema={schema}
+  type="article"
+>
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta">Architecture • Jan 2026</div>
+      <h1>Omnichannel 2026:<br/><span class="text-primary">The Bridge from Store to WhatsApp</span></h1>
+      <p class="subtitle">Integrate your physical store, website, and WhatsApp into a single network.</p>
+    </header>
+    <div class="post-content">
+      <p>The boundary between online and offline is gone. Omnichannel is the new standard.</p>
+      <a href="/en/create-bot" class="btn-primary">Get Started</a>
+    </div>
+  </article>
+</Layout>
+<style>
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  h1 { font-size: 3.5rem; font-weight: 900; color: white; }
+  .text-primary { color: #00f7ff; }
+  .btn-primary { background: #00f7ff; color: black; padding: 1.2rem 3.5rem; border-radius: 50px; text-decoration: none; font-weight: 800; }
+</style>

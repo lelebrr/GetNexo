@@ -1,0 +1,34 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Ventas Predictivas: IA en el Ecommerce",
+      "description": "Ventas Predictivas: IA en el Ecommerce | GetNexo",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-22",
+      "articleSection": "Strategy"
+    }
+  ]
+};
+---
+<Layout
+  title="Ventas Predictivas: IA en el Ecommerce | GetNexo" articleSchema={schema}
+  type="article"
+>
+  <article class="post-container">
+    <h1>Ventas Predictivas:<br/><span class="text-primary">IA en el Ecommerce</span></h1>
+    <p>Sepa qué quiere comprar su cliente antes de que él mismo lo sepa.</p>
+    <a href="/es/crear-bot" class="btn-primary">Saber Más</a>
+  </article>
+</Layout>
+<style>
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  h1 { font-size: 3.5rem; font-weight: 900; color: white; }
+  .text-primary { color: #00f7ff; }
+  .btn-primary { background: #00f7ff; color: black; padding: 1.2rem 3.5rem; border-radius: 50px; text-decoration: none; font-weight: 800; }
+</style>

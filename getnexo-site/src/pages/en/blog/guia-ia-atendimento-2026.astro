@@ -1,0 +1,71 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "The Ultimate Guide to AI in Customer Service 2026",
+      "description": "Discover how AI is transforming customer service. Complete guide on chatbots, automation, and extreme personalization.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-21",
+      "image": "/images/blog/guia_ia_atendimento_2026.png"
+    }
+  ]
+};
+---
+
+<Layout
+  title="AI in Customer Service 2026 | GetNexo"
+  articleSchema={schema}
+  type="article"
+>
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta">Strategy • Jan 2026</div>
+      <h1>AI in Customer Service:<br/><span class="text-primary">The Ultimate 2026 Guide</span></h1>
+      <p class="subtitle">How Generative AI is redefining customer loyalty and operational efficiency.</p>
+      <img src="/images/blog/guia_ia_atendimento_2026.png" alt="AI in Customer Service" class="featured-image" />
+    </header>
+
+    <div class="post-content">
+      <section id="introducao">
+        <h2>🚀 The Silent AI Revolution</h2>
+        <p>In 2026, customer service is no longer about answering questions; it's about predicting needs. Artificial Intelligence has stopped being an accessory to become the main engine of the fastest-growing companies.</p>
+        <div class="glass-panel mt-8">
+          <p><strong>Highlight:</strong> Companies utilizing Generative AI in 2025 saw a 40% increase in customer satisfaction (CSAT) and a 35% reduction in cost per ticket.</p>
+        </div>
+      </section>
+
+      <section id="chatbots-agentes">
+        <h2>🤖 From Chatbots to Virtual Agents</h2>
+        <p>The evolution from traditional chatbots to Predictive Virtual Agents has changed the game. While the old chatbot followed a rigid flow, GetNexo's Virtual Agent understands context, nuance, and sentiment.</p>
+      </section>
+
+      <div class="final-cta">
+        <h3>Transform your service today!</h3>
+        <p>The technology for the future of your business is already available at GetNexo.</p>
+        <div class="cta-buttons mt-8">
+          <a href="/en/create-bot" class="btn-primary">Get Started Now</a>
+        </div>
+      </div>
+    </div>
+  </article>
+</Layout>
+
+<style>
+/* Reusing styles from original post */
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  h1 { font-size: 3.5rem; font-weight: 900; color: white; }
+  .text-primary { color: #00f7ff; }
+  .subtitle { font-size: 1.25rem; color: #a0a0a0; }
+  .featured-image { width: 100%; border-radius: 24px; margin-top: 3rem; }
+  .post-content { color: #ccc; line-height: 1.8; }
+  h2 { font-size: 2.2rem; color: white; margin: 4rem 0 2rem; }
+  .glass-panel { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 2.5rem; border-radius: 24px; }
+  .final-cta { background: linear-gradient(135deg, rgba(0, 247, 255, 0.1), rgba(112, 0, 255, 0.1)); padding: 5rem 2rem; text-align: center; border-radius: 32px; border: 1px solid #00f7ff; }
+  .btn-primary { background: #00f7ff; color: black; padding: 1.2rem 3.5rem; border-radius: 50px; text-decoration: none; font-weight: 800; }
+</style>

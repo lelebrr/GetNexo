@@ -69,7 +69,11 @@ const schema = {
 };
 ---
 
-<Layout title={pageTitle} description={pageDescription} keywords={pageKeywords}>
+<Layout
+  title={pageTitle} description={pageDescription} keywords={pageKeywords}
+  articleSchema={schema}
+  type="article"
+>
   <div class="blog-post-page">
     <!-- Header / Hero Section -->
     <header class="blog-hero">
@@ -248,7 +252,7 @@ const schema = {
     </main>
   </div>
 
-  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+  
 </Layout>
 
 <style>

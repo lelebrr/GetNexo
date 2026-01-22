@@ -1,13 +1,22 @@
+# Dockerfile para o backend Node.js
 FROM node:20-alpine
 
 WORKDIR /app
 
+# Copiar arquivos de configuração
 COPY package*.json ./
-RUN apk add --no-cache python3 make g++
-RUN npm install
 
+# Instalar dependências
+RUN npm ci
+
+# Copiar código fonte
 COPY . .
 
+# Criar diretório para uploads
+RUN mkdir -p uploads
+
+# Expor porta
 EXPOSE 3006
 
+# Comando para iniciar
 CMD ["node", "server.js"]

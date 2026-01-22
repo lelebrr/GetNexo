@@ -1,21 +1,139 @@
+# =============================================
+# OS generated files
+# =============================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*~
+.fseventsd
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# =============================================
+# IDE files
+# =============================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# =============================================
+# Logs and temporary files
+# =============================================
+*.log
+*.tmp
+*.temp
+*.cache
+*.pid
+*.seed
+*.pid.lock
+
+# =============================================
+# Database files
+# =============================================
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+
+# =============================================
 # Data directories - Exclude heavy DBs but keep configs
+# =============================================
 data/postgres/
 data/redis/
 data/qdrant/
 data/chat_logs/
-
-node-linux/
-node_modules/
-.env
-
-*.tar.gz
-*.log
-*.db
-*.db-wal
-*.db-shm
-
 postgres_data/
 redis_data/
-.vscode/
+
+# =============================================
+# Dependencies
+# =============================================
+node_modules/
+node-linux/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# =============================================
+# Environment files - CRITICAL SECURITY
+# =============================================
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+.env.*.local
+.env.*.backup
+*.env.backup
+
+# =============================================
+# Secrets and Keys
+# =============================================
+*.key
+*.pem
+*.crt
+*.p12
+*.pfx
+secrets/
+config/secrets/
+
+# =============================================
+# Build artifacts
+# =============================================
 dist/
 build/
+out/
+.next/
+.nuxt/
+.cache/
+.parcel-cache/
+
+# =============================================
+# Archives
+# =============================================
+*.tar.gz
+*.zip
+*.7z
+*.rar
+
+# =============================================
+# Miscellaneous
+# =============================================
+coverage/
+.nyc_output/
+*.tgz
+*.tar.bz2

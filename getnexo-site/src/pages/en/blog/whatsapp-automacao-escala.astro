@@ -1,0 +1,48 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "WhatsApp at Scale: 2026 Automation",
+      "description": "Manage thousands of conversations with the precision of individual service.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-22",
+      "articleSection": "WhatsApp"
+    }
+  ]
+};
+---
+<Layout
+  title="WhatsApp at Scale: 2026 Automation | GetNexo" articleSchema={schema}
+  type="article"
+>
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta">WhatsApp • Jan 2026</div>
+      <h1>WhatsApp at Scale:<br/><span class="text-primary">2026 Automation</span></h1>
+      <p class="subtitle">Manage thousands of conversations with the precision of individual service.</p>
+    </header>
+    <div class="post-content">
+      <section>
+        <h2>⚡ Scaling with Intelligence</h2>
+        <p>Scale is the final frontier for digital businesses. Automating your WhatsApp ensures that no lead is lost and every customer feels special.</p>
+      </section>
+      <div class="final-cta">
+        <h3>Scale your business now!</h3>
+        <p>GetNexo provides the tools to handle massive volumes of WhatsApp messages.</p>
+        <a href="/en/create-bot" class="btn-primary">Learn More</a>
+      </div>
+    </div>
+  </article>
+</Layout>
+<style>
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  h1 { font-size: 3.5rem; font-weight: 900; color: white; }
+  .text-primary { color: #00f7ff; }
+  .btn-primary { background: #00f7ff; color: black; padding: 1.2rem 3.5rem; border-radius: 50px; text-decoration: none; font-weight: 800; }
+</style>

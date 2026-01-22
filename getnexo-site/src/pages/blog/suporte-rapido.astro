@@ -4,8 +4,26 @@ import Layout from '../../layouts/Layout.astro';
 // Advanced Schema Markup for Top SERP Position
 
 
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "GetNexo Blog Article",
+      "description": "",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-22",
+      "articleSection": "Strategy"
+    }
+  ]
+};
 ---
-<Layout>
+<Layout
+  articleSchema={schema}
+  type="article"
+>
   <article style="max-width: 800px; margin: 0 auto; padding: 100px 5% 4rem;">
     <header style="margin-bottom: 3rem;">
       <time style="color: #64748b; font-size: 0.95rem;">24 Jan 2026</time>

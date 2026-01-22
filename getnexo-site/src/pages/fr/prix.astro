@@ -1,0 +1,185 @@
+---
+import Layout from '../../layouts/Layout.astro';
+const title = "Tarifs GetNexo | Meilleur rapport qualité-prix en automatisation WhatsApp";
+const description = "Comparez les forfaits GetNexo : Starter, Pro et Enterprise. Automatisation WhatsApp avec IA, clés API illimitées et support premium.";
+const keywords = "prix getnexo, forfaits whatsapp api, valeur automatisation whatsapp, coût whatsapp bot";
+
+const lang = 'fr';
+const { default: t } = await import(`../../i18n/${lang}.json`);
+
+const plans = [
+  {
+    name: "Self-Hosted",
+    type: "Open Source",
+    price: "Gratuit",
+    period: "",
+    description: "Idéal pour les développeurs et les entreprises avec une équipe technique.",
+    features: [
+      { text: "Messages illimités", included: true, highlight: true },
+      { text: "Toutes les fonctionnalités débloquées", included: true, highlight: false },
+      { text: "Vos données, votre souveraineté", included: true, highlight: false },
+      { text: "Multi-agent illimité", included: true, highlight: false },
+      { text: "Mises à jour de la communauté", included: true, highlight: false },
+      { text: "Installation par vos soins", included: false, highlight: false },
+      { text: "Support via communauté", included: false, highlight: false }
+    ],
+    cta: "Télécharger sur GitHub",
+    ctaLink: "https://github.com/lelebrr",
+    popular: false
+  },
+  {
+    name: "GetNexo Pro",
+    type: "Cloud Géré",
+    price: "19 €",
+    period: "/mois",
+    description: "On s'occupe de tout. Vous ne faites que vendre.",
+    features: [
+      { text: "Tout du plan Gratuit", included: true, highlight: true },
+      { text: "Serveurs NVMe ultra-rapides", included: true, highlight: false },
+      { text: "Activation en 5 minutes", included: true, highlight: false },
+      { text: "Sauvegardes automatiques quotidiennes", included: true, highlight: false },
+      { text: "SSL et domaine inclus", included: true, highlight: false },
+      { text: "Support VIP via WhatsApp", included: true, highlight: true },
+      { text: "Mises à jour automatiques", included: true, highlight: false }
+    ],
+    cta: "Commencer Maintenant",
+    ctaLink: "/fr/creer-bot",
+    popular: true
+  },
+  {
+    name: "Enterprise",
+    type: "Grandes Opérations",
+    price: "Sur mesure",
+    period: "",
+    description: "Pour les opérations à haut volume et les exigences spécifiques.",
+    features: [
+      { text: "Multiples instances d'IA", included: true, highlight: true },
+      { text: "API RESTful dédiée (Haut Débit)", included: true, highlight: false },
+      { text: "Conseil en IA inclus", included: true, highlight: false },
+      { text: "SLA garanti par contrat", included: true, highlight: false },
+      { text: "White Label complet", included: true, highlight: false },
+      { text: "Gestionnaire de compte dédié", included: true, highlight: true },
+      { text: "Formation de l'équipe", included: true, highlight: false }
+    ],
+    cta: "Contacter un Conseiller",
+    ctaLink: "/fr/contact",
+    popular: false
+  }
+];
+
+const faqs = [
+  {
+    q: "Y a-t-il des frais par message envoyé ?",
+    a: "Non ! Vous payez uniquement l'abonnement mensuel du plan Pro (19 €) ou rien en self-hosted. Les seuls frais supplémentaires sont ceux facturés par Meta si vous dépassez le forfait gratuit de l'API Cloud (les 1000 premières conversations/mois sont gratuites)."
+  },
+  {
+    q: "Quelle est la différence entre Self-Hosted et Pro ?",
+    a: "En Self-Hosted, vous installez et gérez tout sur votre serveur. En Pro, nous gérons l'infrastructure, les sauvegardes, le SSL, les mises à jour et offrons un support VIP. Les fonctions d'IA et d'automatisation sont identiques."
+  },
+  {
+    q: "Si j'annule, est-ce que je perds mes données ?",
+    a: "Non. Vous pouvez exporter toutes vos données avant l'annulation. En self-hosted, les données sont déjà les vôtres. En Pro, nous fournissons une sauvegarde complète."
+  }
+];
+
+const guarantees = [
+  { icon: "💰", title: "7 jours gratuits", desc: "Testez le plan Pro sans engagement" },
+  { icon: "🔒", title: "Sans engagement", desc: "Annulez quand vous voulez, sans frais" },
+  { icon: "📊", title: "Pas de frais par msg", desc: "Payez uniquement le forfait fixe" },
+  { icon: "🔄", title: "Migration gratuite", desc: "On vous aide à transférer vos données" }
+];
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  <section class="pricing-hero">
+    <div class="hero-badge">💰 ROI Imbattable</div>
+    <h1>Tarifs <span class="text-gradient">transparents</span></h1>
+    <p class="hero-subtitle">
+      Pas de surprises. Pas de frais cachés. Pas d'engagement. Choisissez le plan qui vous convient.
+    </p>
+  </section>
+
+  <section class="guarantees-section">
+    <div class="guarantees-grid">
+      {guarantees.map(g => (
+        <div class="guarantee-item">
+          <span class="g-icon">{g.icon}</span>
+          <div>
+            <strong>{g.title}</strong>
+            <span>{g.desc}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="pricing-cards-section">
+    <div class="pricing-grid">
+      {plans.map(plan => (
+        <div class={`pricing-card glass-panel ${plan.popular ? 'featured' : ''}`}>
+          {plan.popular && <div class="popular-badge">Le Plus Choisi</div>}
+          <div class="card-type">{plan.type}</div>
+          <h3>{plan.name}</h3>
+          <div class="card-price">
+            {plan.price}<span>{plan.period}</span>
+          </div>
+          <p class="card-desc">{plan.description}</p>
+          <ul class="card-features">
+            {plan.features.map(f => (
+              <li class={f.highlight ? 'highlight' : ''}>
+                {f.included ? '✅' : '❌'} <span set:html={f.text}></span>
+              </li>
+            ))}
+          </ul>
+          <a href={plan.ctaLink} class={plan.popular ? 'btn-xl-glow' : 'btn-outline-glow'}>
+            {plan.cta}
+          </a>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="faq-section">
+    <h2>Questions sur les <span class="text-gradient">tarifs</span></h2>
+    <div class="faq-list">
+      {faqs.map(faq => (
+        <details class="faq-item glass-panel">
+          <summary>
+            <span class="faq-q">{faq.q}</span>
+            <span class="faq-toggle">+</span>
+          </summary>
+          <p class="faq-a">{faq.a}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <div class="glass-panel cta-box">
+      <h2>Prêt à <span class="text-gradient">économiser</span> ?</h2>
+      <p>Commencez gratuitement ou choisissez le plan Pro pour un support VIP.</p>
+      <div class="cta-buttons">
+        <a href="/fr/creer-bot" class="btn-primary-glow">Commencer Gratuitement</a>
+        <a href="/fr/contact" class="btn-outline">Parler à la Vente</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+/* Reusing styles from pricing.astro */
+  .pricing-hero { text-align: center; padding: 10rem 5% 4rem; max-width: 900px; margin: 0 auto; }
+  .hero-badge { background: rgba(0, 212, 255, 0.1); color: #00d4ff; padding: 0.5rem 1.2rem; border-radius: 50px; font-size: 0.85rem; font-weight: 700; display: inline-block; margin-bottom: 2rem; border: 1px solid rgba(0,212,255,0.2); }
+  .pricing-hero h1 { font-size: 3.5rem; margin-bottom: 1.5rem; font-weight: 900; color: white; }
+  .guarantees-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+  .guarantee-item { display: flex; align-items: center; gap: 1rem; background: rgba(0, 255, 157, 0.03); border: 1px solid rgba(0, 255, 157, 0.1); padding: 1rem 1.5rem; border-radius: 12px; }
+  .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+  .pricing-card { padding: 3rem 2rem; text-align: center; transition: 0.3s; position: relative; display: flex; flex-direction: column; }
+  .pricing-card.featured { border-color: rgba(0, 255, 157, 0.3); background: rgba(0, 255, 157, 0.03); transform: scale(1.05); z-index: 10; }
+  .card-price { font-size: 3rem; font-weight: 900; color: white; }
+  .btn-xl-glow { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; font-weight: 900; }
+  .btn-outline-glow { border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; }
+  .faq-list { display: flex; flex-direction: column; gap: 1rem; }
+  .cta-box { padding: 4rem 2rem; border-radius: 30px; border: 1px solid rgba(0, 212, 255, 0.2); }
+  @media (max-width: 900px) { .pricing-grid, .guarantees-grid { grid-template-columns: 1fr; } }
+</style>

@@ -1,14 +1,13 @@
-export async function get() {
+export const GET = async () => {
     const baseUrl = 'https://getnexo.com.br';
     const pages = [
-        { url: `${baseUrl}/`, changefreq: 'daily', priority: 1.0 },
-        { url: `${baseUrl}/fr/`, changefreq: 'weekly', priority: 0.9 },
+        { url: `${baseUrl}/fr/`, changefreq: 'weekly', priority: 1.0 },
         { url: `${baseUrl}/fr/blog/`, changefreq: 'weekly', priority: 0.8 },
-        { url: `${baseUrl}/fr/precos/`, changefreq: 'monthly', priority: 0.7 },
-        { url: `${baseUrl}/fr/como-funciona/`, changefreq: 'monthly', priority: 0.7 },
-        { url: `${baseUrl}/fr/recursos/`, changefreq: 'monthly', priority: 0.6 },
-        { url: `${baseUrl}/fr/contato/`, changefreq: 'monthly', priority: 0.6 },
-        { url: `${baseUrl}/fr/privacidade/`, changefreq: 'yearly', priority: 0.3 },
+        { url: `${baseUrl}/fr/tarifs/`, changefreq: 'monthly', priority: 0.7 },
+        { url: `${baseUrl}/fr/comment-ca-marche/`, changefreq: 'monthly', priority: 0.7 },
+        { url: `${baseUrl}/fr/fonctionnalites/`, changefreq: 'monthly', priority: 0.6 },
+        { url: `${baseUrl}/fr/contact/`, changefreq: 'monthly', priority: 0.6 },
+        { url: `${baseUrl}/fr/confidentialite/`, changefreq: 'yearly', priority: 0.3 },
         { url: `${baseUrl}/fr/faq/`, changefreq: 'monthly', priority: 0.5 },
     ];
 
@@ -21,10 +20,9 @@ export async function get() {
   </url>`).join('')}
 </urlset>`;
 
-    return {
-        body,
+    return new Response(body, {
         headers: {
             'Content-Type': 'application/xml'
         }
-    };
-}
+    });
+};

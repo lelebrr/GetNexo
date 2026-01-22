@@ -1,0 +1,34 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "7 Scripts de Ventas Elite: Gatillos Psicológicos",
+      "description": "7 Scripts de Ventas Elite para WhatsApp | GetNexo",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-22",
+      "articleSection": "Strategy"
+    }
+  ]
+};
+---
+<Layout
+  title="7 Scripts de Ventas Elite para WhatsApp | GetNexo" articleSchema={schema}
+  type="article"
+>
+  <article class="post-container">
+    <h1>7 Scripts de Ventas Elite:<br/><span class="text-primary">Gatillos Psicológicos</span></h1>
+    <p>Plantillas listas para usar con gatillos mentales para conversión inmediata.</p>
+    <a href="/es/crear-bot" class="btn-primary">Obtener Scripts</a>
+  </article>
+</Layout>
+<style>
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  h1 { font-size: 3.5rem; font-weight: 900; color: white; }
+  .text-primary { color: #00f7ff; }
+  .btn-primary { background: #00f7ff; color: black; padding: 1.2rem 3.5rem; border-radius: 50px; text-decoration: none; font-weight: 800; }
+</style>

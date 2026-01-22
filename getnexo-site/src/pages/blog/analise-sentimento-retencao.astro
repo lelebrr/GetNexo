@@ -17,7 +17,11 @@ const schema = {
 };
 ---
 
-<Layout title="Análise de Sentimento e Retenção | GetNexo">
+<Layout
+  title="Análise de Sentimento e Retenção | GetNexo"
+  articleSchema={schema}
+  type="article"
+>
   <article class="post-container">
     <header class="post-header">
       <div class="meta animate-fade-in">Inteligência • Jan 2026</div>
@@ -65,7 +69,7 @@ const schema = {
     </div>
   </article>
 
-  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+  
 </Layout>
 
 <style>

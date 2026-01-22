@@ -16,25 +16,47 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Instala Astro
-        run: npm ci --only=prod || npm install
+      - name: Instala dependências
+        run: npm ci
 
       - name: Gera site completo (Build)
-        run: npm run build
-
-      - name: Snapshot IA & Content
         run: |
-          mkdir -p backup-ia
-          echo "Backup Date: $(date)" > backup-ia/meta.txt
-          # Copy content directories if they exist
-          if [ -d "src/pages/blog" ]; then cp -r src/pages/blog backup-ia/; fi
-          
-      - name: Compacta tudo (Site + Content)
-        run: zip -r jetnexo-backup-$(date +%Y-%m-%d).zip dist/ backup-ia/ src/
+          npm run build
+          if [ $? -ne 0 ]; then
+            echo "Build failed! Stopping backup."
+            exit 1
+          fi
+
+      - name: Snapshot Essencial (Site + Dados + Logs)
+        run: |
+          mkdir -p backup-essential
+          echo "Backup Date: $(date)" > backup-essential/meta.txt
+          # Copy only essential content, not source code
+          if [ -d "dist" ]; then cp -r dist backup-essential/; fi
+          if [ -d "data" ]; then cp -r data backup-essential/; fi
+          if [ -d "logs" ]; then cp -r logs backup-essential/; fi
+          # Exclude sensitive files
+          find backup-essential -name "*.env*" -delete 2>/dev/null || true
+          find backup-essential -name "*.key" -delete 2>/dev/null || true
+          find backup-essential -name "*.pem" -delete 2>/dev/null || true
+
+      - name: Compacta backup essencial
+        run: |
+          if [ -d "backup-essential" ]; then
+            zip -r jetnexo-backup-$(date +%Y-%m-%d).zip backup-essential/
+          else
+            echo "Required directories not found. Backup failed."
+            exit 1
+          fi
 
       - name: Salva backup no GitHub
         uses: actions/upload-artifact@v4
         with:
           name: backup-site
           path: jetnexo-backup-*.zip
-          retention-days: 7
+          retention-days: ${{ vars.BACKUP_RETENTION_DAYS || 30 }}
+
+      - name: Limpa arquivos temporários
+        run: |
+          rm -rf backup-essential
+          rm -f jetnexo-backup-*.zip

@@ -1,0 +1,168 @@
+---
+import Layout from '../../layouts/Layout.astro';
+const title = "Contact GetNexo | Support, Confidentialité et Demandes RGPD";
+const description = "Contactez GetNexo. Support technique, demandes de droits ARCO (RGPD), DPO, questions sur la confidentialité et les données personnelles.";
+const keywords = "contact getnexo, support whatsapp api, droits rgpd, dpo getnexo, confidentialité des données, demande suppression données, support technique";
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  <section class="contact-hero">
+    <div class="hero-badge">Contact</div>
+    <h1 class="text-gradient">Contactez-nous</h1>
+    <p>Support technique, demandes de droits ARCO (RGPD) et service personnalisé.</p>
+  </section>
+
+  <section class="contact-content">
+    <div class="contact-grid">
+      <!-- General Support -->
+      <div class="contact-card">
+        <div class="card-header">
+          <div class="card-icon">💬</div>
+          <h3>Support Général</h3>
+        </div>
+        <div class="card-body">
+          <p>Questions sur l'installation, la configuration ou l'utilisation de la plateforme.</p>
+          <div class="contact-methods">
+            <a href="https://wa.me/5511999999999?text=Bonjour%20GetNexo!%20J'ai%20besoin%20d'aide..." target="_blank" class="contact-link whatsapp">
+              <span>📱</span> WhatsApp
+            </a>
+            <a href="mailto:support@getnexo.com.br" class="contact-link email">
+              <span>📧</span> support@getnexo.com.br
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Privacy and GDPR -->
+      <div class="contact-card featured">
+        <div class="card-header">
+          <div class="card-icon">🔒</div>
+          <h3>Confidentialité & RGPD</h3>
+        </div>
+        <div class="card-body">
+          <p>Demandes de droits ARCO, questions sur la protection des données et DPO.</p>
+          <div class="contact-methods">
+            <a href="mailto:dpo@getnexo.com.br" class="contact-link email">
+              <span>🛡️</span> dpo@getnexo.com.br
+            </a>
+            <a href="mailto:privacy@getnexo.com.br" class="contact-link email">
+              <span>📋</span> privacy@getnexo.com.br
+            </a>
+          </div>
+          <div class="lgpd-notice">
+            <p><strong>Données du Contrôleur :</strong></p>
+            <p>GetNexo Tecnologia Ltda.<br>ID Tax : 45.678.901/0001-23<br>Responsable : Leandro Brandão</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sales and Partnerships -->
+      <div class="contact-card">
+        <div class="card-header">
+          <div class="card-icon">🚀</div>
+          <h3>Ventes & Partenariats</h3>
+        </div>
+        <div class="card-body">
+          <p>Démonstrations, propositions commerciales et programme revendeur.</p>
+          <div class="contact-methods">
+            <a href="https://wa.me/5511999999999?text=Bonjour!%20J'aimerais%20en%20savoir%20plus%20sur%20GetNexo..." target="_blank" class="contact-link whatsapp">
+              <span>📱</span> WhatsApp Ventes
+            </a>
+            <a href="mailto:sales@getnexo.com.br" class="contact-link email">
+              <span>📧</span> sales@getnexo.com.br
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RGPD Form -->
+    <div class="lgpd-form-section">
+      <div class="glass-panel lgpd-form-wrap">
+        <h2>Demande de Droits ARCO (RGPD)</h2>
+        <p>Utilisez ce formulaire pour exercer vos droits en vertu de la loi sur la protection des données :</p>
+
+        <form id="lgpd-request-form" class="lgpd-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="requester-name">Nom Complet *</label>
+              <input type="text" id="requester-name" name="name" required placeholder="Votre nom complet" />
+            </div>
+            <div class="form-group">
+              <label for="requester-email">E-mail *</label>
+              <input type="email" id="requester-email" name="email" required placeholder="votre@email.com" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="requester-doc">N° Identification Fiscale *</label>
+              <input type="text" id="requester-doc" name="document" required placeholder="N° de document" />
+            </div>
+            <div class="form-group">
+              <label for="requester-phone">Téléphone (WhatsApp)</label>
+              <input type="tel" id="requester-phone" name="phone" placeholder="+33 6 00 00 00 00" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="request-type">Type de Demande *</label>
+            <select id="request-type" name="request_type" required>
+              <option value="">Sélectionnez le droit que vous souhaitez exercer</option>
+              <option value="confirmation">Confirmation du traitement des données</option>
+              <option value="acces">Accès aux données personnelles</option>
+              <option value="rectification">Rectification des données incomplètes/inexactes</option>
+              <option value="suppression">Suppression des données</option>
+              <option value="opposition">Opposition au traitement</option>
+              <option value="autre">Autre (précisez ci-dessous)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="request-description">Description de la Demande *</label>
+            <textarea id="request-description" name="description" required rows="4" placeholder="Décrivez votre demande en détail..."></textarea>
+          </div>
+
+          <div class="form-consent">
+            <input type="checkbox" id="lgpd-consent" name="consent" required />
+            <label for="lgpd-consent">
+              Je déclare que les informations fournies sont exactes et que je suis conscient que la demande sera traitée conformément au RGPD. *
+            </label>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">Envoyer la Demande</button>
+            <button type="reset" class="btn-secondary">Réinitialiser</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Horaires -->
+    <div class="support-hours">
+      <h2>Horaires d'Ouverture</h2>
+      <div class="hours-grid">
+        <div class="hours-item">
+          <h4>Support Technique</h4>
+          <p>Lundi au Vendredi : 9h à 18h<br>Samedi : 9h à 12h (BRT)</p>
+        </div>
+        <div class="hours-item">
+          <h4>Urgence</h4>
+          <p>24/7 pour les questions critiques<br>WhatsApp: +55 11 99999-9999</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+/* Reusing styles from contact.astro */
+  .contact-hero { text-align: center; padding: 10rem 5% 4rem; }
+  .hero-badge { background: rgba(0, 212, 255, 0.1); color: #00d4ff; padding: 0.5rem 1.2rem; border-radius: 50px; display: inline-block; margin-bottom: 2rem; border: 1px solid rgba(0,212,255,0.2); }
+  .contact-content { max-width: 1200px; margin: 0 auto; padding: 4rem 5% 10rem; }
+  .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+  .contact-card { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 20px; padding: 2rem; }
+  .lgpd-form-wrap { padding: 3rem; border-radius: 24px; border: 1px solid rgba(0, 212, 255, 0.2); }
+  .btn-primary { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1rem 2rem; border-radius: 8px; font-weight: 700; border: none; cursor: pointer; }
+  .hours-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+</style>

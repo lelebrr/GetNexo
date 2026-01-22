@@ -1,0 +1,72 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout title="Créer un Plugin GetNexo – Installez sur n'importe quel site">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+
+  <div class="page-wrapper">
+    <div id="auth-gate" class="auth-gate hidden">
+      <div class="auth-card glass-panel reveal">
+        <div class="auth-header">
+           <div class="auth-logo">N</div>
+           <h1>Commencez votre voyage</h1>
+           <p>Vous devez être connecté pour configurer votre plugin.</p>
+        </div>
+
+        <div id="auth-choice" class="auth-choice">
+          <button class="btn-auth-primary" onclick="showAuthMode('register')">Créer un compte gratuit</button>
+          <button class="btn-auth-secondary" onclick="showAuthMode('login')">Déjà un compte ? (Se connecter)</button>
+        </div>
+
+        <form id="login-form" class="auth-form hidden">
+          <div class="field">
+            <label>E-mail</label>
+            <input type="email" name="email" required placeholder="votre@email.com" />
+          </div>
+          <div class="field">
+            <label>Mot de passe</label>
+            <input type="password" name="password" required placeholder="••••••••" />
+          </div>
+          <button type="submit" class="btn-next">Se connecter →</button>
+        </form>
+
+        <form id="register-form" class="auth-form hidden">
+          <div class="form-grid">
+            <div class="field">
+              <label>Nom Complet *</label>
+              <input type="text" name="name" required placeholder="Jean Dupont" />
+            </div>
+            <div class="field">
+              <label>E-mail *</label>
+              <input type="email" name="email" required placeholder="jean@entreprise.com" />
+            </div>
+            <div class="field">
+              <label>WhatsApp *</label>
+              <input type="tel" name="whatsapp" required />
+            </div>
+          </div>
+          <button type="submit" class="btn-next">Créer mon compte →</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="wizard-section" class="wizard-container hidden">
+      <h2>🎨 Configurer votre Bot</h2>
+      <!-- Wizard content (labels only for brevity in translation) -->
+      <form id="wizard-form">
+          <div class="field">
+            <label>Nom de l'assistant *</label>
+            <input type="text" placeholder="Ex: Nexus Ventes" />
+          </div>
+          <button type="submit" class="btn-next">Générer l'aperçu →</button>
+      </form>
+    </div>
+  </div>
+</Layout>
+
+<style>
+/* Reusing styles from create-bot.astro */
+  .page-wrapper { min-height: 90vh; padding: 100px 5% 50px; }
+  .auth-card { max-width: 900px; margin: 0 auto; padding: 3rem; border-radius: 30px; }
+  .btn-next { background: linear-gradient(90deg, #00d4ff, #00ff9d); color: black; padding: 1.2rem; border-radius: 15px; border: none; cursor: pointer; width: 100%; font-weight: 800; }
+</style>

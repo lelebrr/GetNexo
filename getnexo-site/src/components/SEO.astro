@@ -1,5 +1,6 @@
 ---
 // Componente SEO Global Otimizado para Google e Bing
+// Suporta Internacionalização (i18n) completa
 export interface Props {
   title: string;
   description: string;
@@ -15,6 +16,7 @@ export interface Props {
   faq?: Array<{ question: string; answer: string }>;
   breadcrumbs?: Array<{ name: string; url: string }>;
   structuredData?: any;
+  lang?: string;
 }
 
 const {
@@ -31,11 +33,23 @@ const {
   tags,
   faq,
   breadcrumbs,
-  structuredData
+  structuredData,
+  lang = Astro.url.pathname.split('/')[1] || 'pt'
 } = Astro.props;
 
+// Load translations for SEO
+let t;
+try {
+  const translations = await import(`../i18n/${lang}.json`);
+  t = translations.default;
+} catch (e) {
+  const translations = await import(`../i18n/pt.json`);
+  t = translations.default;
+}
+
 const canonicalUrl = url || `https://getnexo.com.br${Astro.url.pathname}`;
-const siteName = "GetNexo";
+const currentPath = Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '');
+const siteName = t.seo.site_name || "GetNexo";
 const twitterHandle = "@getnexo";
 ---
 
@@ -47,6 +61,11 @@ const twitterHandle = "@getnexo";
 <meta name="description" content={description} />
 <meta name="keywords" content={keywords} />
 <meta name="author" content={author || "GetNexo"} />
+
+<!-- Verification Tags -->
+<meta name="google-site-verification" content="getnexo-verification-2026" />
+<meta name="msvalidate.01" content="getnexo-ms-2026" />
+
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
 <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
 <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
@@ -64,7 +83,7 @@ const twitterHandle = "@getnexo";
 <meta property="og:image:height" content="630" />
 <meta property="og:image:alt" content={title} />
 <meta property="og:site_name" content={siteName} />
-<meta property="og:locale" content="pt_BR" />
+<meta property="og:locale" content={t.seo.og_locale || "pt_BR"} />
 <meta property="og:locale:alternate" content="en_US" />
 <meta property="og:locale:alternate" content="es_ES" />
 <meta property="og:locale:alternate" content="fr_FR" />
@@ -78,6 +97,13 @@ const twitterHandle = "@getnexo";
 <meta property="twitter:image:alt" content={title} />
 <meta property="twitter:creator" content={twitterHandle} />
 <meta property="twitter:site" content={twitterHandle} />
+
+<!-- i18n Alternate Links (Hreflang) -->
+<link rel="alternate" hreflang="pt" href={`https://getnexo.com.br/pt${currentPath}`} />
+<link rel="alternate" hreflang="en" href={`https://getnexo.com.br/en${currentPath}`} />
+<link rel="alternate" hreflang="es" href={`https://getnexo.com.br/es${currentPath}`} />
+<link rel="alternate" hreflang="fr" href={`https://getnexo.com.br/fr${currentPath}`} />
+<link rel="alternate" hreflang="x-default" href={`https://getnexo.com.br/pt${currentPath}`} />
 
 <!-- Article Meta Tags (if applicable) -->
 {publishedTime && <meta property="article:published_time" content={publishedTime} />}
@@ -96,7 +122,7 @@ const twitterHandle = "@getnexo";
       "name": "GetNexo",
       "url": "https://getnexo.com.br",
       "logo": "https://getnexo.com.br/logo.svg",
-      "description": "Plataforma de IA para vendas no WhatsApp 24h por dia. API Oficial Meta, PIX automático, CRM integrado.",
+      "description": t.seo.organization_description,
       "foundingDate": "2024",
       "founder": {
         "@type": "Person",
@@ -127,43 +153,16 @@ const twitterHandle = "@getnexo";
         "addressCountry": "BR",
         "addressRegion": "SP",
         "addressLocality": "São Paulo"
-      },
-      "hasOfferCatalog": {
-        "@type": "OfferCatalog",
-        "name": "Planos GetNexo",
-        "itemListElement": [
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "Plano Gratuito",
-              "description": "Acesso completo às funcionalidades básicas"
-            },
-            "price": "0",
-            "priceCurrency": "BRL"
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "Plano Professional",
-              "description": "Recursos avançados e suporte prioritário"
-            },
-            "price": "R$ 197.00",
-            "priceCurrency": "BRL",
-            "priceValidUntil": "2026-12-31"
-          }
-        ]
       }
     },
     {
       "@type": "WebSite",
       "@id": "https://getnexo.com.br/#website",
       "url": "https://getnexo.com.br",
-      "name": "GetNexo - IA para Vendas WhatsApp",
-      "description": "IA que fecha vendas no WhatsApp 24h. Plataforma completa com API Oficial Meta, PIX, CRM, fidelidade e analytics.",
+      "name": siteName,
+      "description": t.seo.default_description,
       "publisher": { "@id": "https://getnexo.com.br/#organization" },
-      "inLanguage": "pt-BR",
+      "inLanguage": lang,
       "copyrightHolder": { "@id": "https://getnexo.com.br/#organization" },
       "potentialAction": [
         {
@@ -183,40 +182,12 @@ const twitterHandle = "@getnexo";
       "applicationCategory": "BusinessApplication",
       "operatingSystem": "Web, WhatsApp",
       "softwareVersion": "2.0.0",
-      "fileSize": "N/A",
-      "downloadUrl": "https://getnexo.com.br",
-      "screenshot": "https://getnexo.com.br/assets/og-poster.jpg",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "BRL",
-        "priceValidUntil": "2026-12-31",
-        "description": "Plano gratuito com funcionalidades avançadas"
-      },
+      "author": { "@id": "https://getnexo.com.br/#organization" },
       "aggregateRating": {
         "@type": "AggregateRating",
         "ratingValue": "4.9",
-        "ratingCount": "500",
-        "bestRating": "5",
-        "worstRating": "1"
-      },
-      "author": { "@id": "https://getnexo.com.br/#organization" },
-      "creator": { "@id": "https://getnexo.com.br/#organization" },
-      "provider": { "@id": "https://getnexo.com.br/#organization" },
-      "featureList": [
-        "IA Conversacional 24h",
-        "API Oficial WhatsApp",
-        "PIX Automático",
-        "CRM Integrado",
-        "Sistema de Fidelidade",
-        "Analytics Avançado",
-        "Magic Replies",
-        "Análise de Sentimento",
-        "Gamificação de Vendas",
-        "Sistema de Tickets",
-        "Multi-canal",
-        "White Label"
-      ]
+        "ratingCount": "500"
+      }
     },
     {
       "@type": "WebPage",
@@ -235,7 +206,7 @@ const twitterHandle = "@getnexo";
       "dateModified": modifiedTime || "2024-12-31T23:59:59+00:00",
       "author": { "@id": "https://getnexo.com.br/#organization" },
       "publisher": { "@id": "https://getnexo.com.br/#organization" },
-      "inLanguage": "pt-BR",
+      "inLanguage": lang,
       "mainEntityOfPage": canonicalUrl,
       "breadcrumb": breadcrumbs ? {
         "@type": "BreadcrumbList",
@@ -264,16 +235,11 @@ const twitterHandle = "@getnexo";
 
 <!-- Additional SEO Meta Tags -->
 <meta name="theme-color" content="#00d4ff" />
-<meta name="msapplication-TileColor" content="#00d4ff" />
-<meta name="msapplication-config" content="/browserconfig.xml" />
 
 <!-- Preconnect to external domains -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="preconnect" href="https://www.google-analytics.com" />
 <link rel="preconnect" href="https://www.googletagmanager.com" />
-<link rel="preconnect" href="https://static.cloudflareinsights.com" />
-<link rel="preconnect" href="https://flagcdn.com" />
 
 <!-- Security Headers -->
 <meta http-equiv="X-Content-Type-Options" content="nosniff" />
@@ -295,20 +261,10 @@ const twitterHandle = "@getnexo";
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 <link rel="manifest" href="/site.webmanifest" />
 
-<!-- Internationalization -->
-<link rel="alternate" hreflang="pt" href={`https://getnexo.com.br${Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '/pt')}`} />
-<link rel="alternate" hreflang="en" href={`https://getnexo.com.br${Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '/en')}`} />
-<link rel="alternate" hreflang="es" href={`https://getnexo.com.br${Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '/es')}`} />
-<link rel="alternate" hreflang="fr" href={`https://getnexo.com.br${Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '/fr')}`} />
-<link rel="alternate" hreflang="x-default" href={`https://getnexo.com.br${Astro.url.pathname.replace(/^\/(pt|es|fr|en)/, '/pt')}`} />
-
 <!-- RSS Feed -->
 <link rel="alternate" type="application/rss+xml" title="GetNexo Blog" href="/blog/rss.xml" />
 
 <!-- Additional Link Tags -->
-<link rel="author" href="https://getnexo.com.br/sobre" />
-<link rel="publisher" href="https://getnexo.com.br" />
-<link rel="help" href="https://getnexo.com.br/suporte" />
 <link rel="search" href="/buscar" />
 <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
 
@@ -316,23 +272,6 @@ const twitterHandle = "@getnexo";
 <link rel="dns-prefetch" href="//api.getnexo.com.br" />
 <link rel="dns-prefetch" href="//cdn.getnexo.com.br" />
 <link rel="dns-prefetch" href="//chat.getnexo.com.br" />
-
-<!-- Resource Hints -->
-<!-- Preloads removed to avoid warnings -->
-
-<!-- Schema.org Breadcrumbs (if provided) -->
-{breadcrumbs && (
-  <script type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": breadcrumbs.map((crumb, index) => ({
-      "@type": "ListItem",
-      "position": index + 1,
-      "name": crumb.name,
-      "item": `https://getnexo.com.br${crumb.url}`
-    }))
-  })}></script>
-)}
 
 <!-- Article Schema (if article) -->
 {type === "article" && (
@@ -347,55 +286,12 @@ const twitterHandle = "@getnexo";
       "name": author || "GetNexo",
       "url": "https://getnexo.com.br"
     },
-    "publisher": {
-      "@type": "Organization",
-      "name": "GetNexo",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://getnexo.com.br/logo.svg"
-      }
-    },
+    "publisher": { "@id": "https://getnexo.com.br/#organization" },
     "datePublished": publishedTime,
     "dateModified": modifiedTime,
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": canonicalUrl
-    }
-  })}></script>
-)}
-
-<!-- Product Schema (if product page) -->
-{type === "product" && (
-  <script type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "Product",
-    "name": title,
-    "description": description,
-    "image": image,
-    "brand": {
-      "@type": "Brand",
-      "name": "GetNexo"
-    },
-    "manufacturer": {
-      "@type": "Organization",
-      "name": "GetNexo"
-    },
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "BRL",
-      "availability": "https://schema.org/InStock",
-      "seller": {
-        "@type": "Organization",
-        "name": "GetNexo"
-      }
-    },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.9",
-      "ratingCount": "500",
-      "bestRating": "5",
-      "worstRating": "1"
     }
   })}></script>
 )}

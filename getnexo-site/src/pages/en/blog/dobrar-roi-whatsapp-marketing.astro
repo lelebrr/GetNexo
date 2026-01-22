@@ -1,0 +1,40 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Double ROI on WhatsApp: Advanced Marketing Tactics",
+      "description": "Maximize the return on your campaigns with proven strategies.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-22",
+      "articleSection": "Marketing"
+    }
+  ]
+};
+---
+<Layout
+  title="How to Double ROI on WhatsApp Marketing | GetNexo" articleSchema={schema}
+  type="article"
+>
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta">Marketing • Jan 2026</div>
+      <h1>Double ROI on WhatsApp:<br/><span class="text-primary">Advanced Marketing Tactics</span></h1>
+      <p class="subtitle">Maximize the return on your campaigns with proven strategies.</p>
+    </header>
+    <div class="post-content">
+      <p>ROI is the only metric that matters. Learn how small tweaks in your flow can double your net profit.</p>
+      <a href="/en/create-bot" class="btn-primary">Scale Now</a>
+    </div>
+  </article>
+</Layout>
+<style>
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  h1 { font-size: 3.5rem; font-weight: 900; color: white; }
+  .text-primary { color: #00f7ff; }
+  .btn-primary { background: #00f7ff; color: black; padding: 1.2rem 3.5rem; border-radius: 50px; text-decoration: none; font-weight: 800; }
+</style>

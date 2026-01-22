@@ -1,0 +1,40 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "GDPR on WhatsApp Corporate: 2026 Security Guide",
+      "description": "Complete guide to security and compliance for companies in 2026.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-22",
+      "articleSection": "Compliance"
+    }
+  ]
+};
+---
+<Layout
+  title="GDPR on WhatsApp Corporate: 2026 Guide | GetNexo" articleSchema={schema}
+  type="article"
+>
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta">Compliance • Jan 2026</div>
+      <h1>GDPR on WhatsApp Corporate:<br/><span class="text-primary">2026 Security Guide</span></h1>
+      <p class="subtitle">Complete guide to security and compliance for companies in 2026.</p>
+    </header>
+    <div class="post-content">
+      <p>Data protection is not optional. Operating on WhatsApp requires strict adherence to GDPR and local data laws.</p>
+      <a href="/en/create-bot" class="btn-primary">Learn More</a>
+    </div>
+  </article>
+</Layout>
+<style>
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  h1 { font-size: 3.5rem; font-weight: 900; color: white; }
+  .text-primary { color: #00f7ff; }
+  .btn-primary { background: #00f7ff; color: black; padding: 1.2rem 3.5rem; border-radius: 50px; text-decoration: none; font-weight: 800; }
+</style>

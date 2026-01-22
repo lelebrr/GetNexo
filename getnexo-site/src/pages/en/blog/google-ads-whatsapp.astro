@@ -1,0 +1,40 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Google Ads to WhatsApp: The Hidden Conversion Strategy",
+      "description": "Capture search intent and move it directly to a personal conversation.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-22",
+      "articleSection": "Ads"
+    }
+  ]
+};
+---
+<Layout
+  title="Google Ads to WhatsApp: The Hidden Strategy | GetNexo" articleSchema={schema}
+  type="article"
+>
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta">Ads • Jan 2026</div>
+      <h1>Google Ads to WhatsApp:<br/><span class="text-primary">The Hidden Conversion Strategy</span></h1>
+      <p class="subtitle">Capture search intent and move it directly to a personal conversation.</p>
+    </header>
+    <div class="post-content">
+      <p>Search intent is the highest quality traffic. Move that power to WhatsApp for immediate closing.</p>
+      <a href="/en/create-bot" class="btn-primary">Connect Google Ads</a>
+    </div>
+  </article>
+</Layout>
+<style>
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  h1 { font-size: 3.5rem; font-weight: 900; color: white; }
+  .text-primary { color: #00f7ff; }
+  .btn-primary { background: #00f7ff; color: black; padding: 1.2rem 3.5rem; border-radius: 50px; text-decoration: none; font-weight: 800; }
+</style>

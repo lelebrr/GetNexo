@@ -71,6 +71,7 @@ export default defineConfig({
     },
     // Compressão gzip/brotli para assets estáticos
     server: {
+        host: '0.0.0.0', // Permite conexões de qualquer interface de rede
         headers: {
             'Content-Encoding': 'gzip, br',
             'Cache-Control': 'public, max-age=31536000, immutable',
@@ -91,19 +92,15 @@ export default defineConfig({
             target: 'es2022',
             cssCodeSplit: true,
             chunkSizeWarningLimit: 500,
-            modulePreload: false,
-            crossorigin: "anonymous",
+            modulePreload: {
+                polyfill: true // Restaurado para manter funcionalidade
+            },
             rollupOptions: {
                 output: {
                     manualChunks: {
                         'vendor': ['react', 'react-dom', 'astro'],
                     },
-                    // Disable automatic module preloading for non-critical chunks
                     chunkFileNames: (chunkInfo) => {
-                        // Don't generate preloads for component-specific chunks
-                        if (chunkInfo.name.includes('astro_astro_type_script')) {
-                            return 'assets/[name]-[hash].js';
-                        }
                         return 'assets/[name]-[hash].js';
                     }
                 }

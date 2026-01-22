@@ -82,6 +82,23 @@ Sistema completo de tagging comportamental baseado em machine learning que permi
 #### Página Admin
 - `/admin/behavioral-tagging`: Interface completa de gerenciamento
 
+## Locais de API
+
+### Endpoints Principais
+- **Produção**: `https://api.getnexo.com.br/api/clustering/`
+- **Desenvolvimento**: `http://localhost:3000/api/clustering/`
+- **Admin Dashboard**: `https://getnexo.com.br/admin/behavioral-tagging`
+
+### Credenciais de Acesso
+- **API Key**: Configure em `.env` como `BEHAVIORAL_API_KEY`
+- **Admin Username**: `admin`
+- **Admin Password**: Configure em `.env` como `ADMIN_PASSWORD`
+
+### Links Úteis
+- **Dashboard Admin**: https://getnexo.com.br/admin/behavioral-tagging
+- **API Documentation**: https://api.getnexo.com.br/docs/clustering
+- **Status Page**: https://status.getnexo.com.br/behavioral-tagging
+
 ## Como Usar
 
 ### 1. Configuração Inicial
@@ -121,6 +138,39 @@ POST /api/clustering/trigger-offers
 - Acesse `/admin/behavioral-tagging` para dashboard completo
 - Visualize clusters, tags aplicadas, regras ativas
 - Monitore performance do algoritmo ML
+
+## Exemplos de Configuração
+
+### Placeholders para .env
+```env
+# Behavioral Tagging Configuration
+BEHAVIORAL_API_KEY=your_api_key_here
+BEHAVIORAL_TRACKING_ENABLED=true
+BEHAVIORAL_CLUSTERING_INTERVAL=24h
+BEHAVIORAL_DATA_RETENTION_DAYS=90
+BEHAVIORAL_ML_MODEL_VERSION=v1.0
+```
+
+### Configuração de Regra JSON
+```json
+{
+  "name": "High Engagement User",
+  "description": "Usuário com alto engajamento",
+  "conditions": {
+    "total_sessions": {"operator": "gte", "value": 10},
+    "avg_session_time": {"operator": "gte", "value": 300},
+    "page_views_per_session": {"operator": "gte", "value": 5}
+  },
+  "tag_config": {
+    "name": "high_engagement",
+    "category": "behavior",
+    "confidence_score": 90,
+    "expiration_days": 30
+  },
+  "cooldown_hours": 24,
+  "priority": 1
+}
+```
 
 ## Exemplos de Tags Comportamentais
 
@@ -196,11 +246,52 @@ POST /api/clustering/trigger-offers
 3. **Recomendações Personalizadas**: Sistema de recomendação baseado em clusters
 4. **A/B Testing Avançado**: Testes multivariados para ofertas
 
+## Demonstração
+
+### Vídeos Tutorial
+- [Configuração Inicial](https://youtu.be/behavioral-setup)
+- [Criação de Regras](https://youtu.be/behavioral-rules)
+- [Monitoramento em Tempo Real](https://youtu.be/behavioral-monitoring)
+
+### Screenshots
+![Dashboard Principal](https://img.getnexo.com/behavioral-dashboard.png)
+*Dashboard administrativo com métricas em tempo real*
+
+![Clustering Visualization](https://img.getnexo.com/clustering-viz.png)
+*Visualização gráfica dos clusters de usuários*
+
+### Passo-a-Passo Visual
+1. **Acesse o Admin**: Navegue para `/admin/behavioral-tagging`
+2. **Configure Regras**: Clique em "Nova Regra" e defina condições
+3. **Execute Clustering**: Botão "Executar Clustering ML"
+4. **Monitore Resultados**: Visualize métricas e conversões por tag
+
 ### Escalabilidade
 - Suporte para milhões de usuários
 - Processamento distribuído para clustering
 - Cache Redis para dados comportamentais
 - Integração com data warehouses externos
+
+## Funcionalidades Não Funcionais
+
+### Status Atual
+- ✅ **Coleta de Eventos**: Funcional, coletando dados em tempo real
+- ✅ **Clustering ML**: Implementado e otimizado
+- ✅ **Aplicação de Tags**: Automática baseada em regras
+- ✅ **Dashboard Admin**: Interface completa disponível
+- ⚠️ **Integração com Magic Map**: Funcional mas heatmaps podem apresentar atrasos
+- ❌ **A/B Testing Avançado**: Planejado mas não implementado
+- ⚠️ **Processamento Distribuído**: Suportado para até 100k usuários, escalabilidade limitada
+
+### Bugs Conhecidos
+- Clustering pode falhar com datasets muito grandes (>1M usuários)
+- Cache Redis pode causar inconsistências durante reinicializações
+- Notificações push têm taxa de entrega de ~85%
+
+### Limitações
+- Algoritmo K-means não suporta dados categóricos complexos
+- Interface admin pode ser lenta com >10k regras ativas
+- Retenção de dados limitada a 90 dias por padrão
 
 ## Conclusão
 

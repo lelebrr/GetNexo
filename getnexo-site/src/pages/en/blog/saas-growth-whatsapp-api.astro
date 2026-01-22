@@ -1,0 +1,40 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "SaaS Growth: AI-Powered Onboarding",
+      "description": "Scaling your software with intelligent automation on WhatsApp.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-22",
+      "articleSection": "SaaS"
+    }
+  ]
+};
+---
+<Layout
+  title="SaaS Growth: Scaling with WhatsApp API | GetNexo" articleSchema={schema}
+  type="article"
+>
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta">SaaS • Jan 2026</div>
+      <h1>SaaS Growth:<br/><span class="text-primary">AI-Powered Onboarding</span></h1>
+      <p class="subtitle">Scaling your software with intelligent automation on WhatsApp.</p>
+    </header>
+    <div class="post-content">
+      <p>Boost your SaaS trial-to-paid conversion with timely, AI-driven notifications and support on WhatsApp.</p>
+      <a href="/en/create-bot" class="btn-primary">Build SaaS Bot</a>
+    </div>
+  </article>
+</Layout>
+<style>
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  h1 { font-size: 3.5rem; font-weight: 900; color: white; }
+  .text-primary { color: #00f7ff; }
+  .btn-primary { background: #00f7ff; color: black; padding: 1.2rem 3.5rem; border-radius: 50px; text-decoration: none; font-weight: 800; }
+</style>

@@ -1,0 +1,707 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import RelatedArticles from '../../components/RelatedArticles.astro';
+
+const title = "GetNexo Integrations 2026 - Connect WhatsApp AI with +50 Platforms | Shopify, WooCommerce, Hotmart, VTEX, Bling, PagSeguro";
+const description = "Complete GetNexo integrations: connect WhatsApp AI with Shopify, WooCommerce, Nuvemshop, Hotmart, Kiwify, VTEX, Bling, PagSeguro, n8n, Make. Full automation of sales, orders, and real-time service.";
+const keywords = "whatsapp shopify integration, whatsapp woocommerce, whatsapp hotmart, whatsapp kiwify, whatsapp vtex, whatsapp bling, whatsapp pagseguro, n8n whatsapp, make whatsapp, zapier whatsapp, getnexo integrations, whatsapp api integration, whatsapp sales automation, e-commerce whatsapp, infoproducts whatsapp, erp whatsapp integration, crm whatsapp sync, whatsapp payment pix";
+
+const integrations = [
+  // E-commerce
+  { slug: "shopify", name: "Shopify", icon: "🛍️", category: "E-commerce", status: "active", desc: "Sync products, orders, and recover carts automatically" },
+  { slug: "woocommerce", name: "WooCommerce", icon: "🔌", category: "E-commerce", status: "active", desc: "Native plugin for WordPress stores with checkout integration" },
+  { slug: "nuvemshop", name: "Nuvemshop", icon: "☁️", category: "E-commerce", status: "active", desc: "Official integration with the largest LATAM platform" },
+  { slug: "yampi", name: "Yampi", icon: "🛒", category: "E-commerce", status: "active", desc: "High-conversion transparent checkouts" },
+  { slug: "cartx", name: "Cartx", icon: "📦", category: "E-commerce", status: "active", desc: "Abandoned cart automation" },
+  { slug: "vtex", name: "VTEX", icon: "🚀", category: "E-commerce", status: "active", desc: "Enterprise commerce with advanced automation" },
+  { slug: "wake-commerce", name: "Wake Commerce", icon: "🏬", category: "E-commerce", status: "active", desc: "Robust platform for large retailers" },
+  { slug: "tray", name: "Tray", icon: "🛒", category: "E-commerce", status: "active", desc: "Complete sales ecosystem" },
+  { slug: "loja-integrada", name: "Loja Integrada", icon: "🏪", category: "E-commerce", status: "active", desc: "Popular among SMEs, easy connection" },
+  { slug: "vnda", name: "Vnda", icon: "🛍️", category: "E-commerce", status: "active", desc: "Native omnichannel for DNVB brands" },
+  { slug: "uappi", name: "Uappi", icon: "🆙", category: "E-commerce", status: "active", desc: "Performance and flexibility in checkout" },
+  { slug: "iset", name: "Iset", icon: "🔢", category: "E-commerce", status: "active", desc: "Complete platform for virtual store management" },
+
+  // ERPs
+  { slug: "bling", name: "Bling", icon: "📑", category: "ERP & Management", status: "active", desc: "Invoicing and order management" },
+  { slug: "tiny", name: "Tiny", icon: "🐜", category: "ERP & Management", status: "active", desc: "Automated backoffice for e-commerce" },
+  { slug: "totvs-protheus", name: "Totvs Protheus", icon: "🏢", category: "ERP & Management", status: "active", desc: "The largest ERP in Brazil integrated with WhatsApp" },
+  { slug: "linx", name: "Linx", icon: "🛒", category: "ERP & Management", status: "active", desc: "Leader in physical and digital retail" },
+  { slug: "sankhya", name: "Sankhya", icon: "🔄", category: "ERP & Management", status: "active", desc: "Intelligent corporate management" },
+  { slug: "alterdata", name: "Alterdata", icon: "💻", category: "ERP & Management", status: "active", desc: "Accounting and business solutions" },
+  { slug: "data-system", name: "Data System", icon: "📉", category: "ERP & Management", status: "active", desc: "Specialist in footwear and apparel retail" },
+  { slug: "alternativa", name: "Alternativa", icon: "🅰️", category: "ERP & Management", status: "active", desc: "Robust ERP for store chains" },
+
+  // Payments
+  { slug: "mercado-pago", name: "Mercado Pago", icon: "🤝", category: "Payments", status: "active", desc: "Payment link and PIX in chat" },
+  { slug: "pagseguro", name: "PagSeguro", icon: "📱", category: "Payments", status: "active", desc: "Secure sales with fraud prevention" },
+  { slug: "cielo", name: "Cielo", icon: "💳", category: "Payments", status: "active", desc: "Leader in electronic payments" },
+  { slug: "stone", name: "Stone", icon: "🟢", category: "Payments", status: "active", desc: "Complete financial solutions" },
+  { slug: "pagar-me", name: "Pagar.me", icon: "🐦", category: "Payments", status: "active", desc: "Digital payment infrastructure" },
+  { slug: "vindi", name: "Vindi", icon: "🔄", category: "Payments", status: "active", desc: "Specialist in recurring billing and subscriptions" },
+  { slug: "getnet", name: "Getnet", icon: "🔴", category: "Payments", status: "active", desc: "Santander Global Payment" },
+
+  // CRM
+  { slug: "rd-station", name: "RD Station", icon: "📉", category: "CRM", status: "active", desc: "Leading Marketing Automation in Brazil" },
+  { slug: "crm-bonus", name: "CRM&Bonus", icon: "🎁", category: "CRM", status: "active", desc: "Giftback and customer loyalty" },
+  { slug: "wake-experience", name: "Wake Experience", icon: "🏬", category: "CRM", status: "active", desc: "CDP and CRM for retail" },
+  { slug: "hubspot", name: "HubSpot", icon: "🧲", category: "CRM", status: "active", desc: "Bidirectional Leads and Deals sync" },
+
+  // Logistics/Shipping
+  { slug: "correios", name: "Correios", icon: "📦", category: "Logistics", status: "active", desc: "Automated national tracking" },
+  { slug: "melhor-envio", name: "Melhor Envio", icon: "🚚", category: "Logistics", status: "active", desc: "Simultaneous shipping rate calculation" },
+  { slug: "loggi", name: "Loggi", icon: "🛵", category: "Logistics", status: "active", desc: "Local express delivery" },
+  { slug: "99-entrega", name: "99 Entrega", icon: "🚕", category: "Logistics", status: "active", desc: "Fast corporate delivery" },
+  { slug: "frenet", name: "Frenet", icon: "🚛", category: "Logistics", status: "active", desc: "Intelligent freight gateway" },
+
+  // Infoproducts
+  { slug: "hotmart", name: "Hotmart", icon: "🔥", category: "Infoproducts", status: "active", desc: "Leading sales recovery" },
+  { slug: "kiwify", name: "Kiwify", icon: "🥝", category: "Infoproducts", status: "active", desc: "High-stakes checkout" },
+  { slug: "eduzz", name: "Eduzz", icon: "📱", category: "Infoproducts", status: "active", desc: "Affiliate ecosystem" },
+
+  // Automation & Others
+  { slug: "n8n", name: "n8n", icon: "⚙️", category: "Automation", status: "active", desc: "Unlimited low-code workflows" },
+  { slug: "make", name: "Make", icon: "🔧", category: "Automation", status: "active", desc: "Complex visual integrations" },
+  { slug: "zapier", name: "Zapier", icon: "⚡", category: "Automation", status: "active", desc: "Connect with 6000+ apps without code" },
+  { slug: "google-sheets", name: "Google Sheets", icon: "📊", category: "Data", status: "active", desc: "Spreadsheets as a database" },
+  { slug: "calendly", name: "Calendly", icon: "📅", category: "Scheduling", status: "active", desc: "Meeting scheduling" }
+];
+
+const relatedPosts = [
+  {
+    slug: "seguranca-lgpd-whatsapp-business",
+    title: "Security & GDPR on WhatsApp",
+    category: "Compliance",
+    excerpt: "Keep your company secure and within GDPR standards in 2026."
+  },
+  {
+    slug: "whatsapp-automacao-escala",
+    title: "WhatsApp at Scale",
+    category: "WhatsApp",
+    excerpt: "Manage thousands of conversations with the precision of individual service."
+  },
+  {
+    slug: "audio-commerce-busca-voz",
+    title: "Audio-Commerce: The Future of Voice",
+    category: "Innovation",
+    excerpt: "The exponential growth of audio sales and voice searches."
+  }
+];
+
+const categories = [...new Set(integrations.map(i => i.category))];
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  <section class="integrations-hero">
+    <div class="hero-badge">🔗 Open Ecosystem</div>
+    <h1>GetNexo Integrations: Connect WhatsApp AI with <span class="text-gradient">+50 Platforms</span></h1>
+    <p class="hero-desc">
+      Connect GetNexo with Shopify, WooCommerce, Hotmart, VTEX, Bling, PagSeguro, and more. Automate sales, orders, payments, and service in real-time. Setup in minutes, immediate results.
+    </p>
+  </section>
+
+  <section class="intro-benefits">
+    <div class="container">
+      <h2>Why Integrate GetNexo with Your Tools? Boost Your Results</h2>
+      <p>GetNexo is not just a chatbot - it is an intelligent bridge between WhatsApp and all your systems. Our integrations go far beyond basic connections, offering full automation that transforms conversations into real sales.</p>
+
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <div class="benefit-icon">🚀</div>
+          <h3>Instant Setup</h3>
+          <p>Configure integrations in less than 5 minutes. Our plug-and-play APIs eliminate technical complexity and let you focus on what really matters: selling more.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">💰</div>
+          <h3>Increased Revenue</h3>
+          <p>Integrated companies report an average 300% increase in WhatsApp conversions. Each integration adds an intelligent automation layer to your processes.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">⚡</div>
+          <h3>Bidirectional Sync</h3>
+          <p>Data flows perfectly between systems. E-commerce updates reflect immediately on WhatsApp, ensuring total consistency.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">🛡️</div>
+          <h3>Enterprise Security</h3>
+          <p>End-to-end encryption, GDPR compliance, and full auditing. Your data is more secure with us than anywhere else.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">📊</div>
+          <h3>Advanced Analytics</h3>
+          <p>Track the performance of each integration in real-time. Custom dashboards show the exact ROI of each integrated channel.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">🤖</div>
+          <h3>Context Aware AI</h3>
+          <p>Our AI understands data from all integrated systems, offering personalized responses based on the full customer history.</p>
+        </div>
+      </div>
+
+      <p>Learn more about how our <a href="/en/about">advanced technologies</a> power each integration and how we help companies scale their results with <a href="/en/blog/whatsapp-automation-scale">WhatsApp at scale</a>.</p>
+    </div>
+  </section>
+
+  <section class="use-cases">
+    <div class="container">
+      <h2>Real Use Cases: How Our Integrations Transform Businesses</h2>
+
+      <h3>Integrated E-commerce</h3>
+      <p>Connect Shopify/WooCommerce to WhatsApp and watch your customers buy directly in the chat. Automated abandoned cart recovery, real-time order status updates, and smart delivery notifications.</p>
+
+      <div class="case-study">
+        <h4>Real Case: Online Clothing Store</h4>
+        <ul>
+          <li>✅ 450% increase in conversions via WhatsApp</li>
+          <li>✅ 60% reduction in response time</li>
+          <li>✅ 25% increase in average ticket value</li>
+          <li>✅ Recovery of 35% of abandoned carts</li>
+        </ul>
+      </div>
+
+      <h3>ERP and Business Management</h3>
+      <p>Integrate Totvs Protheus, Bling, or Tiny with WhatsApp. Issue invoices, check stock, update orders, and provide automatic after-sales support based on ERP data.</p>
+
+      <div class="case-study">
+        <h4>Real Case: Auto Parts Distributor</h4>
+        <ul>
+          <li>✅ Real-time stock inquiry via WhatsApp</li>
+          <li>✅ Automatic invoice issuance</li>
+          <li>✅ Smart replenishment orders</li>
+          <li>✅ Contextualized technical support</li>
+        </ul>
+      </div>
+
+      <h3>Payments and Finance</h3>
+      <p>Connect PagSeguro, Mercado Pago, or Stone. Generate automatic payment links, confirm payments instantly, and send receipts directly on WhatsApp.</p>
+
+      <div class="case-study">
+        <h4>Real Case: Financial Consulting</h4>
+        <ul>
+          <li>✅ Automated recurring payments</li>
+          <li>✅ Instant receipt confirmation</li>
+          <li>✅ Smart expiration reminders</li>
+          <li>✅ Financial reports on WhatsApp</li>
+        </ul>
+      </div>
+
+      <p>Discover more success stories and see how to implement these strategies in your business through our <a href="/en/blog">specialized blog</a> on <a href="/en/blog/whatsapp-automation-scale">WhatsApp automation</a>.</p>
+    </div>
+  </section>
+
+  <section class="integration-guide">
+    <div class="container">
+      <h2>Complete Guide: How to Integrate Any System with GetNexo</h2>
+
+      <h3>Step 1: Choose Your Platform</h3>
+      <p>Select the desired integration in our complete catalog. Each platform has specific documentation and dedicated support from our team.</p>
+
+      <h3>Step 2: Technical Configuration</h3>
+      <p>Use our well-documented RESTful APIs. We provide SDKs in multiple languages and webhooks for bidirectional synchronization.</p>
+
+      <h3>Step 3: Data Mapping</h3>
+      <p>Configure how data flows between systems. Define mandatory fields, validations, and specific business rules for your process.</p>
+
+      <h3>Step 4: Testing and Validation</h3>
+      <p>Test all functionalities in a sandbox environment. Our team performs full validation before go-live.</p>
+
+      <h3>Step 5: Continuous Monitoring</h3>
+      <p>Track performance in real-time. Receive automatic alerts and detailed reports on each integration.</p>
+    </div>
+  </section>
+
+  <section class="integrations-grid-section">
+    <div class="filter-tabs">
+      <button class="tab active" data-filter="all">All</button>
+      {categories.map(cat => (
+        <button class="tab" data-filter={cat}>{cat}</button>
+      ))}
+    </div>
+
+    <div class="integrations-grid">
+      {integrations.map(int => (
+        <a href={`/en/integrations/${int.slug}`} class={`integration-card glass-panel ${int.status}`} data-category={int.category}>
+          <div class="int-header">
+            <span class="int-icon">{int.icon}</span>
+            {int.status === 'coming' && <span class="coming-badge">Coming soon</span>}
+          </div>
+          <h3>{int.name}</h3>
+          <span class="int-category">{int.category}</span>
+          <p>{int.desc}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="api-section">
+    <div class="glass-panel api-box">
+      <div class="api-content">
+        <h2>Premium <span class="text-gradient">RESTful</span> API</h2>
+        <p>
+          For custom integrations, use our complete API. Send messages, receive webhooks, 
+          manage contacts, and create unique experiences.
+        </p>
+        <div class="api-features">
+          <span>📄 OpenAPI 3.0</span>
+          <span>🔐 OAuth 2.0</span>
+          <span>📡 Webhooks</span>
+          <span>📊 Dedicated Rate Limits</span>
+        </div>
+        <a href="/en/docs" class="btn-docs">See Documentation →</a>
+      </div>
+      <div class="api-code">
+        <pre><code set:html={`curl -X POST https://api.getnexo.com.br/v1/messages \\
+  -H "Authorization: Bearer YOUR_TOKEN" \\
+  -d '{
+    "to": "5511999999999",
+    "type": "text",
+    "text": "Hello! Your order has been confirmed"
+  }'`}></code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <h2>Need a <span class="text-gradient">custom</span> integration?</h2>
+    <p>Our team can help connect GetNexo with any system.</p>
+    <div class="cta-buttons">
+      <a href="/en/contact" class="btn-primary">Talk to an Expert</a>
+      <a href="/en/create-bot" class="btn-outline">Start for Free</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .integrations-hero {
+    padding: 8rem 5% 4rem;
+    text-align: center;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .intro-benefits, .use-cases, .integration-guide {
+    padding: 4rem 5%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .intro-benefits h2, .use-cases h2, .integration-guide h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .intro-benefits p, .use-cases p, .integration-guide p {
+    font-size: 1.1rem;
+    color: #94a3b8;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    text-align: center;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+  }
+
+  .benefit-card, .case-study {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .benefit-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(0, 212, 255, 0.3);
+  }
+
+  .benefit-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .benefit-card h3 {
+    color: white;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+
+  .benefit-card p {
+    color: #94a3b8;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .case-study {
+    margin: 2rem 0;
+    text-align: left;
+  }
+
+  .case-study h4 {
+    color: #00d4ff;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .case-study ul {
+    padding-left: 2rem;
+  }
+
+  .case-study li {
+    color: #94a3b8;
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+  }
+
+  .integration-guide h3 {
+    color: #00d4ff;
+    font-size: 1.5rem;
+    margin: 2rem 0 1rem;
+  }
+
+  .integration-guide h4 {
+    color: white;
+    font-size: 1.2rem;
+    margin: 1.5rem 0 1rem;
+  }
+
+  .integration-tips {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-top: 2rem;
+  }
+
+  .integration-tips h4 {
+    color: #00d4ff;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+
+  .integration-tips ul {
+    padding-left: 2rem;
+  }
+
+  .integration-tips li {
+    color: #94a3b8;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+
+  .integration-tips strong {
+    color: white;
+  }
+
+  .hero-badge {
+    background: rgba(0, 212, 255, 0.1);
+    color: #00d4ff;
+    padding: 0.5rem 1.2rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    display: inline-block;
+    margin-bottom: 2rem;
+  }
+
+  .integrations-hero h1 {
+    font-size: 3.5rem;
+    color: white;
+    margin-bottom: 1.5rem;
+    font-weight: 900;
+  }
+
+  .hero-desc {
+    font-size: 1.3rem;
+    color: #94a3b8;
+    line-height: 1.6;
+  }
+
+  .integrations-grid-section {
+    padding: 2rem 5% 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .filter-tabs {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+
+  .tab {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #94a3b8;
+    padding: 0.6rem 1.5rem;
+    border-radius: 30px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .tab:hover, .tab.active {
+    background: rgba(0, 212, 255, 0.1);
+    border-color: #00d4ff;
+    color: #00d4ff;
+  }
+
+  .integrations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .integration-card {
+    padding: 2rem;
+    transition: 0.3s;
+    text-decoration: none;
+    display: block;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .integration-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(0, 255, 157, 0.3);
+    background: rgba(255,255,255,0.02);
+  }
+
+  .integration-card.coming {
+    opacity: 0.6;
+  }
+
+  .int-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+
+  .int-icon {
+    font-size: 2.5rem;
+  }
+
+  .coming-badge {
+    background: #eab308;
+    color: black;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .integration-card h3 {
+    color: white;
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-bottom: 0.3rem;
+  }
+
+  .int-category {
+    color: #00d4ff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .integration-card p {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    line-height: 1.5;
+  }
+
+  /* API Section */
+  .api-section {
+    padding: 4rem 5%;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .api-box {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    padding: 3rem;
+    border-radius: 24px;
+  }
+
+  .api-content h2 {
+    font-size: 2rem;
+    color: white;
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+
+  .api-content p {
+    color: #94a3b8;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .api-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-bottom: 2rem;
+  }
+
+  .api-features span {
+    background: rgba(255,255,255,0.05);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: #e2e8f0;
+  }
+
+  .btn-docs {
+    color: #00ff9d;
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 0.95rem;
+  }
+
+  .api-code {
+    background: #0a0f1a;
+    border-radius: 16px;
+    padding: 1.5rem;
+    overflow-x: auto;
+  }
+
+  .api-code pre {
+    margin: 0;
+  }
+
+  .api-code code {
+    color: #00d4ff;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    white-space: pre-wrap;
+  }
+
+  /* CTA */
+  .cta-section {
+    padding: 6rem 5%;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .cta-section h2 {
+    font-size: 2.5rem;
+    color: white;
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+
+  .cta-section p {
+    color: #64748b;
+    font-size: 1.2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #00d4ff, #00ff9d);
+    color: black;
+    padding: 1rem 2.5rem;
+    border-radius: 12px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: 0.3s;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+  }
+
+  .btn-outline {
+    border: 1px solid rgba(255,255,255,0.1);
+    color: white;
+    padding: 1rem 2.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    background: rgba(255,255,255,0.03);
+    transition: 0.3s;
+  }
+
+  .btn-outline:hover {
+    background: rgba(255,255,255,0.08);
+    border-color: #00d4ff;
+  }
+
+  @media (max-width: 900px) {
+    .api-box {
+      grid-template-columns: 1fr;
+    }
+    .integrations-hero h1 {
+      font-size: 2.5rem;
+    }
+
+    .benefits-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .benefit-card, .case-study {
+      padding: 1.5rem;
+    }
+
+    .intro-benefits h2, .use-cases h2, .integration-guide h2 {
+      font-size: 2rem;
+    }
+
+    .benefit-card h3 {
+      font-size: 1.1rem;
+    }
+
+    .integration-guide h3 {
+      font-size: 1.3rem;
+    }
+  }
+</style>
+
+<script is:inline>
+  // Tab filtering
+  const tabs = document.querySelectorAll('.tab');
+  const cards = document.querySelectorAll('.integration-card');
+
+  if (tabs) {
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        
+        const filter = tab.dataset.filter;
+        cards.forEach(card => {
+          if (filter === 'all' || card.dataset.category === filter) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+  }
+</script>
+---

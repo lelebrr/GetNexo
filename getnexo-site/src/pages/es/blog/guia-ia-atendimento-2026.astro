@@ -1,0 +1,57 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "La Guía Definitiva de la Inteligencia Artificial en el Servicio al Cliente 2026",
+      "description": "Descubra cómo la IA está transformando el servicio al cliente. Guía completa sobre chatbots, automatización y personalización extrema.",
+      "author": { "@type": "Organization", "name": "GetNexo" },
+      "publisher": { "@type": "Organization", "name": "GetNexo" },
+      "datePublished": "2026-01-21",
+      "image": "/images/blog/guia_ia_atendimento_2026.png"
+    }
+  ]
+};
+---
+
+<Layout
+  title="Guía IA Servicio al Cliente 2026 | GetNexo"
+  articleSchema={schema}
+  type="article"
+>
+  <article class="post-container">
+    <header class="post-header">
+      <div class="meta">Estrategia • Ene 2026</div>
+      <h1>IA en la Atención:<br/><span class="text-primary">La Guía Definitiva 2026</span></h1>
+      <p class="subtitle">Cómo la Inteligencia Artificial Generativa está redefiniendo la lealtad del cliente.</p>
+      <img src="/images/blog/guia_ia_atendimento_2026.png" alt="IA en el Servicio al Cliente" class="featured-image" />
+    </header>
+
+    <div class="post-content">
+      <section id="introducao">
+        <h2>🚀 La Revolución Silenciosa de la IA</h2>
+        <p>En 2026, el servicio al cliente ya no se trata de responder preguntas; se trata de predecir necesidades.</p>
+      </section>
+
+      <div class="final-cta">
+        <h3>¡Transforme su atención hoy mismo!</h3>
+        <p>La tecnología para el futuro de su negocio ya está disponible en GetNexo.</p>
+        <div class="cta-buttons mt-8">
+          <a href="/es/crear-bot" class="btn-primary">Comenzar Ahora</a>
+        </div>
+      </div>
+    </div>
+  </article>
+</Layout>
+
+<style>
+/* Reusing styles */
+  .post-container { max-width: 1000px; margin: 4rem auto; padding: 0 1.5rem; }
+  .post-header { text-align: center; margin-bottom: 5rem; }
+  h1 { font-size: 3.5rem; font-weight: 900; color: white; }
+  .text-primary { color: #00f7ff; }
+  .btn-primary { background: #00f7ff; color: black; padding: 1.2rem 3.5rem; border-radius: 50px; text-decoration: none; font-weight: 800; }
+</style>
