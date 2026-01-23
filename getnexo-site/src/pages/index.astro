@@ -4,12 +4,27 @@ import VideoDemo from '../components/VideoDemo.astro';
 import ROICalculator from '../components/ROICalculator.astro';
 import Testimonials from '../components/Testimonials.astro';
 import TourGuided from '../components/TourGuided.astro';
+import { verificaDataVariavel } from '../lib/feriados.js';
+
 const title = "Chatbot WhatsApp IA Self-Hosted – Fecha Venda Sozinho | GetNexo";
 const description = "Automação 24h no seu domínio. Sem taxa por mensagem. Integra estoque, frete, PIX. Teste grátis 7 dias. API Oficial Meta + AR + 360°.";
 const keywords = "chatbot whatsapp, ia vendas, automação self hosted, pix no zap, ar produto, giro 360, whatsapp business api oficial, ia para vendas whatsapp, chatbot whatsapp grátis, automação whatsapp vendas, recuperar carrinho abandonado whatsapp, pix no whatsapp automatico";
 
 const lang = 'pt';
 const { default: t } = await import(`../i18n/pt.json`);
+
+// Sistema de Feriados Festivos
+const feriadosData = await fetch('/data/feriados.json').then(r => r.json()).catch(() => ({ feriados: [] }));
+const hoje = new Date().toISOString().slice(0,10);
+const idiomaNavegador = typeof navigator !== 'undefined' ? (navigator.language || 'pt-BR') : 'pt-BR';
+const idiomaCurto = idiomaNavegador.split('-')[0];
+
+const feriadoHoje = feriadosData.feriados.find(f => {
+  if (f.data === hoje) return true;
+  const anoAtual = new Date().getFullYear();
+  const dataCalculada = verificaDataVariavel(f.data, anoAtual);
+  return dataCalculada === hoje;
+});
 
 const homeSchema = {
   "@context": "https://schema.org",
@@ -214,11 +229,34 @@ const homeSchema = {
 ---
 
 <Layout title={title} description={description} keywords={keywords} isLanding={true}>
+  <!-- Importar CSS de efeitos festivos se houver feriado hoje -->
+  {feriadoHoje && (
+    <link rel="stylesheet" href="/custom/css/holiday-effects.css" is:inline />
+  )}
+  
+  <!-- Aplicar efeito visual ao body se houver feriado hoje -->
+  {feriadoHoje && (
+    <script is:inline>
+      document.body.classList.add('{feriadoHoje.efeito}');
+    </script>
+  )}
+  
   <script type="application/ld+json" is:inline set:html={JSON.stringify(homeSchema)}></script>
   
   <!-- Modern Hero with 3D Phone Simulation -->
   <section class="hero-split">
     <div class="hero-content">
+      <!-- Banner de Feriado -->
+      {feriadoHoje && (
+        <div class="feriado-banner reveal">
+          <span class="feriado-emoji">🎉</span>
+          <span class="feriado-texto">
+            {feriadoHoje.bot_frase[idiomaCurto] || feriadoHoje.bot_frase.pt}
+          </span>
+          <span class="feriado-nome">| {feriadoHoje.idiomas[idiomaCurto] || feriadoHoje.idiomas.pt}</span>
+        </div>
+      )}
+      
       <div class="hero-badge reveal">🚀 TRANSFORME SEU WHATSAPP EM UMA MÁQUINA DE VENDAS AUTOMATIZADA</div>
       <h1 class="hero-title reveal" set:html={'<span class="text-gradient">IA INTELIGENTE</span> VENDE 24H/DIA SEM PRECISAR DE ATENDENTES'}</h1>
       <p class="hero-subtitle reveal">
@@ -313,7 +351,13 @@ const homeSchema = {
         <span class="m-label">Mensalidade Fixa</span>
     </div>
   </section>
-  
+
+  <!-- Testimonials Section -->
+  <Testimonials />
+
+  <!-- ROI Calculator Section -->
+  <ROICalculator />
+
   <!-- Giant Features Showcase -->
   <section class="giant-features">
     <!-- Magic Replies -->

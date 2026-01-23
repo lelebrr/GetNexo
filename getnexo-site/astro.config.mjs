@@ -74,7 +74,7 @@ export default defineConfig({
         host: '0.0.0.0', // Permite conexões de qualquer interface de rede
         port: 4322, // Porta específica para desenvolvimento
         headers: {
-            'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.cloudflare.com static.cloudflareinsights.com https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://api.getnexo.com.br https://*.getnexo.com.br; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src * data:; font-src 'self' https://fonts.gstatic.com; connect-src *; object-src 'none'; base-uri 'none'; frame-ancestors *",
+            'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.cloudflare.com static.cloudflareinsights.com https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://api.getnexo.com.br https://*.getnexo.com.br https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src * data: blob:; font-src 'self' https://fonts.gstatic.com; connect-src *; object-src 'none'; base-uri 'none'; frame-ancestors *; script-src-elem 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net; style-src-elem 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net https://fonts.googleapis.com;",
             'Cache-Control': 'public, max-age=31536000, immutable',
             ...(!isVercel ? {} : { 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload' })
         }

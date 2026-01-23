@@ -1,12 +1,11 @@
-// Funções para calcular datas variáveis de feriados otimizadas
+// Sistema de Cálculo de Datas de Feriados Festivos
+// GetNexo - IA para WhatsApp e E-commerce
 
-function calculaCarnaval(ano) {
-    const pascoa = calculaPascoa(ano);
-    const carnaval = new Date(pascoa);
-    carnaval.setDate(carnaval.getDate() - 47);
-    return carnaval.toISOString().slice(0, 10);
-}
-
+/**
+ * Calcula a data da Páscoa usando o algoritmo de Meeus/Jones/Butcher
+ * @param {number} ano - Ano para calcular
+ * @returns {string} Data no formato YYYY-MM-DD
+ */
 function calculaPascoa(ano) {
     const a = ano % 19;
     const b = Math.floor(ano / 100);
@@ -22,79 +21,121 @@ function calculaPascoa(ano) {
     const m = Math.floor((a + 11 * h + 22 * l) / 451);
     const mes = Math.floor((h + l - 7 * m + 114) / 31);
     const dia = ((h + l - 7 * m + 114) % 31) + 1;
-    return new Date(ano, mes - 1, dia);
+    return `${ano}-${mes.toString().padStart(2, '0')}-${dia.toString().padStart(2, '0')}`;
 }
 
-function calculaCorpus(ano) {
-    const pascoa = calculaPascoa(ano);
+/**
+ * Calcula a data do Carnaval (47 dias antes da Páscoa)
+ * @param {number} ano - Ano para calcular
+ * @returns {string} Data no formato YYYY-MM-DD
+ */
+function calculaCarnaval(ano) {
+    const pascoa = new Date(calculaPascoa(ano));
+    const carnaval = new Date(pascoa);
+    carnaval.setDate(carnaval.getDate() - 47);
+    return carnaval.toISOString().slice(0, 10);
+}
+
+/**
+ * Calcula a data do Corpus Christi (60 dias após a Páscoa)
+ * @param {number} ano - Ano para calcular
+ * @returns {string} Data no formato YYYY-MM-DD
+ */
+function calculaCorpusChristi(ano) {
+    const pascoa = new Date(calculaPascoa(ano));
     const corpus = new Date(pascoa);
     corpus.setDate(corpus.getDate() + 60);
     return corpus.toISOString().slice(0, 10);
 }
 
-function blackFriday(ano) {
-    const nov = new Date(ano, 10, 1);
-    const diaSemana = nov.getDay();
-    const ultimaSexta = new Date(nov);
-    ultimaSexta.setDate(nov.getDate() + (5 - diaSemana + 26) % 7);
+/**
+ * Calcula a data da Black Friday (última sexta-feira de novembro)
+ * @param {number} ano - Ano para calcular
+ * @returns {string} Data no formato YYYY-MM-DD
+ */
+function calculaBlackFriday(ano) {
+    const nov = new Date(ano, 10, 1); // 1 de novembro
+    const ultimoDia = new Date(ano, 11, 0); // Último dia de novembro
+    const ultimaSexta = new Date(ultimoDia);
+
+    // Retrocede até encontrar uma sexta-feira (5 = sexta-feira)
+    while (ultimaSexta.getDay() !== 5) {
+        ultimaSexta.setDate(ultimaSexta.getDate() - 1);
+    }
+
     return ultimaSexta.toISOString().slice(0, 10);
 }
 
-function segundoDomingo(mes, ano) {
-    const primeiroDia = new Date(ano, mes, 1);
-    const primeiroDomingo = new Date(primeiroDia);
-    primeiroDomingo.setDate(primeiroDia.getDate() + (7 - primeiroDia.getDay()));
-    const segundoDomingo = new Date(primeiroDomingo);
-    segundoDomingo.setDate(primeiroDomingo.getDate() + 7);
-    return segundoDomingo.toISOString().slice(0, 10);
+/**
+ * Calcula a data do segundo domingo de maio (Dia das Mães)
+ * @param {number} ano - Ano para calcular
+ * @returns {string} Data no formato YYYY-MM-DD
+ */
+function calculaDiaMaes(ano) {
+    const primeiroMaio = new Date(ano, 4, 1); // 1 de maio
+    const diaSemana = primeiroMaio.getDay();
+
+    // Encontra o primeiro domingo de maio
+    const primeiroDomingo = new Date(primeiroMaio);
+    primeiroDomingo.setDate(primeiroMaio.getDate() + (7 - diaSemana) % 7);
+
+    // Adiciona 7 dias para o segundo domingo
+    primeiroDomingo.setDate(primeiroDomingo.getDate() + 7);
+
+    return primeiroDomingo.toISOString().slice(0, 10);
 }
 
-function terceiroQuintaNovembro(ano) {
-    const nov = new Date(ano, 10, 1);
-    const primeiraQuinta = new Date(nov);
-    primeiraQuinta.setDate(nov.getDate() + (4 - nov.getDay() + 7) % 7);
-    const terceiraQuinta = new Date(primeiraQuinta);
-    terceiraQuinta.setDate(primeiraQuinta.getDate() + 14);
-    return terceiraQuinta.toISOString().slice(0, 10);
+/**
+ * Calcula a data do segundo domingo de novembro (Dia da Consciência Negra)
+ * @param {number} ano - Ano para calcular
+ * @returns {string} Data no formato YYYY-MM-DD
+ */
+function calculaDiaConscienciaNegra(ano) {
+    const primeiroNovembro = new Date(ano, 10, 1); // 1 de novembro
+    const diaSemana = primeiroNovembro.getDay();
+
+    // Encontra o primeiro domingo de novembro
+    const primeiroDomingo = new Date(primeiroNovembro);
+    primeiroDomingo.setDate(primeiroNovembro.getDate() + (7 - diaSemana) % 7);
+
+    // Adiciona 7 dias para o segundo domingo
+    primeiroDomingo.setDate(primeiroDomingo.getDate() + 7);
+
+    return primeiroDomingo.toISOString().slice(0, 10);
 }
 
-function terceiraSegundaAbril(ano) {
-    const abr = new Date(ano, 3, 1);
-    const primeiraSegunda = new Date(abr);
-    primeiraSegunda.setDate(abr.getDate() + (1 - abr.getDay() + 7) % 7);
-    const terceiraSegunda = new Date(primeiraSegunda);
-    terceiraSegunda.setDate(primeiraSegunda.getDate() + 14);
-    return terceiraSegunda.toISOString().slice(0, 10);
-}
-
-function sextaAntesPrimavera(ano) {
-    const primavera = new Date(ano, 8, 22); // 22 de setembro
-    if (primavera.getDay() === 5) primavera.setDate(primavera.getDate() - 7);
-    while (primavera.getDay() !== 5) primavera.setDate(primavera.getDate() - 1);
-    return primavera.toISOString().slice(0, 10);
-}
-
-function variavelOrgulho(ano) {
-    // Junho é mês do orgulho LGBTQ+
-    return `${ano}-06-28`; // Último dia de junho
-}
-
-function verificaDataVariavel(data, ano) {
-    switch (data) {
-        case 'variavel_carnaval': return calculaCarnaval(ano);
-        case 'variavel_pascoa': return calculaPascoa(ano).toISOString().slice(0, 10);
-        case 'variavel_corpus': return calculaCorpus(ano);
-        case 'variavel_blackfriday': return blackFriday(ano);
-        case 'segundo_domingo_maio': return segundoDomingo(4, ano);
-        case 'segundo_domingo_agosto': return segundoDomingo(7, ano);
-        case 'segundo_domingo_setembro': return segundoDomingo(8, ano);
-        case 'primeiro_domingo_julho': return segundoDomingo(6, ano); // primeiro domingo julho
-        case 'terceira_quinta_novembro': return terceiroQuintaNovembro(ano);
-        case 'terceira_segunda_abril': return terceiraSegundaAbril(ano);
-        case 'sexta_antes_primavera': return sextaAntesPrimavera(ano);
-        case 'variavel_orgulho': return variavelOrgulho(ano);
-        default: return data;
+/**
+ * Verifica se uma data variável corresponde à data atual
+ * @param {string} tipo - Tipo de data variável
+ * @param {number} ano - Ano atual
+ * @returns {string|null} Data calculada ou null se não reconhecida
+ */
+export function verificaDataVariavel(tipo, ano) {
+    switch (tipo) {
+        case 'variavel_carnaval':
+            return calculaCarnaval(ano);
+        case 'variavel_pascoa':
+            return calculaPascoa(ano);
+        case 'variavel_corpus':
+            return calculaCorpusChristi(ano);
+        case 'variavel_blackfriday':
+            return calculaBlackFriday(ano);
+        case 'segundo_domingo_maio':
+            return calculaDiaMaes(ano);
+        case 'segundo_domingo_novembro':
+            return calculaDiaConscienciaNegra(ano);
+        default:
+            return null;
     }
 }
 
-export { verificaDataVariavel };
+// Teste das funções (descomente para debugar)
+/*
+console.log('Testes de cálculo de feriados:');
+console.log('Carnaval 2026:', calculaCarnaval(2026));
+console.log('Páscoa 2026:', calculaPascoa(2026));
+console.log('Corpus Christi 2026:', calculaCorpusChristi(2026));
+console.log('Black Friday 2026:', calculaBlackFriday(2026));
+console.log('Dia das Mães 2026:', calculaDiaMaes(2026));
+console.log('Dia da Consciência Negra 2026:', calculaDiaConscienciaNegra(2026));
+*/
