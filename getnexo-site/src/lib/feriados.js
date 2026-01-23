@@ -105,6 +105,60 @@ function calculaDiaConscienciaNegra(ano) {
 }
 
 /**
+ * Calcula a data do Dia de Ação de Graças EUA (quarta quinta-feira de novembro)
+ * @param {number} ano - Ano para calcular
+ * @returns {string} Data no formato YYYY-MM-DD
+ */
+function calculaThanksgiving(ano) {
+    const nov = new Date(ano, 10, 1); // 1 de novembro
+    const diaSemana = nov.getDay();
+
+    // Encontra a primeira quinta-feira (4 = quinta-feira)
+    const primeiraQuinta = new Date(nov);
+    primeiraQuinta.setDate(nov.getDate() + (4 - diaSemana + 7) % 7);
+
+    // Adiciona 21 dias para a quarta quinta-feira
+    primeiraQuinta.setDate(primeiraQuinta.getDate() + 21);
+
+    return primeiraQuinta.toISOString().slice(0, 10);
+}
+
+/**
+ * Calcula a data do Ano Novo Chinês (baseado no calendário lunar)
+ * @param {number} ano - Ano para calcular
+ * @returns {string} Data aproximada no formato YYYY-MM-DD
+ */
+function calculaAnoNovoChines(ano) {
+    // Usando uma fórmula aproximada baseada no calendário lunar chinês
+    // O Ano Novo Chinês varia entre 21 de janeiro e 20 de fevereiro
+    const baseDate = new Date(ano, 0, 21); // 21 de janeiro como base
+    // Esta é uma simplificação; na prática seria necessário um calendário lunar preciso
+    return baseDate.toISOString().slice(0, 10);
+}
+
+/**
+ * Calcula a data da Oktoberfest (tipicamente começa na última semana de setembro)
+ * @param {number} ano - Ano para calcular
+ * @returns {string} Data aproximada no formato YYYY-MM-DD
+ */
+function calculaOktoberfest(ano) {
+    // Oktoberfest começa na última semana de setembro
+    const set = new Date(ano, 8, 15); // 15 de setembro
+    return set.toISOString().slice(0, 10);
+}
+
+/**
+ * Calcula a data do Dia da Árvore (varia por região, assumindo primavera)
+ * @param {number} ano - Ano para calcular
+ * @returns {string} Data no formato YYYY-MM-DD
+ */
+function calculaDiaArvore(ano) {
+    // Dia da Árvore varia, assumindo 21 de setembro (primavera no hemisfério sul)
+    const out = new Date(ano, 8, 21);
+    return out.toISOString().slice(0, 10);
+}
+
+/**
  * Verifica se uma data variável corresponde à data atual
  * @param {string} tipo - Tipo de data variável
  * @param {number} ano - Ano atual
@@ -124,6 +178,14 @@ export function verificaDataVariavel(tipo, ano) {
             return calculaDiaMaes(ano);
         case 'segundo_domingo_novembro':
             return calculaDiaConscienciaNegra(ano);
+        case 'variavel_thanksgiving':
+            return calculaThanksgiving(ano);
+        case 'variavel_chines_novo':
+            return calculaAnoNovoChines(ano);
+        case 'variavel_oktoberfest':
+            return calculaOktoberfest(ano);
+        case 'variavel_arvore':
+            return calculaDiaArvore(ano);
         default:
             return null;
     }

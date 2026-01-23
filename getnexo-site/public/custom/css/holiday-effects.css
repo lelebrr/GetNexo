@@ -841,6 +841,1104 @@
 }
 
 /* Reduce motion for accessibility */
+/* Fogos de Independência */
+.fogos_independencia {
+    background: linear-gradient(45deg, #ff4444, #ffffff, #4444ff);
+    background-size: 400% 400%;
+    animation: independenceFireworks 2s ease-in-out infinite alternate;
+}
+
+@keyframes independenceFireworks {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* Fantasmas e Abóboras */
+.fantasmas_aboboras {
+    background: linear-gradient(135deg, #ff6b35 0%, #2d1b69 100%);
+    position: relative;
+}
+
+.fantasmas_aboboras::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+        radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.8) 20px, transparent 20px),
+        radial-gradient(circle at 80% 70%, #ff6b35 25px, transparent 25px),
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.6) 15px, transparent 15px);
+    animation: halloweenSpook 4s ease-in-out infinite;
+}
+
+@keyframes halloweenSpook {
+
+    0%,
+    100% {
+        opacity: 0.7;
+        transform: translateY(0);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translateY(-10px);
+    }
+}
+
+/* Peru Festa */
+.peru_festa {
+    background: linear-gradient(135deg, #d2691e 0%, #8b4513 100%);
+    position: relative;
+}
+
+.peru_festa::before {
+    content: '🦃';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 5rem;
+    animation: turkeyDance 3s ease-in-out infinite;
+}
+
+@keyframes turkeyDance {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.1) rotate(10deg);
+    }
+}
+
+/* Noel Americano */
+.noel_americano {
+    background: linear-gradient(135deg, #b22222 0%, #ffffff 50%, #228b22 100%);
+    position: relative;
+}
+
+.noel_americano::before {
+    content: '🎅';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: santaWave 4s ease-in-out infinite;
+}
+
+@keyframes santaWave {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+}
+
+/* Dragão Fogos */
+.dragao_fogos {
+    background: linear-gradient(45deg, #ff0000, #ffff00, #ff0000);
+    position: relative;
+}
+
+.dragao_fogos::before {
+    content: '🐉';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 6rem;
+    animation: dragonFly 5s linear infinite;
+}
+
+@keyframes dragonFly {
+    0% {
+        transform: translate(-50%, -50%) translateX(-20px);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) translateX(20px);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) translateX(-20px);
+    }
+}
+
+/* Trevos Verdes */
+.trevos_verdes {
+    background: linear-gradient(135deg, #228b22 0%, #32cd32 100%);
+    position: relative;
+}
+
+.trevos_verdes::before {
+    content: '🍀';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: cloverLuck 3s ease-in-out infinite;
+}
+
+@keyframes cloverLuck {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.2) rotate(180deg);
+    }
+}
+
+/* Arco Íris Orgulho */
+.arco_iris_orgulho {
+    background: linear-gradient(45deg, #ff0000, #ff8000, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+    animation: prideWave 6s ease-in-out infinite;
+}
+
+@keyframes prideWave {
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* Rosa Europeia */
+.rosa_europeia {
+    background: linear-gradient(135deg, #ffb6c1 0%, #ff69b4 100%);
+    position: relative;
+}
+
+.rosa_europeia::before {
+    content: '🌹';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: roseBloom 4s ease-in-out infinite;
+}
+
+@keyframes roseBloom {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+        opacity: 1;
+    }
+}
+
+/* Bandeira Francesa */
+.bandeira_franca {
+    background: linear-gradient(90deg, #002654 0%, #ffffff 33%, #ed2939 66%);
+    animation: frenchFlag 4s ease-in-out infinite;
+}
+
+@keyframes frenchFlag {
+
+    0%,
+    100% {
+        background-position: 0 0;
+    }
+
+    50% {
+        background-position: 10px 0;
+    }
+}
+
+/* Cerveja Caneco */
+.cerveja_caneco {
+    background: linear-gradient(135deg, #ffd700 0%, #daa520 100%);
+    position: relative;
+}
+
+.cerveja_caneco::before {
+    content: '🍺';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: beerFoam 2s ease-in-out infinite;
+}
+
+@keyframes beerFoam {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+}
+
+/* Fita Colorida */
+.fita_colorida {
+    background: linear-gradient(45deg, #ff0000, #ff8000, #ffff00, #00ff00, #0000ff, #4b0082);
+    position: relative;
+}
+
+.fita_colorida::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255, 255, 255, 0.3) 20px, rgba(255, 255, 255, 0.3) 40px);
+    animation: ribbonBurn 3s ease-in-out infinite;
+}
+
+@keyframes ribbonBurn {
+
+    0%,
+    100% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Livro Graduação */
+.livro_graduacao {
+    background: linear-gradient(135deg, #8b4513 0%, #daa520 100%);
+    position: relative;
+}
+
+.livro_graduacao::before {
+    content: '🎓📚';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: graduationCap 4s ease-in-out infinite;
+}
+
+@keyframes graduationCap {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.1) rotate(5deg);
+    }
+}
+
+/* Lousa Quadro */
+.lousa_quadro {
+    background: linear-gradient(135deg, #000000 0%, #2f4f4f 100%);
+    position: relative;
+}
+
+.lousa_quadro::before {
+    content: '👩‍🏫';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: teacherWrite 3s ease-in-out infinite;
+}
+
+@keyframes teacherWrite {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+}
+
+/* Folhas Árvore */
+.folhas_arvore {
+    background: linear-gradient(135deg, #228b22 0%, #32cd32 100%);
+    position: relative;
+}
+
+.folhas_arvore::before {
+    content: '🌳';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 5rem;
+    animation: treeGrow 5s ease-in-out infinite;
+}
+
+@keyframes treeGrow {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+}
+
+/* Onda Azul */
+.onda_azul {
+    background: linear-gradient(135deg, #4169e1 0%, #00bfff 100%);
+    position: relative;
+}
+
+.onda_azul::before {
+    content: '🌊';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: waterWave 3s ease-in-out infinite;
+}
+
+@keyframes waterWave {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+}
+
+/* Planeta Terra */
+.planeta_terra {
+    background: linear-gradient(135deg, #4169e1 0%, #228b22 50%, #daa520 100%);
+    position: relative;
+}
+
+.planeta_terra::before {
+    content: '🌍';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 5rem;
+    animation: earthSpin 6s linear infinite;
+}
+
+@keyframes earthSpin {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* Reciclagem Verde */
+.reciclagem_verde {
+    background: linear-gradient(135deg, #228b22 0%, #32cd32 100%);
+    position: relative;
+}
+
+.reciclagem_verde::before {
+    content: '♻️';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: recycleSpin 4s linear infinite;
+}
+
+@keyframes recycleSpin {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* Livros Abertos */
+.livros_abertos {
+    background: linear-gradient(135deg, #8b4513 0%, #daa520 100%);
+    position: relative;
+}
+
+.livros_abertos::before {
+    content: '📖';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: bookFlip 3s ease-in-out infinite;
+}
+
+@keyframes bookFlip {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+}
+
+/* Mulher Empoderada */
+.mulher_empoderada {
+    background: linear-gradient(135deg, #ff69b4 0%, #ffb6c1 100%);
+    position: relative;
+}
+
+.mulher_empoderada::before {
+    content: '💪👩';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: empowerGlow 4s ease-in-out infinite;
+}
+
+@keyframes empowerGlow {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.05);
+        opacity: 1;
+    }
+}
+
+/* Cruz Vermelha */
+.cruz_vermelha {
+    background: linear-gradient(135deg, #ffffff 0%, #ff0000 100%);
+    position: relative;
+}
+
+.cruz_vermelha::before {
+    content: '⛑️';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: healthPulse 3s ease-in-out infinite;
+}
+
+@keyframes healthPulse {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+}
+
+/* Consumidor Protegido */
+.consumidor_protegido {
+    background: linear-gradient(135deg, #4169e1 0%, #ffffff 100%);
+    position: relative;
+}
+
+.consumidor_protegido::before {
+    content: '⚖️';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: justiceBalance 4s ease-in-out infinite;
+}
+
+@keyframes justiceBalance {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) rotate(5deg);
+    }
+}
+
+/* Mala Viagem */
+.mala_viagem {
+    background: linear-gradient(135deg, #daa520 0%, #8b4513 100%);
+    position: relative;
+}
+
+.mala_viagem::before {
+    content: '🧳✈️';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: travelFly 4s ease-in-out infinite;
+}
+
+@keyframes travelFly {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) translateX(0);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) translateX(20px);
+    }
+}
+
+/* Comida Saudável */
+.comida_saudavel {
+    background: linear-gradient(135deg, #ff6347 0%, #32cd32 50%, #daa520 100%);
+    position: relative;
+}
+
+.comida_saudavel::before {
+    content: '🥗🍎';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: foodFresh 3s ease-in-out infinite;
+}
+
+@keyframes foodFresh {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+}
+
+/* Pomba Paz */
+.pomba_paz {
+    background: linear-gradient(135deg, #ffffff 0%, #87ceeb 100%);
+    position: relative;
+}
+
+.pomba_paz::before {
+    content: '🕊️';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: peaceFly 5s ease-in-out infinite;
+}
+
+@keyframes peaceFly {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) translateY(0);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) translateY(-20px);
+    }
+}
+
+/* Mão União */
+.mao_uniao {
+    background: linear-gradient(135deg, #ffb6c1 0%, #add8e6 100%);
+    position: relative;
+}
+
+.mao_uniao::before {
+    content: '🤝';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: handsTogether 4s ease-in-out infinite;
+}
+
+@keyframes handsTogether {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+}
+
+/* Criança Feliz */
+.crianca_feliz {
+    background: linear-gradient(135deg, #ffb6c1 0%, #ffff00 50%, #add8e6 100%);
+    position: relative;
+}
+
+.crianca_feliz::before {
+    content: '👶😊';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: childJoy 3s ease-in-out infinite;
+}
+
+@keyframes childJoy {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+}
+
+/* Acessibilidade Universal */
+.acessibilidade_universal {
+    background: linear-gradient(135deg, #ffffff 0%, #0000ff 100%);
+    position: relative;
+}
+
+.acessibilidade_universal::before {
+    content: '♿';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: accessibilityGlow 4s ease-in-out infinite;
+}
+
+@keyframes accessibilityGlow {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.05);
+        opacity: 1;
+    }
+}
+
+/* Fita Vermelha */
+.fita_vermelha {
+    background: linear-gradient(135deg, #ffffff 0%, #ff0000 100%);
+    position: relative;
+}
+
+.fita_vermelha::before {
+    content: '🎗️';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: ribbonWave 4s ease-in-out infinite;
+}
+
+@keyframes ribbonWave {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+}
+
+/* Templo Japonês */
+.templo_japones {
+    background: linear-gradient(135deg, #8b4513 0%, #daa520 100%);
+    position: relative;
+}
+
+.templo_japones::before {
+    content: '⛩️';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: templeGlow 5s ease-in-out infinite;
+}
+
+@keyframes templeGlow {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.05);
+        opacity: 1;
+    }
+}
+
+/* Mão Chinesa */
+.mao_chinesa {
+    background: linear-gradient(135deg, #ff0000 0%, #ffff00 100%);
+    position: relative;
+}
+
+.mao_chinesa::before {
+    content: '👷';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: workHard 3s ease-in-out infinite;
+}
+
+@keyframes workHard {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+}
+
+/* Estrela Vitória */
+.estrela_vitoria {
+    background: linear-gradient(135deg, #daa520 0%, #ff0000 100%);
+    position: relative;
+}
+
+.estrela_vitoria::before {
+    content: '⭐';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: starShine 4s ease-in-out infinite;
+}
+
+@keyframes starShine {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 1;
+    }
+}
+
+/* Canguru Austrália */
+.canguru_australia {
+    background: linear-gradient(135deg, #00008b 0%, #ffffff 50%, #ff0000 100%);
+    position: relative;
+}
+
+.canguru_australia::before {
+    content: '🦘';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: kangarooJump 3s ease-in-out infinite;
+}
+
+@keyframes kangarooJump {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) translateY(0);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) translateY(-30px);
+    }
+}
+
+/* Mulher Africana */
+.mulher_africana {
+    background: linear-gradient(135deg, #228b22 0%, #ffff00 50%, #ff0000 100%);
+    position: relative;
+}
+
+.mulher_africana::before {
+    content: '👩🏾';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: africanPride 4s ease-in-out infinite;
+}
+
+@keyframes africanPride {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+}
+
+/* Bandeira Indiana */
+.bandeira_india {
+    background: linear-gradient(135deg, #ff9933 0%, #ffffff 50%, #128807 100%);
+    position: relative;
+}
+
+.bandeira_india::before {
+    content: '🇮🇳';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: indiaFlag 5s ease-in-out infinite;
+}
+
+@keyframes indiaFlag {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+}
+
+/* Sombrero México */
+.sombrero_mexico {
+    background: linear-gradient(135deg, #006847 0%, #ffffff 50%, #ce1126 100%);
+    position: relative;
+}
+
+.sombrero_mexico::before {
+    content: '🎩';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: mexicoDance 3s ease-in-out infinite;
+}
+
+@keyframes mexicoDance {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    25% {
+        transform: translate(-50%, -50%) rotate(5deg);
+    }
+
+    75% {
+        transform: translate(-50%, -50%) rotate(-5deg);
+    }
+}
+
+/* Constituição Brasil */
+.constituicao_brasil {
+    background: linear-gradient(135deg, #009c3b 0%, #ffcc29 50%, #002776 100%);
+    position: relative;
+}
+
+.constituicao_brasil::before {
+    content: '📜⚖️';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: constitutionParchment 4s ease-in-out infinite;
+}
+
+@keyframes constitutionParchment {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+}
+
+/* Servidor Público */
+.servidor_publico {
+    background: linear-gradient(135deg, #4169e1 0%, #ffffff 100%);
+    position: relative;
+}
+
+.servidor_publico::before {
+    content: '👨‍💼';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: publicService 4s ease-in-out infinite;
+}
+
+@keyframes publicService {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.02);
+    }
+}
+
+/* Livro Brasil */
+.livro_brasil {
+    background: linear-gradient(135deg, #009c3b 0%, #ffcc29 50%, #002776 100%);
+    position: relative;
+}
+
+.livro_brasil::before {
+    content: '📚🇧🇷';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: brazilBook 4s ease-in-out infinite;
+}
+
+@keyframes brazilBook {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+}
+
+/* Bandeira Brasil Ondulando */
+.bandeira_brasil_ondulando {
+    background: linear-gradient(135deg, #009c3b 0%, #ffcc29 50%, #002776 100%);
+    animation: brazilFlagWave 6s ease-in-out infinite;
+}
+
+@keyframes brazilFlagWave {
+
+    0%,
+    100% {
+        background-position: 0 0;
+    }
+
+    50% {
+        background-position: 20px 0;
+    }
+}
+
+/* Engenheiro Técnico */
+.engenheiro_tecnico {
+    background: linear-gradient(135deg, #ff6347 0%, #daa520 100%);
+    position: relative;
+}
+
+.engenheiro_tecnico::before {
+    content: '👷‍♂️⚙️';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: engineerBuild 4s ease-in-out infinite;
+}
+
+@keyframes engineerBuild {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.02);
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .feriado-ativo {
         animation: none !important;

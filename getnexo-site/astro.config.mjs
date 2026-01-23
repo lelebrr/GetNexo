@@ -10,15 +10,19 @@ import { initSocket } from './src/server.js';
 import sharp from 'sharp';
 
 const isVercel = process.env.VERCEL === '1';
+const isDev = process.env.NODE_ENV !== 'production';
 
 export default defineConfig({
-    output: 'server',
+    output: isDev ? 'server' : 'server',
     adapter: isVercel
         ? vercel({ webAnalytics: { enabled: true } })
-        : node({
-            mode: 'standalone',
-            server: './src/server-entry.js'
-        }),
+        : (isDev
+            ? undefined // Usa o servidor de dev padrão do Astro
+            : node({
+                mode: 'standalone',
+                server: './src/server-entry.js'
+            })
+        ),
     site: 'https://getnexo.com.br',
     trailingSlash: 'never',
     devToolbar: {
