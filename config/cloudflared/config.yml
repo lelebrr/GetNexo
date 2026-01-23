@@ -1,20 +1,22 @@
-# credentials-file removed - Using Tunnel Token via Environment Variable
+# Usando tunnel existente que estava funcionando
+tunnel: d3f3dd2f-6e4d-45e5-a182-aa36cc8db06c
+credentials-file: /root/.cloudflared/cert.pem
+origincert: /root/.cloudflared/cert.pem
 
 ingress:
-  # 1. Frontend (Landing Page)
+  # 1. Frontend (Landing Page) - PRODUCTION MODE
   - hostname: getnexo.com.br
     service: http://frontend:4321
 
-  # 2. Chatwoot / Widget Host seems to rely on Frontend proxy or Direct?
-  # Prompt says "Widget: chat no canto da tela conecta" - usually via API
+  # 2. Chatwoot / Widget Host - PRODUCTION MODE
   - hostname: chat.getnexo.com.br
     service: http://frontend:4321
 
   # 3. Evolution API / OmniNexo Backend
   - hostname: api.getnexo.com.br
-    service: http://chat-api:3006
+    service: http://backend:3006
 
-  # 4. Admin Panel (Frontend Route)
+  # 4. Admin Panel (Frontend Route) - PRODUCTION MODE
   - hostname: admin.getnexo.com.br
     service: http://frontend:4321
 

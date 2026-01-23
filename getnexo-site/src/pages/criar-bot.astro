@@ -223,7 +223,6 @@ import Layout from '../layouts/Layout.astro';
   <script is:inline>
     // State Management
     let currentUser = null;
-    let itiReg = null;
     let registrationData = {};
     let selectedTheme = 'neon';
 
@@ -247,7 +246,7 @@ import Layout from '../layouts/Layout.astro';
     function showAuthGate() {
       document.getElementById('auth-gate').classList.remove('hidden');
       document.getElementById('wizard-section').classList.add('hidden');
-      initTelInput();
+      // initTelInput(); // Removido - causando erros
       initMasks();
     }
 
@@ -309,14 +308,15 @@ import Layout from '../layouts/Layout.astro';
       const fd = new FormData(e.target);
       const data = Object.fromEntries(fd.entries());
       
-      // Validate WhatsApp
-      if (!itiReg.isValidNumber()) {
+      // Validate WhatsApp (simplificada)
+      const whatsapp = data.whatsapp.replace(/\D/g, '');
+      if (whatsapp.length < 11 || whatsapp.length > 12) {
         document.getElementById('reg-error').textContent = '❌ WhatsApp inválido. Digite ddd + número.';
         btn.disabled = false;
         btn.textContent = 'Criar Minha Conta →';
         return;
       }
-      data.whatsapp = itiReg.getNumber();
+      data.whatsapp = whatsapp;
 
       registrationData = data;
 

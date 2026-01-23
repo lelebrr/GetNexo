@@ -44,7 +44,7 @@ export default defineConfig({
     ],
     compressHTML: true,
     build: {
-        inlineStylesheets: 'always', // Crítico para LCP
+        inlineStylesheets: 'auto', // Mudado de 'always' para 'auto' para evitar conflitos com Rocket Loader
     },
     image: {
         service: {
@@ -72,8 +72,9 @@ export default defineConfig({
     // Compressão gzip/brotli para assets estáticos
     server: {
         host: '0.0.0.0', // Permite conexões de qualquer interface de rede
+        port: 4322, // Porta específica para desenvolvimento
         headers: {
-            'Content-Encoding': 'gzip, br',
+            'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.cloudflare.com static.cloudflareinsights.com https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://api.getnexo.com.br https://*.getnexo.com.br; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src * data:; font-src 'self' https://fonts.gstatic.com; connect-src *; object-src 'none'; base-uri 'none'; frame-ancestors *",
             'Cache-Control': 'public, max-age=31536000, immutable',
             ...(!isVercel ? {} : { 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload' })
         }
@@ -89,11 +90,18 @@ export default defineConfig({
             }
         }] : [],
         build: {
-            target: 'es2022',
+            target: 'es2017',
             cssCodeSplit: true,
             chunkSizeWarningLimit: 500,
             modulePreload: {
-                polyfill: true // Restaurado para manter funcionalidade
+                polyfill: false // Desabilitado para evitar conflitos com Rocket Loader
+            },
+            // Adicionar headers para forçar desabilitação do Rocket Loader
+            security: {
+                contentSecurityPolicy: {
+                    'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+                    'style-src': ["'self'", "'unsafe-inline'"],
+                }
             },
             rollupOptions: {
                 output: {

@@ -1,0 +1,15 @@
+---
+import Layout from '../layouts/Layout.astro';
+const title = 'Página Simples';
+const description = 'Página simples para teste';
+const keywords = 'teste';
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  <div style="padding: 2rem; background: white; color: black; min-height: 100vh;">
+    <h1 style="color: red;">Página Simples com Layout</h1>
+    <p>Esta página usa o Layout.astro.</p>
+    <p>Se você ver este texto, o Layout está funcionando.</p>
+    <p style="background: yellow; padding: 1rem;">Texto visível em fundo amarelo</p>
+  </div>
+</Layout>

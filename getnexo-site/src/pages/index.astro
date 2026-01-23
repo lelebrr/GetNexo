@@ -260,7 +260,7 @@ const homeSchema = {
   </section>
 
   <!-- Tour Guided Component -->
-  <TourGuided targetPage="home" mobileOptimized={true} client:load />
+  <TourGuided targetPage="home" mobileOptimized={true} />
 
   <!-- Value Propositions Grid -->
     <div class="section-header reveal">
@@ -1352,7 +1352,11 @@ const homeSchema = {
   .section-header h2 { font-size: 3rem; font-weight: 800; margin-bottom: 1rem; }
   .section-header p { color: #e2e8f0; font-size: 1.2rem; }
 
-  .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+  .grid-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+
+  @media (max-width: 768px) {
+    .grid-cards { grid-template-columns: 1fr; }
+  }
   .p-card { padding: 3rem; transition: 0.3s; }
   .p-card:hover { transform: translateY(-10px); border-color: #00ff9d; }
   .p-icon { font-size: 2.5rem; margin-bottom: 1.5rem; }

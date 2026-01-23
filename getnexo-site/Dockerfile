@@ -9,7 +9,7 @@ COPY astro.config.mjs ./
 COPY tsconfig.json ./
 
 # Instalar dependências
-RUN npm ci
+RUN npm install
 
 # Copiar código fonte
 COPY src ./src
@@ -35,6 +35,7 @@ RUN echo 'server {\
     \
     # Headers para controlar Cloudflare\
     add_header Cache-Control "no-transform";\
+    add_header CF-RAY "disable-rocket-loader";\
     add_header X-Frame-Options "SAMEORIGIN" always;\
     \
     # Configuração para SPA (Single Page Application)\

@@ -1,7 +1,8 @@
+---
 import { verifyToken } from '../../../lib/auth.js';
 
-export async function get(req) {
-    const cookies = req.headers.get('cookie') || '';
+export async function GET({ request }) {
+    const cookies = request.headers.get('cookie') || '';
     const tokenMatch = cookies.match(/auth_token=([^;]+)/);
 
     if (!tokenMatch) {
@@ -27,7 +28,7 @@ export async function get(req) {
     });
 }
 
-export async function post(req) {
+export async function POST({ request }) {
     // Logout
     return new Response(JSON.stringify({ success: true }), {
         headers: {
@@ -36,3 +37,4 @@ export async function post(req) {
         }
     });
 }
+---

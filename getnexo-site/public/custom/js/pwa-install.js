@@ -33,6 +33,47 @@ class PWAInstallPrompt {
                 this.showUpdateNotification();
             }
         });
+
+        // Adicionar CSS da animação
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideUp {
+                from {
+                    opacity: 0;
+                    transform: translateX(-50%) translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(-50%) translateY(0);
+                }
+            }
+
+            #install-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+            }
+
+            #install-btn::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+                transition: left 0.5s;
+            }
+
+            #install-btn:hover::before {
+                left: 100%;
+            }
+
+            #dismiss-btn:hover {
+                background: rgba(255,255,255,0.2);
+                transform: scale(1.1);
+            }
+        `;
+        document.head.appendChild(style);
     }
 
     showInstallPrompt() {
@@ -42,44 +83,84 @@ class PWAInstallPrompt {
             <div style="
                 position: fixed;
                 bottom: 20px;
-                left: 20px;
-                right: 20px;
-                background: linear-gradient(90deg, #00d4ff, #00ff9d);
-                color: #000;
-                padding: 1rem;
-                border-radius: 10px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                left: 50%;
+                transform: translateX(-50%);
+                width: 90%;
+                max-width: 400px;
+                background: rgba(15, 23, 42, 0.9);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(0, 212, 255, 0.2);
+                color: #fff;
+                padding: 1rem 1.5rem;
+                border-radius: 20px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.3);
                 z-index: 10000;
                 display: flex;
-                justify-content: space-between;
+                flex-direction: column;
                 align-items: center;
+                gap: 1rem;
                 font-family: 'Inter', sans-serif;
+                animation: slideUp 0.3s ease-out;
             ">
-                <div>
-                    <strong>Instalar GetNexo</strong><br>
-                    <small>App PWA completo com funcionalidades offline</small>
+                <div style="text-align: center;">
+                    <div style="font-size: 1.2rem; font-weight: 800; background: linear-gradient(90deg, #00d4ff, #00ff9d); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.5rem;">
+                        🚀 TRANSFORME SEU NAVEGADOR!
+                    </div>
+                    <div style="font-size: 0.9rem; color: #94a3b8; line-height: 1.4;">
+                        GetNexo no seu desktop - IA sempre disponível, sem precisar abrir o navegador!
+                    </div>
                 </div>
-                <div>
+
+                <div id="countdown-timer" style="
+                    font-size: 0.8rem;
+                    color: #00d4ff;
+                    font-weight: 600;
+                    background: rgba(0, 212, 255, 0.1);
+                    padding: 0.3rem 0.8rem;
+                    border-radius: 20px;
+                    border: 1px solid rgba(0, 212, 255, 0.3);
+                ">
+                    Fecha automaticamente em <span id="countdown-seconds">30</span>s
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
                     <button id="install-btn" style="
-                        background: #000;
-                        color: #fff;
-                        border: none;
-                        padding: 0.5rem 1rem;
-                        border-radius: 5px;
-                        cursor: pointer;
-                        margin-right: 0.5rem;
-                    ">Instalar</button>
-                    <button id="dismiss-btn" style="
-                        background: transparent;
+                        background: linear-gradient(135deg, #00d4ff, #00ff9d);
                         color: #000;
                         border: none;
+                        padding: 0.6rem 1.2rem;
+                        border-radius: 25px;
                         cursor: pointer;
+                        font-weight: 700;
+                        font-size: 0.9rem;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+                        position: relative;
+                        overflow: hidden;
+                    ">📱 Instalar Agora</button>
+                    <button id="dismiss-btn" style="
+                        background: rgba(255,255,255,0.1);
+                        color: #fff;
+                        border: 1px solid rgba(255,255,255,0.2);
+                        padding: 0.6rem;
+                        border-radius: 50%;
+                        cursor: pointer;
+                        font-size: 1rem;
+                        width: 40px;
+                        height: 40px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        transition: 0.3s;
                     ">✕</button>
                 </div>
             </div>
         `;
 
         document.body.appendChild(installToast);
+
+        // Start countdown timer
+        this.startCountdown();
 
         document.getElementById('install-btn').addEventListener('click', () => {
             this.installPWA();
@@ -95,6 +176,25 @@ class PWAInstallPrompt {
         if (toast) {
             toast.remove();
         }
+        if (this.countdownInterval) {
+            clearInterval(this.countdownInterval);
+        }
+    }
+
+    startCountdown() {
+        let seconds = 30;
+        const countdownElement = document.getElementById('countdown-seconds');
+
+        this.countdownInterval = setInterval(() => {
+            seconds--;
+            if (countdownElement) {
+                countdownElement.textContent = seconds;
+            }
+
+            if (seconds <= 0) {
+                this.hideInstallPrompt();
+            }
+        }, 1000);
     }
 
     async installPWA() {

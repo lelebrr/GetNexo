@@ -1,11 +1,17 @@
----
-import Layout from '../layouts/Layout.astro';
-const title = 'Test Page';
-const description = 'Test description';
-const keywords = 'test';
----
-
-<Layout title={title} description={description} keywords={keywords}>
-  <h1>Test</h1>
-  <p>Test page</p>
-</Layout>
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Page</title>
+  <style>
+    body { background: white; color: black; font-family: Arial; padding: 20px; }
+    h1 { color: red; }
+  </style>
+</head>
+<body>
+  <h1>Test Page</h1>
+  <p>Esta é uma página de teste simples.</p>
+  <p>Se você ver este texto, o problema está no Layout ou componentes.</p>
+</body>
+</html>

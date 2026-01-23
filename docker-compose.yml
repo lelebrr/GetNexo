@@ -176,7 +176,10 @@ services:
   # Cloudflare Tunnel
   cloudflared:
     image: cloudflare/cloudflared:latest
-    command: tunnel --no-autoupdate run
+    command: tunnel --config /etc/cloudflared/config.yml run
+    volumes:
+      - ./config/cloudflared:/etc/cloudflared:ro
+      - ~/.cloudflared:/root/.cloudflared:ro
     environment:
       - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
     extra_hosts:
