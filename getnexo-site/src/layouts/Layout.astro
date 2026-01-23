@@ -1,5 +1,5 @@
 ---
-import '../styles/global.css';
+import '../styles/global.css?v=premium_v1.1'; // Forced Cache Buster
 import SEO from '../components/SEO.astro';
 import PreSupportModal from '../components/PreSupportModal.astro';
 import AccessibilityControls from '../components/AccessibilityControls.astro';
@@ -28,6 +28,23 @@ try {
 } catch (e) {
   const translations = await import(`../i18n/pt.json`);
   t = translations.default;
+}
+
+// Função para gerar URLs com idioma correto (sem trailing slash para evitar 404)
+function getLangUrl(targetLang) {
+  const currentPath = Astro.url.pathname;
+  if (currentPath === '/') return `/${targetLang}`;
+  
+  const segments = currentPath.split('/').filter(s => s);
+
+  // Se o primeiro segmento for um idioma, substitua-o
+  if (['pt', 'en', 'es', 'fr'].includes(segments[0])) {
+    segments[0] = targetLang;
+    return '/' + segments.join('/');
+  } else {
+    // Se não houver prefixo de idioma, adicione-o
+    return '/' + targetLang + (currentPath.endsWith('/') ? currentPath.slice(0, -1) : currentPath);
+  }
 }
 
 // Verificar feriados ativos para carregar CSS condicionalmente
@@ -69,8 +86,13 @@ const clientId = Astro.locals.clientId || 'default';
     structuredData={articleSchema}
   />
   
+  <NeuralBackground />
+  
   <!-- PWA Manifest -->
   <link rel="manifest" href="/manifest.json">
+  
+  <!-- Click Fireworks Script -->
+  <script is:inline src="/custom/js/click-fireworks.js"></script>
 
   <!-- White-label CSS -->
   {clientId !== 'default' && (
@@ -115,6 +137,31 @@ const clientId = Astro.locals.clientId || 'default';
     });
   </script>
 
+  <script is:inline>
+    // Aggressive Cache Buster & SW Killer
+    const VERSION = '1.6';
+    if (localStorage.getItem('getnexo_v') !== VERSION) {
+      localStorage.setItem('getnexo_v', VERSION);
+      
+      // Kill all service workers
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(registrations => {
+          for(let r of registrations) r.unregister();
+        });
+      }
+      
+      // Clear all caches
+      if ('caches' in window) {
+        caches.keys().then(names => {
+          for (let name of names) caches.delete(name);
+        });
+      }
+
+      // Hard Reload
+      window.location.reload(true);
+    }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
@@ -128,8 +175,10 @@ const clientId = Astro.locals.clientId || 'default';
     </style>
   <style is:global define:vars={{ mainPadding: isLanding ? '0' : '80px', mainMinHeight: isLanding ? 'auto' : '100vh' }}>
     :root { 
-      --primary: var(--primary); 
-      --success: var(--success); 
+      --primary: #00d4ff; 
+      --success: #00ff9d; 
+      --neon-blue: #00d4ff;
+      --neon-green: #00ff9d;
       --dark: #030712; 
       --gray: #111827; 
       --light: #f8fafc; 
@@ -163,118 +212,90 @@ const clientId = Astro.locals.clientId || 'default';
     main { padding-top: var(--mainPadding); min-height: var(--mainMinHeight); }
 
     .global-header {
-      background: rgba(3, 7, 18, 0.95);
-      backdrop-filter: blur(20px);
+      background: rgba(3, 7, 18, 0.7);
+      backdrop-filter: blur(25px);
       position: fixed; top: 0; width: 100%; z-index: 1000;
       padding: 1rem 5%;
       display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
     }
-    .logo-link { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
+    .global-header.scrolled {
+      padding: 0.6rem 5%;
+      background: rgba(3, 7, 18, 0.95);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.6), 0 0 30px rgba(0, 212, 255, 0.05);
+      border-bottom-color: rgba(0, 212, 255, 0.2);
+    }
+    .logo-link { display: flex; align-items: center; gap: 0.8rem; text-decoration: none; }
     .logo-box {
-      width: 48px; height: 48px;
-      background: linear-gradient(135deg, var(--primary), var(--success));
-      color: black;
+      width: 44px; height: 44px;
+      position: relative;
       display: flex; align-items: center; justify-content: center;
-      font-weight: 900; border-radius: 12px; font-size: 1.2rem;
-      box-shadow: 0 4px 20px rgba(0, 212, 255, 0.4);
-      position: relative;
-      overflow: hidden;
-      transition: all 0.3s ease;
+      transition: all 0.5s var(--transition-smooth);
     }
-    .logo-box::before {
-      content: '';
-      position: absolute;
-      top: -50%; left: -50%;
-      width: 200%; height: 200%;
-      background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
-      transform: rotate(45deg);
-      transition: all 0.3s;
+    .logo-box svg { width: 100%; height: 100%; }
+    .logo-box:hover { transform: scale(1.1) rotate(5deg); }
+    
+    .logo-text { 
+      color:white; font-weight: 900; font-size: 1.4rem; margin:0; 
+      letter-spacing: -1px; text-transform: lowercase; 
     }
-    .logo-box:hover {
-      transform: scale(1.1) rotate(5deg);
-      box-shadow: 0 8px 30px rgba(0, 212, 255, 0.6);
-    }
-    .logo-box:hover::before {
-      animation: shimmer 1.5s;
-    }
-    @keyframes shimmer {
-      0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-      100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-    }
-    .logo-text { color:white; font-weight: 800; font-size: 1.2rem; margin:0; letter-spacing: -0.3px; display: flex; align-items: center; }
-    .logo-text span.logo-highlight { color: var(--success); }
+    .logo-text span.logo-highlight { color: var(--success); text-transform: none; }
 
-    .nav-links { display: flex; align-items: center; gap: 0.5rem; }
-    .nav-links > li { position: relative; }
+    .nav-links { display: flex; align-items: center; gap: 0.2rem; }
     .nav-links a {
-      color: var(--text);
+      color: #94a3b8;
       text-decoration: none;
-      font-weight: 600;
+      font-weight: 700;
       font-size: 0.85rem;
-      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-      padding: 0.8rem 1.2rem;
-      border-radius: 12px;
-      position: relative;
-      overflow: hidden;
-    }
-    .nav-links a::before {
-      content: '';
-      position: absolute;
-      top: 0; left: -100%;
-      width: 100%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.1), transparent);
-      transition: left 0.5s;
+      transition: all 0.3s ease;
+      padding: 0.6rem 1rem;
+      border-radius: 10px;
     }
     .nav-links a:hover {
       color: white;
-      background: rgba(0, 212, 255, 0.15);
-      border: 1px solid rgba(0, 212, 255, 0.3);
-      transform: scale(1.05);
-      box-shadow: 0 8px 25px rgba(0, 212, 255, 0.2);
-    }
-    .nav-links a:hover::before {
-      left: 100%;
+      background: rgba(255,255,255,0.05);
     }
 
-    /* Dropdown Styles */
+    /* Premium Dropdown */
     .nav-dropdown { position: relative; }
-    .nav-dropdown-toggle { cursor: pointer; display: flex; align-items: center; gap: 0.5rem; }
-    .nav-dropdown-toggle::after { content: '▼'; font-size: 0.7rem; transition: 0.3s cubic-bezier(0.23, 1, 0.32, 1); }
-    .nav-dropdown:hover .nav-dropdown-toggle::after { transform: rotate(180deg); }
+    .nav-dropdown-toggle { display: flex; align-items: center; gap: 0.3rem; }
+    .nav-dropdown-toggle::after { content: '›'; transform: rotate(90deg); font-size: 1rem; transition: 0.3s; }
+    .nav-dropdown:hover .nav-dropdown-toggle::after { transform: rotate(270deg); color: var(--primary); }
 
     .nav-dropdown-menu {
-      position: absolute; top: 110%; left: 50%; transform: translateX(-50%);
-      min-width: 320px;
-      background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,255,255,0.15); border-radius: 16px;
-      padding: 1.5rem; z-index: 1000; opacity: 0; visibility: hidden;
-      transform: translateX(-50%) translateY(-10px); transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-      box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+      position: absolute; top: 100%; left: 50%; transform: translateX(-50%) translateY(20px);
+      width: 520px; padding: 1.5rem;
+      background: rgba(10, 14, 23, 0.98);
+      backdrop-filter: blur(40px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      opacity: 0; visibility: hidden;
+      transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+      box-shadow: 0 40px 80px rgba(0,0,0,0.9), 0 0 50px rgba(0,212,255,0.1);
+      z-index: 100;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
     }
-
-    .nav-dropdown:hover .nav-dropdown-menu { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
-
-    .dropdown-section { margin-bottom: 1.5rem; }
-    .dropdown-section:last-child { margin-bottom: 0; }
-    .dropdown-title { font-size: 0.8rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; }
-    .dropdown-links { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    .nav-dropdown:hover .nav-dropdown-menu { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(10px); }
+    
     .dropdown-links a {
-      padding: 0.8rem 1rem;
-      font-size: 0.85rem;
-      font-weight: 600;
-      border-radius: 10px;
-      transition: all 0.3s ease;
-      text-align: center;
-      border: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      padding: 1rem;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      transition: 0.3s;
     }
     .dropdown-links a:hover {
-      background: rgba(0, 212, 255, 0.15);
-      color: var(--primary);
+      background: rgba(255,255,255,0.03);
+      border-color: rgba(0,212,255,0.2);
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0, 212, 255, 0.2);
     }
+    .dropdown-item-title { color: white; font-weight: 800; font-size: 0.9rem; }
+    .dropdown-item-desc { color: #64748b; font-size: 0.75rem; font-weight: 500; }
 
     /* Search Bar */
     .search-container { position: relative; margin-left: 1rem; }
@@ -293,97 +314,62 @@ const clientId = Astro.locals.clientId || 'default';
     .header-ctas { display: flex; align-items: center; gap: 1rem; }
     .btn-login { color: white; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
     .btn-start {
-      background: linear-gradient(135deg, var(--primary), var(--success));
-      color: black;
-      padding: 0.8rem 2rem;
-      border-radius: 16px;
+      background: linear-gradient(135deg, var(--neon-blue), var(--neon-green));
+      color: black !important;
+      padding: 0.8rem 1.8rem;
+      border-radius: 12px;
       font-weight: 900;
       text-decoration: none;
-      font-size: 1rem;
+      font-size: 0.95rem;
       transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-      min-height: 52px;
+      min-height: 48px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
-      border: 2px solid transparent;
+      white-space: nowrap;
+      box-shadow: 0 10px 30px rgba(0, 212, 255, 0.5);
+      border: none;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      animation: pulse-glow 2s infinite ease-in-out;
     }
-    .btn-start::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      transition: left 0.5s;
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 10px 30px rgba(0, 212, 255, 0.5); }
+      50% { box-shadow: 0 10px 50px rgba(0, 212, 255, 0.8), 0 0 20px var(--neon-green); }
     }
     .btn-start:hover {
       transform: translateY(-3px) scale(1.05);
-      box-shadow: 0 12px 35px rgba(0, 212, 255, 0.5);
-      border-color: rgba(255,255,255,0.3);
-    }
-    .btn-start:hover::before {
-      left: 100%;
+      background: linear-gradient(135deg, var(--neon-green), var(--neon-blue));
     }
 
     /* Language Selector */
-    .lang-selector {
-      position: relative;
-      display: inline-block;
-    }
-    .lang-btn {
-      background: rgba(255,255,255,0.1);
-      color: white;
-      border: 1px solid rgba(255,255,255,0.2);
-      padding: 0.5rem 0.8rem;
-      border-radius: 12px;
-      cursor: pointer;
-      font-size: 1.1rem;
-      font-weight: 700;
+    .lang-flags {
       display: flex;
+      gap: 0.8rem;
       align-items: center;
-      gap: 0.5rem;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      margin-left: 1rem;
     }
-    .lang-btn:hover { background: rgba(0, 212, 255, 0.15); border-color: var(--primary); transform: translateY(-1px); }
-    #current-lang-code { font-size: 0.75rem; color: #94a3b8; }
-    .lang-dropdown {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      background: rgba(15, 23, 42, 0.95);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 8px;
-      min-width: 120px;
-      display: none;
-      z-index: 9999;
-      margin-top: 0.5rem;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    }
-    .lang-dropdown.show { display: block; animation: fadeInDown 0.2s ease-out; }
-    @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .lang-option {
-      display: block;
-      color: white;
+    .flag-link {
+      font-size: 0.75rem;
+      font-weight: 800;
       text-decoration: none;
-      padding: 0.8rem 1rem;
-      font-size: 0.85rem;
-      transition: 0.2s;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: all 0.3s ease;
+      color: #64748b;
+      padding: 2px 4px;
     }
-    .lang-option:last-child { border-bottom: none; }
-    .lang-option:hover { background: rgba(0, 212, 255, 0.1); }
+    .flag-link:hover, .flag-link.active {
+      color: var(--primary);
+      transform: translateY(-1px);
+    }
+    .flag-link.active {
+      border-bottom: 2px solid var(--primary);
+      color: white;
+    }
 
-    .global-footer { padding: 10rem 5% 4rem; background: #020617; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 6rem; position: relative; z-index: 10; }
-    .footer-grid { display: grid; grid-template-columns: 1.5fr repeat(4, 1fr); gap: 3rem; max-width: 1400px; margin: 0 auto; }
+    .global-footer { padding: 10rem 5% 4rem !important; background: #020617 !important; border-top: 1px solid rgba(255,255,255,0.05) !important; margin-top: 6rem !important; position: relative !important; z-index: 10 !important; width: 100% !important; display: block !important; }
+    .footer-grid { display: grid !important; grid-template-columns: 1.5fr repeat(4, 1fr) !important; gap: 3rem !important; max-width: 1400px !important; margin: 0 auto !important; text-align: left !important; }
     .footer-col h3.footer-title { color: white; margin-bottom: 2rem; font-size: 1.15rem; font-weight: 800; letter-spacing: -0.5px; text-transform: uppercase; }
     .footer-links { display: flex; flex-direction: column; gap: 0.8rem; }
     .footer-links a { color: var(--text); text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -671,97 +657,104 @@ const clientId = Astro.locals.clientId || 'default';
     .mobile-menu-btn.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
 
     /* Mobile Menu Overlay */
+    /* Mobile Menu - App Style */
     .mobile-menu {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(3, 7, 18, 0.98);
-      backdrop-filter: blur(20px);
-      z-index: 999;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 0.3s;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(2, 6, 23, 0.95);
+      backdrop-filter: blur(30px);
+      z-index: 2000;
+      opacity: 0; visibility: hidden;
+      transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+      display: flex; align-items: center; justify-content: center;
     }
-    .mobile-menu.active {
-      display: flex;
-      opacity: 1;
-    }
+    .mobile-menu.active { opacity: 1; visibility: visible; }
+    
     .mobile-nav {
+      width: 90%; max-width: 400px;
+      height: 85vh;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 40px;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      transform: translateY(50px);
+      transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+      box-shadow: 0 50px 100px rgba(0,0,0,0.8);
+    }
+    .mobile-menu.active .mobile-nav { transform: translateY(0); }
+
+    .mobile-header { padding: 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .mobile-close { background: none; border: none; color: white; font-size: 2rem; cursor: pointer; }
+    
+    .mobile-scroll-area { flex: 1; overflow-y: auto; padding: 2rem; }
+    .mobile-section { margin-bottom: 2.5rem; }
+    .mobile-section-title { font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1.5rem; display: block; }
+    
+    .mobile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .mobile-grid a {
+      background: rgba(255,255,255,0.03);
+      padding: 1.2rem; border-radius: 20px;
+      font-size: 0.85rem; font-weight: 700; color: white;
+      text-decoration: none; text-align: center;
+      border: 1px solid rgba(255,255,255,0.05);
+      transition: 0.3s;
+    }
+    .mobile-grid a:hover { background: rgba(0, 212, 255, 0.1); border-color: var(--primary); transform: scale(1.05); }
+
+    .mobile-links-extra { display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem; }
+    .mobile-links-extra a { color: #94a3b8; text-decoration: none; font-weight: 600; font-size: 0.95rem; }
+
+    .mobile-footer { padding: 2rem; background: rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 1rem; }
+
+    .mobile-lang-selector {
       display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 1.5rem;
-      text-align: left;
-      padding: 2rem 1rem;
-      max-width: 100%;
+      gap: 1rem;
+      margin-right: 1rem;
     }
-    .mobile-section {
-      width: 100%;
-      margin-bottom: 2rem;
-    }
-    .mobile-section:last-child { margin-bottom: 1rem; }
-    .mobile-section-title {
-      font-size: 0.9rem;
-      font-weight: 800;
-      color: var(--primary);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 1rem;
-      display: block;
-    }
-    .mobile-section a {
-      display: block;
-      color: white;
+    .mobile-lang-selector a {
+      font-size: 1.5rem;
       text-decoration: none;
-      font-size: 1rem;
-      font-weight: 600;
-      padding: 0.5rem 0;
-      border-radius: 8px;
+      opacity: 0.5;
       transition: 0.3s;
     }
-    .mobile-section a:hover {
-      background: rgba(0, 212, 255, 0.1);
-      color: var(--primary);
-      padding-left: 1rem;
+    .mobile-lang-selector a.active {
+      opacity: 1;
+      transform: scale(1.2);
     }
-    .mobile-nav a {
-      color: white;
-      text-decoration: none;
-      font-size: 1.3rem;
-      font-weight: 600;
-      padding: 0.8rem 1.5rem;
+    .mobile-login { color: white; text-align: center; text-decoration: none; font-weight: 700; padding: 1rem; }
+
+    /* Surprise Discovery Icon */
+    .magic-discovery {
+      position: relative;
+      width: 42px; height: 42px;
+      background: rgba(255, 215, 0, 0.05);
+      border: 1px solid rgba(255, 215, 0, 0.2);
       border-radius: 12px;
-      transition: 0.3s;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      margin-right: 0.5rem;
+      font-size: 1.2rem;
     }
-    .mobile-nav a:hover {
-      background: rgba(0, 212, 255, 0.1);
-      color: var(--primary);
+    .magic-discovery:hover { 
+      transform: scale(1.15) rotate(15deg); 
+      background: rgba(255, 215, 0, 0.15);
+      border-color: rgba(255, 215, 0, 0.5);
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
     }
-    .mobile-divider {
-      width: 80px;
-      height: 2px;
-      background: rgba(255,255,255,0.1);
-      margin: 1rem 0;
-    }
-    .mobile-login {
-      color: var(--text) !important;
-      font-size: 1rem !important;
-    }
-    .mobile-cta {
-      background: linear-gradient(135deg, var(--primary), var(--success)) !important;
-      color: black !important;
-      font-weight: 800 !important;
-      padding: 1rem 2rem !important;
+    .magic-discovery::after {
+      content: 'AI';
+      position: absolute; top: -6px; right: -6px;
+      background: linear-gradient(135deg, #ffd700, #ff8c00); 
+      color: black;
+      font-size: 0.65rem; font-weight: 900;
+      padding: 2px 5px; border-radius: 6px;
+      box-shadow: 0 2px 10px rgba(255, 140, 0, 0.4);
     }
 
     @media (max-width: 1100px) {
       .nav-links { display: none; }
       .header-ctas { display: flex; gap: 0.5rem; }
-      .btn-login, .btn-start { display: none; }
+      .btn-start { display: none; }
       .global-header { padding: 1rem 5%; }
       .mobile-menu-btn { display: flex; }
       .lang-btn { padding: 0.4rem 0.6rem; font-size: 1rem; }
@@ -799,7 +792,9 @@ const clientId = Astro.locals.clientId || 'default';
   <script is:inline>
     // Gerenciador de Fundo Global
     (function() {
-      const bgType = localStorage.getItem('getnexo-bg-type') || 'neural';
+      // Quando há feriado, priorizar o efeito do feriado
+      // Quando não há feriado, usar background animado como padrão
+      const bgType = localStorage.getItem('getnexo-bg-type') || 'animated';
       const neuralCanvas = document.getElementById('neural-bg');
       const oldBg = document.getElementById('old-bg');
 
@@ -918,89 +913,87 @@ const clientId = Astro.locals.clientId || 'default';
 
   <header id="main-nav" class:list={["global-header", { "header-landing": isLanding }]}>
     <a href="/" class="logo-link" aria-label="GetNexo Home">
-      <div class="logo-box" aria-hidden="true">N</div>
-      <span class="logo-text">Get<span class="logo-highlight">Nexo</span></span>
+      <div class="logo-box" aria-hidden="true">
+        <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="45" stroke="url(#logo-grad)" stroke-width="2" class="logo-ring"/>
+          <path d="M30 30L50 50L70 30M30 70L50 50L70 70" stroke="url(#logo-grad)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" class="logo-neural"/>
+          <circle cx="50" cy="50" r="10" fill="url(#logo-grad)" class="logo-core">
+            <animate attributeName="r" values="8;11;8" dur="2s" repeatCount="indefinite" />
+          </circle>
+          <defs>
+            <linearGradient id="logo-grad" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+              <stop stop-color="var(--neon-blue)"/>
+              <stop offset="1" stop-color="var(--neon-green)"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <span class="logo-text">get<span class="logo-highlight">Nexo</span></span>
     </a>
     <nav class="nav-links">
-      <!-- Menu Soluções Simplificado -->
       <div class="nav-dropdown">
-        <a href={`/${lang}/solucoes-completas`} class="nav-dropdown-toggle">🚀 Soluções</a>
+        <a href={`/${lang}/solucoes-completas`} class="nav-dropdown-toggle">Soluções</a>
         <div class="nav-dropdown-menu">
           <div class="dropdown-links">
-            <a href={`/${lang}/chat-ia-24h`}>🤖 Chatbot IA 24h</a>
-            <a href={`/${lang}/sistema-tickets-inteligente`}>🎫 Sistema de Tickets</a>
-            <a href={`/${lang}/dashboard-analytics-real-time`}>📊 Analytics</a>
-            <a href={`/${lang}/programa-pontos-fidelidade`}>🏆 Programa Fidelidade</a>
+            <a href={`/${lang}/chat-ia-24h`}>
+              <span class="dropdown-item-title">🤖 Chatbot IA 24h</span>
+              <span class="dropdown-item-desc">Atendimento automatizado com IA Generativa</span>
+            </a>
+            <a href={`/${lang}/sistema-tickets-inteligente`}>
+              <span class="dropdown-item-title">🎫 Suporte 360º</span>
+              <span class="dropdown-item-desc">Gestão inteligente de tickets e chamados</span>
+            </a>
+            <a href={`/${lang}/dashboard-analytics-real-time`}>
+              <span class="dropdown-item-title">📊 IA Analytics</span>
+              <span class="dropdown-item-desc">Métricas preditivas em tempo real</span>
+            </a>
+            <a href={`/${lang}/programa-pontos-fidelidade`}>
+              <span class="dropdown-item-title">🏆 Fidelidade</span>
+              <span class="dropdown-item-desc">Retenção de clientes via gamificação</span>
+            </a>
           </div>
         </div>
       </div>
 
-      <!-- Menu Integrações Simplificado -->
       <div class="nav-dropdown">
-        <a href={`/${lang}/integracoes-completas`} class="nav-dropdown-toggle">🔗 Integrações</a>
+        <a href={`/${lang}/integracoes-completas`} class="nav-dropdown-toggle">Integrações</a>
         <div class="nav-dropdown-menu">
           <div class="dropdown-links">
-            <a href={`/${lang}/shopify-integracao-avancada`}>🛍️ Shopify</a>
-            <a href={`/${lang}/woocommerce-full-sync`}>🛒 WooCommerce</a>
-            <a href={`/${lang}/pagseguro-uol`}>💳 PagSeguro</a>
-            <a href={`/${lang}/api-rest-documentada`}>🔄 APIs</a>
+            <a href={`/${lang}/shopify-integracao-avancada`}>
+              <span class="dropdown-item-title">🛍️ Shopify Sync</span>
+              <span class="dropdown-item-desc">Conexão direta com sua loja Shopify</span>
+            </a>
+            <a href={`/${lang}/woocommerce-full-sync`}>
+              <span class="dropdown-item-title">🛒 WooCommerce</span>
+              <span class="dropdown-item-desc">Integração nativa para WordPress</span>
+            </a>
+            <a href={`/${lang}/pagseguro-uol`}>
+              <span class="dropdown-item-title">💳 Checkout PIX</span>
+              <span class="dropdown-item-desc">Pagamentos automáticos in-chat</span>
+            </a>
+            <a href={`/${lang}/api-rest-documentada`}>
+              <span class="dropdown-item-title">🔄 API Developer</span>
+              <span class="dropdown-item-desc">Webhook e REST para desenvolvedores</span>
+            </a>
           </div>
         </div>
       </div>
 
-      <!-- Menu Loja Simplificado -->
-      <div class="nav-dropdown">
-        <a href={`/${lang}/loja-personalizada-enterprise`} class="nav-dropdown-toggle">🛍️ Loja</a>
-        <div class="nav-dropdown-menu">
-          <div class="dropdown-links">
-            <a href={`/${lang}/white-label-completo-personalizado`}>🎨 White Label</a>
-            <a href={`/${lang}/progressive-web-app-completo`}>📱 PWA</a>
-            <a href={`/${lang}/multicanal-omnichannel-completo`}>📞 Multicanal</a>
-            <a href={`/${lang}/visual-workflow-builder`}>⚙️ Automação</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Menu Fidelidade Simplificado -->
-      <div class="nav-dropdown">
-        <a href={`/${lang}/fidelidade-retencao-completa`} class="nav-dropdown-toggle">🏆 Fidelidade</a>
-        <div class="nav-dropdown-menu">
-          <div class="dropdown-links">
-            <a href={`/${lang}/programa-pontos-fidelidade-premium`}>🏆 Programa Pontos</a>
-            <a href={`/${lang}/email-marketing-personalizado-ia`}>📧 Email Marketing</a>
-            <a href={`/${lang}/customer-analytics-dashboard`}>📊 Analytics</a>
-            <a href={`/${lang}/referral-program-viral`}>🌟 Referral</a>
-          </div>
-        </div>
-      </div>
-
-      <a href={`/${lang}/analytics`}>{t.menu.analytics}</a>
       <a href={`/${lang}/precos`}>{t.menu.pricing}</a>
-      <a href={`/${lang}/como-funciona`}>{t.menu.how_it_works}</a>
-      <a href={`/${lang}/blog`}>{t.menu.blog}</a>
+      <a href={`/${lang}/como-funciona`}>Descubra</a>
+      <a href={`/${lang}/blog`}>Insights</a>
     </nav>
+
     <div class="header-ctas">
-      <a href="/login" class="btn-login">{t.nav.login}</a>
-      <a href="/criar-bot" class="btn-start">{t.nav.start_free}</a>
-      <div class="lang-selector">
-        <button id="lang-btn" class="lang-btn">
-          <img id="current-lang-flag" src={`https://flagcdn.com/w40/${lang === 'en' ? 'us' : lang === 'pt' ? 'br' : lang}.png`} alt={lang.toUpperCase()} style="width: 20px; height: 15px; flex-shrink: 0;">
-          <span id="current-lang-code">{lang.toUpperCase()}</span>
-        </button>
-        <div id="lang-dropdown" class="lang-dropdown">
-          <a href={Astro.url.pathname.replace(/^\/[^\/]+/, '/pt')} class="lang-option">
-            <img src="https://flagcdn.com/w40/br.png" alt="BR" style="width: 20px; height: 15px; margin-right: 8px;"> Português
-          </a>
-          <a href={Astro.url.pathname.replace(/^\/[^\/]+/, '/en')} class="lang-option">
-            <img src="https://flagcdn.com/w40/us.png" alt="US" style="width: 20px; height: 15px; margin-right: 8px;"> English
-          </a>
-          <a href={Astro.url.pathname.replace(/^\/[^\/]+/, '/es')} class="lang-option">
-            <img src="https://flagcdn.com/w40/es.png" alt="ES" style="width: 20px; height: 15px; margin-right: 8px;"> Español
-          </a>
-          <a href={Astro.url.pathname.replace(/^\/[^\/]+/, '/fr')} class="lang-option">
-            <img src="https://flagcdn.com/w40/fr.png" alt="FR" style="width: 20px; height: 15px; margin-right: 8px;"> Français
-          </a>
-        </div>
+      <div class="magic-discovery" id="magic-discovery" title="Descobrir Soluções IA">✨</div>
+      <a href={`/${lang}/login`} class="btn-login">Login</a>
+      <a href="https://app.getnexo.com.br/register" class="btn-start" target="_blank" style="background: linear-gradient(135deg, #00d4ff 0%, #00ff9d 100%) !important; color: #030712 !important; box-shadow: 0 0 20px rgba(0, 212, 255, 0.4) !important; border: none !important;">Ativar Grátis</a>
+      
+      <div class="lang-flags">
+        <a href={getLangUrl('pt')} class={`flag-link ${lang === 'pt' ? 'active' : ''}`} title="Português">🇧🇷 PT</a>
+        <a href={getLangUrl('en')} class={`flag-link ${lang === 'en' ? 'active' : ''}`} title="English">🇺🇸 EN</a>
+        <a href={getLangUrl('es')} class={`flag-link ${lang === 'es' ? 'active' : ''}`} title="Español">🇪🇸 ES</a>
+        <a href={getLangUrl('fr')} class={`flag-link ${lang === 'fr' ? 'active' : ''}`} title="Français">🇫🇷 FR</a>
       </div>
     </div>
     <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Menu">
@@ -1010,47 +1003,50 @@ const clientId = Astro.locals.clientId || 'default';
 
   <!-- Mobile Menu Overlay -->
   <div id="mobile-menu" class="mobile-menu">
-    <nav class="mobile-nav">
-      <div class="mobile-section">
-        <span class="mobile-section-title">🚀 Soluções</span>
-        <a href="/chat-ia">🤖 Chatbot IA 24h</a>
-        <a href="/sistema-tickets">🎫 Sistema de Tickets</a>
-        <a href="/gamificacao-vendas">🏆 Gamificação de Vendas</a>
-        <a href="/dashboard-analytics">📊 Analytics Dashboard</a>
-        <a href="/criptografia-end-to-end">🔒 Segurança LGPD</a>
+    <nav class="mobile-nav reveal">
+      <div class="mobile-header">
+         <span class="logo-text">get<span class="logo-highlight">Nexo</span></span>
+         <div class="mobile-lang-selector">
+           <a href={getLangUrl('pt')} class={lang === 'pt' ? 'active' : ''}>🇧🇷 PT</a>
+           <a href={getLangUrl('en')} class={lang === 'en' ? 'active' : ''}>🇺🇸 EN</a>
+           <a href={getLangUrl('es')} class={lang === 'es' ? 'active' : ''}>🇪🇸 ES</a>
+           <a href={getLangUrl('fr')} class={lang === 'fr' ? 'active' : ''}>🇫🇷 FR</a>
+         </div>
+         <button id="mobile-close" class="mobile-close">×</button>
+      </div>
+      
+      <div class="mobile-scroll-area">
+        <div class="mobile-section">
+          <span class="mobile-section-title">Soluções Smart</span>
+          <div class="mobile-grid">
+            <a href="/chat-ia">🤖 Chatbot IA 24h</a>
+            <a href="/sistema-tickets">🎫 Suporte 360º</a>
+            <a href="/dashboard-analytics">📊 AI Analytics</a>
+            <a href="/programa-pontos">🏆 Fidelidade</a>
+          </div>
+        </div>
+
+        <div class="mobile-section">
+          <span class="mobile-section-title">Ecossistema</span>
+          <div class="mobile-grid">
+            <a href="/shopify-integracao">🛍️ Shopify</a>
+            <a href="/woocommerce">🛒 WooCommerce</a>
+            <a href="/pagseguro">💳 Checkout PIX</a>
+            <a href="/api-rest">🔄 API Dev</a>
+          </div>
+        </div>
+
+        <div class="mobile-links-extra">
+          <a href="/precos">💰 Planos e Preços</a>
+          <a href="/como-funciona">⚙️ Como Funciona</a>
+          <a href="/blog">📝 Blog Insights</a>
+        </div>
       </div>
 
-      <div class="mobile-section">
-        <span class="mobile-section-title">🔗 Integrações</span>
-        <a href="/shopify-integracao">🛍️ Shopify</a>
-        <a href="/woocommerce">🛒 WooCommerce</a>
-        <a href="/pagseguro">💳 PagSeguro</a>
-        <a href="/correios">📦 Correios</a>
-        <a href="/api-rest">🔄 API REST</a>
+      <div class="mobile-footer">
+        <a href="/login" class="mobile-login">Login</a>
+        <a href="/criar-bot" class="btn-primary-glow w-full">Teste Grátis Agora</a>
       </div>
-
-      <div class="mobile-section">
-        <span class="mobile-section-title">🛍️ Loja</span>
-        <a href="/white-label">🎨 White Label</a>
-        <a href="/pwa">📱 PWA</a>
-        <a href="/multicanal">📞 Multicanal</a>
-      </div>
-
-      <div class="mobile-section">
-        <span class="mobile-section-title">🏆 Fidelidade</span>
-        <a href="/pontos-fidelidade">⭐ Programa de Pontos</a>
-        <a href="/email-marketing">📧 Email Marketing</a>
-        <a href="/lifetime-value">💎 Lifetime Value</a>
-      </div>
-
-      <a href="/analytics">📊 Analytics Completo</a>
-      <a href="/precos">💰 Planos e Preços</a>
-      <a href="/como-funciona">⚙️ Como Funciona</a>
-      <a href="/blog">📝 Blog</a>
-      <a href="/suporte">🛟 Suporte</a>
-      <div class="mobile-divider"></div>
-      <a href="/login" class="mobile-login">Entrar no Dashboard</a>
-      <a href="/criar-bot" class="mobile-cta">Testar Grátis →</a>
     </nav>
   </div>
 
@@ -1072,37 +1068,60 @@ const clientId = Astro.locals.clientId || 'default';
 
 
 
-  <!-- Accessibility Controls Panel -->
-  <AccessibilityControls nonce={nonce} />
-
-  <!-- Cookie Consent Banner -->
-  <CookieConsent />
-
-  <!-- Clippy-style Assistants -->
-  <ClippyAssistants />
-
-  <!-- Tour Guided Component -->
-  <TourGuided />
-
-  <!-- WhatsApp Floating Button -->
-  <WhatsAppFloat />
+  <!-- Global Styles cleanup -->
 
   <footer class="global-footer" id="main-footer" itemscope itemtype="https://schema.org/Organization">
+    <!-- Schema.org Organization para SEO -->
+    <meta itemprop="name" content="GetNexo - Automação WhatsApp e IA Generativa">
+    <meta itemprop="url" content="https://getnexo.com.br">
+    <meta itemprop="logo" content="https://getnexo.com.br/assets/logo.png">
+    <meta itemprop="description" content="Chatbot WhatsApp IA grátis self-hosted: fecha vendas sozinho 24/7 no seu domínio. Sem taxa por mensagem, integra PIX automático, estoque, frete.">
+    
+    <!-- Trust Badges Gigantes -->
+    <div class="footer-trust-badges">
+      <div class="trust-badge">
+        <span class="badge-icon">🔒</span>
+        <span class="badge-text">SSL 256-bit</span>
+      </div>
+      <div class="trust-badge">
+        <span class="badge-icon">🛡️</span>
+        <span class="badge-text">GDPR Ready</span>
+      </div>
+      <div class="trust-badge">
+        <span class="badge-icon">⚡</span>
+        <span class="badge-text">99.9% Uptime</span>
+      </div>
+      <div class="trust-badge">
+        <span class="badge-icon">✅</span>
+        <span class="badge-text">Meta Official</span>
+      </div>
+    </div>
+
     <div class="footer-grid">
       <!-- Coluna 1: Branding e Trust -->
       <div class="footer-col branding-col">
-        <a href="/" class="logo-link" aria-label="GetNexo Home - Automação WhatsApp e IA">
+        <a href="/" class="logo-link" aria-label="GetNexo Home - Automação WhatsApp e IA Generativa">
           <div class="logo-box footer-logo" aria-hidden="true">N</div>
           <span class="logo-text footer-text">Get<span class="logo-highlight">Nexo</span></span>
         </a>
         <p class="footer-description">
           A plataforma líder em <strong>automação de WhatsApp e IA Generativa</strong>. Escalamos sua operação comercial com inteligência, segurança e foco em conversão.
         </p>
+        
+        <!-- Newsletter Gigante -->
+        <div class="footer-newsletter-section">
+          <h4 class="newsletter-title">Receba Insights de IA</h4>
+          <p class="newsletter-subtitle">Dicas semanais para escalar vendas no WhatsApp</p>
+          <form class="footer-newsletter" id="footer-newsletter-form" aria-label="Newsletter GetNexo">
+            <input type="email" name="email" placeholder="Seu melhor email" required aria-label="Email para newsletter">
+            <button type="submit" aria-label="Assinar newsletter">Assinar</button>
+          </form>
+          <p class="newsletter-privacy">Sem spam. Cancelar a qualquer momento.</p>
+        </div>
+
         <div class="footer-socials">
           <a href="https://wa.me/5511999999999?text=Ola%20GetNexo" aria-label="WhatsApp GetNexo - Conversar Agora" class="social-link whatsapp">
-            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M18 10C18 5.58 14.42 2 10 2 5.58 2 2 5.58 2 10C2 13.48 3.99 16.48 7.16 17.94V22L9.49 20.09C9.86 20.03 10.31 20.13 10.57 20.34C10.83 20.55 11 20.87 11 21.23V17.94C11.66 17.69 12.27 17.3 12.8 16.82C13.52 16.1 14.07 15.2 14.44 14.17C14.72 13.31 14.85 12.35 14.85 11.35C14.85 10.78 14.77 10.26 14.64 9.78L18.65 11.14V10Z"/>
-            </svg>
+            <span class="social-icon">📱</span>
           </a>
           <a href="https://facebook.com/getnexo" aria-label="Facebook GetNexo - Novidades em Automação" class="social-link facebook">
             <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
@@ -1336,6 +1355,9 @@ const clientId = Astro.locals.clientId || 'default';
 
   <!-- Magic Map User Tracking - Temporarily disabled -->
   <!-- <script src="/tracking.js" defer></script> -->
+
+  <!-- Click Fireworks Effect -->
+  <script src="/custom/js/click-fireworks.js" defer></script>
 
   <!-- GetNexo Custom Widget -->
   <script is:inline data-cfasync="false" nonce={nonce}>
@@ -1777,6 +1799,70 @@ const clientId = Astro.locals.clientId || 'default';
       will-change: transform;
     }
 
+    /* Animações especiais de clique durante feriados */
+    .feriado-ativo .btn-start,
+    .feriado-ativo .nav-links a,
+    .feriado-ativo .dropdown-links a,
+    .feriado-ativo .social-link,
+    .feriado-ativo .lang-btn {
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    .feriado-ativo .btn-start:active,
+    .feriado-ativo .nav-links a:active,
+    .feriado-ativo .dropdown-links a:active,
+    .feriado-ativo .social-link:active,
+    .feriado-ativo .lang-btn:active {
+      transform: scale(0.95) rotate(2deg);
+      animation: holidayClick 0.3s ease-out;
+    }
+
+    .feriado-ativo .btn-start:hover,
+    .feriado-ativo .nav-links a:hover,
+    .feriado-ativo .dropdown-links a:hover,
+    .feriado-ativo .social-link:hover,
+    .feriado-ativo .lang-btn:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 15px 35px rgba(0, 212, 255, 0.4);
+      filter: brightness(1.1) saturate(1.2);
+    }
+
+    @keyframes holidayClick {
+      0% { transform: scale(1) rotate(0deg); }
+      50% { transform: scale(0.9) rotate(3deg); }
+      100% { transform: scale(0.95) rotate(2deg); }
+    }
+
+    /* Efeitos de brilho nos cliques */
+    .feriado-ativo button:active::before,
+    .feriado-ativo a:active::before,
+    .feriado-ativo .btn-start:active::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, transparent 70%);
+      transform: translate(-50%, -50%);
+      animation: holidayRipple 0.6s ease-out;
+      pointer-events: none;
+    }
+
+    @keyframes holidayRipple {
+      0% {
+        width: 0;
+        height: 0;
+        opacity: 1;
+      }
+      100% {
+        width: 300px;
+        height: 300px;
+        opacity: 0;
+      }
+    }
+
     /* Confete Caindo - Otimizado */
     .confete_caindo {
       background-image: url('/assets/holidays/confetti-bg.png');
@@ -2039,41 +2125,166 @@ const clientId = Astro.locals.clientId || 'default';
         max-width: none;
         top: 80px;
       }
-
-      .feriado-content {
-        gap: 0.8rem;
-        padding: 0.8rem;
-      }
-
-      .feriado-emoji {
-        font-size: 1.5rem;
-      }
     }
   </style>
 
-  <!-- Back to Top Script -->
-  <script is:inline>
-    // Back to Top Button Logic
-    document.addEventListener('DOMContentLoaded', () => {
-      const backToTopBtn = document.getElementById('back-to-top');
-      
-      if (!backToTopBtn) return;
+  <div id="discovery-hub" class="discovery-hub">
+    <div class="hub-container glass-panel reveal">
+      <div class="hub-header">
+        <h3 class="text-gradient">Nexbot Discovery Hub</h3>
+        <button id="hub-close" class="hub-close">×</button>
+      </div>
+      <div class="hub-body">
+        <p class="hub-intro">Explore as ferramentas que estão transformando o WhatsApp em máquinas de lucro.</p>
+        <div class="hub-features">
+          <div class="hub-feature" data-tour="checkout">
+            <span class="hub-icon">💰</span>
+            <div class="hub-info">
+              <strong>Checkout PIX</strong>
+              <span>Venda no chat em 2 min</span>
+            </div>
+          </div>
+          <div class="hub-feature" data-tour="ia">
+            <span class="hub-icon">🧠</span>
+            <div class="hub-info">
+              <strong>IA Generativa</strong>
+              <span>Treine seu bot com PDFs</span>
+            </div>
+          </div>
+          <div class="hub-feature" data-tour="ads">
+            <span class="hub-icon">🚀</span>
+            <div class="hub-info">
+              <strong>Click-to-WhatsApp</strong>
+              <span>Anúncios que convertem</span>
+            </div>
+          </div>
+        </div>
+        <div class="hub-footer">
+          <a href="/criar-bot" class="btn-primary-glow w-full">Ativar Todas as Soluções</a>
+        </div>
+      </div>
+    </div>
+  </div>
 
-      // Show/hide button based on scroll position
+  <!-- Global Floating UI - Left (Accessibility & Tour) -->
+  <div class="dock-left">
+    <AccessibilityControls nonce={nonce} />
+    <TourGuided />
+  </div>
+
+  <!-- Global Floating UI - Right (Chat & Support) -->
+  <div class="dock-right">
+    <WhatsAppFloat />
+  </div>
+
+  <CookieConsent />
+
+  <style is:global>
+    .dock-left {
+      position: fixed; bottom: 24px; left: 24px;
+      display: flex; flex-direction: column-reverse; gap: 12px; z-index: 9999;
+      pointer-events: none;
+    }
+    .dock-right {
+      position: fixed; bottom: 24px; right: 24px;
+      display: flex; flex-direction: column-reverse; gap: 12px; z-index: 9999;
+      pointer-events: none;
+    }
+    .dock-left > *, .dock-right > * { pointer-events: auto; }
+
+    /* Component Fixed Overrides for Docks */
+    .accessibility-trigger, .tour-trigger-btn, .whatsapp-float-btn {
+      position: relative !important;
+      bottom: auto !important;
+      right: auto !important;
+      left: auto !important;
+    }
+
+    @media (max-width: 768px) {
+        .dock-left { bottom: 10px; left: 10px; gap: 8px; }
+        .dock-right { bottom: 10px; right: 10px; gap: 8px; }
+    }
+  </style>
+
+
+  <!-- Header & Mobile Menu Scripts -->
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+      const header = document.getElementById('main-nav');
+      const mobileBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      const mobileClose = document.getElementById('mobile-close');
+      const backToTopBtn = document.getElementById('back-to-top');
+
+      // Header Scroll Effect
       window.addEventListener('scroll', () => {
-        if (window.scrollY > 500) {
-          backToTopBtn.classList.add('visible');
+        if (window.scrollY > 20) {
+          header.classList.add('scrolled');
         } else {
-          backToTopBtn.classList.remove('visible');
+          header.classList.remove('scrolled');
+        }
+        
+        // Back to Top logic
+        if (backToTopBtn) {
+          if (window.scrollY > 500) {
+            backToTopBtn.classList.add('visible');
+          } else {
+            backToTopBtn.classList.remove('visible');
+          }
         }
       });
 
-      // Smooth scroll to top when clicked
-      backToTopBtn.addEventListener('click', () => {
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth'
+      // Mobile Menu Logic
+      const toggleMobile = () => {
+        mobileMenu.classList.toggle('active');
+        document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+      };
+
+      mobileBtn?.addEventListener('click', toggleMobile);
+      mobileClose?.addEventListener('click', toggleMobile);
+      
+      // Close on link click
+      mobileMenu?.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          mobileMenu.classList.remove('active');
+          document.body.style.overflow = '';
         });
+      });
+
+      // Discovery Hub Logic
+      const magicBtn = document.getElementById('magic-discovery');
+      const hub = document.getElementById('discovery-hub');
+      const hubClose = document.getElementById('hub-close');
+
+      const toggleHub = () => {
+        hub?.classList.toggle('active');
+        document.body.style.overflow = hub?.classList.contains('active') ? 'hidden' : '';
+      };
+
+      magicBtn?.addEventListener('click', toggleHub);
+      hubClose?.addEventListener('click', toggleHub);
+      
+      hub?.addEventListener('click', (e) => {
+        if (e.target === hub) toggleHub();
+      });
+
+      // Parallax Mouse Glow for Header (Surprise!)
+      header?.addEventListener('mousemove', (e) => {
+        const { left, top, width, height } = header.getBoundingClientRect();
+        const x = ((e.clientX - left) / width) * 100;
+        const y = ((e.clientY - top) / height) * 100;
+        header.style.setProperty('--mouse-x', `${x}%`);
+        header.style.setProperty('--mouse-y', `${y}%`);
+        header.style.background = `radial-gradient(circle at ${x}% ${y}%, rgba(0, 212, 255, 0.15) 0%, rgba(3, 7, 18, 0.8) 50%)`;
+      });
+      
+      header?.addEventListener('mouseleave', () => {
+        header.style.background = '';
+      });
+
+      // Back to Top Click
+      backToTopBtn?.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       });
     });
   </script>

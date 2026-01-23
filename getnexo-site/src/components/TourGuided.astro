@@ -16,11 +16,13 @@ const {
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@11.0.1/dist/css/shepherd.css" />
 
 <!-- Shepherd.js Script -->
-<script src="https://cdn.jsdelivr.net/npm/shepherd.js@11.0.1/dist/js/shepherd.min.js"></script>
+
+<!-- Shepherd.js Script -->
+<script is:inline src="https://cdn.jsdelivr.net/npm/shepherd.js@11.0.1/dist/js/shepherd.min.js"></script>
 
 <script define:vars={{ targetPage, autoStart, mobileOptimized }}>
   // @ts-ignore
-  declare const Shepherd: any;
+  const _Shepherd = typeof Shepherd !== 'undefined' ? Shepherd : null;
 
   let tourInstance = null;
 
@@ -297,18 +299,14 @@ const {
 </script>
 
 <!-- Tour Trigger Button -->
+<!-- Tour Trigger Button (Minimized Circle) -->
 <button
   onclick="startGetNexoTour()"
-  class="tour-trigger-btn fixed bottom-6 left-6 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-40 group"
+  class="tour-trigger-btn"
   title="Tour Guiado GetNexo"
 >
-  <div class="flex items-center gap-2">
-    <span class="text-lg">🎯</span>
-    <span class="hidden md:inline font-medium">Tour</span>
-  </div>
-  <div class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-    !
-  </div>
+  <span class="tour-icon">🎯</span>
+  <span class="tour-badge">!</span>
 </button>
 
 <!-- Custom Styles for Tour -->
@@ -367,20 +365,53 @@ const {
     border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
   }
 
-  /* Tour trigger button */
+  /* Tour trigger button (Minimized Circle) */
   .tour-trigger-btn {
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    animation: gentlePulse 3s ease-in-out infinite;
+    position: fixed;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #9333ea, #2563eb);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(147, 51, 234, 0.4);
+    border: 2px solid rgba(255,255,255,0.2);
+    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    pointer-events: auto;
+    z-index: 1002;
+  }
+  .tour-icon { font-size: 1.5rem; }
+  .tour-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background: #ef4444;
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #030712;
+    animation: gentlePulse 2s infinite;
   }
 
   @keyframes gentlePulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    50% { transform: scale(1.1); box-shadow: 0 0 10px 4px rgba(239, 68, 68, 0); }
   }
 
   .tour-trigger-btn:hover {
-    transform: scale(1.05);
+    transform: scale(1.1) rotate(-5deg);
+    box-shadow: 0 15px 40px rgba(147, 51, 234, 0.6);
   }
 
   /* Mobile optimizations */
