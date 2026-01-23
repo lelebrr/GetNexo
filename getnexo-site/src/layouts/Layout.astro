@@ -1706,18 +1706,28 @@ const clientId = Astro.locals.clientId || 'default';
       }
     }
 
-    /* 🎉 EFEITOS DE FERIADOS FESTIVOS 🎉 */
+    /* 🎉 EFEITOS DE FERIADOS FESTIVOS 🎉 - Otimizado */
     .feriado-ativo {
       position: relative;
       overflow: hidden;
+      will-change: auto;
     }
 
-    /* Confete Caindo */
+    .feriado-ativo * {
+      will-change: auto;
+    }
+
+    .feriado-ativo img {
+      will-change: transform;
+    }
+
+    /* Confete Caindo - Otimizado */
     .confete_caindo {
       background-image: url('/assets/holidays/confetti-bg.png');
       background-size: cover;
       background-position: center;
       animation: confettiFall 20s linear infinite;
+      will-change: background-position;
     }
     @keyframes confettiFall {
       0% { background-position: 0 0; }
