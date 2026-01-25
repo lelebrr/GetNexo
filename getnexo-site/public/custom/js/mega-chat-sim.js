@@ -38,13 +38,26 @@
     // Helper for Trusted Types
     function setInnerHTML(element, html) {
         if (window.trustedTypes && window.trustedTypes.defaultPolicy) {
-            // Se existe politica default, o navegador converte automaticamente.
-            // Podemos atribuir direto.
             element.innerHTML = html;
             return;
         }
 
-        const policy = window.getnexoPolicy || (window.getnexoTrustedTypes && window.getnexoTrustedTypes.policy);
+        let policy = window.getnexoPolicy || (window.getnexoTrustedTypes && window.getnexoTrustedTypes.policy);
+
+        if (!policy && window.trustedTypes && window.trustedTypes.createPolicy) {
+            try {
+                // Check if policy already exists to avoid error
+                if (!window.trustedTypes.getAttributeType || !window.trustedTypes.getAttributeType('getnexo-trusted')) {
+                    policy = window.trustedTypes.createPolicy('getnexo-trusted', {
+                        createHTML: (string) => string
+                    });
+                    window.getnexoPolicy = policy;
+                }
+            } catch (e) {
+                // Fallback: try getting default policy or just ignore if already exists
+                console.warn('TrustedTypes policy creation failed or exists:', e);
+            }
+        }
 
         if (policy && policy.createHTML) {
             element.innerHTML = policy.createHTML(html);

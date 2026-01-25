@@ -1565,6 +1565,7 @@ const clientId = Astro.locals.clientId || 'default';
       }
     });
 
+  <script is:inline nonce={nonce}>
     // Detecção de Feriados Festivos com Sistema Completo
     (async function() {
       try {
@@ -1662,8 +1663,10 @@ const clientId = Astro.locals.clientId || 'default';
         </div>
       `;
 
-      if (window.getnexoTrustedTypes && window.getnexoTrustedTypes.policy) {
-        notification.innerHTML = window.getnexoTrustedTypes.policy.createHTML(htmlContent);
+      if (window.trustedTypes && window.trustedTypes.defaultPolicy) {
+        notification.innerHTML = htmlContent;
+      } else if (window.getnexoPolicy && window.getnexoPolicy.createHTML) {
+        notification.innerHTML = window.getnexoPolicy.createHTML(htmlContent);
       } else {
         notification.innerHTML = htmlContent;
       }
