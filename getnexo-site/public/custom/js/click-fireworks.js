@@ -62,7 +62,7 @@
     }
 
     // Adiciona listener global de clique - DESATIVADO PARA EVITAR ATROPELOS VISUAIS
-    // document.addEventListener('click', createFireworks);
+    document.addEventListener('click', createFireworks);
 
     console.log('🎆 Efeito de fogos no clique ativado!');
 

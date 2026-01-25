@@ -1505,18 +1505,23 @@ const clientId = Astro.locals.clientId || 'default';
     })(document,"script");
   </script>
 
-  <script is:inline>
-    // Mobile Menu Toggle Logic
+  <script is:inline nonce={nonce}>
+    // Mobile Menu & Pulse & Lang Dropdown Logic
     document.addEventListener('DOMContentLoaded', () => {
       const menuBtn = document.getElementById('mobile-menu-btn');
       const mobileMenu = document.getElementById('mobile-menu');
+      const mobileClose = document.getElementById('mobile-close');
+      const header = document.getElementById('main-nav');
+      const backToTopBtn = document.getElementById('back-to-top');
 
       if (menuBtn && mobileMenu) {
-        menuBtn.addEventListener('click', () => {
+        const toggleMobile = () => {
           menuBtn.classList.toggle('active');
           mobileMenu.classList.toggle('active');
           document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
-        });
+        };
+        menuBtn.addEventListener('click', toggleMobile);
+        mobileClose?.addEventListener('click', toggleMobile);
 
         mobileMenu.querySelectorAll('a').forEach(link => {
           link.addEventListener('click', () => {
@@ -1527,7 +1532,20 @@ const clientId = Astro.locals.clientId || 'default';
         });
       }
 
-      // Pulse Click Handler (Refactored from inline onclick)
+      // Header Scroll & Back to Top logic
+      window.addEventListener('scroll', () => {
+        if (header) {
+          if (window.scrollY > 20) header.classList.add('scrolled');
+          else header.classList.remove('scrolled');
+        }
+        
+        if (backToTopBtn) {
+          if (window.scrollY > 500) backToTopBtn.classList.add('visible');
+          else backToTopBtn.classList.remove('visible');
+        }
+      });
+
+      // Pulse Click Handler
       const pulseToast = document.getElementById('live-pulse');
       if (pulseToast) {
         pulseToast.addEventListener('click', () => {
@@ -1538,38 +1556,33 @@ const clientId = Astro.locals.clientId || 'default';
       // Language Selector Toggle Logic
       const langBtn = document.getElementById('lang-btn');
       const langDropdown = document.getElementById('lang-dropdown');
-
       if (langBtn && langDropdown) {
-        let isDropdownOpen = false;
-
         langBtn.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          isDropdownOpen = !isDropdownOpen;
-
-          if (isDropdownOpen) {
-            langDropdown.classList.add('show');
-          } else {
-            langDropdown.classList.remove('show');
-          }
+          e.preventDefault(); e.stopPropagation();
+          langDropdown.classList.toggle('show');
         });
-
-        // Close dropdown when clicking outside
         document.addEventListener('click', (e) => {
           if (!langBtn.contains(e.target) && !langDropdown.contains(e.target)) {
             langDropdown.classList.remove('show');
-            isDropdownOpen = false;
-          }
-        });
-
-        // Close on Escape key
-        document.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape' && isDropdownOpen) {
-            langDropdown.classList.remove('show');
-            isDropdownOpen = false;
           }
         });
       }
+
+      // Parallax Mouse Glow for Header
+      header?.addEventListener('mousemove', (e) => {
+        const { left, top, width, height } = header.getBoundingClientRect();
+        const x = ((e.clientX - left) / width) * 100;
+        const y = ((e.clientY - top) / height) * 100;
+        header.style.setProperty('--mouse-x', `${x}%`);
+        header.style.setProperty('--mouse-y', `${y}%`);
+        header.style.background = `radial-gradient(circle at ${x}% ${y}%, rgba(0, 212, 255, 0.15) 0%, rgba(3, 7, 18, 0.8) 50%)`;
+      });
+      header?.addEventListener('mouseleave', () => { if(header) header.style.background = ''; });
+
+      // Back to Top Click
+      backToTopBtn?.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
     });
   </script>
 
@@ -2373,86 +2386,6 @@ const clientId = Astro.locals.clientId || 'default';
 
 
   <!-- Header & Mobile Menu Scripts -->
-  <script is:inline nonce={nonce}>
-    document.addEventListener('DOMContentLoaded', () => {
-      const header = document.getElementById('main-nav');
-      const mobileBtn = document.getElementById('mobile-menu-btn');
-      const mobileMenu = document.getElementById('mobile-menu');
-      const mobileClose = document.getElementById('mobile-close');
-      const backToTopBtn = document.getElementById('back-to-top');
-
-      // Header Scroll Effect
-      window.addEventListener('scroll', () => {
-        if (window.scrollY > 20) {
-          header.classList.add('scrolled');
-        } else {
-          header.classList.remove('scrolled');
-        }
-        
-        // Back to Top logic
-        if (backToTopBtn) {
-          if (window.scrollY > 500) {
-            backToTopBtn.classList.add('visible');
-          } else {
-            backToTopBtn.classList.remove('visible');
-          }
-        }
-      });
-
-      // Mobile Menu Logic
-      const toggleMobile = () => {
-        mobileMenu.classList.toggle('active');
-        document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
-      };
-
-      mobileBtn?.addEventListener('click', toggleMobile);
-      mobileClose?.addEventListener('click', toggleMobile);
-      
-      // Close on link click
-      mobileMenu?.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-          mobileMenu.classList.remove('active');
-          document.body.style.overflow = '';
-        });
-      });
-
-      // Discovery Hub Logic
-      const magicBtn = document.getElementById('magic-discovery');
-      const hub = document.getElementById('discovery-hub');
-      const hubClose = document.getElementById('hub-close');
-
-      const toggleHub = () => {
-        hub?.classList.toggle('active');
-        document.body.style.overflow = hub?.classList.contains('active') ? 'hidden' : '';
-      };
-
-      magicBtn?.addEventListener('click', toggleHub);
-      hubClose?.addEventListener('click', toggleHub);
-      
-      hub?.addEventListener('click', (e) => {
-        if (e.target === hub) toggleHub();
-      });
-
-      // Parallax Mouse Glow for Header (Surprise!)
-      header?.addEventListener('mousemove', (e) => {
-        const { left, top, width, height } = header.getBoundingClientRect();
-        const x = ((e.clientX - left) / width) * 100;
-        const y = ((e.clientY - top) / height) * 100;
-        header.style.setProperty('--mouse-x', `${x}%`);
-        header.style.setProperty('--mouse-y', `${y}%`);
-        header.style.background = `radial-gradient(circle at ${x}% ${y}%, rgba(0, 212, 255, 0.15) 0%, rgba(3, 7, 18, 0.8) 50%)`;
-      });
-      
-      header?.addEventListener('mouseleave', () => {
-        header.style.background = '';
-      });
-
-      // Back to Top Click
-      backToTopBtn?.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      });
-    });
-  </script>
 
   <style is:global>
     body, html {
