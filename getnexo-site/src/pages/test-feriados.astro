@@ -1,0 +1,261 @@
+---
+import feriadosData from '../../public/data/feriados.json';
+const data = feriadosData;
+const hoje = new Date().toISOString().slice(0, 10);
+const ano = new Date().getFullYear();
+
+// Importar funções de cálculo de feriados
+const { verificaDataVariavel } = await import('../lib/feriados.js');
+
+// Verificar feriado ativo
+const feriadoHoje = data.feriados.find(f => {
+  if (f.data === hoje) return true;
+  const dataCalculada = verificaDataVariavel(f.data, ano);
+  return dataCalculada === hoje;
+});
+
+// Próximos feriados
+const proximosFeriados = data.feriados
+  .map(f => {
+    let dataFeriado = f.data;
+    if (dataFeriado.startsWith('variavel') || dataFeriado.startsWith('segundo_domingo')) {
+      dataFeriado = verificaDataVariavel(dataFeriado, ano);
+    }
+    return { ...f, dataCalculada: dataFeriado };
+  })
+  .filter(f => f.dataCalculada > hoje)
+  .sort((a, b) => new Date(a.dataCalculada) - new Date(b.dataCalculada))
+  .slice(0, 10);
+
+// Estatísticas
+const totalFeriados = data.feriados.length;
+const efeitosUnicos = [...new Set(data.feriados.map(f => f.efeito))].length;
+const feriadosFixos = data.feriados.filter(f => !f.data.startsWith('variavel') && !f.data.startsWith('segundo_domingo')).length;
+const feriadosVariaveis = totalFeriados - feriadosFixos;
+---
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Sistema de Feriados - GetNexo</title>
+    <style>
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            line-height: 1.6;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(15, 23, 42, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #00d4ff;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .current-status {
+            background: rgba(15, 23, 42, 0.8);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .holiday-active {
+            background: linear-gradient(45deg, #00ff88, #00cc66);
+            color: black;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            animation: celebrate 2s ease-in-out infinite alternate;
+        }
+
+        .holiday-inactive {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .upcoming-holidays {
+            background: rgba(15, 23, 42, 0.8);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .holiday-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 10px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .holiday-item:hover {
+            background: rgba(0, 212, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .holiday-name {
+            font-weight: 600;
+        }
+
+        .holiday-date {
+            color: #00d4ff;
+            font-weight: 500;
+        }
+
+        .holiday-effect {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: black;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        @keyframes celebrate {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.02); }
+        }
+
+        .emoji {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+
+        .today-info {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎉 Sistema de Feriados GetNexo</h1>
+        <p>Teste completo do sistema automático de detecção e efeitos visuais de feriados</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">{totalFeriados}</div>
+            <div class="stat-label">Total de Feriados</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{efeitosUnicos}</div>
+            <div class="stat-label">Efeitos Visuais Únicos</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{feriadosFixos}</div>
+            <div class="stat-label">Datas Fixas</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{feriadosVariaveis}</div>
+            <div class="stat-label">Datas Variáveis</div>
+        </div>
+    </div>
+
+    <div class="today-info">
+        <h3>📅 Hoje: {hoje}</h3>
+        <p>Ano: {ano} | Sistema funcionando perfeitamente! ⚡</p>
+    </div>
+
+    <div class="current-status">
+        <h2>🎯 Status Atual dos Feriados</h2>
+
+        {feriadoHoje ? (
+            <div class="holiday-active">
+                <h3>🎉 FERIADO ATIVO HOJE!</h3>
+                <div class="emoji">🎊</div>
+                <p><strong>{feriadoHoje.idiomas.pt}</strong></p>
+                <p>Data: {feriadoHoje.data}</p>
+                <p>Efeito: <code>{feriadoHoje.efeito}</code></p>
+                <p>🤖 Bot dirá: "{feriadoHoje.bot_frase.pt}"</p>
+            </div>
+        ) : (
+            <div class="holiday-inactive">
+                <h3>📅 Nenhum feriado ativo hoje</h3>
+                <p>O site está com aparência normal. Os próximos feriados ativarão automaticamente os efeitos visuais!</p>
+            </div>
+        )}
+    </div>
+
+    <div class="upcoming-holidays">
+        <h2>📋 Próximos Feriados (Top 10)</h2>
+        {proximosFeriados.map(feriado => (
+            <div class="holiday-item">
+                <div>
+                    <div class="holiday-name">🎊 {feriado.idiomas.pt}</div>
+                    <div class="holiday-effect">Efeito: {feriado.efeito}</div>
+                </div>
+                <div class="holiday-date">{feriado.dataCalculada}</div>
+            </div>
+        ))}
+    </div>
+
+    <div style="text-align: center;">
+        <a href="/" class="back-link">🏠 Voltar ao Site Principal</a>
+    </div>
+
+    <script>
+        // Pequeno script para mostrar que o sistema está ativo
+        console.log('🎉 Sistema de Feriados GetNexo carregado com sucesso!');
+        console.log('📊 Total de feriados:', {totalFeriados});
+        console.log('🎨 Efeitos únicos:', {efeitosUnicos});
+    </script>
+</body>
+</html>

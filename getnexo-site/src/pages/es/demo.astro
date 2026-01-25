@@ -1,0 +1,38 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const title = "Demo IA GetNexo - Experimenta Automatización WhatsApp en Vivo";
+const description = "Prueba nuestro chatbot IA para WhatsApp. Ve cómo maneja consultas de clientes, procesa pedidos y genera ventas automáticamente.";
+const keywords = "demo ia whatsapp, demo chatbot, demo automatización, demo ai ventas, prueba bot whatsapp";
+
+const lang = 'es';
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  <section class="py-20">
+    <div class="container mx-auto px-4">
+      <h1 class="text-4xl font-bold text-center mb-8">Experiencia Demo IA</h1>
+      <p class="text-xl text-center text-gray-600 mb-12">Interactúa con nuestro chatbot inteligente de WhatsApp y ve el futuro de las ventas automatizadas</p>
+
+      <div class="max-w-4xl mx-auto">
+        <div class="bg-white p-8 rounded-lg shadow-lg">
+          <h2 class="text-2xl font-semibold mb-6">Prueba el Asistente IA</h2>
+          <div class="chat-demo bg-gray-50 p-6 rounded-lg">
+            <div class="chat-messages space-y-4" id="demo-chat">
+              <div class="message bot">
+                <div class="avatar">🤖</div>
+                <div class="content">
+                  <p>¡Hola! Bienvenido al Chat IA de GetNexo.</p>
+                </div>
+              </div>
+            </div>
+            <div class="chat-input mt-4">
+              <input type="text" placeholder="Escribe tu mensaje..." class="w-full p-3 border rounded-lg" />
+              <button class="mt-2 bg-blue-600 text-white px-6 py-2 rounded-lg">Enviar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

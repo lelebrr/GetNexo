@@ -1,4 +1,4 @@
- // Middleware de autenticação e segurança para GetNexo
+// Middleware de autenticação e segurança para GetNexo
 import { verifyToken } from './lib/auth.js';
 import logger from './lib/logger.js';
 import crypto from 'node:crypto';
@@ -8,23 +8,41 @@ const rateLimitStore = new Map();
 
 const RATE_LIMITS = {
     // API endpoints
-    '/api/graphql': { window: 60 * 1000, max: 50, burst: 10 },
-    '/api/stream': { window: 60 * 1000, max: 30, burst: 5 },
-    '/api/payments': { window: 60 * 1000, max: 20, burst: 3 },
-    '/api/webhooks': { window: 60 * 1000, max: 100, burst: 20 },
-    // Páginas públicas
-    '/': { window: 60 * 1000, max: 500, burst: 50 },
-    // Admin endpoints (mais restritivo)
-    '/admin': { window: 60 * 1000, max: 100, burst: 10 },
+    '/api/graphql': { window: 60 * 1000, max: 500, burst: 100 },
+    '/api/stream': { window: 60 * 1000, max: 300, burst: 50 },
+    '/api/payments': { window: 60 * 1000, max: 200, burst: 30 },
+    '/api/webhooks': { window: 60 * 1000, max: 1000, burst: 200 },
+    // Páginas públicas - Muito permissivo para evitar bloqueios falso-positivos
+    '/': { window: 60 * 1000, max: 2000, burst: 500 },
+    '/pt': { window: 60 * 1000, max: 2000, burst: 500 },
+    '/en': { window: 60 * 1000, max: 2000, burst: 500 },
+    '/es': { window: 60 * 1000, max: 2000, burst: 500 },
+    // Admin endpoints
+    '/admin': { window: 60 * 1000, max: 500, burst: 100 },
     // Padrão para outros
-    'default': { window: 60 * 1000, max: 200, burst: 30 }
+    'default': { window: 60 * 1000, max: 1000, burst: 100 }
 };
+
+function getClientIP(request) {
+    const cfIP = request.headers.get('cf-connecting-ip');
+    if (cfIP) return cfIP;
+
+    const forwardedFor = request.headers.get('x-forwarded-for');
+    if (forwardedFor) {
+        return forwardedFor.split(',')[0].trim();
+    }
+
+    return request.headers.get('x-real-ip') || 'unknown';
+}
 
 function checkRateLimit(clientIP, endpoint) {
     const now = Date.now();
 
     // Encontrar configuração específica ou usar padrão
-    const config = RATE_LIMITS[endpoint] || RATE_LIMITS.default;
+    const config = RATE_LIMITS[endpoint] ||
+        Object.entries(RATE_LIMITS).find(([key]) => endpoint.startsWith(key))?.[1] ||
+        RATE_LIMITS.default;
+
     const windowStart = now - config.window;
 
     const key = `${clientIP}:${endpoint}`;
@@ -33,33 +51,27 @@ function checkRateLimit(clientIP, endpoint) {
     }
 
     const data = rateLimitStore.get(key);
-    const { requests, burstCount, lastBurstReset } = data;
 
-    // Reset burst counter se necessário
-    if (now - lastBurstReset > config.window) {
-        data.burstCount = 0;
-        data.lastBurstReset = now;
+    // Cleanup old requests once in a while
+    if (data.requests.length > config.max * 2) {
+        data.requests = data.requests.filter(time => time > windowStart);
     }
 
-    // Remove old requests outside the window
-    const validRequests = requests.filter(time => time > windowStart);
-
-    // Check burst limit (requests in short time)
-    const recentRequests = validRequests.filter(time => now - time < 10000); // 10s burst window
+    // Check burst limit (requests in short time - 10s)
+    const burstWindow = 10000;
+    const recentRequests = data.requests.filter(time => now - time < burstWindow);
     if (recentRequests.length >= config.burst) {
-        return { allowed: false, retryAfter: Math.ceil((config.window - (now - windowStart)) / 1000) };
+        return { allowed: false, retryAfter: Math.ceil((burstWindow - (now - recentRequests[0])) / 1000) || 1 };
     }
 
     // Check general limit
+    const validRequests = data.requests.filter(time => time > windowStart);
     if (validRequests.length >= config.max) {
-        return { allowed: false, retryAfter: Math.ceil((config.window - (now - windowStart)) / 1000) };
+        return { allowed: false, retryAfter: Math.ceil((config.window - (now - validRequests[0])) / 1000) || 1 };
     }
 
     // Add current request
-    validRequests.push(now);
-    data.requests = validRequests;
-    data.burstCount++;
-
+    data.requests.push(now);
     return { allowed: true };
 }
 
@@ -68,14 +80,11 @@ export const onRequest = async (context, next) => {
     const url = new URL(context.request.url);
     const endpoint = url.pathname;
     const method = context.request.method;
-    const clientIP = context.request.headers.get('x-forwarded-for') ||
-        context.request.headers.get('x-real-ip') || 'unknown';
+    const clientIP = getClientIP(context.request);
 
-    // 1. Language Redirection for Root
+    // 1. Language Redirection for Root (Only if on root exactly)
     if (endpoint === '/' || endpoint === '') {
-        // For Brazil/South America, always default to Portuguese
-        // Skip language redirection for now to test
-        // return; // Stay on root - REMOVED: was breaking middleware chain
+        // Redirection logic...
     }
 
     // Log de request
@@ -86,14 +95,10 @@ export const onRequest = async (context, next) => {
         userAgent: context.request.headers.get('user-agent')
     });
 
-    // Verificar se endpoint tem rate limiting configurado
-    const hasRateLimit = Object.keys(RATE_LIMITS).some(key => endpoint.startsWith(key)) || RATE_LIMITS.default;
+    // Ignorar rate limit para assets estáticos
+    const isStatic = /\.(js|css|png|jpg|jpeg|gif|svg|woff|woff2|webp|avif|ico|json|map|glb)$/.test(endpoint);
 
-    if (hasRateLimit) {
-        const clientIP = context.request.headers.get('x-forwarded-for') ||
-            context.request.headers.get('x-real-ip') ||
-            'unknown';
-
+    if (!isStatic) {
         const result = checkRateLimit(clientIP, endpoint);
         if (!result.allowed) {
             logger.warn(`Rate limit exceeded: ${endpoint}`, {
@@ -116,9 +121,13 @@ export const onRequest = async (context, next) => {
         }
     }
 
-    // Generate Nonce for CSP
+    // Generate Nonce for CSP (usado para permitir scripts inline seguros)
     const nonce = crypto.randomBytes(16).toString('base64');
     context.locals.nonce = nonce;
+
+    // Generate Trusted Types policy name (para mitigar XSS baseado em DOM)
+    const trustedTypesPolicy = `getnexo-trusted-${crypto.randomBytes(8).toString('hex')}`;
+    context.locals.trustedTypesPolicy = trustedTypesPolicy;
 
     // Detect client_id for white-label
     const clientId = context.request.headers.get('x-client-id') ||
@@ -221,17 +230,53 @@ export const onRequest = async (context, next) => {
     response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
     response.headers.set('Cross-Origin-Opener-Policy', 'same-origin');
 
-    // Relaxed CSP for maximum compatibility with Cloudflare and external widgets
-    // - allows 'unsafe-inline' for Rocket Loader and event handlers
-    // - whitelists getnexo domains for API and Widget loading
+    // CSP avançada com proteção contra XSS
+    // - Usa nonces para scripts inline seguros
+    // - Adiciona strict-dynamic para proteção contra bypass de listas de permissões
+    // - Adiciona Trusted Types para mitigar XSS baseado em DOM
+    // - Remove 'unsafe-inline' e 'unsafe-eval' sempre que possível
     const csp = [
+        // Base policy
         "default-src 'self'",
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.cloudflare.com static.cloudflareinsights.com https://cdn.jsdelivr.net https://api.getnexo.com.br https://*.getnexo.com.br; object-src 'none'; base-uri 'none';",
-        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-        "img-src * data:",
+
+        // Scripts: usa nonce + strict-dynamic para segurança máxima
+        // Permite scripts de terceiros confiáveis (Cloudflare, CDN)
+        // unsafe-hashes para permitir event handlers inline (temporário até refatorar)
+        `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-hashes' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://api.getnexo.com.br https://*.getnexo.com.br https://www.googletagmanager.com https://static.cloudflareinsights.com`,
+
+        // Styles: usa apenas unsafe-inline para atributos de estilo legados
+        // Nota: se houver nonce, 'unsafe-inline' é ignorado em navegadores modernos. Removendo nonce de style-src.
+        `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com`,
+
+        // Images: permite de todas as fontes (necessário para widgets e CDN)
+        "img-src * data: blob:",
+
+        // Fonts: apenas fontes confiáveis
         "font-src 'self' https://fonts.gstatic.com",
-        "connect-src *",
-        "frame-ancestors *"
+
+        // Conexões: restringe para domínios confiáveis
+        "connect-src 'self' https://api.getnexo.com.br https://*.getnexo.com.br wss://*.getnexo.com.br",
+
+        // Frames: restringe para domínios confiáveis (removido 'frame-ancestors *' inseguro)
+        "frame-ancestors 'self' https://*.getnexo.com.br",
+
+        // Trusted Types: requer Trusted Types para scripts inline
+        "require-trusted-types-for 'script'",
+
+        // Trusted Types policy: permite apenas as políticas específicas do app
+        `trusted-types getnexo-trusted getnexo-api-data`,
+
+        // Object: desabilita objetos embutidos (proteção contra XSS)
+        "object-src 'none'",
+
+        // Base URI: previne ataques de base URI
+        "base-uri 'self'",
+
+        // Form Action: restringe envios de formulário
+        "form-action 'self'",
+
+        // Upgrade insecure requests: força HTTPS
+        "upgrade-insecure-requests"
     ].join('; ');
 
     response.headers.set('Content-Security-Policy', csp);

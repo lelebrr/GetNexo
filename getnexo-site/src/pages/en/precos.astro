@@ -1,0 +1,53 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const title = "GetNexo Pricing - WhatsApp AI Automation Plans";
+const description = "Transparent pricing for WhatsApp automation. No hidden fees, no setup costs. Pay only for what you use.";
+const keywords = "whatsapp pricing, ai chatbot cost, automation pricing, whatsapp business pricing";
+
+const lang = 'en';
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  <section class="py-20">
+    <div class="container mx-auto px-4">
+      <h1 class="text-4xl font-bold text-center mb-8">Simple, Transparent Pricing</h1>
+      <p class="text-xl text-center text-gray-600 mb-12">No monthly fees. Pay only for successful transactions.</p>
+
+      <div class="max-w-4xl mx-auto">
+        <div class="bg-white p-8 rounded-lg shadow-lg">
+          <h2 class="text-2xl font-semibold mb-6">How It Works</h2>
+          <div class="grid md:grid-cols-2 gap-8">
+            <div>
+              <h3 class="text-xl font-semibold mb-4">Free to Start</h3>
+              <ul class="space-y-2">
+                <li>• Setup in 12 minutes</li>
+                <li>• Basic AI features</li>
+                <li>• Up to 1,000 messages/month</li>
+                <li>• WhatsApp Business API</li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold mb-4">Pay Per Success</h3>
+              <ul class="space-y-2">
+                <li>• R$ 0.50 per transaction</li>
+                <li>• No monthly subscriptions</li>
+                <li>• Scale as you grow</li>
+                <li>• Cancel anytime</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-12 text-center">
+          <h3 class="text-2xl font-semibold mb-6">ROI Calculator</h3>
+          <p class="text-gray-600 mb-8">See how much you can save with GetNexo</p>
+          <div class="bg-blue-50 p-6 rounded-lg inline-block">
+            <p class="text-lg">Average customer saves R$ 2,500/month</p>
+            <p class="text-sm text-gray-600">Based on 500 conversations/month</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

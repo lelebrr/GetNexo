@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realidade Aumentada - GetNexo</title>
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            background: #000;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+        }
+
+        model-viewer {
+            width: 100vw;
+            height: 100vh;
+            --progress-bar-background: transparent;
+            --poster-color: transparent;
+            --progress-bar-color: #10b981;
+        }
+
+        .ar-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .ar-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .info-panel {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-panel h3 {
+            margin: 0 0 8px 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .info-panel p {
+            margin: 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 18px;
+            z-index: 1000;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.5;
+            }
+        }
+
+        .loading::after {
+            content: '';
+            animation: pulse 1.5s infinite;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loading" class="loading">Carregando modelo 3D...</div>
+
+    <model-viewer id="model-viewer" src="/modelos/tenis_branco.glb" alt="Produto em 3D" camera-orbit="45deg 55deg 2m"
+        shadow-intensity="1" ar ar-modes="webxr scene-viewer quick-look" poster="/modelos/poster.jpg" loading="eager">
+        <button class="ar-button" slot="ar-button">
+            👓 Ver em Realidade Aumentada
+        </button>
+    </model-viewer>
+
+    <div class="info-panel">
+        <h3>Visualização 3D</h3>
+        <p>Gire o produto com o mouse ou toque. Clique em "Ver em AR" para colocar na sua casa!</p>
+    </div>
+
+    <script>
+        const modelViewer = document.getElementById('model-viewer');
+        const loading = document.getElementById('loading');
+
+        // Esconde loading quando carregar
+        modelViewer.addEventListener('load', () => {
+            loading.style.display = 'none';
+        });
+
+        // Pega parâmetro da URL para modelo dinâmico
+        const urlParams = new URLSearchParams(window.location.search);
+        const model = urlParams.get('model') || 'tenis_branco';
+        modelViewer.src = `/modelos/${model}.glb`;
+
+        // Analytics (opcional)
+        modelViewer.addEventListener('ar-status', (event) => {
+            if (event.detail.status === 'failed') {
+                console.log('AR não suportado neste dispositivo');
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,66 +1,181 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 
-const title = "Checkout WhatsApp & Vendas PIX Automáticas | GetNexo";
-const description = "Venda 3x mais com checkout nativo no WhatsApp. Pagamentos PIX automáticos, catálogo inteligente, recuperação de carrinho e checkout sem sair do chat.";
-const keywords = "checkout whatsapp, pix whatsapp, vendas whatsapp, carrinho whatsapp, pagamento pix chat, api oficial whatsapp, getnexo vendas";
+// SEO Meta Tags
+const title = "Checkout WhatsApp com PIX Automático | Venda 3x Mais | GetNexo";
+const description = "Checkout nativo no WhatsApp com pagamento PIX automático. Reduza abandono em 67%, venda 3x mais com experiência fluida no chat. Teste Grátis!";
+const keywords = "checkout whatsapp, pix automático, vendas whatsapp, carrinho whatsapp, pagamento pix chat, api oficial whatsapp, getnexo vendas, checkout pix, vendas online";
+const canonical = "https://getnexo.com.br/produtos/vendas";
 
-const schema = {
+// Structured Data - Organization
+const organizationSchema = {
   "@context": "https://schema.org",
-  "@graph": [
+  "@type": "Organization",
+  "name": "GetNexo",
+  "url": "https://getnexo.com.br",
+  "logo": "https://getnexo.com.br/logo.png",
+  "sameAs": [
+    "https://www.linkedin.com/company/getnexo",
+    "https://twitter.com/getnexo",
+    "https://github.com/getnexo"
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+5511999999999",
+    "contactType": "customer service",
+    "areaServed": "BR",
+    "availableLanguage": "pt-BR"
+  }
+};
+
+// SoftwareApplication Schema with detailed features
+const softwareSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "GetNexo Checkout & Vendas com PIX",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web, iOS, Android",
+  "applicationSuite": "GetNexo Platform",
+  "softwareVersion": "3.0",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "BRL",
+    "availability": "https://schema.org/InStock",
+    "eligibleCustomerType": "https://schema.org/Business",
+    "eligibleDuration": "https://schema.org/Unlimited"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "ratingCount": "94",
+    "bestRating": "5",
+    "worstRating": "1"
+  },
+  "description": "Checkout nativo no WhatsApp com pagamento PIX automático. Reduza abandono de carrinho, venda 3x mais com experiência fluida no chat.",
+  "featureList": [
+    "Checkout nativo no WhatsApp",
+    "PIX automático com QR Code dinâmico",
+    "Recuperação de carrinho com IA",
+    "Catálogo inteligente integrado",
+    "Confirmação instantânea de pagamento",
+    "Integração com Shopify, WooCommerce, Nuvemshop",
+    "Conciliação bancária direta",
+    "Analytics e métricas em tempo real"
+  ],
+  "author": {
+    "@type": "Organization",
+    "name": "GetNexo"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "GetNexo"
+  },
+  "datePublished": "2024-01-01",
+  "dateModified": "2026-01-23",
+  "operatingSystem": "Web, iOS, Android",
+  "applicationCategory": "BusinessApplication",
+  "genre": "Checkout e Vendas Online",
+  "keywords": "checkout whatsapp, pix automático, vendas online, carrinho whatsapp, pagamento pix"
+};
+
+// FAQ Schema with comprehensive questions
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
     {
-      "@type": "SoftwareApplication",
-      "name": "GetNexo Checkout & Vendas",
-      "applicationCategory": "BusinessApplication",
-      "operatingSystem": "Web",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "BRL"
-      },
-      "description": "Plataforma de checkout e automação de vendas via PIX para WhatsApp.",
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.9",
-        "ratingCount": "94"
+      "@type": "Question",
+      "name": "O pagamento PIX é automático?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sim. O GetNexo gera o QR Code e o código 'Copia e Cola' instantaneamente no chat. Assim que o cliente paga, o sistema recebe a confirmação bancária e libera o pedido automaticamente."
       }
     },
     {
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "O pagamento PIX é automático?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Sim. O GetNexo gera o QR Code e o código 'Copia e Cola' instantaneamente no chat. Assim que o cliente paga, o sistema recebe a confirmação bancária e libera o pedido automaticamente."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Integra com quais plataformas?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Integramos nativamente com Shopify, WooCommerce, Nuvemshop, Mercado Pago, PagSeguro e diversos bancos via API para conciliação PIX."
-          }
-        }
-      ]
+      "@type": "Question",
+      "name": "Integra com quais plataformas?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Integramos nativamente com Shopify, WooCommerce, Nuvemshop, Mercado Pago, PagSeguro e diversos bancos via API para conciliação PIX."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "É seguro receber via PIX pelo WhatsApp?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Extremamente seguro. O GetNexo não armazena seu dinheiro. Nós apenas conectamos seu WhatsApp à API oficial do seu banco ou gateway de pagamento. O dinheiro cai direto na sua conta e a confirmação é feita via protocolo SSL criptografado."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Como funciona a sincronização de estoque?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Se você integrar com Shopify, Nuvemshop ou WooCommerce, o GetNexo consulta seu estoque em tempo real. Se um produto acaba na sua loja, a IA avisa automaticamente o cliente no WhatsApp que aquele item está indisponível, evitando vendas sem produto."
+      }
     }
   ]
 };
 
-const stats = [
-  { value: "300%", label: "mais conversão", desc: "vs. sites tradicionais" },
-  { value: "67%", label: "menos abandono", desc: "checkout direto no chat" },
-  { value: "< 2min", label: "tempo de venda", desc: "da escolha ao pagamento" },
-  { value: "100%", label: "PIX Automático", desc: "confirmação sem humano" }
-];
+// Breadcrumb Schema
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Início",
+      "item": "https://getnexo.com.br"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Produtos",
+      "item": "https://getnexo.com.br/produtos"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Checkout WhatsApp",
+      "item": "https://getnexo.com.br/produtos/vendas"
+    }
+  ]
+};
 
+// Product Schema for comparison
+const productSchema = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "GetNexo Checkout & Vendas com PIX",
+  "description": "Checkout nativo no WhatsApp com pagamento PIX automático",
+  "brand": {
+    "@type": "Brand",
+    "name": "GetNexo"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "BRL",
+    "availability": "https://schema.org/InStock",
+    "url": "https://getnexo.com.br/produtos/vendas"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "ratingCount": "94"
+  }
+};
+
+// Features data with SEO-rich descriptions
 const features = [
   {
     icon: "🛒",
-    title: "Checkout Nativo",
+    title: "Checkout Nativo no WhatsApp",
     description: "Seu cliente escolhe, adiciona ao carrinho e paga sem nunca fechar o WhatsApp. Simplicidade que gera lucro.",
+    seoKeywords: ["checkout nativo", "carrinho whatsapp", "venda direta chat"],
     details: [
       "Carrinho persistente no chat",
       "Cálculo de frete automático",
@@ -70,8 +185,9 @@ const features = [
   },
   {
     icon: "💎",
-    title: "PIX Express",
+    title: "PIX Express Automático",
     description: "Gere cobranças dinâmicas com QR Code. O sistema monitora o banco e avisa o cliente sobre a aprovação em milisegundos.",
+    seoKeywords: ["pix automático", "qr code dinâmico", "confirmação instantânea"],
     details: [
       "QR Code dinâmico por pedido",
       "Copia e Cola in-chat",
@@ -81,8 +197,9 @@ const features = [
   },
   {
     icon: "📈",
-    title: "Recuperação Ativa",
+    title: "Recuperação de Carrinho com IA",
     description: "A IA persegue os abandonos de carrinho com ofertas irresistíveis enviadas no momento certo.",
+    seoKeywords: ["recuperação carrinho", "abandono checkout", "ia vendas"],
     details: [
       "Lembretes 2h/24h depois",
       "Gatilhos de escassez",
@@ -94,6 +211,7 @@ const features = [
     icon: "🔌",
     title: "Eco-Sistema Integrado",
     description: "Sincronize pedidos e estoque com suas ferramentas favoritas de e-commerce e ERP.",
+    seoKeywords: ["integração shopify", "woocommerce sync", "erp integração"],
     details: [
       "Sync Shopify & WooCommerce",
       "Integração Bling/Tiny",
@@ -103,6 +221,51 @@ const features = [
   }
 ];
 
+// Use cases for SEO
+const useCases = [
+  { icon: "🛒", title: "E-commerce", desc: "Checkout direto no WhatsApp", benefit: "Aumento de 3x em conversões" },
+  { icon: "🍕", title: "Delivery", desc: "Pedidos e pagamentos via PIX", benefit: "Entrega em 2min" },
+  { icon: "🏠", title: "Imobiliárias", desc: "Vendas de imóveis no chat", benefit: "Fechamento 24/7" },
+  { icon: "📚", title: "Educação", desc: "Matrículas e pagamentos", benefit: "Redução de 50% em burocracia" }
+];
+
+// Comparison data for comparison
+const comparisonData = [
+  {
+    feature: "Checkout",
+    getNexo: "✅ Nativo no WhatsApp (sem sair do chat)",
+    competitors: "❌ Redireciona para site externo",
+    oldBots: "⚠️ Link externo (alto abandono)"
+  },
+  {
+    feature: "PIX",
+    getNexo: "✅ Automático com confirmação instantânea",
+    competitors: "❌ Manual ou via link externo",
+    oldBots: "❌ Não possui"
+  },
+  {
+    feature: "Recuperação",
+    getNexo: "✅ IA com timing inteligente",
+    competitors: "❌ Mensagens genéricas",
+    oldBots: "❌ Apenas lembretes manuais"
+  },
+  {
+    feature: "Integração",
+    getNexo: "✅ Shopify, WooCommerce, Nuvemshop nativo",
+    competitors: "⚠️ Limitado a alguns",
+    oldBots: "❌ Muito limitado"
+  }
+];
+
+// Stats data
+const stats = [
+  { value: "300%", label: "mais conversão", desc: "vs. sites tradicionais" },
+  { value: "67%", label: "menos abandono", desc: "checkout direto no chat" },
+  { value: "< 2min", label: "tempo de venda", desc: "da escolha ao pagamento" },
+  { value: "100%", label: "PIX Automático", desc: "confirmação sem humano" }
+];
+
+// Steps data
 const steps = [
   { num: "01", title: "Interesse", desc: "Cliente pergunta ou clica no catálogo", icon: "👀" },
   { num: "02", title: "Escolha", desc: "IA apresenta produtos e variantes", icon: "🛍️" },
@@ -110,12 +273,28 @@ const steps = [
   { num: "04", title: "PIX", desc: "QR Code gerado e pago instantaneamente", icon: "💰" }
 ];
 
+// Trust badges
 const trustBadges = [
   { label: "PCI Compliance", icon: "🛡️" },
   { label: "PIX Bacen Ready", icon: "🇧🇷" },
   { label: "SSL Encrypted", icon: "🔒" },
   { label: "Official Meta API", icon: "✅" }
 ];
+
+// Integrations data
+const integrations = [
+  { name: "n8n", icon: "⚡", desc: "Automação infinita open-source", url: "https://n8n.io" },
+  { name: "Typebot", icon: "🤖", desc: "Construtor visual de conversas", url: "https://typebot.io" },
+  { name: "ChatGPT", icon: "🧠", desc: "Inteligência Generativa Nativa", url: "https://openai.com" },
+  { name: "Webhooks", icon: "🔗", desc: "Conecte com qualquer API REST", url: "#" },
+  { name: "Google Sheets", icon: "📊", desc: "Banco de dados simples e ágil", url: "https://sheets.google.com" },
+  { name: "Stripe", icon: "💳", desc: "Cobranças direto no chat", url: "https://stripe.com" },
+  { name: "MercadoPago", icon: "💳", desc: "Pagamentos no Brasil", url: "https://mercadopago.com.br" },
+  { name: "Zapier", icon: "🔗", desc: "Automação no-code", url: "https://zapier.com" }
+];
+
+
+
 ---
 
 <Layout title={title} description={description} keywords={keywords}>
@@ -123,32 +302,32 @@ const trustBadges = [
 
   <!-- Hero Section -->
   <section class="prod-hero relative py-20 px-4 text-center overflow-hidden" aria-label="Introdução Vendas WhatsApp">
-    <div class="absolute inset-0 bg-gradient-to-b from-blue-900/10 to-transparent -z-10"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-neon-blue/10 to-transparent -z-10"></div>
     
-    <div class="hero-badge mb-6">💰 Venda 3x Mais no WhatsApp</div>
-    <h1 class="text-4xl md:text-6xl font-black text-white mb-6 leading-tight">
-      O Checkout que acontece <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">Dentro da Janela</span>
+    <div class="hero-badge mb-6 reveal">💰 Venda 3x Mais no WhatsApp</div>
+    <h1 class="hero-title reveal leading-tight">
+      O Checkout que acontece <span class="text-gradient-animated">Dentro da Janela</span>
     </h1>
-    <p class="hero-subtitle text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-10">
+    <p class="hero-subtitle reveal max-w-3xl mx-auto mb-10">
       Reduza o abandono de carrinho em 67% oferecendo uma experiência de compra fluida via PIX, totalmente integrada ao catálogo da sua loja.
     </p>
     
-    <div class="hero-ctas flex flex-col md:flex-row gap-4 justify-center mb-16">
-      <a href="/criar-bot" class="btn-primary-glow px-10 py-4 rounded-xl font-bold bg-green-600 hover:bg-green-500 text-white transition-all shadow-lg shadow-green-500/20">
+    <div class="hero-ctas flex flex-col md:flex-row gap-4 justify-center mb-16 reveal">
+      <a href="/criar-bot" class="btn-primary-glow">
         Ativar Vendas no Chat
       </a>
-      <a href="/demo" class="px-10 py-4 rounded-xl font-bold border border-slate-700 text-slate-300 hover:text-white transition-all bg-slate-800/30">
+      <a href="/demo" class="btn-outline">
         Ver Fluxo PIX →
       </a>
     </div>
 
     <!-- Stats Grid -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl mx-auto">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl mx-auto reveal">
       {stats.map(stat => (
-        <div class="p-6 rounded-2xl bg-[#0f172a]/50 border border-white/5 backdrop-blur-sm">
-          <span class="block text-3xl font-black text-green-400">{stat.value}</span>
+        <div class="glass-panel p-6">
+          <span class="block text-3xl font-black text-neon-green">{stat.value}</span>
           <span class="block text-sm font-bold text-white uppercase mt-1">{stat.label}</span>
-          <span class="block text-xs text-slate-500 mt-1">{stat.desc}</span>
+          <span class="block text-xs text-text-secondary mt-1">{stat.desc}</span>
         </div>
       ))}
     </div>
@@ -181,9 +360,9 @@ const trustBadges = [
   <section class="py-20 px-4" aria-label="Demonstração do Checkout PIX">
     <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
       
-      <div>
-        <h2 class="text-3xl md:text-4xl font-black text-white mb-6 leading-tight">Pagamento PIX com <span class="text-blue-400">Confirmação Instantânea</span></h2>
-        <p class="text-slate-400 text-lg mb-8 leading-relaxed">
+      <div class="reveal">
+        <h2 class="text-3xl md:text-4xl font-black text-white mb-6 leading-tight">Pagamento PIX com <span class="text-gradient">Confirmação Instantânea</span></h2>
+        <p class="text-text-secondary text-lg mb-8 leading-relaxed">
           Esqueça o envio manual de chaves. O GetNexo gera o QR Code na hora, com o valor exato, e seu cliente paga sem sair da conversa.
         </p>
         
@@ -258,19 +437,19 @@ const trustBadges = [
   </section>
 
   <!-- Features Grid -->
-  <section class="py-20 bg-[#0b101b]">
+  <section class="py-20">
     <div class="max-w-7xl mx-auto px-4">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         {features.map(f => (
-          <article class="p-8 rounded-3xl bg-[#131b2e] border border-white/5 hover:border-green-500/20 transition-all flex items-start gap-6 group">
-            <span class="text-4xl p-4 bg-green-900/10 rounded-2xl group-hover:grayscale-0 grayscale transition-all">{f.icon}</span>
+          <article class="glass-panel p-8 flex items-start gap-6 group reveal">
+            <span class="text-4xl p-4 bg-neon-green/10 rounded-2xl group-hover:grayscale-0 grayscale transition-all">{f.icon}</span>
             <div>
               <h3 class="text-xl font-bold text-white mb-3">{f.title}</h3>
-              <p class="text-slate-400 text-sm leading-relaxed mb-6">{f.description}</p>
+              <p class="text-text-secondary text-sm leading-relaxed mb-6">{f.description}</p>
               <div class="grid grid-cols-2 gap-3">
                 {f.details.map(d => (
-                  <div class="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1">
-                    <span class="text-green-500">✓</span> {d}
+                  <div class="text-[10px] font-bold text-text-secondary uppercase flex items-center gap-1">
+                    <span class="text-neon-green">✓</span> {d}
                   </div>
                 ))}
               </div>

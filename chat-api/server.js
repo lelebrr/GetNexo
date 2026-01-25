@@ -9,6 +9,7 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const rateLimit = require('express-rate-limit');
+const mongoose = require('mongoose');
 let authenticator;
 try {
     authenticator = require('otplib').authenticator;
@@ -56,6 +57,8 @@ app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
 // Basic security
 app.set('trust proxy', 1);
+
+app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
 
 // Rate limiting com configurações do .env
 const limiter = rateLimit({
@@ -660,6 +663,12 @@ app.post('/api/trial/register', async (req, res) => {
 const DB_PATH = process.env.DB_PATH || (process.env.NODE_ENV === 'test' ? path.join(__dirname, 'test.db') : path.join(__dirname, 'omninchat.db'));
 const db = global.testDb || new Database(DB_PATH);
 global.dbInstance = db;
+
+// --- MONGODB CONNECTION (For Models) ---
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://mongodb:27017/getnexo';
+mongoose.connect(MONGODB_URI)
+    .then(() => console.log('✅ Connected to MongoDB'))
+    .catch(err => console.error('❌ MongoDB Connection Error:', err));
 
 // Extended schema with media, analytics, and advanced features
 db.exec(`

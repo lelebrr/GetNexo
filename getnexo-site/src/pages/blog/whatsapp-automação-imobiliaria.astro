@@ -1,0 +1,903 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+// SEO Meta Tags
+const title = "WhatsApp Automação Imobiliária - Guia Completo 2026 | GetNexo";
+const description = "Descubra como automatizar vendas imobiliárias no WhatsApp com IA. Agende visitas, qualifique leads e feche mais negócios 24/7. Guia completo gratuito!";
+const keywords = "whatsapp imobiliária, automação imobiliária, chatbot imobiliário, qualificação leads, agendamento visitas, vendas imobiliárias 2026";
+const canonical = "https://getnexo.com.br/blog/whatsapp-automação-imobiliaria";
+
+// Structured Data - Organization
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GetNexo",
+  "url": "https://getnexo.com.br",
+  "logo": "https://getnexo.com.br/logo.png",
+  "sameAs": [
+    "https://www.linkedin.com/company/getnexo",
+    "https://twitter.com/getnexo",
+    "https://github.com/getnexo"
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+5511999999999",
+    "contactType": "customer service",
+    "areaServed": "BR",
+    "availableLanguage": "pt-BR"
+  }
+};
+
+// WebSite Schema
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "GetNexo",
+  "url": "https://getnexo.com.br",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://getnexo.com.br/buscar?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+};
+
+// Breadcrumb Schema
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Início",
+      "item": "https://getnexo.com.br"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Blog",
+      "item": "https://getnexo.com.br/blog"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "WhatsApp Automação Imobiliária",
+      "item": "https://getnexo.com.br/blog/whatsapp-automação-imobiliaria"
+    }
+  ]
+};
+
+// Article Schema
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "WhatsApp Automação Imobiliária: Guia Completo 2026",
+  "description": "Descubra como automatizar vendas imobiliárias no WhatsApp com IA. Agende visitas, qualifique leads e feche mais negócios 24/7.",
+  "author": {
+    "@type": "Organization",
+    "name": "GetNexo"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "GetNexo",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://getnexo.com.br/logo.png"
+    }
+  },
+  "datePublished": "2026-01-23",
+  "dateModified": "2026-01-23",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://getnexo.com.br/blog/whatsapp-automação-imobiliaria"
+  }
+};
+
+// FAQ Schema
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Como a automação WhatsApp ajuda imobiliárias?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A automação WhatsApp para imobiliárias ajuda a qualificar leads 24/7, agendar visitas automaticamente, enviar propostas, confirmar compromissos e reduzir no-shows em até 60%."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Qual o ROI de automação para imobiliárias?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Imobiliárias que usam automação WhatsApp reportam aumento de 3x no agendamento de visitas, redução de 60% em no-shows e ROI de 300% em média."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Como qualificar leads automaticamente?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Com IA, o chatbot faz perguntas estratégicas, analisa respostas, verifica disponibilidade financeira e segmenta leads por perfil (investidor, morador, etc.)."
+      }
+    }
+  ]
+};
+
+// Stats data
+const stats = [
+  { value: "3x", label: "mais visitas", desc: "agendadas automaticamente" },
+  { value: "60%", label: "menos no-shows", desc: "com lembretes inteligentes" },
+  { value: "24/7", label: "qualificação", desc: "de leads automática" },
+  { value: "300%", label: "ROI", desc: "em média" }
+];
+
+// Benefits data
+const benefits = [
+  {
+    icon: "🏠",
+    title: "Qualificação Automática 24/7",
+    desc: "O chatbot qualifica leads a qualquer hora, com perguntas estratégicas sobre perfil, orçamento e necessidades.",
+    features: [
+      "Perguntas inteligentes de qualificação",
+      "Análise de perfil do cliente",
+      "Verificação de disponibilidade financeira",
+      "Segmentação automática"
+    ]
+  },
+  {
+    icon: "📅",
+    title: "Agendamento de Visitas Inteligente",
+    desc: "Agende visitas automaticamente com integração ao calendário e confirmações automáticas.",
+    features: [
+      "Integração com Google Calendar",
+      "Lembretes automáticos",
+      "Confirmação via WhatsApp",
+      "Reagendamento fácil"
+    ]
+  },
+  {
+    icon: "🤖",
+    title: "Tour Virtual via WhatsApp",
+    desc: "Envie fotos, vídeos e tours 360° diretamente pelo WhatsApp para qualificar leads antes da visita.",
+    features: [
+      "Envio de imagens HD",
+      "Vídeos explicativos",
+      "Tour 360° interativo",
+      "Documentos automáticos"
+    ]
+  },
+  {
+    icon: "📊",
+    title: "Analytics de Performance",
+    desc: "Acompanhe métricas de conversão, tempo de resposta e taxa de fechamento em tempo real.",
+    features: [
+      "Dashboard em tempo real",
+      "Métricas de conversão",
+      "Análise de funil",
+      "Relatórios automáticos"
+    ]
+  }
+];
+
+// Use cases data
+const useCases = [
+  {
+    title: "Lançamentos de Imóveis",
+    desc: "Qualifique leads para novos empreendimentos e agende visitas ao modelo",
+    results: ["85% leads qualificados", "3x mais visitas", "Fechamento 40%"]
+  },
+  {
+    title: "Aluguel de Imóveis",
+    desc: "Automatize agendamentos e envie documentação automaticamente",
+    results: ["90% menos burocracia", "24h para resposta", "Satisfação 4.9/5"]
+  },
+  {
+    title: "Vendas de Imóveis Usados",
+    desc: "Qualifique compradores e agende visitas com proprietários",
+    results: ["3x mais visitas", "60% menos no-shows", "Fechamento 35%"]
+  },
+  {
+    title: "Investidores Imobiliários",
+    desc: "Qualifique oportunidades e envie propostas automáticas",
+    results: ["Qualificação 24/7", "Propostas em 2min", "ROI 300%"]
+  }
+];
+
+// Testimonials data
+const testimonials = [
+  {
+    name: "Carlos Mendes",
+    role: "Sócio Diretor",
+    company: "Imobiliária Premium",
+    quote: "Recuperamos 35% dos leads perdidos e triplicamos visitas agendadas.",
+    results: [
+      { value: "3x", label: "mais visitas" },
+      { value: "35%", label: "leads recuperados" },
+      { value: "R$ 120k", label: "faturamento extra" }
+    ]
+  },
+  {
+    name: "Ana Paula",
+    role: "Gerente de Vendas",
+    company: "Construtora Nova Era",
+    quote: "Reduzimos no-shows em 60% e aumentamos satisfação dos clientes.",
+    results: [
+      { value: "60%", label: "menos no-shows" },
+      { value: "40%", label: "agendamentos online" },
+      { value: "4.9", label: "satisfação" }
+    ]
+  }
+];
+
+// Trust badges
+const trustBadges = [
+  { icon: "🏠", title: "Imobiliárias", desc: "500+ usando" },
+  { icon: "🤖", title: "IA Especializada", desc: "Treinada para imóveis" },
+  { icon: "🔒", title: "LGPD", desc: "100% compliant" },
+  { icon: "📈", title: "ROI Comprovado", desc: "300% média" }
+];
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+
+  <!-- SEO Schemas -->
+  <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <!-- Hero Section -->
+  <section class="article-hero" aria-label="WhatsApp Automação Imobiliária">
+    <div class="hero-badge">🏠 Guia Completo 2026</div>
+    <h1>WhatsApp Automação Imobiliária: <span class="text-gradient">Guia Completo</span></h1>
+    <p class="hero-desc">
+      Descubra como <strong>automatizar vendas imobiliárias no WhatsApp</strong> com IA. Agende visitas, qualifique leads e feche mais negócios 24/7. <strong>Ganhe 3x mais visitas</strong> e reduza no-shows em 60%!
+    </p>
+
+    <!-- Trust Badges -->
+    <div class="trust-badges">
+      {trustBadges.map(badge => (
+        <div class="trust-badge">
+          <span class="trust-icon">{badge.icon}</span>
+          <div>
+            <strong>{badge.title}</strong>
+            <span>{badge.desc}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="hero-ctas">
+      <a href="/criar-bot" class="btn-primary-glow" aria-label="Começar automação imobiliária">
+        Começar Automatização
+      </a>
+      <a href="/contato" class="btn-outline" aria-label="Falar com especialista">
+        Falar com Especialista
+      </a>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats-section">
+    <div class="max-w-6xl mx-auto px-5">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        {stats.map(stat => (
+          <div class="stat-card glass-panel p-6 text-center">
+            <span class="stat-value">{stat.value}</span>
+            <span class="stat-label">{stat.label}</span>
+            <span class="stat-desc">{stat.desc}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefits Section -->
+  <section class="benefits-section">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-white mb-4">Benefícios da <span class="text-gradient">Automação WhatsApp</span></h2>
+        <p class="text-slate-400 max-w-2xl mx-auto">Transforme seu processo de vendas imobiliárias com IA especializada</p>
+      </div>
+
+      <div class="benefits-grid">
+        {benefits.map(benefit => (
+          <div class="benefit-card glass-panel p-8 rounded-3xl">
+            <div class="benefit-icon">{benefit.icon}</div>
+            <h3 class="benefit-title">{benefit.title}</h3>
+            <p class="benefit-desc">{benefit.desc}</p>
+            <ul class="benefit-features">
+              {benefit.features.map(feature => (
+                <li class="feature-item">
+                  <span class="feature-check">✓</span>
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Use Cases Section -->
+  <section class="use-cases-section">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-white mb-4">Casos de <span class="text-gradient">Uso Real</span></h2>
+        <p class="text-slate-400 max-w-2xl mx-auto">Veja como diferentes segmentos imobiliários estão usando automação WhatsApp</p>
+      </div>
+
+      <div class="use-cases-grid">
+        {useCases.map(useCase => (
+          <div class="use-case-card glass-panel p-8 rounded-3xl">
+            <h3 class="use-case-title">{useCase.title}</h3>
+            <p class="use-case-desc">{useCase.desc}</p>
+            <div class="use-case-results">
+              {useCase.results.map(result => (
+                <span class="result-tag">{result}</span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="testimonials-section">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-white mb-4">Depoimentos de <span class="text-gradient">Clientes</span></h2>
+        <p class="text-slate-400 max-w-2xl mx-auto">O que nossos clientes imobiliários dizem sobre os resultados</p>
+      </div>
+
+      <div class="testimonials-grid">
+        {testimonials.map(testimonial => (
+          <div class="testimonial-card glass-panel p-8 rounded-3xl">
+            <div class="testimonial-header">
+              <div class="testimonial-avatar">
+                <span class="avatar-placeholder">{testimonial.name.charAt(0)}</span>
+              </div>
+              <div>
+                <h3 class="testimonial-name">{testimonial.name}</h3>
+                <p class="testimonial-role">{testimonial.role}</p>
+                <p class="testimonial-company">{testimonial.company}</p>
+              </div>
+            </div>
+            <blockquote class="testimonial-quote">"{testimonial.quote}"</blockquote>
+            <div class="testimonial-results">
+              {testimonial.results.map(result => (
+                <div class="result-item">
+                  <span class="result-value">{result.value}</span>
+                  <span class="result-label">{result.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <div class="max-w-4xl mx-auto px-5">
+      <h2 class="text-center text-3xl font-bold text-white mb-4">Perguntas <span class="text-gradient">Frequentes</span></h2>
+      <p class="text-center text-slate-400 mb-12">Tire suas dúvidas sobre automação WhatsApp para imobiliárias</p>
+      
+      <div class="space-y-4">
+        <details class="glass-panel p-4 rounded-xl group cursor-pointer open:bg-white/10 transition-colors">
+          <summary class="flex justify-between items-center font-bold text-white list-none">
+            Como a automação WhatsApp ajuda imobiliárias?
+            <span class="text-blue-400 text-xl group-open:rotate-45 transition-transform">+</span>
+          </summary>
+          <p class="mt-4 text-slate-400 leading-relaxed border-t border-white/5 pt-4 animate-fade-in">
+            A automação WhatsApp para imobiliárias ajuda a qualificar leads 24/7, agendar visitas automaticamente, enviar propostas, confirmar compromissos e reduzir no-shows em até 60%.
+          </p>
+        </details>
+
+        <details class="glass-panel p-4 rounded-xl group cursor-pointer open:bg-white/10 transition-colors">
+          <summary class="flex justify-between items-center font-bold text-white list-none">
+            Qual o ROI de automação para imobiliárias?
+            <span class="text-blue-400 text-xl group-open:rotate-45 transition-transform">+</span>
+          </summary>
+          <p class="mt-4 text-slate-400 leading-relaxed border-t border-white/5 pt-4 animate-fade-in">
+            Imobiliárias que usam automação WhatsApp reportam aumento de 3x no agendamento de visitas, redução de 60% em no-shows e ROI de 300% em média.
+          </p>
+        </details>
+
+        <details class="glass-panel p-4 rounded-xl group cursor-pointer open:bg-white/10 transition-colors">
+          <summary class="flex justify-between items-center font-bold text-white list-none">
+            Como qualificar leads automaticamente?
+            <span class="text-blue-400 text-xl group-open:rotate-45 transition-transform">+</span>
+          </summary>
+          <p class="mt-4 text-slate-400 leading-relaxed border-t border-white/5 pt-4 animate-fade-in">
+            Com IA, o chatbot faz perguntas estratégicas, analisa respostas, verifica disponibilidade financeira e segmenta leads por perfil (investidor, morador, etc.).
+          </p>
+        </details>
+
+        <details class="glass-panel p-4 rounded-xl group cursor-pointer open:bg-white/10 transition-colors">
+          <summary class="flex justify-between items-center font-bold text-white list-none">
+            É necessário treinar a equipe?
+            <span class="text-blue-400 text-xl group-open:rotate-45 transition-transform">+</span>
+          </summary>
+          <p class="mt-4 text-slate-400 leading-relaxed border-t border-white/5 pt-4 animate-fade-in">
+            Sim, oferecemos treinamento completo e suporte contínuo. A maioria das equipes está operando em 1 semana com suporte 24/7.
+          </p>
+        </details>
+
+        <details class="glass-panel p-4 rounded-xl group cursor-pointer open:bg-white/10 transition-colors">
+          <summary class="flex justify-between items-center font-bold text-white list-none">
+            Como funciona o tour virtual?
+            <span class="text-blue-400 text-xl group-open:rotate-45 transition-transform">+</span>
+          </summary>
+          <p class="mt-4 text-slate-400 leading-relaxed border-t border-white/5 pt-4 animate-fade-in">
+            Envie fotos HD, vídeos explicativos e tours 360° diretamente pelo WhatsApp. Qualifique leads antes da visita física, economizando tempo e recursos.
+          </p>
+        </details>
+
+        <details class="glass-panel p-4 rounded-xl group cursor-pointer open:bg-white/10 transition-colors">
+          <summary class="flex justify-between items-center font-bold text-white list-none">
+            Posso integrar com meu CRM?
+            <span class="text-blue-400 text-xl group-open:rotate-45 transition-transform">+</span>
+          </summary>
+          <p class="mt-4 text-slate-400 leading-relaxed border-t border-white/5 pt-4 animate-fade-in">
+            Sim! GetNexo integra com os principais CRMs imobiliários. Também oferecemos API completa para integrações personalizadas.
+          </p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Implementation Guide -->
+  <section class="implementation-section py-20 px-5 max-w-6xl mx-auto">
+    <div class="glass-panel p-12 rounded-3xl">
+      <h2 class="text-3xl font-bold text-white mb-6 text-center">Guia de <span class="text-gradient">Implementação</span></h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="text-center">
+          <div class="step-number">1</div>
+          <h3 class="text-xl font-bold text-white mb-2">Configuração Inicial</h3>
+          <p class="text-slate-400">Conecte sua conta WhatsApp Business e configure as respostas automáticas</p>
+        </div>
+        <div class="text-center">
+          <div class="step-number">2</div>
+          <h3 class="text-xl font-bold text-white mb-2">Treinamento da IA</h3>
+          <p class="text-slate-400">Treine o chatbot com suas perguntas frequentes e processos de qualificação</p>
+        </div>
+        <div class="text-center">
+          <div class="step-number">3</div>
+          <h3 class="text-xl font-bold text-white mb-2">Lançamento</h3>
+          <p class="text-slate-400">Ative a automação e monitore os resultados em tempo real</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta py-20 text-center px-4">
+    <div class="max-w-4xl mx-auto glass-panel p-12 rounded-3xl">
+      <h2 class="text-3xl md:text-4xl font-black text-white mb-6">Pronto para <span class="text-blue-400">automatizar</span> sua imobiliária?</h2>
+      <p class="text-xl text-slate-300 mb-10 max-w-2xl mx-auto">
+        Comece com GetNexo e veja sua imobiliária crescer 3x com automação WhatsApp.
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <a href="/criar-bot" class="btn-primary-glow bg-blue-600 hover:bg-blue-500" aria-label="Começar automação">
+          Começar Automatização
+        </a>
+        <a href="/contato" class="px-10 py-5 bg-transparent border border-blue-500 text-blue-400 font-bold rounded-2xl hover:bg-blue-500 hover:text-white transition-colors text-lg" aria-label="Falar com vendas">
+          Falar com Vendas
+        </a>
+      </div>
+      <p class="mt-8 text-sm text-slate-500">
+        ✅ Sem cartão de crédito • ✅ Cancelamento fácil • ✅ Suporte em português
+      </p>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  /* Hero */
+  .article-hero { 
+    padding: 8rem 5% 4rem; 
+    text-align: center; 
+    max-width: 1300px; 
+    margin: 0 auto; 
+  }
+  
+  .hero-badge { 
+    background: rgba(59, 130, 246, 0.1); 
+    color: #3b82f6; 
+    padding: 0.5rem 1.2rem; 
+    border-radius: 50px; 
+    font-size: 0.85rem; 
+    font-weight: 700; 
+    border: 1px solid rgba(59, 130, 246, 0.2); 
+    display: inline-block; 
+    margin-bottom: 2rem; 
+  }
+  
+  .article-hero h1 { 
+    font-size: 3.5rem; 
+    margin-bottom: 1.5rem; 
+    color: white;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+  
+  .hero-desc { 
+    font-size: 1.35rem; 
+    color: #94a3b8; 
+    max-width: 900px; 
+    margin: 0 auto 3rem; 
+    line-height: 1.6;
+  }
+
+  /* Trust badges */
+  .trust-badges {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+  .trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 0.75rem 1.25rem;
+    border-radius: 12px;
+  }
+  .trust-icon {
+    font-size: 1.5rem;
+  }
+  .trust-badge strong {
+    display: block;
+    color: white;
+    font-size: 0.9rem;
+    margin-bottom: 0.1rem;
+  }
+  .trust-badge span {
+    display: block;
+    color: #94a3b8;
+    font-size: 0.75rem;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary-glow { 
+    background: linear-gradient(135deg, #3b82f6, #06b6d4); 
+    color: white; 
+    padding: 1.2rem 2.8rem; 
+    border-radius: 14px; 
+    font-weight: 800; 
+    text-decoration: none; 
+    transition: 0.3s; 
+    box-shadow: 0 10px 40px rgba(59, 130, 246, 0.25); 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 0.5rem; 
+  }
+  
+  .btn-primary-glow:hover { transform: translateY(-4px); box-shadow: 0 20px 50px rgba(59, 130, 246, 0.4); }
+
+  .btn-outline { 
+    border: 1px solid rgba(255,255,255,0.15); 
+    color: white; 
+    padding: 1.2rem 2.8rem; 
+    border-radius: 14px; 
+    font-weight: 700; 
+    text-decoration: none; 
+    background: rgba(255,255,255,0.03); 
+    transition: 0.3s; 
+  }
+  
+  .btn-outline:hover { background: rgba(255,255,255,0.1); border-color: #3b82f6; }
+
+  /* Stats Section */
+  .stats-section {
+    padding: 4rem 5%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .stat-card {
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .stat-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: 900;
+    color: #3b82f6;
+    line-height: 1;
+  }
+
+  .stat-label {
+    display: block;
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-top: 0.3rem;
+  }
+
+  .stat-desc {
+    display: block;
+    color: #64748b;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+  }
+
+  /* Benefits Section */
+  .benefits-section {
+    padding: 6rem 5%;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .benefit-card {
+    padding: 2.5rem;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .benefit-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .benefit-title {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .benefit-desc {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .benefit-features {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1.5rem;
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.4rem 0;
+    color: #94a3b8;
+    font-size: 0.85rem;
+  }
+
+  .feature-check {
+    color: #3b82f6;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  /* Use Cases Section */
+  .use-cases-section {
+    padding: 6rem 5%;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .use-cases-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .use-case-card {
+    padding: 2.5rem;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .use-case-title {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .use-case-desc {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .use-case-results {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .result-tag {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  /* Testimonials Section */
+  .testimonials-section {
+    padding: 6rem 5%;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .testimonial-card {
+    padding: 2.5rem;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .testimonial-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .testimonial-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: white;
+  }
+
+  .testimonial-name {
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+  }
+
+  .testimonial-role {
+    color: #94a3b8;
+    font-size: 0.85rem;
+  }
+
+  .testimonial-company {
+    color: #3b82f6;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .testimonial-quote {
+    color: #94a3b8;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+  }
+
+  .testimonial-results {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .result-item {
+    text-align: center;
+    padding: 0.75rem;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+  }
+
+  .result-value {
+    display: block;
+    color: #3b82f6;
+    font-size: 1.2rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .result-label {
+    display: block;
+    color: #94a3b8;
+    font-size: 0.7rem;
+    margin-top: 0.2rem;
+  }
+
+  /* FAQ Section */
+  .faq-section {
+    padding: 6rem 5%;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  /* Implementation Section */
+  .implementation-section {
+    padding: 6rem 5%;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .step-number {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 900;
+    margin: 0 auto 1rem;
+  }
+
+  /* Final CTA */
+  .final-cta {
+    padding: 4rem 5% 8rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* Utility */
+  .text-gradient {
+    background: linear-gradient(to right, #3b82f6, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .article-hero h1 { font-size: 2.5rem; }
+    .hero-desc { font-size: 1.1rem; }
+    .trust-badges { flex-direction: column; gap: 0.75rem; }
+    .trust-badge { width: 100%; justify-content: flex-start; }
+    .hero-ctas { flex-direction: column; }
+    .benefits-grid { grid-template-columns: 1fr; }
+    .use-cases-grid { grid-template-columns: 1fr; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .testimonial-results { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 1024px) {
+    .article-hero h1 { font-size: 3rem; }
+  }
+</style>

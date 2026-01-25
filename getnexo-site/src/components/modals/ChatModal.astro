@@ -1,0 +1,46 @@
+---
+---
+<!-- Modal Chat Completo -->
+<div id="chat-modal" class="fixed inset-0 hidden z-[9999]" style="background: rgba(0,0,0,0.95); backdrop-filter: blur(8px); display: none;">
+  <div class="modal-wrapper flex items-center justify-center min-h-screen p-4">
+    <div class="bg-void-black border-2 border-neon-blue rounded-3xl p-6 w-full max-w-4xl h-[85vh] flex flex-col shadow-[0_0_50px_rgba(0,247,255,0.3)] relative">
+    <div class="flex justify-between items-center mb-4">
+      <div>
+        <h3 class="text-2xl text-cyber-gold font-jetbrains">Demo GetNexo – IA Multimídia</h3>
+        <p class="text-gray-300">IA responde e fala sozinha</p>
+      </div>
+      <button onclick="fecharModalChat()" class="text-neon-blue text-3xl hover:text-white">×</button>
+    </div>
+
+    <div class="chat-container flex-1 overflow-hidden flex flex-col">
+      <div class="chat-box flex-1 overflow-y-auto border border-neon-blue rounded p-4 mb-4 space-y-2" id="chat-messages-modal">
+        <!-- Mensagem inicial -->
+        <div class="flex justify-start">
+          <div class="bg-neon-blue/20 border border-neon-blue/50 rounded-2xl px-4 py-3 max-w-md">
+            <p class="text-white text-sm">🚀 <strong>Olá! Bem-vindo ao Chat IA do GetNexo!</strong></p>
+            <p class="text-gray-300 text-xs mt-2">Eu sou um assistente inteligente capaz de:</p>
+            <ul class="text-xs text-neon-blue mt-1 space-y-1">
+              <li>• 💬 Conversar naturalmente sobre produtos</li>
+              <li>• 🔍 Buscar itens em catálogo JSON</li>
+              <li>• 🛒 Mostrar cards interativos com preços</li>
+              <li>• 🔄 Exibir visualizações 360° dos produtos</li>
+              <li>• 🎤 Responder por voz</li>
+            </ul>
+            <p class="text-cyber-gold text-xs mt-2 font-medium">💡 Teste comigo! Experimente:</p>
+            <div class="flex flex-wrap gap-1 mt-2">
+              <button onclick="preencherMensagemModal('Quero um tênis branco')" class="bg-matrix-green/20 hover:bg-matrix-green/30 text-matrix-green text-xs px-2 py-1 rounded border border-matrix-green/30">Quero um tênis branco</button>
+              <button onclick="preencherMensagemModal('Tem algum carro preto?')" class="bg-cyber-gold/20 hover:bg-cyber-gold/30 text-cyber-gold text-xs px-2 py-1 rounded border border-cyber-gold/30">Tem carro preto?</button>
+              <button onclick="preencherMensagemModal('Procurando um PC gamer')" class="bg-neon-blue/20 hover:bg-neon-blue/30 text-neon-blue text-xs px-2 py-1 rounded border border-neon-blue/30">PC gamer barato</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="input-bar flex gap-2">
+        <input id="chat-input-modal" type="text" placeholder="Pergunte qualquer coisa..." class="flex-1 bg-void-black border border-neon-blue text-white rounded p-2" onkeydown="handleKeyPressModal(event)" />
+        <button onclick="sendMessageModal()" class="bg-cyber-gold text-black px-4 py-2 rounded">Enviar</button>
+        <button onclick="iniciarVozModal()" class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded">🎤 Voz</button>
+      </div>
+    </div>
+  </div>
+</div>

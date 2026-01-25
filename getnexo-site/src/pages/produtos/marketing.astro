@@ -1,66 +1,181 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 
-const title = "Marketing no WhatsApp: Click-to-WhatsApp Ads e Disparos Oficiais | GetNexo";
-const description = "Plataforma oficial para Marketing no WhatsApp. Escale vendas com Click-to-WhatsApp Ads, Broadcast ilimitado sem bloqueios e Retargeting automático.";
-const keywords = "click to whatsapp, whatsapp ads, disparo em massa whatsapp, api oficial whatsapp, marketing whatsapp, retargeting whatsapp, nexo marketing, meta business partner";
+// SEO Meta Tags
+const title = "Marketing WhatsApp Oficial: Click-to-WhatsApp Ads e Broadcast | GetNexo";
+const description = "Plataforma oficial Meta para Marketing no WhatsApp. Escale vendas com Click-to-WhatsApp Ads, Broadcast ilimitado sem bloqueios e Retargeting automático. Teste Grátis!";
+const keywords = "click to whatsapp, whatsapp ads, disparo em massa whatsapp, api oficial whatsapp, marketing whatsapp, retargeting whatsapp, nexo marketing, meta business partner, anúncios whatsapp";
+const canonical = "https://getnexo.com.br/produtos/marketing";
 
-const schema = {
+// Structured Data - Organization
+const organizationSchema = {
   "@context": "https://schema.org",
-  "@graph": [
+  "@type": "Organization",
+  "name": "GetNexo",
+  "url": "https://getnexo.com.br",
+  "logo": "https://getnexo.com.br/logo.png",
+  "sameAs": [
+    "https://www.linkedin.com/company/getnexo",
+    "https://twitter.com/getnexo",
+    "https://github.com/getnexo"
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+5511999999999",
+    "contactType": "customer service",
+    "areaServed": "BR",
+    "availableLanguage": "pt-BR"
+  }
+};
+
+// SoftwareApplication Schema with detailed features
+const softwareSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "GetNexo Marketing WhatsApp",
+  "applicationCategory": "MarketingApplication",
+  "operatingSystem": "Web, iOS, Android",
+  "applicationSuite": "GetNexo Platform",
+  "softwareVersion": "3.0",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "BRL",
+    "availability": "https://schema.org/InStock",
+    "eligibleCustomerType": "https://schema.org/Business",
+    "eligibleDuration": "https://schema.org/Unlimited"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "ratingCount": "128",
+    "bestRating": "5",
+    "worstRating": "1"
+  },
+  "description": "Plataforma oficial Meta para Marketing no WhatsApp com Click-to-WhatsApp Ads, Broadcast ilimitado e Retargeting automático.",
+  "featureList": [
+    "Click-to-WhatsApp Ads nativo",
+    "Broadcast oficial sem bloqueios",
+    "Segmentação precisa de audiências",
+    "Retargeting automático",
+    "Pixel de conversão no WhatsApp",
+    "Atribuição de vendas por anúncio",
+    "Templates multimídia aprovados",
+    "Analytics e ROAS em tempo real"
+  ],
+  "author": {
+    "@type": "Organization",
+    "name": "GetNexo"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "GetNexo"
+  },
+  "datePublished": "2024-01-01",
+  "dateModified": "2026-01-23",
+  "operatingSystem": "Web, iOS, Android",
+  "applicationCategory": "MarketingApplication",
+  "genre": "Marketing Digital WhatsApp",
+  "keywords": "click to whatsapp, whatsapp ads, broadcast, retargeting, marketing"
+};
+
+// FAQ Schema with comprehensive questions
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
     {
-      "@type": "SoftwareApplication",
-      "name": "GetNexo Marketing",
-      "applicationCategory": "MarketingApplication",
-      "operatingSystem": "Web",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "BRL"
-      },
-      "description": "Plataforma de automação de marketing para WhatsApp com API Oficial da Meta.",
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.9",
-        "ratingCount": "128"
+      "@type": "Question",
+      "name": "O disparo em massa dá bloqueio?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Não quando feito via API Oficial (Cloud API). O GetNexo utiliza a infraestrutura oficial da Meta, garantindo conformidade e alta entrega sem risco de banimento."
       }
     },
     {
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "O disparo em massa dá bloqueio?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Não quando feito via API Oficial (Cloud API). O GetNexo utiliza a infraestrutura oficial da Meta, garantindo conformidade e alta entrega sem risco de banimento."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "O que é Click-to-WhatsApp Ads?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "São anúncios no Facebook ou Instagram que, ao serem clicados, abrem diretamente uma conversa no WhatsApp da sua empresa, permitindo conversão imediata."
-          }
-        }
-      ]
+      "@type": "Question",
+      "name": "O que é Click-to-WhatsApp Ads?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "São anúncios no Facebook ou Instagram que, ao serem clicados, abrem diretamente uma conversa no WhatsApp da sua empresa, permitindo conversão imediata."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Preciso ter o Facebook Business Manager?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sim. Para usar a API Oficial e fazer anúncios Click-to-WhatsApp com rastreamento, você precisa de uma conta verificada no Gerenciador de Negócios da Meta. O GetNexo auxilia neste processo de verificação."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Posso importar meus contatos antigos?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sim, você pode importar listas de contatos (CSV/Excel) desde que tenham dado opt-in (consentimento) prévio. A Meta exige que você envie mensagens apenas para usuários que aceitaram receber contato."
+      }
     }
   ]
 };
 
-const stats = [
-  { value: "5x", label: "mais conversão", desc: "que landing pages tradicionais" },
-  { value: "98%", label: "taxa de leitura", desc: "nas primeiras 2 horas" },
-  { value: "45%", label: "taxa de resposta", desc: "em campanhas de reaquecimento" },
-  { value: "R$0,00", label: "risco de ban", desc: "usando API Oficial Meta" }
-];
+// Breadcrumb Schema
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Início",
+      "item": "https://getnexo.com.br"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Produtos",
+      "item": "https://getnexo.com.br/produtos"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Marketing WhatsApp",
+      "item": "https://getnexo.com.br/produtos/marketing"
+    }
+  ]
+};
 
+// Product Schema for comparison
+const productSchema = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "GetNexo Marketing WhatsApp",
+  "description": "Plataforma oficial Meta para Marketing no WhatsApp com Click-to-WhatsApp Ads",
+  "brand": {
+    "@type": "Brand",
+    "name": "GetNexo"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "BRL",
+    "availability": "https://schema.org/InStock",
+    "url": "https://getnexo.com.br/produtos/marketing"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "ratingCount": "128"
+  }
+};
+
+// Features data with SEO-rich descriptions
 const features = [
   {
     icon: "🚀",
     title: "Click-to-WhatsApp Ads",
     description: "Conecte seus anúncios do Meta (Facebook/Instagram) diretamente ao funil. Mensure o ROAS exato de cada conversa iniciada.",
+    seoKeywords: ["click to whatsapp", "anúncios meta", "pixel conversão", "atribuição vendas"],
     details: [
       "Integração nativa Meta Business",
       "Pixel de conversão no WhatsApp",
@@ -72,6 +187,7 @@ const features = [
     icon: "📡",
     title: "Broadcast Oficial",
     description: "Envie campanhas em massa sem medo de perder o número. Use templates aprovados e garanta a entrega na caixa de entrada.",
+    seoKeywords: ["broadcast oficial", "disparo em massa", "templates multimídia", "alta entrega"],
     details: [
       "Alta taxa de entrega",
       "Templates multimídia (Vídeo/Img)",
@@ -83,6 +199,7 @@ const features = [
     icon: "🎯",
     title: "Segmentação Precisa",
     description: "Crie audiências ultra-qualificadas baseadas no comportamento do cliente, etiquetas e histórico de compras.",
+    seoKeywords: ["segmentação", "audiências", "tags", "histórico compras"],
     details: [
       "Filtros por tags e status",
       "Histórico de inatividade",
@@ -94,6 +211,7 @@ const features = [
     icon: "🔄",
     title: "Retargeting Automático",
     description: "Não deixe dinheiro na mesa. O sistema identifica quem parou no meio do fluxo e envia ofertas de recuperação automaticamente.",
+    seoKeywords: ["retargeting", "recuperação carrinho", "gatilhos comportamentais", "ofertas"],
     details: [
       "Recuperação de carrinho",
       "Boleto não pago",
@@ -103,12 +221,67 @@ const features = [
   }
 ];
 
+// Use cases for SEO
+const useCases = [
+  { icon: "🛒", title: "E-commerce", desc: "Click-to-WhatsApp Ads para vendas diretas", benefit: "Aumento de 5x em conversões" },
+  { icon: "🏠", title: "Imobiliárias", desc: "Anúncios para agendamento de visitas", benefit: "3x mais visitas agendadas" },
+  { icon: "📚", title: "Educação", desc: "Anúncios para matrículas", benefit: "Redução de 40% no custo por lead" },
+  { icon: "💼", title: "Consultoria", desc: "Anúncios para agendamento de reuniões", benefit: "Qualificação 24/7" }
+];
+
+// Comparison data for comparison
+const comparisonData = [
+  {
+    feature: "Click-to-WhatsApp Ads",
+    getNexo: "✅ Oficial Meta + Pixel",
+    competitors: "❌ Links externos (sem rastreamento)",
+    oldBots: "❌ Não possui"
+  },
+  {
+    feature: "Broadcast Oficial",
+    getNexo: "✅ API Cloud API (sem bloqueio)",
+    competitors: "⚠️ Ferramentas cinzas (alto risco)",
+    oldBots: "❌ Bloqueio garantido"
+  },
+  {
+    feature: "Retargeting",
+    getNexo: "✅ Automático com IA",
+    competitors: "❌ Manual ou inexistente",
+    oldBots: "❌ Não possui"
+  },
+  {
+    feature: "ROAS",
+    getNexo: "✅ Atribuição precisa por anúncio",
+    competitors: "❌ Aproximado",
+    oldBots: "❌ Não mede"
+  }
+];
+
+// Stats data
+const stats = [
+  { value: "5x", label: "mais conversão", desc: "que landing pages tradicionais" },
+  { value: "98%", label: "taxa de leitura", desc: "nas primeiras 2 horas" },
+  { value: "45%", label: "taxa de resposta", desc: "em campanhas de reaquecimento" },
+  { value: "R$0,00", label: "risco de ban", desc: "usando API Oficial Meta" }
+];
+
+// Compliance items
 const complianceItems = [
   { title: "Meta Tech Provider", desc: "Parceiro tecnológico oficial" },
   { title: "Criptografia E2E", desc: "Segurança total de dados" },
   { title: "LGPD Ready", desc: "Conformidade com leis de dados" },
   { title: "Opt-in Management", desc: "Gestão automática de consentimento" }
 ];
+
+// Integrations data
+const integrations = [
+  { name: "Meta Business", icon: "📘", desc: "Anúncios Facebook/Instagram", url: "https://business.facebook.com" },
+  { name: "Google Analytics", icon: "📊", desc: "Métricas avançadas", url: "https://analytics.google.com" },
+  { name: "Webhooks", icon: "🔗", desc: "Integre com qualquer sistema", url: "#" },
+  { name: "Zapier/n8n", icon: "⚡", desc: "Automações avançadas", url: "https://zapier.com" }
+];
+
+
 ---
 
 <Layout title={title} description={description} keywords={keywords}>

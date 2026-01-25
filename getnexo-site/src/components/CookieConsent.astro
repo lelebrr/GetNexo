@@ -1,5 +1,6 @@
 ---
 // Cookie Consent Banner LGPD Compliant - Discreet Version
+const { nonce } = Astro.props;
 ---
 
 <div id="cookie-consent-banner" class="cookie-banner" style="display: none;">
@@ -292,21 +293,10 @@
   }
 </style>
 
-<script>
-  interface Window {
-    gtag?: (...args: any[]) => void;
-    [key: string]: any;
-  }
+<script nonce={nonce}>
+  /* interface Window removed for JS compatibility */
 
   class CookieConsentManager {
-    banner: HTMLElement | null;
-    details: HTMLElement | null;
-    btnDetails: HTMLElement | null;
-    btnSave: HTMLElement | null;
-    actions: HTMLElement | null;
-    detailsOpen: boolean;
-    consent: any;
-
     constructor() {
       this.banner = document.getElementById('cookie-consent-banner');
       this.details = document.getElementById('cookie-details');
@@ -353,8 +343,8 @@
       // Save Preferences (only visible when details open)
       if (this.btnSave) {
         this.btnSave.addEventListener('click', () => {
-          const analytics = (document.getElementById('analytics-cookies') as HTMLInputElement).checked;
-          const preference = (document.getElementById('preference-cookies') as HTMLInputElement).checked;
+          const analytics = document.getElementById('analytics-cookies').checked;
+          const preference = document.getElementById('preference-cookies').checked;
           this.setConsent({ essential: true, analytics, preference, timestamp: Date.now() });
         });
       }
@@ -390,7 +380,7 @@
       if (this.banner) this.banner.style.display = 'none';
       this.applyConsent(consent);
 
-      const win = window as any;
+      const win = window;
       if (consent.analytics && win.gtag) {
         console.log('[CookieConsent] Updating gtag consent');
         win.gtag('consent', 'update', { analytics_storage: 'granted' });
@@ -402,8 +392,8 @@
       return stored ? JSON.parse(stored) : null;
     }
 
-    applyConsent(consent: any) {
-      const win = window as any;
+    applyConsent(consent) {
+      const win = window;
       if (!consent.analytics) {
         win['ga-disable-G-F8P994EX00'] = true;
         if (win.gtag) win.gtag('consent', 'default', { analytics_storage: 'denied' });

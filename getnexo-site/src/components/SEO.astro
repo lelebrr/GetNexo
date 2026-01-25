@@ -17,6 +17,7 @@ export interface Props {
   breadcrumbs?: Array<{ name: string; url: string }>;
   structuredData?: any;
   lang?: string;
+  nonce?: string;
 }
 
 const {
@@ -34,7 +35,8 @@ const {
   faq,
   breadcrumbs,
   structuredData,
-  lang = Astro.url.pathname.split('/')[1] || 'pt'
+  lang = Astro.url.pathname.split('/')[1] || 'pt',
+  nonce
 } = Astro.props;
 
 // Load translations for SEO
@@ -113,7 +115,7 @@ const twitterHandle = "@getnexo";
 {tags && tags.map(tag => <meta property="article:tag" content={tag} />)}
 
 <!-- Business/Local Business Schema -->
-<script type="application/ld+json" set:html={JSON.stringify({
+<script type="application/ld+json" nonce={nonce} set:html={JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [
     {
@@ -241,9 +243,8 @@ const twitterHandle = "@getnexo";
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="preconnect" href="https://www.googletagmanager.com" />
 
-<!-- Security Headers -->
+<!-- Security Headers (Moved to HTTP headers where possible) -->
 <meta http-equiv="X-Content-Type-Options" content="nosniff" />
-<meta http-equiv="X-Frame-Options" content="DENY" />
 <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
 <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
 <meta name="format-detection" content="telephone=no" />
@@ -275,7 +276,7 @@ const twitterHandle = "@getnexo";
 
 <!-- Article Schema (if article) -->
 {type === "article" && (
-  <script type="application/ld+json" set:html={JSON.stringify({
+  <script type="application/ld+json" nonce={nonce} set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@type": "Article",
     "headline": title,

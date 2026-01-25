@@ -1,0 +1,942 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+// SEO Meta Tags
+const title = "Loja GetNexo - Implementações Avançadas | Imagem 360°, AR, Voz e Mais!";
+const description = "Conheça as implementações avançadas da GetNexo: Imagem 360°, Realidade Aumentada, Comando por Voz, Chatbots Inteligentes e muito mais. Transforme sua loja virtual!";
+const keywords = "loja getnexo, implementações avançadas, imagem 360, realidade aumentada, comando por voz, chatbot loja, e-commerce inteligente";
+const canonical = "https://getnexo.com.br/pt/loja";
+
+// Structured Data - Organization
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GetNexo",
+  "url": "https://getnexo.com.br",
+  "logo": "https://getnexo.com.br/logo.png",
+  "sameAs": [
+    "https://www.linkedin.com/company/getnexo",
+    "https://twitter.com/getnexo",
+    "https://github.com/getnexo"
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+5511999999999",
+    "contactType": "customer service",
+    "areaServed": "BR",
+    "availableLanguage": "pt-BR"
+  }
+};
+
+// WebSite Schema
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "GetNexo",
+  "url": "https://getnexo.com.br",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://getnexo.com.br/buscar?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+};
+
+// Breadcrumb Schema
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Início",
+      "item": "https://getnexo.com.br"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Loja",
+      "item": "https://getnexo.com.br/pt/loja"
+    }
+  ]
+};
+
+// Product Schema
+const productSchema = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "GetNexo - Loja Inteligente",
+  "description": "Sistema completo de loja virtual com IA, imagem 360°, AR e comando por voz",
+  "brand": {
+    "@type": "Brand",
+    "name": "GetNexo"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "97",
+    "priceCurrency": "BRL",
+    "availability": "https://schema.org/InStock"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "ratingCount": "5000"
+  }
+};
+
+// FAQ Schema
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "O que é imagem 360° no WhatsApp?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Imagem 360° permite que o cliente visualize o produto de todos os ângulos diretamente no WhatsApp, aumentando a confiança e reduzindo devoluções."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Como funciona a Realidade Aumentada?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "O cliente pode visualizar o produto em seu ambiente usando a câmera do celular, vendo como ficaria em sua casa ou escritório."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Comando por voz funciona em português?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sim! O sistema reconhece comandos em português, permitindo pesquisar produtos, adicionar ao carrinho e finalizar compras com a voz."
+      }
+    }
+  ]
+};
+
+// Features data
+const features = [
+  {
+    icon: "📸",
+    title: "Imagem 360° Interativa",
+    desc: "Visualize produtos de todos os ângulos diretamente no WhatsApp",
+    benefits: [
+      "Aumenta confiança do cliente",
+      "Reduz devoluções em 40%",
+      "Melhora experiência de compra",
+      "Integração simples"
+    ],
+    stats: ["+40% conversão", "-40% devoluções", "95% satisfação"]
+  },
+  {
+    icon: "👓",
+    title: "Realidade Aumentada",
+    desc: "Veja o produto em seu ambiente antes de comprar",
+    benefits: [
+      "Visualização em escala real",
+      "Teste de cores e tamanhos",
+      "Integração com câmera",
+      "Sem app extra"
+    ],
+    stats: ["+60% confiança", "-30% dúvidas", "4.8/5 avaliação"]
+  },
+  {
+    icon: "🎤",
+    title: "Comando por Voz",
+    desc: "Pesquise e compre usando apenas sua voz",
+    benefits: [
+      "Reconhecimento em português",
+      "Navegação hands-free",
+      "Acessibilidade total",
+      "Integração com Alexa/Google"
+    ],
+    stats: ["+50% uso", "99% precisão", "Acessível"]
+  },
+  {
+    icon: "🤖",
+    title: "Chatbot Inteligente",
+    desc: "Atendimento 24/7 com IA especializada",
+    benefits: [
+      "Respostas instantâneas",
+      "Recomendações personalizadas",
+      "Suporte pós-venda",
+      "Integração com CRM"
+    ],
+    stats: ["24/7 disponibilidade", "95% resolvido", "Satisfação 4.9/5"]
+  },
+  {
+    icon: "💳",
+    title: "Checkout Inteligente",
+    desc: "Finalize compras com um clique no WhatsApp",
+    benefits: [
+      "PIX automático",
+      "Cartão salvo",
+      "Frete calculado",
+      "Confirmação instantânea"
+    ],
+    stats: ["+35% conversão", "2min checkout", "99% sucesso"]
+  },
+  {
+    icon: "📊",
+    title: "Analytics Avançado",
+    desc: "Acompanhe tudo em tempo real",
+    benefits: [
+      "Dashboard completo",
+      "Comportamento do cliente",
+      "A/B testing",
+      "Relatórios automáticos"
+    ],
+    stats: ["+25% otimização", "Dados em tempo real", "ROI mensurável"]
+  }
+];
+
+// Use cases data
+const useCases = [
+  {
+    title: "E-commerce de Moda",
+    desc: "Visualize roupas em 360° e experimente com AR",
+    results: ["+50% conversão", "-35% devoluções", "Satisfação 4.9/5"]
+  },
+  {
+    title: "Móveis e Decoração",
+    desc: "Veja como fica em sua casa com AR",
+    results: ["+60% confiança", "-40% dúvidas", "Fechamento 45%"]
+  },
+  {
+    title: "Eletrônicos",
+    desc: "Explore detalhes com imagem 360° e voz",
+    results: ["+45% engajamento", "2min resposta", "Satisfação 4.8/5"]
+  },
+  {
+    title: "Alimentos e Bebidas",
+    desc: "Compre com voz e receba em 2h",
+    results: ["+70% recorrência", "Entrega rápida", "Avaliação 4.9/5"]
+  }
+];
+
+// Testimonials data
+const testimonials = [
+  {
+    name: "Maria Silva",
+    role: "Fundadora",
+    company: "ModaFácil",
+    quote: "A imagem 360° aumentou nossas vendas em 50% e reduziu devoluções pela metade.",
+    results: [
+      { value: "+50%", label: "vendas" },
+      { value: "-50%", label: "devoluções" },
+      { value: "4.9", label: "satisfação" }
+    ]
+  },
+  {
+    name: "João Santos",
+    role: "CEO",
+    company: "Móveis Modernos",
+    quote: "A AR transformou nossa loja. Clientes veem o móvel em casa antes de comprar.",
+    results: [
+      { value: "+60%", label: "confiança" },
+      { value: "-40%", label: "dúvidas" },
+      { value: "45%", label: "fechamento" }
+    ]
+  }
+];
+
+// Stats data
+const stats = [
+  { value: "50+", label: "implementações", desc: "disponíveis" },
+  { value: "99%", label: "precisão", desc: "reconhecimento" },
+  { value: "24/7", label: "suporte", desc: "em português" },
+  { value: "Grátis", label: "setup", desc: "sem cartão" }
+];
+
+// Trust badges
+const trustBadges = [
+  { icon: "📸", title: "Imagem 360°", desc: "Interativa" },
+  { icon: "👓", title: "Realidade Aumentada", desc: "AR" },
+  { icon: "🎤", title: "Comando por Voz", desc: "Português" },
+  { icon: "🤖", title: "Chatbot IA", desc: "Inteligente" }
+];
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+
+  <!-- SEO Schemas -->
+  <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(productSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <!-- Hero Section -->
+  <section class="loja-hero" aria-label="Loja GetNexo">
+    <div class="hero-badge">🚀 Implementações Avançadas</div>
+    <h1>Loja <span class="text-gradient">Inteligente</span> com IA</h1>
+    <p class="hero-desc">
+      Transforme sua loja virtual com <strong>tecnologias de ponta</strong>: Imagem 360°, Realidade Aumentada, Comando por Voz e Chatbots Inteligentes. <strong>Aumente vendas em 50%+</strong> e ofereça experiência única!
+    </p>
+
+    <!-- Trust Badges -->
+    <div class="trust-badges">
+      {trustBadges.map(badge => (
+        <div class="trust-badge">
+          <span class="trust-icon">{badge.icon}</span>
+          <div>
+            <strong>{badge.title}</strong>
+            <span>{badge.desc}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="hero-ctas">
+      <a href="/criar-bot" class="btn-primary-glow" aria-label="Criar loja inteligente">
+        Criar Loja Inteligente
+      </a>
+      <a href="/contato" class="btn-outline" aria-label="Ver demonstração">
+        Ver Demonstração
+      </a>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats-section">
+    <div class="max-w-6xl mx-auto px-5">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        {stats.map(stat => (
+          <div class="stat-card glass-panel p-6 text-center">
+            <span class="stat-value">{stat.value}</span>
+            <span class="stat-label">{stat.label}</span>
+            <span class="stat-desc">{stat.desc}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-white mb-4">Implementações <span class="text-gradient">Avançadas</span></h2>
+        <p class="text-slate-400 max-w-2xl mx-auto">Tecnologias de ponta para transformar sua loja virtual</p>
+      </div>
+
+      <div class="features-grid">
+        {features.map(feature => (
+          <div class="feature-card glass-panel p-8 rounded-3xl">
+            <div class="feature-icon">{feature.icon}</div>
+            <h3 class="feature-title">{feature.title}</h3>
+            <p class="feature-desc">{feature.desc}</p>
+            <ul class="feature-benefits">
+              {feature.benefits.map(benefit => (
+                <li class="benefit-item">
+                  <span class="benefit-check">✓</span>
+                  <span>{benefit}</span>
+                </li>
+              ))}
+            </ul>
+            <div class="feature-stats">
+              {feature.stats.map(stat => (
+                <span class="stat-tag">{stat}</span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Use Cases Section -->
+  <section class="use-cases-section">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-white mb-4">Casos de <span class="text-gradient">Uso</span></h2>
+        <p class="text-slate-400 max-w-2xl mx-auto">Veja como diferentes segmentos estão usando nossa loja inteligente</p>
+      </div>
+
+      <div class="use-cases-grid">
+        {useCases.map(useCase => (
+          <div class="use-case-card glass-panel p-8 rounded-3xl">
+            <h3 class="use-case-title">{useCase.title}</h3>
+            <p class="use-case-desc">{useCase.desc}</p>
+            <div class="use-case-results">
+              {useCase.results.map(result => (
+                <span class="result-tag">{result}</span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="testimonials-section">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-white mb-4">Depoimentos de <span class="text-gradient">Clientes</span></h2>
+        <p class="text-slate-400 max-w-2xl mx-auto">O que nossos clientes dizem sobre as implementações</p>
+      </div>
+
+      <div class="testimonials-grid">
+        {testimonials.map(testimonial => (
+          <div class="testimonial-card glass-panel p-8 rounded-3xl">
+            <div class="testimonial-header">
+              <div class="testimonial-avatar">
+                <span class="avatar-placeholder">{testimonial.name.charAt(0)}</span>
+              </div>
+              <div>
+                <h3 class="testimonial-name">{testimonial.name}</h3>
+                <p class="testimonial-role">{testimonial.role}</p>
+                <p class="testimonial-company">{testimonial.company}</p>
+              </div>
+            </div>
+            <blockquote class="testimonial-quote">"{testimonial.quote}"</blockquote>
+            <div class="testimonial-results">
+              {testimonial.results.map(result => (
+                <div class="result-item">
+                  <span class="result-value">{result.value}</span>
+                  <span class="result-label">{result.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <div class="max-w-4xl mx-auto px-5">
+      <h2 class="text-center text-3xl font-bold text-white mb-4">Perguntas <span class="text-gradient">Frequentes</span></h2>
+      <p class="text-center text-slate-400 mb-12">Tire suas dúvidas sobre as implementações avançadas</p>
+      
+      <div class="space-y-4">
+        <details class="glass-panel p-4 rounded-xl group cursor-pointer open:bg-white/10 transition-colors">
+          <summary class="flex justify-between items-center font-bold text-white list-none">
+            O que é imagem 360° no WhatsApp?
+            <span class="text-blue-400 text-xl group-open:rotate-45 transition-transform">+</span>
+          </summary>
+          <p class="mt-4 text-slate-400 leading-relaxed border-t border-white/5 pt-4 animate-fade-in">
+            Imagem 360° permite que o cliente visualize o produto de todos os ângulos diretamente no WhatsApp, aumentando a confiança e reduzindo devoluções.
+          </p>
+        </details>
+
+        <details class="glass-panel p-4 rounded-xl group cursor-pointer open:bg-white/10 transition-colors">
+          <summary class="flex justify-between items-center font-bold text-white list-none">
+            Como funciona a Realidade Aumentada?
+            <span class="text-blue-400 text-xl group-open:rotate-45 transition-transform">+</span>
+          </summary>
+          <p class="mt-4 text-slate-400 leading-relaxed border-t border-white/5 pt-4 animate-fade-in">
+            O cliente pode visualizar o produto em seu ambiente usando a câmera do celular, vendo como ficaria em sua casa ou escritório.
+          </p>
+        </details>
+
+        <details class="glass-panel p-4 rounded-xl group cursor-pointer open:bg-white/10 transition-colors">
+          <summary class="flex justify-between items-center font-bold text-white list-none">
+            Comando por voz funciona em português?
+            <span class="text-blue-400 text-xl group-open:rotate-45 transition-transform">+</span>
+          </summary>
+          <p class="mt-4 text-slate-400 leading-relaxed border-t border-white/5 pt-4 animate-fade-in">
+            Sim! O sistema reconhece comandos em português, permitindo pesquisar produtos, adicionar ao carrinho e finalizar compras com a voz.
+          </p>
+        </details>
+
+        <details class="glass-panel p-4 rounded-xl group cursor-pointer open:bg-white/10 transition-colors">
+          <summary class="flex justify-between items-center font-bold text-white list-none">
+            Preciso de app extra para AR?
+            <span class="text-blue-400 text-xl group-open:rotate-45 transition-transform">+</span>
+          </summary>
+          <p class="mt-4 text-slate-400 leading-relaxed border-t border-white/5 pt-4 animate-fade-in">
+            Não! A Realidade Aumentada funciona diretamente no navegador, sem necessidade de instalar apps adicionais.
+          </p>
+        </details>
+
+        <details class="glass-panel p-4 rounded-xl group cursor-pointer open:bg-white/10 transition-colors">
+          <summary class="flex justify-between items-center font-bold text-white list-none">
+            Como integro com minha loja atual?
+            <span class="text-blue-400 text-xl group-open:rotate-45 transition-transform">+</span>
+          </summary>
+          <p class="mt-4 text-slate-400 leading-relaxed border-t border-white/5 pt-4 animate-fade-in">
+            Oferecemos API completa e plugins para Shopify, WooCommerce, Magento e outras plataformas. Setup em minutos.
+          </p>
+        </details>
+
+        <details class="glass-panel p-4 rounded-xl group cursor-pointer open:bg-white/10 transition-colors">
+          <summary class="flex justify-between items-center font-bold text-white list-none">
+            Qual o custo das implementações?
+            <span class="text-blue-400 text-xl group-open:rotate-45 transition-transform">+</span>
+          </summary>
+          <p class="mt-4 text-slate-400 leading-relaxed border-t border-white/5 pt-4 animate-fade-in">
+            Comece grátis com o plano Starter. Implementações avançadas disponíveis no plano Pro (R$97/mês) e Enterprise (custom).
+          </p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Implementation Guide -->
+  <section class="implementation-section py-20 px-5 max-w-6xl mx-auto">
+    <div class="glass-panel p-12 rounded-3xl">
+      <h2 class="text-3xl font-bold text-white mb-6 text-center">Guia de <span class="text-gradient">Implementação</span></h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="text-center">
+          <div class="step-number">1</div>
+          <h3 class="text-xl font-bold text-white mb-2">Escolha as Features</h3>
+          <p class="text-slate-400">Selecione as implementações que deseja (360°, AR, Voz, etc.)</p>
+        </div>
+        <div class="text-center">
+          <div class="step-number">2</div>
+          <h3 class="text-xl font-bold text-white mb-2">Configure</h3>
+          <p class="text-slate-400">Faça upload das imagens e configure os parâmetros</p>
+        </div>
+        <div class="text-center">
+          <div class="step-number">3</div>
+          <h3 class="text-xl font-bold text-white mb-2">Lançamento</h3>
+          <p class="text-slate-400">Ative e monitore o aumento de conversão</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta py-20 text-center px-4">
+    <div class="max-w-4xl mx-auto glass-panel p-12 rounded-3xl">
+      <h2 class="text-3xl md:text-4xl font-black text-white mb-6">Pronto para <span class="text-blue-400">transformar</span> sua loja?</h2>
+      <p class="text-xl text-slate-300 mb-10 max-w-2xl mx-auto">
+        Comece com GetNexo e ofereça a melhor experiência de compra do mercado.
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <a href="/criar-bot" class="btn-primary-glow bg-blue-600 hover:bg-blue-500" aria-label="Criar loja inteligente">
+          Criar Loja Inteligente
+        </a>
+        <a href="/contato" class="px-10 py-5 bg-transparent border border-blue-500 text-blue-400 font-bold rounded-2xl hover:bg-blue-500 hover:text-white transition-colors text-lg" aria-label="Ver demonstração">
+          Ver Demonstração
+        </a>
+      </div>
+      <p class="mt-8 text-sm text-slate-500">
+        ✅ Sem cartão de crédito • ✅ Cancelamento fácil • ✅ Suporte em português
+      </p>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  /* Hero */
+  .loja-hero { 
+    padding: 8rem 5% 4rem; 
+    text-align: center; 
+    max-width: 1300px; 
+    margin: 0 auto; 
+  }
+  
+  .hero-badge { 
+    background: rgba(139, 92, 246, 0.1); 
+    color: #8b5cf6; 
+    padding: 0.5rem 1.2rem; 
+    border-radius: 50px; 
+    font-size: 0.85rem; 
+    font-weight: 700; 
+    border: 1px solid rgba(139, 92, 246, 0.2); 
+    display: inline-block; 
+    margin-bottom: 2rem; 
+  }
+  
+  .loja-hero h1 { 
+    font-size: 3.5rem; 
+    margin-bottom: 1.5rem; 
+    color: white;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+  
+  .hero-desc { 
+    font-size: 1.35rem; 
+    color: #94a3b8; 
+    max-width: 900px; 
+    margin: 0 auto 3rem; 
+    line-height: 1.6;
+  }
+
+  /* Trust badges */
+  .trust-badges {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+  .trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 0.75rem 1.25rem;
+    border-radius: 12px;
+  }
+  .trust-icon {
+    font-size: 1.5rem;
+  }
+  .trust-badge strong {
+    display: block;
+    color: white;
+    font-size: 0.9rem;
+    margin-bottom: 0.1rem;
+  }
+  .trust-badge span {
+    display: block;
+    color: #94a3b8;
+    font-size: 0.75rem;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary-glow { 
+    background: linear-gradient(135deg, #3b82f6, #06b6d4); 
+    color: white; 
+    padding: 1.2rem 2.8rem; 
+    border-radius: 14px; 
+    font-weight: 800; 
+    text-decoration: none; 
+    transition: 0.3s; 
+    box-shadow: 0 10px 40px rgba(59, 130, 246, 0.25); 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 0.5rem; 
+  }
+  
+  .btn-primary-glow:hover { transform: translateY(-4px); box-shadow: 0 20px 50px rgba(59, 130, 246, 0.4); }
+
+  .btn-outline { 
+    border: 1px solid rgba(255,255,255,0.15); 
+    color: white; 
+    padding: 1.2rem 2.8rem; 
+    border-radius: 14px; 
+    font-weight: 700; 
+    text-decoration: none; 
+    background: rgba(255,255,255,0.03); 
+    transition: 0.3s; 
+  }
+  
+  .btn-outline:hover { background: rgba(255,255,255,0.1); border-color: #3b82f6; }
+
+  /* Stats Section */
+  .stats-section {
+    padding: 4rem 5%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .stat-card {
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .stat-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: 900;
+    color: #8b5cf6;
+    line-height: 1;
+  }
+
+  .stat-label {
+    display: block;
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-top: 0.3rem;
+  }
+
+  .stat-desc {
+    display: block;
+    color: #64748b;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+  }
+
+  /* Features Section */
+  .features-section {
+    padding: 6rem 5%;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .feature-card {
+    padding: 2.5rem;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .feature-title {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .feature-desc {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .feature-benefits {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1.5rem;
+  }
+
+  .benefit-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.4rem 0;
+    color: #94a3b8;
+    font-size: 0.85rem;
+  }
+
+  .benefit-check {
+    color: #8b5cf6;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .feature-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .stat-tag {
+    background: rgba(139, 92, 246, 0.1);
+    color: #8b5cf6;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  /* Use Cases Section */
+  .use-cases-section {
+    padding: 6rem 5%;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .use-cases-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .use-case-card {
+    padding: 2.5rem;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .use-case-title {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .use-case-desc {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .use-case-results {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .result-tag {
+    background: rgba(139, 92, 246, 0.1);
+    color: #8b5cf6;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  /* Testimonials Section */
+  .testimonials-section {
+    padding: 6rem 5%;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .testimonial-card {
+    padding: 2.5rem;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .testimonial-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .testimonial-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: white;
+  }
+
+  .testimonial-name {
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+  }
+
+  .testimonial-role {
+    color: #94a3b8;
+    font-size: 0.85rem;
+  }
+
+  .testimonial-company {
+    color: #8b5cf6;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .testimonial-quote {
+    color: #94a3b8;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+  }
+
+  .testimonial-results {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .result-item {
+    text-align: center;
+    padding: 0.75rem;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+  }
+
+  .result-value {
+    display: block;
+    color: #8b5cf6;
+    font-size: 1.2rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .result-label {
+    display: block;
+    color: #94a3b8;
+    font-size: 0.7rem;
+    margin-top: 0.2rem;
+  }
+
+  /* FAQ Section */
+  .faq-section {
+    padding: 6rem 5%;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  /* Implementation Section */
+  .implementation-section {
+    padding: 6rem 5%;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .step-number {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 900;
+    margin: 0 auto 1rem;
+  }
+
+  /* Final CTA */
+  .final-cta {
+    padding: 4rem 5% 8rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* Utility */
+  .text-gradient {
+    background: linear-gradient(to right, #8b5cf6, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .loja-hero h1 { font-size: 2.5rem; }
+    .hero-desc { font-size: 1.1rem; }
+    .trust-badges { flex-direction: column; gap: 0.75rem; }
+    .trust-badge { width: 100%; justify-content: flex-start; }
+    .hero-ctas { flex-direction: column; }
+    .features-grid { grid-template-columns: 1fr; }
+    .use-cases-grid { grid-template-columns: 1fr; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .testimonial-results { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 1024px) {
+    .loja-hero h1 { font-size: 3rem; }
+  }
+</style>

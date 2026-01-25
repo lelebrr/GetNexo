@@ -1,0 +1,75 @@
+---
+const { lang } = Astro.props;
+---
+<!-- Security Section -->
+<section class="security-section">
+  <div class="section-header animate-on-scroll">
+      <h2 class="text-gradient">🛡️ Segurança Máxima no GetNexo</h2>
+      <p>Proteja Sua Loja e Seus Clientes com Confiança Total</p>
+  </div>
+
+  <div class="security-grid animate-on-scroll">
+    <div class="security-card glass-panel">
+      <div class="security-icon">🛡️</div>
+      <h3>Cloudflare Shield</h3>
+      <p>Proteção contra DDoS, Firewall Avançado (WAF) e Gerenciamento de Bots. Sua loja protegida como as maiores do mundo.</p>
+    </div>
+
+    <div class="security-card glass-panel">
+      <div class="security-icon">🔐</div>
+      <h3>AES Encryption</h3>
+      <p>Criptografia LGPD-compliant com AES-256. Conformidade 100% LGPD. Zero armazenamento desnecessário.</p>
+    </div>
+
+    <div class="security-card glass-panel">
+      <div class="security-icon">🚪</div>
+      <h3>Zero Trust Network</h3>
+      <p>Cloudflare Tunnel com Zero Trust. Nenhuma porta aberta no servidor. Conexão outbound apenas.</p>
+    </div>
+
+    <div class="security-card glass-panel">
+      <div class="security-icon">⏰</div>
+      <h3>24h Monitoring</h3>
+      <p>Rate Limiting inteligente, detecção de ameaças em tempo real e backups seguros automatizados.</p>
+    </div>
+
+    <div class="security-card glass-panel">
+      <div class="security-icon">💳</div>
+      <h3>Secure PIX</h3>
+      <p>Integração direta com gateways confiáveis. QR Code validado e criptografado em tempo real.</p>
+    </div>
+
+    <div class="security-card glass-panel">
+      <div class="security-icon">✅</div>
+      <h3>99.99% Uptime</h3>
+      <p>Sua loja nunca fica offline. Sem histórico de breaches. Atualizações automáticas.</p>
+    </div>
+  </div>
+
+  <!-- Final Squeeze: The Ultimate Trust & ROI Section -->
+  <div class="security-cta animate-on-scroll">
+      <div class="glass-panel cta-box p-12 text-center max-w-4xl mx-auto border-neon-blue/30 scale-105">
+          <div class="flex flex-col items-center gap-4 mb-8">
+              <span class="text-cyber-gold text-lg font-bold tracking-widest uppercase">Segurança Enterprise & Performance Absurda</span>
+              <h2 class="text-gradient text-4xl md:text-5xl font-black leading-tight">Pronto para Dominar o WhatsApp com IA?</h2>
+          </div>
+          
+          <p class="text-xl text-gray-300 mb-8 leading-relaxed">
+              💡 <strong>Segurança WhatsApp Business não é luxo — é necessidade.</strong><br/>
+              Com o GetNexo, você tem proteção de nível militar e a infraestrutura mais robusta do mercado.<br/>
+              Ative sua IA em menos de 10 minutos e comece a vender 24h por dia, sem mensalidades.
+          </p>
+
+          <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+              <a href={`/${lang}/criar-conta`} class="btn-primary-glow text-lg px-10 py-5">COMEÇAR AGORA GRÁTIS</a>
+              <button onclick="window.abrirModalDemo()" class="btn-outline text-lg px-10 py-5">TESTAR DEMO IA</button>
+          </div>
+          
+          <div class="mt-8 flex flex-wrap justify-center gap-8 opacity-60 text-xs font-bold uppercase tracking-widest text-gray-400">
+              <span>🛡️ Protocolo Zero Trust</span>
+              <span>🔐 Criptografia AES-256</span>
+              <span>☁️ Cloudflare Shields</span>
+          </div>
+      </div>
+  </div>
+</section>

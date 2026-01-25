@@ -61,31 +61,16 @@ const testimonials = [
 
   <div class={`testimonials-grid ${layout === 'hero' ? 'hero-grid' : 'section-grid'}`}>
     {testimonials.map((testimonial, index) => (
-      <div class="testimonial-card reveal" style={`animation-delay: ${index * 0.1}s`}>
-        <div class="testimonial-header">
-          <div class="testimonial-avatar">
-            {testimonial.photo ? (
-              <img src={testimonial.photo} alt={testimonial.name} />
-            ) : (
-              <span class="avatar-initials">{testimonial.avatar}</span>
-            )}
+      <div class="bg-gray-800 p-6 rounded-xl border border-cyan-900/30 reveal" style={`animation-delay: ${index * 0.1}s`}>
+        <div class="flex items-center gap-4 mb-4">
+          <img src={testimonial.photo} class="w-12 h-12 rounded-full" />
+          <div>
+            <p class="font-bold text-cyan-300">@{testimonial.name.replace(/\s+/g, '_').toLowerCase()}</p>
+            <p class="text-xs text-gray-500">⭐ Verificado GetNexo</p>
           </div>
-          <div class="testimonial-meta">
-            <div class="testimonial-name">{testimonial.name}</div>
-            <div class="testimonial-role">{testimonial.role}</div>
-            <div class="testimonial-company">{testimonial.company}</div>
-          </div>
-          <div class="testimonial-result">{testimonial.results}</div>
         </div>
-
-        <div class="testimonial-quote">
-          "{testimonial.quote}"
-        </div>
-
-        <div class="testimonial-rating">
-          <span class="stars">★★★★★</span>
-          <span class="verified">✓ Verificado</span>
-        </div>
+        <p class="text-lg italic">“{testimonial.results}”</p>
+        <p class="text-sm text-gray-400 mt-2">"{testimonial.quote}"</p>
       </div>
     ))}
   </div>

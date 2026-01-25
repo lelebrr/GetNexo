@@ -1,0 +1,144 @@
+---
+// src/components/Upload3D.astro
+---
+
+<div class="p-6">
+  <h2 class="text-2xl font-black mb-4">Upload 3D</h2>
+
+  <input
+    type="file"
+    accept=".glb,.gltf"
+    id="file-input"
+    class="mb-4 text-sm"
+  />
+
+  <button
+    id="preview-btn"
+    class="px-6 py-3 bg-gradient-to-r from-cyan-500 to-green-500 text-black font-bold rounded hover:from-cyan-400 hover:to-green-400 transition opacity-50 cursor-not-allowed"
+    disabled
+  >
+    Ver 3D
+  </button>
+
+  <div id="preview-container" class="mt-8 rounded-xl bg-gray-900 p-4 border border-cyan-900 shadow-lg overflow-hidden hidden">
+    <div id="canvas-mount" class="w-full h-96"></div>
+    <p class="text-center text-sm text-gray-500 mt-2">Gire com o mouse | Zoom com scroll</p>
+  </div>
+</div>
+
+<script>
+  import * as THREE from 'three';
+  import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+
+  let arquivo = null;
+  let scene, camera, renderer, controls;
+
+  const fileInput = document.getElementById('file-input');
+  const previewBtn = document.getElementById('preview-btn');
+  const previewContainer = document.getElementById('preview-container');
+  const mount = document.getElementById('canvas-mount');
+
+  fileInput.addEventListener('change', (e) => {
+    arquivo = e.target.files[0];
+    if (arquivo) {
+      previewBtn.disabled = false;
+      previewBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      previewBtn.classList.add('cursor-pointer');
+    }
+  });
+
+  previewBtn.addEventListener('click', () => {
+    if (!arquivo) return;
+    previewContainer.classList.remove('hidden');
+    init3D();
+  });
+
+  function init3D() {
+    // Limpa canvas anterior
+    while (mount.firstChild) {
+      mount.removeChild(mount.firstChild);
+    }
+
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(50, mount.clientWidth / mount.clientHeight, 0.1, 1000);
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(mount.clientWidth, mount.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    mount.appendChild(renderer.domElement);
+
+    // Luz
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(5, 5, 5);
+    scene.add(light);
+
+    const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+    scene.add(ambientLight);
+
+    // Loader GLTF
+    const loader = new GLTFLoader();
+    loader.load(URL.createObjectURL(arquivo), (gltf) => {
+      scene.add(gltf.scene);
+      gltf.scene.scale.set(5, 5, 5);
+      gltf.scene.position.set(0, 0, 0);
+
+      // Centraliza
+      const box = new THREE.Box3().setFromObject(gltf.scene);
+      const center = box.getCenter(new THREE.Vector3());
+      gltf.scene.position.sub(center);
+
+      camera.position.z = 20;
+    });
+
+    // Controles orbitais simples
+    let isMouseDown = false;
+    let mouseX = 0, mouseY = 0;
+
+    mount.addEventListener('mousedown', (e) => {
+      isMouseDown = true;
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    mount.addEventListener('mousemove', (e) => {
+      if (!isMouseDown) return;
+      const deltaX = e.clientX - mouseX;
+      const deltaY = e.clientY - mouseY;
+      scene.rotation.y += deltaX * 0.01;
+      scene.rotation.x += deltaY * 0.01;
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    mount.addEventListener('mouseup', () => {
+      isMouseDown = false;
+    });
+
+    mount.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      camera.position.z += e.deltaY * 0.1;
+    });
+
+    animate();
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+    if (renderer) renderer.render(scene, camera);
+  }
+
+  // Resize
+  window.addEventListener('resize', () => {
+    if (camera && renderer) {
+      camera.aspect = mount.clientWidth / mount.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(mount.clientWidth, mount.clientHeight);
+    }
+  });
+</script>
+
+<style>
+  #canvas-mount canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+</style>

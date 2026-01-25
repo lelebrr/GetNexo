@@ -218,7 +218,7 @@ class LeadsInteligente {
             data_captura: conversa.timestamp,
             interesse: this.extrairInteresse(conversa.mensagens),
             ultima_msg: conversa.mensagens[conversa.mensagens.length - 1]?.texto || '',
-            link_compra: `https://lojadoleandro.com/produto/${conversa.produto.toLowerCase().replace(' ', '-')}`,
+            link_compra: `/loja?produto=${encodeURIComponent(conversa.produto.toLowerCase().replace(' ', '-'))}`,
             conversa: conversa.mensagens,
             valor_perdido: conversa.preco,
             ultima_interacao: conversa.timestamp

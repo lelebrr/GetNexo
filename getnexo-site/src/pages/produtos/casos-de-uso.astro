@@ -1,0 +1,882 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+// SEO Meta Tags
+const title = "Casos de Uso GetNexo - Como Empresas Escalam Vendas no WhatsApp | GetNexo";
+const description = "Veja como diferentes empresas estão usando GetNexo para escalar vendas no WhatsApp. E-commerce, clínicas, imobiliárias e muito mais. Casos reais de sucesso!";
+const keywords = "casos de uso getnexo, casos de sucesso, e-commerce whatsapp, clínicas whatsapp, imobiliárias whatsapp, depoimentos, resultados reais";
+const canonical = "https://getnexo.com.br/produtos/casos-de-uso";
+
+// Structured Data - Organization
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GetNexo",
+  "url": "https://getnexo.com.br",
+  "logo": "https://getnexo.com.br/logo.png",
+  "sameAs": [
+    "https://www.linkedin.com/company/getnexo",
+    "https://twitter.com/getnexo",
+    "https://github.com/getnexo"
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+5511999999999",
+    "contactType": "customer service",
+    "areaServed": "BR",
+    "availableLanguage": "pt-BR"
+  }
+};
+
+// WebSite Schema
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "GetNexo",
+  "url": "https://getnexo.com.br",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://getnexo.com.br/buscar?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+};
+
+// Breadcrumb Schema
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Início",
+      "item": "https://getnexo.com.br"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Produtos",
+      "item": "https://getnexo.com.br/produtos"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Casos de Uso",
+      "item": "https://getnexo.com.br/produtos/casos-de-uso"
+    }
+  ]
+};
+
+// Testimonials data
+const testimonials = [
+  {
+    name: "Carlos Mendes",
+    role: "CEO - TechStore",
+    company: "E-commerce de Tecnologia",
+    avatar: "/testimonials/carlos.jpg",
+    quote: "Recuperamos 35% dos carrinhos abandonados no primeiro mês. O ROI foi imediato.",
+    results: [
+      { value: "35%", label: "carrinhos recuperados" },
+      { value: "3x", label: "mais conversões" },
+      { value: "R$ 120k", label: "faturamento extra" }
+    ],
+    features: ["Recuperação de carrinho", "Checkout WhatsApp", "PIX automático"]
+  },
+  {
+    name: "Dra. Ana Paula",
+    role: "Diretora Médica",
+    company: "Clínica Vida Saudável",
+    avatar: "/testimonials/ana.jpg",
+    quote: "Reduzimos no-shows em 60% e aumentamos a satisfação dos pacientes.",
+    results: [
+      { value: "60%", label: "menos no-shows" },
+      { value: "40%", label: "agendamentos online" },
+      { value: "4.9", label: "satisfação" }
+    ],
+    features: ["Agendamento automático", "Lembretes WhatsApp", "Pré-atendimento"]
+  },
+  {
+    name: "Roberto Silva",
+    role: "Sócio Diretor",
+    company: "Imobiliária Premium",
+    avatar: "/testimonials/roberto.jpg",
+    quote: "Qualificamos leads 24/7 e agendamos 3x mais visitas.",
+    results: [
+      { value: "3x", label: "mais visitas" },
+      { value: "85%", label: "leads qualificados" },
+      { value: "24/7", label: "atendimento" }
+    ],
+    features: ["Qualificação automática", "Agendamento 24h", "Tour virtual"]
+  },
+  {
+    name: "Mariana Costa",
+    role: "Fundadora",
+    company: "Escola Futuro Digital",
+    avatar: "/testimonials/mariana.jpg",
+    quote: "Automatizamos matrículas e aumentamos conversões em 40%.",
+    results: [
+      { value: "40%", label: "mais matrículas" },
+      { value: "50%", label: "menos burocracia" },
+      { value: "24h", label: "resposta" }
+    ],
+    features: ["Matrículas online", "Documentação automática", "Suporte 24h"]
+  }
+];
+
+// Use cases by industry
+const industries = [
+  {
+    icon: "🛒",
+    title: "E-commerce",
+    desc: "Recupere carrinhos abandonados e venda mais",
+    benefits: [
+      "Recuperação automática de carrinhos",
+      "Checkout direto no WhatsApp",
+      "Confirmação de pagamento via PIX",
+      "Notificações de entrega"
+    ],
+    results: ["Aumento de 35% em conversões", "Redução de 60% em abandono", "ROI em 30 dias"]
+  },
+  {
+    icon: "🏥",
+    title: "Clínicas e Saúde",
+    desc: "Agende consultas e reduza no-shows",
+    benefits: [
+      "Agendamento automático 24/7",
+      "Lembretes de consulta",
+      "Pré-atendimento com IA",
+      "Documentação digital"
+    ],
+    results: ["Redução de 60% em no-shows", "40% mais agendamentos", "Satisfação 4.9/5"]
+  },
+  {
+    icon: "🏠",
+    title: "Imobiliárias",
+    desc: "Qualifique leads e agende visitas",
+    benefits: [
+      "Qualificação automática de leads",
+      "Agendamento de visitas 24h",
+      "Tour virtual via WhatsApp",
+      "Propostas automáticas"
+    ],
+    results: ["3x mais visitas agendadas", "85% leads qualificados", "Fechamento 24/7"]
+  },
+  {
+    icon: "📚",
+    title: "Educação",
+    desc: "Automatize matrículas e suporte",
+    benefits: [
+      "Matrículas online via WhatsApp",
+      "Documentação automática",
+      "Suporte para alunos",
+      "Lembretes de pagamento"
+    ],
+    results: ["40% mais matrículas", "50% menos burocracia", "Resposta 24h"]
+  },
+  {
+    icon: "🍕",
+    title: "Delivery e Food",
+    desc: "Receba pedidos e confirme pagamentos",
+    benefits: [
+      "Pedidos via WhatsApp",
+      "Confirmação de pagamento PIX",
+      "Status de entrega em tempo real",
+      "Avaliações automáticas"
+    ],
+    results: ["Entrega em 2min", "95% pedidos corretos", "Avaliação 4.8/5"]
+  },
+  {
+    icon: "💼",
+    title: "Consultoria",
+    desc: "Agende reuniões e qualifique prospects",
+    benefits: [
+      "Qualificação 24/7",
+      "Agendamento automático",
+      "Envio de propostas",
+      "Follow-up inteligente"
+    ],
+    results: ["3x mais reuniões", "Qualificação 24h", "Fechamento 40%"]
+  }
+];
+
+// Stats data
+const stats = [
+  { value: "5.000+", label: "empresas", desc: "usando GetNexo" },
+  { value: "99.9%", label: "uptime", desc: "garantido" },
+  { value: "24/7", label: "suporte", desc: "em português" },
+  { value: "Grátis", label: "setup", desc: "sem cartão" }
+];
+
+// Trust badges
+const trustBadges = [
+  { icon: "✅", title: "Resultados Reais", desc: "Casos verificados" },
+  { icon: "🔒", title: "Privacidade", desc: "Dados protegidos" },
+  { icon: "📈", title: "ROI Comprovado", desc: "Retorno mensurável" },
+  { icon: "🏆", title: "Empresas de Sucesso", desc: "Casos de destaque" }
+];
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+
+  <!-- SEO Schemas -->
+  <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+
+  <!-- Hero Section -->
+  <section class="cases-hero" aria-label="Casos de Uso GetNexo">
+    <div class="hero-badge">🏆 Casos de Sucesso</div>
+    <h1>Casos de <span class="text-gradient">Uso Real</span></h1>
+    <p class="hero-desc">
+      Veja como diferentes empresas estão usando GetNexo para escalar vendas no WhatsApp. <strong>Resultados reais, empresas reais.</strong>
+    </p>
+
+    <!-- Trust Badges -->
+    <div class="trust-badges">
+      {trustBadges.map(badge => (
+        <div class="trust-badge">
+          <span class="trust-icon">{badge.icon}</span>
+          <div>
+            <strong>{badge.title}</strong>
+            <span>{badge.desc}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="hero-ctas">
+      <a href="/criar-bot" class="btn-primary-glow" aria-label="Começar gratuitamente">
+        Começar Grátis Agora
+      </a>
+      <a href="/contato" class="btn-outline" aria-label="Falar com vendas">
+        Falar com Vendas
+      </a>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats-section">
+    <div class="max-w-6xl mx-auto px-5">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        {stats.map(stat => (
+          <div class="stat-card glass-panel p-6 text-center">
+            <span class="stat-value">{stat.value}</span>
+            <span class="stat-label">{stat.label}</span>
+            <span class="stat-desc">{stat.desc}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="testimonials-section">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-white mb-4">Depoimentos de <span class="text-gradient">Clientes</span></h2>
+        <p class="text-slate-400 max-w-2xl mx-auto">O que nossos clientes dizem sobre os resultados</p>
+      </div>
+
+      <div class="testimonials-grid">
+        {testimonials.map(testimonial => (
+          <div class="testimonial-card glass-panel p-8 rounded-3xl">
+            <div class="testimonial-header">
+              <div class="testimonial-avatar">
+                <span class="avatar-placeholder">{testimonial.name.charAt(0)}</span>
+              </div>
+              <div>
+                <h3 class="testimonial-name">{testimonial.name}</h3>
+                <p class="testimonial-role">{testimonial.role}</p>
+                <p class="testimonial-company">{testimonial.company}</p>
+              </div>
+            </div>
+            <blockquote class="testimonial-quote">"{testimonial.quote}"</blockquote>
+            <div class="testimonial-results">
+              {testimonial.results.map(result => (
+                <div class="result-item">
+                  <span class="result-value">{result.value}</span>
+                  <span class="result-label">{result.label}</span>
+                </div>
+              ))}
+            </div>
+            <div class="testimonial-features">
+              {testimonial.features.map(feature => (
+                <span class="feature-tag">{feature}</span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Industries Section -->
+  <section class="industries-section">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-white mb-4">Indústrias que <span class="text-gradient">Transformamos</span></h2>
+        <p class="text-slate-400 max-w-2xl mx-auto">Veja como diferentes segmentos estão usando GetNexo</p>
+      </div>
+
+      <div class="industries-grid">
+        {industries.map(industry => (
+          <div class="industry-card glass-panel p-8 rounded-3xl">
+            <div class="industry-icon">{industry.icon}</div>
+            <h3 class="industry-title">{industry.title}</h3>
+            <p class="industry-desc">{industry.desc}</p>
+            <ul class="industry-benefits">
+              {industry.benefits.map(benefit => (
+                <li class="benefit-item">
+                  <span class="benefit-check">✓</span>
+                  <span>{benefit}</span>
+                </li>
+              ))}
+            </ul>
+            <div class="industry-results">
+              {industry.results.map(result => (
+                <span class="result-tag">{result}</span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ROI Calculator Section -->
+  <section class="roi-section py-20 px-5 max-w-6xl mx-auto">
+    <div class="glass-panel p-12 rounded-3xl text-center">
+      <h2 class="text-3xl font-bold text-white mb-4">Calcule seu <span class="text-gradient">ROI</span></h2>
+      <p class="text-slate-400 text-lg mb-8 max-w-2xl mx-auto">
+        Descubra quanto você pode economizar e ganhar com GetNexo
+      </p>
+      <div class="roi-calculator">
+        <div class="roi-inputs">
+          <div class="input-group">
+            <label>Leads/mês</label>
+            <input type="number" id="leads" value="100" min="0" />
+          </div>
+          <div class="input-group">
+            <label>Ticket médio (R$)</label>
+            <input type="number" id="ticket" value="500" min="0" />
+          </div>
+          <div class="input-group">
+            <label>Conversão atual (%)</label>
+            <input type="number" id="conversion" value="5" min="0" max="100" />
+          </div>
+        </div>
+        <div class="roi-results">
+          <div class="result-box">
+            <span class="result-label">Economia com GetNexo</span>
+            <span class="result-value" id="economy">R$ 0</span>
+          </div>
+          <div class="result-box">
+            <span class="result-label">Faturamento extra</span>
+            <span class="result-value" id="revenue">R$ 0</span>
+          </div>
+          <div class="result-box">
+            <span class="result-label">ROI mensal</span>
+            <span class="result-value" id="roi">0%</span>
+          </div>
+        </div>
+      </div>
+      <p class="mt-6 text-sm text-slate-500">
+        *Cálculo baseado em médias de clientes. Resultados reais podem variar.
+      </p>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta py-20 text-center px-4">
+    <div class="max-w-4xl mx-auto glass-panel p-12 rounded-3xl">
+      <h2 class="text-3xl md:text-4xl font-black text-white mb-6">Pronto para <span class="text-blue-400">escrever seu caso de sucesso</span>?</h2>
+      <p class="text-xl text-slate-300 mb-10 max-w-2xl mx-auto">
+        Junte-se a mais de 5.000 empresas que transformaram vendas com GetNexo.
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <a href="/criar-bot" class="btn-primary-glow bg-blue-600 hover:bg-blue-500" aria-label="Começar gratuitamente">
+          Começar Grátis Agora
+        </a>
+        <a href="/contato" class="px-10 py-5 bg-transparent border border-blue-500 text-blue-400 font-bold rounded-2xl hover:bg-blue-500 hover:text-white transition-colors text-lg" aria-label="Falar com vendas">
+          Falar com Vendas
+        </a>
+      </div>
+      <p class="mt-8 text-sm text-slate-500">
+        ✅ Sem cartão de crédito • ✅ Cancelamento fácil • ✅ Suporte em português
+      </p>
+    </div>
+  </section>
+
+</Layout>
+
+<script>
+  // ROI Calculator
+  function calculateROI() {
+    const leads = parseFloat(document.getElementById('leads').value) || 0;
+    const ticket = parseFloat(document.getElementById('ticket').value) || 0;
+    const conversion = parseFloat(document.getElementById('conversion').value) || 0;
+
+    // Assumptions based on GetNexo data
+    const getNexoConversion = conversion * 1.5; // 50% increase
+    const getNexoCost = 97; // Pro plan
+    const manualCost = leads * 5; // R$5 per lead manual
+
+    const currentRevenue = leads * (conversion / 100) * ticket;
+    const newRevenue = leads * (getNexoConversion / 100) * ticket;
+    const revenueIncrease = newRevenue - currentRevenue;
+    const economy = manualCost - getNexoCost;
+    const roi = ((revenueIncrease + economy) / getNexoCost) * 100;
+
+    document.getElementById('economy').textContent = `R$ ${economy.toFixed(0)}`;
+    document.getElementById('revenue').textContent = `R$ ${revenueIncrease.toFixed(0)}`;
+    document.getElementById('roi').textContent = `${roi.toFixed(0)}%`;
+  }
+
+  // Add event listeners
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputs = ['leads', 'ticket', 'conversion'];
+    inputs.forEach(id => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.addEventListener('input', calculateROI);
+      }
+    });
+    calculateROI();
+  });
+</script>
+
+<style>
+  /* Hero */
+  .cases-hero { 
+    padding: 8rem 5% 4rem; 
+    text-align: center; 
+    max-width: 1300px; 
+    margin: 0 auto; 
+  }
+  
+  .hero-badge { 
+    background: rgba(251, 191, 36, 0.1); 
+    color: #fbbf24; 
+    padding: 0.5rem 1.2rem; 
+    border-radius: 50px; 
+    font-size: 0.85rem; 
+    font-weight: 700; 
+    border: 1px solid rgba(251, 191, 36, 0.2); 
+    display: inline-block; 
+    margin-bottom: 2rem; 
+  }
+  
+  .cases-hero h1 { 
+    font-size: 3.5rem; 
+    margin-bottom: 1.5rem; 
+    color: white;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+  
+  .hero-desc { 
+    font-size: 1.35rem; 
+    color: #94a3b8; 
+    max-width: 800px; 
+    margin: 0 auto 3rem; 
+    line-height: 1.6;
+  }
+
+  /* Trust badges */
+  .trust-badges {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+  .trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 0.75rem 1.25rem;
+    border-radius: 12px;
+  }
+  .trust-icon {
+    font-size: 1.5rem;
+  }
+  .trust-badge strong {
+    display: block;
+    color: white;
+    font-size: 0.9rem;
+    margin-bottom: 0.1rem;
+  }
+  .trust-badge span {
+    display: block;
+    color: #94a3b8;
+    font-size: 0.75rem;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary-glow { 
+    background: linear-gradient(135deg, #3b82f6, #06b6d4); 
+    color: white; 
+    padding: 1.2rem 2.8rem; 
+    border-radius: 14px; 
+    font-weight: 800; 
+    text-decoration: none; 
+    transition: 0.3s; 
+    box-shadow: 0 10px 40px rgba(59, 130, 246, 0.25); 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 0.5rem; 
+  }
+  
+  .btn-primary-glow:hover { transform: translateY(-4px); box-shadow: 0 20px 50px rgba(59, 130, 246, 0.4); }
+
+  .btn-outline { 
+    border: 1px solid rgba(255,255,255,0.15); 
+    color: white; 
+    padding: 1.2rem 2.8rem; 
+    border-radius: 14px; 
+    font-weight: 700; 
+    text-decoration: none; 
+    background: rgba(255,255,255,0.03); 
+    transition: 0.3s; 
+  }
+  
+  .btn-outline:hover { background: rgba(255,255,255,0.1); border-color: #3b82f6; }
+
+  /* Stats Section */
+  .stats-section {
+    padding: 4rem 5%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .stat-card {
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .stat-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: 900;
+    color: #3b82f6;
+    line-height: 1;
+  }
+
+  .stat-label {
+    display: block;
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-top: 0.3rem;
+  }
+
+  .stat-desc {
+    display: block;
+    color: #64748b;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+  }
+
+  /* Testimonials Section */
+  .testimonials-section {
+    padding: 6rem 5%;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .testimonial-card {
+    padding: 2.5rem;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .testimonial-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .testimonial-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: white;
+  }
+
+  .testimonial-name {
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+  }
+
+  .testimonial-role {
+    color: #94a3b8;
+    font-size: 0.85rem;
+  }
+
+  .testimonial-company {
+    color: #3b82f6;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .testimonial-quote {
+    color: #94a3b8;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+  }
+
+  .testimonial-results {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .result-item {
+    text-align: center;
+    padding: 0.75rem;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+  }
+
+  .result-value {
+    display: block;
+    color: #3b82f6;
+    font-size: 1.2rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .result-label {
+    display: block;
+    color: #94a3b8;
+    font-size: 0.7rem;
+    margin-top: 0.2rem;
+  }
+
+  .testimonial-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .feature-tag {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  /* Industries Section */
+  .industries-section {
+    padding: 6rem 5%;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .industries-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .industry-card {
+    padding: 2.5rem;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .industry-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .industry-title {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .industry-desc {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .industry-benefits {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1.5rem;
+  }
+
+  .benefit-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.4rem 0;
+    color: #94a3b8;
+    font-size: 0.85rem;
+  }
+
+  .benefit-check {
+    color: #3b82f6;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .industry-results {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .result-tag {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  /* ROI Calculator */
+  .roi-section {
+    padding: 6rem 5%;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .roi-calculator {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    margin-top: 2rem;
+  }
+
+  .roi-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .input-group {
+    text-align: left;
+  }
+
+  .input-group label {
+    display: block;
+    color: white;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .input-group input {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.05);
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .input-group input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    background: rgba(255,255,255,0.08);
+  }
+
+  .roi-results {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  .result-box {
+    padding: 1.5rem;
+    background: rgba(59, 130, 246, 0.05);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 12px;
+    text-align: center;
+  }
+
+  .result-box .result-label {
+    display: block;
+    color: #94a3b8;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .result-box .result-value {
+    display: block;
+    color: #3b82f6;
+    font-size: 1.8rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  /* Final CTA */
+  .final-cta {
+    padding: 4rem 5% 8rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* Utility */
+  .text-gradient {
+    background: linear-gradient(to right, #fbbf24, #f59e0b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .cases-hero h1 { font-size: 2.5rem; }
+    .hero-desc { font-size: 1.1rem; }
+    .trust-badges { flex-direction: column; gap: 0.75rem; }
+    .trust-badge { width: 100%; justify-content: flex-start; }
+    .hero-ctas { flex-direction: column; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .industries-grid { grid-template-columns: 1fr; }
+    .roi-calculator { grid-template-columns: 1fr; gap: 2rem; }
+    .testimonial-results { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 1024px) {
+    .cases-hero h1 { font-size: 3rem; }
+  }
+</style>

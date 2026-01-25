@@ -47,21 +47,21 @@ export let produto: Partial<Produto> = {};
     <p class="text-white">Cor: {produto.cor}</p>
   {/if}
 
-  <div class="mt-4 space-y-2">
+  <div class="mt-4 space-y-2" data-product-data={JSON.stringify(produto)}>
     {#if produto.360}
-      <button onclick={`abrir360('${produto.360}')`} class="bg-void-black border border-matrix-green text-matrix-green px-6 py-2 rounded font-medium hover:bg-matrix-green hover:text-black transition">
+      <button class="btn-360 bg-void-black border border-matrix-green text-matrix-green px-6 py-2 rounded font-medium hover:bg-matrix-green hover:text-black transition">
         🔍 Girar 360°
       </button>
     {/if}
 
     {#if produto.video}
-    <button onclick={`abrirVideo('${produto.video}')`} class="mt-2 bg-void-black border border-cyber-gold text-cyber-gold px-6 py-2 rounded font-medium hover:bg-cyber-gold hover:text-black transition">
+    <button class="btn-video mt-2 bg-void-black border border-cyber-gold text-cyber-gold px-6 py-2 rounded font-medium hover:bg-cyber-gold hover:text-black transition">
       ▶️ Ver vídeo
     </button>
     {/if}
 
     {#if produto.audio}
-    <button onclick={`tocarAudio('${produto.audio}')`} class="mt-2 bg-void-black border border-matrix-green text-matrix-green px-6 py-2 rounded font-medium hover:bg-matrix-green hover:text-black transition">
+    <button class="btn-audio mt-2 bg-void-black border border-matrix-green text-matrix-green px-6 py-2 rounded font-medium hover:bg-matrix-green hover:text-black transition">
       🔊 Depoimento
     </button>
     {/if}
@@ -75,6 +75,13 @@ export let produto: Partial<Produto> = {};
 </div>
 
 <script>
+function createTrustedHTML(html) {
+  if (window.getnexoTrustedTypes && window.getnexoTrustedTypes.policy) {
+    return window.getnexoTrustedTypes.policy.createHTML(html);
+  }
+  return html;
+}
+
 function abrirVideo(url) {
   const iframe = document.createElement('iframe');
   iframe.src = url;
@@ -84,7 +91,16 @@ function abrirVideo(url) {
   iframe.allowFullscreen = true;
   const modal = document.createElement('div');
   modal.className = 'fixed inset-0 bg-black/80 flex items-center justify-center z-50';
-  modal.innerHTML = `<button onclick="this.parentNode.remove()" class="absolute top-4 right-4 text-4xl text-white">&times;</button><div class="relative">${iframe.outerHTML}</div>`;
+  
+  const modalHtml = `
+    <button class="modal-close absolute top-4 right-4 text-4xl text-white">&times;</button>
+    <div class="relative">${iframe.outerHTML}</div>
+  `;
+  modal.innerHTML = createTrustedHTML(modalHtml);
+  
+  const closeBtn = modal.querySelector('.modal-close');
+  if (closeBtn) closeBtn.onclick = () => modal.remove();
+  
   document.body.append(modal);
 }
 
@@ -96,50 +112,68 @@ function tocarAudio(src) {
 function abrir360(path) {
   const modal = document.createElement('div');
   modal.className = 'fixed inset-0 bg-black/90 flex items-center justify-center z-50';
-  modal.innerHTML = `
-    <button onclick="this.parentNode.remove()" class="absolute top-4 right-4 text-white text-4xl">&times;</button>
-    <div id="viewer-360" class="w-11/12 h-80vh bg-gray-900"></div>`;
+  
+  const modalHtml = `
+    <button class="modal-close absolute top-4 right-4 text-white text-4xl">&times;</button>
+    <div id="viewer-360" class="w-11/12 h-80vh bg-gray-900"></div>
+  `;
+  modal.innerHTML = createTrustedHTML(modalHtml);
+  
+  const closeBtn = modal.querySelector('.modal-close');
+  if (closeBtn) closeBtn.onclick = () => modal.remove();
+  
   document.body.append(modal);
 
   const script = document.createElement('script');
   script.src = 'https://cdn.jsdelivr.net/npm/pannellum@0.15.1/build/pannellum.js';
   script.onload = () => {
-    pannellum.viewer('viewer-360', {
-      "type": "multires",
-      "multiRes": {
-        "basePath": path,
-        "path": '/%l/%s%y.%p',
-        "fallbackPath": '/fallback/%s.jpg',
-        "extension": "jpg"
-      },
-      "autoLoad": true,
-      "showZoomCtrl": true
-    });
+    if (typeof pannellum !== 'undefined') {
+      pannellum.viewer('viewer-360', {
+        "type": "multires",
+        "multiRes": {
+          "basePath": path,
+          "path": '/%l/%s%y.%p',
+          "fallbackPath": '/fallback/%s.jpg',
+          "extension": "jpg"
+        },
+        "autoLoad": true,
+        "showZoomCtrl": true
+      });
+    }
   };
   document.head.append(script);
 }
 
-// VOZ
-if (document.getElementById('mic')) {
-  const mic = document.getElementById('mic');
-  mic.onclick = () => {
-    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = 'pt-BR';
-    recognition.onresult = e => {
-      const texto = e.results[0][0].transcript;
-      // Manda pro chat via fetch('/api/chat', { texto })
-      fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mensagem: texto })
-      }).then(r => r.json()).then(data => {
-        resposta = data.resposta;
-        const utter = new SpeechSynthesisUtterance(resposta);
-        utter.lang = 'pt-BR';
-        speechSynthesis.speak(utter);
-      });
-    };
-    recognition.start();
-  };
-}
+// Inicializar eventos para todos os cards
+document.querySelectorAll('.product-card').forEach(card => {
+  const dataEl = card.querySelector('[data-product-data]');
+  if (!dataEl) return;
+  
+  const data = JSON.parse(dataEl.getAttribute('data-product-data'));
+  
+  card.querySelector('.btn-360')?.addEventListener('click', () => abrir360(data['360']));
+  card.querySelector('.btn-video')?.addEventListener('click', () => abrirVideo(data.video));
+  card.querySelector('.btn-audio')?.addEventListener('click', () => tocarAudio(data.audio));
+  
+  const mic = card.querySelector('#mic');
+  if (mic) {
+    mic.addEventListener('click', () => {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = 'pt-BR';
+      recognition.onresult = e => {
+        const texto = e.results[0][0].transcript;
+        fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mensagem: texto })
+        }).then(r => r.json()).then(newData => {
+          const ut = new SpeechSynthesisUtterance(newData.resposta);
+          ut.lang = 'pt-BR';
+          speechSynthesis.speak(ut);
+        });
+      };
+      recognition.start();
+    });
+  }
+});
 </script>

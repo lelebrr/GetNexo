@@ -1,0 +1,700 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+// SEO Meta Tags
+const title = "Preços GetNexo - Planos para Automação WhatsApp | Teste Grátis!";
+const description = "Conheça os planos GetNexo para automação WhatsApp. Preços transparentes, sem taxas escondidas. Comece grátis e escale quando precisar. Sem cartão de crédito!";
+const keywords = "preços getnexo, planos whatsapp, automação whatsapp, custo chatbot, orçamento, planos mensais, teste grátis";
+const canonical = "https://getnexo.com.br/produtos/precos";
+
+// Structured Data - Organization
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GetNexo",
+  "url": "https://getnexo.com.br",
+  "logo": "https://getnexo.com.br/logo.png",
+  "sameAs": [
+    "https://www.linkedin.com/company/getnexo",
+    "https://twitter.com/getnexo",
+    "https://github.com/getnexo"
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+5511999999999",
+    "contactType": "customer service",
+    "areaServed": "BR",
+    "availableLanguage": "pt-BR"
+  }
+};
+
+// WebSite Schema
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "GetNexo",
+  "url": "https://getnexo.com.br",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://getnexo.com.br/buscar?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+};
+
+// Breadcrumb Schema
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Início",
+      "item": "https://getnexo.com.br"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Produtos",
+      "item": "https://getnexo.com.br/produtos"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Preços",
+      "item": "https://getnexo.com.br/produtos/precos"
+    }
+  ]
+};
+
+// Plans data
+const plans = [
+  {
+    name: "Starter",
+    price: "0",
+    period: "para sempre",
+    badge: "Grátis",
+    description: "Ideal para testar e começar a automatizar",
+    features: [
+      "1 bot ativo",
+      "1.000 mensagens/mês",
+      "Suporte por email",
+      "Templates básicos",
+      "Integrações básicas"
+    ],
+    cta: "Começar Grátis",
+    ctaLink: "/criar-bot",
+    recommended: false
+  },
+  {
+    name: "Pro",
+    price: "97",
+    period: "por mês",
+    badge: "Mais Popular",
+    description: "Para empresas que querem escalar vendas",
+    features: [
+      "Bots ilimitados",
+      "50.000 mensagens/mês",
+      "Suporte prioritário",
+      "Templates avançados",
+      "Integrações completas",
+      "Analytics avançado",
+      "API REST completa"
+    ],
+    cta: "Assinar Pro",
+    ctaLink: "/criar-bot?plan=pro",
+    recommended: true
+  },
+  {
+    name: "Enterprise",
+    price: "Custom",
+    period: "contato",
+    badge: "Premium",
+    description: "Para grandes operações e necessidades específicas",
+    features: [
+      "Mensagens ilimitadas",
+      "Suporte 24/7 dedicado",
+      "Implementação personalizada",
+      "SLA garantido",
+      "Infraestrutura dedicada",
+      "Consultoria estratégica",
+      "Contrato empresarial"
+    ],
+    cta: "Falar com Vendas",
+    ctaLink: "/contato",
+    recommended: false
+  }
+];
+
+// Comparison data
+const comparisonData = [
+  {
+    feature: "Bots Ativos",
+    starter: "1",
+    pro: "Ilimitado",
+    enterprise: "Ilimitado"
+  },
+  {
+    feature: "Mensagens/mês",
+    starter: "1.000",
+    pro: "50.000",
+    enterprise: "Ilimitado"
+  },
+  {
+    feature: "Suporte",
+    starter: "Email",
+    pro: "Prioritário",
+    enterprise: "24/7 Dedicado"
+  },
+  {
+    feature: "Templates",
+    starter: "Básicos",
+    pro: "Avançados",
+    enterprise: "Personalizados"
+  },
+  {
+    feature: "Integrações",
+    starter: "Básicas",
+    pro: "Completas",
+    enterprise: "Personalizadas"
+  },
+  {
+    feature: "API REST",
+    starter: "❌",
+    pro: "✅ Completa",
+    enterprise: "✅ Completa + Webhooks"
+  },
+  {
+    feature: "Analytics",
+    starter: "Básico",
+    pro: "Avançado",
+    enterprise: "Enterprise"
+  },
+  {
+    feature: "SLA",
+    starter: "99%",
+    pro: "99.9%",
+    enterprise: "99.99% Garantido"
+  }
+];
+
+// FAQ data
+const faqs = [
+  {
+    q: "Posso cancelar a qualquer momento?",
+    a: "Sim! Você pode cancelar seu plano a qualquer momento sem taxas de cancelamento. Seu plano permanecerá ativo até o final do período pago."
+  },
+  {
+    q: "Preciso de cartão de crédito para começar?",
+    a: "Não! O plano Starter é totalmente gratuito e não requer cartão de crédito. Você só precisará de um cartão para assinar o plano Pro ou Enterprise."
+  },
+  {
+    q: "Posso mudar de plano depois?",
+    a: "Sim! Você pode fazer upgrade ou downgrade a qualquer momento. As mudanças são prorrateadas e refletidas na sua próxima fatura."
+  },
+  {
+    q: "O que acontece se eu ultrapassar o limite de mensagens?",
+    a: "Você receberá uma notificação e pode optar por fazer upgrade do plano ou pagar uma taxa adicional por mensagem extra. Nós sempre avisamos antes."
+  },
+  {
+    q: "Tem desconto para pagamento anual?",
+    a: "Sim! Ao pagar anualmente, você ganha 2 meses grátis (desconto de ~17%). Entre em contato para calcular sua economia."
+  },
+  {
+    q: "O que está incluído no suporte?",
+    a: "No Starter: suporte por email. No Pro: suporte prioritário via chat e email. No Enterprise: suporte 24/7 dedicado com SLA."
+  }
+];
+
+// Trust badges
+const trustBadges = [
+  { icon: "🔒", title: "Sem Taxas Escondidas", desc: "Preço transparente" },
+  { icon: "💳", title: "Sem Cartão Crédito", desc: "Para começar" },
+  { icon: "🔄", title: "Cancelamento Fácil", desc: "Sem multas" },
+  { icon: "📈", title: "Escalável", desc: "Cresça quando precisar" }
+];
+
+// Stats data
+const stats = [
+  { value: "5.000+", label: "empresas", desc: "usando GetNexo" },
+  { value: "99.9%", label: "uptime", desc: "garantido" },
+  { value: "24/7", label: "suporte", desc: "em português" },
+  { value: "Grátis", label: "setup", desc: "sem cartão" }
+];
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+
+  <!-- SEO Schemas -->
+  <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+
+  <!-- Hero Section -->
+  <section class="pricing-hero" aria-label="Preços GetNexo">
+    <div class="hero-badge">💰 Preços Transparentes</div>
+    <h1>Preços <span class="text-gradient">Simples e Justos</span></h1>
+    <p class="hero-desc">
+      Escolha o plano perfeito para suas necessidades. <strong>Sem taxas escondidas, sem compromisso.</strong> Comece grátis e escale quando precisar.
+    </p>
+
+    <!-- Trust Badges -->
+    <div class="trust-badges">
+      {trustBadges.map(badge => (
+        <div class="trust-badge">
+          <span class="trust-icon">{badge.icon}</span>
+          <div>
+            <strong>{badge.title}</strong>
+            <span>{badge.desc}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="hero-ctas">
+      <a href="/criar-bot" class="btn-primary-glow" aria-label="Começar gratuitamente">
+        Começar Grátis Agora
+      </a>
+      <a href="/contato" class="btn-outline" aria-label="Falar com vendas">
+        Falar com Vendas
+      </a>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats-section">
+    <div class="max-w-6xl mx-auto px-5">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        {stats.map(stat => (
+          <div class="stat-card glass-panel p-6 text-center">
+            <span class="stat-value">{stat.value}</span>
+            <span class="stat-label">{stat.label}</span>
+            <span class="stat-desc">{stat.desc}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Plans Section -->
+  <section class="plans-section">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-white mb-4">Escolha seu <span class="text-gradient">Plano</span></h2>
+        <p class="text-slate-400 max-w-2xl mx-auto">Todos os planos incluem suporte em português e garantia de 7 dias</p>
+      </div>
+
+      <div class="plans-grid">
+        {plans.map(plan => (
+          <div class={`plan-card glass-panel ${plan.recommended ? 'recommended' : ''}`}>
+            {plan.recommended && <div class="plan-badge">Recomendado</div>}
+            <div class="plan-header">
+              <h3 class="plan-name">{plan.name}</h3>
+              <div class="plan-price">
+                <span class="price-value">{plan.price}</span>
+                <span class="price-period">/{plan.period}</span>
+              </div>
+              <p class="plan-description">{plan.description}</p>
+            </div>
+            <ul class="plan-features">
+              {plan.features.map(f => (
+                <li class="feature-item">
+                  <span class="feature-check">✓</span>
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+            <a href={plan.ctaLink} class={`plan-cta ${plan.recommended ? 'btn-primary-glow' : 'btn-outline'}`} aria-label={`Assinar ${plan.name}`}>
+              {plan.cta}
+            </a>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Comparison Table -->
+  <section class="comparison-section">
+    <div class="max-w-6xl mx-auto px-5">
+      <h2 class="text-center text-3xl font-bold text-white mb-4">Comparação de <span class="text-gradient">Planos</span></h2>
+      <p class="text-center text-slate-400 mb-12 max-w-2xl mx-auto">Veja detalhadamente o que está incluído em cada plano</p>
+      
+      <div class="overflow-x-auto rounded-2xl border border-white/10">
+        <table class="w-full text-left border-collapse" aria-label="Comparação de planos">
+          <thead>
+            <tr class="bg-white/5">
+              <th class="p-4 text-slate-300 font-medium">Recurso</th>
+              <th class="p-4 text-slate-300 font-medium">Starter</th>
+              <th class="p-4 text-blue-400 font-black bg-blue-900/20 border-b-2 border-blue-500">Pro</th>
+              <th class="p-4 text-purple-400 font-black bg-purple-900/20 border-b-2 border-purple-500">Enterprise</th>
+            </tr>
+          </thead>
+          <tbody class="text-sm">
+            {comparisonData.map((row, idx) => (
+              <tr class={`border-t border-white/5 ${(idx % 2 === 0) ? 'bg-white/[0.02]' : ''}`}>
+                <td class="p-4 text-white font-medium">{row.feature}</td>
+                <td class="p-4 text-slate-400">{row.starter}</td>
+                <td class="p-4 text-blue-400 font-bold bg-blue-900/20">{row.pro}</td>
+                <td class="p-4 text-purple-400 font-bold bg-purple-900/20">{row.enterprise}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <div class="max-w-4xl mx-auto px-5">
+      <h2 class="text-center text-3xl font-bold text-white mb-4">Perguntas <span class="text-gradient">Frequentes</span></h2>
+      <p class="text-center text-slate-400 mb-12">Tire suas dúvidas sobre nossos planos e preços</p>
+      
+      <div class="space-y-4">
+        {faqs.map(faq => (
+          <details class="glass-panel p-4 rounded-xl group cursor-pointer open:bg-white/10 transition-colors">
+            <summary class="flex justify-between items-center font-bold text-white list-none">
+              {faq.q}
+              <span class="text-blue-400 text-xl group-open:rotate-45 transition-transform">+</span>
+            </summary>
+            <p class="mt-4 text-slate-400 leading-relaxed border-t border-white/5 pt-4 animate-fade-in">
+              {faq.a}
+            </p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta py-20 text-center px-4">
+    <div class="max-w-4xl mx-auto glass-panel p-12 rounded-3xl">
+      <h2 class="text-3xl md:text-4xl font-black text-white mb-6">Pronto para <span class="text-blue-400">começar</span>?</h2>
+      <p class="text-xl text-slate-300 mb-10 max-w-2xl mx-auto">
+        Comece com o plano Starter gratuito e descubra o poder da automação WhatsApp.
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <a href="/criar-bot" class="btn-primary-glow bg-blue-600 hover:bg-blue-500" aria-label="Começar gratuitamente">
+          Começar Grátis Agora
+        </a>
+        <a href="/contato" class="px-10 py-5 bg-transparent border border-blue-500 text-blue-400 font-bold rounded-2xl hover:bg-blue-500 hover:text-white transition-colors text-lg" aria-label="Falar com vendas">
+          Falar com Vendas
+        </a>
+      </div>
+      <p class="mt-8 text-sm text-slate-500">
+        ✅ Sem cartão de crédito • ✅ Cancelamento fácil • ✅ Suporte em português
+      </p>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  /* Hero */
+  .pricing-hero { 
+    padding: 8rem 5% 4rem; 
+    text-align: center; 
+    max-width: 1300px; 
+    margin: 0 auto; 
+  }
+  
+  .hero-badge { 
+    background: rgba(59, 130, 246, 0.1); 
+    color: #3b82f6; 
+    padding: 0.5rem 1.2rem; 
+    border-radius: 50px; 
+    font-size: 0.85rem; 
+    font-weight: 700; 
+    border: 1px solid rgba(59, 130, 246, 0.2); 
+    display: inline-block; 
+    margin-bottom: 2rem; 
+  }
+  
+  .pricing-hero h1 { 
+    font-size: 3.5rem; 
+    margin-bottom: 1.5rem; 
+    color: white;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+  
+  .hero-desc { 
+    font-size: 1.35rem; 
+    color: #94a3b8; 
+    max-width: 800px; 
+    margin: 0 auto 3rem; 
+    line-height: 1.6;
+  }
+
+  /* Trust badges */
+  .trust-badges {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+  .trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 0.75rem 1.25rem;
+    border-radius: 12px;
+  }
+  .trust-icon {
+    font-size: 1.5rem;
+  }
+  .trust-badge strong {
+    display: block;
+    color: white;
+    font-size: 0.9rem;
+    margin-bottom: 0.1rem;
+  }
+  .trust-badge span {
+    display: block;
+    color: #94a3b8;
+    font-size: 0.75rem;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary-glow { 
+    background: linear-gradient(135deg, #3b82f6, #06b6d4); 
+    color: white; 
+    padding: 1.2rem 2.8rem; 
+    border-radius: 14px; 
+    font-weight: 800; 
+    text-decoration: none; 
+    transition: 0.3s; 
+    box-shadow: 0 10px 40px rgba(59, 130, 246, 0.25); 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 0.5rem; 
+  }
+  
+  .btn-primary-glow:hover { transform: translateY(-4px); box-shadow: 0 20px 50px rgba(59, 130, 246, 0.4); }
+
+  .btn-outline { 
+    border: 1px solid rgba(255,255,255,0.15); 
+    color: white; 
+    padding: 1.2rem 2.8rem; 
+    border-radius: 14px; 
+    font-weight: 700; 
+    text-decoration: none; 
+    background: rgba(255,255,255,0.03); 
+    transition: 0.3s; 
+  }
+  
+  .btn-outline:hover { background: rgba(255,255,255,0.1); border-color: #3b82f6; }
+
+  /* Stats Section */
+  .stats-section {
+    padding: 4rem 5%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .stat-card {
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .stat-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: 900;
+    color: #3b82f6;
+    line-height: 1;
+  }
+
+  .stat-label {
+    display: block;
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-top: 0.3rem;
+  }
+
+  .stat-desc {
+    display: block;
+    color: #64748b;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+  }
+
+  /* Plans Section */
+  .plans-section {
+    padding: 6rem 5%;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .plans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .plan-card {
+    padding: 2.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .plan-card.recommended {
+    border-color: #3b82f6;
+    background: rgba(59, 130, 246, 0.05);
+  }
+
+  .plan-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .plan-header {
+    margin-bottom: 2rem;
+  }
+
+  .plan-name {
+    color: white;
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .plan-price {
+    margin-bottom: 1rem;
+  }
+
+  .price-value {
+    font-size: 3rem;
+    font-weight: 900;
+    color: #3b82f6;
+    line-height: 1;
+  }
+
+  .price-period {
+    font-size: 1rem;
+    color: #94a3b8;
+    font-weight: 600;
+  }
+
+  .plan-description {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .plan-features {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 2rem;
+    text-align: left;
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    color: #94a3b8;
+    font-size: 0.9rem;
+  }
+
+  .feature-check {
+    color: #3b82f6;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .plan-cta {
+    display: inline-block;
+    width: 100%;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: 0.3s;
+  }
+
+  .plan-card.recommended .plan-cta {
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+    color: white;
+    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.25);
+  }
+
+  .plan-card.recommended .plan-cta:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4);
+  }
+
+  .plan-card:not(.recommended) .plan-cta {
+    border: 1px solid rgba(255,255,255,0.15);
+    color: white;
+    background: rgba(255,255,255,0.03);
+  }
+
+  .plan-card:not(.recommended) .plan-cta:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: #3b82f6;
+  }
+
+  /* Comparison Section */
+  .comparison-section {
+    padding: 6rem 5%;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  /* FAQ Section */
+  .faq-section {
+    padding: 6rem 5%;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  /* Final CTA */
+  .final-cta {
+    padding: 4rem 5% 8rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* Utility */
+  .text-gradient {
+    background: linear-gradient(to right, #3b82f6, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .pricing-hero h1 { font-size: 2.5rem; }
+    .hero-desc { font-size: 1.1rem; }
+    .trust-badges { flex-direction: column; gap: 0.75rem; }
+    .trust-badge { width: 100%; justify-content: flex-start; }
+    .hero-ctas { flex-direction: column; }
+    .plans-grid { grid-template-columns: 1fr; }
+    .price-value { font-size: 2.5rem; }
+  }
+
+  @media (max-width: 1024px) {
+    .pricing-hero h1 { font-size: 3rem; }
+  }
+</style>

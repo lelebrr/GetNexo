@@ -2,6 +2,11 @@
 import Layout from '../layouts/Layout.astro';
 import RelatedArticles from '../components/RelatedArticles.astro';
 
+// Pega o parâmetro produto da URL
+const url = new URL(Astro.request.url);
+const produtoParam = url.searchParams.get('produto');
+const nonce = Astro.locals.nonce;
+
 const relatedPosts = [
   {
     slug: "vendas-preditivas-ia",
@@ -27,10 +32,17 @@ const relatedPosts = [
 <Layout title="Loja Oficial | GetNexo">
     <div class="store-container">
         <header class="store-header">
-            <h1 class="text-neon-blue">Loja de Plugins & Recursos</h1>
+            <h1 class="text-neon-blue">
+                {produtoParam ? `Produto: ${produtoParam.replace('-', ' ')}` : 'Loja de Plugins & Recursos'}
+            </h1>
+            {produtoParam && (
+                <div class="product-highlight">
+                    🎯 Produto destacado da conversa
+                </div>
+            )}
             <div id="cart-summary" class="cart-summary">
                 🛒 <span id="cart-count">0</span> itens - R$ <span id="cart-total">0,00</span>
-                <button onclick="checkout()" class="btn-checkout">FINALIZAR</button>
+                <button id="btn-checkout-action" class="btn-checkout">FINALIZAR</button>
             </div>
         </header>
 
@@ -56,7 +68,7 @@ const relatedPosts = [
              <div id="pix-area">
                  <p>Gerando QR Code...</p>
              </div>
-             <button onclick="closeCheckout()" class="btn-cancel">Fechar</button>
+             <button id="btn-close-checkout" class="btn-cancel">Fechar</button>
         </div>
     </div>
     <RelatedArticles articles={relatedPosts} />
@@ -64,7 +76,16 @@ const relatedPosts = [
 
 <style>
     .store-container { max-width: 1200px; margin: 0 auto; padding: 2rem; color: #fff; }
-    .store-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid #333; padding-bottom: 1rem; }
+    .store-header { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid #333; padding-bottom: 1rem; }
+    .product-highlight {
+        background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+        color: #000;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: bold;
+        text-align: center;
+        animation: pulse 2s infinite;
+    }
     .store-layout { display: grid; grid-template-columns: 250px 1fr; gap: 2rem; }
     
     .categories-sidebar h3 { color: #ffd700; border-bottom: 1px solid #333; padding-bottom: 0.5rem; }
@@ -84,44 +105,102 @@ const relatedPosts = [
     .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 100; }
     .modal.hidden { display: none; }
     .modal-content { background: #111; padding: 2rem; border: 1px solid #00f3ff; border-radius: 8px; text-align: center; }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.05); opacity: 0.8; }
+    }
 </style>
 
-<script is:inline>
+<script is:inline nonce={nonce}>
     const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '/api-proxy';
     let cart = [];
     let products = [];
 
+    // Helper para Trusted Types
+    function setTrustedHTML(element, content) {
+        if (window.getnexoTrustedTypes && window.getnexoTrustedTypes.policy) {
+            element.innerHTML = window.getnexoTrustedTypes.policy.createHTML(content);
+        } else {
+            element.innerHTML = content;
+        }
+    }
+
     async function initStore() {
         // Load Categories
-        fetch(`${API_URL}/api/categories`)
+        fetch('/api/categories')
             .then(r => r.json())
             .then(cats => {
                 const list = document.getElementById('categories-list');
-                list.innerHTML = cats.map(c => `<li>${c.name}</li>`).join('');
+                const html = cats.map(c => `<li>${c.icon} ${c.name}</li>`).join('');
+                setTrustedHTML(list, html);
             });
 
-        // Load Products (Mock for now if API not full, or hit /api/products)
-        // Assuming /api/products implemented or we mock
-        products = [
-            { id: 1, name: 'Plugin WooCommerce', price: 97.00 },
-            { id: 2, name: 'Plugin Shopify', price: 127.00 },
-            { id: 3, name: 'Pacote Revenda Ouro', price: 997.00 }
-        ];
-        renderProducts();
+        // Load Products from public API
+        fetch('/api/products-public')
+            .then(r => r.json())
+            .then(prods => {
+                products = prods;
+                renderProducts();
+                
+                // Se vier produto específico, foca nele
+                const urlParams = new URLSearchParams(window.location.search);
+                const produtoParam = urlParams.get('produto');
+                
+                if (produtoParam) {
+                    const produtoNormalizado = produtoParam.replace('-', ' ');
+                    const produtoFocado = products.find(p =>
+                        p.name.toLowerCase().includes(produtoNormalizado.toLowerCase())
+                    );
+                    
+                    if (produtoFocado) {
+                        // Destacar o produto na interface
+                        setTimeout(() => {
+                            const produtos = document.querySelectorAll('.product-card');
+                            produtos.forEach(card => {
+                                if (card.textContent.includes(produtoFocado.name)) {
+                                    card.style.border = '2px solid #ffd700';
+                                    card.style.boxShadow = '0 0 20px rgba(255, 215, 0, 0.5)';
+                                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                }
+                            });
+                        }, 1000);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao carregar produtos:', error);
+                // Fallback para dados mock
+                products = [
+                    { id: 1, name: 'Plugin WooCommerce', price: 97.00 },
+                    { id: 2, name: 'Plugin Shopify', price: 127.00 },
+                    { id: 3, name: 'Pacote Revenda Ouro', price: 997.00 }
+                ];
+                renderProducts();
+            });
     }
 
     function renderProducts() {
         const grid = document.getElementById('products-list');
-        grid.innerHTML = products.map(p => `
+        const html = products.map(p => `
             <div class="product-card">
                 <h4>${p.name}</h4>
                 <div class="product-price">R$ ${p.price.toFixed(2)}</div>
-                <button onclick="addToCart(${p.id})" class="btn-buy">ADICIONAR</button>
+                <button class="btn-buy" data-id="${p.id}">ADICIONAR</button>
             </div>
         `).join('');
+        setTrustedHTML(grid, html);
     }
 
-    window.addToCart = (id) => {
+    // Event Delegation para botões de compra
+    document.getElementById('products-list').addEventListener('click', (e) => {
+        if (e.target.classList.contains('btn-buy')) {
+            const id = parseInt(e.target.getAttribute('data-id'));
+            addToCart(id);
+        }
+    });
+
+    function addToCart(id) {
         const p = products.find(x => x.id === id);
         if (p) {
             const existing = cart.find(x => x.productId === id);
@@ -129,7 +208,7 @@ const relatedPosts = [
             else cart.push({ productId: id, quantity: 1, price: p.price });
             updateCartUI();
         }
-    };
+    }
 
     function updateCartUI() {
         const count = cart.reduce((a,b) => a + b.quantity, 0);
@@ -138,38 +217,49 @@ const relatedPosts = [
         document.getElementById('cart-total').textContent = total.toFixed(2);
     }
 
-    window.checkout = async () => {
+    // Listeners para botões estáticos
+    document.getElementById('btn-checkout-action')?.addEventListener('click', checkout);
+    document.getElementById('btn-close-checkout')?.addEventListener('click', closeCheckout);
+
+    async function checkout() {
         if (cart.length === 0) return alert('Carrinho vazio');
         
         document.getElementById('checkout-modal').classList.remove('hidden');
-        document.getElementById('pix-area').innerHTML = 'Gerando PIX...';
+        setTrustedHTML(document.getElementById('pix-area'), 'Gerando PIX...');
 
         try {
-            const res = await fetch(`${API_URL}/api/orders/checkout`, {
+            const res = await fetch('/api/checkout-public', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ cart, userData: { phone: '5511999999999' } }) // Mock user
+                body: JSON.stringify({
+                    cart,
+                    userData: {
+                        phone: '5511999999999',
+                        name: 'Cliente GetNexo'
+                    }
+                })
             });
             const data = await res.json();
             
             if (data.success) {
-                document.getElementById('pix-area').innerHTML = `
+                const pixHtml = `
                     <p style="color:#00ff41; margin-bottom:1rem;">PIX Gerado!</p>
                     <textarea style="width:100%; height:100px; background:#000; color:#fff;">${data.pix.qr_code}</textarea>
                     <p style="font-size:0.8rem; color:#aaa;">Copie e pague no app do banco</p>
                 `;
+                setTrustedHTML(document.getElementById('pix-area'), pixHtml);
             } else {
                 alert('Erro checkout: ' + data.error);
             }
         } catch (e) {
             console.error(e);
-            document.getElementById('pix-area').innerHTML = 'Erro ao gerar PIX';
+            setTrustedHTML(document.getElementById('pix-area'), 'Erro ao gerar PIX');
         }
-    };
+    }
 
-    window.closeCheckout = () => {
+    function closeCheckout() {
         document.getElementById('checkout-modal').classList.add('hidden');
-    };
+    }
 
     initStore();
 </script>

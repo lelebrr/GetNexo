@@ -1,0 +1,53 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const title = "Precios GetNexo - Automatización IA WhatsApp";
+const description = "Precios transparentes para automatización WhatsApp. Sin tarifas ocultas, sin costos de configuración. Paga solo por lo que usas.";
+const keywords = "precios whatsapp, costo chatbot ia, precios whatsapp business, precios automatización";
+
+const lang = 'es';
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  <section class="py-20">
+    <div class="container mx-auto px-4">
+      <h1 class="text-4xl font-bold text-center mb-8">Precios Transparentes</h1>
+      <p class="text-xl text-center text-gray-600 mb-12">Sin mensualidades. Paga solo por transacciones exitosas.</p>
+
+      <div class="max-w-4xl mx-auto">
+        <div class="bg-white p-8 rounded-lg shadow-lg">
+          <h2 class="text-2xl font-semibold mb-6">Cómo Funciona</h2>
+          <div class="grid md:grid-cols-2 gap-8">
+            <div>
+              <h3 class="text-xl font-semibold mb-4">Gratis para Comenzar</h3>
+              <ul class="space-y-2">
+                <li>• Configuración en 12 minutos</li>
+                <li>• Funciones básicas IA</li>
+                <li>• Hasta 1,000 mensajes/mes</li>
+                <li>• API WhatsApp Business</li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold mb-4">Paga por Éxito</h3>
+              <ul class="space-y-2">
+                <li>• R$ 0.50 por transacción</li>
+                <li>• Sin mensualidades</li>
+                <li>• Escala con tu crecimiento</li>
+                <li>• Cancela cuando quieras</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-12 text-center">
+          <h3 class="text-2xl font-semibold mb-6">Calculadora de ROI</h3>
+          <p class="text-gray-600 mb-8">Ve cuánto puedes ahorrar con GetNexo</p>
+          <div class="bg-blue-50 p-6 rounded-lg inline-block">
+            <p class="text-lg">Cliente promedio ahorra R$ 2,500/mes</p>
+            <p class="text-sm text-gray-600">Basado en 500 conversaciones/mes</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

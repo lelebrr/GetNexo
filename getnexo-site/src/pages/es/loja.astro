@@ -1,0 +1,59 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const title = "Tienda GetNexo - Planes Premium de Automatización WhatsApp";
+const description = "Elige el plan perfecto para tu negocio. Desde gratis inicial hasta soluciones enterprise con funciones avanzadas de IA.";
+const keywords = "planes automatización whatsapp, precios chatbot ia, precios whatsapp business, suscripción automatización";
+
+const lang = 'es';
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  <section class="py-20">
+    <div class="container mx-auto px-4">
+      <h1 class="text-4xl font-bold text-center mb-8">Elige Tu Plan</h1>
+      <p class="text-xl text-center text-gray-600 mb-12">Comienza gratis y escala a medida que crece tu negocio</p>
+
+      <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div class="bg-white p-8 rounded-lg shadow-lg border-2 border-gray-200">
+          <h3 class="text-2xl font-semibold mb-4">Gratuito</h3>
+          <div class="text-4xl font-bold mb-6">R$ 0<span class="text-lg font-normal">/mes</span></div>
+          <ul class="space-y-3 mb-8">
+            <li>✅ Hasta 1,000 mensajes/mes</li>
+            <li>✅ Respuestas básicas IA</li>
+            <li>✅ Integración WhatsApp</li>
+            <li>✅ Analíticas básicas</li>
+          </ul>
+          <button class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold">Comenzar</button>
+        </div>
+
+        <div class="bg-blue-50 p-8 rounded-lg shadow-lg border-2 border-blue-500 relative">
+          <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-semibold">Más Popular</div>
+          <h3 class="text-2xl font-semibold mb-4">Pro</h3>
+          <div class="text-4xl font-bold mb-6">R$ 97<span class="text-lg font-normal">/mes</span></div>
+          <ul class="space-y-3 mb-8">
+            <li>✅ Mensajes ilimitados</li>
+            <li>✅ IA avanzada con aprendizaje</li>
+            <li>✅ Integración CRM</li>
+            <li>✅ Analíticas avanzadas</li>
+            <li>✅ Soporte prioritario</li>
+          </ul>
+          <button class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold">Prueba Pro</button>
+        </div>
+
+        <div class="bg-white p-8 rounded-lg shadow-lg border-2 border-gray-200">
+          <h3 class="text-2xl font-semibold mb-4">Enterprise</h3>
+          <div class="text-4xl font-bold mb-6">Personalizado</div>
+          <ul class="space-y-3 mb-8">
+            <li>✅ Todo en Pro</li>
+            <li>✅ Entrenamiento IA personalizado</li>
+            <li>✅ Solución white-label</li>
+            <li>✅ Soporte dedicado</li>
+            <li>✅ Acceso API</li>
+          </ul>
+          <button class="w-full bg-gray-800 text-white py-3 rounded-lg font-semibold">Contactar Ventas</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -13,11 +13,19 @@ class PWAInstallPrompt {
             return;
         }
 
+        // Mostrar modal automaticamente após 2 segundos
+        setTimeout(() => {
+            this.showInstallPrompt();
+        }, 2000);
+
         // Escutar pelo prompt de instalação
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             this.deferredPrompt = e;
-            this.showInstallPrompt();
+            // Se já estiver mostrando, não mostrar novamente
+            if (!document.getElementById('pwa-install-toast')) {
+                this.showInstallPrompt();
+            }
         });
 
         // Escutar pela instalação
@@ -82,72 +90,72 @@ class PWAInstallPrompt {
         installToast.innerHTML = `
             <div style="
                 position: fixed;
-                bottom: 20px;
+                top: 50%;
                 left: 50%;
-                transform: translateX(-50%);
-                width: 90%;
-                max-width: 400px;
-                background: rgba(15, 23, 42, 0.9);
-                backdrop-filter: blur(10px);
+                transform: translate(-50%, -50%);
+                width: 75%;
+                max-width: 280px;
+                background: rgba(15, 23, 42, 0.75);
+                backdrop-filter: blur(20px);
                 border: 1px solid rgba(0, 212, 255, 0.2);
                 color: #fff;
-                padding: 1rem 1.5rem;
-                border-radius: 20px;
-                box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+                padding: 0.6rem 1rem;
+                border-radius: 14px;
+                box-shadow: 0 8px 30px rgba(0,0,0,0.3);
                 z-index: 10000;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                gap: 1rem;
+                gap: 0.6rem;
                 font-family: 'Inter', sans-serif;
                 animation: slideUp 0.3s ease-out;
             ">
                 <div style="text-align: center;">
-                    <div style="font-size: 1.2rem; font-weight: 800; background: linear-gradient(90deg, #00d4ff, #00ff9d); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.5rem;">
-                        🚀 TRANSFORME SEU NAVEGADOR!
+                    <div style="font-size: 0.9rem; font-weight: 800; background: linear-gradient(90deg, #00d4ff, #00ff9d); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.2rem;">
+                        🚀 GetNexo Vai Transformar Seu Negócio!
                     </div>
-                    <div style="font-size: 0.9rem; color: #94a3b8; line-height: 1.4;">
-                        GetNexo no seu desktop - IA sempre disponível, sem precisar abrir o navegador!
+                    <div style="font-size: 0.7rem; color: #94a3b8; line-height: 1.3;">
+                        IA que vende sozinha 24h - Instale AGORA e multiplique seus resultados!
                     </div>
                 </div>
 
                 <div id="countdown-timer" style="
-                    font-size: 0.8rem;
+                    font-size: 0.6rem;
                     color: #00d4ff;
                     font-weight: 600;
-                    background: rgba(0, 212, 255, 0.1);
-                    padding: 0.3rem 0.8rem;
-                    border-radius: 20px;
-                    border: 1px solid rgba(0, 212, 255, 0.3);
+                    background: rgba(0, 212, 255, 0.15);
+                    padding: 0.15rem 0.5rem;
+                    border-radius: 10px;
+                    border: 1px solid rgba(0, 212, 255, 0.4);
                 ">
-                    Fecha automaticamente em <span id="countdown-seconds">30</span>s
+                    Fecha em <span id="countdown-seconds">30</span>s
                 </div>
 
-                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <div style="display: flex; gap: 0.3rem; align-items: center;">
                     <button id="install-btn" style="
                         background: linear-gradient(135deg, #00d4ff, #00ff9d);
                         color: #000;
                         border: none;
-                        padding: 0.6rem 1.2rem;
-                        border-radius: 25px;
+                        padding: 0.4rem 0.8rem;
+                        border-radius: 18px;
                         cursor: pointer;
                         font-weight: 700;
-                        font-size: 0.9rem;
+                        font-size: 0.7rem;
                         transition: all 0.3s ease;
-                        box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+                        box-shadow: 0 3px 12px rgba(0, 212, 255, 0.4);
                         position: relative;
                         overflow: hidden;
-                    ">📱 Instalar Agora</button>
+                    ">🚀 Instalar</button>
                     <button id="dismiss-btn" style="
                         background: rgba(255,255,255,0.1);
                         color: #fff;
                         border: 1px solid rgba(255,255,255,0.2);
-                        padding: 0.6rem;
+                        padding: 0.4rem;
                         border-radius: 50%;
                         cursor: pointer;
-                        font-size: 1rem;
-                        width: 40px;
-                        height: 40px;
+                        font-size: 0.8rem;
+                        width: 30px;
+                        height: 30px;
                         display: flex;
                         align-items: center;
                         justify-content: center;

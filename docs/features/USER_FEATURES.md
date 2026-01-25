@@ -110,6 +110,13 @@ O **GetNexo** é uma plataforma SaaS enterprise completa com mais de **250 funci
 - **Backup e recovery** automático
 - **Monitoramento de SLA** e uptime
 
+### 🧠 12. Neuro-marketing & Conversão
+- **Hero Section 2.0** com gatilhos de escassez e autoridade
+- **Demo Chat Persuasivo** com call-to-action e reciprocidade automática
+- **Visualização Guiada (Tour)** com técnica de hipnose conversacional
+- **Prova Social Verificada** com design de alta credibilidade
+- **CTA Final de Alta Conversão** com contraste estratégico
+
 ## 🚀 Como Usar - Guias Completos
 
 ### 🎨 Interface Neural e Temas

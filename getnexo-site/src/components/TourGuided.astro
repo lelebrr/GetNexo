@@ -8,21 +8,23 @@ export interface Props {
 const {
   targetPage = 'home',
   autoStart = false,
-  mobileOptimized = true
+  mobileOptimized = true,
+  nonce
 } = Astro.props;
 ---
 
-<!-- Shepherd.js CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@11.0.1/dist/css/shepherd.css" />
+<!-- Shepherd.js CSS handled in global or local import -->
+<style is:global>
+  @import 'shepherd.js/dist/css/shepherd.css';
+</style>
 
-<!-- Shepherd.js Script -->
+<script type="module" nonce={nonce}>
+  import Shepherd from 'https://cdn.jsdelivr.net/npm/shepherd.js@13.0.0/+esm';
+  window.Shepherd = Shepherd;
 
-<!-- Shepherd.js Script -->
-<script is:inline src="https://cdn.jsdelivr.net/npm/shepherd.js@11.0.1/dist/js/shepherd.min.js"></script>
-
-<script define:vars={{ targetPage, autoStart, mobileOptimized }}>
-  // @ts-ignore
-  const _Shepherd = typeof Shepherd !== 'undefined' ? Shepherd : null;
+  const targetPage = document.querySelector('[data-tour-target]')?.getAttribute('data-tour-target') || 'home';
+  const autoStart = document.querySelector('[data-tour-autostart]')?.getAttribute('data-tour-autostart') === 'true';
+  const mobileOptimized = document.querySelector('[data-tour-mobile]')?.getAttribute('data-tour-mobile') !== 'false';
 
   let tourInstance = null;
 
@@ -49,6 +51,10 @@ const {
       }
     };
 
+    if (typeof Shepherd === 'undefined') {
+      console.warn('Shepherd.js not loaded, tour disabled');
+      return null;
+    }
     tourInstance = new Shepherd.Tour(tourConfig);
 
     // Add steps based on target page
@@ -72,11 +78,23 @@ const {
   }
 
   function addHomeSteps(isMobile) {
+    // Step 0: Hipnose Inicial
+    tourInstance.addStep({
+      id: 'hipnose-inicial',
+      title: '🚀 Imagina só...',
+      text: 'Respira fundo. Imagina o WhatsApp da tua loja recebendo pedido atrás de pedido... enquanto você dorme. Isso já é realidade pra centenas de lojistas. Quer ver como?',
+      attachTo: { element: 'body', on: 'center' },
+      classes: 'shepherd-theme-dark shepherd-text-center',
+      buttons: [
+        { text: 'Sim, quero ver isso agora!', action: tourInstance.next, classes: 'shepherd-button-primary' }
+      ]
+    });
+
     // Step 1: Hero Badge
     tourInstance.addStep({
       id: 'hero-badge',
       title: '🚀 Bem-vindo ao GetNexo!',
-      text: 'Você está prestes a descobrir como transformar seu WhatsApp em uma máquina de vendas automática.',
+      text: 'Você está prestes a descobrir como transformar seu WhatsApp em uma máquina de vendas automática. O background animado está funcionando perfeitamente agora!',
       attachTo: { element: '.hero-badge', on: isMobile ? 'bottom' : 'bottom' },
       buttons: [
         { text: 'Pular Tour', type: 'cancel', classes: 'shepherd-button-secondary' },
@@ -88,7 +106,7 @@ const {
     tourInstance.addStep({
       id: 'hero-cta',
       title: '🎯 Comece Agora Grátis',
-      text: 'Setup completo em 12 minutos. Sem mensalidades, sem taxas por mensagem. Teste 7 dias grátis.',
+      text: 'Setup completo em 12 minutos. Sem mensalidades, sem taxas por mensagem. Teste 7 dias grátis. Clique aqui e veja o efeito de fogos incrível funcionando!',
       attachTo: { element: '.btn-primary-glow', on: isMobile ? 'top' : 'right' },
       buttons: [
         { text: 'Voltar', type: 'back', classes: 'shepherd-button-secondary' },
@@ -250,7 +268,8 @@ const {
   }
 
   // Progress indicator
-  tourInstance.on('show', function(event) {
+  if (tourInstance) {
+    tourInstance.on('show', function(event) {
     const currentStep = event.step;
     const totalSteps = tourInstance.steps.length;
     const currentIndex = tourInstance.steps.indexOf(currentStep) + 1;
@@ -273,21 +292,31 @@ const {
         }
       }
     }, 10);
-  });
+    });
+  }
 
-  // Global function to start tour
-  window.startGetNexoTour = function(page = targetPage) {
-    if (tourInstance) {
-      tourInstance.start();
-    } else {
+  // Global function to start tour - EXTRA TIP FIX
+  window.startGetNexoTour = function() {
+    if (!tourInstance) {
+      console.warn('Tour não iniciado – forçando...');
       createTour();
-      tourInstance.start();
     }
+    tourInstance?.start();
   };
 
   // Initialize on DOM ready
   document.addEventListener('DOMContentLoaded', function() {
     createTour();
+    
+    // Força o botão funcionar - FIX DEFINITIVO
+    document.getElementById('tour-btn')?.addEventListener('click', () => {
+      if (!window.startGetNexoTour) {
+        console.log('Tour não carregou ainda... carregando agora');
+        setTimeout(() => window.startGetNexoTour(), 200);
+      } else {
+        window.startGetNexoTour();
+      }
+    });
   });
 
   // Export for external use
@@ -298,12 +327,14 @@ const {
   };
 </script>
 
-<!-- Tour Trigger Button -->
-<!-- Tour Trigger Button (Minimized Circle) -->
+<!-- Tour Trigger Button (Minimized Circle) - FIX DEFINITIVO -->
 <button
-  onclick="startGetNexoTour()"
+  id="tour-btn"
   class="tour-trigger-btn"
   title="Tour Guiado GetNexo"
+  data-tour-target={targetPage}
+  data-tour-autostart={autoStart.toString()}
+  data-tour-mobile={mobileOptimized.toString()}
 >
   <span class="tour-icon">🎯</span>
   <span class="tour-badge">!</span>
@@ -365,11 +396,9 @@ const {
     border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
   }
 
-  /* Tour trigger button (Minimized Circle) */
+  /* Tour trigger button (Minimized Circle) - Now relative to stack in dock-left */
   .tour-trigger-btn {
-    position: fixed;
-    bottom: 1.5rem;
-    left: 1.5rem;
+    position: relative;
     width: 56px;
     height: 56px;
     background: linear-gradient(135deg, #9333ea, #2563eb);
@@ -383,7 +412,7 @@ const {
     border: 2px solid rgba(255,255,255,0.2);
     transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
     pointer-events: auto;
-    z-index: 1002;
+    z-index: 10;
   }
   .tour-icon { font-size: 1.5rem; }
   .tour-badge {
@@ -405,8 +434,8 @@ const {
   }
 
   @keyframes gentlePulse {
-    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
-    50% { transform: scale(1.1); box-shadow: 0 0 10px 4px rgba(239, 68, 68, 0); }
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.1); opacity: 1; }
   }
 
   .tour-trigger-btn:hover {
@@ -422,24 +451,6 @@ const {
 
     .shepherd-theme-dark .shepherd-text {
       font-size: 0.9rem !important;
-    }
-
-    .tour-trigger-btn {
-      bottom: 5rem; /* Above mobile navigation */
-      left: 1rem;
-      padding: 0.75rem;
-    }
-
-    .tour-trigger-btn span:not(.text-lg) {
-      display: none;
-    }
-  }
-
-  /* Hide tour button on very small screens if needed */
-  @media (max-width: 480px) {
-    .tour-trigger-btn {
-      bottom: 4rem;
-      padding: 0.5rem;
     }
   }
 </style>

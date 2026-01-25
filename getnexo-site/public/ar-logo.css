@@ -1,0 +1,41 @@
+.ar-logo {
+    position: fixed;
+    top: 60px;
+    right: 80px;
+    z-index: 99999;
+    width: 40px;
+    height: 40px;
+    opacity: 0;
+    animation: pulse-ar 2s infinite;
+    pointer-events: none;
+    filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.5));
+}
+
+@keyframes pulse-ar {
+    0% {
+        opacity: 0.4;
+        transform: scale(0.8);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+
+    100% {
+        opacity: 0.4;
+        transform: scale(0.8);
+    }
+}
+
+/* Mostra apenas no WhatsApp Web */
+@media (max-width: 768px) {
+    .ar-logo {
+        display: none;
+    }
+}
+
+/* Esconde em páginas normais, só mostra quando injetado */
+.ar-logo:not(.active) {
+    display: none !important;
+}

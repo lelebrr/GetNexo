@@ -1,22 +1,197 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 
-const title = "CRM WhatsApp: Kanban, Multi-Agente e Analytics | GetNexo";
-const description = "Gestão completa de leads no WhatsApp. Kanban visual, atendimento multi-agente, histórico unificado, SLA automático e relatórios de performance em tempo real.";
-const keywords = "crm whatsapp, kanban whatsapp, multi agente whatsapp, gestão leads whatsapp, atendimento equipe whatsapp, pipeline vendas whatsapp, getnexo crm, helpdesk whatsapp";
+// SEO Meta Tags
+const title = "CRM WhatsApp Completo: Kanban, Multi-Agente e Analytics | GetNexo";
+const description = "Gestão completa de leads no WhatsApp com Kanban visual, atendimento multi-agente, histórico unificado e relatórios em tempo real. Teste Grátis!";
+const keywords = "crm whatsapp, kanban whatsapp, multi agente whatsapp, gestão leads whatsapp, atendimento equipe whatsapp, pipeline vendas whatsapp, getnexo crm, helpdesk whatsapp, gestão de vendas";
+const canonical = "https://getnexo.com.br/produtos/crm";
 
-const stats = [
-  { value: "3x", label: "mais produtivo", desc: "que planilhas e emails" },
-  { value: "< 2min", label: "tempo resposta", desc: "com atribuição automática" },
-  { value: "100%", label: "histórico", desc: "de todas conversas salvo" },
-  { value: "∞", label: "agentes", desc: "no mesmo número WhatsApp" }
-];
+// Structured Data - Organization
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GetNexo",
+  "url": "https://getnexo.com.br",
+  "logo": "https://getnexo.com.br/logo.png",
+  "sameAs": [
+    "https://www.linkedin.com/company/getnexo",
+    "https://twitter.com/getnexo",
+    "https://github.com/getnexo"
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+5511999999999",
+    "contactType": "customer service",
+    "areaServed": "BR",
+    "availableLanguage": "pt-BR"
+  }
+};
 
+// SoftwareApplication Schema with detailed features
+const softwareSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "GetNexo CRM WhatsApp",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web, iOS, Android",
+  "applicationSuite": "GetNexo Platform",
+  "softwareVersion": "3.0",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "BRL",
+    "availability": "https://schema.org/InStock",
+    "eligibleCustomerType": "https://schema.org/Business",
+    "eligibleDuration": "https://schema.org/Unlimited"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "ratingCount": "120",
+    "bestRating": "5",
+    "worstRating": "1"
+  },
+  "description": "CRM completo para WhatsApp com Kanban visual, atendimento multi-agente, histórico unificado e relatórios de performance em tempo real.",
+  "featureList": [
+    "Kanban visual de leads",
+    "Atendimento multi-agente simultâneo",
+    "Tags e segmentos automáticos",
+    "Notas e histórico completo",
+    "SLA e alertas automáticos",
+    "Analytics e métricas em tempo real",
+    "Integração com Shopify, WooCommerce",
+    "Exportação para Excel/BI"
+  ],
+  "author": {
+    "@type": "Organization",
+    "name": "GetNexo"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "GetNexo"
+  },
+  "datePublished": "2024-01-01",
+  "dateModified": "2026-01-23",
+  "operatingSystem": "Web, iOS, Android",
+  "applicationCategory": "BusinessApplication",
+  "genre": "CRM e Gestão de Vendas",
+  "keywords": "crm whatsapp, kanban, multi-agente, gestão leads, analytics"
+};
+
+// FAQ Schema with comprehensive questions
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Quantos agentes podem usar o mesmo número?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Não há limite! Você pode ter quantos atendentes quiser logados simultaneamente no mesmo número WhatsApp. A distribuição de conversas pode ser automática (round-robin) ou manual."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Os agentes veem as conversas uns dos outros?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Depende da configuração de permissões. Administradores e Supervisores podem ver todos os chats. Atendentes normalmente veem apenas os chats atribuídos a eles, mas isso é configurável."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Como funciona a atribuição automática?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Quando um novo lead chega, o sistema distribui automaticamente para o agente disponível usando round-robin ou baseado em carga de trabalho. Você também pode criar regras por departamento, horário ou origem do lead."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Posso customizar as colunas do Kanban?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sim! Você pode criar quantas colunas quiser, renomeá-las, definir cores e ordenar conforme seu processo de vendas. Exemplos: Novo → Qualificando → Proposta → Negociando → Fechado."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "O histórico fica salvo por quanto tempo?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Para sempre! Todas as conversas, notas, anexos e eventos ficam salvos indefinidamente. Você pode buscar qualquer interação feita com um cliente, mesmo que tenha sido há anos."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Consigo ver métricas individuais dos atendentes?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sim! O dashboard mostra tempo médio de resposta, quantidade de atendimentos, taxa de conversão e satisfação de cada agente. Ideal para bonificações e treinamentos."
+      }
+    }
+  ]
+};
+
+// Breadcrumb Schema
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Início",
+      "item": "https://getnexo.com.br"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Produtos",
+      "item": "https://getnexo.com.br/produtos"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "CRM WhatsApp",
+      "item": "https://getnexo.com.br/produtos/crm"
+    }
+  ]
+};
+
+// Product Schema for comparison
+const productSchema = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "GetNexo CRM WhatsApp",
+  "description": "CRM completo para WhatsApp com Kanban visual e atendimento multi-agente",
+  "brand": {
+    "@type": "Brand",
+    "name": "GetNexo"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "BRL",
+    "availability": "https://schema.org/InStock",
+    "url": "https://getnexo.com.br/produtos/crm"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "ratingCount": "120"
+  }
+};
+
+// Features data with SEO-rich descriptions
 const features = [
   {
     icon: "📋",
     title: "Kanban Visual",
     description: "Arraste e solte leads entre colunas personalizadas. Visualize todo seu funil de vendas em tempo real.",
+    seoKeywords: ["kanban visual", "pipeline vendas", "gestão leads", "funil vendas"],
     details: [
       "Colunas customizáveis",
       "Drag and drop intuitivo",
@@ -28,6 +203,7 @@ const features = [
     icon: "👥",
     title: "Multi-Agente",
     description: "Toda sua equipe atendendo no mesmo número WhatsApp. Atribuição automática ou manual de conversas.",
+    seoKeywords: ["multi-agente", "atendimento equipe", "distribuição conversas", "round-robin"],
     details: [
       "Número único para todos",
       "Distribuição round-robin",
@@ -39,6 +215,7 @@ const features = [
     icon: "🏷️",
     title: "Tags e Segmentos",
     description: "Organize leads com tags automáticas ou manuais. Crie segmentos para campanhas e follow-ups.",
+    seoKeywords: ["tags leads", "segmentação", "automação comportamento", "exportação"],
     details: [
       "Tags ilimitadas",
       "Automação por comportamento",
@@ -50,6 +227,7 @@ const features = [
     icon: "📝",
     title: "Notas e Histórico",
     description: "Mantenha contexto completo de cada cliente. Notas internas, histórico de compras e interações anteriores.",
+    seoKeywords: ["notas internas", "histórico completo", "timeline eventos", "documentos"],
     details: [
       "Notas internas privadas",
       "Histórico completo",
@@ -61,6 +239,7 @@ const features = [
     icon: "🛎️",
     title: "SLA e Alertas",
     description: "Nunca perca um lead por demora. Alertas automáticos quando conversas passam do tempo limite.",
+    seoKeywords: ["sla", "alertas tempo real", "escalação automática", "violações"],
     details: [
       "SLA por prioridade",
       "Alertas em tempo real",
@@ -72,6 +251,7 @@ const features = [
     icon: "📊",
     title: "Analytics Completo",
     description: "Métricas de performance individual e da equipe. Entenda quem vende mais e por quê.",
+    seoKeywords: ["analytics", "métricas", "ranking agentes", "exportação excel"],
     details: [
       "Tempo médio de resposta",
       "Taxa de conversão",
@@ -80,6 +260,55 @@ const features = [
     ]
   }
 ];
+
+// Use cases for SEO
+const useCases = [
+  { industry: "Vendas B2B", icon: "💼", benefit: "Pipeline visual de negociações" },
+  { industry: "Suporte Técnico", icon: "🔧", benefit: "Tickets e escalação automática" },
+  { industry: "Imobiliárias", icon: "🏠", benefit: "Gestão de visitas e propostas" },
+  { industry: "Clínicas", icon: "🏥", benefit: "Agendamento e follow-up" }
+];
+
+// Comparison data for comparison
+const comparisonData = [
+  {
+    feature: "Atendimento Multi-Agente",
+    getNexo: "✅ Ilimitado & Organizado",
+    competitors: "⚠️ Limitado (4 telas/caos)",
+    oldBots: "❌ Não Nativo"
+  },
+  {
+    feature: "Pipeline Visual",
+    getNexo: "✅ Nativo no Chat",
+    competitors: "❌ Lista Infinita",
+    oldBots: "⚠️ Em outra aba/sistema"
+  },
+  {
+    feature: "Inteligência Artificial",
+    getNexo: "✅ IA Generativa (GPT/Claude)",
+    competitors: "❌ Apenas Respostas Rápidas",
+    oldBots: "⚠️ Custos Extras Altos"
+  },
+  {
+    feature: "Custo por Usuário",
+    getNexo: "✅ Preço Fixo (Equipe Ilimitada!)",
+    competitors: "✅ Grátis",
+    oldBots: "❌ Caro (Cobra por cabeça)"
+  }
+];
+
+// Stats data
+const stats = [
+  { value: "3x", label: "mais produtivo", desc: "que planilhas e emails" },
+  { value: "< 2min", label: "tempo resposta", desc: "com atribuição automática" },
+  { value: "100%", label: "histórico", desc: "de todas conversas salvo" },
+  { value: "∞", label: "agentes", desc: "no mesmo número WhatsApp" }
+];
+
+// Integrations data
+
+
+
 
 const pipelineStages = [
   { name: "Novo Lead", color: "#00d4ff", count: 24, desc: "Leads que acabaram de chegar" },
@@ -129,13 +358,6 @@ const faqs = [
     q: "Consigo ver métricas individuais dos atendentes?",
     a: "Sim! O dashboard mostra tempo médio de resposta, quantidade de atendimentos, taxa de conversão e satisfação de cada agente. Ideal para bonificações e treinamentos."
   }
-];
-
-const useCases = [
-  { industry: "Vendas B2B", icon: "💼", benefit: "Pipeline visual de negociações" },
-  { industry: "Suporte Técnico", icon: "🔧", benefit: "Tickets e escalação automática" },
-  { industry: "Imobiliárias", icon: "🏠", benefit: "Gestão de visitas e propostas" },
-  { industry: "Clínicas", icon: "🏥", benefit: "Agendamento e follow-up" }
 ];
 ---
 

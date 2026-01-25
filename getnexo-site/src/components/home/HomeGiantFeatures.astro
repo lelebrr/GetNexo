@@ -1,0 +1,77 @@
+---
+const { t } = Astro.props;
+---
+<!-- Giant Features Showcase -->
+<section class="giant-features">
+  <!-- Magic Replies -->
+  <div class="giant-feature-row animate-on-scroll">
+      <div class="giant-feature-visual">
+          <img src="/assets/features/magic-replies.webp" alt="Magic Replies AI" width="501" height="501" class="premium-visual" />
+      </div>
+      <div class="giant-feature-info">
+          <div class="feature-tag">Exclusivo</div>
+          <h2 class="text-gradient">{t.features_giant.magic_replies.title}</h2>
+          <p>{t.features_giant.magic_replies.description}</p>
+          <ul class="feature-bullets">
+              <li><span>✨</span> {t.features_giant.magic_replies.f1}</li>
+              <li><span>🧠</span> {t.features_giant.magic_replies.f2}</li>
+              <li><span>📈</span> {t.features_giant.magic_replies.f3}</li>
+          </ul>
+          <a href="/produtos/automacao" class="btn-outline-glow">Conhecer Magic Replies</a>
+      </div>
+  </div>
+
+  <!-- Loyalty System -->
+  <div class="giant-feature-row reverse animate-on-scroll">
+      <div class="giant-feature-info">
+          <div class="feature-tag gold">Retenção</div>
+          <h2 class="text-gradient">{t.features_giant.loyalty.title}</h2>
+          <p>{t.features_giant.loyalty.description}</p>
+          <ul class="feature-bullets">
+              <li><span>🏆</span> {t.features_giant.loyalty.f1}</li>
+              <li><span>🎁</span> {t.features_giant.loyalty.f2}</li>
+              <li><span>❤️</span> {t.features_giant.loyalty.f3}</li>
+          </ul>
+          <a href="/produtos/vendas" class="btn-outline-glow">Ver Fidelidade</a>
+      </div>
+      <div class="giant-feature-visual">
+          <img src="/assets/features/loyalty.webp" alt="Loyalty System" width="501" height="501" class="premium-visual" />
+      </div>
+  </div>
+
+  <!-- Analytics -->
+  <div class="giant-feature-row animate-on-scroll">
+      <div class="giant-feature-visual">
+          <img src="/assets/features/analytics.webp" alt="Advanced Analytics" width="501" height="501" class="premium-visual" />
+      </div>
+      <div class="giant-feature-info">
+          <div class="feature-tag blue">Inteligência</div>
+          <h2 class="text-gradient">{t.features_giant.analytics.title}</h2>
+          <p>{t.features_giant.analytics.description}</p>
+          <ul class="feature-bullets">
+              <li><span>📊</span> {t.features_giant.analytics.f1}</li>
+              <li><span>📝</span> {t.features_giant.analytics.f2}</li>
+              <li><span>🌍</span> {t.features_giant.analytics.f3}</li>
+          </ul>
+          <a href="/produtos/crm" class="btn-outline-glow">Explorar Dados</a>
+      </div>
+  </div>
+
+  <!-- Integrations -->
+  <div class="giant-feature-row reverse animate-on-scroll">
+      <div class="giant-feature-info">
+          <div class="feature-tag green">Ecossistema</div>
+          <h2 class="text-gradient">{t.features_giant.integrations.title}</h2>
+          <p>{t.features_giant.integrations.description}</p>
+          <ul class="feature-bullets">
+              <li><span>🔗</span> {t.features_giant.integrations.f1}</li>
+              <li><span>⚙️</span> {t.features_giant.integrations.f2}</li>
+              <li><span>📡</span> {t.features_giant.integrations.f3}</li>
+          </ul>
+          <a href="/integracoes" class="btn-outline-glow">Ver Todas as Integrações</a>
+      </div>
+      <div class="giant-feature-visual">
+          <img src="/assets/features/integrations.webp" alt="Integrations Map" width="501" height="501" class="premium-visual" />
+      </div>
+  </div>
+</section>

@@ -1,0 +1,38 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const title = "GetNexo AI Demo - Experience WhatsApp Automation Live";
+const description = "Try our AI-powered WhatsApp chatbot demo. See how it handles customer inquiries, processes orders, and drives sales automatically.";
+const keywords = "whatsapp ai demo, chatbot demo, automation demo, ai sales demo, whatsapp bot test";
+
+const lang = 'en';
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  <section class="py-20">
+    <div class="container mx-auto px-4">
+      <h1 class="text-4xl font-bold text-center mb-8">AI Demo Experience</h1>
+      <p class="text-xl text-center text-gray-600 mb-12">Interact with our intelligent WhatsApp chatbot and see the future of automated sales</p>
+
+      <div class="max-w-4xl mx-auto">
+        <div class="bg-white p-8 rounded-lg shadow-lg">
+          <h2 class="text-2xl font-semibold mb-6">Try the AI Assistant</h2>
+          <div class="chat-demo bg-gray-50 p-6 rounded-lg">
+            <div class="chat-messages space-y-4" id="demo-chat">
+              <div class="message bot">
+                <div class="avatar">🤖</div>
+                <div class="content">
+                  <p>Hello! I'm the GetNexo AI assistant. How can I help you today?</p>
+                </div>
+              </div>
+            </div>
+            <div class="chat-input mt-4">
+              <input type="text" placeholder="Type your message..." class="w-full p-3 border rounded-lg" />
+              <button class="mt-2 bg-blue-600 text-white px-6 py-2 rounded-lg">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

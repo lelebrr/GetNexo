@@ -1,0 +1,204 @@
+---
+const homeSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://getnexo.com.br/#organization",
+      "name": "GetNexo",
+      "url": "https://getnexo.com.br",
+      "logo": "https://getnexo.com.br/logo.svg",
+      "description": "Plataforma de IA para vendas no WhatsApp 24h por dia. API Oficial Meta, PIX automático, CRM integrado.",
+      "foundingDate": "2024",
+      "sameAs": [
+        "https://linkedin.com/company/getnexo",
+        "https://instagram.com/getnexo",
+        "https://github.com/lelebrr",
+        "https://youtube.com/@getnexo",
+        "https://tiktok.com/@getnexo"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+55-11-4003-XXXX",
+        "contactType": "customer service",
+        "availableLanguage": ["Portuguese", "English", "Spanish", "French"]
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://getnexo.com.br/#website",
+      "url": "https://getnexo.com.br",
+      "name": "GetNexo - IA para Vendas WhatsApp",
+      "description": "IA que fecha vendas no WhatsApp 24h. Plataforma completa com API Oficial Meta, PIX, CRM, fidelidade e analytics.",
+      "publisher": { "@id": "https://getnexo.com.br/#organization" },
+      "inLanguage": "pt-BR",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://getnexo.com.br/buscar?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://getnexo.com.br/#software",
+      "name": "GetNexo",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web, WhatsApp",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "BRL",
+        "priceValidUntil": "2026-12-31",
+        "description": "Plano gratuito com funcionalidades avançadas"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "ratingCount": "500",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "author": { "@id": "https://getnexo.com.br/#organization" }
+    },
+    {
+      "@type": "Service",
+      "@id": "https://getnexo.com.br/#service",
+      "name": "Automação de Vendas WhatsApp com IA",
+      "description": "Serviço completo de automação de vendas via WhatsApp com inteligência artificial avançada",
+      "provider": { "@id": "https://getnexo.com.br/#organization" },
+      "serviceType": "Business Automation",
+      "areaServed": "Worldwide",
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Planos GetNexo",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Plano Gratuito",
+              "description": "Acesso completo às funcionalidades básicas"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Plano Pro",
+              "description": "Recursos avançados e suporte prioritário"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "O que é o GetNexo?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "GetNexo é uma plataforma de IA que automatiza vendas no WhatsApp 24 horas por dia. Usa API Oficial Meta, PIX automático, CRM integrado e muito mais."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Como funciona a IA para vendas?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nossa IA é treinada com seu catálogo de produtos e histórico de vendas. Ela conversa naturalmente com clientes, tira dúvidas, sugere produtos e fecha vendas automaticamente."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "O GetNexo tem PIX integrado?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sim! Temos PIX nativo. O bot gera QR Code ou código copia e cola automaticamente e confirma pagamentos em tempo real na conversa."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Quanto custa usar o GetNexo?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "O plano básico é 100% GRÁTIS! Você só paga uma pequena taxa por transação realizada. Sem mensalidades fixas ou contratos longos."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Quais integrações estão disponíveis?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Integramos com Shopify, WooCommerce, VTEX, Bling, Tiny, PagSeguro, Mercado Pago, Correios, Melhor Envio e muito mais. API REST completa disponível."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "O GetNexo funciona com API Oficial do WhatsApp?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sim! Somos 100% compatíveis com a API Oficial da Meta via Evolution API. Zero risco de banimento, máxima segurança e conformidade."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Quanto tempo leva para configurar?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Setup completo em até 12 minutos! Nossa plataforma é self-hosted, você instala em seu servidor e começa a vender imediatamente."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Tem sistema de fidelidade integrado?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sim! Sistema completo de pontos, tiers, recompensas e gamificação. Seus clientes acumulam pontos automaticamente e resgatam prêmios via WhatsApp."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "HowTo",
+      "name": "Como configurar GetNexo em 5 passos",
+      "description": "Guia passo a passo para configurar sua IA de vendas no WhatsApp",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "Instalação",
+          "text": "Instale a plataforma em seu servidor (Docker ou manual)"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "Conectar WhatsApp",
+          "text": "Configure a API Oficial do WhatsApp Business"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "Configurar Catálogo",
+          "text": "Importe seus produtos e configure preços"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 4,
+          "name": "Treinar IA",
+          "text": "Configure as respostas e comportamento da IA"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 5,
+          "name": "Ativar Vendas",
+          "text": "Configure PIX, CRM e analytics. Pronto para vender!"
+        }
+      ]
+    }
+  ]
+};
+---
+
+<script type="application/ld+json" is:inline set:html={JSON.stringify(homeSchema)}></script>

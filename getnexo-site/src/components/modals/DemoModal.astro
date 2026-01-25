@@ -1,0 +1,44 @@
+---
+---
+<!-- Modal Demo IA Redesigned -->
+<div id="demo-modal" class="fixed inset-0 hidden z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-xl" style="display: none;">
+  <div class="bg-void-black border border-white/10 rounded-[2rem] p-8 w-full max-w-4xl shadow-2xl relative overflow-hidden">
+    <!-- Background Glows -->
+    <div class="absolute -top-24 -left-24 w-64 h-64 bg-neon-blue/20 blur-[100px] pointer-events-none"></div>
+    <div class="absolute -bottom-24 -right-24 w-64 h-64 bg-matrix-green/20 blur-[100px] pointer-events-none"></div>
+
+    <div class="flex justify-between items-start mb-8 relative z-10">
+      <div>
+        <h3 class="text-3xl font-extrabold text-white mb-2">Escolha sua Experiência</h3>
+        <p class="text-gray-400">Transforme seu atendimento com a potência da IA GetNexo</p>
+      </div>
+      <button onclick="fecharModalDemo()" class="text-white/50 hover:text-white transition-all text-4xl">&times;</button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+      <!-- Option 1 -->
+      <div onclick="abrirModalChat()" class="group relative p-6 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 hover:border-neon-blue/50 transition-all cursor-pointer overflow-hidden">
+        <div class="text-3xl mb-4 group-hover:scale-110 transition-transform">💬</div>
+        <h4 class="text-xl font-bold text-white mb-2">Chat IA Completo</h4>
+        <p class="text-sm text-gray-400">Demonstração de conversa fluida e natural.</p>
+        <div class="mt-4 text-neon-blue text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity">Ver Demo →</div>
+      </div>
+
+      <!-- Option 2 -->
+      <div onclick="abrirModalIA()" class="group relative p-6 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 hover:border-cyber-gold/50 transition-all cursor-pointer overflow-hidden">
+        <div class="text-3xl mb-4 group-hover:scale-110 transition-transform">🤖</div>
+        <h4 class="text-xl font-bold text-white mb-2">IA Multimídia</h4>
+        <p class="text-sm text-gray-400">Produtos, cards e experiências imersivas.</p>
+        <div class="mt-4 text-cyber-gold text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity">Ver Demo →</div>
+      </div>
+
+      <!-- Option 3 -->
+      <div onclick="window.open('https://wa.me/5511999999999', '_blank')" class="group relative p-6 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 hover:border-matrix-green/50 transition-all cursor-pointer overflow-hidden">
+        <div class="text-3xl mb-4 group-hover:scale-110 transition-transform">📱</div>
+        <h4 class="text-xl font-bold text-white mb-2">Demo WhatsApp</h4>
+        <p class="text-sm text-gray-400">A experiência real no aplicativo oficial.</p>
+        <div class="mt-4 text-matrix-green text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity">Abrir Whats →</div>
+      </div>
+    </div>
+  </div>
+</div>

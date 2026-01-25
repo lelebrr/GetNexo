@@ -1,5 +1,5 @@
 ---
-import '../styles/global.css?v=premium_v1.1'; // Forced Cache Buster
+import '../styles/global.css?v=premium_v1.8'; // Forced Cache Buster
 import SEO from '../components/SEO.astro';
 import PreSupportModal from '../components/PreSupportModal.astro';
 import AccessibilityControls from '../components/AccessibilityControls.astro';
@@ -33,6 +33,10 @@ try {
 // Função para gerar URLs com idioma correto (sem trailing slash para evitar 404)
 function getLangUrl(targetLang) {
   const currentPath = Astro.url.pathname;
+  
+  // Se for português e estiver na home, apontar para / (evita 404 em /pt)
+  if (targetLang === 'pt' && (currentPath === '/' || currentPath === '/pt')) return '/';
+  
   if (currentPath === '/') return `/${targetLang}`;
   
   const segments = currentPath.split('/').filter(s => s);
@@ -40,8 +44,12 @@ function getLangUrl(targetLang) {
   // Se o primeiro segmento for um idioma, substitua-o
   if (['pt', 'en', 'es', 'fr'].includes(segments[0])) {
     segments[0] = targetLang;
+    // Se o resultado for /pt, apontar para a raiz (evita redundância e 404)
+    if (targetLang === 'pt' && segments.length === 1) return '/';
     return '/' + segments.join('/');
   } else {
+    // Se não houver prefixo de idioma e o alvo for pt, retornar o path original
+    if (targetLang === 'pt') return currentPath;
     // Se não houver prefixo de idioma, adicione-o
     return '/' + targetLang + (currentPath.endsWith('/') ? currentPath.slice(0, -1) : currentPath);
   }
@@ -71,12 +79,31 @@ try {
 }
 
 const nonce = Astro.locals.nonce;
+const trustedTypesPolicy = Astro.locals.trustedTypesPolicy || 'getnexo-trusted';
 const clientId = Astro.locals.clientId || 'default';
 ---
-<!doctype html>
-<html lang={lang}>
+<!DOCTYPE html>
+<html lang={lang} data-bg-type="animated">
 <head>
-  <SEO 
+  <!-- Trusted Types Policy Script (carregado com nonce do CSP) -->
+  <script is:inline src="/custom/js/trusted-types-policy.js" nonce={nonce}></script>
+  
+  <!-- Gerenciador de Fundo Instantâneo - BLOQUEANTE E NO TOPO PARA EVITAR FLICKER -->
+  <script is:inline nonce={nonce} define:vars={{ trustedTypesPolicy }}>
+    (function() {
+      try {
+        const bgType = localStorage.getItem('getnexo-bg-type') || 'animated';
+        document.documentElement.setAttribute('data-bg-type', bgType);
+        window.GETNEXO_CONFIG = { 
+          bgType,
+          trustedTypesPolicy: trustedTypesPolicy
+        };
+      } catch (e) {
+        console.warn('LocalStorage access blocked:', e);
+      }
+    })();
+  </script>
+  <SEO
     title={title}
     description={description}
     keywords={keywords}
@@ -84,15 +111,23 @@ const clientId = Astro.locals.clientId || 'default';
     lang={lang}
     type={type}
     structuredData={articleSchema}
+    nonce={nonce}
   />
-  
-  <NeuralBackground />
+
+  <!-- Hreflang Links for SEO -->
+  <link rel="alternate" hreflang="pt-BR" href={`https://getnexo.com.br${getLangUrl('pt')}`} />
+  <link rel="alternate" hreflang="en-US" href={`https://getnexo.com.br${getLangUrl('en')}`} />
+  <link rel="alternate" hreflang="es-ES" href={`https://getnexo.com.br${getLangUrl('es')}`} />
+  <link rel="alternate" hreflang="fr-FR" href={`https://getnexo.com.br${getLangUrl('fr')}`} />
+  <link rel="alternate" hreflang="x-default" href="https://getnexo.com.br/" />
+
+  <!-- NeuralBackground restored -->
+  <NeuralBackground nonce={nonce} />
   
   <!-- PWA Manifest -->
   <link rel="manifest" href="/manifest.json">
   
-  <!-- Click Fireworks Script -->
-  <script is:inline src="/custom/js/click-fireworks.js"></script>
+  <!-- Click Fireworks Script handled in body -->
 
   <!-- White-label CSS -->
   {clientId !== 'default' && (
@@ -121,7 +156,7 @@ const clientId = Astro.locals.clientId || 'default';
       transform: translateY(0);
     }
   </style>
-  <script is:inline>
+  <script is:inline nonce={nonce}>
     document.addEventListener('DOMContentLoaded', () => {
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -137,9 +172,9 @@ const clientId = Astro.locals.clientId || 'default';
     });
   </script>
 
-  <script is:inline>
+  <script is:inline nonce={nonce}>
     // Aggressive Cache Buster & SW Killer
-    const VERSION = '1.6';
+    const VERSION = '1.8';
     if (localStorage.getItem('getnexo_v') !== VERSION) {
       localStorage.setItem('getnexo_v', VERSION);
       
@@ -157,8 +192,6 @@ const clientId = Astro.locals.clientId || 'default';
         });
       }
 
-      // Hard Reload
-      window.location.reload(true);
     }
   </script>
 
@@ -201,9 +234,12 @@ const clientId = Astro.locals.clientId || 'default';
     /* Foco Visível */
     :focus { outline: 3px solid var(--success); }
 
-    /* Animated Background */
-    .animated-bg { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1; overflow: hidden; background: #030712; }
-    .blob { position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(0, 212, 255, 0.15) 0%, transparent 70%); border-radius: 50%; filter: blur(80px); animation: move 20s infinite alternate; }
+    /* Animated Background & Neural Toggle */
+    html[data-bg-type="neural"] .animated-bg { display: none !important; }
+    html[data-bg-type="animated"] .neural-background { display: none !important; }
+
+    .animated-bg { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -99; overflow: hidden; background: #030712; }
+    .blob { position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(0, 212, 255, 0.15) 0%, transparent 70%); border-radius: 50%; filter: blur(80px); animation: move 20s infinite alternate; will-change: transform; }
     .blob-1 { top: -100px; left: -100px; }
     .blob-2 { bottom: -100px; right: -100px; background: radial-gradient(circle, rgba(0, 255, 157, 0.10) 0%, transparent 70%); }
     @keyframes move { from { transform: translate(0, 0); } to { transform: translate(100px, 100px); } }
@@ -336,8 +372,8 @@ const clientId = Astro.locals.clientId || 'default';
       animation: pulse-glow 2s infinite ease-in-out;
     }
     @keyframes pulse-glow {
-      0%, 100% { box-shadow: 0 10px 30px rgba(0, 212, 255, 0.5); }
-      50% { box-shadow: 0 10px 50px rgba(0, 212, 255, 0.8), 0 0 20px var(--neon-green); }
+      0%, 100% { opacity: 0.8; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.02); }
     }
     .btn-start:hover {
       transform: translateY(-3px) scale(1.05);
@@ -347,30 +383,44 @@ const clientId = Astro.locals.clientId || 'default';
     /* Language Selector */
     .lang-flags {
       display: flex;
-      gap: 0.8rem;
+      gap: 0.5rem;
       align-items: center;
       margin-left: 1rem;
     }
     .flag-link {
-      font-size: 0.75rem;
-      font-weight: 800;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      color: #64748b;
-      padding: 2px 4px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        background: rgba(255,255,255,0.05);
+        width: 32px;
+        height: 22px;
+        overflow: hidden;
+        opacity: 0.8;
+    }
+    .flag-link img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: 0.3s;
     }
     .flag-link:hover, .flag-link.active {
-      color: var(--primary);
+      opacity: 1;
       transform: translateY(-1px);
+      background: rgba(0,212,255,0.1);
+      border-color: var(--neon-blue);
+      box-shadow: 0 0 10px rgba(0,212,255,0.2);
     }
     .flag-link.active {
-      border-bottom: 2px solid var(--primary);
-      color: white;
+      border-color: var(--neon-green);
+      background: rgba(0,255,157,0.1);
     }
 
-    .global-footer { padding: 10rem 5% 4rem !important; background: #020617 !important; border-top: 1px solid rgba(255,255,255,0.05) !important; margin-top: 6rem !important; position: relative !important; z-index: 10 !important; width: 100% !important; display: block !important; }
-    .footer-grid { display: grid !important; grid-template-columns: 1.5fr repeat(4, 1fr) !important; gap: 3rem !important; max-width: 1400px !important; margin: 0 auto !important; text-align: left !important; }
-    .footer-col h3.footer-title { color: white; margin-bottom: 2rem; font-size: 1.15rem; font-weight: 800; letter-spacing: -0.5px; text-transform: uppercase; }
+    .global-footer { padding: 4rem 5% 2rem !important; background: #020617 !important; border-top: 1px solid rgba(255,255,255,0.05) !important; margin-top: 2rem !important; position: relative !important; z-index: 10 !important; width: 100% !important; display: block !important; }
+    .footer-grid { display: grid !important; grid-template-columns: 1.2fr repeat(4, 1fr) !important; gap: 2rem !important; max-width: 1300px !important; margin: 0 auto !important; text-align: left !important; }
+    .footer-col h3.footer-title { color: white; margin-bottom: 1.2rem; font-size: 0.9rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; opacity: 0.8; white-space: pre-line; }
     .footer-links { display: flex; flex-direction: column; gap: 0.8rem; }
     .footer-links a { color: var(--text); text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
     .footer-links a:hover { color: var(--primary); transform: translateX(5px); }
@@ -444,31 +494,43 @@ const clientId = Astro.locals.clientId || 'default';
     }
     
     /* Footer Newsletter */
-    .newsletter-text { font-size: 0.9rem; color: #94a3b8; margin-bottom: 1rem; }
-    .footer-newsletter { display: flex; gap: 0.5rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 0.3rem; border-radius: 12px; }
-    .footer-newsletter input { flex: 1; background: transparent; border: none; color: white; padding: 0.5rem 0.8rem; font-size: 0.85rem; outline: none; }
-    .footer-newsletter button { background: var(--primary); color: black; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+    .newsletter-text { font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.8rem; }
+    .footer-newsletter { display: flex; gap: 0.5rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 0.2rem; border-radius: 10px; }
+    .footer-newsletter input { flex: 1; background: transparent; border: none; color: white; padding: 0.4rem 0.6rem; font-size: 0.8rem; outline: none; }
+    .footer-newsletter button { background: var(--primary); color: black; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 0.8rem; }
     .footer-newsletter button:hover { transform: scale(1.05); background: var(--success); }
 
-    .footer-bottom { border-top: 1px solid rgba(255,255,255,0.05); margin-top: 6rem; padding-top: 3rem; text-align: center; color: #475569; font-size: 0.85rem; }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,0.03); margin-top: 3rem; padding-top: 1.5rem; text-align: center; color: #475569; font-size: 0.75rem; }
+
+    /* Trust Badges Styles */
+    .footer-trust-badges { 
+      display: flex; justify-content: center; gap: 3rem; 
+      padding: 1rem; background: rgba(255,255,255,0.015); 
+      border-radius: 12px; margin-bottom: 2rem; border: 1px solid rgba(255,255,255,0.03);
+    }
+    .trust-badge { display: flex; align-items: center; gap: 0.6rem; }
+    .badge-icon { font-size: 1.25rem; opacity: 0.8; white-space: pre-line; }
+    .badge-text { font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
 
     /* Footer Logo Styles */
-    .footer-logo { width: 60px; height: 60px; font-size: 1.5rem; margin-bottom: 1rem; }
-    .footer-text { font-size: 1.5rem; }
+    .footer-logo { width: 50px !important; height: 50px !important; font-size: 1.2rem !important; margin-bottom: 0.5rem !important; }
+    .footer-text { font-size: 1.2rem !important; }
+    .footer-description { font-size: 0.85rem !important; line-height: 1.5 !important; margin-bottom: 1.5rem !important; opacity: 0.8; white-space: pre-line; }
 
-    .mt-6 { margin-top: 1.5rem; }
+    .mt-6 { margin-top: 1rem; }
 
     @media (max-width: 1200px) {
-      .footer-grid { grid-template-columns: repeat(3, 1fr); gap: 3rem; }
-      .branding-col { grid-column: span 3; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 3rem; }
+      .footer-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 2rem; }
+      .branding-col { grid-column: span 3; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 2rem; }
     }
     @media (max-width: 768px) {
-      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-trust-badges { flex-wrap: wrap; gap: 1rem; justify-content: center; }
+      .footer-grid { grid-template-columns: repeat(2, 1fr) !important; }
       .branding-col { grid-column: span 2; }
-      .newsletter-col { grid-column: span 2; padding-top: 3rem; border-top: 1px solid rgba(255,255,255,0.05); }
+      .newsletter-col { grid-column: span 2; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.05); }
     }
     @media (max-width: 480px) {
-      .footer-grid { grid-template-columns: 1fr; gap: 2.5rem; text-align: center; }
+      .footer-grid { grid-template-columns: 1fr !important; gap: 2rem; text-align: center; }
       .branding-col, .newsletter-col { grid-column: span 1; }
       .footer-socials, .footer-newsletter { justify-content: center; max-width: 300px; margin-left: auto; margin-right: auto; }
       .footer-links a:hover { transform: scale(1.05); }
@@ -507,7 +569,7 @@ const clientId = Astro.locals.clientId || 'default';
 
     .security-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 2rem;
       margin-bottom: 4rem;
     }
@@ -708,18 +770,33 @@ const clientId = Astro.locals.clientId || 'default';
 
     .mobile-lang-selector {
       display: flex;
-      gap: 1rem;
-      margin-right: 1rem;
+      gap: 0.75rem;
+      margin: 1rem 0;
+      justify-content: center;
     }
     .mobile-lang-selector a {
-      font-size: 1.5rem;
-      text-decoration: none;
-      opacity: 0.5;
-      transition: 0.3s;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      transition: all 0.3s var(--transition-bounce);
+      overflow: hidden;
+    }
+    .mobile-lang-selector a img {
+      width: 28px;
+      height: 18px;
+      object-fit: cover;
+      border-radius: 2px;
     }
     .mobile-lang-selector a.active {
-      opacity: 1;
-      transform: scale(1.2);
+      background: rgba(0, 212, 255, 0.1);
+      border-color: var(--neon-blue);
+      box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+      transform: scale(1.1);
     }
     .mobile-login { color: white; text-align: center; text-decoration: none; font-weight: 700; padding: 1rem; }
 
@@ -782,38 +859,23 @@ const clientId = Astro.locals.clientId || 'default';
     <a href="#main-nav" class="skip-link">Pular para navegação</a>
     <a href="#breadcrumb-nav" class="skip-link">Pular para breadcrumbs</a>
   </div>
-  <canvas id="neural-bg" class="neural-canvas" style="display: none;"></canvas>
+
   
   <div class="animated-bg" id="old-bg">
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
   </div>
 
-  <script is:inline>
-    // Gerenciador de Fundo Global
+  <script is:inline nonce={nonce}>
+    // Sincronização de Fundo Global
     (function() {
-      // Quando há feriado, priorizar o efeito do feriado
-      // Quando não há feriado, usar background animado como padrão
-      const bgType = localStorage.getItem('getnexo-bg-type') || 'animated';
-      const neuralCanvas = document.getElementById('neural-bg');
-      const oldBg = document.getElementById('old-bg');
-
-      if (bgType === 'neural') {
-        if (neuralCanvas) neuralCanvas.style.display = 'block';
-        if (oldBg) oldBg.style.display = 'none';
-      } else {
-        if (neuralCanvas) neuralCanvas.style.display = 'none';
-        if (oldBg) oldBg.style.display = 'block';
-      }
-
-      // Escutar mudanças de configuração
+      // Escutar mudanças de configuração via storage (toggles no painel admin ou controles)
       window.addEventListener('storage', (e) => {
         if (e.key === 'getnexo-bg-type') {
-          window.location.reload();
+          document.documentElement.setAttribute('data-bg-type', e.newValue || 'animated');
         }
       });
     })();
-
   </script>
 
   <!-- Neural Background Controls -->
@@ -843,7 +905,7 @@ const clientId = Astro.locals.clientId || 'default';
   <style is:global>
     .neural-canvas {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      z-index: -1; pointer-events: none; background: #030712;
+      z-index: -99; pointer-events: none; background: #030712;
     }
 
     .neural-controls {
@@ -912,7 +974,7 @@ const clientId = Astro.locals.clientId || 'default';
   </style>
 
   <header id="main-nav" class:list={["global-header", { "header-landing": isLanding }]}>
-    <a href="/" class="logo-link" aria-label="GetNexo Home">
+    <a href={lang === 'pt' ? '/' : `/${lang}`} class="logo-link" aria-label="GetNexo Home">
       <div class="logo-box" aria-hidden="true">
         <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <circle cx="50" cy="50" r="45" stroke="url(#logo-grad)" stroke-width="2" class="logo-ring"/>
@@ -932,22 +994,22 @@ const clientId = Astro.locals.clientId || 'default';
     </a>
     <nav class="nav-links">
       <div class="nav-dropdown">
-        <a href={`/${lang}/solucoes-completas`} class="nav-dropdown-toggle">Soluções</a>
+        <a href={`/${lang}/${t.slugs.solutions}`} class="nav-dropdown-toggle">Soluções</a>
         <div class="nav-dropdown-menu">
           <div class="dropdown-links">
-            <a href={`/${lang}/chat-ia-24h`}>
+            <a href={`/${lang}/${t.slugs.chat_ia}`}>
               <span class="dropdown-item-title">🤖 Chatbot IA 24h</span>
               <span class="dropdown-item-desc">Atendimento automatizado com IA Generativa</span>
             </a>
-            <a href={`/${lang}/sistema-tickets-inteligente`}>
+            <a href={`/${lang}/${t.slugs.tickets}`}>
               <span class="dropdown-item-title">🎫 Suporte 360º</span>
               <span class="dropdown-item-desc">Gestão inteligente de tickets e chamados</span>
             </a>
-            <a href={`/${lang}/dashboard-analytics-real-time`}>
+            <a href={`/${lang}/${t.slugs.analytics}`}>
               <span class="dropdown-item-title">📊 IA Analytics</span>
               <span class="dropdown-item-desc">Métricas preditivas em tempo real</span>
             </a>
-            <a href={`/${lang}/programa-pontos-fidelidade`}>
+            <a href={`/${lang}/${t.slugs.loyalty}`}>
               <span class="dropdown-item-title">🏆 Fidelidade</span>
               <span class="dropdown-item-desc">Retenção de clientes via gamificação</span>
             </a>
@@ -956,22 +1018,22 @@ const clientId = Astro.locals.clientId || 'default';
       </div>
 
       <div class="nav-dropdown">
-        <a href={`/${lang}/integracoes-completas`} class="nav-dropdown-toggle">Integrações</a>
+        <a href={`/${lang}/${t.slugs.integrations}`} class="nav-dropdown-toggle">Integrações</a>
         <div class="nav-dropdown-menu">
           <div class="dropdown-links">
-            <a href={`/${lang}/shopify-integracao-avancada`}>
+            <a href={`/${lang}/${t.slugs.integrations}#shopify`}>
               <span class="dropdown-item-title">🛍️ Shopify Sync</span>
               <span class="dropdown-item-desc">Conexão direta com sua loja Shopify</span>
             </a>
-            <a href={`/${lang}/woocommerce-full-sync`}>
+            <a href={`/${lang}/${t.slugs.integrations}#woocommerce`}>
               <span class="dropdown-item-title">🛒 WooCommerce</span>
               <span class="dropdown-item-desc">Integração nativa para WordPress</span>
             </a>
-            <a href={`/${lang}/pagseguro-uol`}>
+            <a href={`/${lang}/${t.slugs.integrations}#pagamentos`}>
               <span class="dropdown-item-title">💳 Checkout PIX</span>
               <span class="dropdown-item-desc">Pagamentos automáticos in-chat</span>
             </a>
-            <a href={`/${lang}/api-rest-documentada`}>
+            <a href={`/${lang}/${t.slugs.api}`}>
               <span class="dropdown-item-title">🔄 API Developer</span>
               <span class="dropdown-item-desc">Webhook e REST para desenvolvedores</span>
             </a>
@@ -979,21 +1041,21 @@ const clientId = Astro.locals.clientId || 'default';
         </div>
       </div>
 
-      <a href={`/${lang}/precos`}>{t.menu.pricing}</a>
-      <a href={`/${lang}/como-funciona`}>Descubra</a>
-      <a href={`/${lang}/blog`}>Insights</a>
+      <a href={`/${lang}/${t.slugs.pricing}`}>{t.menu.pricing}</a>
+      <a href={`/${lang}/${t.slugs.how_it_works}`}>Descubra</a>
+      <a href={`/${lang}/${t.slugs.blog}`}>Insights</a>
     </nav>
 
     <div class="header-ctas">
       <div class="magic-discovery" id="magic-discovery" title="Descobrir Soluções IA">✨</div>
-      <a href={`/${lang}/login`} class="btn-login">Login</a>
+      <a href="/login" class="btn-login">Login</a>
       <a href="https://app.getnexo.com.br/register" class="btn-start" target="_blank" style="background: linear-gradient(135deg, #00d4ff 0%, #00ff9d 100%) !important; color: #030712 !important; box-shadow: 0 0 20px rgba(0, 212, 255, 0.4) !important; border: none !important;">Ativar Grátis</a>
       
       <div class="lang-flags">
-        <a href={getLangUrl('pt')} class={`flag-link ${lang === 'pt' ? 'active' : ''}`} title="Português">🇧🇷 PT</a>
-        <a href={getLangUrl('en')} class={`flag-link ${lang === 'en' ? 'active' : ''}`} title="English">🇺🇸 EN</a>
-        <a href={getLangUrl('es')} class={`flag-link ${lang === 'es' ? 'active' : ''}`} title="Español">🇪🇸 ES</a>
-        <a href={getLangUrl('fr')} class={`flag-link ${lang === 'fr' ? 'active' : ''}`} title="Français">🇫🇷 FR</a>
+        <a href={getLangUrl('pt')} class={`flag-link ${lang === 'pt' ? 'active' : ''}`} title="Português"><img src="/flags/br.svg" alt="PT" width="32" height="22" /></a>
+        <a href={getLangUrl('en')} class={`flag-link ${lang === 'en' ? 'active' : ''}`} title="English"><img src="/flags/gb.svg" alt="EN" width="32" height="22" /></a>
+        <a href={getLangUrl('es')} class={`flag-link ${lang === 'es' ? 'active' : ''}`} title="Español"><img src="/flags/es.svg" alt="ES" width="32" height="22" /></a>
+        <a href={getLangUrl('fr')} class={`flag-link ${lang === 'fr' ? 'active' : ''}`} title="Français"><img src="/flags/fr.svg" alt="FR" width="32" height="22" /></a>
       </div>
     </div>
     <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Menu">
@@ -1007,10 +1069,10 @@ const clientId = Astro.locals.clientId || 'default';
       <div class="mobile-header">
          <span class="logo-text">get<span class="logo-highlight">Nexo</span></span>
          <div class="mobile-lang-selector">
-           <a href={getLangUrl('pt')} class={lang === 'pt' ? 'active' : ''}>🇧🇷 PT</a>
-           <a href={getLangUrl('en')} class={lang === 'en' ? 'active' : ''}>🇺🇸 EN</a>
-           <a href={getLangUrl('es')} class={lang === 'es' ? 'active' : ''}>🇪🇸 ES</a>
-           <a href={getLangUrl('fr')} class={lang === 'fr' ? 'active' : ''}>🇫🇷 FR</a>
+           <a href={getLangUrl('pt')} class={lang === 'pt' ? 'active' : ''} title="Português"><img src="/flags/br.svg" alt="PT" /></a>
+           <a href={getLangUrl('en')} class={lang === 'en' ? 'active' : ''} title="English"><img src="/flags/gb.svg" alt="EN" /></a>
+           <a href={getLangUrl('es')} class={lang === 'es' ? 'active' : ''} title="Español"><img src="/flags/es.svg" alt="ES" /></a>
+           <a href={getLangUrl('fr')} class={lang === 'fr' ? 'active' : ''} title="Français"><img src="/flags/fr.svg" alt="FR" /></a>
          </div>
          <button id="mobile-close" class="mobile-close">×</button>
       </div>
@@ -1019,33 +1081,33 @@ const clientId = Astro.locals.clientId || 'default';
         <div class="mobile-section">
           <span class="mobile-section-title">Soluções Smart</span>
           <div class="mobile-grid">
-            <a href="/chat-ia">🤖 Chatbot IA 24h</a>
-            <a href="/sistema-tickets">🎫 Suporte 360º</a>
-            <a href="/dashboard-analytics">📊 AI Analytics</a>
-            <a href="/programa-pontos">🏆 Fidelidade</a>
+            <a href={`/${lang}/${t.slugs.chat_ia}`}>🤖 Chatbot IA 24h</a>
+            <a href={`/${lang}/${t.slugs.tickets}`}>🎫 Suporte 360º</a>
+            <a href={`/${lang}/${t.slugs.analytics}`}>📊 AI Analytics</a>
+            <a href={`/${lang}/${t.slugs.loyalty}`}>🏆 Fidelidade</a>
           </div>
         </div>
 
         <div class="mobile-section">
           <span class="mobile-section-title">Ecossistema</span>
           <div class="mobile-grid">
-            <a href="/shopify-integracao">🛍️ Shopify</a>
-            <a href="/woocommerce">🛒 WooCommerce</a>
-            <a href="/pagseguro">💳 Checkout PIX</a>
-            <a href="/api-rest">🔄 API Dev</a>
+            <a href={`/${lang}/${t.slugs.integrations}`}>🛍️ Shopify</a>
+            <a href={`/${lang}/${t.slugs.integrations}`}>🛒 WooCommerce</a>
+            <a href={`/${lang}/${t.slugs.integrations}`}>💳 Checkout PIX</a>
+            <a href={`/${lang}/${t.slugs.api}`}>🔄 API Dev</a>
           </div>
         </div>
 
         <div class="mobile-links-extra">
-          <a href="/precos">💰 Planos e Preços</a>
-          <a href="/como-funciona">⚙️ Como Funciona</a>
-          <a href="/blog">📝 Blog Insights</a>
+          <a href={`/${lang}/${t.slugs.pricing}`}>💰 Planos e Preços</a>
+          <a href={`/${lang}/${t.slugs.how_it_works}`}>⚙️ Como Funciona</a>
+          <a href={`/${lang}/${t.slugs.blog}`}>📝 Blog Insights</a>
         </div>
       </div>
 
       <div class="mobile-footer">
         <a href="/login" class="mobile-login">Login</a>
-        <a href="/criar-bot" class="btn-primary-glow w-full">Teste Grátis Agora</a>
+        <a href={`/${lang}/${t.slugs.create_bot}`} class="btn-primary-glow w-full">Teste Grátis Agora</a>
       </div>
     </nav>
   </div>
@@ -1100,7 +1162,7 @@ const clientId = Astro.locals.clientId || 'default';
     <div class="footer-grid">
       <!-- Coluna 1: Branding e Trust -->
       <div class="footer-col branding-col">
-        <a href="/" class="logo-link" aria-label="GetNexo Home - Automação WhatsApp e IA Generativa">
+        <a href={lang === 'pt' ? '/' : `/${lang}`} class="logo-link" aria-label="GetNexo Home - Automação WhatsApp e IA Generativa">
           <div class="logo-box footer-logo" aria-hidden="true">N</div>
           <span class="logo-text footer-text">Get<span class="logo-highlight">Nexo</span></span>
         </a>
@@ -1108,17 +1170,6 @@ const clientId = Astro.locals.clientId || 'default';
           A plataforma líder em <strong>automação de WhatsApp e IA Generativa</strong>. Escalamos sua operação comercial com inteligência, segurança e foco em conversão.
         </p>
         
-        <!-- Newsletter Gigante -->
-        <div class="footer-newsletter-section">
-          <h4 class="newsletter-title">Receba Insights de IA</h4>
-          <p class="newsletter-subtitle">Dicas semanais para escalar vendas no WhatsApp</p>
-          <form class="footer-newsletter" id="footer-newsletter-form" aria-label="Newsletter GetNexo">
-            <input type="email" name="email" placeholder="Seu melhor email" required aria-label="Email para newsletter">
-            <button type="submit" aria-label="Assinar newsletter">Assinar</button>
-          </form>
-          <p class="newsletter-privacy">Sem spam. Cancelar a qualquer momento.</p>
-        </div>
-
         <div class="footer-socials">
           <a href="https://wa.me/5511999999999?text=Ola%20GetNexo" aria-label="WhatsApp GetNexo - Conversar Agora" class="social-link whatsapp">
             <span class="social-icon">📱</span>
@@ -1170,12 +1221,12 @@ const clientId = Astro.locals.clientId || 'default';
       <div class="footer-col">
         <h3 class="footer-title">Plataforma & IA</h3>
         <div class="footer-links">
-          <a href={`/${lang}/produtos`} title="Nossas Soluções de Automação WhatsApp e Chat IA">Soluções Completas</a>
-          <a href={`/${lang}/fidelidade`} title="Sistema de Fidelização e Recompensa com IA">Programa de Fidelidade</a>
-          <a href={`/${lang}/analytics`} title="Dashboard de Analytics e BI para WhatsApp">Analytics Enterprise</a>
-          <a href={`/${lang}/integracoes`} title="Integrações com CRM, Google Sheets, n8n e mais">Integrações de API</a>
+          <a href={`/${lang}/${t.slugs.solutions}`} title="Nossas Soluções de Automação WhatsApp e Chat IA">Soluções Completas</a>
+          <a href={`/${lang}/${t.slugs.loyalty}`} title="Sistema de Fidelização e Recompensa com IA">Programa de Fidelidade</a>
+          <a href={`/${lang}/${t.slugs.analytics}`} title="Dashboard de Analytics e BI para WhatsApp">Analytics Enterprise</a>
+          <a href={`/${lang}/${t.slugs.integrations}`} title="Integrações com CRM, Google Sheets, n8n e mais">Integrações de API</a>
           <a href={`/${lang}/loja`} title="Plugins e Complementos para sua Operação">Loja GetNexo</a>
-          <a href={`/${lang}/precos`} title="Planos e Preços Assistente Virtual WhatsApp">Tabela de Preços</a>
+          <a href={`/${lang}/${t.slugs.pricing}`} title="Planos e Preços Assistente Virtual WhatsApp">Tabela de Preços</a>
         </div>
       </div>
 
@@ -1183,12 +1234,12 @@ const clientId = Astro.locals.clientId || 'default';
       <div class="footer-col">
         <h3 class="footer-title">Soluções por Setor</h3>
         <div class="footer-links">
-          <a href="/blog/whatsapp-automação-imobiliaria" title="Automação WhatsApp para Imobiliárias e Corretores">Imobiliárias</a>
-          <a href="/blog/whatsapp-clinicas-saude-lgpd" title="Agendamento Automático para Clínicas e Médicos">Saúde & Clínicas</a>
-          <a href="/blog/chatbot-infoprodutores-escala" title="Chatbot para Infoprodutores, Cursos e Lançamentos">Infoprodutores</a>
-          <a href="/blog/vendas-preditivas-ia" title="IA de Vendas para E-commerce e Lojas Virtuais">E-commerce</a>
-          <a href="/blog/automacao-agendamento-liberais" title="Automação para Profissionais Liberais e Consultores">Profissionais Liberais</a>
-          <a href="/blog/saas-growth-whatsapp-api" title="Estratégias de Growth para Empresas de Software SaaS">SaaS & Startups</a>
+          <a href={`/${lang}/${t.slugs.blog}/whatsapp-automação-imobiliaria`} title="Automação WhatsApp para Imobiliárias e Corretores">Imobiliárias</a>
+          <a href={`/${lang}/${t.slugs.blog}/whatsapp-clinicas-saude-lgpd`} title="Agendamento Automático para Clínicas e Médicos">Saúde & Clínicas</a>
+          <a href={`/${lang}/${t.slugs.blog}/chatbot-infoprodutores-escala`} title="Chatbot para Infoprodutores, Cursos e Lançamentos">Infoprodutores</a>
+          <a href={`/${lang}/${t.slugs.blog}/vendas-preditivas-ia`} title="IA de Vendas para E-commerce e Lojas Virtuais">E-commerce</a>
+          <a href={`/${lang}/${t.slugs.blog}/automacao-agendamento-liberais`} title="Automação para Profissionais Liberais e Consultores">Profissionais Liberais</a>
+          <a href={`/${lang}/${t.slugs.blog}/saas-growth-whatsapp-api`} title="Estratégias de Growth para Empresas de Software SaaS">SaaS & Startups</a>
         </div>
       </div>
 
@@ -1196,12 +1247,12 @@ const clientId = Astro.locals.clientId || 'default';
       <div class="footer-col">
         <h3 class="footer-title">Recursos & Empresa</h3>
         <div class="footer-links">
-          <a href="/blog" title="Blog GetNexo: Estratégias de Vendas e IA">Blog de Vendas</a>
-          <a href="/documentacao" title="Documentação Técnica e Tutoriais para Desenvolvedores">Documentação API</a>
-          <a href="/faq" title="Perguntas Frequentes sobre Automação WhatsApp">Central de FAQ</a>
-          <a href="/sobre" title="Conheça a História da GetNexo">Sobre Nós</a>
-          <a href="/contato" title="Fale com nosso Time de Suporte e Vendas">Contato Oficial</a>
-          <a href="/revenda" title="Seja um Parceiro e Revenda GetNexo">Programa de Revenda</a>
+          <a href={`/${lang}/${t.slugs.blog}`} title="Blog GetNexo: Estratégias de Vendas e IA">Blog de Vendas</a>
+          <a href={`/${lang}/documentacao`} title="Documentação Técnica e Tutoriais para Desenvolvedores">Documentação API</a>
+          <a href={`/${lang}/${t.slugs.faq}`} title="Perguntas Frequentes sobre Automação WhatsApp">Central de FAQ</a>
+          <a href={`/${lang}/sobre`} title="Conheça a História da GetNexo">Sobre Nós</a>
+          <a href={`/${lang}/${t.slugs.contact}`} title="Fale com nosso Time de Suporte e Vendas">Contato Oficial</a>
+          <a href={`/${lang}/revenda`} title="Seja um Parceiro e Revenda GetNexo">Programa de Revenda</a>
         </div>
       </div>
 
@@ -1214,9 +1265,9 @@ const clientId = Astro.locals.clientId || 'default';
           <button type="submit" aria-label="Inscrever-se na Newsletter">🚀</button>
         </form>
         <div class="footer-links mt-6">
-          <a href="/privacidade" title="Políticas de Privacidade e LGPD">Privacidade</a>
-          <a href="/termos" title="Termos de Uso do Serviço">Termos</a>
-          <a href="/acessibilidade" title="Acessibilidade Digital WCAG 2.2">Acessibilidade</a>
+          <a href={`/${lang}/${t.slugs.privacy}`} title="Políticas de Privacidade e LGPD">Privacidade</a>
+          <a href={`/${lang}/${t.slugs.terms}`} title="Termos de Uso do Serviço">Termos</a>
+          <a href={`/${lang}/acessibilidade`} title="Acessibilidade Digital WCAG 2.2">Acessibilidade</a>
         </div>
       </div>
     </div>
@@ -1224,6 +1275,24 @@ const clientId = Astro.locals.clientId || 'default';
 
 
     <div class="footer-bottom">
+      <div class="footer-lang-selector" style="display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap;">
+        <a href={getLangUrl('pt')} class={`lang-chip ${lang === 'pt' ? 'active' : ''}`} title="Português">
+          <img src="/flags/br.svg" alt="" style="width: 18px; border-radius: 2px;" />
+          <span>PT</span>
+        </a>
+        <a href={getLangUrl('en')} class={`lang-chip ${lang === 'en' ? 'active' : ''}`} title="English">
+          <img src="/flags/gb.svg" alt="" class="flag-icon" />
+          <span>EN</span>
+        </a>
+        <a href={getLangUrl('es')} class={`lang-chip ${lang === 'es' ? 'active' : ''}`} title="Español">
+          <img src="/flags/es.svg" alt="" class="flag-icon" />
+          <span>ES</span>
+        </a>
+        <a href={getLangUrl('fr')} class={`lang-chip ${lang === 'fr' ? 'active' : ''}`} title="Français">
+          <img src="/flags/fr.svg" alt="" class="flag-icon" />
+          <span>FR</span>
+        </a>
+      </div>
       <p>{t.footer.rights} | <strong>GetNexo</strong>: A vanguarda em Automação WhatsApp e IA para Negócios.</p>
     </div>
   </footer>
@@ -1231,7 +1300,7 @@ const clientId = Astro.locals.clientId || 'default';
 
 
   <!-- Live Pulse Engine UI -->
-  <div id="live-pulse" class="pulse-toast glass-panel" style="display:none;" onclick="window.location.href='/chat-ia'">
+  <div id="live-pulse" class="pulse-toast glass-panel hidden-forced">
     <div class="pulse-icon">⚡</div>
     <div class="pulse-content">
       <span class="pulse-title">Nexus Work</span>
@@ -1258,28 +1327,28 @@ const clientId = Astro.locals.clientId || 'default';
     @keyframes toastSlideIn { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
   </style>
 
-  <div id="command-palette" class="palette-overlay" style="display:none;">
+  <div id="command-palette" class="palette-overlay hidden-forced">
     <div class="palette-modal glass-panel">
       <div class="palette-header">
         <span class="palette-icon">🔍</span>
         <input type="text" id="palette-search" placeholder="O que você está procurando? (Esc para sair)" autocomplete="off" />
       </div>
       <div class="palette-results" id="palette-results">
-        <div id="palette-quick-answer" class="quick-answer-box glass-panel" style="display:none;">
+        <div id="palette-quick-answer" class="quick-answer-box glass-panel hidden-forced">
           <span class="qa-tag">Resposta IA</span>
           <p id="qa-text"></p>
         </div>
         <div class="result-group">
           <span class="group-title">Navegação Rápida</span>
-          <a href="/" class="palette-item"><span>🏠</span> Home</a>
-          <a href="/precos" class="palette-item"><span>💰</span> Planos e Preços</a>
-          <a href="/produtos" class="palette-item"><span>🚀</span> Todas as Soluções</a>
-          <a href="/como-funciona" class="palette-item"><span>🛠️</span> Como Funciona</a>
+          <a href={lang === 'pt' ? '/' : `/${lang}`} class="palette-item"><span>🏠</span> Home</a>
+          <a href={`/${lang}/${t.slugs.pricing}`} class="palette-item"><span>💰</span> Planos e Preços</a>
+          <a href={`/${lang}/${t.slugs.solutions}`} class="palette-item"><span>🚀</span> Todas as Soluções</a>
+          <a href={`/${lang}/${t.slugs.how_it_works}`} class="palette-item"><span>🛠️</span> Como Funciona</a>
         </div>
         <div class="result-group">
           <span class="group-title">Suporte e Comunidade</span>
-          <a href="/contato" class="palette-item"><span>📧</span> Fale com o Time</a>
-          <a href="/faq" class="palette-item"><span>❓</span> Perguntas Frequentes</a>
+          <a href={`/${lang}/${t.slugs.contact}`} class="palette-item"><span>📧</span> Fale com o Time</a>
+          <a href={`/${lang}/${t.slugs.faq}`} class="palette-item"><span>❓</span> Perguntas Frequentes</a>
           <a href="https://github.com/lelebrr" target="_blank" class="palette-item"><span>🐙</span> GitHub Oficial</a>
         </div>
       </div>
@@ -1348,6 +1417,34 @@ const clientId = Astro.locals.clientId || 'default';
       border-radius: 4px; font-family: 'JetBrains Mono', monospace;
       border: 1px solid #334155; margin-right: 4px;
     }
+    
+    /* Language Selector Footer Chips */
+    .lang-chip {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50px;
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 700;
+      transition: all 0.3s var(--transition-smooth);
+    }
+    .lang-chip:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--neon-blue);
+      color: white;
+      transform: translateY(-2px);
+    }
+    .lang-chip.active {
+      background: rgba(0, 212, 255, 0.1);
+      border-color: var(--neon-blue);
+      color: var(--neon-blue);
+      box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+    }
   </style>
 
 
@@ -1357,7 +1454,7 @@ const clientId = Astro.locals.clientId || 'default';
   <!-- <script src="/tracking.js" defer></script> -->
 
   <!-- Click Fireworks Effect -->
-  <script src="/custom/js/click-fireworks.js" defer></script>
+  <script is:inline src="/custom/js/click-fireworks.js" nonce={nonce}></script>
 
   <!-- GetNexo Custom Widget -->
   <script is:inline data-cfasync="false" nonce={nonce}>
@@ -1420,6 +1517,14 @@ const clientId = Astro.locals.clientId || 'default';
             mobileMenu.classList.remove('active');
             document.body.style.overflow = '';
           });
+        });
+      }
+
+      // Pulse Click Handler (Refactored from inline onclick)
+      const pulseToast = document.getElementById('live-pulse');
+      if (pulseToast) {
+        pulseToast.addEventListener('click', () => {
+          window.location.href = '/chat-ia';
         });
       }
 
@@ -1546,16 +1651,27 @@ const clientId = Astro.locals.clientId || 'default';
     function mostrarNotificacaoFeriado(feriado) {
       const notification = document.createElement('div');
       notification.className = 'feriado-notification glass-panel';
-      notification.innerHTML = `
+      const htmlContent = `
         <div class="feriado-content">
           <div class="feriado-emoji">🎉</div>
           <div class="feriado-text">
             <h4>${feriado.idiomas.pt}</h4>
             <p>${feriado.bot_frase.pt}</p>
           </div>
-          <button class="feriado-close" onclick="this.parentElement.parentElement.remove()">×</button>
+          <button class="feriado-close">×</button>
         </div>
       `;
+
+      if (window.getnexoTrustedTypes && window.getnexoTrustedTypes.policy) {
+        notification.innerHTML = window.getnexoTrustedTypes.policy.createHTML(htmlContent);
+      } else {
+        notification.innerHTML = htmlContent;
+      }
+
+      const closeBtn = notification.querySelector('.feriado-close');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => notification.remove());
+      }
 
       document.body.appendChild(notification);
 
@@ -1569,7 +1685,7 @@ const clientId = Astro.locals.clientId || 'default';
   </script>
 
   <!-- Breadcrumb Generator Script -->
-  <script is:inline>
+  <script is:inline nonce={nonce}>
     // Breadcrumb Generator
     function generateBreadcrumbs() {
       const path = window.location.pathname;
@@ -1912,7 +2028,7 @@ const clientId = Astro.locals.clientId || 'default';
     }
     @keyframes heartsFloat {
       0% { background-position: 0 0; }
-      50% { background-position: 100px 50px; opacity: 0.8; }
+      50% { background-position: 100px 50px; opacity: 0.8; white-space: pre-line; }
       100% { background-position: 0 100px; opacity: 1; }
     }
 
@@ -1953,7 +2069,7 @@ const clientId = Astro.locals.clientId || 'default';
     }
     @keyframes blueLight {
       0% { opacity: 0.4; }
-      100% { opacity: 0.8; }
+      100% { opacity: 0.8; white-space: pre-line; }
     }
 
     /* Velas Cinza */
@@ -1963,7 +2079,7 @@ const clientId = Astro.locals.clientId || 'default';
     }
     @keyframes candlesFlicker {
       0%, 100% { opacity: 0.5; }
-      50% { opacity: 0.8; }
+      50% { opacity: 0.8; white-space: pre-line; }
     }
 
     /* Bandeira Republicana */
@@ -2023,7 +2139,7 @@ const clientId = Astro.locals.clientId || 'default';
     }
     @keyframes hostLight {
       0% { opacity: 0.4; }
-      100% { opacity: 0.8; }
+      100% { opacity: 0.8; white-space: pre-line; }
     }
 
     /* Fogueira Balões */
@@ -2166,10 +2282,12 @@ const clientId = Astro.locals.clientId || 'default';
     </div>
   </div>
 
-  <!-- Global Floating UI - Left (Accessibility & Tour) -->
+  <!-- Global Floating UI - Left (Unified Accessibility & Tour) -->
   <div class="dock-left">
-    <AccessibilityControls nonce={nonce} />
-    <TourGuided />
+    <div class="accessibility-wrapper">
+        <AccessibilityControls nonce={nonce} />
+    </div>
+    <slot name="dock-left" />
   </div>
 
   <!-- Global Floating UI - Right (Chat & Support) -->
@@ -2177,7 +2295,9 @@ const clientId = Astro.locals.clientId || 'default';
     <WhatsAppFloat />
   </div>
 
-  <CookieConsent />
+  <CookieConsent nonce={nonce} />
+  <PreSupportModal nonce={nonce} />
+  <ClippyAssistants nonce={nonce} />
 
   <style is:global>
     .dock-left {
@@ -2208,7 +2328,7 @@ const clientId = Astro.locals.clientId || 'default';
 
 
   <!-- Header & Mobile Menu Scripts -->
-  <script is:inline>
+  <script is:inline nonce={nonce}>
     document.addEventListener('DOMContentLoaded', () => {
       const header = document.getElementById('main-nav');
       const mobileBtn = document.getElementById('mobile-menu-btn');

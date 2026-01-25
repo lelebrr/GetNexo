@@ -1,0 +1,59 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const title = "GetNexo Store - Premium WhatsApp Automation Plans";
+const description = "Choose the perfect plan for your business. From free starter to enterprise solutions with advanced AI features.";
+const keywords = "whatsapp automation plans, ai chatbot pricing, whatsapp business pricing, automation subscription";
+
+const lang = 'en';
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  <section class="py-20">
+    <div class="container mx-auto px-4">
+      <h1 class="text-4xl font-bold text-center mb-8">Choose Your Plan</h1>
+      <p class="text-xl text-center text-gray-600 mb-12">Start free and scale as your business grows</p>
+
+      <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div class="bg-white p-8 rounded-lg shadow-lg border-2 border-gray-200">
+          <h3 class="text-2xl font-semibold mb-4">Free</h3>
+          <div class="text-4xl font-bold mb-6">R$ 0<span class="text-lg font-normal">/month</span></div>
+          <ul class="space-y-3 mb-8">
+            <li>✅ Up to 1,000 messages/month</li>
+            <li>✅ Basic AI responses</li>
+            <li>✅ WhatsApp integration</li>
+            <li>✅ Basic analytics</li>
+          </ul>
+          <button class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold">Get Started</button>
+        </div>
+
+        <div class="bg-blue-50 p-8 rounded-lg shadow-lg border-2 border-blue-500 relative">
+          <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-semibold">Most Popular</div>
+          <h3 class="text-2xl font-semibold mb-4">Pro</h3>
+          <div class="text-4xl font-bold mb-6">R$ 97<span class="text-lg font-normal">/month</span></div>
+          <ul class="space-y-3 mb-8">
+            <li>✅ Unlimited messages</li>
+            <li>✅ Advanced AI with learning</li>
+            <li>✅ CRM integration</li>
+            <li>✅ Advanced analytics</li>
+            <li>✅ Priority support</li>
+          </ul>
+          <button class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold">Start Pro Trial</button>
+        </div>
+
+        <div class="bg-white p-8 rounded-lg shadow-lg border-2 border-gray-200">
+          <h3 class="text-2xl font-semibold mb-4">Enterprise</h3>
+          <div class="text-4xl font-bold mb-6">Custom</div>
+          <ul class="space-y-3 mb-8">
+            <li>✅ Everything in Pro</li>
+            <li>✅ Custom AI training</li>
+            <li>✅ White-label solution</li>
+            <li>✅ Dedicated support</li>
+            <li>✅ API access</li>
+          </ul>
+          <button class="w-full bg-gray-800 text-white py-3 rounded-lg font-semibold">Contact Sales</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

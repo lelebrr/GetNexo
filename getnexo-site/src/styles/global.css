@@ -2,19 +2,30 @@
    GetNexo Global CSS - Complete & Optimized
    ============================================ */
 
-/* === CSS Variables === */
+/* === CSS Variables - WCAG AA Compliant === */
 :root {
     --primary: #00d4ff;
     --success: #00ff9d;
-    --dark: #0a0e17;
+    --dark: #020617;
     --gray: #1e293b;
-    --light: #e2e8f0;
-    --text: #94a3b8;
-    --warning: #ff4d4d;
-    --gradient-primary: linear-gradient(135deg, var(--primary), var(--success));
-    --gradient-dark: linear-gradient(135deg, var(--dark), var(--gray));
-    --shadow-glow: 0 0 30px rgba(0, 212, 255, 0.2);
-    --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --light: #ffffff;
+    --text: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --warning: #f43f5e;
+
+    /* Premium Neon Tokens */
+    --neon-blue: #00d4ff;
+    --neon-green: #00ff9d;
+    --cyber-gold: #ffd700;
+    --matrix-green: #00ff41;
+    --void-black: #0a0a0a;
+    --glass-bg: rgba(255, 255, 255, 0.02);
+    --glass-border: rgba(255, 255, 255, 0.1);
+
+    --gradient-primary: linear-gradient(135deg, var(--neon-blue), var(--neon-green));
+    --gradient-dark: linear-gradient(135deg, var(--void-black), var(--dark));
+    --shadow-glow: 0 0 30px rgba(0, 212, 255, 0.3);
+    --transition-smooth: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 /* Dark mode - default */
@@ -57,82 +68,26 @@ body {
     top: 0;
 }
 
-/* === Header === */
-header {
-    background: rgba(10, 14, 23, 0.95);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
-    padding: 1rem 5%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid rgba(0, 212, 255, 0.1);
-}
+/* === Header & Navigation (DELEGATED) === */
+/* All header positioning and styling are handled in Layout.astro to support high-fidelity glassmorphism */
 
-.logo {
-    font-size: 1.8rem;
-    font-weight: 800;
-    color: var(--primary);
-    text-decoration: none;
-    transition: var(--transition-smooth);
-}
-
-.logo:hover {
-    text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
-}
-
-nav {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-}
-
-nav a {
-    color: var(--light);
-    margin-left: 1.2rem;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.95rem;
-    transition: var(--transition-smooth);
-    position: relative;
-}
-
-nav a::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: var(--success);
-    transition: width 0.3s;
-}
-
-nav a:hover {
-    color: var(--success);
-}
-
-nav a:hover::after {
-    width: 100%;
-}
-
-/* === CTA Button === */
+/* === CTA Button - A11y Enhanced === */
 .btn-cta {
     color: var(--success);
     border: 2px solid var(--success);
-    padding: 0.6rem 1.5rem;
+    padding: 0.75rem 2rem;
+    /* Aumentado para 44px mínimo de toque */
     border-radius: 50px;
     font-weight: 800;
-    font-size: 0.9rem;
+    font-size: 1rem;
     transition: var(--transition-smooth);
     animation: pulse 2s infinite;
     text-decoration: none;
     display: inline-block;
+    min-height: 44px;
+    /* Área de toque WCAG */
+    min-width: 44px;
+    background-color: transparent;
 }
 
 .btn-cta:hover {
@@ -171,22 +126,90 @@ nav a:hover::after {
     }
 }
 
-.animated-gradient {
-    background: linear-gradient(-45deg, var(--dark), var(--gray), #0f172a, #1a1a2e);
-    background-size: 400% 400%;
-    animation: gradientShift 15s ease infinite;
-}
-
-/* === Scroll Animations (Fade-in) === */
-.fade-in {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
 .fade-in.visible {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* === Premium Utility Classes === */
+.text-gradient-animated {
+    background: linear-gradient(90deg, var(--neon-blue), var(--neon-green), var(--neon-blue));
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine 3s linear infinite;
+    font-weight: 900;
+    filter: drop-shadow(0 0 15px rgba(0, 212, 255, 0.4));
+}
+
+@keyframes shine {
+    to {
+        background-position: 200% center;
+    }
+}
+
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition-smooth);
+}
+
+.btn-primary-glow {
+    background: var(--gradient-primary);
+    color: black !important;
+    padding: 1.2rem 2.8rem;
+    border-radius: 12px;
+    font-weight: 900;
+    text-decoration: none;
+    transition: var(--transition-smooth);
+    box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+    text-align: center;
+    display: inline-block;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary-glow:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(0, 212, 255, 0.6);
+}
+
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@keyframes gradientShift {
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* CSP Compliance - Utility Classes Helper */
+.hidden-forced {
+    display: none !important;
+}
+
+.flag-icon {
+    width: 18px;
+    border-radius: 2px;
 }
 
 /* === Loading Animation === */
@@ -256,7 +279,8 @@ main {
     font-size: clamp(1.1rem, 3vw, 1.5rem);
     max-width: 800px;
     margin: 0 auto 3rem;
-    color: var(--text);
+    color: var(--text-secondary);
+    /* Melhor contraste */
 }
 
 .buttons {
@@ -550,14 +574,131 @@ footer p {
     }
 }
 
-/* === Focus States (A11y) === */
+/* === Form Elements - A11y Enhanced === */
+input,
+textarea,
+select {
+    padding: 0.75rem;
+    border: 2px solid var(--gray);
+    border-radius: 8px;
+    font-size: 1rem;
+    min-height: 44px;
+    /* Área de toque WCAG */
+    background-color: var(--dark);
+    color: var(--light);
+    transition: var(--transition-smooth);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--primary);
+    outline: 3px solid rgba(0, 102, 204, 0.3);
+    outline-offset: 2px;
+}
+
+button {
+    padding: 0.75rem 1.5rem;
+    min-height: 44px;
+    min-width: 44px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    background-color: var(--primary);
+    color: white;
+}
+
+/* Efeito de fogos no clique */
+.click-fireworks {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    animation: fireworks-explode 0.6s ease-out forwards;
+}
+
+.firework-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ff6b35, #f7931e, #ffd23f);
+    box-shadow: 0 0 6px rgba(255, 107, 53, 0.8);
+    animation: particle-fade 0.8s ease-out forwards;
+}
+
+@keyframes fireworks-explode {
+    0% {
+        opacity: 1;
+        transform: scale(0);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(2);
+    }
+}
+
+@keyframes particle-fade {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+}
+
+/* Efeitos de clique para botões */
+button:active {
+    transform: scale(0.95) translateY(1px);
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 102, 204, 0.2);
+}
+
+/* Efeitos de clique para links */
+a:active {
+    transform: scale(0.95) translateY(1px);
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Efeitos de clique para elementos CTA */
+.btn-cta:active {
+    transform: scale(0.95) translateY(2px);
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px rgba(0, 255, 157, 0.3);
+}
+
+/* Efeitos de clique para cards */
+.card:active {
+    transform: scale(0.98) translateY(2px);
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Efeitos de clique para blog cards */
+.blog-card:active {
+    transform: scale(0.98) translateY(3px);
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* === Focus States (A11y) - Enhanced === */
 a:focus,
 button:focus,
 input:focus,
 textarea:focus,
 select:focus {
-    outline: 2px solid var(--primary);
-    outline-offset: 2px;
+    outline: 3px solid var(--primary);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 6px rgba(0, 102, 204, 0.2);
 }
 
 /* === Reduced Motion (A11y) === */

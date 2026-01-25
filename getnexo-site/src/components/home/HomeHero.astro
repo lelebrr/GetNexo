@@ -1,0 +1,112 @@
+---
+const { feriadoHoje, lang, idiomaCurto } = Astro.props;
+---
+
+<section class="hero-split">
+  <div class="hero-content">
+    <!-- Banner de Feriado -->
+    {feriadoHoje && (
+      <div class="feriado-banner animate-on-scroll">
+        <span class="feriado-emoji">🎉</span>
+        <span class="feriado-texto">
+          {feriadoHoje.bot_frase[idiomaCurto] || feriadoHoje.bot_frase.pt}
+        </span>
+        <span class="feriado-nome">| {feriadoHoje.idiomas[idiomaCurto] || feriadoHoje.idiomas.pt}</span>
+      </div>
+    )}
+    
+    <h1 class="text-4xl md:text-6xl font-black mb-6 leading-tight animate-on-scroll">
+      TRANSFORME SEU WHATSAPP EM<br />
+      <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-cyan-400">
+        MÁQUINA DE VENDAS 24/7
+      </span>
+    </h1>
+
+    <p class="text-xl md:text-2xl text-gray-300 mb-8 animate-on-scroll">
+      Setup em <span class="text-cyan-400 font-bold">12 minutos</span> • Zero mensalidade • 
+      <span class="text-green-400 font-bold">7 dias GRÁTIS sem cartão</span>
+    </p>
+
+    <!-- BOTÃO COM CONTADOR SUBLIMINAR -->
+    <div class="relative inline-block animate-on-scroll">
+      <a href="/ativar" id="hero-cta" class="inline-block px-10 py-5 text-black font-bold text-xl rounded-full 
+        bg-gradient-to-r from-red-500 to-indigo-600 
+        hover:from-red-400 hover:to-indigo-500 
+        transition-all duration-300 transform hover:scale-105 
+        shadow-2xl shadow-red-500/40">
+        Liberar Meu Bot GRÁTIS Agora
+      </a>
+      <div class="text-sm text-gray-400 mt-3 text-center">
+        ⏱ Tempo médio de ativação: <span id="countdown" class="font-bold text-cyan-300">12:00</span>
+      </div>
+    </div>
+
+    <div class="hero-trust animate-on-scroll" style="margin-top: 2rem;">
+      <span>✅ API Oficial Meta</span>
+      <span>✅ Setup em 12min</span>
+      <span>✅ Zero Mensalidade</span>
+    </div>
+
+    <!-- Language Selector -->
+  </div>
+
+  <div class="hero-visual animate-on-scroll">
+      <div class="visual-container">
+          <div class="visual-glow"></div>
+          <!-- Replacement for potentially broken hologram -->
+          <div class="smart-phone-mockup">
+              <div class="screen-content">
+                  <div class="chat-header-sim">
+                      <div class="sim-avatar">N</div>
+                      <div class="sim-info">
+                          <span class="sim-name">Nexus Smart Bot</span>
+                          <span class="sim-status">online</span>
+                      </div>
+                  </div>
+                  <div class="chat-body-mega" id="mega-chat-container">
+                      <!-- Conteúdo dinâmico aqui -->
+                  </div>
+                  <div class="chat-input-sim">
+                      <div class="sim-mic">🎤</div>
+                      <span>Diga algo...</span>
+                      <div class="sim-audio-icon">🎧</div>
+                      <div class="sim-send">🚀</div>
+                  </div>
+                  <!-- Cursor simulado para o clique RAR -->
+                  <div id="sim-finger-cursor" class="sim-finger">☝️</div>
+              </div>
+          </div>
+          
+          <div class="floating-elements">
+              <div class="f-pill">💰 Pix Ativo</div>
+              <div class="f-pill">🚀 10x ROI</div>
+          </div>
+      </div>
+  </div>
+</section>
+
+<script>
+// Contador regressivo de 12 minutos que reinicia
+function startCountdown() {
+  let minutes = 11;
+  let seconds = 59;
+  const countdownEl = document.getElementById("countdown");
+  
+  if (!countdownEl) return;
+
+  setInterval(() => {
+    seconds--;
+    if (seconds < 0) {
+      seconds = 59;
+      minutes--;
+      if (minutes < 0) {
+        minutes = 11;
+        seconds = 59;
+      }
+    }
+    countdownEl.textContent = `${minutes.toString().padStart(2,"0")}:${seconds.toString().padStart(2,"0")}`;
+  }, 1000);
+}
+// Start when DOM is ready
+document.addEventListener("DOMContentLoaded", startCountdown);
+</script>

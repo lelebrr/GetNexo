@@ -4,6 +4,7 @@ import react from '@astrojs/react';
 import node from '@astrojs/node';
 import vercel from '@astrojs/vercel/serverless';
 import tailwind from '@astrojs/tailwind';
+import sitemap from '@astrojs/sitemap';
 import { initSocket } from './src/server.js';
 
 // Otimização automática de imagens WebP
@@ -13,16 +14,11 @@ const isVercel = process.env.VERCEL === '1';
 const isDev = process.env.NODE_ENV !== 'production';
 
 export default defineConfig({
-    output: isDev ? 'server' : 'server',
-    adapter: isVercel
-        ? vercel({ webAnalytics: { enabled: true } })
-        : (isDev
-            ? undefined // Usa o servidor de dev padrão do Astro
-            : node({
-                mode: 'standalone',
-                server: './src/server-entry.js'
-            })
-        ),
+    output: 'server',
+    adapter: node({
+        mode: 'standalone',
+        server: './src/server-entry.js'
+    }),
     site: 'https://getnexo.com.br',
     trailingSlash: 'never',
     devToolbar: {
@@ -31,7 +27,17 @@ export default defineConfig({
     integrations: [
         react(),
         tailwind({ applyBaseStyles: false }),
-        // sitemap(),
+        sitemap({
+            i18n: {
+                defaultLocale: 'pt',
+                locales: {
+                    pt: 'pt-BR',
+                    en: 'en-US',
+                    es: 'es-ES',
+                    fr: 'fr-FR'
+                }
+            }
+        }),
         partytown({
             config: {
                 forward: ['dataLayer.push', 'gtag'],
@@ -76,11 +82,14 @@ export default defineConfig({
     // Compressão gzip/brotli para assets estáticos
     server: {
         host: '0.0.0.0', // Permite conexões de qualquer interface de rede
-        port: 4322, // Porta específica para desenvolvimento
+        port: 4321, // Porta padrão para o container e healthchecks
         headers: {
+            // CSP avançada com proteção contra XSS (para ambiente de desenvolvimento)
+            // Em produção, o middleware gera nonces dinamicamente
             'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.cloudflare.com static.cloudflareinsights.com https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://api.getnexo.com.br https://*.getnexo.com.br https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src * data: blob:; font-src 'self' https://fonts.gstatic.com; connect-src *; object-src 'none'; base-uri 'none'; frame-ancestors *; script-src-elem 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net; style-src-elem 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net https://fonts.googleapis.com;",
             'Cache-Control': 'public, max-age=31536000, immutable',
-            ...(!isVercel ? {} : { 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload' })
+            // HSTS forte para todos os ambientes (não apenas Vercel)
+            'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'
         }
     },
     vite: {

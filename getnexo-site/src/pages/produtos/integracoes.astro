@@ -1,0 +1,474 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+// SEO Meta Tags
+const title = "Integrações GetNexo - Conecte com n8n, Typebot, APIs e Mais | GetNexo";
+const description = "Integre GetNexo com n8n, Typebot, APIs REST e milhares de outras ferramentas via webhooks. Crie fluxos complexos e automatize sua operação. Teste Grátis!";
+const keywords = "integrações getnexo, n8n, typebot, webhooks, api rest, automação empresarial, zapier, integração whatsapp";
+const canonical = "https://getnexo.com.br/produtos/integracoes";
+
+// Structured Data - Organization
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GetNexo",
+  "url": "https://getnexo.com.br",
+  "logo": "https://getnexo.com.br/logo.png",
+  "sameAs": [
+    "https://www.linkedin.com/company/getnexo",
+    "https://twitter.com/getnexo",
+    "https://github.com/getnexo"
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+5511999999999",
+    "contactType": "customer service",
+    "areaServed": "BR",
+    "availableLanguage": "pt-BR"
+  }
+};
+
+// WebSite Schema
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "GetNexo",
+  "url": "https://getnexo.com.br",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://getnexo.com.br/buscar?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+};
+
+// Breadcrumb Schema
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Início",
+      "item": "https://getnexo.com.br"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Produtos",
+      "item": "https://getnexo.com.br/produtos"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Integrações",
+      "item": "https://getnexo.com.br/produtos/integracoes"
+    }
+  ]
+};
+
+// Integrations data
+const integrations = [
+  {
+    category: "Automação",
+    items: [
+      { name: "n8n", icon: "⚡", desc: "Automação empresarial open-source", url: "https://n8n.io", features: ["Fluxos complexos", "Self-hosted", "Open-source"] },
+      { name: "Zapier", icon: "🔗", desc: "Automação no-code", url: "https://zapier.com", features: ["5.000+ apps", "Templates prontos", "Sem código"] },
+      { name: "Make", icon: "🔄", desc: "Automação visual avançada", url: "https://www.make.com", features: ["Interface visual", "Lógica complexa", "Escalável"] }
+    ]
+  },
+  {
+    category: "Chatbots",
+    items: [
+      { name: "Typebot", icon: "🤖", desc: "Construtor visual de conversas", url: "https://typebot.io", features: ["Drag & drop", "Templates", "Analytics"] },
+      { name: "Chatfuel", icon: "💬", desc: "Chatbot para Facebook/Instagram", url: "https://chatfuel.com", features: ["Meta integrado", "Templates", "Broadcast"] },
+      { name: "ManyChat", icon: "📱", desc: "Marketing no WhatsApp", url: "https://manychat.com", features: ["WhatsApp Business", "Sequências", "Segmentação"] }
+    ]
+  },
+  {
+    category: "E-commerce",
+    items: [
+      { name: "Shopify", icon: "🛒", desc: "Plataforma de e-commerce", url: "https://shopify.com", features: ["Sync estoque", "Pedidos", "Catálogo"] },
+      { name: "WooCommerce", icon: "📦", desc: "Plugin WordPress", url: "https://woocommerce.com", features: ["WordPress", "Pedidos", "Estoque"] },
+      { name: "Nuvemshop", icon: "🏬", desc: "E-commerce brasileiro", url: "https://www.nuvemshop.com.br", features: ["BR focado", "Pagamentos", "Entrega"] }
+    ]
+  },
+  {
+    category: "Pagamentos",
+    items: [
+      { name: "MercadoPago", icon: "💳", desc: "Pagamentos no Brasil", url: "https://mercadopago.com.br", features: ["PIX", "Boleto", "Cartão"] },
+      { name: "Stripe", icon: "💳", desc: "Pagamentos globais", url: "https://stripe.com", features: ["Global", "API robusta", "Webhooks"] },
+      { name: "PagSeguro", icon: "💳", desc: "Pagamentos brasileiros", url: "https://pagseguro.uol.com.br", features: ["BR focado", "PIX", "Boleto"] }
+    ]
+  },
+  {
+    category: "Banco de Dados",
+    items: [
+      { name: "Google Sheets", icon: "📊", desc: "Planilhas online", url: "https://sheets.google.com", features: ["Grátis", "Real-time", "API"] },
+      { name: "Airtable", icon: "🗂️", desc: "Banco de dados visual", url: "https://airtable.com", features: ["Visual", "Relacionamentos", "Views"] },
+      { name: "Notion", icon: "📝", desc: "Workspace colaborativo", url: "https://notion.so", features: ["Wiki", "Tasks", "Database"] }
+    ]
+  },
+  {
+    category: "Analytics",
+    items: [
+      { name: "Google Analytics", icon: "📈", desc: "Métricas de website", url: "https://analytics.google.com", features: ["Eventos", "Conversões", "Relatórios"] },
+      { name: "Mixpanel", icon: "📊", desc: "Analytics de produto", url: "https://mixpanel.com", features: ["Eventos", "Funnels", "Cohorts"] },
+      { name: "Amplitude", icon: "📉", desc: "Analytics de usuário", url: "https://amplitude.com", features: ["Behavioral", "Predictive", "Retention"] }
+    ]
+  }
+];
+
+// Use cases for integration
+const useCases = [
+  { icon: "🔄", title: "Sincronização de Dados", desc: "Envie leads do WhatsApp para seu CRM ou ERP automaticamente", benefit: "Dados sempre atualizados" },
+  { icon: "🤖", title: "Automação Complexa", desc: "Crie workflows com múltiplas etapas e condições", benefit: "Processos inteligentes" },
+  { icon: "📊", title: "Relatórios Automáticos", desc: "Exporte métricas para planilhas ou BI", benefit: "Decisões baseadas em dados" },
+  { icon: "🔔", title: "Notificações", desc: "Envie alertas para Slack, Teams ou email", benefit: "Time sempre informado" }
+];
+
+// Stats data
+const stats = [
+  { value: "50+", label: "integrações", desc: "disponíveis nativamente" },
+  { value: "Webhooks", label: "ilimitados", desc: "conexões personalizadas" },
+  { value: "API REST", label: "completa", desc: "documentação detalhada" },
+  { value: "99.9%", label: "uptime", desc: "garantido" }
+];
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+
+  <!-- SEO Schemas -->
+  <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+
+  <!-- Hero Section -->
+  <section class="integrations-hero" aria-label="Integrações GetNexo">
+    <div class="hero-badge">🔌 Conexões Ilimitadas</div>
+    <h1>Integra com <span class="text-gradient">Todas as Ferramentas</span></h1>
+    <p class="hero-desc">
+      Conecte GetNexo com n8n, Typebot, APIs REST e milhares de outras ferramentas via webhooks. <strong>Crie fluxos complexos e automatize sua operação.</strong>
+    </p>
+
+    <!-- Trust Badges -->
+    <div class="trust-badges">
+      <span class="badge">✅ API REST Completa</span>
+      <span class="badge">⚡ Webhooks Ilimitados</span>
+      <span class="badge">🔒 Segurança Total</span>
+      <span class="badge">📚 Documentação</span>
+    </div>
+
+    <div class="hero-ctas">
+      <a href="/criar-bot" class="btn-primary-glow" aria-label="Criar bot gratuito">
+        Criar Meu Bot Grátis
+      </a>
+      <a href="/docs/api" class="btn-outline" aria-label="Ver documentação API">
+        Ver Documentação API
+      </a>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats-section">
+    <div class="max-w-6xl mx-auto px-5">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        {stats.map(stat => (
+          <div class="stat-card glass-panel p-6 text-center">
+            <span class="stat-value">{stat.value}</span>
+            <span class="stat-label">{stat.label}</span>
+            <span class="stat-desc">{stat.desc}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Integrations Grid -->
+  <section class="integrations-section">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-white mb-4">Categorias de <span class="text-gradient">Integração</span></h2>
+        <p class="text-slate-400 max-w-2xl mx-auto">Conecte com as ferramentas que você já usa ou descubra novas possibilidades</p>
+      </div>
+
+      {integrations.map(category => (
+        <div class="category-section mb-12">
+          <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+            <span class="text-2xl">📦</span> {category.category}
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {category.items.map(item => (
+              <a href={item.url} class="integration-card glass-panel p-6 hover:bg-white/5 transition-all" target="_blank" rel="noopener noreferrer">
+                <div class="flex items-start gap-4">
+                  <span class="text-3xl">{item.icon}</span>
+                  <div>
+                    <h4 class="text-white font-bold mb-1">{item.name}</h4>
+                    <p class="text-slate-400 text-sm mb-3">{item.desc}</p>
+                    <div class="flex flex-wrap gap-2">
+                      {item.features.map(f => (
+                        <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full">{f}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Use Cases Section -->
+  <section class="use-cases-section">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-white mb-4">Casos de <span class="text-gradient">Uso Real</span></h2>
+        <p class="text-slate-400 max-w-2xl mx-auto">Veja como diferentes empresas estão usando integrações para escalar</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {useCases.map(uc => (
+          <div class="glass-panel p-6 rounded-2xl hover:bg-white/5 transition-all">
+            <div class="text-4xl mb-4">{uc.icon}</div>
+            <h3 class="text-xl font-bold text-white mb-2">{uc.title}</h3>
+            <p class="text-slate-400 mb-3">{uc.desc}</p>
+            <span class="text-sm text-blue-400 font-bold">✅ {uc.benefit}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- API Documentation Section -->
+  <section class="api-section py-20 px-5 max-w-6xl mx-auto">
+    <div class="glass-panel p-12 rounded-3xl text-center">
+      <h2 class="text-3xl font-bold text-white mb-4">API REST <span class="text-gradient">Completa</span></h2>
+      <p class="text-slate-400 text-lg mb-8 max-w-2xl mx-auto">
+        Documentação completa e exemplos de código para desenvolvedores. Integre GetNexo com qualquer sistema.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4 mb-8">
+        <span class="px-4 py-2 bg-blue-500/20 text-blue-300 rounded-lg font-mono text-sm">GET /api/leads</span>
+        <span class="px-4 py-2 bg-blue-500/20 text-blue-300 rounded-lg font-mono text-sm">POST /api/messages</span>
+        <span class="px-4 py-2 bg-blue-500/20 text-blue-300 rounded-lg font-mono text-sm">Webhooks</span>
+      </div>
+      <a href="/docs/api" class="btn-primary-glow bg-blue-600 hover:bg-blue-500" aria-label="Ver documentação completa">
+        Ver Documentação Completa
+      </a>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta py-20 text-center px-4">
+    <div class="max-w-4xl mx-auto glass-panel p-12 rounded-3xl">
+      <h2 class="text-3xl md:text-4xl font-black text-white mb-6">Pronto para <span class="text-blue-400">conectar tudo</span>?</h2>
+      <p class="text-xl text-slate-300 mb-10 max-w-2xl mx-auto">
+        Comece a integrar GetNexo com suas ferramentas favoritas hoje mesmo.
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <a href="/criar-bot" class="btn-primary-glow bg-blue-600 hover:bg-blue-500" aria-label="Começar gratuitamente">
+          Começar Gratuitamente
+        </a>
+        <a href="/docs/api" class="px-10 py-5 bg-transparent border border-blue-500 text-blue-400 font-bold rounded-2xl hover:bg-blue-500 hover:text-white transition-colors text-lg" aria-label="Ver documentação API">
+          Ver Documentação API
+        </a>
+      </div>
+      <p class="mt-8 text-sm text-slate-500">
+        ✅ Setup em 5 minutos • ✅ Sem cartão de crédito • ✅ Suporte 24/7
+      </p>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  /* Hero */
+  .integrations-hero { 
+    padding: 8rem 5% 4rem; 
+    text-align: center; 
+    max-width: 1300px; 
+    margin: 0 auto; 
+  }
+  
+  .hero-badge { 
+    background: rgba(59, 130, 246, 0.1); 
+    color: #3b82f6; 
+    padding: 0.5rem 1.2rem; 
+    border-radius: 50px; 
+    font-size: 0.85rem; 
+    font-weight: 700; 
+    border: 1px solid rgba(59, 130, 246, 0.2); 
+    display: inline-block; 
+    margin-bottom: 2rem; 
+  }
+  
+  .integrations-hero h1 { 
+    font-size: 3.5rem; 
+    margin-bottom: 1.5rem; 
+    color: white;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+  
+  .hero-desc { 
+    font-size: 1.35rem; 
+    color: #94a3b8; 
+    max-width: 800px; 
+    margin: 0 auto 3rem; 
+    line-height: 1.6;
+  }
+
+  /* Trust badges */
+  .trust-badges {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+  .badge {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    color: #94a3b8;
+    font-weight: 600;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary-glow { 
+    background: linear-gradient(135deg, #3b82f6, #06b6d4); 
+    color: white; 
+    padding: 1.2rem 2.8rem; 
+    border-radius: 14px; 
+    font-weight: 800; 
+    text-decoration: none; 
+    transition: 0.3s; 
+    box-shadow: 0 10px 40px rgba(59, 130, 246, 0.25); 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 0.5rem; 
+  }
+  
+  .btn-primary-glow:hover { transform: translateY(-4px); box-shadow: 0 20px 50px rgba(59, 130, 246, 0.4); }
+
+  .btn-outline { 
+    border: 1px solid rgba(255,255,255,0.15); 
+    color: white; 
+    padding: 1.2rem 2.8rem; 
+    border-radius: 14px; 
+    font-weight: 700; 
+    text-decoration: none; 
+    background: rgba(255,255,255,0.03); 
+    transition: 0.3s; 
+  }
+  
+  .btn-outline:hover { background: rgba(255,255,255,0.1); border-color: #3b82f6; }
+
+  /* Stats Section */
+  .stats-section {
+    padding: 4rem 5%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .stat-card {
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .stat-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: 900;
+    color: #3b82f6;
+    line-height: 1;
+  }
+
+  .stat-label {
+    display: block;
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-top: 0.3rem;
+  }
+
+  .stat-desc {
+    display: block;
+    color: #64748b;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+  }
+
+  /* Integrations Section */
+  .integrations-section {
+    padding: 6rem 5%;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .category-section {
+    margin-bottom: 4rem;
+  }
+
+  .integration-card {
+    position: relative;
+    overflow: hidden;
+  }
+  .integration-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #3b82f6, #06b6d4);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+  .integration-card:hover::before {
+    transform: scaleX(1);
+  }
+
+  /* Use Cases Section */
+  .use-cases-section {
+    padding: 6rem 5%;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* API Section */
+  .api-section {
+    padding: 6rem 5%;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  /* Final CTA */
+  .final-cta {
+    padding: 4rem 5% 8rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .integrations-hero h1 { font-size: 2.5rem; }
+    .hero-desc { font-size: 1.1rem; }
+    .trust-badges { flex-direction: column; gap: 0.5rem; }
+    .badge { font-size: 0.75rem; }
+    .hero-ctas { flex-direction: column; }
+  }
+
+  @media (max-width: 1024px) {
+    .integrations-hero h1 { font-size: 3rem; }
+  }
+</style>

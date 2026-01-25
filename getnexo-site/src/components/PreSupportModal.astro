@@ -1,5 +1,6 @@
 ---
 // PreSupportModal.astro - Suporte Multimodal Acessível v2.0
+const { nonce } = Astro.props;
 ---
 
 <!-- Skip Link para acessibilidade -->
@@ -69,27 +70,16 @@
 </div>
 
 <!-- Schema.org Speakable -->
-<script is:inline>
+<script is:inline nonce={nonce}>
   const speakable = document.createElement('meta');
   speakable.name = 'speakable';
   speakable.content = '.modal-header, #btn-text, #btn-voice, #voice-status';
   document.head.appendChild(speakable);
 </script>
 
-<script>
+<script nonce={nonce}>
   // PreSupportModal v2.0 - Estado Reativo e Acessibilidade WCAG 2.2 AA
   class PreSupportModal {
-    private modal: HTMLElement | null;
-    private closeBtn: HTMLElement | null;
-    private textBtn: HTMLElement | null;
-    private voiceBtn: HTMLElement | null;
-    private voiceStatus: HTMLElement | null;
-    private voiceFeedbackText: HTMLElement | null;
-    private recognition: any = null;
-    private isOpen: boolean = false;
-    private mode: string | null = null;
-    private config: any = {};
-
     constructor() {
       this.modal = document.getElementById('pre-support-modal');
       this.closeBtn = document.getElementById('close-modal');
@@ -97,19 +87,22 @@
       this.voiceBtn = document.getElementById('btn-voice');
       this.voiceStatus = document.getElementById('voice-status');
       this.voiceFeedbackText = document.getElementById('voice-feedback-text');
+      this.recognition = null;
+      this.isOpen = false;
+      this.mode = null;
 
       this.config = {
         primaryColor: '#00ffa3',
         language: 'pt-BR',
         voiceTimeout: 30000,
         enableAnalytics: true,
-        ...((window as any).preSupportModalConfig || {})
+        ...(window.preSupportModalConfig || {}) // removed 'as any'
       };
 
       this.init();
     }
 
-    private init() {
+    init() {
       if (!this.modal) return;
 
       this.bindEvents();
@@ -117,10 +110,10 @@
       this.setupAutoShow();
 
       // Configuração global
-      (window as any).modalInstance = this;
+      window.modalInstance = this;
     }
 
-    private bindEvents() {
+    bindEvents() {
       // Botão fechar
       this.closeBtn?.addEventListener('click', () => this.close());
 
@@ -143,14 +136,14 @@
       });
     }
 
-    private setupKeyboardNavigation() {
+    setupKeyboardNavigation() {
       const focusableElements = this.modal?.querySelectorAll(
         'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
       );
 
       if (focusableElements) {
-        const firstElement = focusableElements[0] as HTMLElement;
-        const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
 
         this.modal?.addEventListener('keydown', (e) => {
           if (e.key === 'Tab') {
@@ -170,7 +163,7 @@
       }
     }
 
-    private setupAutoShow() {
+    setupAutoShow() {
       // Mostrar modal após delay, respeitando preferências do usuário
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -182,7 +175,7 @@
     }
 
     // API Pública
-    public open() {
+    open() {
       if (this.modal && !this.isOpen) {
         this.isOpen = true;
         this.modal.classList.remove('hidden');
@@ -198,7 +191,7 @@
       }
     }
 
-    public close() {
+    close() {
       if (this.modal && this.isOpen) {
         this.isOpen = false;
         this.modal.classList.add('hidden');
@@ -214,19 +207,19 @@
       }
     }
 
-    public selectText() {
+    selectText() {
       this.mode = 'text';
       this.close();
       this.openChat();
     }
 
-    public selectVoice() {
+    selectVoice() {
       this.mode = 'voice';
       this.startVoiceRecognition();
     }
 
-    private startVoiceRecognition() {
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    startVoiceRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
       if (!SpeechRecognition) {
         this.showFallback('Seu navegador não suporta reconhecimento de voz. Use o modo texto.');
@@ -235,7 +228,7 @@
 
       // Verificar permissões
       if (navigator.permissions) {
-        navigator.permissions.query({ name: 'microphone' as PermissionName }).then((result) => {
+        navigator.permissions.query({ name: 'microphone' }).then((result) => {
           if (result.state === 'denied') {
             this.showFallback('Permissão de microfone negada. Permita o acesso ou use o modo texto.');
             return;
@@ -249,7 +242,7 @@
       }
     }
 
-    private initializeRecognition(SpeechRecognition: any) {
+    initializeRecognition(SpeechRecognition) {
       this.recognition = new SpeechRecognition();
       this.recognition.lang = this.config.language;
       this.recognition.interimResults = true;
@@ -300,28 +293,28 @@
       }
     }
 
-    private showVoiceFeedback(text: string) {
+    showVoiceFeedback(text) {
       if (this.voiceStatus && this.voiceFeedbackText) {
         this.voiceStatus.classList.remove('hidden');
         this.voiceFeedbackText.textContent = text;
       }
     }
 
-    private hideVoiceFeedback() {
+    hideVoiceFeedback() {
       if (this.voiceStatus) {
         this.voiceStatus.classList.add('hidden');
       }
     }
 
-    private showFallback(message: string) {
+    showFallback(message) {
       this.hideVoiceFeedback();
       // Poderia mostrar um toast ou modal de erro
       console.warn('PreSupportModal:', message);
       alert(message);
     }
 
-    private openChat() {
-      const win = window as any;
+    openChat() {
+      const win = window;
       if (win.$chatwoot) {
         win.$chatwoot.toggle();
       } else {
@@ -329,7 +322,7 @@
       }
     }
 
-    private async sendVoiceMessage(transcript: string) {
+    async sendVoiceMessage(transcript) {
       try {
         const response = await fetch('/api/support/voice', {
           method: 'POST',

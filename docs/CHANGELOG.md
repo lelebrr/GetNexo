@@ -31,6 +31,17 @@
 
 ---
 
+## [1.4.1] - 2026-01-24 🧠 **NEURO-MARKETING UPDATE**
+
+### ✨ Otimizações de Conversão (High Impact)
+- **Hero Section 2.0**: Nova headline "Máquina de Vendas", subheadline otimizada e contador de escassez (12min resetável).
+- **Demo Chat Persuasivo**: Placeholder com Call-to-Action claro e mensagem de boas-vindas automática ("Reciprocidade").
+- **Visualização Guiada (Tour)**: Novo passo "Hipnose Inicial" para preparar mentalmente o usuário.
+- **Prova Social Verificada**: Novos cards de depoimentos com fotos reais, @handles e selo de verificação.
+- **Final CTA Power**: Seção de fechamento antes do footer com alto contraste e copy agressiva.
+
+---
+
 ## [1.4.0] - 2026-01-21 🚀 **ENTERPRISE RELEASE**
 
 ### 🎯 **RELEASE COMPLETA - GetNexo Enterprise v1.4.0**

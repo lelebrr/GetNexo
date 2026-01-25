@@ -1,6 +1,7 @@
 ---
 // Componente de Assistentes Clippy Personalizados para GetNexo
 // Implementa assistentes animados inspirados no Clippy do Microsoft Office
+const { nonce } = Astro.props;
 ---
 
 <div id="clippy-assistants" class="clippy-assistants">
@@ -36,8 +37,8 @@
 <style>
   .clippy-assistants {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    bottom: 224px; /* Stacked above Accessibility (160px) */
+    right: 24px;
     z-index: 9999;
     pointer-events: none;
   }
@@ -267,7 +268,7 @@
   }
 </style>
 
-<script>
+<script nonce={nonce}>
   class GetNexoAssistants {
     constructor() {
       this.currentAssistant = null;
@@ -360,12 +361,18 @@
       // Criar assistente visual customizado
       const assistantDiv = document.createElement('div');
       assistantDiv.className = 'fallback-assistant';
-      assistantDiv.innerHTML = `
+      const htmlContent = `
         <div class="assistant-body">
           <div class="assistant-avatar">${this.getAssistantEmoji(assistant?.name || 'Nexus')}</div>
           <div class="assistant-name">${assistant?.name || 'Nexus'}</div>
         </div>
       `;
+
+      if (window.getnexoTrustedTypes && window.getnexoTrustedTypes.policy) {
+        assistantDiv.innerHTML = window.getnexoTrustedTypes.policy.createHTML(htmlContent);
+      } else {
+        assistantDiv.innerHTML = htmlContent;
+      }
 
       container.appendChild(assistantDiv);
 
@@ -431,16 +438,22 @@
 
       const bubble = document.createElement('div');
       bubble.className = 'clippy-bubble';
-      bubble.innerHTML = `
+      const bubbleContent = `
         <div class="bubble-content">
           <h4>${this.assistants[document.getElementById('active-assistant').value]?.name || 'Assistente'}</h4>
           <p>${message}</p>
           <div class="bubble-actions">
-            <button class="bubble-btn primary" onclick="this.closest('.clippy-bubble').remove()">OK</button>
-            <button class="bubble-btn secondary" onclick="window.showMoreHelp()">Mais Ajuda</button>
+            <button class="bubble-btn primary">OK</button>
+            <button class="bubble-btn secondary">Mais Ajuda</button>
           </div>
         </div>
       `;
+
+      if (window.getnexoTrustedTypes && window.getnexoTrustedTypes.policy) {
+        bubble.innerHTML = window.getnexoTrustedTypes.policy.createHTML(bubbleContent);
+      } else {
+        bubble.innerHTML = bubbleContent;
+      }
 
       // Posicionar bolha
       const container = document.getElementById('assistants-container');
@@ -449,6 +462,17 @@
       bubble.style.right = '20px';
 
       document.body.appendChild(bubble);
+
+      // Vincular eventos programaticamente (evita violação de CSP)
+      const okBtn = bubble.querySelector('.bubble-btn.primary');
+      const helpBtn = bubble.querySelector('.bubble-btn.secondary');
+
+      if (okBtn) okBtn.addEventListener('click', () => bubble.remove());
+      if (helpBtn) helpBtn.addEventListener('click', () => {
+        if (typeof window.showMoreHelp === 'function') {
+          window.showMoreHelp();
+        }
+      });
 
       // Auto-remover após 10 segundos
       setTimeout(() => {
@@ -491,7 +515,7 @@
     }
 
     showHelpOptions() {
-      this.showMessage(`
+      const helpContent = `
         Como posso ajudar?
         <br><br>
         • 💬 Configurar chatbot
@@ -503,7 +527,8 @@
         • 🛠️ Resolver problemas
         <br><br>
         Escolha uma opção ou pergunte diretamente!
-      `);
+      `;
+      this.showMessage(helpContent);
     }
 
     showWelcomeMessage() {

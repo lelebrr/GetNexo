@@ -1,192 +1,389 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 
-const title = "Automação WhatsApp com IA Generativa | Crie Chatbots Inteligentes | GetNexo";
-const description = "Plataforma de Automação para WhatsApp com IA (Llama 3/GPT-4). Crie fluxos visuais, recupere carrinhos e atenda 24/7 sem codificação. Teste Grátis!";
-const keywords = "automação whatsapp, chatbot ia whatsapp, ia generativa whatsapp, n8n whatsapp, typebot whatsapp, recuperação de carrinho whatsapp, bot atendimento whatsapp, getnexo automação";
+// SEO Meta Tags
+const title = "Automação WhatsApp com IA Generativa | Chatbots Inteligentes 24/7 | GetNexo";
+const description = "Plataforma completa de automação para WhatsApp com IA Generativa (GPT-4, Claude, Llama). Crie fluxos visuais, recupere carrinhos, atenda 24/7 sem codificação. Teste Grátis!";
+const keywords = "automação whatsapp, chatbot ia whatsapp, ia generativa whatsapp, n8n whatsapp, typebot whatsapp, recuperação de carrinho whatsapp, bot atendimento whatsapp, getnexo automação, chatbot inteligente, fluxo visual automação";
+const canonical = "https://getnexo.com.br/produtos/automacao";
 
-// Schema.org JSON-LD
-const schema = {
+// Structured Data - Organization
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GetNexo",
+  "url": "https://getnexo.com.br",
+  "logo": "https://getnexo.com.br/logo.png",
+  "sameAs": [
+    "https://www.linkedin.com/company/getnexo",
+    "https://twitter.com/getnexo",
+    "https://github.com/getnexo"
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+5511999999999",
+    "contactType": "customer service",
+    "areaServed": "BR",
+    "availableLanguage": "pt-BR"
+  }
+};
+
+// SoftwareApplication Schema with detailed features
+const softwareSchema = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  "name": "GetNexo Automation AI",
+  "name": "GetNexo Automação com IA",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web, iOS, Android",
+  "applicationSuite": "GetNexo Platform",
+  "softwareVersion": "3.0",
   "offers": {
     "@type": "Offer",
     "price": "0",
     "priceCurrency": "BRL",
-    "availability": "https://schema.org/InStock"
+    "availability": "https://schema.org/InStock",
+    "eligibleCustomerType": "https://schema.org/Business",
+    "eligibleDuration": "https://schema.org/Unlimited"
   },
   "aggregateRating": {
     "@type": "AggregateRating",
     "ratingValue": "4.95",
-    "ratingCount": "840"
+    "ratingCount": "840",
+    "bestRating": "5",
+    "worstRating": "1"
   },
-  "description": description,
+  "description": "Plataforma de automação para WhatsApp com IA Generativa. Crie chatbots inteligentes, fluxos visuais, recupere carrinhos e atenda clientes 24/7 sem codificação.",
   "featureList": [
-    "Construtor de Fluxo Visual",
-    "IA Generativa com RAG Local",
-    "Integração Nativa n8n/Typebot",
-    "Webhooks Ilimitados",
-    "Disparo Agendado"
-  ]
+    "Construtor de Fluxo Visual (Drag & Drop)",
+    "IA Generativa com RAG Local e Privacidade",
+    "Integração Nativa n8n/Typebot/Webhooks",
+    "Processamento de Voz (Whisper API)",
+    "Visão Computacional (Análise de Imagens)",
+    "Roteamento Multi-LLM (GPT-4, Claude, Llama)",
+    "Disparo Agendado e Automático",
+    "Analytics e Métricas em Tempo Real"
+  ],
+  "author": {
+    "@type": "Organization",
+    "name": "GetNexo"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "GetNexo"
+  },
+  "datePublished": "2024-01-01",
+  "dateModified": "2026-01-23",
+  "operatingSystem": "Web, iOS, Android",
+  "applicationCategory": "BusinessApplication",
+  "genre": "Automação de Marketing e Vendas",
+  "keywords": "automação whatsapp, chatbot, ia generativa, n8n, typebot, recuperação de carrinho"
 };
 
+// FAQ Schema with comprehensive questions
 const faqSchema = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "A IA substitui humanos?",
+      "name": "A IA substitui humanos no atendimento?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Ela substitui o trabalho repetitivo. A IA tria, qualifica e resolve 80% das dúvidas. Casos complexos ou vendas de alto valor são transferidos automaticamente para sua equipe humana no momento certo."
+        "text": "Não substitui, mas potencializa. A IA tria, qualifica e resolve até 80% das dúvidas repetitivas automaticamente. Casos complexos ou vendas de alto valor são transferidos instantaneamente para sua equipe humana no momento certo, com todo o contexto da conversa."
       }
     },
     {
       "@type": "Question",
-      "name": "Preciso saber programar?",
+      "name": "Preciso saber programar para usar o GetNexo?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Zero código! Nosso construtor é visual (drag & drop). Você arrasta blocos, conecta setas e pronto. Para usuários avançados, temos Low-Code com JavaScript e n8n."
+        "text": "Zero código! Nosso construtor é 100% visual (drag & drop). Você arrasta blocos de ação, conecta setas e cria fluxos complexos em minutos. Para desenvolvedores avançados, oferecemos Low-Code com JavaScript, n8n e API REST completa."
       }
     },
     {
       "@type": "Question",
-      "name": "Funciona com áudio?",
+      "name": "Como funciona o processamento de áudio e voz?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Sim! Graças à tecnologia Whisper (OpenAI), nosso bot ouve, transcreve e entende áudios como se fosse texto. E também pode responder enviando áudio, se configurado."
+        "text": "Graças à tecnologia Whisper da OpenAI, nosso bot ouve, transcreve e entende áudios recebidos em segundos. Ele analisa o conteúdo, extrai intenção e pode responder em texto ou áudio sintético ultra-realista (TTS), mantendo a naturalidade da conversa."
       }
     },
     {
       "@type": "Question",
-      "name": "Posso treinar com meus dados?",
+      "name": "Posso treinar a IA com os dados da minha empresa?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Com certeza. Faça upload ou cole seus PDFs, DOCs e URLs do site. Nossa tecnologia RAG (Retrieval-Augmented Generation) aprende sobre sua empresa em minutos."
+        "text": "Com certeza! Faça upload de PDFs, DOCs, Excel ou cole URLs do seu site. Nossa tecnologia RAG (Retrieval-Augmented Generation) cria um banco de dados vetorial privado que aprende sobre sua empresa em minutos, garantindo respostas precisas sem alucinações."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Qual a diferença entre GetNexo e outros chatbots?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "GetNexo combina automação visual com IA Generativa avançada. Enquanto outros bots usam apenas regras fixas, nossa IA entende contexto, emoção e pode tomar decisões complexas. Além disso, integra nativamente com n8n, Typebot e oferece privacidade total com RAG local."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Funciona com WhatsApp Business oficial?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sim! Utilizamos a API Oficial do WhatsApp Business (Cloud API) da Meta. Isso garante conformidade, alta taxa de entrega, suporte a mídia rica e elimina riscos de bloqueio por uso de ferramentas não autorizadas."
       }
     }
   ]
 };
 
+// Breadcrumb Schema
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Início",
+      "item": "https://getnexo.com.br"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Produtos",
+      "item": "https://getnexo.com.br/produtos"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Automação com IA",
+      "item": "https://getnexo.com.br/produtos/automacao"
+    }
+  ]
+};
+
+// Product Schema for comparison
+const productSchema = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "GetNexo Automação com IA",
+  "description": "Plataforma de automação para WhatsApp com IA Generativa",
+  "brand": {
+    "@type": "Brand",
+    "name": "GetNexo"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "BRL",
+    "availability": "https://schema.org/InStock",
+    "url": "https://getnexo.com.br/produtos/automacao"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.95",
+    "ratingCount": "840"
+  }
+};
+
+// Features data with SEO-rich descriptions
 const aiFeatures = [
   {
     icon: "🧠",
-    title: "RAG Local & Privacidade",
-    desc: "Seus dados não treinam IAs públicas. Usamos Vector DB privado para garantir que o bot saiba tudo sobre SUA empresa, sem alucinações."
+    title: "RAG Local & Privacidade Total",
+    desc: "Seus dados não treinam IAs públicas. Usamos Vector DB privado para garantir que o bot saiba tudo sobre SUA empresa, sem alucinações e com LGPD compliance.",
+    seoKeywords: ["RAG local", "privacidade dados", "vector database", "LGPD compliance"]
   },
   {
     icon: "🔄",
-    title: "Roteamento Multi-LLM",
-    desc: "O sistema escolhe inteligentemente entre GPT-4o, Claude 3.5 ou Llama 3 dependendo da complexidade da pergunta e custo."
+    title: "Roteamento Multi-LLM Inteligente",
+    desc: "O sistema escolhe automaticamente entre GPT-4o, Claude 3.5 ou Llama 3 dependendo da complexidade da pergunta, otimizando custo e qualidade de resposta.",
+    seoKeywords: ["multi-LLM", "GPT-4", "Claude", "Llama", "otimização custo"]
   },
   {
     icon: "🎨",
-    title: "Visão Computacional",
-    desc: "O bot 'enxerga'. Envie a foto de um produto com defeito e ele identifica o problema. Envie um comprovante e ele valida o PIX."
+    title: "Visão Computacional Avançada",
+    desc: "O bot 'enxerga' e analisa imagens. Envie fotos de produtos com defeito e ele identifica problemas. Valide comprovantes de PIX e documentos automaticamente.",
+    seoKeywords: ["visão computacional", "análise imagem", "validação documentos", "reconhecimento visual"]
   },
   {
     icon: "🗣️",
-    title: "Processamento de Voz",
-    desc: "Transcreve áudios recebidos instantaneamente e responde em texto ou áudio sintético ultra-realista (TTS)."
+    title: "Processamento de Voz em Tempo Real",
+    desc: "Transcreve áudios recebidos instantaneamente e responde em texto ou áudio sintético ultra-realista (TTS). Mantém a naturalidade da conversa humana.",
+    seoKeywords: ["processamento voz", "transcrição áudio", "TTS", "whisper api"]
+  },
+  {
+    icon: "⚡",
+    title: "Integração n8n & Webhooks",
+    desc: "Conecte com milhares de ferramentas via n8n ou webhooks. Automatize fluxos complexos entre WhatsApp, CRM, ERP e sistemas internos.",
+    seoKeywords: ["n8n", "webhooks", "integração", "automação empresarial"]
+  },
+  {
+    icon: "📊",
+    title: "Analytics & Métricas",
+    desc: "Acompanhe em tempo real: taxa de conversão, tempo de resposta, satisfação do cliente e ROI de cada campanha. Exporte para BI e planilhas.",
+    seoKeywords: ["analytics", "métricas", "ROI", "dashboard", "relatórios"]
   }
 ];
 
+// Integrations data
 const integrations = [
-  { name: "n8n", icon: "⚡", desc: "Automação infinita open-source" },
-  { name: "Typebot", icon: "🤖", desc: "Construtor visual de conversas" },
-  { name: "ChatGPT", icon: "🧠", desc: "Inteligência Generativa Nativa" },
-  { name: "Webhooks", icon: "🔗", desc: "Conecte com qualquer API REST" },
-  { name: "Google Sheets", icon: "📊", desc: "Banco de dados simples e ágil" },
-  { name: "Stripe/MercadoPago", icon: "💳", desc: "Cobranças direto no chat" }
+  { name: "n8n", icon: "⚡", desc: "Automação infinita open-source", url: "https://n8n.io" },
+  { name: "Typebot", icon: "🤖", desc: "Construtor visual de conversas", url: "https://typebot.io" },
+  { name: "ChatGPT", icon: "🧠", desc: "Inteligência Generativa Nativa", url: "https://openai.com" },
+  { name: "Webhooks", icon: "🔗", desc: "Conecte com qualquer API REST", url: "#" },
+  { name: "Google Sheets", icon: "📊", desc: "Banco de dados simples e ágil", url: "https://sheets.google.com" },
+  { name: "Stripe", icon: "💳", desc: "Cobranças direto no chat", url: "https://stripe.com" },
+  { name: "MercadoPago", icon: "💳", desc: "Pagamentos no Brasil", url: "https://mercadopago.com.br" },
+  { name: "Zapier", icon: "🔗", desc: "Automação no-code", url: "https://zapier.com" }
 ];
+
+// Use cases for SEO
+const useCases = [
+  { icon: "🛒", title: "E-commerce", desc: "Recupere carrinhos abandonados e venda mais", benefit: "Aumento de 35% em conversões" },
+  { icon: "🏥", title: "Clínicas", desc: "Agende consultas e envie lembretes automáticos", benefit: "Redução de 60% em no-shows" },
+  { icon: "🏠", title: "Imobiliárias", desc: "Qualifique leads e agende visitas 24h", benefit: "3x mais visitas agendadas" },
+  { icon: "📚", title: "Educação", desc: "Engaje alunos e automatize matrículas", benefit: "Aumento de 40% em matrículas" },
+  { icon: "🍕", title: "Delivery", desc: "Receba pedidos e confirme pagamentos via PIX", benefit: "Entrega em 2min" },
+  { icon: "💼", title: "Consultoria", desc: "Agende reuniões e qualifique prospects", benefit: "Qualificação 24/7" }
+];
+
+// Comparison data for SEO
+const comparisonData = [
+  {
+    feature: "IA Generativa",
+    getNexo: "✅ GPT-4, Claude, Llama (Multi-LLM)",
+    competitors: "❌ Apenas regras fixas",
+    oldBots: "⚠️ Limitado a palavras-chave"
+  },
+  {
+    feature: "RAG Local",
+    getNexo: "✅ Vector DB privado, sem vazamento",
+    competitors: "❌ Treina em dados públicos",
+    oldBots: "❌ Não possui"
+  },
+  {
+    feature: "Processamento de Voz",
+    getNexo: "✅ Whisper API + TTS ultra-realista",
+    competitors: "❌ Apenas texto",
+    oldBots: "❌ Não possui"
+  },
+  {
+    feature: "Visão Computacional",
+    getNexo: "✅ Analisa imagens e documentos",
+    competitors: "❌ Não possui",
+    oldBots: "❌ Não possui"
+  },
+  {
+    feature: "Integrações",
+    getNexo: "✅ n8n, Webhooks, APIs nativas",
+    competitors: "⚠️ Limitado a Zapier (pago)",
+    oldBots: "❌ Muito limitado"
+  },
+  {
+    feature: "Preço Escala",
+    getNexo: "✅ Fixo (equipe ilimitada)",
+    competitors: "❌ Por usuário/contato",
+    oldBots: "❌ Caro e complexo"
+  }
+];
+
 ---
 
 <Layout title={title} description={description} keywords={keywords}>
 
   <!-- SEO Schemas -->
-  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(softwareSchema)} />
   <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(productSchema)} />
 
   <!-- Hero Section -->
-  <section class="prod-hero relative overflow-hidden">
+  <section class="prod-hero relative overflow-hidden text-center" aria-label="Automação WhatsApp com IA Generativa">
     <!-- Background Effects -->
-    <div class="absolute top-0 right-1/2 translate-x-1/2 w-[800px] h-[600px] bg-purple-500/20 blur-[120px] rounded-full -z-10 animate-pulse-slow"></div>
+    <div class="absolute top-0 right-1/2 translate-x-1/2 w-[800px] h-[600px] bg-neon-blue/20 blur-[120px] rounded-full -z-10 animate-pulse-slow"></div>
 
-    <div class="hero-badge animate-fade-in-up">⚡ Automação de Próxima Geração</div>
-    <h1 class="animate-fade-in-up delay-100">O Cérebro Digital da <br/><span class="text-gradient">Sua Operação</span></h1>
-    <p class="hero-subtitle animate-fade-in-up delay-200">
-      Muito além de um chatbot. Crie fluxos complexos, integre com APIs e use IA Generativa para atender, vender e suportar 24/7.
+    <div class="hero-badge reveal">⚡ Automação de Próxima Geração</div>
+    <h1 class="hero-title reveal leading-tight">
+      Automação WhatsApp com <br/><span class="text-gradient-animated">IA Generativa</span>
+    </h1>
+    <p class="hero-subtitle reveal max-w-3xl mx-auto mb-10">
+      Crie chatbots inteligentes que entendem contexto, emocional e vendem 24/7.
+      <strong>Zero código, 100% visual.</strong> Teste Grátis!
     </p>
 
-    <div class="hero-ctas animate-fade-in-up delay-300">
-      <a href="/criar-bot" class="btn-primary-glow group">
-        Criar Meu Primeiro Bot
+    <div class="hero-ctas reveal">
+      <a href="/criar-bot" class="btn-primary-glow group" aria-label="Criar bot gratuito">
+        Criar Meu Primeiro Bot Grátis
         <span class="group-hover:translate-x-1 transition-transform inline-block">→</span>
       </a>
-      <a href="#como-funciona" class="btn-outline">
-        Ver em Ação 
+      <a href="#como-funciona" class="btn-outline" aria-label="Ver demonstração">
+        Ver Demonstração
       </a>
+    </div>
+
+    <!-- Trust Badges -->
+    <div class="trust-badges reveal">
+      <span class="badge">✅ API Oficial Meta</span>
+      <span class="badge">🔒 LGPD Compliant</span>
+      <span class="badge">⚡ 99.9% Uptime</span>
     </div>
   </section>
 
   <!-- Visual Flow Builder Mockup -->
-  <section class="py-20 px-5 max-w-7xl mx-auto" id="como-funciona">
+  <section class="py-20 px-5 max-w-7xl mx-auto" id="como-funciona" aria-label="Como funciona a automação visual">
     <div class="text-center mb-16">
       <h2 class="text-3xl font-bold text-white mb-4">Construa sem <span class="text-gradient">Programar</span></h2>
-      <p class="text-slate-400 max-w-2xl mx-auto">Arraste, solte e conecte. Nosso construtor visual permite criar desde auto-atendimentos simples até funis de vendas complexos em minutos.</p>
+      <p class="text-slate-400 max-w-2xl mx-auto">Arraste, solte e conecte. Nosso construtor visual permite criar desde auto-atendimentos simples até funis de vendas complexos em minutos. <strong>Zero código necessário.</strong></p>
     </div>
 
-    <div class="glass-panel p-1 rounded-2xl border border-white/10 shadow-2xl relative overflow-hidden group hover:border-primary/30 transition-colors">
-      <div class="bg-[#0f172a] rounded-xl relative h-[500px] w-full overflow-hidden pattern-grid-lg">
+    <div class="glass-panel p-1 rounded-2xl border border-white/10 shadow-2xl relative overflow-hidden group hover:border-neon-blue/30 transition-colors reveal">
+      <div class="bg-void-black rounded-xl relative h-[500px] w-full overflow-hidden pattern-grid-lg">
         
         <!-- Nodes (Simulated) -->
-        <div class="absolute top-10 left-10 bg-[#1e293b] p-4 rounded-lg border border-green-500/50 w-64 shadow-lg">
+        <div class="absolute top-10 left-10 glass-panel p-4 border-neon-green/50 w-64 shadow-lg">
           <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold text-green-400 uppercase tracking-wider">Gatilho</span>
-            <span class="text-slate-500">⚡</span>
+            <span class="text-xs font-bold text-neon-green uppercase tracking-wider">Gatilho</span>
+            <span class="text-text-secondary">⚡</span>
           </div>
           <p class="text-white font-medium text-sm">Mensagem Recebida</p>
-          <div class="mt-2 text-xs text-slate-400">Contém: "preço" ou "orçamento"</div>
+          <div class="mt-2 text-xs text-text-secondary">Contém: "preço" ou "orçamento"</div>
           <!-- Output Dot -->
-          <div class="absolute top-1/2 -right-3 w-4 h-4 bg-slate-500 rounded-full border-4 border-[#0f172a]"></div>
+          <div class="absolute top-1/2 -right-3 w-4 h-4 bg-text-secondary rounded-full border-4 border-void-black"></div>
         </div>
 
         <!-- Connection Line CSS -->
         <svg class="absolute inset-0 w-full h-full pointer-events-none z-0">
-          <path d="M 320 60 C 400 60, 400 150, 480 150" fill="none" stroke="#64748b" stroke-width="2" stroke-dasharray="5,5" class="animate-dash" />
-          <path d="M 730 180 C 800 180, 800 280, 850 280" fill="none" stroke="#64748b" stroke-width="2" />
+          <path d="M 320 60 C 400 60, 400 150, 480 150" fill="none" stroke="var(--text-secondary)" stroke-width="2" stroke-dasharray="5,5" class="animate-dash" />
+          <path d="M 730 180 C 800 180, 800 280, 850 280" fill="none" stroke="var(--text-secondary)" stroke-width="2" />
         </svg>
 
-        <div class="absolute top-28 left-[480px] bg-[#1e293b] p-4 rounded-lg border border-purple-500/50 w-64 shadow-lg z-10">
+        <div class="absolute top-28 left-[480px] glass-panel p-4 border-cyber-gold/50 w-64 shadow-lg z-10">
           <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold text-purple-400 uppercase tracking-wider">Ação IA</span>
-            <span class="text-slate-500">🧠</span>
+            <span class="text-xs font-bold text-cyber-gold uppercase tracking-wider">Ação IA</span>
+            <span class="text-text-secondary">🧠</span>
           </div>
           <p class="text-white font-medium text-sm">Analisar Intenção</p>
-          <div class="mt-2 text-xs text-slate-400">Modelo: GPT-4o Mini</div>
+          <div class="mt-2 text-xs text-text-secondary">Modelo: GPT-4o Mini</div>
           <!-- Input Dot -->
-          <div class="absolute top-1/2 -left-3 w-4 h-4 bg-slate-500 rounded-full border-4 border-[#0f172a]"></div>
+          <div class="absolute top-1/2 -left-3 w-4 h-4 bg-text-secondary rounded-full border-4 border-void-black"></div>
           <!-- Output Dot -->
-          <div class="absolute top-1/2 -right-3 w-4 h-4 bg-slate-500 rounded-full border-4 border-[#0f172a]"></div>
+          <div class="absolute top-1/2 -right-3 w-4 h-4 bg-text-secondary rounded-full border-4 border-void-black"></div>
         </div>
 
-        <div class="absolute top-60 left-[850px] bg-[#1e293b] p-4 rounded-lg border border-blue-500/50 w-64 shadow-lg z-10">
+        <div class="absolute top-60 left-[850px] glass-panel p-4 border-neon-blue/50 w-64 shadow-lg z-10">
           <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold text-blue-400 uppercase tracking-wider">Resposta</span>
-            <span class="text-slate-500">💬</span>
+            <span class="text-xs font-bold text-neon-blue uppercase tracking-wider">Resposta</span>
+            <span class="text-text-secondary">💬</span>
           </div>
           <p class="text-white font-medium text-sm">Enviar Catálogo PDF</p>
-          <div class="mt-2 text-xs text-slate-400">Delay: 2 segundos</div>
+          <div class="mt-2 text-xs text-text-secondary">Delay: 2 segundos</div>
            <!-- Input Dot -->
-           <div class="absolute top-1/2 -left-3 w-4 h-4 bg-slate-500 rounded-full border-4 border-[#0f172a]"></div>
+           <div class="absolute top-1/2 -left-3 w-4 h-4 bg-text-secondary rounded-full border-4 border-void-black"></div>
         </div>
 
         <!-- Floating UI Elements -->
-        <div class="absolute bottom-5 right-5 bg-black/60 backdrop-blur px-4 py-2 rounded-full border border-white/10 text-xs text-slate-300">
+        <div class="absolute bottom-5 right-5 bg-black/60 backdrop-blur px-4 py-2 rounded-full border border-white/10 text-xs text-text-secondary">
           ● Auto-Saving...
         </div>
       </div>
@@ -203,12 +400,12 @@ const integrations = [
 
       <div class="grid md:grid-cols-2 gap-8">
         {aiFeatures.map(feat => (
-          <div class="feature-card glass-panel group hover:bg-white/5">
-            <div class="flex items-start gap-4">
+          <div class="feature-card glass-panel group reveal">
+            <div class="flex items-start gap-4 p-6">
               <span class="text-4xl bg-white/5 p-3 rounded-xl">{feat.icon}</span>
               <div>
-                <h3 class="text-xl font-bold text-white mb-2 group-hover:text-primary transition-colors">{feat.title}</h3>
-                <p class="text-slate-400 leading-relaxed">{feat.desc}</p>
+                <h3 class="text-xl font-bold text-white mb-2 group-hover:text-neon-blue transition-colors">{feat.title}</h3>
+                <p class="text-text-secondary leading-relaxed">{feat.desc}</p>
               </div>
             </div>
           </div>
@@ -311,51 +508,96 @@ const integrations = [
 
 <style>
   /* Base Preserved styles specific to this page */
-  .prod-hero { text-align: center; padding: 12rem 5% 6rem; max-width: 1400px; margin: 0 auto; position: relative; }
+  .prod-hero {
+    text-align: center;
+    padding: 12rem 5% 6rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+  }
   
   .hero-badge {
-    background: rgba(168, 85, 247, 0.1); 
-    color: #a855f7; 
-    padding: 0.5rem 1.5rem; 
-    border-radius: 50px; 
-    font-size: 0.9rem; 
-    font-weight: 700; 
-    display: inline-block; 
-    margin-bottom: 2rem; 
+    background: rgba(168, 85, 247, 0.1);
+    color: #a855f7;
+    padding: 0.5rem 1.5rem;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    display: inline-block;
+    margin-bottom: 2rem;
     border: 1px solid rgba(168, 85, 247, 0.2);
   }
 
-  .prod-hero h1 { font-size: 4rem; margin-bottom: 1.5rem; font-weight: 900; line-height: 1.1; color: white; }
-  .prod-hero h1 .text-gradient { background: linear-gradient(to right, #a855f7, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .prod-hero h1 {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    font-weight: 900;
+    line-height: 1.1;
+    color: white;
+    letter-spacing: -0.02em;
+  }
+  .prod-hero h1 .text-gradient {
+    background: linear-gradient(to right, #a855f7, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
   
-  .hero-subtitle { color: #94a3b8; font-size: 1.4rem; max-width: 800px; margin: 0 auto 3rem; line-height: 1.6; }
-  .hero-ctas { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin-bottom: 3rem; }
+  .hero-subtitle {
+    color: #94a3b8;
+    font-size: 1.4rem;
+    max-width: 800px;
+    margin: 0 auto 3rem;
+    line-height: 1.6;
+  }
+  .hero-ctas {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+  .trust-badges {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+  }
+  .badge {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    color: #94a3b8;
+    font-weight: 600;
+  }
 
-  .btn-primary-glow { 
-    background: linear-gradient(135deg, #a855f7, #ec4899); 
-    color: white; 
-    padding: 1.2rem 2.8rem; 
-    border-radius: 14px; 
-    font-weight: 800; 
-    text-decoration: none; 
-    transition: 0.3s; 
-    box-shadow: 0 10px 40px rgba(168, 85, 247, 0.25); 
-    display: inline-flex; 
-    align-items: center; 
-    gap: 0.5rem; 
+  .btn-primary-glow {
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    color: white;
+    padding: 1.2rem 2.8rem;
+    border-radius: 14px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: 0.3s;
+    box-shadow: 0 10px 40px rgba(168, 85, 247, 0.25);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
   }
   
   .btn-primary-glow:hover { transform: translateY(-4px); box-shadow: 0 20px 50px rgba(168, 85, 247, 0.4); }
 
-  .btn-outline { 
-    border: 1px solid rgba(255,255,255,0.15); 
-    color: white; 
-    padding: 1.2rem 2.8rem; 
-    border-radius: 14px; 
-    font-weight: 700; 
-    text-decoration: none; 
-    background: rgba(255,255,255,0.03); 
-    transition: 0.3s; 
+  .btn-outline {
+    border: 1px solid rgba(255,255,255,0.15);
+    color: white;
+    padding: 1.2rem 2.8rem;
+    border-radius: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    background: rgba(255,255,255,0.03);
+    transition: 0.3s;
   }
   
   .btn-outline:hover { background: rgba(255,255,255,0.1); border-color: #a855f7; }
@@ -383,9 +625,38 @@ const integrations = [
   .delay-100 { animation-delay: 0.1s; }
   .delay-200 { animation-delay: 0.2s; }
   .delay-300 { animation-delay: 0.3s; }
+  .delay-400 { animation-delay: 0.4s; }
 
+  /* Feature cards with SEO keywords */
+  .feature-card {
+    position: relative;
+    overflow: hidden;
+  }
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #a855f7, #ec4899);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+  .feature-card:hover::before {
+    transform: scaleX(1);
+  }
+
+  /* Responsive */
   @media (max-width: 768px) {
     .prod-hero h1 { font-size: 2.5rem; }
+    .hero-subtitle { font-size: 1.1rem; }
     .hero-ctas { flex-direction: column; }
+    .trust-badges { flex-direction: column; gap: 0.5rem; }
+    .badge { font-size: 0.75rem; }
+  }
+
+  @media (max-width: 1024px) {
+    .prod-hero h1 { font-size: 3.5rem; }
   }
 </style>
