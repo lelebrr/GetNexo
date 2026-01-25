@@ -2316,11 +2316,32 @@ const clientId = Astro.locals.clientId || 'default';
       bottom: 40px;
       left: 24px;
       display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 80px; /* Gap solicitado de 80px */
+      flex-direction: column; /* normal: Tour em cima, Acessibilidade embaixo */
+      gap: 80px; /* 80px desktop */
       z-index: 9999;
       pointer-events: none;
+    }
+
+    .dock-left > * {
+      pointer-events: auto;
+    }
+
+    /* Força os botões a seguirem o fluxo do dock (remove fixed interno) */
+    #tour-btn,
+    #acc-widget-root {
+      position: static !important;
+      bottom: auto !important;
+      left: auto !important;
+      right: auto !important;
+    }
+
+    /* Mobile: reduz gap pra não ficar muito alto */
+    @media (max-width: 768px) {
+      .dock-left {
+        gap: 60px;
+        left: 20px;
+        bottom: 30px;
+      }
     }
     .dock-right {
       position: fixed; bottom: 24px; right: 24px;
@@ -2334,9 +2355,6 @@ const clientId = Astro.locals.clientId || 'default';
     }
 
     /* Força os botões a saírem do fixed e entrarem no fluxo do dock */
-    #acc-widget-root,
-    #tour-btn,
-    .tour-trigger-btn,
     .whatsapp-float-btn {
       position: static !important;
       margin: 0 !important;
@@ -2349,7 +2367,6 @@ const clientId = Astro.locals.clientId || 'default';
     }
 
     @media (max-width: 768px) {
-        .dock-left { bottom: 20px; left: 16px; gap: 60px; }
         .dock-right { bottom: 10px; right: 10px; gap: 8px; }
     }
   </style>
