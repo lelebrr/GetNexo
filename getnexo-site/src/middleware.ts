@@ -12,16 +12,16 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
     const response = await next();
 
-    // Configurar CSP dinâmico com o nonce
-    // Nota: 'unsafe-eval' mantido por compatibilidade com algumas libs (hotjar, etc) se necessário
+    // Configurar CSP dinâmico - Modo Permissivo para Debug
+    // Removido strict-dynamic para permitir whitelists normais
     const csp = [
-        `default-src 'self'`,
-        `script-src 'self' 'nonce-${nonce}' 'unsafe-inline' 'unsafe-eval' https: http: *.getnexo.com.br *.cloudflare.com *.googletagmanager.com`,
-        `style-src 'self' 'unsafe-inline' https: http:`,
-        `img-src 'self' data: blob: https: http:`,
-        `font-src 'self' data: https: http:`,
-        `connect-src 'self' https: http: wss: ws:`,
-        `frame-src 'self' https: http:`,
+        `default-src 'self' *`,
+        `script-src 'self' 'unsafe-inline' 'unsafe-eval' * blob: data:`,
+        `style-src 'self' 'unsafe-inline' *`,
+        `img-src 'self' data: blob: *`,
+        `font-src 'self' data: *`,
+        `connect-src 'self' *`,
+        `frame-src 'self' *`,
         `object-src 'none'`,
         `base-uri 'self'`,
         `form-action 'self'`,

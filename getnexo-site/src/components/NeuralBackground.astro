@@ -304,142 +304,148 @@ const { nonce } = Astro.props;
 </style>
 
 <script nonce={nonce}>
-  class NeuralBackground {
-    constructor() {
-      this.canvas = document.getElementById('neural-canvas-primary');
-      if (!this.canvas) return;
+  (function() {
+    if (window.NeuralBackground) return;
 
-      this.ctx = this.canvas.getContext('2d');
-      this.nodes = [];
-      this.connections = [];
-      this.animationId = null;
-      this.mouse = { x: 0, y: 0 };
+    class NeuralBackground {
+      constructor() {
+        this.canvas = document.getElementById('neural-canvas-primary');
+        if (!this.canvas) return;
 
-      this.init();
-      this.animate();
-      this.bindEvents();
-    }
+        this.ctx = this.canvas.getContext('2d');
+        this.nodes = [];
+        this.connections = [];
+        this.animationId = null;
+        this.mouse = { x: 0, y: 0 };
 
-    init() {
-      this.resize();
-      this.createNodes();
-      this.createConnections();
-    }
+        this.init();
+        this.animate();
+        this.bindEvents();
+      }
 
-    resize() {
-      const rect = this.canvas.getBoundingClientRect();
-      this.canvas.width = rect.width * window.devicePixelRatio;
-      this.canvas.height = rect.height * window.devicePixelRatio;
-      this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-      this.canvas.style.width = rect.width + 'px';
-      this.canvas.style.height = rect.height + 'px';
-    }
+      init() {
+        this.resize();
+        this.createNodes();
+        this.createConnections();
+      }
 
-    createNodes() {
-      this.nodes = [];
-      for (let i = 0; i < 15; i++) {
-        this.nodes.push({
-          x: Math.random() * this.canvas.offsetWidth,
-          y: Math.random() * this.canvas.offsetHeight,
-          vx: (Math.random() - 0.5) * 0.5,
-          vy: (Math.random() - 0.5) * 0.5,
-          radius: Math.random() * 3 + 1,
-          alpha: Math.random() * 0.5 + 0.2
+      resize() {
+        const rect = this.canvas.getBoundingClientRect();
+        this.canvas.width = rect.width * window.devicePixelRatio;
+        this.canvas.height = rect.height * window.devicePixelRatio;
+        this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        this.canvas.style.width = rect.width + 'px';
+        this.canvas.style.height = rect.height + 'px';
+      }
+
+      createNodes() {
+        this.nodes = [];
+        for (let i = 0; i < 15; i++) {
+          this.nodes.push({
+            x: Math.random() * this.canvas.offsetWidth,
+            y: Math.random() * this.canvas.offsetHeight,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
+            radius: Math.random() * 3 + 1,
+            alpha: Math.random() * 0.5 + 0.2
+          });
+        }
+      }
+
+      createConnections() {
+        this.connections = [];
+        for (let i = 0; i < this.nodes.length; i++) {
+          for (let j = i + 1; j < this.nodes.length; j++) {
+            const dx = this.nodes[i].x - this.nodes[j].x;
+            const dy = this.nodes[i].y - this.nodes[j].y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < 150) {
+              this.connections.push({
+                from: i,
+                to: j,
+                alpha: (150 - distance) / 150 * 0.3
+              });
+            }
+          }
+        }
+      }
+
+      animate() {
+        this.ctx.clearRect(0, 0, this.canvas.offsetWidth, this.canvas.offsetHeight);
+
+        // Update nodes
+        this.nodes.forEach(node => {
+          node.x += node.vx;
+          node.y += node.vy;
+
+          // Bounce off edges
+          if (node.x <= 0 || node.x >= this.canvas.offsetWidth) node.vx *= -1;
+          if (node.y <= 0 || node.y >= this.canvas.offsetHeight) node.vy *= -1;
+
+          // Mouse interaction
+          const dx = node.x - this.mouse.x;
+          const dy = node.y - this.mouse.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < 100) {
+            node.vx += dx * 0.0001;
+            node.vy += dy * 0.0001;
+          }
+
+          // Draw node
+          this.ctx.beginPath();
+          this.ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+          this.ctx.fillStyle = `rgba(0, 212, 255, ${node.alpha})`;
+          this.ctx.fill();
+        });
+
+        // Draw connections
+        this.connections.forEach(conn => {
+          const from = this.nodes[conn.from];
+          const to = this.nodes[conn.to];
+
+          this.ctx.beginPath();
+          this.ctx.moveTo(from.x, from.y);
+          this.ctx.lineTo(to.x, to.y);
+          this.ctx.strokeStyle = `rgba(0, 255, 157, ${conn.alpha})`;
+          this.ctx.lineWidth = 0.5;
+          this.ctx.stroke();
+        });
+
+        this.animationId = requestAnimationFrame(() => this.animate());
+      }
+
+      bindEvents() {
+        const handleMouseMove = (e) => {
+          const rect = this.canvas.getBoundingClientRect();
+          this.mouse.x = e.clientX - rect.left;
+          this.mouse.y = e.clientY - rect.top;
+        };
+
+        const handleResize = () => {
+          this.resize();
+          this.createNodes();
+        };
+
+        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('resize', handleResize);
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+          if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+          }
         });
       }
     }
 
-    createConnections() {
-      this.connections = [];
-      for (let i = 0; i < this.nodes.length; i++) {
-        for (let j = i + 1; j < this.nodes.length; j++) {
-          const dx = this.nodes[i].x - this.nodes[j].x;
-          const dy = this.nodes[i].y - this.nodes[j].y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-
-          if (distance < 150) {
-            this.connections.push({
-              from: i,
-              to: j,
-              alpha: (150 - distance) / 150 * 0.3
-            });
-          }
-        }
-      }
-    }
-
-    animate() {
-      this.ctx.clearRect(0, 0, this.canvas.offsetWidth, this.canvas.offsetHeight);
-
-      // Update nodes
-      this.nodes.forEach(node => {
-        node.x += node.vx;
-        node.y += node.vy;
-
-        // Bounce off edges
-        if (node.x <= 0 || node.x >= this.canvas.offsetWidth) node.vx *= -1;
-        if (node.y <= 0 || node.y >= this.canvas.offsetHeight) node.vy *= -1;
-
-        // Mouse interaction
-        const dx = node.x - this.mouse.x;
-        const dy = node.y - this.mouse.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance < 100) {
-          node.vx += dx * 0.0001;
-          node.vy += dy * 0.0001;
-        }
-
-        // Draw node
-        this.ctx.beginPath();
-        this.ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
-        this.ctx.fillStyle = `rgba(0, 212, 255, ${node.alpha})`;
-        this.ctx.fill();
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+         window.NeuralBackground = new NeuralBackground();
       });
-
-      // Draw connections
-      this.connections.forEach(conn => {
-        const from = this.nodes[conn.from];
-        const to = this.nodes[conn.to];
-
-        this.ctx.beginPath();
-        this.ctx.moveTo(from.x, from.y);
-        this.ctx.lineTo(to.x, to.y);
-        this.ctx.strokeStyle = `rgba(0, 255, 157, ${conn.alpha})`;
-        this.ctx.lineWidth = 0.5;
-        this.ctx.stroke();
-      });
-
-      this.animationId = requestAnimationFrame(() => this.animate());
+    } else {
+       window.NeuralBackground = new NeuralBackground();
     }
-
-    bindEvents() {
-      const handleMouseMove = (e) => {
-        const rect = this.canvas.getBoundingClientRect();
-        this.mouse.x = e.clientX - rect.left;
-        this.mouse.y = e.clientY - rect.top;
-      };
-
-      const handleResize = () => {
-        this.resize();
-        this.createNodes();
-      };
-
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('resize', handleResize);
-
-      // Cleanup on page unload
-      window.addEventListener('beforeunload', () => {
-        if (this.animationId) {
-          cancelAnimationFrame(this.animationId);
-        }
-      });
-    }
-  }
-
-  // Initialize when DOM is ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => new NeuralBackground());
-  } else {
-    new NeuralBackground();
-  }
+  })();
 </script>

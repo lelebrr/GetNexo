@@ -46,16 +46,19 @@
 
         if (!policy && window.trustedTypes && window.trustedTypes.createPolicy) {
             try {
-                // Check if policy already exists to avoid error
-                if (!window.trustedTypes.getAttributeType || !window.trustedTypes.getAttributeType('getnexo-trusted')) {
-                    policy = window.trustedTypes.createPolicy('getnexo-trusted', {
-                        createHTML: (string) => string
-                    });
-                    window.getnexoPolicy = policy;
-                }
+                // Tenta criar a política. Se já existir (erro duplicate), pegamos a referência se possível ou ignoramos.
+                // O check getAttributeType não é suportado em todos os browsers da mesma forma.
+                policy = window.trustedTypes.createPolicy('getnexo-trusted', {
+                    createHTML: (string) => string
+                });
+                window.getnexoPolicy = policy;
             } catch (e) {
-                // Fallback: try getting default policy or just ignore if already exists
-                console.warn('TrustedTypes policy creation failed or exists:', e);
+                // Política já existe ou erro de criação.
+                console.warn('TrustedTypes policy creation note:', e);
+                // Tenta recuperar se possível, ou usa default
+                if (window.trustedTypes.defaultPolicy) {
+                    policy = window.trustedTypes.defaultPolicy;
+                }
             }
         }
 

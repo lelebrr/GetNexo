@@ -86,10 +86,11 @@ const clientId = Astro.locals.clientId || 'default';
 <html lang={lang} data-bg-type="animated">
 <head>
   <!-- Trusted Types Policy Script (carregado com nonce do CSP) -->
-  <script is:inline src="/custom/js/trusted-types-policy.js" nonce={nonce}></script>
+  <!-- Trusted Types Policy Script -->
+  <script is:inline src="/custom/js/trusted-types-policy.js"></script>
   
   <!-- Gerenciador de Fundo Instantâneo - BLOQUEANTE E NO TOPO PARA EVITAR FLICKER -->
-  <script is:inline nonce={nonce} define:vars={{ trustedTypesPolicy }}>
+  <script is:inline define:vars={{ trustedTypesPolicy }}>
     (function() {
       try {
         const bgType = localStorage.getItem('getnexo-bg-type') || 'animated';
@@ -419,7 +420,7 @@ const clientId = Astro.locals.clientId || 'default';
       background: rgba(0,255,157,0.1);
     }
 
-    .global-footer { padding: 4rem 5% 2rem !important; background: #020617 !important; border-top: 1px solid rgba(255,255,255,0.05) !important; margin-top: 2rem !important; position: relative !important; z-index: 10 !important; width: 100% !important; display: block !important; }
+    .global-footer { padding: 4rem 5% 0.5rem !important; background: transparent !important; border-top: none !important; margin-top: 2rem !important; position: relative !important; z-index: 10 !important; width: 100% !important; display: block !important; }
     .footer-grid { display: grid !important; grid-template-columns: 1.2fr repeat(4, 1fr) !important; gap: 2rem !important; max-width: 1300px !important; margin: 0 auto !important; text-align: left !important; }
     .footer-col h3.footer-title { color: white; margin-bottom: 1.2rem; font-size: 0.9rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; opacity: 0.8; white-space: pre-line; }
     .footer-links { display: flex; flex-direction: column; gap: 0.8rem; }
@@ -546,7 +547,10 @@ const clientId = Astro.locals.clientId || 'default';
       margin: 4rem 0;
     }
 
-    .security-container { max-width: 1200px; margin: 0 auto; }
+    .security-container { 
+      max-width: 1200px; 
+      margin: 0 auto; 
+    }
 
     .security-title {
       text-align: center;
@@ -854,7 +858,7 @@ const clientId = Astro.locals.clientId || 'default';
   </style>
 </head>
 <body>
-  <NeuralBackground />
+
   <div class="skip-links">
     <a href="#main-content" class="skip-link">Pular para conteúdo principal</a>
     <a href="#main-nav" class="skip-link">Pular para navegação</a>
@@ -1294,7 +1298,7 @@ const clientId = Astro.locals.clientId || 'default';
           <span>FR</span>
         </a>
       </div>
-      <p>{t.footer.rights} | <strong>GetNexo</strong>: A vanguarda em Automação WhatsApp e IA para Negócios.</p>
+      <p>{t.footer.rights}</p>
     </div>
   </footer>
 
@@ -1499,7 +1503,9 @@ const clientId = Astro.locals.clientId || 'default';
         window.addEventListener('load', loadWidget);
       }
     })(document,"script");
+  </script>
 
+  <script is:inline>
     // Mobile Menu Toggle Logic
     document.addEventListener('DOMContentLoaded', () => {
       const menuBtn = document.getElementById('mobile-menu-btn');
@@ -1565,8 +1571,9 @@ const clientId = Astro.locals.clientId || 'default';
         });
       }
     });
+  </script>
 
-  <script is:inline nonce={nonce}>
+  <script is:inline>
     // Detecção de Feriados Festivos com Sistema Completo
     (async function() {
       try {
@@ -2413,5 +2420,15 @@ const clientId = Astro.locals.clientId || 'default';
     });
   </script>
 
+  <style is:global>
+    body, html {
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+  </style>
 </body>
 </html>

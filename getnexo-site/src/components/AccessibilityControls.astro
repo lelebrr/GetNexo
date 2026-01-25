@@ -1,543 +1,648 @@
 ---
-// Componente de Controles de Acessibilidade WCAG AA
+// Componente de Controles de Acessibilidade - Premium & Robust
+// Uses scoped CSS to guarantee appearance independent of global Tailwind config
 export interface Props {
   showPanel?: boolean;
-  nonce?: string;
 }
 
-const { showPanel = true, nonce } = Astro.props;
+const { showPanel = true } = Astro.props;
 ---
 
-  <div id="accessibility-panel" class="accessibility-panel fixed bottom-[100px] left-6 z-[10000] bg-[#030712]/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 p-6 w-[280px] transition-all duration-300 pointer-events-none opacity-0 invisible translate-y-4 hidden-forced">
-    <div class="flex items-center justify-between mb-4 border-b border-white/5 pb-2">
-      <h3 class="text-sm font-bold text-white flex items-center">
-        <span class="mr-2 text-[#00d4ff]">♿</span>
-        Acessibilidade
+<div id="acc-widget-root">
+  <!-- Trigger Button -->
+  <button id="acc-trigger" aria-label="Abrir menu de acessibilidade" title="Acessibilidade">
+    <!-- Wheelchair Icon (Highly Visible) -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="24" height="24" fill="white">
+      <path d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm312 240l-28.7-22.9C381.1 254.9 368 239.1 368 221.9V160c0-17.7-14.3-32-32-32H200c-17.7 0-32 14.3-32 32v128c0 17.7 14.3 32 32 32h16v128c0 17.7 14.3 32 32 32s32-14.3 32-32V320h44.1l63.5 50.8c5.4 4.3 11.8 6.5 18.3 6.5s12.9-2.2 18.3-6.5c10.8-8.6 12.6-24.3 4-35.1l-14.2-11.4zM128 320c-35.3 0-64 28.7-64 64s28.7 64 64 64s64-28.7 64-64s-28.7-64-64-64zm0 192c-106 0-192-86-192-192s86-192 192-192c26.1 0 51.1 5.2 73.9 14.7l-41.2 30.9C143.4 163.1 135.8 160 128 160c-106 0-192 86-192 192s86 192 192 192c7.8 0 15.4-3.1 32.7-12.6l-41.2-30.9zm256-128c0-70.7-57.3-128-128-128s-128 57.3-128 128s57.3 128 128 128s128-57.3 128-128z" />
+    </svg>
+    <span class="sr-only">Acessibilidade</span>
+  </button>
+
+  <!-- Panel -->
+  <div id="acc-panel" class="hidden">
+    <div class="acc-header">
+      <h3>
+        <span class="icon">♿</span> Acessibilidade
       </h3>
-      <button
-        id="accessibility-close"
-        class="text-gray-400 hover:text-white text-2xl leading-none transition-colors"
-        aria-label="Fechar painel de acessibilidade"
-      >
-        ×
-      </button>
+      <button id="acc-close" aria-label="Fechar painel">&times;</button>
     </div>
 
-    <div class="space-y-5">
-      <!-- Controle de Zoom -->
-      <div class="flex flex-col gap-2">
-        <label for="zoom-control" class="text-[10px] uppercase tracking-wider font-bold text-gray-500 flex items-center">
-          <span class="mr-2 text-[#00d4ff]">🔍</span>
-          Ajustar Zoom
-        </label>
-        <div class="flex items-center justify-between bg-white/5 rounded-xl p-2 border border-white/5">
-          <button id="zoom-decrease" class="w-8 h-8 flex items-center justify-center text-lg bg-white/10 hover:bg-[#00d4ff] hover:text-black rounded-lg transition-all">-</button>
-          <span id="zoom-level" class="text-xs font-black min-w-[3rem] text-center text-white">100%</span>
-          <button id="zoom-increase" class="w-8 h-8 flex items-center justify-center text-lg bg-white/10 hover:bg-[#00d4ff] hover:text-black rounded-lg transition-all">+</button>
+    <div class="acc-content">
+      
+      <!-- Feature Grid -->
+      <div class="acc-grid">
+        <!-- Font Size -->
+        <div class="acc-item full-width">
+          <label>Tamanho da Fonte</label>
+          <div class="acc-buttons-row">
+            <button id="zoom-out" aria-label="Diminuir fonte">-</button>
+            <span id="zoom-display">100%</span>
+            <button id="zoom-in" aria-label="Aumentar fonte">+</button>
+          </div>
         </div>
-      </div>
 
-      <!-- Modo Acessibilidade -->
-      <div class="flex items-center justify-between bg-white/5 rounded-xl p-3 border border-white/5">
-        <label class="text-[10px] uppercase tracking-wider font-bold text-gray-500">Auto-Contraste</label>
-        <button id="accessibility-mode-toggle" class="relative inline-flex h-6 w-11 items-center rounded-full bg-white/10 transition-colors">
-          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-1 shadow-sm"></span>
+        <!-- Tour Guided (Integrated) -->
+        <button class="acc-toggle-btn tour-btn" id="trigger-tour">
+          <span class="icon">🎯</span>
+          <span>Iniciar Tour</span>
+        </button>
+
+        <!-- Legible Font -->
+        <button class="acc-toggle-btn" id="toggle-font">
+          <span class="icon">Aa</span>
+          <span>Fonte Legível</span>
+        </button>
+
+        <!-- Highlight Links -->
+        <button class="acc-toggle-btn" id="toggle-highlight">
+          <span class="icon">🔗</span>
+          <span>Links</span>
+        </button>
+
+        <!-- Big Cursor -->
+        <button class="acc-toggle-btn" id="toggle-cursor">
+          <span class="icon">👆</span>
+          <span>Cursor</span>
+        </button>
+
+        <!-- Monochrome -->
+        <button class="acc-toggle-btn" id="toggle-mono">
+          <span class="icon">🌗</span>
+          <span>P&B</span>
+        </button>
+
+        <!-- Contrast -->
+        <button class="acc-toggle-btn" id="toggle-contrast">
+          <span class="icon">👁️</span>
+          <span>Contraste</span>
+        </button>
+
+         <!-- Stop Animations -->
+         <button class="acc-toggle-btn" id="toggle-motion">
+          <span class="icon">⏹️</span>
+          <span>Parar Anim.</span>
         </button>
       </div>
 
+      <!-- Reading Guide Control -->
+      <div class="acc-control-group row top-border">
+        <label>Guia de Leitura</label>
+        <div class="acc-toggle-wrapper">
+          <input type="checkbox" id="toggle-guide">
+          <label for="toggle-guide" class="acc-toggle-label"></label>
+        </div>
+      </div>
+
       <!-- Reset -->
-      <button id="accessibility-reset" class="w-full py-3 px-4 text-[10px] uppercase tracking-widest font-black bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl hover:bg-red-500 hover:text-white transition-all duration-300">
-        ✨ Resetar Padrão
-      </button>
+      <button id="acc-reset">Restaurar Padrão</button>
     </div>
   </div>
+</div>
 
-<!-- Minimized Circle Trigger -->
-<button
-  id="accessibility-trigger"
-  class="accessibility-trigger"
-  aria-label="Abrir painel de acessibilidade"
->
-  <span class="acc-icon">♿</span>
-</button>
+<!-- Reading Guide Element -->
+<div id="reading-guide-line"></div>
 
-<style>
-  .accessibility-trigger {
-    width: 56px;
-    height: 56px;
-    background: #007acc;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    cursor: pointer;
-    box-shadow: 0 10px 30px rgba(0, 122, 204, 0.4);
-    border: 2px solid rgba(255,255,255,0.2);
-    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-    pointer-events: auto;
+<style is:global>
+  /* Global CSS to guarantee look and feel and avoid scoping issues */
+  #acc-widget-root {
     position: fixed;
     bottom: 30px;
     left: 30px;
-    z-index: 9999;
-  }
-  .accessibility-trigger:hover {
-    transform: scale(1.1) rotate(5deg);
-    box-shadow: 0 15px 40px rgba(0, 122, 204, 0.6);
-  }
-  @media (max-width: 768px) {
-    .accessibility-trigger {
-      width: 48px;
-      height: 48px;
-      font-size: 1.2rem;
-    }
-  }
-</style>
-
-<!-- Accessibility Styles -->
-<style>
-  .accessibility-panel {
-    font-family: system-ui, -apple-system, sans-serif;
+    z-index: 99999999;
+    font-family: 'Inter', system-ui, sans-serif;
+    /* Reset font size on the widget container to 16px fixed, so it doesn't inherit root scaling */
+    font-size: 16px !important;
   }
 
-  /* High Contrast Mode */
-  .high-contrast {
-    filter: contrast(150%);
+  /* Trigger Button - Smaller */
+  #acc-trigger {
+    width: 48px; /* 3rem */
+    height: 48px; /* 3rem */
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00d4ff, #0056b3);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: auto;
   }
 
-  .high-contrast * {
-    border-color: #000 !important;
+  #acc-trigger:hover {
+    transform: scale(1.1) rotate(10deg);
+    box-shadow: 0 12px 24px rgba(0, 212, 255, 0.4);
   }
 
-  /* Reduced Motion */
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-    }
+  #acc-trigger svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
   }
 
-  .reduced-motion * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-
-  /* Focus Styles for Keyboard Navigation */
-  .keyboard-navigation *:focus {
-    outline: 3px solid #007acc !important;
-    outline-offset: 2px !important;
-  }
-
-  /* Screen Reader Only */
-  .sr-only {
+  /* The Panel - Compact & Responsive */
+  #acc-panel {
+    display: none; /* Critical: hidden by default */
     position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
+    bottom: 64px; /* 4rem -> 64px, nicely above button */
+    left: 0;
+    width: 260px; /* Fixed width */
+    background-color: #0f172a !important; /* Force Solid Slate 900 */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
     overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
+    color: white;
+    z-index: 99999999;
+    transform-origin: bottom left;
   }
 
-  .sr-only.focus:not-sr-only {
-    position: static;
-    width: auto;
-    height: auto;
-    padding: inherit;
-    margin: inherit;
-    overflow: visible;
-    clip: auto;
-    white-space: normal;
+  /* Responsive fixes */
+  @media (max-width: 480px) {
+    #acc-panel {
+      width: 240px;
+      bottom: 56px; /* 3.5rem equivalent */
+    }
+  }
+
+  #acc-panel.open {
+    display: block !important;
+    animation: slideUp 0.3s ease-out;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(10px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* Header - Compact */
+  .acc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px; /* 0.75rem 1rem */
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .acc-header h3 {
+    margin: 0;
+    font-size: 13.6px; /* 0.85rem */
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6.4px; /* 0.4rem */
+    color: white;
+  }
+
+  #acc-close {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 20px; /* 1.25rem */
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    transition: color 0.2s;
+  }
+
+  #acc-close:hover {
+    color: white;
+  }
+
+  /* Content - Compact */
+  .acc-content {
+    padding: 16px; /* 1rem */
+    display: flex;
+    flex-direction: column;
+    gap: 12.8px; /* 0.8rem */
+    background: #0f172a;
+  }
+
+  /* Grid Layout - Tighter gap */
+  .acc-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px; /* 0.5rem */
+  }
+
+  .acc-item.full-width {
+    grid-column: span 2;
+    margin-bottom: 4px; /* 0.25rem */
+  }
+
+  .acc-item label {
+    display: block;
+    font-size: 11.2px; /* 0.7rem */
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+    color: #94a3b8;
+    margin-bottom: 6.4px; /* 0.4rem */
+  }
+
+  /* Toggle Buttons - Compact */
+  .acc-toggle-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 9.6px 6.4px; /* 0.6rem 0.4rem */
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 11.2px; /* 0.7rem */
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4.8px; /* 0.3rem */
+    transition: all 0.2s;
+  }
+
+  .acc-toggle-btn .icon {
+    font-size: 17.6px; /* 1.1rem */
+    margin-bottom: 1.6px; /* 0.1rem */
+  }
+
+  .acc-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+
+  .acc-toggle-btn.active {
+    background: rgba(0, 212, 255, 0.15);
+    color: #00d4ff;
+    border-color: rgba(0, 212, 255, 0.3);
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.1);
+  }
+
+  /* Tour Button Style */
+  .acc-toggle-btn.tour-btn {
+    border-color: rgba(147, 51, 234, 0.3);
+    background: rgba(147, 51, 234, 0.05);
+    color: #c084fc;
+  }
+  .acc-toggle-btn.tour-btn:hover {
+    background: rgba(147, 51, 234, 0.15);
+    color: white;
+  }
+
+  /* Zoom Control - Compact */
+  .acc-buttons-row {
+    display: flex;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    padding: 3px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .acc-buttons-row button {
+    width: 32px; /* 2rem */
+    height: 28.8px; /* 1.8rem */
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px; /* 1rem */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+
+  .acc-buttons-row button:hover {
+    background: rgba(0, 212, 255, 0.2);
+    color: #00d4ff;
+  }
+
+  #zoom-display {
+    flex: 1;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    font-size: 12.8px; /* 0.8rem */
+    color: white;
+  }
+
+  /* Reading Guide Toggle Row */
+  .acc-control-group.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .top-border {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 12.8px; /* 0.8rem */
+  }
+
+  .acc-toggle-wrapper {
+    position: relative;
+    width: 36px;
+    height: 20px;
+  }
+
+  .acc-toggle-wrapper input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .acc-toggle-label {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #334155;
+    transition: .4s;
+    border-radius: 34px;
+  }
+
+  .acc-toggle-label:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+  }
+
+  input:checked + .acc-toggle-label {
+    background-color: #00d4ff;
+  }
+
+  input:checked + .acc-toggle-label:before {
+    transform: translateX(16px);
+  }
+
+  /* Reset Button - Compact */
+  #acc-reset {
+    width: 100%;
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    padding: 9.6px; /* 0.6rem */
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 12px; /* 0.75rem */
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  #acc-reset:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: white;
+  }
+
+  /* Reading Guide Line */
+  #reading-guide-line {
+    position: fixed;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background-color: rgba(255, 255, 0, 0.5);
+    box-shadow: 0 0 0 10000px rgba(0, 0, 0, 0.3);
+    z-index: 2147483640;
+    pointer-events: none;
+    display: none;
+    transform: translateY(-50%);
+  }
+  #reading-guide-line.active {
+    display: block;
+  }
+
+  /* Global Accessibility Classes (Body) */
+  body.acc-dyslexia {
+    font-family: 'Open Sans', 'Arial', sans-serif !important;
+    line-height: 1.8 !important;
+    letter-spacing: 0.05em !important;
+  }
+  body.acc-dyslexia p, 
+  body.acc-dyslexia h1, 
+  body.acc-dyslexia h2, 
+  body.acc-dyslexia h3, 
+  body.acc-dyslexia span {
+    word-spacing: 0.1em;
+  }
+
+  body.acc-cursor {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewport="0 0 48 48" style="fill:black;stroke:white;stroke-width:2px;"><path d="M10 40L40 24L10 8z"/></svg>') 0 0, auto !important;
+  }
+  body.acc-cursor a, 
+  body.acc-cursor button {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewport="0 0 48 48" style="fill:yellow;stroke:black;stroke-width:2px;"><path d="M10 40L40 24L10 8z"/></svg>') 0 0, pointer !important;
+  }
+
+  body.acc-highlight-links a {
+    text-decoration: underline !important;
+    background-color: rgba(255, 255, 0, 0.2) !important;
+    color: #black !important;
+  }
+  body.acc-highlight-links button {
+    outline: 2px solid yellow !important;
+  }
+
+  body.acc-monochrome {
+    filter: grayscale(100%) !important;
+  }
+
+  body.acc-stop-motion *,
+  body.acc-stop-motion *::before,
+  body.acc-stop-motion *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+
+  body.high-contrast {
+    background-color: #000000 !important;
+    color: #ffff00 !important;
+    border-color: #ffff00 !important;
+  }
+  body.high-contrast button {
+    background-color: #ffff00 !important;
+    color: #000000 !important;
   }
 </style>
 
-<!-- Accessibility JavaScript -->
-<script nonce={nonce}>
-  // Accessibility State
-  let accessibilityState = {
-    zoom: 1,
-    reducedMotion: false,
-    highContrast: false,
-    keyboardNavigation: false,
-    screenReader: false,
-    accessibilityMode: false
-  };
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Elements
+    const trigger = document.getElementById('acc-trigger');
+    const panel = document.getElementById('acc-panel');
+    const closeBtn = document.getElementById('acc-close');
+    const resetBtn = document.getElementById('acc-reset');
+    const zoomDisplay = document.getElementById('zoom-display');
+    const readingGuide = document.getElementById('reading-guide-line');
+    const tourTrigger = document.getElementById('trigger-tour');
 
-  // Load saved preferences
-  function loadAccessibilityPreferences() {
-    const saved = localStorage.getItem('accessibility-preferences');
-    if (saved) {
-      accessibilityState = { ...accessibilityState, ...JSON.parse(saved) };
-      applyAccessibilitySettings();
-      updateUI();
-    }
-
-    // Check system preferences
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      accessibilityState.reducedMotion = true;
-    }
-  }
-
-  // Save preferences
-  function saveAccessibilityPreferences() {
-    localStorage.setItem('accessibility-preferences', JSON.stringify(accessibilityState));
-  }
-
-  // Apply all settings
-  function applyAccessibilitySettings() {
-    const body = document.body;
-
-    // Zoom
-    body.style.zoom = accessibilityState.zoom;
-    body.style.transform = `scale(${accessibilityState.zoom})`;
-    body.style.transformOrigin = 'top left';
-
-    // Reduced Motion
-    if (accessibilityState.reducedMotion) {
-      body.classList.add('reduced-motion');
-    } else {
-      body.classList.remove('reduced-motion');
-    }
-
-    // High Contrast
-    if (accessibilityState.highContrast) {
-      body.classList.add('high-contrast');
-    } else {
-      body.classList.remove('high-contrast');
-    }
-
-    // Keyboard Navigation
-    if (accessibilityState.keyboardNavigation) {
-      body.classList.add('keyboard-navigation');
-    } else {
-      body.classList.remove('keyboard-navigation');
-    }
-  }
-
-  // Update UI elements
-  function updateUI() {
-    // Update zoom level
-    const zoomLevel = document.getElementById('zoom-level');
-    if (zoomLevel) {
-      zoomLevel.textContent = Math.round(accessibilityState.zoom * 100) + '%';
-    }
-
-    // Update toggles
-    updateToggle('accessibility-mode-toggle', accessibilityState.accessibilityMode);
-    updateToggle('keyboard-nav-toggle', accessibilityState.keyboardNavigation);
-  }
-
-  function updateToggle(toggleId, state) {
-    const toggle = document.getElementById(toggleId);
-    if (toggle) {
-      const span = toggle.querySelector('span');
-      if (state) {
-        toggle.classList.remove('bg-gray-200');
-        toggle.classList.add('bg-blue-600');
-        span.classList.add('translate-x-6');
-        toggle.setAttribute('aria-checked', 'true');
-      } else {
-        toggle.classList.remove('bg-blue-600');
-        toggle.classList.add('bg-gray-200');
-        span.classList.remove('translate-x-6');
-        span.classList.add('translate-x-1');
-        toggle.setAttribute('aria-checked', 'false');
-      }
-    }
-  }
-
-  // Control Functions
-  function changeZoom(delta) {
-    accessibilityState.zoom = Math.max(0.5, Math.min(2, accessibilityState.zoom + delta));
-    applyAccessibilitySettings();
-    updateUI();
-    saveAccessibilityPreferences();
-
-    // Announce change for screen readers
-    announceChange(`Zoom alterado para ${Math.round(accessibilityState.zoom * 100)}%`);
-  }
-
-  function toggleReducedMotion() {
-    accessibilityState.reducedMotion = !accessibilityState.reducedMotion;
-    applyAccessibilitySettings();
-    updateUI();
-    saveAccessibilityPreferences();
-
-    announceChange(accessibilityState.reducedMotion ? 'Movimento reduzido ativado' : 'Movimento reduzido desativado');
-  }
-
-  function toggleHighContrast() {
-    accessibilityState.highContrast = !accessibilityState.highContrast;
-    applyAccessibilitySettings();
-    updateUI();
-    saveAccessibilityPreferences();
-
-    announceChange(accessibilityState.highContrast ? 'Alto contraste ativado' : 'Alto contraste desativado');
-  }
-
-  function toggleAccessibilityMode() {
-    accessibilityState.accessibilityMode = !accessibilityState.accessibilityMode;
-    accessibilityState.reducedMotion = accessibilityState.accessibilityMode;
-    accessibilityState.highContrast = accessibilityState.accessibilityMode;
-    applyAccessibilitySettings();
-    updateUI();
-    saveAccessibilityPreferences();
-
-    announceChange(accessibilityState.accessibilityMode ? 'Modo acessibilidade ativado' : 'Modo acessibilidade desativado');
-  }
-
-  function toggleKeyboardNavigation() {
-    accessibilityState.keyboardNavigation = !accessibilityState.keyboardNavigation;
-    applyAccessibilitySettings();
-    updateUI();
-    saveAccessibilityPreferences();
-
-    announceChange(accessibilityState.keyboardNavigation ? 'Navegação por teclado ativada' : 'Navegação por teclado desativada');
-  }
-
-  function toggleScreenReader() {
-    accessibilityState.screenReader = !accessibilityState.screenReader;
-
-    if (accessibilityState.screenReader) {
-      startScreenReader();
-      announceChange('Assistente de voz ativado');
-    } else {
-      stopScreenReader();
-      announceChange('Assistente de voz desativado');
-    }
-
-    saveAccessibilityPreferences();
-  }
-
-  function resetAccessibility() {
-    accessibilityState = {
-      zoom: 1,
-      reducedMotion: false,
-      highContrast: false,
-      keyboardNavigation: false,
-      screenReader: false,
-      accessibilityMode: false
+    // State
+    const state = {
+      zoom: 100,
+      font: false,
+      highlight: false,
+      cursor: false,
+      mono: false,
+      contrast: false,
+      motion: false,
+      guide: false
     };
 
-    applyAccessibilitySettings();
-    updateUI();
-    saveAccessibilityPreferences();
+    // --- Helper Functions ---
+    const toggleClass = (cls, active) => {
+      active ? document.body.classList.add(cls) : document.body.classList.remove(cls);
+    };
 
-    announceChange('Configurações de acessibilidade resetadas');
-  }
+    const updateBtn = (id, active) => {
+      const btn = document.getElementById(id);
+      if(btn) active ? btn.classList.add('active') : btn.classList.remove('active');
+    };
 
-  function toggleAccessibilityPanel() {
-    const panel = document.getElementById('accessibility-panel');
-    if (panel) {
-      if (panel.style.display === 'none') {
-        // Show
-        panel.style.display = 'block';
-        // Small delay to allow transition
-        requestAnimationFrame(() => {
-          panel.classList.remove('opacity-0', 'invisible', 'translate-y-4', 'pointer-events-none');
-        });
-      } else {
-        // Hide
-        panel.classList.add('opacity-0', 'invisible', 'translate-y-4', 'pointer-events-none');
-        // Wait for transition to finish before setting display none (optional, but safer to just leave it hidden by classes if transition works, but if we want to force it away:)
-        setTimeout(() => {
-            if (panel.classList.contains('invisible')) {
-                panel.style.display = 'none';
-            }
-        }, 300);
+    const setZoom = (val) => {
+      // Range 80% to 150% is safer for rem scaling without breaking visuals too much
+      const newZoom = Math.min(Math.max(val, 80), 160);
+      state.zoom = newZoom;
+      if (zoomDisplay) zoomDisplay.textContent = newZoom + '%';
+      
+      // Use Root Font Size scaling (standard a11y approach)
+      // Default browser font size is usually 16px (100%).
+      // We scale this percentage.
+      document.documentElement.style.fontSize = `${newZoom}%`;
+      
+      // Remove old transform potential leftovers if they exist
+      document.body.style.transform = '';
+      document.body.style.transformOrigin = '';
+      document.body.style.width = '';
+    };
+
+    // --- Event Listeners ---
+
+    // Panel Toggle
+    if (trigger) trigger.onclick = (e) => { e.stopPropagation(); panel.classList.toggle('open'); };
+    if (closeBtn) closeBtn.onclick = (e) => { e.stopPropagation(); panel.classList.remove('open'); };
+    document.onclick = (e) => {
+      if (panel && panel.classList.contains('open') && !panel.contains(e.target) && !trigger.contains(e.target)) {
+        panel.classList.remove('open');
       }
-    }
-  }
+    };
 
-  // Close panel on outside click
-  document.addEventListener('click', (e) => {
-    const panel = document.getElementById('accessibility-panel');
-    const trigger = document.getElementById('accessibility-trigger');
-    if (panel && panel.style.display !== 'none' && !panel.contains(e.target) && !trigger.contains(e.target)) {
-      toggleAccessibilityPanel();
-    }
-  });
+    // Tour Trigger (Integrated)
+    if (tourTrigger) tourTrigger.onclick = () => {
+       if (window.startGetNexoTour) {
+         window.startGetNexoTour();
+         panel.classList.remove('open'); // Close panel when tour starts
+       } else {
+         console.warn('Tour function not ready yet');
+       }
+    };
 
-  // Screen Reader Functions
-  let speechSynthesis = null;
-  let currentSpeech = null;
+    // Zoom
+    document.getElementById('zoom-in')?.addEventListener('click', () => setZoom(state.zoom + 10));
+    document.getElementById('zoom-out')?.addEventListener('click', () => setZoom(state.zoom - 10));
 
-  function startScreenReader() {
-    if ('speechSynthesis' in window) {
-      speechSynthesis = window.speechSynthesis;
-
-      // Add click listeners to announce interactive elements
-      document.addEventListener('click', handleElementAnnouncement);
-      document.addEventListener('focus', handleElementAnnouncement);
-
-      announceChange('Assistente de voz iniciado. Clique em elementos para ouvi-los.');
-    } else {
-      announceChange('Seu navegador não suporta síntese de voz.');
-    }
-  }
-
-  function stopScreenReader() {
-    if (speechSynthesis) {
-      speechSynthesis.cancel();
-    }
-    document.removeEventListener('click', handleElementAnnouncement);
-    document.removeEventListener('focus', handleElementAnnouncement);
-  }
-
-  function handleElementAnnouncement(event) {
-    const element = event.target;
-    let textToSpeak = '';
-
-    // Get accessible text
-    if (element.getAttribute('aria-label')) {
-      textToSpeak = element.getAttribute('aria-label');
-    } else if (element.textContent) {
-      textToSpeak = element.textContent.trim();
-    } else if (element.getAttribute('alt')) {
-      textToSpeak = element.getAttribute('alt');
-    } else if (element.tagName === 'BUTTON') {
-      textToSpeak = 'Botão';
-    } else if (element.tagName === 'INPUT') {
-      textToSpeak = `${element.getAttribute('type') || 'campo de entrada'} ${element.getAttribute('placeholder') || ''}`;
-    }
-
-    if (textToSpeak) {
-      speakText(textToSpeak);
-    }
-  }
-
-  function speakText(text) {
-    if (speechSynthesis) {
-      // Cancel previous speech
-      if (currentSpeech) {
-        speechSynthesis.cancel();
-      }
-
-      currentSpeech = new SpeechSynthesisUtterance(text);
-      currentSpeech.lang = 'pt-BR'; // Portuguese
-
-      speechSynthesis.speak(currentSpeech);
-    }
-  }
-
-  function announceChange(message) {
-    if (accessibilityState.screenReader) {
-      speakText(message);
-    }
-
-    // Also show as toast notification for visual feedback
-    showToast(message);
-  }
-
-  function showToast(message) {
-    // Simple toast implementation
-    const toast = document.createElement('div');
-    toast.className = 'fixed top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 max-w-xs';
-    toast.textContent = message;
-
-    document.body.appendChild(toast);
-
-    setTimeout(() => {
-      toast.remove();
-    }, 3000);
-  }
-
-  // Skip Link Handler
-  function handleSkipLink(event) {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      const mainContent = document.getElementById('main-content');
-      if (mainContent) {
-        mainContent.focus();
-        mainContent.scrollIntoView();
-      }
-    }
-  }
-
-  // ARIA Live Region for announcements
-  function createAriaLiveRegion() {
-    const liveRegion = document.createElement('div');
-    liveRegion.setAttribute('aria-live', 'polite');
-    liveRegion.setAttribute('aria-atomic', 'true');
-    liveRegion.className = 'sr-only';
-    liveRegion.id = 'accessibility-announcements';
-    document.body.appendChild(liveRegion);
-  }
-
-  // Keyboard Navigation Enhancements
-  function enhanceKeyboardNavigation() {
-    // Add visible focus indicators
-    const style = document.createElement('style');
-    style.textContent = `
-      .keyboard-navigation *:focus {
-        outline: 3px solid #007acc !important;
-        outline-offset: 2px !important;
-      }
-    `;
-    document.head.appendChild(style);
-
-    // Handle Tab navigation
-    document.addEventListener('keydown', function(event) {
-      if (event.key === 'Tab') {
-        document.body.classList.add('keyboard-navigation');
-      }
+    // Dyslexia Font
+    document.getElementById('toggle-font')?.addEventListener('click', () => {
+      state.font = !state.font;
+      toggleClass('acc-dyslexia', state.font);
+      updateBtn('toggle-font', state.font);
     });
 
-    // Reset on mouse usage
-    document.addEventListener('mousedown', function() {
-      document.body.classList.remove('keyboard-navigation');
+    // Highlight Links
+    document.getElementById('toggle-highlight')?.addEventListener('click', () => {
+      state.highlight = !state.highlight;
+      toggleClass('acc-highlight-links', state.highlight);
+      updateBtn('toggle-highlight', state.highlight);
     });
-  }
 
-  // Initialize
-  document.addEventListener('DOMContentLoaded', function() {
-    loadAccessibilityPreferences();
-    createAriaLiveRegion();
-    enhanceKeyboardNavigation();
+    // Big Cursor
+    document.getElementById('toggle-cursor')?.addEventListener('click', () => {
+      state.cursor = !state.cursor;
+      toggleClass('acc-cursor', state.cursor);
+      updateBtn('toggle-cursor', state.cursor);
+    });
 
-    // Add keyboard shortcuts
-    document.addEventListener('keydown', function(event) {
-      // Alt+A to toggle accessibility panel
-      if (event.altKey && event.key === 'a') {
-        event.preventDefault();
-        toggleAccessibilityPanel();
-      }
+    // Monochrome
+    document.getElementById('toggle-mono')?.addEventListener('click', () => {
+      state.mono = !state.mono;
+      toggleClass('acc-monochrome', state.mono);
+      updateBtn('toggle-mono', state.mono);
+    });
 
-      // Ctrl+Plus/Ctrl+Minus for zoom
-      if (event.ctrlKey) {
-        if (event.key === '=') {
-          event.preventDefault();
-          changeZoom(0.1);
-        } else if (event.key === '-') {
-          event.preventDefault();
-          changeZoom(-0.1);
-        } else if (event.key === '0') {
-          event.preventDefault();
-          accessibilityState.zoom = 1;
-          applyAccessibilitySettings();
-          updateUI();
-          saveAccessibilityPreferences();
+    // High Contrast
+    document.getElementById('toggle-contrast')?.addEventListener('click', () => {
+      state.contrast = !state.contrast;
+      toggleClass('high-contrast', state.contrast);
+      updateBtn('toggle-contrast', state.contrast);
+    });
+
+    // Stop Motion
+    document.getElementById('toggle-motion')?.addEventListener('click', () => {
+      state.motion = !state.motion;
+      toggleClass('acc-stop-motion', state.motion);
+      updateBtn('toggle-motion', state.motion);
+    });
+
+    // Reading Guide
+    const toggleGuide = document.getElementById('toggle-guide');
+    if (toggleGuide) {
+      toggleGuide.onchange = (e) => {
+        state.guide = e.target.checked;
+        if (state.guide) {
+          readingGuide.classList.add('active');
+          document.addEventListener('mousemove', moveGuide);
+        } else {
+          readingGuide.classList.remove('active');
+          document.removeEventListener('mousemove', moveGuide);
         }
-      }
-    });
+      };
+    }
+
+    const moveGuide = (e) => {
+      if (readingGuide) readingGuide.style.top = e.clientY + 'px';
+    };
+
+    // Reset All
+    if (resetBtn) resetBtn.onclick = () => {
+      state.zoom = 100;
+      setZoom(100);
+
+      const features = [
+        { key: 'font', cls: 'acc-dyslexia', id: 'toggle-font' },
+        { key: 'highlight', cls: 'acc-highlight-links', id: 'toggle-highlight' },
+        { key: 'cursor', cls: 'acc-cursor', id: 'toggle-cursor' },
+        { key: 'mono', cls: 'acc-monochrome', id: 'toggle-mono' },
+        { key: 'contrast', cls: 'high-contrast', id: 'toggle-contrast' },
+        { key: 'motion', cls: 'acc-stop-motion', id: 'toggle-motion' }
+      ];
+
+      features.forEach(f => {
+        state[f.key] = false;
+        document.body.classList.remove(f.cls);
+        updateBtn(f.id, false);
+      });
+
+      // Reset Guide
+      state.guide = false;
+      if (toggleGuide) toggleGuide.checked = false;
+      if (readingGuide) readingGuide.classList.remove('active');
+      document.removeEventListener('mousemove', moveGuide);
+
+      // Clean styles
+      document.documentElement.style.fontSize = ''; 
+      document.body.style.transform = '';
+      document.body.style.width = '';
+    };
+
   });
-
-    // Export functions to global scope for inline onclick handlers - REMOVED, using event listeners now.
-    // window.toggleAccessibilityPanel = toggleAccessibilityPanel;
-    // window.changeZoom = changeZoom;
-    // ...
-
-    // Bind event listeners
-    const el = (id) => document.getElementById(id);
-    el('accessibility-close')?.addEventListener('click', toggleAccessibilityPanel);
-    el('accessibility-trigger')?.addEventListener('click', toggleAccessibilityPanel);
-    el('zoom-decrease')?.addEventListener('click', () => changeZoom(-0.1));
-    el('zoom-increase')?.addEventListener('click', () => changeZoom(0.1));
-    el('accessibility-mode-toggle')?.addEventListener('click', toggleAccessibilityMode);
-    el('accessibility-reset')?.addEventListener('click', resetAccessibility);
 </script>

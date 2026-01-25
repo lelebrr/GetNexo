@@ -146,14 +146,16 @@ const testimonials = [
   }
 
   .testimonial-card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    padding: 1.5rem;
-    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    padding: 2rem;
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
     position: relative;
     overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
 
   .testimonial-card::before {
@@ -162,20 +164,17 @@ const testimonials = [
     top: 0;
     left: 0;
     right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #00d4ff, #00ff9d, #00d4ff);
+    height: 100%;
+    background: radial-gradient(circle at top right, rgba(0, 212, 255, 0.1), transparent 40%);
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
   }
 
   .testimonial-card:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 40px rgba(0, 212, 255, 0.15);
-    border-color: rgba(0, 212, 255, 0.2);
-  }
-
-  .testimonial-card:hover::before {
-    opacity: 1;
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.3);
+    border-color: rgba(0, 212, 255, 0.3);
   }
 
   .testimonial-header {

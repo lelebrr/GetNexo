@@ -41,7 +41,7 @@ const { feriadoHoje, lang, idiomaCurto, nonce } = Astro.props;
       </div>
     </div>
 
-    <div class="hero-trust animate-on-scroll" style="margin-top: 2rem;">
+    <div class="hero-trust hero-badge animate-on-scroll" style="margin-top: 2rem;">
       <span>✅ API Oficial Meta</span>
       <span>✅ Setup em 12min</span>
       <span>✅ Zero Mensalidade</span>
@@ -85,7 +85,7 @@ const { feriadoHoje, lang, idiomaCurto, nonce } = Astro.props;
   </div>
 </section>
 
-<script nonce={nonce}>
+<script>
 // Contador regressivo de 12 minutos que reinicia
 function startCountdown() {
   let minutes = 11;

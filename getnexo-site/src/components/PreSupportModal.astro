@@ -9,7 +9,7 @@ const { nonce } = Astro.props;
 </a>
 
 <!-- Modal de Suporte -->
-<div id="pre-support-modal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-description">
+<div id="pre-support-modal" class="fixed inset-0 z-50 hidden" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-description">
   <!-- Overlay com blur -->
   <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" aria-hidden="true"></div>
 
@@ -107,7 +107,9 @@ const { nonce } = Astro.props;
 
       this.bindEvents();
       this.setupKeyboardNavigation();
-      this.setupAutoShow();
+      this.bindEvents();
+      this.setupKeyboardNavigation();
+      // this.setupAutoShow(); // Desabilitado para não incomodar
 
       // Configuração global
       window.modalInstance = this;

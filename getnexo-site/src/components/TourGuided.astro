@@ -18,7 +18,7 @@ const {
   @import 'shepherd.js/dist/css/shepherd.css';
 </style>
 
-<script type="module" nonce={nonce}>
+<script type="module">
   import Shepherd from 'https://cdn.jsdelivr.net/npm/shepherd.js@13.0.0/+esm';
   window.Shepherd = Shepherd;
 
@@ -83,9 +83,10 @@ const {
       id: 'hipnose-inicial',
       title: '🚀 Imagina só...',
       text: 'Respira fundo. Imagina o WhatsApp da tua loja recebendo pedido atrás de pedido... enquanto você dorme. Isso já é realidade pra centenas de lojistas. Quer ver como?',
-      attachTo: { element: 'body', on: 'center' },
+      attachTo: { element: null, on: 'center' },
       classes: 'shepherd-theme-dark shepherd-text-center',
       buttons: [
+        { text: 'Pular', action: tourInstance.cancel, classes: 'shepherd-button-secondary' },
         { text: 'Sim, quero ver isso agora!', action: tourInstance.next, classes: 'shepherd-button-primary' }
       ]
     });
@@ -384,10 +385,44 @@ const {
     margin-bottom: 0.5rem !important;
   }
 
+  .shepherd-theme-dark.shepherd-element {
+    background: #0f172a !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5) !important;
+    max-width: 400px !important; 
+  }
+
+  .shepherd-theme-dark .shepherd-content {
+    background: #0f172a !important;
+    border-radius: 16px !important;
+    padding: 0 !important;
+  }
+
   .shepherd-theme-dark .shepherd-header {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-    padding-bottom: 1rem !important;
-    margin-bottom: 1rem !important;
+    background: transparent !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    padding: 1.5rem 1.5rem 0.5rem 1.5rem !important;
+    border-top-left-radius: 16px !important;
+    border-top-right-radius: 16px !important;
+  }
+
+  .shepherd-theme-dark .shepherd-text {
+    color: #cbd5e1 !important;
+    font-size: 0.95rem !important;
+    padding: 0.5rem 1.5rem 1.5rem 1.5rem !important;
+    line-height: 1.6 !important;
+  }
+
+  .shepherd-theme-dark .shepherd-footer {
+    padding: 0 1.5rem 1.5rem 1.5rem !important;
+    background: transparent !important;
+    border-bottom-left-radius: 16px !important;
+    border-bottom-right-radius: 16px !important;
+  }
+
+  .shepherd-arrow, .shepherd-arrow:before {
+    background: #0f172a !important; 
   }
 
   .tour-progress {
@@ -396,9 +431,12 @@ const {
     border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
   }
 
-  /* Tour trigger button (Minimized Circle) - Now relative to stack in dock-left */
+  /* Tour trigger button (Minimized Circle) - Stacked ABOVE Accessibility */
   .tour-trigger-btn {
-    position: relative;
+    position: fixed;
+    bottom: 110px;
+    left: 30px;
+    display: flex !important;
     width: 56px;
     height: 56px;
     background: linear-gradient(135deg, #9333ea, #2563eb);
