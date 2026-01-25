@@ -15,9 +15,7 @@ const isDev = process.env.NODE_ENV !== 'production';
 
 export default defineConfig({
     output: 'server',
-    adapter: isVercel ? vercel({
-        webAnalytics: { enabled: true }
-    }) : node({
+    adapter: node({
         mode: 'standalone',
         server: './src/server-entry.js'
     }),
