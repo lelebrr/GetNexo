@@ -328,17 +328,11 @@ const {
   };
 </script>
 
-<!-- Tour Trigger Button (Minimized Circle) - FIX DEFINITIVO -->
-<button
-  id="tour-btn"
-  class="tour-trigger-btn"
-  title="Tour Guiado GetNexo"
-  data-tour-target={targetPage}
-  data-tour-autostart={autoStart.toString()}
-  data-tour-mobile={mobileOptimized.toString()}
->
-  <span class="tour-icon">🔍</span>
-  <span class="tour-badge">!</span>
+<button id="tour-btn" class="tour-trigger-btn" title="Tour Guiado" aria-label="Iniciar tour guiado" data-tour-target={targetPage} data-tour-autostart={autoStart.toString()} data-tour-mobile={mobileOptimized.toString()}>
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+    <circle cx="12" cy="12" r="10" />
+    <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" />
+  </svg>
 </button>
 
 <!-- Custom Styles for Tour -->
