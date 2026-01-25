@@ -104,6 +104,16 @@ const clientId = Astro.locals.clientId || 'default';
           bgType,
           trustedTypesPolicy: trustedTypesPolicy
         };
+        
+        // FORCE UNREGISTER SERVICE WORKERS (Kill Switch)
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then(function(registrations) {
+            for(let registration of registrations) {
+              registration.unregister();
+              console.log('Service Worker Unregistered (Kill Switch Executed)');
+            }
+          });
+        }
       } catch (e) {
         console.warn('LocalStorage access blocked:', e);
       }
