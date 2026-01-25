@@ -51,7 +51,7 @@ const canShowAR = trialMode || hasARModule;
   <!-- Content -->
   <div class="product-viewer-content">
     {mode === '360' && canShow360 && (
-      <Spin360Viewer productId={productId} imageCount={imageCount} title="Girar Produto 360°" client:load />
+      <Spin360Viewer productId={productId} imageCount={imageCount} title="Girar Produto 360°" client:visible />
     )}
 
     {mode === 'ar' && canShowAR && (
@@ -60,7 +60,7 @@ const canShowAR = trialMode || hasARModule;
         glbUrl={glbUrl}
         usdzUrl={usdzUrl}
         title="Ver em AR"
-        client:load
+        client:visible
       />
     )}
 
@@ -84,7 +84,7 @@ const canShowAR = trialMode || hasARModule;
         <div class="tabs-content">
           {canShow360 && (
             <div class="tab-pane active" data-tab="360">
-              <Spin360Viewer productId={productId} imageCount={imageCount} title="Girar Produto 360°" client:load />
+              <Spin360Viewer productId={productId} imageCount={imageCount} title="Girar Produto 360°" client:visible />
             </div>
           )}
           {canShowAR && (
@@ -94,7 +94,7 @@ const canShowAR = trialMode || hasARModule;
                 glbUrl={glbUrl}
                 usdzUrl={usdzUrl}
                 title="Ver em AR"
-                client:load
+                client:visible
               />
             </div>
           )}
@@ -332,7 +332,7 @@ const canShowAR = trialMode || hasARModule;
   }
 </style>
 
-<script define:vars={{ productId, canShow360, canShowAR }}>
+<script define:vars={{ productId, canShow360, canShowAR }} defer>
   // Tab switching functionality
   document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById(`product-viewer-${productId}`);

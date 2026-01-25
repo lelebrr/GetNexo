@@ -46,7 +46,7 @@ const {
   </video>
 
   {streaming && (
-    <script>
+    <script defer>
       // Basic HLS streaming support
       if (typeof Hls !== 'undefined') {
         const video = document.querySelector('.video-player[data-streaming="true"]');
@@ -133,7 +133,7 @@ const {
   }
 </style>
 
-<script>
+<script defer>
   // Video streaming and performance optimizations
   class VideoStreamer {
     constructor() {

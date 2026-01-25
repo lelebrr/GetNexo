@@ -114,8 +114,8 @@ const twitterHandle = "@getnexo";
 {author && <meta property="article:author" content={author} />}
 {tags && tags.map(tag => <meta property="article:tag" content={tag} />)}
 
-<!-- Business/Local Business Schema -->
-<script type="application/ld+json" nonce={nonce} set:html={JSON.stringify({
+<!-- Business/Local Business Schema - Carregado com defer -->
+<script defer type="application/ld+json" nonce={nonce} set:html={JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [
     {
@@ -276,7 +276,7 @@ const twitterHandle = "@getnexo";
 
 <!-- Article Schema (if article) -->
 {type === "article" && (
-  <script type="application/ld+json" nonce={nonce} set:html={JSON.stringify({
+  <script defer type="application/ld+json" nonce={nonce} set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@type": "Article",
     "headline": title,

@@ -25,12 +25,13 @@ const finalUsdzUrl = usdzUrl || `/modelos/${productId}.usdz`;
   Ver em AR / Realidade Aumentada
 </button>
 
-<script define:vars={{ productId }}>
+<script define:vars={{ productId }} defer>
   // Load model-viewer script if not loaded
   if (!window.customElements || !window.customElements.get('model-viewer')) {
     const script = document.createElement('script');
     script.src = 'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js';
     script.type = 'module';
+    script.loading = 'lazy';
     document.head.appendChild(script);
   }
 

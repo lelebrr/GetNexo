@@ -158,7 +158,7 @@ const {
   }
 </style>
 
-<script>
+<script defer>
   // @ts-ignore
   declare const THREE: any;
 
@@ -420,6 +420,7 @@ const {
     if (typeof THREE === 'undefined') {
       const script = document.createElement('script');
       script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+      script.loading = 'lazy';
       script.onload = () => loadGLTFLoader();
       document.head.appendChild(script);
     } else {
@@ -432,6 +433,7 @@ const {
     if (typeof THREE.GLTFLoader === 'undefined') {
       const gltfScript = document.createElement('script');
       gltfScript.src = 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js';
+      gltfScript.loading = 'lazy';
       gltfScript.onload = () => new ARViewer();
       document.head.appendChild(gltfScript);
     } else {

@@ -6,7 +6,7 @@ const { t } = Astro.props;
   <!-- Magic Replies -->
   <div class="giant-feature-row animate-on-scroll">
       <div class="giant-feature-visual">
-          <img src="/assets/features/magic-replies.webp" alt="Magic Replies AI" width="501" height="501" class="premium-visual" />
+          <img src="/assets/features/magic-replies.webp" alt="Magic Replies AI" width="501" height="501" class="premium-visual" loading="lazy" />
       </div>
       <div class="giant-feature-info">
           <div class="feature-tag">Exclusivo</div>
@@ -35,14 +35,14 @@ const { t } = Astro.props;
           <a href="/produtos/vendas" class="btn-outline-glow">Ver Fidelidade</a>
       </div>
       <div class="giant-feature-visual">
-          <img src="/assets/features/loyalty.webp" alt="Loyalty System" width="501" height="501" class="premium-visual" />
+          <img src="/assets/features/loyalty.webp" alt="Loyalty System" width="501" height="501" class="premium-visual" loading="lazy" />
       </div>
   </div>
 
   <!-- Analytics -->
   <div class="giant-feature-row animate-on-scroll">
       <div class="giant-feature-visual">
-          <img src="/assets/features/analytics.webp" alt="Advanced Analytics" width="501" height="501" class="premium-visual" />
+          <img src="/assets/features/analytics.webp" alt="Advanced Analytics" width="501" height="501" class="premium-visual" loading="lazy" />
       </div>
       <div class="giant-feature-info">
           <div class="feature-tag blue">Inteligência</div>
@@ -69,9 +69,236 @@ const { t } = Astro.props;
           <a href="/integracoes" class="btn-outline-glow">Ver Todas as Integrações</a>
       </div>
       <div class="giant-feature-visual">
-          <img src="/assets/features/integrations.webp" alt="Integrations Map" width="501" height="501" class="premium-visual" />
+          <img src="/assets/features/integrations.webp" alt="Integrations Map" width="501" height="501" class="premium-visual" loading="lazy" />
       </div>
   </div>
 
 
 </section>
+
+<style>
+  .giant-features {
+    display: flex;
+    flex-direction: column;
+    gap: 6rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+
+  .giant-feature-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.8s ease-out forwards;
+  }
+
+  .giant-feature-row:nth-child(1) { animation-delay: 0.1s; }
+  .giant-feature-row:nth-child(2) { animation-delay: 0.2s; }
+  .giant-feature-row:nth-child(3) { animation-delay: 0.3s; }
+  .giant-feature-row:nth-child(4) { animation-delay: 0.4s; }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .giant-feature-row.reverse {
+    direction: rtl;
+  }
+
+  .giant-feature-row.reverse > * {
+    direction: ltr;
+  }
+
+    .giant-feature-visual {
+    position: relative;
+    overflow: hidden;
+    border-radius: 24px;
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 157, 0.05));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    height: auto !important; /* Allow height to adjust to width but maintain ratio */
+    width: 100% !important;
+    max-width: 500px !important;
+    aspect-ratio: 1 / 1 !important; /* Force Square */
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .premium-visual {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .giant-feature-visual:hover .premium-visual {
+    transform: scale(1.05);
+  }
+
+  .giant-feature-info {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 400px; /* Consistent text block height */
+  }
+
+  /* ... rest of existing styles ... */
+  
+  @media (max-width: 1024px) {
+    .giant-feature-visual {
+      height: 400px; /* Adjusted for smaller screens */
+    }
+    .giant-feature-info {
+      min-height: auto;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .giant-feature-visual {
+      height: 300px;
+    }
+  }
+
+  .feature-tag {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    color: #00d4ff;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+  }
+
+  .feature-tag.gold {
+    background: rgba(255, 215, 0, 0.1);
+    border-color: rgba(255, 215, 0, 0.3);
+    color: #ffd700;
+  }
+
+  .feature-tag.blue {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: #3b82f6;
+  }
+
+  .feature-tag.green {
+    background: rgba(34, 197, 94, 0.1);
+    border-color: rgba(34, 197, 94, 0.3);
+    color: #22c55e;
+  }
+
+  .giant-feature-info h2 {
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: 900;
+    color: white;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+
+  .giant-feature-info p {
+    color: #94a3b8;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .feature-bullets {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2rem 0;
+  }
+
+  .feature-bullets li {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: #cbd5e1;
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .feature-bullets li span {
+    font-size: 1.2rem;
+  }
+
+  .btn-outline-glow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    border: 2px solid rgba(0, 212, 255, 0.3);
+    border-radius: 12px;
+    color: #00d4ff;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: transparent;
+  }
+
+  .btn-outline-glow:hover {
+    border-color: #00d4ff;
+    background: rgba(0, 212, 255, 0.1);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 1024px) {
+    .giant-feature-row {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .giant-feature-row.reverse {
+      direction: ltr;
+    }
+
+    .giant-feature-row.reverse > * {
+      direction: ltr;
+    }
+
+    .giant-feature-visual {
+      order: -1;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .giant-features {
+      gap: 3rem;
+      padding: 2rem 1rem;
+    }
+
+    .giant-feature-info {
+      padding: 1rem;
+    }
+
+    .giant-feature-info h2 {
+      font-size: 1.5rem;
+    }
+
+    .giant-feature-info p {
+      font-size: 1rem;
+    }
+
+    .feature-bullets li {
+      font-size: 0.95rem;
+    }
+  }
+</style>

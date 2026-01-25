@@ -61,8 +61,7 @@ const nonce = Astro.locals.nonce;
   
   <HomeHero feriadoHoje={feriadoHoje} lang={lang} idiomaCurto={idiomaCurto} nonce={nonce} />
 
-  <!-- Tour Guided Component -->
-  <TourGuided slot="dock-left" targetPage="home" mobileOptimized={true} nonce={nonce} autoStart={false} />
+
 
   <HomeFeatures />
 
@@ -117,10 +116,10 @@ const nonce = Astro.locals.nonce;
   <ChatModal />
   <InteractiveModal />
 
-  <!-- Modals & Scripts -->
-  <script is:inline nonce={nonce} src="/custom/js/hero-animations.js"></script>
-  <script is:inline nonce={nonce} src="/custom/js/mega-chat-sim-v2.js"></script>
-  <script is:inline nonce={nonce} src="/custom/js/modals-demo.js"></script>
+  <!-- Modals & Scripts - Carregados com defer para não bloquear renderização -->
+  <script defer nonce={nonce} src="/custom/js/hero-animations.js"></script>
+  <script defer nonce={nonce} src="/custom/js/mega-chat-sim-v2.js"></script>
+  <script defer nonce={nonce} src="/custom/js/modals-demo.js"></script>
 
 
 </Layout>

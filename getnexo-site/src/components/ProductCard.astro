@@ -74,7 +74,7 @@ export let produto: Partial<Produto> = {};
   </div>
 </div>
 
-<script>
+<script defer>
 function createTrustedHTML(html) {
   if (window.getnexoTrustedTypes && window.getnexoTrustedTypes.policy) {
     return window.getnexoTrustedTypes.policy.createHTML(html);
@@ -124,8 +124,10 @@ function abrir360(path) {
   
   document.body.append(modal);
 
+  // Carregar script do pannellum de forma lazy
   const script = document.createElement('script');
   script.src = 'https://cdn.jsdelivr.net/npm/pannellum@0.15.1/build/pannellum.js';
+  script.loading = 'lazy';
   script.onload = () => {
     if (typeof pannellum !== 'undefined') {
       pannellum.viewer('viewer-360', {
@@ -145,35 +147,37 @@ function abrir360(path) {
 }
 
 // Inicializar eventos para todos os cards
-document.querySelectorAll('.product-card').forEach(card => {
-  const dataEl = card.querySelector('[data-product-data]');
-  if (!dataEl) return;
-  
-  const data = JSON.parse(dataEl.getAttribute('data-product-data'));
-  
-  card.querySelector('.btn-360')?.addEventListener('click', () => abrir360(data['360']));
-  card.querySelector('.btn-video')?.addEventListener('click', () => abrirVideo(data.video));
-  card.querySelector('.btn-audio')?.addEventListener('click', () => tocarAudio(data.audio));
-  
-  const mic = card.querySelector('#mic');
-  if (mic) {
-    mic.addEventListener('click', () => {
-      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-      recognition.lang = 'pt-BR';
-      recognition.onresult = e => {
-        const texto = e.results[0][0].transcript;
-        fetch('/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ mensagem: texto })
-        }).then(r => r.json()).then(newData => {
-          const ut = new SpeechSynthesisUtterance(newData.resposta);
-          ut.lang = 'pt-BR';
-          speechSynthesis.speak(ut);
-        });
-      };
-      recognition.start();
-    });
-  }
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.product-card').forEach(card => {
+    const dataEl = card.querySelector('[data-product-data]');
+    if (!dataEl) return;
+    
+    const data = JSON.parse(dataEl.getAttribute('data-product-data'));
+    
+    card.querySelector('.btn-360')?.addEventListener('click', () => abrir360(data['360']));
+    card.querySelector('.btn-video')?.addEventListener('click', () => abrirVideo(data.video));
+    card.querySelector('.btn-audio')?.addEventListener('click', () => tocarAudio(data.audio));
+    
+    const mic = card.querySelector('#mic');
+    if (mic) {
+      mic.addEventListener('click', () => {
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'pt-BR';
+        recognition.onresult = e => {
+          const texto = e.results[0][0].transcript;
+          fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mensagem: texto })
+          }).then(r => r.json()).then(newData => {
+            const ut = new SpeechSynthesisUtterance(newData.resposta);
+            ut.lang = 'pt-BR';
+            speechSynthesis.speak(ut);
+          });
+        };
+        recognition.start();
+      });
+    }
+  });
 });
 </script>

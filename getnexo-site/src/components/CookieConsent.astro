@@ -293,7 +293,7 @@ const { nonce } = Astro.props;
   }
 </style>
 
-<script nonce={nonce}>
+<script defer nonce={nonce}>
   /* interface Window removed for JS compatibility */
 
   class CookieConsentManager {

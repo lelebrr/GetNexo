@@ -303,7 +303,7 @@ const { nonce } = Astro.props;
   }
 </style>
 
-<script nonce={nonce}>
+<script defer nonce={nonce}>
   (function() {
     if (window.NeuralBackground) return;
 

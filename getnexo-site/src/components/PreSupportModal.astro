@@ -70,14 +70,14 @@ const { nonce } = Astro.props;
 </div>
 
 <!-- Schema.org Speakable -->
-<script is:inline nonce={nonce}>
+<script defer nonce={nonce}>
   const speakable = document.createElement('meta');
   speakable.name = 'speakable';
   speakable.content = '.modal-header, #btn-text, #btn-voice, #voice-status';
   document.head.appendChild(speakable);
 </script>
 
-<script nonce={nonce}>
+<script defer nonce={nonce}>
   // PreSupportModal v2.0 - Estado Reativo e Acessibilidade WCAG 2.2 AA
   class PreSupportModal {
     constructor() {

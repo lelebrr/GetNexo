@@ -103,59 +103,110 @@ const {
   }
 </style>
 
-<script define:vars={{ productId, imageCount }}>
-  import * as THREE from 'https://cdn.skypack.dev/three@0.150';
-  import { OrbitControls } from 'https://cdn.skypack.dev/three@0.150/examples/jsm/controls/OrbitControls.js';
+<script define:vars={{ productId, imageCount }} defer>
+  // Carregar Three.js de forma lazy
+  const loadThreeJS = () => {
+    return new Promise((resolve, reject) => {
+      if (typeof THREE !== 'undefined') {
+        resolve();
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = 'https://cdn.skypack.dev/three@0.150';
+      script.loading = 'lazy';
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+  };
+
+  const loadOrbitControls = () => {
+    return new Promise((resolve, reject) => {
+      if (typeof OrbitControls !== 'undefined') {
+        resolve();
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = 'https://cdn.skypack.dev/three@0.150/examples/jsm/controls/OrbitControls.js';
+      script.loading = 'lazy';
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+  };
+
+  const initSpinner360 = async () => {
+    const container = document.getElementById(`nexo-360-${productId}`);
+    if (!container) return;
+
+    // Carregar Three.js e OrbitControls
+    await loadThreeJS();
+    await loadOrbitControls();
+
+    // Carrega imagens em sequência
+    const loader = new THREE.TextureLoader();
+    const images = [];  // array de texturas
+    let loaded = 0;
+
+    for (let i = 1; i <= imageCount; i++) {
+      const imgPath = `/360/${productId}/foto${String(i).padStart(3, '0')}.jpg`;
+      loader.load(imgPath, (tex) => {
+        images.push(tex);
+        loaded++;
+        if (loaded === imageCount) initSpinner();
+      });
+    }
+
+    function initSpinner() {
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(70, container.clientWidth / container.clientHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      container.appendChild(renderer.domElement);
+
+      const geometry = new THREE.BoxGeometry(2, 2, 0.1);
+      const material = new THREE.MeshBasicMaterial({ map: images[0] });
+      const mesh = new THREE.Mesh(geometry, material);
+      scene.add(mesh);
+
+      camera.position.z = 3;
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableZoom = false;
+      controls.enablePan = false;
+
+      let idx = 0;
+      function animate() {
+        requestAnimationFrame(animate);
+        idx = (idx + 1) % imageCount;
+        material.map = images[idx];
+        material.needsUpdate = true;
+        controls.update();
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      window.addEventListener('resize', () => {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+      });
+    }
+  };
+
+  // Inicializar quando o elemento estiver visível
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        initSpinner360();
+        observer.disconnect();
+      }
+    });
+  }, { threshold: 0.1 });
 
   const container = document.getElementById(`nexo-360-${productId}`);
-  if (!container) return;
-
-  // Carrega imagens em sequência
-  const loader = new THREE.TextureLoader();
-  const images = [];  // array de texturas
-  let loaded = 0;
-
-  for (let i = 1; i <= imageCount; i++) {
-    const imgPath = `/360/${productId}/foto${String(i).padStart(3, '0')}.jpg`;
-    loader.load(imgPath, (tex) => {
-      images.push(tex);
-      loaded++;
-      if (loaded === imageCount) initSpinner();
-    });
-  }
-
-  function initSpinner() {
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(70, container.clientWidth / container.clientHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    container.appendChild(renderer.domElement);
-
-    const geometry = new THREE.BoxGeometry(2, 2, 0.1);
-    const material = new THREE.MeshBasicMaterial({ map: images[0] });
-    const mesh = new THREE.Mesh(geometry, material);
-    scene.add(mesh);
-
-    camera.position.z = 3;
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableZoom = false;
-    controls.enablePan = false;
-
-    let idx = 0;
-    function animate() {
-      requestAnimationFrame(animate);
-      idx = (idx + 1) % imageCount;
-      material.map = images[idx];
-      material.needsUpdate = true;
-      controls.update();
-      renderer.render(scene, camera);
-    }
-    animate();
-
-    window.addEventListener('resize', () => {
-      camera.aspect = container.clientWidth / container.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(container.clientWidth, container.clientHeight);
-    });
+  if (container) {
+    observer.observe(container);
   }
 </script>

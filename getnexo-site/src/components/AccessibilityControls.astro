@@ -472,7 +472,7 @@ const { showPanel = true } = Astro.props;
   }
 </style>
 
-<script is:inline>
+<script defer>
   document.addEventListener('DOMContentLoaded', () => {
     // Elements
     const trigger = document.getElementById('acc-trigger');

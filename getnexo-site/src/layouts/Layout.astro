@@ -1,12 +1,11 @@
 ---
-import '../styles/global.css?v=premium_v1.8'; // Forced Cache Buster
+import '../styles/global.css'; // Forced Cache Buster Removed
 import SEO from '../components/SEO.astro';
 import PreSupportModal from '../components/PreSupportModal.astro';
 import AccessibilityControls from '../components/AccessibilityControls.astro';
 import CookieConsent from '../components/CookieConsent.astro';
 import NeuralBackground from '../components/NeuralBackground.astro';
-import ClippyAssistants from '../components/ClippyAssistants.astro';
-import NexusChatButton from '../components/NexusChatButton.astro';
+import ChatFAB from '../components/ChatFAB.astro';
 import TourGuided from '../components/TourGuided.astro';
 
 const {
@@ -85,17 +84,22 @@ const clientId = Astro.locals.clientId || 'default';
 <!DOCTYPE html>
 <html lang={lang} data-bg-type="animated">
 <head>
-  <!-- Trusted Types Policy Script (carregado com nonce do CSP) -->
-  <!-- Trusted Types Policy Script -->
-  <script is:inline src="/custom/js/trusted-types-policy.js"></script>
+  <!-- Pré-conexão para origens críticas (máximo 4) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://api.getnexo.com.br">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
   
-  <!-- Gerenciador de Fundo Instantâneo - BLOQUEANTE E NO TOPO PARA EVITAR FLICKER -->
-  <script is:inline define:vars={{ trustedTypesPolicy }}>
+  <!-- Trusted Types Policy Script - Carregado com defer para não bloquear renderização -->
+  <script defer src="/custom/js/trusted-types-policy.js"></script>
+  
+  <!-- Gerenciador de Fundo Instantâneo - Carregado com defer -->
+  <script defer define:vars={{ trustedTypesPolicy }}>
     (function() {
       try {
         const bgType = localStorage.getItem('getnexo-bg-type') || 'animated';
         document.documentElement.setAttribute('data-bg-type', bgType);
-        window.GETNEXO_CONFIG = { 
+        window.GETNEXO_CONFIG = {
           bgType,
           trustedTypesPolicy: trustedTypesPolicy
         };
@@ -146,7 +150,7 @@ const clientId = Astro.locals.clientId || 'default';
   <slot name="head" />
 
   <!-- Animate On Scroll (Inline) -->
-  <style>
+  <style is:inline>
     .animate-on-scroll {
       opacity: 0;
       transform: translateY(30px);
@@ -157,58 +161,22 @@ const clientId = Astro.locals.clientId || 'default';
       transform: translateY(0);
     }
   </style>
-  <script is:inline nonce={nonce}>
-    document.addEventListener('DOMContentLoaded', () => {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('animate-in');
-          }
-        });
-      }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-
-      document.querySelectorAll('.animate-on-scroll').forEach(el => {
-        observer.observe(el);
-      });
-    });
-  </script>
-
-  <script is:inline nonce={nonce}>
-    // Aggressive Cache Buster & SW Killer
-    const VERSION = '1.9-rc1-BUILD-debug';
-    console.log(`%c GetNexo Site Version: ${VERSION}`, 'background: #222; color: #bada55; padding: 4px; border-radius: 4px;');
-    if (localStorage.getItem('getnexo_v') !== VERSION) {
-      localStorage.setItem('getnexo_v', VERSION);
-      
-      // Kill all service workers
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(registrations => {
-          for(let r of registrations) r.unregister();
-        });
-      }
-      
-      // Clear all caches
-      if ('caches' in window) {
-        caches.keys().then(names => {
-          for (let name of names) caches.delete(name);
-        });
-      }
-
+  <script defer src="/custom/js/scroll-animation.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+  <style is:inline>
+    /* Critical LCP Styles - Inlined para evitar bloqueio */
+    .logo-text { font-family: 'Inter', sans-serif; font-weight: 800; visibility: visible !important; opacity: 1 !important; }
+    @media (max-width: 768px) {
+      .hero-title { font-size: 2.2rem !important; }
+      .hero-split { padding-top: 6rem !important; }
     }
-  </script>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
-    <style is:inline>
-      /* Critical LCP Styles */
-      .logo-text { font-family: 'Inter', sans-serif; font-weight: 800; visibility: visible !important; opacity: 1 !important; }
-      @media (max-width: 768px) {
-        .hero-title { font-size: 2.2rem !important; }
-        .hero-split { padding-top: 6rem !important; }
-      }
-    </style>
-  <style is:global define:vars={{ mainPadding: isLanding ? '0' : '80px', mainMinHeight: isLanding ? 'auto' : '100vh' }}>
+    /* Prevenir layout shift em imagens */
+    img { width: auto; height: auto; }
+    /* Otimização LCP - Garantir que o hero carregue rápido */
+    .hero-title { opacity: 0; animation: fadeIn 0.5s ease-in-out forwards; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  </style>
+  <style is:global>
     :root { 
       --primary: #00d4ff; 
       --success: #00ff9d; 
@@ -220,7 +188,13 @@ const clientId = Astro.locals.clientId || 'default';
       --text: #94a3b8; 
       --glass: rgba(15, 23, 42, 0.7);
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body, html {
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+    * { box-sizing: border-box; }
     body { 
       font-family: 'Inter', system-ui, sans-serif; 
       background: var(--dark); 
@@ -416,11 +390,11 @@ const clientId = Astro.locals.clientId || 'default';
       background: rgba(0,255,157,0.1);
     }
 
-    .global-footer { padding: 4rem 5% 0.5rem !important; background: transparent !important; border-top: none !important; margin-top: 2rem !important; position: relative !important; z-index: 10 !important; width: 100% !important; display: block !important; }
-    .footer-grid { display: grid !important; grid-template-columns: 1.2fr repeat(4, 1fr) !important; gap: 2rem !important; max-width: 1300px !important; margin: 0 auto !important; text-align: left !important; }
-    .footer-col h3.footer-title { color: white; margin-bottom: 1.2rem; font-size: 0.9rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; opacity: 0.8; white-space: pre-line; }
+    .global-footer { padding: 4rem 5% 2rem; background: #030712; border-top: 1px solid rgba(255,255,255,0.05); position: relative; z-index: 10; width: 100%; }
+    .footer-grid { display: grid; grid-template-columns: 1.2fr repeat(4, 1fr); gap: 2rem; max-width: 1300px; margin: 0 auto; text-align: left; }
+    .footer-col h3.footer-title { color: white; margin-bottom: 1.2rem; font-size: 0.9rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; opacity: 0.8; }
     .footer-links { display: flex; flex-direction: column; gap: 0.8rem; }
-    .footer-links a { color: var(--text); text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .footer-links a { color: #94a3b8; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: 0.3s; }
     .footer-links a:hover { color: var(--primary); transform: translateX(5px); }
     .branding-col .footer-description { font-size: 1rem; color: #94a3b8; line-height: 1.7; margin-bottom: 2rem; max-width: 300px; }
     .footer-socials { display: flex; gap: 1.2rem; flex-wrap: wrap; }
@@ -864,7 +838,7 @@ const clientId = Astro.locals.clientId || 'default';
   
   <!-- Círculos flutuantes removidos - não têm função clara -->
 
-  <script is:inline nonce={nonce}>
+  <script defer nonce={nonce}>
     // Sincronização de Fundo Global
     (function() {
       // Escutar mudanças de configuração via storage (toggles no painel admin ou controles)
@@ -1050,10 +1024,10 @@ const clientId = Astro.locals.clientId || 'default';
       <a href={`/${lang}/${t.slugs.pricing}`} class="btn-start" style="background: linear-gradient(135deg, #00d4ff 0%, #00ff9d 100%) !important; color: #030712 !important; box-shadow: 0 0 20px rgba(0, 212, 255, 0.4) !important; border: none !important;">Ativar Grátis</a>
       
       <div class="lang-flags">
-        <a href={getLangUrl('pt')} class={`flag-link ${lang === 'pt' ? 'active' : ''}`} title="Português"><img src="/flags/br.svg" alt="PT" width="32" height="22" /></a>
-        <a href={getLangUrl('en')} class={`flag-link ${lang === 'en' ? 'active' : ''}`} title="English"><img src="/flags/gb.svg" alt="EN" width="32" height="22" /></a>
-        <a href={getLangUrl('es')} class={`flag-link ${lang === 'es' ? 'active' : ''}`} title="Español"><img src="/flags/es.svg" alt="ES" width="32" height="22" /></a>
-        <a href={getLangUrl('fr')} class={`flag-link ${lang === 'fr' ? 'active' : ''}`} title="Français"><img src="/flags/fr.svg" alt="FR" width="32" height="22" /></a>
+        <a href={getLangUrl('pt')} class={`flag-link ${lang === 'pt' ? 'active' : ''}`} title="Português"><img src="/flags/br.svg" alt="PT" width="32" height="22" loading="lazy" /></a>
+        <a href={getLangUrl('en')} class={`flag-link ${lang === 'en' ? 'active' : ''}`} title="English"><img src="/flags/gb.svg" alt="EN" width="32" height="22" loading="lazy" /></a>
+        <a href={getLangUrl('es')} class={`flag-link ${lang === 'es' ? 'active' : ''}`} title="Español"><img src="/flags/es.svg" alt="ES" width="32" height="22" loading="lazy" /></a>
+        <a href={getLangUrl('fr')} class={`flag-link ${lang === 'fr' ? 'active' : ''}`} title="Français"><img src="/flags/fr.svg" alt="FR" width="32" height="22" loading="lazy" /></a>
       </div>
     </div>
     <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Menu">
@@ -1067,10 +1041,10 @@ const clientId = Astro.locals.clientId || 'default';
       <div class="mobile-header">
          <span class="logo-text">get<span class="logo-highlight">Nexo</span></span>
          <div class="mobile-lang-selector">
-           <a href={getLangUrl('pt')} class={lang === 'pt' ? 'active' : ''} title="Português"><img src="/flags/br.svg" alt="PT" /></a>
-           <a href={getLangUrl('en')} class={lang === 'en' ? 'active' : ''} title="English"><img src="/flags/gb.svg" alt="EN" /></a>
-           <a href={getLangUrl('es')} class={lang === 'es' ? 'active' : ''} title="Español"><img src="/flags/es.svg" alt="ES" /></a>
-           <a href={getLangUrl('fr')} class={lang === 'fr' ? 'active' : ''} title="Français"><img src="/flags/fr.svg" alt="FR" /></a>
+           <a href={getLangUrl('pt')} class={lang === 'pt' ? 'active' : ''} title="Português"><img src="/flags/br.svg" alt="PT" width="28" height="18" loading="lazy" /></a>
+           <a href={getLangUrl('en')} class={lang === 'en' ? 'active' : ''} title="English"><img src="/flags/gb.svg" alt="EN" width="28" height="18" loading="lazy" /></a>
+           <a href={getLangUrl('es')} class={lang === 'es' ? 'active' : ''} title="Español"><img src="/flags/es.svg" alt="ES" width="28" height="18" loading="lazy" /></a>
+           <a href={getLangUrl('fr')} class={lang === 'fr' ? 'active' : ''} title="Français"><img src="/flags/fr.svg" alt="FR" width="28" height="18" loading="lazy" /></a>
          </div>
          <button id="mobile-close" class="mobile-close">×</button>
       </div>
@@ -1122,7 +1096,7 @@ const clientId = Astro.locals.clientId || 'default';
     </div>
   </nav>
 
-  <main id="main-content">
+  <main id="main-content" style={`--mainPadding: ${isLanding ? '0' : '80px'}; --mainMinHeight: ${isLanding ? 'auto' : '100vh'};`}>
     <slot />
   </main>
 
@@ -1250,19 +1224,19 @@ const clientId = Astro.locals.clientId || 'default';
     <div class="footer-bottom">
       <div class="footer-lang-selector" style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap;">
         <a href={getLangUrl('pt')} class={`lang-chip ${lang === 'pt' ? 'active' : ''}`}>
-          <img src="/flags/br.svg" alt="" style="width: 18px; border-radius: 2px;" />
+          <img src="/flags/br.svg" alt="Português" width="18" height="12" style="width: 18px; height: 12px; border-radius: 2px;" />
           <span>PT</span>
         </a>
         <a href={getLangUrl('en')} class={`lang-chip ${lang === 'en' ? 'active' : ''}`}>
-          <img src="/flags/gb.svg" alt="" style="width: 18px; border-radius: 2px;" />
+          <img src="/flags/gb.svg" alt="English" width="18" height="12" style="width: 18px; height: 12px; border-radius: 2px;" />
           <span>EN</span>
         </a>
         <a href={getLangUrl('es')} class={`lang-chip ${lang === 'es' ? 'active' : ''}`}>
-          <img src="/flags/es.svg" alt="" style="width: 18px; border-radius: 2px;" />
+          <img src="/flags/es.svg" alt="Español" width="18" height="12" style="width: 18px; height: 12px; border-radius: 2px;" />
           <span>ES</span>
         </a>
         <a href={getLangUrl('fr')} class={`lang-chip ${lang === 'fr' ? 'active' : ''}`}>
-          <img src="/flags/fr.svg" alt="" style="width: 18px; border-radius: 2px;" />
+          <img src="/flags/fr.svg" alt="Français" width="18" height="12" style="width: 18px; height: 12px; border-radius: 2px;" />
           <span>FR</span>
         </a>
       </div>
@@ -1272,28 +1246,8 @@ const clientId = Astro.locals.clientId || 'default';
 
 
 
-  <!-- Live Pulse Engine UI -->
-  <div id="live-pulse" class="pulse-toast glass-panel hidden-forced">
-    <div class="pulse-icon">⚡</div>
-    <div class="pulse-content">
-      <span class="pulse-title">Nexus Work</span>
-      <p id="pulse-message">Nexus acaba de processar um lead em São Paulo.</p>
-    </div>
-  </div>
 
   <style is:global>
-    .pulse-toast {
-      position: fixed; bottom: 100px; left: 30px;
-      padding: 1rem 1.5rem; display: flex; align-items: center; gap: 1rem;
-      border-color: rgba(0, 255, 157, 0.2); z-index: 1000;
-      animation: toastSlideIn 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    .pulse-toast:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(0, 255, 157, 0.3);
-    }
     .pulse-icon { font-size: 1.2rem; color: var(--success); filter: drop-shadow(0 0 5px var(--success)); }
     .pulse-title { display: block; font-size: 0.7rem; font-weight: 800; color: var(--success); text-transform: uppercase; letter-spacing: 1px; }
     #pulse-message { color: white; font-size: 0.85rem; font-weight: 600; margin: 0; }
@@ -1426,11 +1380,11 @@ const clientId = Astro.locals.clientId || 'default';
   <!-- Magic Map User Tracking - Temporarily disabled -->
   <!-- <script src="/tracking.js" defer></script> -->
 
-  <!-- Click Fireworks Effect -->
-  <script is:inline src="/custom/js/click-fireworks.js" nonce={nonce}></script>
+  <!-- Click Fireworks Effect - Carregado com defer para não bloquear renderização -->
+  <script defer src="/custom/js/click-fireworks.js" nonce={nonce}></script>
 
-  <!-- GetNexo Custom Widget -->
-  <script is:inline data-cfasync="false" nonce={nonce}>
+  <!-- GetNexo Custom Widget - Carregado com defer -->
+  <script defer data-cfasync="false" nonce={nonce}>
     (function(d,t) {
       const loadWidget = () => {
         const isMobile = window.innerWidth < 768;
@@ -1473,7 +1427,7 @@ const clientId = Astro.locals.clientId || 'default';
     })(document,"script");
   </script>
 
-  <script is:inline nonce={nonce}>
+  <script defer nonce={nonce}>
     // Mobile Menu & Pulse & Lang Dropdown Logic
     document.addEventListener('DOMContentLoaded', () => {
       const menuBtn = document.getElementById('mobile-menu-btn');
@@ -1554,7 +1508,7 @@ const clientId = Astro.locals.clientId || 'default';
     });
   </script>
 
-  <script is:inline>
+  <script defer>
     // Detecção de Feriados Festivos com Sistema Completo
     (async function() {
       try {
@@ -1677,7 +1631,7 @@ const clientId = Astro.locals.clientId || 'default';
   </script>
 
   <!-- Breadcrumb Generator Script -->
-  <script is:inline nonce={nonce}>
+  <script defer nonce={nonce}>
     // Breadcrumb Generator
     function generateBreadcrumbs() {
       const path = window.location.pathname;
@@ -2277,19 +2231,17 @@ const clientId = Astro.locals.clientId || 'default';
   <!-- Global Floating UI - Left (Unified Accessibility & Tour) -->
   <div class="dock-left">
     <slot name="dock-left" />
-    <div class="accessibility-wrapper">
-        <AccessibilityControls nonce={nonce} />
-    </div>
+    <TourGuided />
+    <AccessibilityControls />
   </div>
 
-  <!-- Global Floating UI - Right (Chat & Support) -->
+  <!-- Global Floating UI - Right (Unified Chat) -->
   <div class="dock-right">
-    <NexusChatButton />
+    <ChatFAB />
   </div>
 
   <CookieConsent nonce={nonce} />
   <PreSupportModal nonce={nonce} />
-  <ClippyAssistants nonce={nonce} />
 
   <style is:global>
     /* Discovery Hub - Hidden by default, Fixed when active */
@@ -2390,28 +2342,14 @@ const clientId = Astro.locals.clientId || 'default';
       pointer-events: auto;
     }
 
-    /* Força os botões a saírem do fixed e entrarem no fluxo do dock */
-    #nexus-chat-fab, #acc-widget-root {
+    /* Fixed positioning handled by components themselves */
+    #acc-widget-root {
       position: static !important;
       margin: 0 !important;
     }
 
     @media (max-width: 768px) {
         .dock-right { bottom: 10px; right: 10px; gap: 8px; }
-    }
-  </style>
-
-
-  <!-- Header & Mobile Menu Scripts -->
-
-  <style is:global>
-    body, html {
-      margin: 0 !important;
-      padding: 0 !important;
-      overflow-x: hidden;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
     }
   </style>
 </body>

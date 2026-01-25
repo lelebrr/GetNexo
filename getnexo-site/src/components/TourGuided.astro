@@ -13,12 +13,12 @@ const {
 } = Astro.props;
 ---
 
-<!-- Shepherd.js CSS handled in global or local import -->
+<!-- Shepherd.js CSS handled in global or local import - Carregado com defer -->
 <style is:global>
   @import 'shepherd.js/dist/css/shepherd.css';
 </style>
 
-<script type="module">
+<script defer type="module">
   import Shepherd from 'https://cdn.jsdelivr.net/npm/shepherd.js@13.0.0/+esm';
   window.Shepherd = Shepherd;
 

@@ -83,7 +83,7 @@ const { feriadoHoje, lang, idiomaCurto, nonce } = Astro.props;
   </div>
 </section>
 
-<script>
+<script defer>
 // Contador regressivo de 12 minutos que reinicia
 function startCountdown() {
   let minutes = 11;
@@ -109,9 +109,15 @@ document.addEventListener("DOMContentLoaded", startCountdown);
 </script>
 
 <style>
-  /* Novas Estilizações Baseadas na Foto */
+  /* Novas Estilizações Baseadas na Foto - Otimizado para LCP */
   .premium-header-badge {
     margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeInHero 0.5s ease-in-out 0.2s forwards;
+  }
+  @keyframes fadeInHero {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
   }
   .inner-badge {
     display: inline-flex;
@@ -138,6 +144,8 @@ document.addEventListener("DOMContentLoaded", startCountdown);
     margin-bottom: 2rem;
     letter-spacing: -2px;
     font-family: 'Outfit', sans-serif;
+    opacity: 0;
+    animation: fadeInHero 0.5s ease-in-out 0.4s forwards;
   }
   .text-gradient-premium {
     background: linear-gradient(90deg, #00d4ff, #00ff9d);

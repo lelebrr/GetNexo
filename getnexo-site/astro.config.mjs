@@ -89,6 +89,7 @@ export default defineConfig({
             // CSP avançada com proteção contra XSS (para ambiente de desenvolvimento)
             // Em produção, o middleware gera nonces dinamicamente
             'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.cloudflare.com static.cloudflareinsights.com https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://api.getnexo.com.br https://*.getnexo.com.br https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src * data: blob:; font-src 'self' https://fonts.gstatic.com; connect-src *; object-src 'none'; base-uri 'none'; frame-ancestors *; script-src-elem 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net; style-src-elem 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net https://fonts.googleapis.com;",
+            // Cache otimizado: 1 ano para assets estáticos, 1 dia para APIs
             'Cache-Control': 'public, max-age=31536000, immutable',
             // HSTS forte para todos os ambientes (não apenas Vercel)
             'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'

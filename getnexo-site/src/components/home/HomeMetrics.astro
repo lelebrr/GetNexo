@@ -15,3 +15,78 @@
       <span class="m-label">Taxa por Mensagem</span>
   </div>
 </section>
+
+<style>
+  .metrics-section {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    padding: 3rem 0;
+    flex-wrap: wrap;
+  }
+
+  .metric-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 2rem 3rem;
+    text-align: center;
+    min-width: 200px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  .metric-card:nth-child(1) { animation-delay: 0.1s; }
+  .metric-card:nth-child(2) { animation-delay: 0.2s; }
+  .metric-card:nth-child(3) { animation-delay: 0.3s; }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .m-val {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #00d4ff;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+  }
+
+  .m-label {
+    display: block;
+    font-size: 0.9rem;
+    color: #94a3b8;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  @media (max-width: 768px) {
+    .metrics-section {
+      gap: 1rem;
+      padding: 2rem 0;
+    }
+
+    .metric-card {
+      padding: 1.5rem 2rem;
+      min-width: 150px;
+    }
+
+    .m-val {
+      font-size: 2rem;
+    }
+
+    .m-label {
+      font-size: 0.8rem;
+    }
+  }
+</style>
