@@ -2312,8 +2312,13 @@ const clientId = Astro.locals.clientId || 'default';
 
   <style is:global>
     .dock-left {
-      position: fixed; bottom: 24px; left: 24px;
-      display: flex; flex-direction: column-reverse; gap: 12px; z-index: 9999;
+      position: fixed;
+      bottom: 40px;
+      left: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px; /* Distância entre os botões */
+      z-index: 9999;
       pointer-events: none;
     }
     .dock-right {
@@ -2321,18 +2326,25 @@ const clientId = Astro.locals.clientId || 'default';
       display: flex; flex-direction: column-reverse; gap: 12px; z-index: 9999;
       pointer-events: none;
     }
-    .dock-left > *, .dock-right > * { pointer-events: auto; }
+    .dock-left > *, .dock-right > * {
+      pointer-events: auto;
+    }
 
-    /* Component Fixed Overrides for Docks */
-    .accessibility-trigger, .tour-trigger-btn, .whatsapp-float-btn {
-      position: relative !important;
+    /* Força os botões a saírem do fixed e entrarem no fluxo do dock */
+    #acc-widget-root,
+    #tour-btn,
+    .tour-trigger-btn,
+    .whatsapp-float-btn {
+      position: static !important;
       bottom: auto !important;
-      right: auto !important;
       left: auto !important;
+      right: auto !important;
+      width: auto !important;
+      min-width: auto !important;
     }
 
     @media (max-width: 768px) {
-        .dock-left { bottom: 10px; left: 10px; gap: 8px; }
+        .dock-left { bottom: 20px; left: 16px; gap: 12px; }
         .dock-right { bottom: 10px; right: 10px; gap: 8px; }
     }
   </style>
