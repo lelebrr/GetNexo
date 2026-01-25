@@ -57,6 +57,11 @@ const nonce = Astro.locals.nonce;
     </script>
   )}
   
+  <!-- DEBUG BANNER - REMOVE AFTER FIX -->
+  <div style="background: red; color: white; text-align: center; padding: 10px; font-weight: bold; position: fixed; top: 0; left: 0; width: 100%; z-index: 99999;">
+    VERSÃO DEBUG 2.0 ATIVA - CACHE LIMPO
+  </div>
+
   <HomeSchema />
   
   <HomeHero feriadoHoje={feriadoHoje} lang={lang} idiomaCurto={idiomaCurto} nonce={nonce} />
