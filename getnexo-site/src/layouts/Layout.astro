@@ -6,7 +6,7 @@ import AccessibilityControls from '../components/AccessibilityControls.astro';
 import CookieConsent from '../components/CookieConsent.astro';
 import NeuralBackground from '../components/NeuralBackground.astro';
 import ClippyAssistants from '../components/ClippyAssistants.astro';
-import WhatsAppFloat from '../components/WhatsAppFloat.astro';
+import NexusChatButton from '../components/NexusChatButton.astro';
 import TourGuided from '../components/TourGuided.astro';
 
 const {
@@ -199,7 +199,7 @@ const clientId = Astro.locals.clientId || 'default';
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
     <style is:inline>
       /* Critical LCP Styles */
       .logo-text { font-family: 'Inter', sans-serif; font-weight: 800; visibility: visible !important; opacity: 1 !important; }
@@ -241,10 +241,6 @@ const clientId = Astro.locals.clientId || 'default';
     html[data-bg-type="animated"] .neural-background { display: none !important; }
 
     .animated-bg { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -99; overflow: hidden; background: #030712; }
-    .blob { position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(0, 212, 255, 0.15) 0%, transparent 70%); border-radius: 50%; filter: blur(80px); animation: move 20s infinite alternate; will-change: transform; }
-    .blob-1 { top: -100px; left: -100px; }
-    .blob-2 { bottom: -100px; right: -100px; background: radial-gradient(circle, rgba(0, 255, 157, 0.10) 0%, transparent 70%); }
-    @keyframes move { from { transform: translate(0, 0); } to { transform: translate(100px, 100px); } }
 
     /* Layout Parts */
     main { padding-top: var(--mainPadding); min-height: var(--mainMinHeight); }
@@ -866,10 +862,7 @@ const clientId = Astro.locals.clientId || 'default';
   </div>
 
   
-  <div class="animated-bg" id="old-bg">
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-  </div>
+  <!-- Círculos flutuantes removidos - não têm função clara -->
 
   <script is:inline nonce={nonce}>
     // Sincronização de Fundo Global
@@ -1054,7 +1047,7 @@ const clientId = Astro.locals.clientId || 'default';
     <div class="header-ctas">
       <div class="magic-discovery" id="magic-discovery" title="Descobrir Soluções IA">✨</div>
       <a href="/login" class="btn-login">Login</a>
-      <a href="https://app.getnexo.com.br/register" class="btn-start" target="_blank" style="background: linear-gradient(135deg, #00d4ff 0%, #00ff9d 100%) !important; color: #030712 !important; box-shadow: 0 0 20px rgba(0, 212, 255, 0.4) !important; border: none !important;">Ativar Grátis</a>
+      <a href={`/${lang}/${t.slugs.pricing}`} class="btn-start" style="background: linear-gradient(135deg, #00d4ff 0%, #00ff9d 100%) !important; color: #030712 !important; box-shadow: 0 0 20px rgba(0, 212, 255, 0.4) !important; border: none !important;">Ativar Grátis</a>
       
       <div class="lang-flags">
         <a href={getLangUrl('pt')} class={`flag-link ${lang === 'pt' ? 'active' : ''}`} title="Português"><img src="/flags/br.svg" alt="PT" width="32" height="22" /></a>
@@ -1144,7 +1137,7 @@ const clientId = Astro.locals.clientId || 'default';
     <meta itemprop="logo" content="https://getnexo.com.br/assets/logo.png">
     <meta itemprop="description" content="Chatbot WhatsApp IA grátis self-hosted: fecha vendas sozinho 24/7 no seu domínio. Sem taxa por mensagem, integra PIX automático, estoque, frete.">
     
-    <!-- Trust Badges Gigantes -->
+    <!-- Trust Badges -->
     <div class="footer-trust-badges">
       <div class="trust-badge">
         <span class="badge-icon">🔒</span>
@@ -1176,62 +1169,38 @@ const clientId = Astro.locals.clientId || 'default';
         </p>
         
         <div class="footer-socials">
-          <a href="https://wa.me/5511999999999?text=Ola%20GetNexo" aria-label="WhatsApp GetNexo - Conversar Agora" class="social-link whatsapp">
-            <span class="social-icon">📱</span>
+          <a href="https://wa.me/5511999999999" aria-label="WhatsApp" class="social-link whatsapp"><span class="social-icon">📱</span></a>
+          <a href="https://facebook.com/getnexo" aria-label="Facebook" class="social-link facebook">
+            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
           </a>
-          <a href="https://facebook.com/getnexo" aria-label="Facebook GetNexo - Novidades em Automação" class="social-link facebook">
-            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-            </svg>
+          <a href="https://instagram.com/getnexo" aria-label="Instagram" class="social-link instagram">
+            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z"/></svg>
           </a>
-          <a href="https://instagram.com/getnexo" aria-label="Instagram GetNexo - Dicas de Vendas WhatsApp" class="social-link instagram">
-            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12.017 0C8.396 0 7.975.015 6.618.07 5.254.124 4.169.251 3.271.508c-.936.26-1.734.646-2.502 1.413C-.021 2.689 0 3.487 0 4.423c0 .891.127 1.976.384 3.34C.694 9.12.709 9.541.709 13.162c0 3.621-.015 4.042-.07 5.399-.057 1.356-.192 2.441-.449 3.339-.26.936-.646 1.734-1.413 2.502C1.311 25.021 2.109 24 3.045 24c.891 0 1.976-.127 3.34-.384.893-.057 1.314-.192 2.67-.449.356-.057.691-.115 1.013-.172.646-.115 1.013-.172 1.48-.172.467 0 .834.057 1.48.172.322.057.657.115 1.013.172 1.356.257 2.441.392 3.339.449 1.356.057 2.441.192 3.339.449.936.26 1.734.646 2.502 1.413.768.767 1.153 1.565 1.153 2.502 0 .936-.385 1.734-1.153 2.502-.768.767-1.566 1.152-2.502 1.152-.891 0-1.976.127-3.34.384-.893.057-1.314.192-2.67.449-.356.057-.691.115-1.013.172-.646.115-1.013.172-1.48.172-.467 0-.834-.057-1.48-.172-.322-.057-.657-.115-1.013-.172-1.356-.257-2.441-.392-3.339-.449C4.169 23.749 3.054 23.622 1.696 23.565 1.339 23.508.978 23.508.978 23.508c-.646-.115-1.013-.172-1.48-.172-.467 0-.834.057-1.48.172-.322.057-.657.115-1.013.172-1.356.257-2.441.392-3.339.449C.251 23.975.124 24.84 0 25.696c0 .936.385 1.734 1.153 2.502C1.921 29.966 2.719 30.351 3.655 30.608c.936.26 1.734.646 2.502 1.413.768.767 1.153 1.565 1.153 2.502 0 .936-.385 1.734-1.153 2.502-.768.767-1.566 1.152-2.502 1.152-.891 0-1.976.127-3.34.384-.893.057-1.314.192-2.67.449C3.054 38.749 1.939 38.622.581 38.565.224 38.508-.137 38.508-.137 38.508c-.646-.115-1.013-.172-1.48-.172-.467 0-.834.057-1.48.172-.322.057-.657.115-1.013.172-1.356.257-2.441.392-3.339.449C.127 39.16 0 40.045 0 40.981c0 .936.385 1.734 1.153 2.502.768.767 1.566 1.152 2.502 1.152.891 0 1.976-.127 3.34-.384.893-.057 1.314-.192 2.67-.449.356-.057.691-.115 1.013-.172.646-.115 1.013-.172 1.48-.172.467 0 .834.057 1.48.172.322.057.657.115 1.013.172 1.356.257 2.441.392 3.339.449 1.356.057 2.441.192 3.339.449.936.26 1.734.646 2.502 1.413.768.767 1.153 1.565 1.153 2.502 0 .936-.385 1.734-1.153 2.502-.768.767-1.566 1.152-2.502 1.152-.891 0-1.976.127-3.34.384-.893.057-1.314.192-2.67.449-.356.057-.691.115-1.013.172-.646.115-1.013.172-1.48.172-.467 0-.834-.057-1.48-.172-.322-.057-.657-.115-1.013-.172-1.356-.257-2.441-.392-3.339-.449-1.356-.057-2.441-.192-3.339-.449-.936-.26-1.734-.646-2.502-1.413C1.311 46.979.416 46.181.416 45.245c0-.891.127-1.976.384-3.34.057-.893.192-1.314.449-2.67.057-.356.115-.691.172-1.013.115-.646.172-1.013.172-1.48 0-.467-.057-.834-.172-1.48-.057-.322-.115-.657-.172-1.013-.257-1.356-.392-2.441-.449-3.339-.057-1.356-.192-2.441-.449-3.339-.26-.936-.646-1.734-1.413-2.502C.979 35.311 0 34.513 0 33.577c0-.891.127-1.976.384-3.34.057-.893.192-1.314.449-2.67.057-.356.115-.691.172-1.013.115-.646.172-1.013.172-1.48 0-.467-.057-.834-.172-1.48-.057-.322-.115-.657-.172-1.013-.257-1.356-.392-2.441-.449-3.339C.84 25.127.713 24.242.713 23.386c0-.936.385-1.734 1.153-2.502.768-.767 1.566-1.152 2.502-1.152.891 0 1.976-.127 3.34-.384.893-.057 1.314-.192 2.67-.449.356-.057.691-.115 1.013-.172.646-.115 1.013-.172 1.48-.172.467 0 .834.057 1.48.172.322.057.657.115 1.013.172 1.356.257 2.441.392 3.339.449 1.356.057 2.441.192 3.339.449.936.26 1.734.646 2.502 1.413.768.767 1.153 1.565 1.153 2.502 0 .936-.385 1.734-1.153 2.502-.768.767-1.566 1.152-2.502 1.152-.891 0-1.976.127-3.34.384-.893.057-1.314.192-2.67.449-.356.057-.691.115-1.013.172-.646.115-1.013.172-1.48.172-.467 0-.834-.057-1.48-.172-.322-.057-.657-.115-1.013-.172-1.356-.257-2.441-.392-3.339-.449C3.054 24.251 1.939 24.124.581 24.067.224 24.01-.137 24.01-.137 24.01c-.646.115-1.013.172-1.48.172-.467 0-.834-.057-1.48-.172-.322-.057-.657-.115-1.013-.172-1.356-.257-2.441-.392-3.339-.449C.127 23.84 0 22.955 0 22.019c0-.936.385-1.734 1.153-2.502.768-.767 1.566-1.152 2.502-1.152.891 0 1.976-.127 3.34-.384.893-.057 1.314-.192 2.67-.449.356-.057.691-.115 1.013-.172.646-.115 1.013-.172 1.48-.172.467 0 .834.057 1.48.172.322.057.657.115 1.013.172 1.356.257 2.441.392 3.339.449 1.356.057 2.441.192 3.339.449.936.26 1.734.646 2.502 1.413.768.767 1.153 1.565 1.153 2.502 0 .936-.385 1.734-1.153 2.502-.768.767-1.566 1.152-2.502 1.152-.891 0-1.976.127-3.34.384-.893.057-1.314.192-2.67.449-.356.057-.691.115-1.013.172-.646.115-1.013.172-1.48.172-.467 0-.834-.057-1.48-.172-.322-.057-.657-.115-1.013-.172-1.356-.257-2.441-.392-3.339-.449-1.356-.057-2.441-.192-3.339-.449-.936-.26-1.734-.646-2.502-1.413C1.311 19.021.416 18.223.416 17.287c0-.891.127-1.976.384-3.34.057-.893.192-1.314.449-2.67.057-.356.115-.691.172-1.013.115-.646.172-1.013.172-1.48 0-.467-.057-.834-.172-1.48-.057-.322-.115-.657-.172-1.013-.257-1.356-.392-2.441-.449-3.339-.057-1.356-.192-2.441-.449-3.339-.26-.936-.646-1.734-1.413-2.502C.979 8.353 0 7.555 0 6.619c0-.891.127-1.976.384-3.34.057-.893.192-1.314.449-2.67.057-.356.115-.691.172-1.013.115-.646.172-1.013.172-1.48 0-.467-.057-.834-.172-1.48-.057-.322-.115-.657-.172-1.013-.257-1.356-.392-2.441-.449-3.339C.84 1.169.713.284.713.428c0-.936.385-1.734 1.153-2.502.768-.767 1.566-1.152 2.502-1.152.891 0 1.976-.127 3.34-.384.893-.057 1.314-.192 2.67-.449.356-.057.691-.115 1.013-.172.646-.115 1.013-.172 1.48-.172.467 0 .834.057 1.48.172.322.057.657.115 1.013.172 1.356.257 2.441.392 3.339.449 1.356.057 2.441.192 3.339.449.936.26 1.734.646 2.502 1.413.768.767 1.153 1.565 1.153 2.502 0 .936-.385 1.734-1.153 2.502-.768.767-1.566 1.152-2.502 1.152-.891 0-1.976.127-3.34.384-.893.057-1.314.192-2.67.449-.356.057-.691.115-1.013.172-.646.115-1.013.172-1.48.172-.467 0-.834-.057-1.48-.172-.322-.057-.657-.115-1.013-.172-1.356-.257-2.441-.392-3.339-.449C3.054.251 1.939.124.581.067.224.01-.137.01-.137.01c-.646.115-1.013.172-1.48.172-.467 0-.834-.057-1.48-.172-.322-.057-.657-.115-1.013-.172-1.356-.257-2.441-.392-3.339-.449C.127 0 0 0 0 0z"/>
-            </svg>
+          <a href="https://linkedin.com/company/getnexo" aria-label="LinkedIn" class="social-link linkedin">
+            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351v-11.452h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555v-11.452h3.564v11.452z"/></svg>
           </a>
-          <a href="https://linkedin.com/company/getnexo" aria-label="LinkedIn GetNexo - Insights Corporativos" class="social-link linkedin">
-            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-            </svg>
-          </a>
-          <a href="https://tiktok.com/@getnexo" aria-label="TikTok GetNexo - Vídeos Curtos e Inovação" class="social-link tiktok">
-            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M19.589 6.686a4.793 4.793 0 0 1-3.77-4.245V2h-3.445v13.672a2.896 2.896 0 0 1-5.201 1.743l-.002-.001.002.001a2.895 2.895 0 0 1 3.183-4.51v-3.5a6.329 6.329 0 0 0-1-.043c.365-.235.79-.5 1.26-.74a4.793 4.793 0 0 0 3.77 4.245V2h-3.445v13.672a2.896 2.896 0 0 1-5.201 1.743l-.002-.001.002.001a2.895 2.895 0 0 1 3.183-4.51v-3.5a6.329 6.329 0 0 0-1-.043c.365-.235.79-.5 1.26-.74Z"/>
-            </svg>
-          </a>
-          <a href="https://twitter.com/getnexo" aria-label="Twitter/X GetNexo - Atualizações em Tempo Real" class="social-link twitter">
-            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-            </svg>
-          </a>
-          <a href="https://youtube.com/@getnexo" aria-label="YouTube GetNexo - Tutoriais e Demos" class="social-link youtube">
-            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-            </svg>
-          </a>
-          <a href="https://discord.gg/getnexo" aria-label="Discord GetNexo - Comunidade e Suporte" class="social-link discord">
-            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419-.0189 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
-            </svg>
-          </a>
-          <a href="https://t.me/getnexo" aria-label="Telegram GetNexo - Canal Oficial" class="social-link telegram">
-            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-            </svg>
-          </a>
+        </div>
+        <div class="footer-socials" style="margin-top: 10px;">
+          <a href="https://tiktok.com/@getnexo" aria-label="TikTok" class="social-link tiktok"><span class="social-icon">🎵</span></a>
+          <a href="https://twitter.com/getnexo" aria-label="Twitter" class="social-link twitter"><span class="social-icon">𝕏</span></a>
+          <a href="https://youtube.com/@getnexo" aria-label="YouTube" class="social-link youtube"><span class="social-icon">🎬</span></a>
+          <a href="https://discord.gg/getnexo" aria-label="Discord" class="social-link discord"><span class="social-icon">💬</span></a>
+        </div>
+        <div class="footer-socials" style="margin-top: 10px;">
+          <a href="https://t.me/getnexo" aria-label="Telegram" class="social-link telegram"><span class="social-icon">✈️</span></a>
         </div>
       </div>
 
-      <!-- Coluna 2: Plataforma de Automação -->
+      <!-- Coluna 2: Plataforma -->
       <div class="footer-col">
         <h3 class="footer-title">Plataforma & IA</h3>
         <div class="footer-links">
-          <a href={`/${lang}/${t.slugs.solutions}`} title="Nossas Soluções de Automação WhatsApp e Chat IA">Soluções Completas</a>
-          <a href={`/${lang}/${t.slugs.loyalty}`} title="Sistema de Fidelização e Recompensa com IA">Programa de Fidelidade</a>
-          <a href={`/${lang}/${t.slugs.analytics}`} title="Dashboard de Analytics e BI para WhatsApp">Analytics Enterprise</a>
-          <a href={`/${lang}/${t.slugs.integrations}`} title="Integrações com CRM, Google Sheets, n8n e mais">Integrações de API</a>
-          <a href={`/${lang}/loja`} title="Plugins e Complementos para sua Operação">Loja GetNexo</a>
-          <a href={`/${lang}/${t.slugs.pricing}`} title="Planos e Preços Assistente Virtual WhatsApp">Tabela de Preços</a>
+          <a href={`/${lang}/${t.slugs.solutions}`}>Soluções Completas</a>
+          <a href={`/${lang}/${t.slugs.loyalty}`}>Programa de Fidelidade</a>
+          <a href={`/${lang}/${t.slugs.analytics}`}>Analytics Enterprise</a>
+          <a href={`/${lang}/${t.slugs.integrations}`}>Integrações de API</a>
+          <a href="/loja">Loja GetNexo</a>
+          <a href={`/${lang}/${t.slugs.pricing}`}>Tabela de Preços</a>
         </div>
       </div>
 
@@ -1239,66 +1208,65 @@ const clientId = Astro.locals.clientId || 'default';
       <div class="footer-col">
         <h3 class="footer-title">Soluções por Setor</h3>
         <div class="footer-links">
-          <a href={`/${lang}/${t.slugs.blog}/whatsapp-automação-imobiliaria`} title="Automação WhatsApp para Imobiliárias e Corretores">Imobiliárias</a>
-          <a href={`/${lang}/${t.slugs.blog}/whatsapp-clinicas-saude-lgpd`} title="Agendamento Automático para Clínicas e Médicos">Saúde & Clínicas</a>
-          <a href={`/${lang}/${t.slugs.blog}/chatbot-infoprodutores-escala`} title="Chatbot para Infoprodutores, Cursos e Lançamentos">Infoprodutores</a>
-          <a href={`/${lang}/${t.slugs.blog}/vendas-preditivas-ia`} title="IA de Vendas para E-commerce e Lojas Virtuais">E-commerce</a>
-          <a href={`/${lang}/${t.slugs.blog}/automacao-agendamento-liberais`} title="Automação para Profissionais Liberais e Consultores">Profissionais Liberais</a>
-          <a href={`/${lang}/${t.slugs.blog}/saas-growth-whatsapp-api`} title="Estratégias de Growth para Empresas de Software SaaS">SaaS & Startups</a>
+          <a href={`/${lang}/${t.slugs.blog}/whatsapp-automacao-imobiliaria`} title="Automação WhatsApp para Imobiliárias">Imobiliárias</a>
+          <a href={`/${lang}/${t.slugs.blog}/whatsapp-clinicas-saude-lgpd`} title="Agendamento Automático para Clínicas">Saúde & Clínicas</a>
+          <a href={`/${lang}/${t.slugs.blog}/chatbot-infoprodutores-escala`} title="Chatbot para Infoprodutores">Infoprodutores</a>
+          <a href={`/${lang}/${t.slugs.blog}/vendas-preditivas-ia`} title="IA de Vendas para E-commerce">E-commerce</a>
+          <a href={`/${lang}/${t.slugs.blog}/automacao-agendamento-liberais`} title="Automação para Profissionais Liberais">Profissionais Liberais</a>
+          <a href={`/${lang}/${t.slugs.blog}/saas-growth-whatsapp-api`} title="Estratégias de Growth para SaaS">SaaS & Startups</a>
         </div>
       </div>
 
-      <!-- Coluna 4: Recursos e Empresa -->
+      <!-- Coluna 4: Empresa -->
       <div class="footer-col">
         <h3 class="footer-title">Recursos & Empresa</h3>
         <div class="footer-links">
-          <a href={`/${lang}/${t.slugs.blog}`} title="Blog GetNexo: Estratégias de Vendas e IA">Blog de Vendas</a>
-          <a href={`/${lang}/documentacao`} title="Documentação Técnica e Tutoriais para Desenvolvedores">Documentação API</a>
-          <a href={`/${lang}/${t.slugs.faq}`} title="Perguntas Frequentes sobre Automação WhatsApp">Central de FAQ</a>
-          <a href={`/${lang}/sobre`} title="Conheça a História da GetNexo">Sobre Nós</a>
-          <a href={`/${lang}/${t.slugs.contact}`} title="Fale com nosso Time de Suporte e Vendas">Contato Oficial</a>
-          <a href={`/${lang}/revenda`} title="Seja um Parceiro e Revenda GetNexo">Programa de Revenda</a>
+          <a href={`/${lang}/${t.slugs.blog}`}>Blog de Vendas</a>
+          <a href="/documentacao">Documentação API</a>
+          <a href={`/${lang}/${t.slugs.faq}`}>Central de FAQ</a>
+          <a href="/sobre">Sobre Nós</a>
+          <a href={`/${lang}/${t.slugs.contact}`}>Contato Oficial</a>
+          <a href="/revenda">Programa de Revenda</a>
         </div>
       </div>
 
-      <!-- Coluna 5: Newsletter & Compliance -->
+      <!-- Coluna 5: Newsletter -->
       <div class="footer-col newsletter-col">
         <h3 class="footer-title">Escala Semanal</h3>
         <p class="newsletter-text">Receba táticas de IA e automação direto no seu e-mail.</p>
         <form class="footer-newsletter">
           <input type="email" placeholder="Seu melhor e-mail" required />
-          <button type="submit" aria-label="Inscrever-se na Newsletter">🚀</button>
+          <button type="submit">🚀</button>
         </form>
         <div class="footer-links mt-6">
-          <a href={`/${lang}/${t.slugs.privacy}`} title="Políticas de Privacidade e LGPD">Privacidade</a>
-          <a href={`/${lang}/${t.slugs.terms}`} title="Termos de Uso do Serviço">Termos</a>
-          <a href={`/${lang}/acessibilidade`} title="Acessibilidade Digital WCAG 2.2">Acessibilidade</a>
+          <a href={`/${lang}/${t.slugs.privacy}`}>Privacidade</a>
+          <a href={`/${lang}/${t.slugs.terms}`}>Termos</a>
+          <a href="/acessibilidade">Acessibilidade</a>
         </div>
       </div>
     </div>
 
-
-
+    <!-- Bottom -->
     <div class="footer-bottom">
-      <div class="footer-lang-selector" style="display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap;">
-        <a href={getLangUrl('pt')} class={`lang-chip ${lang === 'pt' ? 'active' : ''}`} title="Português">
+      <div class="footer-lang-selector" style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap;">
+        <a href={getLangUrl('pt')} class={`lang-chip ${lang === 'pt' ? 'active' : ''}`}>
           <img src="/flags/br.svg" alt="" style="width: 18px; border-radius: 2px;" />
           <span>PT</span>
         </a>
-        <a href={getLangUrl('en')} class={`lang-chip ${lang === 'en' ? 'active' : ''}`} title="English">
-          <img src="/flags/gb.svg" alt="" class="flag-icon" />
+        <a href={getLangUrl('en')} class={`lang-chip ${lang === 'en' ? 'active' : ''}`}>
+          <img src="/flags/gb.svg" alt="" style="width: 18px; border-radius: 2px;" />
           <span>EN</span>
         </a>
-        <a href={getLangUrl('es')} class={`lang-chip ${lang === 'es' ? 'active' : ''}`} title="Español">
-          <img src="/flags/es.svg" alt="" class="flag-icon" />
+        <a href={getLangUrl('es')} class={`lang-chip ${lang === 'es' ? 'active' : ''}`}>
+          <img src="/flags/es.svg" alt="" style="width: 18px; border-radius: 2px;" />
           <span>ES</span>
         </a>
-        <a href={getLangUrl('fr')} class={`lang-chip ${lang === 'fr' ? 'active' : ''}`} title="Français">
-          <img src="/flags/fr.svg" alt="" class="flag-icon" />
+        <a href={getLangUrl('fr')} class={`lang-chip ${lang === 'fr' ? 'active' : ''}`}>
+          <img src="/flags/fr.svg" alt="" style="width: 18px; border-radius: 2px;" />
           <span>FR</span>
         </a>
       </div>
-      <p>{t.footer.rights}</p>
+      <p>© 2026 GetNexo. Todos os direitos reservados. | GetNexo: A vanguarda em Automação WhatsApp e IA para Negócios.</p>
     </div>
   </footer>
 
@@ -2316,7 +2284,7 @@ const clientId = Astro.locals.clientId || 'default';
 
   <!-- Global Floating UI - Right (Chat & Support) -->
   <div class="dock-right">
-    <WhatsAppFloat />
+    <NexusChatButton />
   </div>
 
   <CookieConsent nonce={nonce} />
@@ -2324,13 +2292,41 @@ const clientId = Astro.locals.clientId || 'default';
   <ClippyAssistants nonce={nonce} />
 
   <style is:global>
+    /* Discovery Hub - Hidden by default, Fixed when active */
+    .discovery-hub {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 10000;
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.3s ease;
+    }
+    .discovery-hub.active {
+      opacity: 1; visibility: visible; pointer-events: auto;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+    }
+    .hub-container {
+      background: #0f172a; border: 1px solid rgba(0,212,255,0.3);
+      padding: 2rem; border-radius: 20px; max-width: 500px; width: 90%;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+    .hub-header { display: flex; justify-content: space-between; margin-bottom: 1.5rem; }
+    .hub-close { background: none; border: none; font-size: 1.5rem; color: #fff; cursor: pointer; }
+    .hub-features { display: grid; gap: 1rem; margin: 1.5rem 0; }
+    .hub-feature { display: flex; gap: 1rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 12px; }
+    .hub-icon { font-size: 1.5rem; }
+    .hub-info strong { display: block; color: var(--primary); }
+    .hub-info span { font-size: 0.85rem; color: #94a3b8; }
+
+    /* Dock Left - Reduced Gap */
     .dock-left {
       position: fixed;
-      bottom: 40px;
+      bottom: 24px;
       left: 24px;
       display: flex;
-      flex-direction: column; /* normal: Tour em cima, Acessibilidade embaixo */
-      gap: 80px; /* 80px desktop */
+      flex-direction: column; 
+      gap: 20px; /* Reduced to 20px as requested */
       z-index: 9999;
       pointer-events: none;
     }
@@ -2339,21 +2335,48 @@ const clientId = Astro.locals.clientId || 'default';
       pointer-events: auto;
     }
 
-    /* Força os botões a seguirem o fluxo do dock (remove fixed interno) */
+    /* Force buttons to be visible and static */
     #tour-btn,
-    #acc-widget-root {
+    #acc-trigger {
       position: static !important;
       bottom: auto !important;
       left: auto !important;
       right: auto !important;
+      width: 50px !important;
+      height: 50px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      background: rgba(15, 23, 42, 0.8) !important;
+      backdrop-filter: blur(10px) !important;
+      border: 1px solid rgba(0, 212, 255, 0.3) !important;
+      border-radius: 50% !important;
+      color: #00d4ff !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+      transition: all 0.3s ease !important;
+    }
+    #tour-btn:hover, #acc-trigger:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 15px rgba(0, 212, 255, 0.4) !important;
+      border-color: #00d4ff !important;
+    }
+    #tour-btn svg, #acc-trigger svg {
+      width: 24px !important;
+      height: 24px !important;
+      stroke: #00d4ff !important;
+      fill: none !important;
     }
 
-    /* Mobile: reduz gap pra não ficar muito alto */
+    /* Mobile adjustments */
     @media (max-width: 768px) {
       .dock-left {
-        gap: 60px;
-        left: 20px;
-        bottom: 30px;
+        gap: 15px;
+        left: 15px;
+        bottom: 20px;
+      }
+      #tour-btn, #acc-trigger {
+        width: 45px !important;
+        height: 45px !important;
       }
     }
     .dock-right {
@@ -2368,15 +2391,9 @@ const clientId = Astro.locals.clientId || 'default';
     }
 
     /* Força os botões a saírem do fixed e entrarem no fluxo do dock */
-    .whatsapp-float-btn {
+    #nexus-chat-fab, #acc-widget-root {
       position: static !important;
       margin: 0 !important;
-    }
-
-    /* Correção extra para garantir que o Tour não seja cortado */
-    .tour-trigger-btn {
-      width: 56px !important;
-      height: 56px !important;
     }
 
     @media (max-width: 768px) {

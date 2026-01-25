@@ -4,56 +4,55 @@ const { feriadoHoje, lang, idiomaCurto, nonce } = Astro.props;
 
 <section class="hero-split">
   <div class="hero-content">
-    <!-- Banner de Feriado -->
-    {feriadoHoje && (
-      <div class="feriado-banner animate-on-scroll">
-        <span class="feriado-emoji">🎉</span>
-        <span class="feriado-texto">
-          {feriadoHoje.bot_frase[idiomaCurto] || feriadoHoje.bot_frase.pt}
-        </span>
-        <span class="feriado-nome">| {feriadoHoje.idiomas[idiomaCurto] || feriadoHoje.idiomas.pt}</span>
-      </div>
-    )}
+    <!-- Top Badge - Estilo Premium do User -->
+    <div class="premium-header-badge animate-on-scroll">
+       <div class="inner-badge">
+         <span class="rocket">🚀</span> 
+         TRANSFORME SEU WHATSAPP EM UMA MÁQUINA DE VENDAS AUTOMATIZADA
+       </div>
+    </div>
     
-    <h1 class="text-4xl md:text-6xl font-black mb-6 leading-tight animate-on-scroll">
+    <h1 class="hero-main-title animate-on-scroll">
       TRANSFORME SEU WHATSAPP EM<br />
-      <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-cyan-400">
-        MÁQUINA DE VENDAS 24/7
-      </span>
+      <span class="text-gradient-premium">MÁQUINA DE VENDAS 24/7</span>
     </h1>
 
-    <p class="text-xl md:text-2xl text-gray-300 mb-8 animate-on-scroll">
-      Setup em <span class="text-cyan-400 font-bold">12 minutos</span> • Zero mensalidade • 
-      <span class="text-green-400 font-bold">7 dias GRÁTIS sem cartão</span>
-    </p>
+    <div class="hero-subtitle-box animate-on-scroll">
+      <p>
+        <strong>+500 lojas</strong> já faturam pesado com GetNexo: <strong>+540% em vendas</strong>, <strong>R$ 8.5k economia/mês</strong>.<br />
+        Setup em 12 minutos • Zero mensalidade • 7 dias GRÁTIS sem cartão
+      </p>
+    </div>
 
-    <!-- BOTÃO COM CONTADOR SUBLIMINAR -->
-    <div class="relative inline-block animate-on-scroll">
-      <a href="/ativar" id="hero-cta" class="inline-block px-10 py-5 text-black font-bold text-xl rounded-full 
-        bg-gradient-to-r from-red-500 to-indigo-600 
-        hover:from-red-400 hover:to-indigo-500 
-        transition-all duration-300 transform hover:scale-105 
-        shadow-2xl shadow-red-500/40">
-        Liberar Meu Bot GRÁTIS Agora
+    <!-- DUAL CTA - Estilo Foto -->
+    <div class="hero-actions-box animate-on-scroll">
+      <a href="/precos" class="cta-link-rocket">
+        🚀 LIBERAR MEU BOT GRÁTIS AGORA
       </a>
-      <div class="text-sm text-gray-400 mt-3 text-center">
-        ⏱ Tempo médio de ativação: <span id="countdown" class="font-bold text-cyan-300">12:00</span>
-      </div>
+
+      <button onclick="window.abrirModalDemo()" class="btn-cyan-premium">
+        <span class="emoji">🤖</span> FALAR COM DEMO IA
+      </button>
     </div>
 
-    <div class="hero-trust hero-badge animate-on-scroll" style="margin-top: 2rem;">
-      <span>✅ API Oficial Meta</span>
-      <span>✅ Setup em 12min</span>
-      <span>✅ Zero Mensalidade</span>
+    <!-- Scarcity -->
+    <div class="scarcity-line animate-on-scroll">
+      <span class="hourglass">⏳</span> Oferta válida por tempo limitado: <strong>7 dias GRÁTIS sem cartão</strong>
     </div>
 
-    <!-- Language Selector -->
+    <!-- Trust Pill - Estilo Foto -->
+    <div class="trust-pill-bar animate-on-scroll">
+      <div class="pill-badge"><span class="check">✅</span> API Oficial Meta</div>
+      <div class="pill-divider"></div>
+      <div class="pill-badge"><span class="check">✅</span> Setup em 12min</div>
+      <div class="pill-divider"></div>
+      <div class="pill-badge"><span class="check">✅</span> Zero Mensalidade</div>
+    </div>
   </div>
 
   <div class="hero-visual animate-on-scroll">
       <div class="visual-container">
           <div class="visual-glow"></div>
-          <!-- Replacement for potentially broken hologram -->
           <div class="smart-phone-mockup">
               <div class="screen-content">
                   <div class="chat-header-sim">
@@ -66,13 +65,12 @@ const { feriadoHoje, lang, idiomaCurto, nonce } = Astro.props;
                   <div class="chat-body-mega" id="mega-chat-container">
                       <!-- Conteúdo dinâmico aqui -->
                   </div>
-                  <div class="chat-input-sim">
+                   <div class="chat-input-sim">
                       <div class="sim-mic">🎤</div>
-                      <span>Diga algo...</span>
+                      <span class="text-[10px] md:text-xs">Digite aqui: 'Quero um tênis preto 42' ou 'Mostrar catálogo'</span>
                       <div class="sim-audio-icon">🎧</div>
                       <div class="sim-send">🚀</div>
                   </div>
-                  <!-- Cursor simulado para o clique RAR -->
                   <div id="sim-finger-cursor" class="sim-finger">☝️</div>
               </div>
           </div>
@@ -107,6 +105,137 @@ function startCountdown() {
     countdownEl.textContent = `${minutes.toString().padStart(2,"0")}:${seconds.toString().padStart(2,"0")}`;
   }, 1000);
 }
-// Start when DOM is ready
 document.addEventListener("DOMContentLoaded", startCountdown);
 </script>
+
+<style>
+  /* Novas Estilizações Baseadas na Foto */
+  .premium-header-badge {
+    margin-bottom: 2rem;
+  }
+  .inner-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0, 212, 255, 0.05);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    padding: 8px 20px;
+    border-radius: 50px;
+    color: #00d4ff;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .hero-main-title {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 950;
+    line-height: 1.1;
+    color: white;
+    margin-bottom: 2rem;
+    letter-spacing: -2px;
+    font-family: 'Outfit', sans-serif;
+  }
+  .text-gradient-premium {
+    background: linear-gradient(90deg, #00d4ff, #00ff9d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero-subtitle-box {
+    margin-bottom: 3rem;
+  }
+  .hero-subtitle-box p {
+    font-size: 1.25rem;
+    color: #94a3b8;
+    line-height: 1.6;
+    max-width: 800px;
+  }
+
+  .hero-actions-box {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+    align-items: flex-start;
+  }
+  
+  .cta-link-rocket {
+    color: #e2e8f0;
+    text-decoration: underline;
+    font-size: 1.1rem;
+    font-weight: 700;
+    transition: all 0.3s ease;
+  }
+  .cta-link-rocket:hover {
+    color: white;
+    transform: translateX(5px);
+  }
+
+  .btn-cyan-premium {
+    background: #00d4ff;
+    color: black;
+    padding: 1rem 2.5rem;
+    border-radius: 12px;
+    font-weight: 900;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+    border: none;
+    cursor: pointer;
+  }
+  .btn-cyan-premium:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 212, 255, 0.5);
+  }
+
+  .scarcity-line {
+    color: #94a3b8;
+    font-size: 1rem;
+    margin-bottom: 3rem;
+  }
+  .scarcity-line strong {
+    color: #00d4ff;
+  }
+
+  .trust-pill-bar {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 12px 24px;
+    border-radius: 20px;
+    gap: 1.5rem;
+    backdrop-filter: blur(10px);
+  }
+  .pill-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: white;
+    white-space: nowrap;
+  }
+  .pill-divider {
+    width: 1px;
+    height: 15px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  @media (max-width: 1024px) {
+    .hero-actions-box { align-items: center; }
+    .hero-subtitle-box { text-align: center; }
+    .hero-main-title { text-align: center; }
+    .premium-header-badge { display: flex; justify-content: center; }
+    .hero-content { display: flex; flex-direction: column; align-items: center; }
+    .trust-pill-bar { flex-direction: column; gap: 0.5rem; border-radius: 30px; width: 100%; }
+    .pill-divider { display: none; }
+  }
+</style>

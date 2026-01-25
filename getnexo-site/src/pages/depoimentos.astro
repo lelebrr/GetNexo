@@ -1,105 +1,154 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Testimonials from '../components/Testimonials.astro';
+
 const title = "Depoimentos Reais – Quem já lucrou com GetNexo";
 const description = "Descubra como empresas de diversos nichos estão economizando milhares de reais e escalando suas vendas com o GetNexo.";
+
+// We'll use the Testimonials component but in a page layout
 ---
 
 <Layout title={title} description={description}>
-  <section class="testimonials-hero">
-    <div class="hero-badge">Cases de Sucesso</div>
-    <h1 class="text-gradient">Quem Ganha com GetNexo</h1>
-    <p>Resultados exponenciais de empresas que trocaram soluções SaaS engessadas pela liberdade da nossa IA Conversacional.</p>
-  </section>
-
-  <section class="testimonials-grid">
-    <div class="testi-card glass-panel">
-      <div class="testi-avatar" style="background: linear-gradient(135deg, #4f46e5, #7c3aed);">M</div>
-      <div class="testi-content">
-        <p>"Eu vendia R$ 8k/mês. Depois do GetNexo, fechei R$ 28k no mês passado. O bot responde melhor que meu vendedor e não pede folga."</p>
-        <div class="testi-meta">
-          <strong>– Marcos, E-commerce de Moda</strong>
-          <span class="testi-badge">+250% em vendas</span>
-        </div>
+  <div class="depoimentos-page">
+    <section class="page-hero">
+      <div class="content-container">
+        <span class="badge">Cases de Sucesso</span>
+        <h1 class="text-gradient">Quem Ganha com GetNexo</h1>
+        <p>Resultados reais de empresas que automatizaram suas vendas e escalaram seus lucros usando nossa tecnologia.</p>
       </div>
-    </div>
+    </section>
 
-    <div class="testi-card glass-panel">
-      <div class="testi-avatar" style="background: linear-gradient(135deg, #ec4899, #f43f5e);">C</div>
-      <div class="testi-content">
-        <p>"Meu vendedor tirou férias e a IA vendeu mais que ele em uma semana. E o melhor: custo fixo zero de mensalidade. Mudou meu jogo."</p>
-        <div class="testi-meta">
-          <strong>– Carla, Clínica Estética</strong>
-          <span class="testi-badge">Recuperação: 72%</span>
-        </div>
-      </div>
-    </div>
+    <!-- We use the component here with showTitle=false to avoid duplication -->
+    <Testimonials showTitle={false} maxItems={20} />
 
-    <div class="testi-card glass-panel">
-      <div class="testi-avatar" style="background: linear-gradient(135deg, #f59e0b, #f97316);">J</div>
-      <div class="testi-content">
-        <p>"Instalação em 12 minutos. O bot já estava qualificando leads no mesmo dia. Parei de pagar R$ 399 no Wati. Nunca mais volto atrás."</p>
-        <div class="testi-meta">
-          <strong>– Jorge, Delivery</strong>
-          <span class="testi-badge">Speed Rank: #1</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="testi-card glass-panel">
-      <div class="testi-avatar" style="background: linear-gradient(135deg, #06b6d4, #0ea5e9);">L</div>
-      <div class="testi-content">
-        <p>"Como Web Designer, instalo para meus clientes e ganho comissão + recorrência de manutenção. Lucro puro e cliente feliz com IA de ponta."</p>
-        <div class="testi-meta">
-          <strong>– Leandro, Partner</strong>
-          <span class="testi-badge">ROI: 12x</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="testi-cta">
-    <div class="glass-panel final-conversion">
+    <section class="trust-cta">
+      <div class="cta-inner glass-panel">
         <h2>Seu resultado é o nosso próximo case.</h2>
-        <p>Pare de perder leads por demora no atendimento. Comece a vender agora.</p>
-        <div class="cta-actions">
-            <a href="#" onclick="window.$chatwoot.toggle(); return false;" class="btn-primary-glow">Testar Agente IA Agora</a>
-            <a href="/precos" class="btn-outline">Ver Planos</a>
+        <p>Junte-se a centenas de empresas que já estão dominando as vendas no WhatsApp.</p>
+        <div class="cta-buttons">
+          <a href="/começar" class="btn-primary">Escalar Meu Negócio Agora</a>
+          <a href="/contato" class="btn-secondary">Falar com Especialista</a>
         </div>
-    </div>
-  </section>
+      </div>
+    </section>
+  </div>
 </Layout>
 
 <style>
-  .testimonials-hero { text-align: center; padding: 10rem 5% 5rem; }
-  .hero-badge { background: rgba(0, 212, 255, 0.1); color: #00d4ff; padding: 0.5rem 1.2rem; border-radius: 50px; font-size: 0.85rem; font-weight: 700; display: inline-block; margin-bottom: 2rem; border: 1px solid rgba(0,212,255,0.2); }
-  .testimonials-hero h1 { font-size: 3.5rem; margin-bottom: 1.5rem; font-weight: 800; }
-  .testimonials-hero p { color: #94a3b8; font-size: 1.25rem; max-width: 750px; margin: 0 auto; }
+  .depoimentos-page {
+    background: #020617;
+    min-height: 100vh;
+    padding-top: 80px;
+  }
 
-  .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 2.5rem; max-width: 1200px; margin: 0 auto; padding: 4rem 5%; }
-  .testi-card { padding: 3rem; display: flex; gap: 2rem; align-items: flex-start; border-radius: 32px; transition: 0.3s; }
-  .testi-card:hover { transform: translateY(-10px); border-color: #00ff9d; }
-  
-  .testi-avatar { width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.8rem; font-weight: 900; flex-shrink: 0; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-  
-  .testi-content p { color: #cbd5e1; font-size: 1.2rem; line-height: 1.7; font-style: italic; margin-bottom: 2rem; position: relative; }
-  .testi-meta { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); pt: 1.5rem; }
-  .testi-meta strong { color: #00ff9d; font-size: 1rem; }
-  .testi-badge { font-size: 0.75rem; background: rgba(0, 212, 255, 0.1); color: #00d4ff; padding: 0.3rem 0.8rem; border-radius: 50px; font-weight: 800; }
+  .page-hero {
+    padding: 8rem 5% 4rem;
+    text-align: center;
+    position: relative;
+  }
 
-  .testi-cta { padding: 6rem 5% 10rem; max-width: 1000px; margin: 0 auto; }
-  .final-conversion { padding: 5rem; text-align: center; border-radius: 40px; }
-  .final-conversion h2 { color: white; font-size: 2.5rem; margin-bottom: 1.5rem; font-weight: 800; }
-  .final-conversion p { color: #94a3b8; font-size: 1.2rem; margin-bottom: 3rem; }
-  
-  .cta-actions { display: flex; justify-content: center; gap: 2rem; }
-  .btn-primary-glow { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: black; padding: 1.2rem 3rem; border-radius: 12px; font-weight: 900; text-decoration: none; transition: 0.3s; box-shadow: 0 10px 30px rgba(0,212,255,0.2); }
-  .btn-outline { border: 1px solid rgba(255,255,255,0.1); color: white; padding: 1.2rem 3rem; border-radius: 12px; font-weight: 700; text-decoration: none; transition: 0.3s; background: rgba(255,255,255,0.03); }
+  .content-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
 
-  @media (max-width: 900px) {
-    .testimonials-grid { grid-template-columns: 1fr; }
-    .testi-card { flex-direction: column; text-align: center; }
-    .testi-avatar { margin: 0 auto; }
-    .cta-actions { flex-direction: column; gap: 1rem; }
-    .testimonials-hero h1 { font-size: 2.5rem; }
+  .badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: rgba(34, 211, 238, 0.1);
+    border: 1px solid rgba(34, 211, 238, 0.2);
+    color: #22d3ee;
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-radius: 100px;
+    margin-bottom: 2rem;
+  }
+
+  .page-hero h1 {
+    font-size: clamp(3rem, 8vw, 5rem);
+    font-weight: 950;
+    line-height: 0.9;
+    letter-spacing: -3px;
+    margin-bottom: 2rem;
+  }
+
+  .page-hero p {
+    font-size: 1.25rem;
+    color: #94a3b8;
+    line-height: 1.6;
+  }
+
+  .trust-cta {
+    padding: 8rem 5%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .cta-inner {
+    padding: 6rem 4rem;
+    text-align: center;
+    border-radius: 4rem;
+    background: radial-gradient(circle at top right, rgba(34, 211, 238, 0.1), transparent);
+  }
+
+  .cta-inner h2 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    color: white;
+    margin-bottom: 1.5rem;
+    letter-spacing: -1px;
+  }
+
+  .cta-inner p {
+    font-size: 1.25rem;
+    color: #94a3b8;
+    margin-bottom: 3rem;
+  }
+
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #22d3ee, #10b981);
+    color: #020617;
+    padding: 1.25rem 2.5rem;
+    border-radius: 1rem;
+    font-weight: 800;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(34, 211, 238, 0.3);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(34, 211, 238, 0.5);
+  }
+
+  .btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    padding: 1.25rem 2.5rem;
+    border-radius: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-3px);
+  }
+
+  @media (max-width: 768px) {
+    .page-hero { padding: 4rem 5% 2rem; }
+    .cta-inner { padding: 4rem 2rem; border-radius: 2.5rem; }
+    .btn-primary, .btn-secondary { width: 100%; text-align: center; }
   }
 </style>

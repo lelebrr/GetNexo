@@ -83,10 +83,9 @@ const {
       id: 'hipnose-inicial',
       title: '🚀 Imagina só...',
       text: 'Respira fundo. Imagina o WhatsApp da tua loja recebendo pedido atrás de pedido... enquanto você dorme. Isso já é realidade pra centenas de lojistas. Quer ver como?',
-      attachTo: { element: null, on: 'center' },
+      attachTo: { element: 'body', on: 'center' },
       classes: 'shepherd-theme-dark shepherd-text-center',
       buttons: [
-        { text: 'Pular', action: tourInstance.cancel, classes: 'shepherd-button-secondary' },
         { text: 'Sim, quero ver isso agora!', action: tourInstance.next, classes: 'shepherd-button-primary' }
       ]
     });
@@ -175,8 +174,8 @@ const {
       attachTo: { element: '.final-cta', on: isMobile ? 'top' : 'bottom' },
       buttons: [
         { text: 'Voltar', type: 'back', classes: 'shepherd-button-secondary' },
-        { text: 'Começar Agora!', action: () => {
-          const ctaButton = document.querySelector('.final-cta .btn-primary-glow');
+        { text: 'Liberar meu bot grátis', action: () => {
+          const ctaButton = document.querySelector('.final-cta .btn-primary-glow') || document.getElementById('hero-cta');
           if (ctaButton) ctaButton.click();
           tourInstance.complete();
         }, classes: 'shepherd-button-primary' }

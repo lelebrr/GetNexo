@@ -167,7 +167,16 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         if (chatContainer) {
-            setTimeout(runSimulation, 1000);
+            // Inicial message from bot after 2 seconds
+            setTimeout(() => {
+                addBubble({
+                    role: 'bot',
+                    content: 'Oi! Eu sou o Nexus, o bot IA do GetNexo. 😎<br>Digita qualquer produto que eu mostro preço, foto, 360° e até coloco na tua casa com AR!'
+                });
+
+                // Start normal simulation after the initial message
+                setTimeout(runSimulation, 3500);
+            }, 2000);
         }
     });
 
