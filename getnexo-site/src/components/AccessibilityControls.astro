@@ -10,12 +10,9 @@ const { showPanel = true } = Astro.props;
 
 <div id="acc-widget-root">
   <!-- Trigger Button -->
-  <button id="acc-trigger" aria-label="Abrir menu de acessibilidade" title="Acessibilidade">
-    <!-- Wheelchair Icon (Highly Visible) -->
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="24" height="24" fill="white">
-      <path d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm312 240l-28.7-22.9C381.1 254.9 368 239.1 368 221.9V160c0-17.7-14.3-32-32-32H200c-17.7 0-32 14.3-32 32v128c0 17.7 14.3 32 32 32h16v128c0 17.7 14.3 32 32 32s32-14.3 32-32V320h44.1l63.5 50.8c5.4 4.3 11.8 6.5 18.3 6.5s12.9-2.2 18.3-6.5c10.8-8.6 12.6-24.3 4-35.1l-14.2-11.4zM128 320c-35.3 0-64 28.7-64 64s28.7 64 64 64s64-28.7 64-64s-28.7-64-64-64zm0 192c-106 0-192-86-192-192s86-192 192-192c26.1 0 51.1 5.2 73.9 14.7l-41.2 30.9C143.4 163.1 135.8 160 128 160c-106 0-192 86-192 192s86 192 192 192c7.8 0 15.4-3.1 32.7-12.6l-41.2-30.9zm256-128c0-70.7-57.3-128-128-128s-128 57.3-128 128s57.3 128 128 128s128-57.3 128-128z" />
-    </svg>
-    <span class="sr-only">Acessibilidade</span>
+  <button id="acc-trigger" aria-label="Menu de Acessibilidade" title="Acessibilidade">
+    <span class="acc-icon-inner">♿️</span>
+    <span class="acc-text-label">Acessibilidade</span>
   </button>
 
   <!-- Panel -->
@@ -116,9 +113,10 @@ const { showPanel = true } = Astro.props;
 
   /* Trigger Button - Smaller */
   #acc-trigger {
-    width: 48px; /* 3rem */
-    height: 48px; /* 3rem */
-    border-radius: 50%;
+    width: auto;
+    height: 40px;
+    padding: 0 16px;
+    border-radius: 20px;
     background: linear-gradient(135deg, #00d4ff, #0056b3);
     border: 2px solid rgba(255, 255, 255, 0.2);
     color: white;
@@ -126,20 +124,20 @@ const { showPanel = true } = Astro.props;
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     pointer-events: auto;
+    font-weight: 700;
   }
 
-  #acc-trigger:hover {
-    transform: scale(1.1) rotate(10deg);
-    box-shadow: 0 12px 24px rgba(0, 212, 255, 0.4);
+  .acc-icon-inner {
+    font-size: 1.2rem;
   }
 
-  #acc-trigger svg {
-    width: 24px;
-    height: 24px;
-    fill: currentColor;
+  .acc-text-label {
+    font-size: 0.85rem;
+    white-space: nowrap;
   }
 
   /* The Panel - Compact & Responsive */
