@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+'use client';
+
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 /**
@@ -6,15 +8,29 @@ import PropTypes from 'prop-types';
  * Exibe ícone de sentimento baseado na pontuação (1-10)
  * Mostra emoji, badge e tooltip com informações detalhadas
  */
-const SentimentIndicator = ({ score, sentiment, category, confidence, showBadge = true, showTooltip = true, size = 'medium' }) => {
+const SentimentIndicator = ({
+    score = 5,
+    sentiment = 'neutral',
+    category = 'neutro',
+    confidence = 0.8,
+    showBadge = true,
+    showTooltip = true,
+    size = 'medium'
+}) => {
     const [isVisible, setIsVisible] = useState(false);
     const [showDetails, setShowDetails] = useState(false);
+    const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
+        setIsLoaded(true);
+        if (import.meta.env.DEV) console.log('SentimentIndicator Fixed v1.2.0 Loaded');
         // Animação de entrada
         const timer = setTimeout(() => setIsVisible(true), 100);
         return () => clearTimeout(timer);
     }, []);
+
+    // Prevent hydration mismatch by returning null or skeleton until mounted
+    if (!isLoaded) return <div className="w-8 h-8 rounded-full bg-gray-800 animate-pulse"></div>;
 
     // Determina o emoji baseado no score
     const getEmoji = () => {
@@ -148,16 +164,6 @@ SentimentIndicator.propTypes = {
     showBadge: PropTypes.bool,
     showTooltip: PropTypes.bool,
     size: PropTypes.oneOf(['small', 'medium', 'large'])
-};
-
-SentimentIndicator.defaultProps = {
-    score: 5,
-    sentiment: 'neutral',
-    category: 'neutro',
-    confidence: 0.8,
-    showBadge: true,
-    showTooltip: true,
-    size: 'medium'
 };
 
 export default SentimentIndicator;

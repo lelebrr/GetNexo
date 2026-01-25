@@ -1,0 +1,12 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import SalesGamificationAdmin from '../../components/admin/SalesGamificationAdmin.jsx';
+
+const pageTitle = 'Fidelidade & Retenção';
+---
+
+<AdminLayout title={pageTitle}>
+    <div class="tab-container h-full">
+        <SalesGamificationAdmin client:only="react" />
+    </div>
+</AdminLayout>

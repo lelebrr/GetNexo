@@ -1,0 +1,12 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import IntegrationsManager from '../../components/admin/IntegrationsManager.jsx';
+
+const pageTitle = 'Integrações';
+---
+
+<AdminLayout title={pageTitle}>
+    <div class="tab-container h-full">
+        <IntegrationsManager client:only="react" />
+    </div>
+</AdminLayout>

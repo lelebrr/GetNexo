@@ -1,0 +1,12 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import GameAdmin from '../../components/admin/GameAdmin.jsx';
+
+const pageTitle = 'Analytics & BI';
+---
+
+<AdminLayout title={pageTitle}>
+    <div class="tab-container h-full">
+        <GameAdmin client:only="react" />
+    </div>
+</AdminLayout>

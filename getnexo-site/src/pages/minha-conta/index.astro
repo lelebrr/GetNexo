@@ -1,0 +1,237 @@
+---
+import ClientLayout from '../../layouts/ClientLayout.astro';
+import { getPlanoCliente, getLimitesCliente } from '../../lib/plano-cliente';
+
+// Dados simulados - em produção viriam do DB
+const userId = Astro.locals.userId || 'user-demo';
+const plano = await getPlanoCliente(userId);
+const limites = await getLimitesCliente(userId);
+
+// Métricas simuladas do dashboard
+const metricas = {
+  faturamentoHoje: 1250.50,
+  conversasNovas: 12,
+  vendasPendentes: 5,
+  produtosAtivos: 47,
+  mensagensEnviadas: 234,
+  taxaConversao: 23.5
+};
+---
+
+<ClientLayout title="Dashboard">
+  <div class="space-y-8">
+    <!-- Header -->
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Dashboard Pessoal</h1>
+        <p class="text-gray-600 mt-1">Bem-vindo de volta! Aqui está o resumo da sua loja hoje.</p>
+      </div>
+      <div class="mt-4 lg:mt-0">
+        <div class="bg-white rounded-lg border border-gray-200 px-4 py-3">
+          <div class="text-sm text-gray-500">Plano Atual</div>
+          <div class="font-semibold text-gray-900">{plano.nome}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cards de Métricas Principais -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Faturamento Hoje -->
+      <div class="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Faturamento Hoje</p>
+            <p class="text-2xl font-bold text-green-600 mt-1">
+              R$ {metricas.faturamentoHoje.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+            </p>
+          </div>
+          <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="mt-4 flex items-center text-sm">
+          <span class="text-green-600 font-medium">+12.5%</span>
+          <span class="text-gray-500 ml-2">vs ontem</span>
+        </div>
+      </div>
+
+      <!-- Conversas Novas -->
+      <div class="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Conversas Novas</p>
+            <p class="text-2xl font-bold text-blue-600 mt-1">{metricas.conversasNovas}</p>
+          </div>
+          <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="mt-4 flex items-center text-sm">
+          <span class="text-blue-600 font-medium">+8.2%</span>
+          <span class="text-gray-500 ml-2">vs ontem</span>
+        </div>
+      </div>
+
+      <!-- Vendas Pendentes -->
+      <div class="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Vendas Pendentes</p>
+            <p class="text-2xl font-bold text-orange-600 mt-1">{metricas.vendasPendentes}</p>
+          </div>
+          <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+            <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="mt-4 flex items-center text-sm">
+          <span class="text-orange-600 font-medium">Aguardando</span>
+          <span class="text-gray-500 ml-2">aprovação</span>
+        </div>
+      </div>
+
+      <!-- Produtos Ativos -->
+      <div class="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Produtos Ativos</p>
+            <p class="text-2xl font-bold text-purple-600 mt-1">{metricas.produtosAtivos}</p>
+          </div>
+          <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="mt-4 flex items-center text-sm">
+          <span class="text-gray-500">de {limites.produtos === -1 ? '∞' : limites.produtos} disponíveis</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Seção de Ações Rápidas -->
+    <div class="bg-white rounded-xl border border-gray-200 p-6">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">Ações Rápidas</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <a href="/minha-conta/produtos/novo" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+          <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+          </div>
+          <div>
+            <div class="font-medium text-gray-900">Novo Produto</div>
+            <div class="text-sm text-gray-500">Adicionar ao catálogo</div>
+          </div>
+        </a>
+
+        <a href="/minha-conta/campanhas/nova" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+          <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
+            </svg>
+          </div>
+          <div>
+            <div class="font-medium text-gray-900">Nova Campanha</div>
+            <div class="text-sm text-gray-500">Criar broadcast</div>
+          </div>
+        </a>
+
+        <a href="/minha-conta/relatorios" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+          <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+          </div>
+          <div>
+            <div class="font-medium text-gray-900">Ver Relatórios</div>
+            <div class="text-sm text-gray-500">Análise de vendas</div>
+          </div>
+        </a>
+
+        <a href="/minha-conta/config" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+          <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
+            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+          </div>
+          <div>
+            <div class="font-medium text-gray-900">Configurações</div>
+            <div class="text-sm text-gray-500">Ajustar preferências</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Seção de Módulos Disponíveis (se aplicável) -->
+    {plano.hasFidelidade || plano.hasAutomations || plano.hasProdutos3D ? (
+      <div class="bg-white rounded-xl border border-gray-200 p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Seus Módulos Premium</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {plano.hasFidelidade && (
+            <a href="/minha-conta/fidelidade" class="flex items-center p-4 border border-red-200 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
+              <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-3">
+                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                </svg>
+              </div>
+              <div>
+                <div class="font-medium text-red-900">Programa de Fidelidade</div>
+                <div class="text-sm text-red-700">Gerenciar pontos e recompensas</div>
+              </div>
+            </a>
+          )}
+
+          {plano.hasAutomations && (
+            <a href="/minha-conta/automations" class="flex items-center p-4 border border-yellow-200 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition-colors">
+              <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
+                <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+              </div>
+              <div>
+                <div class="font-medium text-yellow-900">Automações</div>
+                <div class="text-sm text-yellow-700">Fluxos automatizados</div>
+              </div>
+            </a>
+          )}
+
+          {plano.hasProdutos3D && (
+            <a href="/minha-conta/produtos/3d" class="flex items-center p-4 border border-amber-200 bg-amber-50 rounded-lg hover:bg-amber-100 transition-colors">
+              <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mr-3">
+                <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                </svg>
+              </div>
+              <div>
+                <div class="font-medium text-amber-900">Modelos 3D</div>
+                <div class="text-sm text-amber-700">Produtos em 3D</div>
+              </div>
+            </a>
+          )}
+        </div>
+      </div>
+    ) : null}
+
+    <!-- Footer com informações do plano -->
+    <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200 p-6">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900">Upgrade seu plano</h3>
+          <p class="text-gray-600 mt-1">Desbloqueie mais recursos e aumente suas vendas</p>
+        </div>
+        <div class="mt-4 lg:mt-0">
+          <a href="/precos" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all">
+            Ver Planos
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</ClientLayout>

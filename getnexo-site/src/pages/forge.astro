@@ -217,9 +217,9 @@ import Layout from '../layouts/Layout.astro';
 </style>
 
 <script>
-    const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '/api-proxy'; 
-    // Usually via nginx /api goes to 3000, but if local dev, might need direct port.
-    // Assuming backend is at 3000 and site at 4321.
+    const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3006' : '/api-proxy'; 
+    // Usually via nginx /api goes to 3006, but if local dev, might need direct port.
+    // Assuming backend is at 3006 and site at 4321.
     // Adjust logic to be robust.
 
     const state = {

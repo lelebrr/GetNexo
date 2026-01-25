@@ -110,6 +110,51 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     </div>
 </AdminLayout>
 
+<script>
+    // Interatividade para os Switches (Toggles)
+    document.querySelectorAll('.switch').forEach(toggle => {
+        toggle.addEventListener('click', () => {
+            toggle.classList.toggle('active');
+            const label = toggle.previousElementSibling.textContent;
+            const domain = toggle.closest('.domain-card').querySelector('h3').textContent;
+            const state = toggle.classList.contains('active') ? 'HABILITADO' : 'DESATIVADO';
+            
+            // Simulação de alteração (aqui entraria uma chamada de API)
+            console.log(`[Domain Manager] ${domain}: ${label} -> ${state}`);
+            
+            // Mostrar som/notificação se as funções globais estiverem disponíveis
+            if (window.playNotification) window.playNotification();
+        });
+    });
+
+    // Ações dos botões de domínio
+    document.querySelectorAll('.domain-actions button').forEach(button => {
+        button.addEventListener('click', () => {
+            const domain = button.closest('.domain-card').querySelector('h3').textContent;
+            const action = button.textContent;
+            
+            if (action === 'Desativar') {
+                if (confirm(`DESEJA REALMENTE DESATIVAR O DOMÍNIO ${domain}? Esta ação pode interromper o tráfego.`)) {
+                    button.closest('.domain-card').style.opacity = '0.5';
+                    button.closest('.domain-card').querySelector('.status-dot').style.background = '#ff3333';
+                    button.closest('.domain-card').querySelector('.status-dot').style.boxShadow = '0 0 10px #ff3333';
+                    alert(`Domínio ${domain} desativado com sucesso.`);
+                }
+            } else {
+                alert(`Abrindo interface de ${action} para ${domain}...`);
+            }
+        });
+    });
+
+    // Configurar novo domínio
+    document.querySelector('.btn-glow')?.addEventListener('click', () => {
+        const domain = prompt("Insira o novo domínio/subdomínio:");
+        if (domain) {
+            alert(`Iniciando provisionamento para ${domain}. Verifique os registros DNS.`);
+        }
+    });
+</script>
+
 <style>
     .domains-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2.5rem; gap: 2rem; }
     .stats-row { display: flex; gap: 1.5rem; flex: 1; }

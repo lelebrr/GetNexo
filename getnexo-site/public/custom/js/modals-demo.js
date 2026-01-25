@@ -23,6 +23,9 @@
         }
     };
 
+    // Maintain conversation history
+    window.chatHistory = [];
+
     window.abrirModalChat = function () {
         fecharModalDemo();
         setTimeout(() => {
@@ -30,8 +33,78 @@
             if (modal) {
                 modal.classList.remove('hidden');
                 modal.style.display = 'block';
+
+                // Initial Greeting Check
+                const messagesDiv = document.getElementById('chat-messages-modal');
+                if (messagesDiv && messagesDiv.children.length === 0) {
+                    addMessageModal("Olá! Sou o assistente da GetNexo. Antes de mostrar os produtos incríveis pra você, me diz seu nome e email? Assim eu te trato como VIP e guardo sua oferta exclusiva. 😏", 'bot');
+                    window.chatHistory.push({ role: 'assistant', content: "Olá! Sou o assistente da GetNexo. Antes de mostrar os produtos incríveis pra você, me diz seu nome e email? Assim eu te trato como VIP e guardo sua oferta exclusiva. 😏" });
+                }
             }
         }, 100);
+    };
+
+    window.sendMessageModal = async function () {
+        const input = document.getElementById('chat-input-modal');
+        if (!input) return;
+        const message = input.value.trim();
+        if (!message) return;
+
+        addMessageModal(message, 'user');
+        input.value = '';
+
+        const messagesDiv = document.getElementById('chat-messages-modal');
+        const botMessageDiv = document.createElement('div');
+        botMessageDiv.className = 'flex justify-start';
+        botMessageDiv.innerHTML = `
+            <div class="bg-neon-blue/20 border border-neon-blue/50 text-white rounded-2xl px-4 py-3 max-w-md">
+                <p class="text-sm whitespace-pre-line bot-text">...</p>
+            </div>
+        `;
+        messagesDiv.appendChild(botMessageDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        const botTextElement = botMessageDiv.querySelector('.bot-text');
+
+        try {
+            const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3006' : 'https://api.getnexo.com.br';
+
+            botTextElement.innerText = "Digitando...";
+
+            const response = await fetch(`${API_URL}/api/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: message,
+                    history: window.chatHistory || []
+                })
+            });
+
+            if (!response.ok) throw new Error('Erro API');
+
+            const data = await response.json();
+
+            // Render the response
+            botTextElement.innerHTML = data.reply.replace(/\n/g, '<br>');
+
+            if (data.reply.includes('<img')) {
+                botMessageDiv.querySelector('div').classList.remove('max-w-md'); // default
+                botMessageDiv.querySelector('div').classList.add('max-w-lg');
+            }
+
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            // Update local history
+            if (data.history) {
+                window.chatHistory = data.history;
+            } else {
+                window.chatHistory.push({ role: 'user', content: message });
+                window.chatHistory.push({ role: 'assistant', content: data.reply });
+            }
+
+        } catch (error) {
+            console.error(error);
+            botTextElement.innerText = '⚠️ Ops, o vendedor IA está ocupado. Tente novamente.';
+        }
     };
 
     window.fecharModalChat = function () {
@@ -79,19 +152,8 @@
         if (event.key === 'Enter') sendMessageModal();
     };
 
-    window.sendMessageModal = function () {
-        const input = document.getElementById('chat-input-modal');
-        if (!input) return;
-        const message = input.value.trim();
-        if (!message) return;
+    // Old implementation removed
 
-        addMessageModal(message, 'user');
-        input.value = '';
-
-        setTimeout(() => {
-            addMessageModal('🤖 Esta é uma demonstração do Chat IA do GetNexo. Em uma implementação real, a IA responderia automaticamente com informações sobre produtos do catálogo.', 'bot');
-        }, 1000);
-    };
 
     function addMessageModal(text, sender) {
         const messagesDiv = document.getElementById('chat-messages-modal');
@@ -101,11 +163,11 @@
 
         const bubbleClass = sender === 'user'
             ? 'bg-cyber-gold text-black'
-            : 'bg-neon-blue/20 border border-neon-blue/50 text-white';
+            : 'bg-void-black border border-neon-blue/50 text-white';
 
         messageDiv.innerHTML = `
-            <div class="${bubbleClass} rounded-2xl px-4 py-3 max-w-xs">
-                <p class="text-sm whitespace-pre-line">${text}</p>
+            <div class="${bubbleClass} rounded-2xl px-4 py-3 max-w-md shadow-lg">
+                <div class="text-sm whitespace-pre-line">${text}</div>
             </div>
         `;
 
@@ -113,20 +175,33 @@
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 
-    // -- IA & Multimedia Demo Logic --
-    window.preencherMensagemIA = function (texto) {
-        const input = document.getElementById('ia-chat-input');
-        if (input) {
-            input.value = texto;
-            sendMessageIA();
+    // -- Voice Simulation --
+    let synth = window.speechSynthesis;
+    let isSpeaking = false;
+
+    window.iniciarVozModal = function () {
+        const lastBotMessage = document.querySelector('#chat-messages-modal .flex.justify-start:last-child .text-sm');
+        if (!lastBotMessage) return;
+
+        if (synth.speaking) {
+            synth.cancel();
         }
+
+        const text = lastBotMessage.innerText.replace(/<[^>]*>/g, ''); // Strip HTML
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = 'pt-BR';
+        utter.rate = 1.0;
+        utter.pitch = 1.0;
+
+        utter.onstart = () => { isSpeaking = true; };
+        utter.onend = () => { isSpeaking = false; };
+
+        synth.speak(utter);
     };
 
-    window.handleKeyPressIA = function (event) {
-        if (event.key === 'Enter') sendMessageIA();
-    };
-
-    window.sendMessageIA = function () {
+    window.sendMessageIA = async function () {
+        // Reuse same logic for the IA modal or implement specific one
+        // For now, mapping to the same logic but targeting IA modal elements
         const input = document.getElementById('ia-chat-input');
         if (!input) return;
         const message = input.value.trim();
@@ -135,12 +210,58 @@
         addMessageIA(message, 'user');
         input.value = '';
 
-        setTimeout(() => {
-            addMessageIA('🤖 Demo IA: Buscando produtos... Encontrei resultados relevantes!', 'bot');
-            setTimeout(() => {
-                mostrarProdutoIA('computador', 0);
-            }, 1000);
-        }, 1500);
+        // Bot placeholder
+        const messagesDiv = document.getElementById('ia-chat-messages');
+        const botMessageDiv = document.createElement('div');
+        botMessageDiv.className = 'flex justify-start';
+        botMessageDiv.innerHTML = `
+            <div class="bg-neon-blue/20 border border-neon-blue/50 text-white rounded-2xl px-4 py-3 max-w-md">
+                <p class="text-sm whitespace-pre-line bot-text">...</p>
+            </div>
+        `;
+        messagesDiv.appendChild(botMessageDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+        const botTextElement = botMessageDiv.querySelector('.bot-text');
+        let fullResponse = '';
+
+        try {
+            const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3006' : 'https://api.getnexo.com.br';
+            const response = await fetch(`${API_URL}/api/chat/stream`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: message, history: [] })
+            });
+
+            if (!response.ok) throw new Error('API Error');
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                const chunk = decoder.decode(value);
+                const lines = chunk.split('\n');
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        const dataStr = line.replace('data: ', '');
+                        if (dataStr === '[DONE]') break;
+                        try {
+                            const data = JSON.parse(dataStr);
+                            if (data.content) {
+                                if (fullResponse === '') botTextElement.innerText = '';
+                                fullResponse += data.content;
+                                botTextElement.innerHTML = fullResponse.replace(/\n/g, '<br>');
+                                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                            }
+                        } catch (e) { }
+                    }
+                }
+            }
+        } catch (error) {
+            botTextElement.innerText = 'Erro na IA.';
+        }
     };
 
     function addMessageIA(text, sender) {

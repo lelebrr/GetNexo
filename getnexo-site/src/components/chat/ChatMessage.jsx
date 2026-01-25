@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import SentimentIndicator from '../SentimentIndicator';
+import SentimentIndicator from '../SentimentMetric';
 import PaymentButton from './PaymentButton';
 import useSentimentAnalysis from '../../hooks/useSentimentAnalysis';
 
@@ -11,13 +11,23 @@ const ChatMessage = ({ message, isUser = false, showSentiment = true }) => {
     const { analyzeText, loading: sentimentLoading, lastAnalysis } = useSentimentAnalysis();
     const [sentimentData, setSentimentData] = useState(null);
     const [showAnalysis, setShowAnalysis] = useState(false);
+    const [formattedTime, setFormattedTime] = useState('');
 
     useEffect(() => {
+        setFormattedTime(new Date(message.timestamp).toLocaleTimeString('pt-BR', {
+            hour: '2-digit',
+            minute: '2-digit'
+        }));
+
         // Analisa o sentimento da mensagem quando ela é recebida
         if (showSentiment && message.text && !isUser) {
             analyzeText(message.text).then(setSentimentData).catch(console.error);
         }
-    }, [message.text, showSentiment, isUser, analyzeText]);
+    }, [message.text, getTimestamp(message), showSentiment, isUser, analyzeText]);
+
+    function getTimestamp(msg) {
+        return msg.timestamp;
+    }
 
     const handleSentimentClick = () => {
         setShowAnalysis(!showAnalysis);
@@ -67,7 +77,7 @@ const ChatMessage = ({ message, isUser = false, showSentiment = true }) => {
                         amount={message.paymentData.amount}
                         currency={message.paymentData.currency || 'BRL'}
                         description={message.paymentData.description || message.text}
-                        phone={message.senderPhone || phone}
+                        phone={message.senderPhone || message.senderPhone}
                         chatMessageId={message.id}
                         onPaymentCreated={(data) => {
                             console.log('Pagamento criado:', data);
@@ -80,12 +90,8 @@ const ChatMessage = ({ message, isUser = false, showSentiment = true }) => {
                     />
                 )}
 
-                {/* Timestamp */}
                 <span className="text-xs opacity-70 block mt-1">
-                    {new Date(message.timestamp).toLocaleTimeString('pt-BR', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    })}
+                    {formattedTime}
                 </span>
 
                 {/* Análise detalhada de sentimento */}

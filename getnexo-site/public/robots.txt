@@ -1,17 +1,5 @@
-# Robots.txt Otimizado para SEO Extremo - GetNexo
-# Bloqueia áreas sensíveis e direciona crawlers para conteúdo importante
-
 User-agent: *
 Allow: /
-
-# Páginas principais - prioridade máxima
-Allow: /
-Allow: /precos
-Allow: /criar-bot
-Allow: /blog/
-Allow: /loja/
-
-# Bloquear áreas administrativas e sensíveis
 Disallow: /admin/
 Disallow: /api/
 Disallow: /private/
@@ -20,42 +8,42 @@ Disallow: /node_modules/
 Disallow: /src/
 Disallow: /*.json$
 Disallow: /*.md$
-Disallow: /deploy_selling_machine.sh
 Disallow: /.env
-Disallow: /check_output*
 Disallow: /globalConfigs.json
+Disallow: /login
+Disallow: /login/
+Disallow: /revendedor/login
+Disallow: /revendedor/
+Disallow: /dashboard-revendedor
+Disallow: /revendedores/
+Disallow: /user/login
+Disallow: /seller/login
+Disallow: /auth/login
+Disallow: /signin
+Disallow: /signup
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
 
-# Bloquear arquivos temporários e de desenvolvimento
-Disallow: /*.tmp
-Disallow: /*.bak
-Disallow: /*.old
-Disallow: /*~
-Disallow: /.git/
-Disallow: /.github/
-
-# Permitir crawlers específicos com regras especiais
+# Explicitly block Googlebot (and others) from sensitive areas
 User-agent: Googlebot
 Allow: /
-Crawl-delay: 1
+Disallow: /admin/
+Disallow: /login
+Disallow: /login/
+Disallow: /revendedor/
+Disallow: /api/
+Disallow: /private/
+
+User-agent: Googlebot-News
+Disallow: /admin/
+Disallow: /login
+Disallow: /revendedor/
 
 User-agent: Bingbot
-Allow: /
-Crawl-delay: 2
+Disallow: /admin/
+Disallow: /login
+Disallow: /revendedor/
 
-# Bing, pode indexar tudo, menos essas pastas
-
-User-agent: Slurp
-Allow: /
-Crawl-delay: 2
-
-# Sitemap principal
+# Sitemap
 Sitemap: https://getnexo.com.br/sitemap.xml
-
-# Sitemaps específicos por idioma
-Sitemap: https://getnexo.com.br/sitemap-pt.xml
-Sitemap: https://getnexo.com.br/sitemap-en.xml
-Sitemap: https://getnexo.com.br/sitemap-es.xml
-Sitemap: https://getnexo.com.br/sitemap-fr.xml
-
-# Host directive para canonicalização
-Host: https://getnexo.com.br

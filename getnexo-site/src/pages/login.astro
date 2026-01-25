@@ -400,13 +400,13 @@ import ClientLayout from '../layouts/ClientLayout.astro';
         <form id="login-form">
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" value="admin@getnexo.local" placeholder="seu@email.com" required>
+                <input type="email" id="email" name="email" value="admin@getnexo.com.br" placeholder="seu@email.com" required autocomplete="username">
             </div>
 
             <div class="form-group">
                 <label for="password">Senha</label>
                 <div class="input-group">
-                    <input type="password" id="password" name="password" value="demo123" placeholder="••••••••" required>
+                    <input type="password" id="password" name="password" value="admin123" placeholder="••••••••" required autocomplete="current-password">
                     <button type="button" class="eye-toggle" onclick="togglePassword()">👁️</button>
                 </div>
             </div>
@@ -427,9 +427,9 @@ import ClientLayout from '../layouts/ClientLayout.astro';
         <div class="demo-accounts">
             <h3>🚀 Clique para testar rapidamente:</h3>
 
-            <div class="demo-account" onclick="fillDemo('admin@getnexo.local', 'demo123')">
+            <div class="demo-account" onclick="fillDemo('admin@getnexo.com.br', 'admin123')">
                 <div class="demo-label">Admin</div>
-                <div class="demo-creds">admin@getnexo.local</div>
+                <div class="demo-creds">admin@getnexo.com.br</div>
             </div>
 
             <div class="demo-account" onclick="fillDemo('revendedor@getnexo.com', 'demo123')">
@@ -525,35 +525,13 @@ import ClientLayout from '../layouts/ClientLayout.astro';
             </div>
         </div>
 
-        <div class="divider">
-            <span>Contas de Demonstração</span>
-        </div>
-
-        <div class="demo-accounts">
-            <h3>👤 Clique para preencher automaticamente:</h3>
-
-            <div class="demo-account" onclick="(function(){const demoAccounts={admin:{email:'admin@getnexo.com.br',password:'password123'},reseller:{email:'revendedor@getnexo.com',password:'reseller123'},client:{email:'cliente@getnexo.com',password:'cliente123'}};const account=demoAccounts.admin;if(account){document.getElementById('email').value=account.email;document.getElementById('password').value=account.password;}})()">
-                <div class="demo-label">Admin</div>
-                <div class="demo-creds">admin@getnexo.com.br</div>
-            </div>
-
-            <div class="demo-account" onclick="(function(){const demoAccounts={admin:{email:'admin@getnexo.local',password:'admin123'},reseller:{email:'revendedor@getnexo.com',password:'reseller123'},client:{email:'cliente@getnexo.com',password:'cliente123'}};const account=demoAccounts.reseller;if(account){document.getElementById('email').value=account.email;document.getElementById('password').value=account.password;}})()">
-                <div class="demo-label">Revendedor</div>
-                <div class="demo-creds">revendedor@getnexo.com</div>
-            </div>
-
-            <div class="demo-account" onclick="(function(){const demoAccounts={admin:{email:'admin@getnexo.local',password:'admin123'},reseller:{email:'revendedor@getnexo.com',password:'reseller123'},client:{email:'cliente@getnexo.com',password:'cliente123'}};const account=demoAccounts.client;if(account){document.getElementById('email').value=account.email;document.getElementById('password').value=account.password;}})()">
-                <div class="demo-label">Cliente</div>
-                <div class="demo-creds">cliente@getnexo.com</div>
-            </div>
-        </div>
     </div>
 
     <!-- Fill Demo Script -->
     <script is:inline src="/fillDemo.js"></script>
 
     <script>
-        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:4322' : '';
+        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3006' : '';
 
         async function login(email, password) {
             try {
@@ -577,7 +555,7 @@ import ClientLayout from '../layouts/ClientLayout.astro';
 
                     // Check if user is superadmin or reseller
                     const userRole = data.user.role || data.user.type || 'client';
-                    const isSuperAdmin = userRole === 'superadmin' || data.user.email === 'lelebrr@gmail.com';
+                    const isSuperAdmin = userRole === 'superadmin' || data.user.role_id === 1 || data.user.email === 'lelebrr@gmail.com' || data.user.email === 'admin@getnexo.com.br';
                     const isReseller = userRole === 'reseller' || userRole === 'partner' || data.user.email === 'revendedor@getnexo.com';
 
                     if (isSuperAdmin) {
@@ -678,14 +656,14 @@ import ClientLayout from '../layouts/ClientLayout.astro';
             const token = localStorage.getItem('token');
             if (token) {
                 // Verify token is still valid
-                fetch(`${API_URL}/api/dashboard`, {
+                fetch(`${API_URL}/api/users`, {
                     headers: { 'Authorization': token }
                 }).then(response => {
                     if (response.ok) {
                         // Token is valid
                         const user = JSON.parse(localStorage.getItem('user') || '{}');
                         const userRole = user.role || user.type || 'client';
-                        const isSuperAdmin = userRole === 'superadmin' || user.email === 'lelebrr@gmail.com';
+                        const isSuperAdmin = userRole === 'superadmin' || user.role_id === 1 || user.email === 'lelebrr@gmail.com' || user.email === 'admin@getnexo.com.br';
                         const isReseller = userRole === 'reseller' || userRole === 'partner' || user.email === 'revendedor@getnexo.com';
 
                         if (isSuperAdmin) {

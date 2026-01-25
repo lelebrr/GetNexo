@@ -1,65 +1,274 @@
 ---
 import AdminLayout from '../../layouts/AdminLayout.astro';
+import fs from 'fs';
+import path from 'path';
+
+// Função para extrair informações do post do arquivo .astro
+function extractPostInfo(filePath) {
+    try {
+        const content = fs.readFileSync(filePath, 'utf-8');
+        
+        // Extrair título
+        const titleMatch = content.match(/const title = ["']([^"']+)["']/);
+        const title = titleMatch ? titleMatch[1] : path.basename(filePath, '.astro');
+        
+        // Extrair slug do nome do arquivo
+        const slug = path.basename(filePath, '.astro');
+        
+        // Extrair data de publicação
+        const dateMatch = content.match(/datePublished["']?:\s*["']([^"']+)["']/);
+        const date = dateMatch ? dateMatch[1] : '2026-01-01';
+        
+        // Extrair idioma do caminho
+        const langMatch = filePath.match(/\/(pt|en|es|fr)\//);
+        const lang = langMatch ? langMatch[1] : 'pt';
+        
+        // Extrair status (se tem dataPublished é publicado)
+        const status = dateMatch ? 'published' : 'draft';
+        
+        // Extrair categoria
+        const categoryMatch = content.match(/articleSection["']?:\s*["']([^"']+)["']/);
+        const category = categoryMatch ? categoryMatch[1] : 'Geral';
+        
+        return {
+            slug,
+            title,
+            lang,
+            status,
+            date,
+            category,
+            path: filePath
+        };
+    } catch (error) {
+        console.error(`Erro ao processar ${filePath}:`, error);
+        return null;
+    }
+}
+
+// Função para listar todos os posts de todos os idiomas
+function getAllPosts() {
+    const posts = [];
+    const languages = ['pt', 'en', 'es', 'fr'];
+    
+    languages.forEach(lang => {
+        const blogDir = path.join(process.cwd(), 'src', 'pages', lang, 'blog');
+        
+        if (fs.existsSync(blogDir)) {
+            const files = fs.readdirSync(blogDir);
+            
+            files.forEach(file => {
+                if (file.endsWith('.astro') && file !== 'index.astro') {
+                    const filePath = path.join(blogDir, file);
+                    const postInfo = extractPostInfo(filePath);
+                    
+                    if (postInfo) {
+                        posts.push(postInfo);
+                    }
+                }
+            });
+        }
+    });
+    
+    // Também verificar o diretório principal (pt-BR)
+    const mainBlogDir = path.join(process.cwd(), 'src', 'pages', 'blog');
+    if (fs.existsSync(mainBlogDir)) {
+        const files = fs.readdirSync(mainBlogDir);
+        
+        files.forEach(file => {
+            if (file.endsWith('.astro') && file !== 'index.astro') {
+                const filePath = path.join(mainBlogDir, file);
+                const postInfo = extractPostInfo(filePath);
+                
+                if (postInfo) {
+                    posts.push(postInfo);
+                }
+            }
+        });
+    }
+    
+    // Ordenar por data (mais recente primeiro)
+    return posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+}
+
+// Função para agrupar posts por idioma
+function groupPostsByLanguage(posts) {
+    const grouped = {
+        'pt': { name: 'Português', flag: '🇧🇷', posts: [] },
+        'en': { name: 'English', flag: '🇺🇸', posts: [] },
+        'es': { name: 'Español', flag: '🇪🇸', posts: [] },
+        'fr': { name: 'Français', flag: '🇫🇷', posts: [] }
+    };
+    
+    posts.forEach(post => {
+        if (grouped[post.lang]) {
+            grouped[post.lang].posts.push(post);
+        }
+    });
+    
+    return grouped;
+}
+
+// Buscar todos os posts
+const allPosts = getAllPosts();
+const postsByLanguage = groupPostsByLanguage(allPosts);
+const totalPosts = allPosts.length;
 ---
 
 <AdminLayout title="Blog Management">
     <div class="blog-header">
         <div class="search-bar">
-            <input type="text" placeholder="Buscar posts..." />
+            <input type="text" placeholder="Buscar posts..." id="searchInput" />
         </div>
-        <a href="/admin/blog/edit" class="btn-glow">Criar Novo Post</a>
+        <div class="header-actions">
+            <span class="post-count">Total: {totalPosts} posts</span>
+            <a href="/admin/blog/edit" class="btn-glow">Criar Novo Post</a>
+        </div>
     </div>
 
-    <div class="cyber-card blog-list">
-        <table>
-            <thead>
-                <tr>
-                    <th>Título</th>
-                    <th>Idioma</th>
-                    <th>Status</th>
-                    <th>Data</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="primary">A Revolução da IA no WhatsApp</td>
-                    <td><span class="flag">🇧🇷 PT</span></td>
-                    <td><span class="status published">Publicado</span></td>
-                    <td>21/01/2026</td>
-                    <td>
-                        <div class="actions">
-                            <a href="/admin/blog/edit" title="Editar" style="text-decoration:none;">✏️</a>
-                            <button title="Excluir" class="delete">🗑️</button>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="primary">The Future of Customer Support</td>
-                    <td><span class="flag">🇺🇸 EN</span></td>
-                    <td><span class="status draft">Rascunho</span></td>
-                    <td>20/01/2026</td>
-                    <td>
-                        <div class="actions">
-                            <a href="/admin/blog/edit" title="Editar" style="text-decoration:none;">✏️</a>
-                            <button title="Excluir" class="delete">🗑️</button>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+    {Object.entries(postsByLanguage).map(([langCode, langData]) => (
+        <div class="language-section" data-lang={langCode}>
+            <div class="language-header">
+                <span class="flag">{langData.flag}</span>
+                <h3>{langData.name}</h3>
+                <span class="count">({langData.posts.length} posts)</span>
+            </div>
+            
+            {langData.posts.length > 0 ? (
+                <div class="cyber-card blog-list">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Categoria</th>
+                                <th>Status</th>
+                                <th>Data</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {langData.posts.map(post => (
+                                <tr data-title={post.title.toLowerCase()} data-category={post.category.toLowerCase()}>
+                                    <td class="primary">{post.title}</td>
+                                    <td><span class="category">{post.category}</span></td>
+                                    <td>
+                                        <span class={`status ${post.status}`}>
+                                            {post.status === 'published' ? 'Publicado' : 'Rascunho'}
+                                        </span>
+                                    </td>
+                                    <td>{new Date(post.date).toLocaleDateString('pt-BR')}</td>
+                                    <td>
+                                        <div class="actions">
+                                            <a href={`/admin/blog/edit?slug=${post.slug}&lang=${post.lang}`} title="Editar" style="text-decoration:none;">✏️</a>
+                                            <button title="Excluir" class="delete" data-slug={post.slug} data-lang={post.lang}>🗑️</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            ) : (
+                <div class="empty-state">
+                    <p>Nenhum post encontrado em {langData.name}</p>
+                </div>
+            )}
+        </div>
+    ))}
+
+    {totalPosts === 0 && (
+        <div class="empty-state">
+            <p>Nenhum post encontrado. Crie seu primeiro post!</p>
+        </div>
+    )}
 </AdminLayout>
+
+<script>
+    // Busca em tempo real
+    const searchInput = document.getElementById('searchInput');
+    
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        const rows = document.querySelectorAll('tbody tr');
+        
+        rows.forEach(row => {
+            const title = row.getAttribute('data-title');
+            const category = row.getAttribute('data-category');
+            
+            if (title.includes(query) || category.includes(query)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        // Mostrar/esconder seções vazias
+        const sections = document.querySelectorAll('.language-section');
+        sections.forEach(section => {
+            const visibleRows = section.querySelectorAll('tbody tr:not([style*="display: none"])');
+            const sectionHeader = section.querySelector('.language-header');
+            
+            if (visibleRows.length === 0 && query) {
+                section.style.display = 'none';
+            } else {
+                section.style.display = '';
+            }
+        });
+    });
+
+    // Excluir post
+    document.querySelectorAll('.delete').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            const slug = e.target.getAttribute('data-slug');
+            const lang = e.target.getAttribute('data-lang');
+            
+            if (confirm(`Tem certeza que deseja excluir o post "${slug}"?`)) {
+                try {
+                    const response = await fetch('/api/admin/blog/delete', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ slug, lang })
+                    });
+                    
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Erro ao excluir post');
+                    }
+                } catch (error) {
+                    console.error('Erro:', error);
+                    alert('Erro ao excluir post');
+                }
+            }
+        });
+    });
+</script>
 
 <style>
     .blog-header {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         margin-bottom: 2rem;
         gap: 2rem;
+        flex-wrap: wrap;
     }
 
-    .search-bar { flex: 1; }
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .post-count {
+        background: rgba(0, 212, 255, 0.1);
+        color: #00d4ff;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .search-bar { flex: 1; min-width: 250px; }
     .search-bar input {
         width: 100%;
         background: #080808;
@@ -67,6 +276,12 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         padding: 0.8rem 1.5rem;
         border-radius: 8px;
         color: #fff;
+        transition: border-color 0.3s;
+    }
+    
+    .search-bar input:focus {
+        border-color: #00d4ff;
+        outline: none;
     }
 
     .btn-glow {
@@ -78,24 +293,173 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         font-weight: 800;
         cursor: pointer;
         box-shadow: 0 0 15px rgba(0, 247, 255, 0.4);
+        transition: all 0.3s;
+        white-space: nowrap;
     }
 
-    .blog-list { padding: 0 !important; overflow-x: auto; }
-    
-    table { width: 100%; border-collapse: collapse; }
-    th { text-align: left; padding: 1.2rem; border-bottom: 1px solid #1a1a1a; font-size: 0.7rem; color: #666; text-transform: uppercase; letter-spacing: 1px; }
-    td { padding: 1.2rem; border-bottom: 1px solid #1a1a1a; font-size: 0.85rem; }
-    
-    tr:hover td { background: rgba(0, 247, 255, 0.02); }
-    
-    .primary { color: #fff; font-weight: 600; }
-    .flag { font-size: 0.8rem; color: #888; }
-    
-    .status { font-size: 0.65rem; padding: 4px 8px; border-radius: 4px; font-weight: 800; }
-    .status.published { background: rgba(0, 255, 157, 0.1); color: #00ff9d; }
-    .status.draft { background: rgba(255, 255, 255, 0.1); color: #888; }
+    .btn-glow:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 25px rgba(0, 247, 255, 0.6);
+    }
 
-    .actions { display: flex; gap: 0.8rem; }
-    .actions button { background: none; border: none; cursor: pointer; font-size: 1.1rem; filter: grayscale(1); transition: 0.3s; }
-    .actions button:hover { filter: grayscale(0); transform: scale(1.2); }
+    .language-section {
+        margin-bottom: 2rem;
+    }
+
+    .language-header {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin-bottom: 1rem;
+        padding: 0.8rem 1.2rem;
+        background: rgba(0, 212, 255, 0.05);
+        border-radius: 8px;
+        border: 1px solid rgba(0, 212, 255, 0.1);
+    }
+
+    .language-header .flag {
+        font-size: 1.2rem;
+    }
+
+    .language-header h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        color: #fff;
+        font-weight: 700;
+    }
+
+    .language-header .count {
+        margin-left: auto;
+        background: rgba(0, 212, 255, 0.1);
+        color: #00d4ff;
+        padding: 0.3rem 0.8rem;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .blog-list {
+        padding: 0 !important;
+        overflow-x: auto;
+        border-radius: 12px;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 800px;
+    }
+    
+    th {
+        text-align: left;
+        padding: 1.2rem;
+        border-bottom: 1px solid #1a1a1a;
+        font-size: 0.7rem;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        background: rgba(0, 0, 0, 0.3);
+    }
+    
+    td {
+        padding: 1.2rem;
+        border-bottom: 1px solid #1a1a1a;
+        font-size: 0.85rem;
+    }
+    
+    tr:hover td {
+        background: rgba(0, 247, 255, 0.02);
+    }
+    
+    .primary {
+        color: #fff;
+        font-weight: 600;
+        max-width: 300px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .category {
+        font-size: 0.75rem;
+        color: #888;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 0.3rem 0.6rem;
+        border-radius: 4px;
+        font-weight: 500;
+    }
+    
+    .status {
+        font-size: 0.65rem;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+    
+    .status.published {
+        background: rgba(0, 255, 157, 0.1);
+        color: #00ff9d;
+    }
+    
+    .status.draft {
+        background: rgba(255, 255, 255, 0.1);
+        color: #888;
+    }
+
+    .actions {
+        display: flex;
+        gap: 0.8rem;
+    }
+    
+    .actions a, .actions button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.1rem;
+        filter: grayscale(1);
+        transition: 0.3s;
+        padding: 0.2rem;
+    }
+    
+    .actions a:hover, .actions button:hover {
+        filter: grayscale(0);
+        transform: scale(1.2);
+    }
+
+    .actions button.delete:hover {
+        color: #ff4444;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #666;
+        font-size: 1.1rem;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 12px;
+        border: 1px dashed #333;
+    }
+
+    @media (max-width: 768px) {
+        .blog-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .header-actions {
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .search-bar {
+            width: 100%;
+        }
+
+        .primary {
+            max-width: 150px;
+        }
+    }
+</style>
+
 </style>

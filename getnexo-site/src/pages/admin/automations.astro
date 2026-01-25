@@ -1,0 +1,12 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import AutomationFlows from '../../components/admin/AutomationFlows.jsx';
+
+const pageTitle = 'Automations';
+---
+
+<AdminLayout title={pageTitle}>
+    <div class="tab-container h-full">
+        <AutomationFlows client:only="react" />
+    </div>
+</AdminLayout>

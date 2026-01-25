@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import SentimentIndicator from '../SentimentIndicator';
+'use client';
+
+import { useState, useEffect } from 'react';
+import SentimentIndicator from '../SentimentMetric';
 
 const LiveConversations = () => {
     const [conversations, setConversations] = useState([
@@ -11,8 +13,8 @@ const LiveConversations = () => {
 
     return (
         <div className="conversations-wrapper">
-            <div className="conv-header">
-                <h3>Live Terminal</h3>
+            <div className="conv-header" id="terminal-nuclear-140">
+                <h3>Live Terminal v1.4.0 NUCLEAR</h3>
                 <div className="status-badge">4 Online</div>
             </div>
 
@@ -44,7 +46,8 @@ const LiveConversations = () => {
                 ))}
             </div>
 
-            <style jsx>{`
+            <style dangerouslySetInnerHTML={{
+                __html: `
                 .conversations-wrapper {
                     display: flex;
                     flex-direction: column;
@@ -133,7 +136,7 @@ const LiveConversations = () => {
                     color: #00f7ff;
                     box-shadow: 0 0 10px rgba(0, 247, 255, 0.2);
                 }
-            `}</style>
+            ` }} />
         </div>
     );
 };

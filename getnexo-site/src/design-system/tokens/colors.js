@@ -3,8 +3,7 @@
  * WCAG 2.2 AA+ compliant
  */
 
-export const colors = {
-    // Core Colors - Brand
+const baseColors = {
     primary: {
         50: '#eff6ff',
         100: '#dbeafe',
@@ -47,7 +46,6 @@ export const colors = {
         DEFAULT: '#10b981',
     },
 
-    // Semantic Colors
     success: {
         50: '#f0fdf4',
         100: '#dcfce7',
@@ -104,7 +102,6 @@ export const colors = {
         DEFAULT: '#3b82f6',
     },
 
-    // Neutral Colors - Light Mode
     neutral: {
         50: '#fafafa',
         100: '#f4f4f5',
@@ -118,16 +115,18 @@ export const colors = {
         900: '#18181b',
         DEFAULT: '#71717a',
     },
+};
 
-    // Light Mode Backgrounds
+export const colors = {
+    ...baseColors,
+
+    // Light Mode Specifics
     background: {
         primary: '#ffffff',
         secondary: '#fafafa',
         tertiary: '#f4f4f5',
         inverse: '#18181b',
     },
-
-    // Light Mode Text
     text: {
         primary: '#18181b',
         secondary: '#52525b',
@@ -135,16 +134,35 @@ export const colors = {
         inverse: '#ffffff',
         disabled: '#a1a1aa',
     },
-
-    // Light Mode Borders
     border: {
         light: '#e4e4e7',
         DEFAULT: '#d4d4d8',
         dark: '#a1a1aa',
     },
+    focus: {
+        ring: baseColors.primary[500],
+        ringOffset: '#ffffff',
+        ringOffsetDark: '#09090b',
+    },
+    overlay: {
+        light: 'rgba(0, 0, 0, 0.1)',
+        medium: 'rgba(0, 0, 0, 0.3)',
+        dark: 'rgba(0, 0, 0, 0.5)',
+        lightDark: 'rgba(255, 255, 255, 0.1)',
+        mediumDark: 'rgba(255, 255, 255, 0.3)',
+        darkDark: 'rgba(255, 255, 255, 0.5)',
+    },
+    gradients: {
+        primary: `linear-gradient(135deg, ${baseColors.primary[500]} 0%, ${baseColors.secondary[500]} 100%)`,
+        secondary: `linear-gradient(135deg, ${baseColors.secondary[500]} 0%, #ec4899 100%)`,
+        accent: `linear-gradient(135deg, ${baseColors.accent[500]} 0%, ${baseColors.primary[500]} 100%)`,
+        dark: 'linear-gradient(135deg, #18181b 0%, #27272a 100%)',
+    },
 
     // Dark Mode Colors
     dark: {
+        ...baseColors, // Inherit all semantic colors
+
         background: {
             primary: '#09090b',
             secondary: '#18181b',
@@ -178,31 +196,6 @@ export const colors = {
             800: '#f4f4f5',
             900: '#fafafa',
         },
-    },
-
-    // Focus & Accessibility
-    focus: {
-        ring: '#3b82f6',
-        ringOffset: '#ffffff',
-        ringOffsetDark: '#09090b',
-    },
-
-    // Overlay
-    overlay: {
-        light: 'rgba(0, 0, 0, 0.1)',
-        medium: 'rgba(0, 0, 0, 0.3)',
-        dark: 'rgba(0, 0, 0, 0.5)',
-        lightDark: 'rgba(255, 255, 255, 0.1)',
-        mediumDark: 'rgba(255, 255, 255, 0.3)',
-        darkDark: 'rgba(255, 255, 255, 0.5)',
-    },
-
-    // Gradients
-    gradients: {
-        primary: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
-        secondary: 'linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)',
-        accent: 'linear-gradient(135deg, #10b981 0%, #3b82f6 100%)',
-        dark: 'linear-gradient(135deg, #18181b 0%, #27272a 100%)',
     },
 };
 

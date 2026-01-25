@@ -1,0 +1,12 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import PaymentManager from '../../components/admin/PaymentManager.jsx';
+
+const pageTitle = 'PIX & Pagamentos';
+---
+
+<AdminLayout title={pageTitle}>
+    <div class="tab-container h-full">
+        <PaymentManager client:only="react" />
+    </div>
+</AdminLayout>

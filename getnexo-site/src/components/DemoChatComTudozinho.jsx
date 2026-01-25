@@ -31,6 +31,7 @@ export default function DemoChatComTudozinho() {
     const [digitando, setDigitando] = useState(false)
     const [input, setInput] = useState('')
     const [arAberto, setArAberto] = useState(false)
+    const [showCarPopup, setShowCarPopup] = useState(false)
     const [stats, setStats] = useState({ mensagens: 1, imagensGeradas: 0, arViews: 0 })
     const { speak, isAvailable } = useVoice()
 
@@ -87,111 +88,105 @@ export default function DemoChatComTudozinho() {
         return () => clearTimeout(timer);
     }, []);
 
-    // === RESPOSTA AUTOMÁTICA DO BOT ===
+    // === RESPOSTA REAL DO BACKEND ===
     const responder = async () => {
         if (!input.trim()) return
 
         const userInput = input.trim()
-        const user = userInput.toLowerCase()
         setDigitando(true)
-        setMensagens(prev => [...prev, {
+
+        // Adiciona mensagem do usuário
+        const novaMensagemUsuario = {
             role: 'user',
             text: userInput,
             timestamp: new Date(),
             id: Date.now()
-        }])
+        };
+
+        setMensagens(prev => [...prev, novaMensagemUsuario])
         setInput('')
 
-        // Delay realista para simular processamento
-        const delay = Math.random() * 1000 + 800 // 800-1800ms
+        try {
+            const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3006' : 'https://api.getnexo.com.br';
 
-        setTimeout(async () => {
-            let resposta = ''
-            let precisaIA = false
-            let tipoResposta = 'texto'
-            let dadosExtras = null
+            const response = await fetch(`${API_URL}/api/chat/stream`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: userInput,
+                    history: messages.map(m => ({ role: m.role, content: m.text }))
+                })
+            });
 
-            // === LÓGICA INTELIGENTE DE RESPOSTAS ===
-            if (user.includes('oi') || user.includes('ola') || user.includes('bom dia') || user.includes('boa tarde') || user.includes('eae')) {
-                resposta = '👋 Olá! Sou o assistente virtual da GetNexo. Posso te ajudar a encontrar produtos incríveis com AR e voz! O que você procura?'
-            }
-            else if (user.includes('360') || user.includes('três sessenta') || user.includes('girar') || user.includes('visualizar')) {
-                resposta = '🎯 Aqui em 360°! Gira o produto com o mouse ou dedo pra ver todos os ângulos. Incrível, né?'
-                setArAberto(true)
-                tipoResposta = 'ar'
-            }
-            else if (user.includes('ar') || user.includes('realidade aumentada') || user.includes('casa') || user.includes('ambiente')) {
-                resposta = '🏠 AR ativado! Abra no celular e posicione o produto na sua casa real. Funciona no iOS e Android!'
-                setArAberto(true)
-                tipoResposta = 'ar'
-            }
-            else if (user.includes('preço') || user.includes('quanto') || user.includes('custa') || user.includes('valor') || user.includes('dinheiro')) {
-                const preco = (Math.random() * 200 + 50).toFixed(2)
-                const estoque = Math.floor(Math.random() * 10) + 1
-                resposta = `💰 Preço: R$ ${preco} | 📦 Estoque: ${estoque} unidades | 🚚 Frete grátis acima de R$ 200!`
-                tipoResposta = 'dados'
-                dadosExtras = { preco: parseFloat(preco), estoque }
-            }
-            else if (user.includes('obrigado') || user.includes('valeu') || user.includes('thanks') || user.includes('agradecido')) {
-                resposta = '🙏 De nada! Volte sempre. Temos produtos incríveis esperando por você! ✨'
-            }
-            else if (user.includes('ajuda') || user.includes('help') || user.includes('como') || user.includes('funciona')) {
-                resposta = '💡 Posso te ajudar com: produtos em 360°, AR na sua casa, preços, geração de imagens IA. Tente: "tenis branco", "AR", "preço", "guitarra elétrica"'
-            }
-            else if (user.includes('demo') || user.includes('teste') || user.includes('exemplo')) {
-                resposta = '🎪 Este é o demo completo! Teste voz, AR, IA de imagens. Digite qualquer coisa pra ver a magia acontecer!'
-            }
-            else if (user.includes('carro') || user.includes('veículo') || user.includes('automóvel') || user.includes('auto') || user.includes('moto') || user.includes('motocicleta')) {
-                resposta = '🚗 Temos uma frota incrível de carros! Abra o popup para ver demonstrações em AR 360°.'
-                setShowCarPopup(true)
-                tipoResposta = 'carros'
-            }
-            else {
-                // === VERIFICAÇÃO INTELIGENTE DE PRODUTOS ===
-                const produtoEncontrado = CONFIG_ADMIN.produtosReais.find(p =>
-                    user.includes(p.split(' ')[0]) ||
-                    p.split(' ').some(word => user.includes(word)) ||
-                    user.includes(p.replace(' ', ''))
-                )
+            if (!response.ok) throw new Error('Erro na conexão com o chat');
 
-                if (produtoEncontrado) {
-                    resposta = `✅ Sim! Temos ${produtoEncontrado} disponível. Quer ver em 360° ou AR na sua casa? 🎯`
-                    tipoResposta = 'produto'
-                    dadosExtras = { produto: produtoEncontrado }
-                } else {
-                    // Produto não encontrado - gerar com IA
-                    const produto = userInput.split(' ').pop() || userInput
-                    resposta = `🤖 Não temos ${produto} no estoque, mas posso criar uma visualização especial pra você com IA!`
-                    gerarFotoIA(produto)
-                    precisaIA = true
+            // Preparar mensagem do bot vazia para stream
+            const botMsgId = Date.now() + 1;
+            setMensagens(prev => [...prev, {
+                role: 'bot',
+                text: '',
+                timestamp: new Date(),
+                id: botMsgId
+            }]);
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let botResponseText = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                const chunk = decoder.decode(value);
+                const lines = chunk.split('\n');
+
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        const dataStr = line.replace('data: ', '');
+                        if (dataStr === '[DONE]') break;
+
+                        try {
+                            const data = JSON.parse(dataStr);
+                            if (data.content) {
+                                botResponseText += data.content;
+
+                                // Atualiza a mensagem do bot em tempo real
+                                setMensagens(prev => prev.map(m =>
+                                    m.id === botMsgId ? { ...m, text: botResponseText } : m
+                                ));
+                            }
+                        } catch (e) {
+                            console.error('Erro ao processar chunk:', e);
+                        }
+                    }
                 }
             }
 
-            if (!precisaIA) {
-                setMensagens(prev => [...prev, {
-                    role: 'bot',
-                    text: resposta,
-                    tipo: tipoResposta,
-                    dados: dadosExtras,
-                    timestamp: new Date(),
-                    id: Date.now() + 1
-                }])
+            // Atualiza estatísticas
+            setStats(prev => ({
+                ...prev,
+                mensagens: prev.mensagens + 1
+            }));
 
-                // Atualiza estatísticas
-                setStats(prev => ({
-                    ...prev,
-                    mensagens: prev.mensagens + 1,
-                    arViews: tipoResposta === 'ar' ? prev.arViews + 1 : prev.arViews
-                }))
-
-                // Voz automática se ativada
-                if (CONFIG_ADMIN.vozAtiva && isAvailable) {
-                    setTimeout(() => speak(resposta), 300)
-                }
-
-                setDigitando(false)
+            // Voz automática se ativada
+            if (CONFIG_ADMIN.vozAtiva && isAvailable) {
+                setTimeout(() => speak(botResponseText), 300);
             }
-        }, delay)
+
+        } catch (error) {
+            console.error('Erro no chat:', error);
+            setMensagens(prev => [...prev, {
+                role: 'bot',
+                text: 'Desculpe, estou com problemas para conectar ao servidor. Tente novamente em instantes.',
+                tipo: 'erro',
+                timestamp: new Date(),
+                id: Date.now() + 2
+            }]);
+        } finally {
+            setDigitando(false);
+        }
     }
 
     // === GERA IMAGEM COM IA (PUTER.JS REAL) ===

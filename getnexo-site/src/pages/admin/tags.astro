@@ -1,0 +1,12 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import BehavioralTaggingDashboard from '../../components/admin/BehavioralTaggingDashboard.jsx';
+
+const pageTitle = 'Tags & Segmentos';
+---
+
+<AdminLayout title={pageTitle}>
+    <div class="tab-container h-full">
+        <BehavioralTaggingDashboard client:only="react" />
+    </div>
+</AdminLayout>

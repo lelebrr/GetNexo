@@ -563,13 +563,13 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
     </div>
 
     <script is:inline>
-        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '/api-proxy';
+        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3006' : '/api-proxy';
 
         // Load dashboard data
         async function loadDashboardData() {
             try {
                 const token = localStorage.getItem('token');
-                const res = await fetch(`${API_URL}/api/dashboard`, {
+                const res = await fetch(`${API_URL}/api/analytics/dashboard`, {
                     headers: { 'Authorization': token }
                 });
                 const data = await res.json();
@@ -737,7 +737,18 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
             window.location.href = '/dashboard/suporte';
         }
 
-        // Initialize
-        loadDashboardData();
+        // Initialize with Chart.js check
+        if (typeof Chart !== 'undefined') {
+            loadDashboardData();
+        } else {
+            window.addEventListener('load', () => {
+                if (typeof Chart !== 'undefined') {
+                    loadDashboardData();
+                } else {
+                    console.error('Chart.js failed to load');
+                    loadDashboardData(); // Try anyway, will use fallback
+                }
+            });
+        }
     </script>
 </ClientLayout>

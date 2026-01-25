@@ -170,7 +170,7 @@ class NexoChat extends HTMLElement {
     // --- 360° E AR FEATURES ---
     mostrarProduto360(produtoId) {
         if (!this.userModules.vr360 && !this.trialMode) {
-            this.addMessage('assistant', '🔒 Módulo 360° não ativado. Clique aqui para adquirir: https://getnexo.com.br/adicionais');
+            this.addMessage('assistant', '🔒 Módulo 360° não ativado. Clique aqui para adquirir: http://localhost:4321/produtos/adicionais');
             return;
         }
 
@@ -191,7 +191,7 @@ class NexoChat extends HTMLElement {
 
     mostrarProdutoAR(produtoId) {
         if (!this.userModules.ar && !this.trialMode) {
-            this.addMessage('assistant', '🔒 Módulo AR não ativado. Clique aqui para adquirir: https://getnexo.com.br/adicionais');
+            this.addMessage('assistant', '🔒 Módulo AR não ativado. Clique aqui para adquirir: http://localhost:4321/produtos/adicionais');
             return;
         }
 

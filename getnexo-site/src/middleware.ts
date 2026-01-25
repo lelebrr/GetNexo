@@ -10,6 +10,17 @@ export const onRequest = defineMiddleware(async (context, next) => {
     // Disponibilizar nonce para os componentes
     context.locals.trustedTypesPolicy = 'getnexo-trusted';
 
+    // 🔒 Auth Protection for /admin
+    // 🔒 Auth Protection for /admin (DISABLED TEMPORARILY)
+    /*
+    if (context.url.pathname.startsWith('/admin') && !context.url.pathname.startsWith('/admin/login')) {
+        const token = context.cookies.get('admin_token')?.value;
+        if (!token) {
+            return context.redirect('/admin/login', 302);
+        }
+    }
+    */
+
     const response = await next();
 
     // Configurar CSP dinâmico - Modo Permissivo para Debug

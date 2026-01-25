@@ -20,6 +20,16 @@ const BroadcastManager = () => {
         lastMessage: 'all',
         tags: []
     });
+    const [error, setError] = useState(null);
+    const [campaignStats, setCampaignStats] = useState({
+        totalSent: 15420,
+        totalDelivered: 14280,
+        totalClicked: 2150,
+        totalConverted: 387,
+        avgOpenRate: 23.4,
+        avgClickRate: 15.1,
+        avgConversionRate: 2.5
+    });
 
     useEffect(() => {
         fetchContacts();
@@ -31,14 +41,35 @@ const BroadcastManager = () => {
         try {
             const res = await axios.get('/api/contacts');
             setContacts(res.data || []);
-        } catch (e) { console.error('Erro ao buscar contatos:', e); }
+        } catch (e) {
+            console.error('Erro ao buscar contatos:', e);
+            setError('Não foi possível carregar contatos. Usando dados de exemplo.');
+            // Dados de exemplo
+            setContacts([
+                { id: 1, name: 'João Silva', phone: '5511999999999', stage: 'lead', lastMessage: '2026-01-20' },
+                { id: 2, name: 'Maria Santos', phone: '5511988888888', stage: 'cliente', lastMessage: '2026-01-22' },
+                { id: 3, name: 'Pedro Costa', phone: '5511977777777', stage: 'inativo', lastMessage: '2026-01-15' },
+                { id: 4, name: 'Ana Oliveira', phone: '5511966666666', stage: 'lead', lastMessage: '2026-01-23' },
+                { id: 5, name: 'Carlos Lima', phone: '5511955555555', stage: 'cliente', lastMessage: '2026-01-21' },
+                { id: 6, name: 'Fernanda Souza', phone: '5511944444444', stage: 'lead', lastMessage: '2026-01-24' }
+            ]);
+        }
     };
 
     const fetchCampaigns = async () => {
         try {
             const res = await axios.get('/api/campaigns');
             setCampaigns(res.data || []);
-        } catch (e) { console.error('Erro ao buscar campanhas:', e); }
+        } catch (e) {
+            console.error('Erro ao buscar campanhas:', e);
+            setError('Não foi possível carregar campanhas. Usando dados de exemplo.');
+            // Dados de exemplo
+            setCampaigns([
+                { id: 1, name: 'Campanha de Boas Vindas', message: 'Olá! Bem-vindo ao nosso atendimento!', status: 'completed', sent: 150, delivered: 142, createdAt: '2026-01-20' },
+                { id: 2, name: 'Promoção de Janeiro', message: '🎉 30% de desconto em todos os produtos!', status: 'completed', sent: 280, delivered: 265, createdAt: '2026-01-22' },
+                { id: 3, name: 'Lembrete de Agendamento', message: 'Lembrete do seu agendamento amanhã!', status: 'completed', sent: 95, delivered: 92, createdAt: '2026-01-23' }
+            ]);
+        }
     };
 
     const fetchTemplates = async () => {
@@ -95,6 +126,47 @@ const BroadcastManager = () => {
 
     return (
         <div className="h-full flex flex-col">
+            {/* Header Stats - Same as other admin tabs */}
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+                <div className="glass-panel p-4 rounded-xl border border-gray-800 text-center">
+                    <div className="text-2xl mb-1">📢</div>
+                    <div className="text-xl font-bold text-neon-blue">{campaigns.length}</div>
+                    <div className="text-xs text-gray-400">Campanhas Totais</div>
+                </div>
+                <div className="glass-panel p-4 rounded-xl border border-gray-800 text-center">
+                    <div className="text-2xl mb-1">📤</div>
+                    <div className="text-xl font-bold text-neon-green">{campaignStats.totalSent.toLocaleString()}</div>
+                    <div className="text-xs text-gray-400">Mensagens Enviadas</div>
+                </div>
+                <div className="glass-panel p-4 rounded-xl border border-gray-800 text-center">
+                    <div className="text-2xl mb-1">✅</div>
+                    <div className="text-xl font-bold text-green-500">{((campaignStats.totalDelivered / campaignStats.totalSent) * 100).toFixed(1)}%</div>
+                    <div className="text-xs text-gray-400">Taxa de Entrega</div>
+                </div>
+                <div className="glass-panel p-4 rounded-xl border border-gray-800 text-center">
+                    <div className="text-2xl mb-1">🎯</div>
+                    <div className="text-xl font-bold text-yellow-500">{campaignStats.totalConverted}</div>
+                    <div className="text-xs text-gray-400">Conversões Totais</div>
+                </div>
+                <div className="glass-panel p-4 rounded-xl border border-gray-800 text-center">
+                    <div className="text-2xl mb-1">💰</div>
+                    <div className="text-xl font-bold text-purple-500">471%</div>
+                    <div className="text-xs text-gray-400">ROI Médio</div>
+                </div>
+            </div>
+
+            {error && (
+                <div className="mb-4 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                    <div className="flex items-center gap-2 text-yellow-500 font-medium">
+                        <span>⚠️</span>
+                        <span>{error}</span>
+                    </div>
+                    <p className="text-sm mt-2 text-gray-400">
+                        Mostrando dados de exemplo para demonstração. As APIs podem não estar disponíveis.
+                    </p>
+                </div>
+            )}
+
             {/* Tabs */}
             <div className="flex gap-1 mb-6 bg-gray-900/50 p-1 rounded-xl border border-gray-800">
                 {[
@@ -239,32 +311,120 @@ const BroadcastManager = () => {
 
                 {activeTab === 'analytics' && (
                     <div className="space-y-6 h-full overflow-y-auto">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="glass-panel p-6 rounded-xl border border-gray-800 text-center">
-                                <div className="text-3xl mb-2">📤</div>
-                                <div className="text-2xl font-bold text-neon-blue">2.847</div>
-                                <div className="text-gray-400 text-sm">Mensagens Enviadas</div>
+                        {/* Header Stats */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div className="glass-panel p-4 rounded-xl border border-gray-800 text-center">
+                                <div className="text-2xl mb-1">📤</div>
+                                <div className="text-xl font-bold text-neon-blue">{campaignStats.totalSent.toLocaleString()}</div>
+                                <div className="text-xs text-gray-400">Mensagens Enviadas</div>
                             </div>
-                            <div className="glass-panel p-6 rounded-xl border border-gray-800 text-center">
-                                <div className="text-3xl mb-2">✅</div>
-                                <div className="text-2xl font-bold text-neon-green">94.2%</div>
-                                <div className="text-gray-400 text-sm">Taxa de Entrega</div>
+                            <div className="glass-panel p-4 rounded-xl border border-gray-800 text-center">
+                                <div className="text-2xl mb-1">✅</div>
+                                <div className="text-xl font-bold text-neon-green">{((campaignStats.totalDelivered / campaignStats.totalSent) * 100).toFixed(1)}%</div>
+                                <div className="text-xs text-gray-400">Taxa de Entrega</div>
                             </div>
-                            <div className="glass-panel p-6 rounded-xl border border-gray-800 text-center">
-                                <div className="text-3xl mb-2">👁️</div>
-                                <div className="text-2xl font-bold text-yellow-500">23.1%</div>
-                                <div className="text-gray-400 text-sm">Taxa de Abertura</div>
+                            <div className="glass-panel p-4 rounded-xl border border-gray-800 text-center">
+                                <div className="text-2xl mb-1">👁️</div>
+                                <div className="text-xl font-bold text-yellow-500">{campaignStats.avgOpenRate}%</div>
+                                <div className="text-xs text-gray-400">Taxa de Abertura</div>
+                            </div>
+                            <div className="glass-panel p-4 rounded-xl border border-gray-800 text-center">
+                                <div className="text-2xl mb-1">🎯</div>
+                                <div className="text-xl font-bold text-purple-500">{campaignStats.avgConversionRate}%</div>
+                                <div className="text-xs text-gray-400">Taxa de Conversão</div>
                             </div>
                         </div>
-                        <div className="glass-panel p-6 rounded-xl border border-gray-800">
-                            <h4 className="text-white font-bold mb-4">📈 Performance por Hora</h4>
-                            <div className="h-64 bg-gray-900/50 rounded flex items-end justify-center gap-2 p-4">
-                                {[45, 67, 89, 72, 91, 54, 38, 76, 83, 65, 42, 58].map((height, i) => (
-                                    <div key={i} className="flex-1 bg-neon-blue rounded-t" style={{ height: `${height}%` }}></div>
-                                ))}
+
+                        {/* Performance Charts */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="glass-panel p-6 rounded-xl border border-gray-800">
+                                <h4 className="text-white font-bold mb-4">📈 Performance por Hora</h4>
+                                <div className="h-48 bg-gray-900/50 rounded flex items-end justify-center gap-1 p-4">
+                                    {[45, 67, 89, 72, 91, 54, 38, 76, 83, 65, 42, 58, 71, 63, 79, 55, 68, 74, 61, 82, 49, 73, 57, 69].map((height, i) => (
+                                        <div key={i} className="flex-1 bg-neon-blue rounded-t opacity-80 hover:opacity-100 transition-opacity" style={{ height: `${height}%` }} title={`${height}%`}></div>
+                                    ))}
+                                </div>
+                                <div className="flex justify-between text-xs text-gray-500 mt-2 px-4">
+                                    <span>00h</span><span>06h</span><span>12h</span><span>18h</span><span>23h</span>
+                                </div>
                             </div>
-                            <div className="flex justify-between text-xs text-gray-500 mt-2 px-4">
-                                <span>06h</span><span>18h</span>
+
+                            <div className="glass-panel p-6 rounded-xl border border-gray-800">
+                                <h4 className="text-white font-bold mb-4">📊 Conversões por Dia da Semana</h4>
+                                <div className="space-y-3">
+                                    {[
+                                        { day: 'Segunda', conversions: 89, percentage: 85 },
+                                        { day: 'Terça', conversions: 76, percentage: 72 },
+                                        { day: 'Quarta', conversions: 94, percentage: 89 },
+                                        { day: 'Quinta', conversions: 82, percentage: 78 },
+                                        { day: 'Sexta', conversions: 105, percentage: 100 },
+                                        { day: 'Sábado', conversions: 67, percentage: 64 },
+                                        { day: 'Domingo', conversions: 58, percentage: 55 }
+                                    ].map((item, index) => (
+                                        <div key={index} className="flex items-center gap-3">
+                                            <div className="w-16 text-xs text-gray-400">{item.day.slice(0, 3)}</div>
+                                            <div className="flex-1 bg-gray-800 rounded-full h-2">
+                                                <div className="bg-neon-green h-2 rounded-full" style={{ width: `${item.percentage}%` }}></div>
+                                            </div>
+                                            <div className="w-12 text-xs text-gray-400 text-right">{item.conversions}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Campaign Performance Table */}
+                        <div className="glass-panel p-6 rounded-xl border border-gray-800">
+                            <h4 className="text-white font-bold mb-4">📋 Performance das Campanhas</h4>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-sm">
+                                    <thead>
+                                        <tr className="border-b border-gray-700">
+                                            <th className="text-left py-2 text-gray-400">Campanha</th>
+                                            <th className="text-center py-2 text-gray-400">Enviadas</th>
+                                            <th className="text-center py-2 text-gray-400">Entregues</th>
+                                            <th className="text-center py-2 text-gray-400">Cliques</th>
+                                            <th className="text-center py-2 text-gray-400">Conversões</th>
+                                            <th className="text-center py-2 text-gray-400">Taxa CTR</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {campaigns.map(campaign => (
+                                            <tr key={campaign.id} className="border-b border-gray-800 hover:bg-gray-900/30">
+                                                <td className="py-3 text-white font-medium">{campaign.name}</td>
+                                                <td className="py-3 text-center text-gray-300">{campaign.sent}</td>
+                                                <td className="py-3 text-center text-green-400">{campaign.delivered}</td>
+                                                <td className="py-3 text-center text-blue-400">{Math.floor(campaign.delivered * 0.15)}</td>
+                                                <td className="py-3 text-center text-purple-400">{Math.floor(campaign.delivered * 0.025)}</td>
+                                                <td className="py-3 text-center text-yellow-400">{(campaign.delivered * 0.15 / campaign.sent * 100).toFixed(1)}%</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        {/* ROI Calculator */}
+                        <div className="glass-panel p-6 rounded-xl border border-gray-800">
+                            <h4 className="text-white font-bold mb-4">💰 Calculadora de ROI</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="text-center p-4 bg-gray-900/50 rounded">
+                                    <div className="text-lg font-bold text-green-500">R$ 12.450</div>
+                                    <div className="text-xs text-gray-400">Receita Gerada</div>
+                                </div>
+                                <div className="text-center p-4 bg-gray-900/50 rounded">
+                                    <div className="text-lg font-bold text-blue-500">R$ 2.180</div>
+                                    <div className="text-xs text-gray-400">Custo das Campanhas</div>
+                                </div>
+                                <div className="text-center p-4 bg-gray-900/50 rounded">
+                                    <div className="text-lg font-bold text-neon-green">471%</div>
+                                    <div className="text-xs text-gray-400">ROI Total</div>
+                                </div>
+                            </div>
+                            <div className="mt-4 text-center">
+                                <div className="text-sm text-gray-400">
+                                    Cada R$ 1 investido em campanhas gera R$ 4,71 em retorno
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -13,7 +13,7 @@ import ReportsPanel from './ReportsPanel';
 import axios from 'axios';
 
 const API_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-    ? 'http://localhost:8080'
+    ? 'http://localhost:3006'
     : 'https://api.getnexo.com.br';
 
 // Global Auth Header for Sub-components (Chat, Kanban, etc)

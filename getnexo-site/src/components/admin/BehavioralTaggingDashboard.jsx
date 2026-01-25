@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Input, Select, Badge, Table, Modal, Tabs, Alert, Progress, Tag } from '../../design-system';
+import { Card } from '../../design-system/components/Card';
+import { Button } from '../../design-system/components/Button';
+import { Input } from '../../design-system/components/Input';
+import { Select, Badge, Table, Modal, Tabs, Alert, Progress, Tag } from '../../design-system/components/AdminExtras';
 import { apiRequest } from '../../lib/api';
 
-const BehavioralTaggingDashboard = () => {
-    const [activeTab, setActiveTab] = useState('overview');
+const BehavioralTaggingDashboard = ({ initialTab = 'overview' }) => {
+    const [activeTab, setActiveTab] = useState(initialTab);
     const [clusteringStats, setClusteringStats] = useState(null);
     const [clusters, setClusters] = useState([]);
     const [behavioralTags, setBehavioralTags] = useState([]);
@@ -12,6 +15,7 @@ const BehavioralTaggingDashboard = () => {
     const [showModal, setShowModal] = useState(false);
     const [modalType, setModalType] = useState('');
     const [selectedItem, setSelectedItem] = useState(null);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         loadData();
@@ -19,7 +23,9 @@ const BehavioralTaggingDashboard = () => {
 
     const loadData = async () => {
         setLoading(true);
+        setError(null);
         try {
+            // Tenta carregar dados das APIs
             const [statsRes, clustersRes, tagsRes, rulesRes] = await Promise.all([
                 apiRequest('/api/clustering/stats'),
                 apiRequest('/api/clustering/clusters'),
@@ -27,12 +33,42 @@ const BehavioralTaggingDashboard = () => {
                 apiRequest('/api/clustering/behavior-rules')
             ]);
 
-            setClusteringStats(statsRes.data);
-            setClusters(clustersRes.data);
-            setBehavioralTags(tagsRes.data);
-            setBehaviorRules(rulesRes.data);
+            setClusteringStats(statsRes?.data || statsRes);
+            setClusters(clustersRes?.data || clustersRes || []);
+            setBehavioralTags(tagsRes?.data || tagsRes || []);
+            setBehaviorRules(rulesRes?.data || rulesRes || []);
         } catch (error) {
             console.error('Error loading data:', error);
+            setError('Não foi possível carregar os dados. As APIs podem não estar disponíveis.');
+
+            // Dados de exemplo para demonstração
+            setClusteringStats({
+                profilesCount: 1242,
+                clusters: 5,
+                silhouetteScore: 0.78,
+                iterations: 12,
+                converged: true
+            });
+
+            setClusters([
+                { cluster_id: 1, user_count: 248, avg_engagement: 85, avg_conversion_prob: 42, avg_churn_risk: 12 },
+                { cluster_id: 2, user_count: 312, avg_engagement: 72, avg_conversion_prob: 38, avg_churn_risk: 18 },
+                { cluster_id: 3, user_count: 198, avg_engagement: 91, avg_conversion_prob: 55, avg_churn_risk: 8 },
+                { cluster_id: 4, user_count: 284, avg_engagement: 68, avg_conversion_prob: 31, avg_churn_risk: 22 },
+                { cluster_id: 5, user_count: 200, avg_engagement: 79, avg_conversion_prob: 45, avg_churn_risk: 15 }
+            ]);
+
+            setBehavioralTags([
+                { id: 1, name: 'High Engagement', category: 'engagement', confidence_score: 92, is_active: true },
+                { id: 2, name: 'Frequent Buyer', category: 'conversion', confidence_score: 88, is_active: true },
+                { id: 3, name: 'At Risk', category: 'retention', confidence_score: 75, is_active: true },
+                { id: 4, name: 'Loyal Customer', category: 'loyalty', confidence_score: 95, is_active: true }
+            ]);
+
+            setBehaviorRules([
+                { id: 1, name: 'Engagement Boost', description: 'Aumenta engajamento', tag_name: 'High Engagement', tag_category: 'engagement', priority: 1, confidence_threshold: 80, applications_count: 124, is_active: true },
+                { id: 2, name: 'Churn Prevention', description: 'Previne churn', tag_name: 'At Risk', tag_category: 'retention', priority: 2, confidence_threshold: 70, applications_count: 89, is_active: true }
+            ]);
         } finally {
             setLoading(false);
         }
@@ -101,7 +137,7 @@ const BehavioralTaggingDashboard = () => {
         <div className="space-y-6">
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <Card>
+                <Card style={{ background: '#111827', borderColor: '#1f2937' }}>
                     <div className="text-center">
                         <div className="text-2xl font-bold text-blue-600">
                             {clusteringStats?.profilesCount || 0}
@@ -110,28 +146,28 @@ const BehavioralTaggingDashboard = () => {
                     </div>
                 </Card>
 
-                <Card>
+                <Card style={{ background: '#111827', borderColor: '#1f2937' }}>
                     <div className="text-center">
                         <div className="text-2xl font-bold text-green-600">
-                            {clusters.length}
+                            {clusters?.length || 0}
                         </div>
                         <div className="text-sm text-gray-600">Clusters Ativos</div>
                     </div>
                 </Card>
 
-                <Card>
+                <Card style={{ background: '#111827', borderColor: '#1f2937' }}>
                     <div className="text-center">
                         <div className="text-2xl font-bold text-purple-600">
-                            {behavioralTags.length}
+                            {behavioralTags?.length || 0}
                         </div>
                         <div className="text-sm text-gray-600">Tags Comportamentais</div>
                     </div>
                 </Card>
 
-                <Card>
+                <Card style={{ background: '#111827', borderColor: '#1f2937' }}>
                     <div className="text-center">
                         <div className="text-2xl font-bold text-orange-600">
-                            {behaviorRules.length}
+                            {behaviorRules?.length || 0}
                         </div>
                         <div className="text-sm text-gray-600">Regras de Comportamento</div>
                     </div>
@@ -140,23 +176,23 @@ const BehavioralTaggingDashboard = () => {
 
             {/* Clustering Status */}
             {clusteringStats && (
-                <Card>
-                    <h3 className="text-lg font-semibold mb-4">Último Clustering</h3>
+                <Card style={{ background: '#111827', borderColor: '#1f2937' }}>
+                    <h3 className="text-lg font-semibold mb-4 text-white">Último Clustering</h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div>
-                            <div className="text-sm text-gray-600">Clusters</div>
-                            <div className="font-semibold">{clusteringStats.clusters}</div>
+                            <div className="text-sm text-gray-400">Clusters</div>
+                            <div className="font-semibold text-white">{clusteringStats.clusters || 0}</div>
                         </div>
                         <div>
-                            <div className="text-sm text-gray-600">Silhouette Score</div>
-                            <div className="font-semibold">{clusteringStats.silhouetteScore?.toFixed(3)}</div>
+                            <div className="text-sm text-gray-400">Silhouette Score</div>
+                            <div className="font-semibold text-white">{clusteringStats.silhouetteScore?.toFixed(3) || '0.000'}</div>
                         </div>
                         <div>
-                            <div className="text-sm text-gray-600">Iterações</div>
-                            <div className="font-semibold">{clusteringStats.iterations}</div>
+                            <div className="text-sm text-gray-400">Iterações</div>
+                            <div className="font-semibold text-white">{clusteringStats.iterations || 0}</div>
                         </div>
                         <div>
-                            <div className="text-sm text-gray-600">Status</div>
+                            <div className="text-sm text-gray-400">Status</div>
                             <Badge variant={clusteringStats.converged ? 'success' : 'warning'}>
                                 {clusteringStats.converged ? 'Convergido' : 'Não Convergido'}
                             </Badge>
@@ -166,8 +202,8 @@ const BehavioralTaggingDashboard = () => {
             )}
 
             {/* Actions */}
-            <Card>
-                <h3 className="text-lg font-semibold mb-4">Ações</h3>
+            <Card style={{ background: '#111827', borderColor: '#1f2937' }}>
+                <h3 className="text-lg font-semibold mb-4 text-white">Ações</h3>
                 <div className="flex gap-4">
                     <Button
                         onClick={handleRunClustering}
@@ -212,30 +248,30 @@ const BehavioralTaggingDashboard = () => {
         <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {clusters.map(cluster => (
-                    <Card key={cluster.cluster_id}>
-                        <h3 className="text-lg font-semibold mb-2">
+                    <Card key={cluster.cluster_id} style={{ background: '#111827', borderColor: '#1f2937' }}>
+                        <h3 className="text-lg font-semibold mb-2 text-white">
                             Cluster {cluster.cluster_id}
                         </h3>
 
                         <div className="space-y-2">
                             <div className="flex justify-between">
-                                <span className="text-sm text-gray-600">Usuários:</span>
-                                <span className="font-medium">{cluster.user_count}</span>
+                                <span className="text-sm text-gray-400">Usuários:</span>
+                                <span className="font-medium text-white">{cluster.user_count}</span>
                             </div>
 
                             <div className="flex justify-between">
-                                <span className="text-sm text-gray-600">Engajamento Médio:</span>
-                                <span className="font-medium">{cluster.avg_engagement}%</span>
+                                <span className="text-sm text-gray-400">Engajamento Médio:</span>
+                                <span className="font-medium text-white">{cluster.avg_engagement}%</span>
                             </div>
 
                             <div className="flex justify-between">
-                                <span className="text-sm text-gray-600">Conversão:</span>
-                                <span className="font-medium">{cluster.avg_conversion_prob}%</span>
+                                <span className="text-sm text-gray-400">Conversão:</span>
+                                <span className="font-medium text-white">{cluster.avg_conversion_prob}%</span>
                             </div>
 
                             <div className="flex justify-between">
-                                <span className="text-sm text-gray-600">Churn Risk:</span>
-                                <span className="font-medium">{cluster.avg_churn_risk}%</span>
+                                <span className="text-sm text-gray-400">Churn Risk:</span>
+                                <span className="font-medium text-white">{cluster.avg_churn_risk}%</span>
                             </div>
                         </div>
 
@@ -448,11 +484,23 @@ const BehavioralTaggingDashboard = () => {
     return (
         <div className="p-6">
             <div className="mb-6">
-                <h1 className="text-3xl font-bold text-gray-900">Behavioral Tagging System</h1>
-                <p className="text-gray-600 mt-2">
+                <h1 className="text-3xl font-bold text-white">Behavioral Tagging System</h1>
+                <p className="text-gray-400 mt-2">
                     Sistema completo de tagging comportamental e clustering de usuários
                 </p>
             </div>
+
+            {error && (
+                <Alert variant="warning" className="mb-6">
+                    <div className="flex items-center gap-2">
+                        <span>⚠️</span>
+                        <span>{error}</span>
+                    </div>
+                    <p className="text-sm mt-2 text-gray-600">
+                        Mostrando dados de exemplo para demonstração. As APIs de clustering podem não estar disponíveis.
+                    </p>
+                </Alert>
+            )}
 
             <Tabs
                 activeTab={activeTab}

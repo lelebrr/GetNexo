@@ -1,13 +1,64 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+import fs from 'fs';
+import path from 'path';
+
+// Obter parâmetros da URL
+const url = new URL(Astro.request.url);
+const slug = url.searchParams.get('slug');
+const lang = url.searchParams.get('lang');
+
+// Carregar dados do post se estiver editando
+let postContent = null;
+if (slug && lang) {
+    try {
+        let filePath;
+        if (lang === 'pt') {
+            filePath = path.join(process.cwd(), 'src', 'pages', 'blog', `${slug}.astro`);
+        } else {
+            filePath = path.join(process.cwd(), 'src', 'pages', lang, 'blog', `${slug}.astro`);
+        }
+
+        if (fs.existsSync(filePath)) {
+            const content = fs.readFileSync(filePath, 'utf-8');
+            
+            // Extrair título
+            const titleMatch = content.match(/const title = ["']([^"']+)["']/);
+            const title = titleMatch ? titleMatch[1] : '';
+            
+            // Extrair conteúdo (apenas o que está dentro de div.content)
+            const contentMatch = content.match(/<div class="content">([\s\S]*?)<\/div>/);
+            const articleContent = contentMatch ? contentMatch[1].trim() : '';
+            
+            // Extrair data
+            const dateMatch = content.match(/datePublished["']?:\s*["']([^"']+)["']/);
+            const date = dateMatch ? dateMatch[1] : '';
+            
+            // Extrair categoria
+            const categoryMatch = content.match(/articleSection["']?:\s*["']([^"']+)["']/);
+            const category = categoryMatch ? categoryMatch[1] : '';
+            
+            postContent = {
+                slug,
+                lang,
+                title,
+                content: articleContent,
+                date,
+                category
+            };
+        }
+    } catch (error) {
+        console.error('Erro ao carregar post:', error);
+    }
+}
 ---
 
-<AdminLayout title="Post Editor">
+<AdminLayout title={postContent ? "Editar Post" : "Novo Post"}>
     <div class="editor-header">
         <a href="/admin/blog" class="back-link">← Voltar para Lista</a>
         <div class="header-btns">
-            <button class="btn-outline">Salvar Rascunho</button>
-            <button class="btn-glow">Publicar Post</button>
+            <button class="btn-outline" id="saveDraft">Salvar Rascunho</button>
+            <button class="btn-glow" id="publishPost">Publicar Post</button>
         </div>
     </div>
 
@@ -17,12 +68,22 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
             <div class="cyber-card">
                 <div class="input-field">
                     <label>Título do Post</label>
-                    <input type="text" placeholder="Ex: Como a IA revoluciona o atendimento..." class="title-input" />
+                    <input
+                        type="text"
+                        placeholder="Ex: Como a IA revoluciona o atendimento..."
+                        class="title-input"
+                        id="postTitle"
+                        value={postContent?.title || ''}
+                    />
                 </div>
 
                 <div class="input-field">
                     <label>Conteúdo (Markdown)</label>
-                    <textarea placeholder="Escreva seu conteúdo aqui..." class="content-textarea"></textarea>
+                    <textarea
+                        placeholder="Escreva seu conteúdo aqui..."
+                        class="content-textarea"
+                        id="postContent"
+                    >{postContent?.content || ''}</textarea>
                 </div>
             </div>
         </div>
@@ -33,25 +94,38 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
                 <h3>Metadados</h3>
                 <div class="input-field">
                     <label>Idioma</label>
-                    <select>
-                        <option value="pt">Português (BR)</option>
-                        <option value="en">English (US)</option>
-                        <option value="es">Español</option>
-                        <option value="fr">Français</option>
+                    <select id="postLang">
+                        <option value="pt" selected={postContent?.lang === 'pt'}>Português (BR)</option>
+                        <option value="en" selected={postContent?.lang === 'en'}>English (US)</option>
+                        <option value="es" selected={postContent?.lang === 'es'}>Español</option>
+                        <option value="fr" selected={postContent?.lang === 'fr'}>Français</option>
                     </select>
                 </div>
                 <div class="input-field">
                     <label>Slug (URL)</label>
-                    <input type="text" placeholder="ex: como-ia-revoluciona" />
+                    <input
+                        type="text"
+                        placeholder="ex: como-ia-revoluciona"
+                        id="postSlug"
+                        value={postContent?.slug || ''}
+                    />
                 </div>
                 <div class="input-field">
-                    <label>Categorias</label>
-                    <div class="tag-cloud">
-                        <span class="tag">IA</span>
-                        <span class="tag">Vendas</span>
-                        <span class="tag">WhatsApp</span>
-                        <span class="tag add">+ add</span>
-                    </div>
+                    <label>Categoria</label>
+                    <input
+                        type="text"
+                        placeholder="Ex: IA, Vendas, WhatsApp..."
+                        id="postCategory"
+                        value={postContent?.category || ''}
+                    />
+                </div>
+                <div class="input-field">
+                    <label>Data de Publicação</label>
+                    <input
+                        type="date"
+                        id="postDate"
+                        value={postContent?.date ? postContent.date.split('T')[0] : ''}
+                    />
                 </div>
             </div>
 
@@ -65,6 +139,79 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         </div>
     </div>
 </AdminLayout>
+
+<script>
+    // Função para gerar slug a partir do título
+    function generateSlug(title) {
+        return title
+            .toLowerCase()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .trim();
+    }
+
+    // Auto-preencher slug quando o título muda
+    const titleInput = document.getElementById('postTitle');
+    const slugInput = document.getElementById('postSlug');
+
+    if (titleInput && slugInput) {
+        titleInput.addEventListener('input', (e) => {
+            if (!slugInput.value) {
+                slugInput.value = generateSlug(e.target.value);
+            }
+        });
+    }
+
+    // Função para salvar post
+    async function savePost(isPublished = false) {
+        const title = document.getElementById('postTitle').value;
+        const content = document.getElementById('postContent').value;
+        const lang = document.getElementById('postLang').value;
+        const slug = document.getElementById('postSlug').value;
+        const category = document.getElementById('postCategory').value;
+        const date = document.getElementById('postDate').value;
+
+        if (!title || !content || !slug) {
+            alert('Por favor, preencha todos os campos obrigatórios (Título, Conteúdo e Slug)');
+            return;
+        }
+
+        const postData = {
+            title,
+            content,
+            lang,
+            slug,
+            category,
+            date: date || new Date().toISOString().split('T')[0],
+            status: isPublished ? 'published' : 'draft'
+        };
+
+        try {
+            const response = await fetch('/api/admin/blog/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(postData)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert(isPublished ? 'Post publicado com sucesso!' : 'Rascunho salvo com sucesso!');
+                window.location.href = '/admin/blog';
+            } else {
+                alert('Erro ao salvar: ' + result.error);
+            }
+        } catch (error) {
+            console.error('Erro:', error);
+            alert('Erro ao salvar post');
+        }
+    }
+
+    // Event listeners para os botões
+    document.getElementById('saveDraft')?.addEventListener('click', () => savePost(false));
+    document.getElementById('publishPost')?.addEventListener('click', () => savePost(true));
+</script>
 
 <style>
     .editor-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; }
@@ -104,4 +251,8 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     .drop-zone:hover { border-color: #00f7ff; color: #aaa; }
     .drop-zone .icon { font-size: 2rem; display: block; margin-bottom: 0.5rem; opacity: 0.3; }
     .drop-zone p { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+    @media (max-width: 1024px) {
+        .editor-grid { grid-template-columns: 1fr; }
+    }
 </style>

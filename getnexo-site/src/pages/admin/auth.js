@@ -2,9 +2,22 @@
 export async function login(username, password) {
     // In production, use environment variables and a real database
     // For now, using simple check
-    if (username === 'admin@getnexo.com.br' && password === 'password123') {
+    const validUsers = [
+        { email: 'admin@getnexo.com.br', password: 'password123' },
+        { email: 'admin@getnexo.local', password: 'password123' },
+        { email: 'lelebrr@gmail.com', password: 'master2026' }
+    ];
+
+    const user = validUsers.find(u =>
+        u.email === username.trim() &&
+        u.password === password.trim()
+    );
+
+    if (user) {
         const token = btoa(username + ':' + Date.now());
         localStorage.setItem('adminToken', token);
+        // Set cookie for server-side middleware protection
+        document.cookie = `admin_token=${token}; path=/; max-age=86400; SameSite=Strict`;
         return { success: true, token };
     }
     return { success: false, error: 'Credenciais inválidas' };

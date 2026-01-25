@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import useSentimentAnalysis from '../../hooks/useSentimentAnalysis';
 import { useTickets } from '../../hooks/useTickets';
-import SentimentIndicator from '../SentimentIndicator';
+import SentimentIndicator from '../SentimentMetric';
 
 /**
  * Componente SupportEffectivenessReport

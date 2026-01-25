@@ -66,12 +66,13 @@
 
 .hero-subtitle {
     font-size: 1.4rem;
-    color: #e2e8f0;
+    color: #cbd5e1;
     max-width: 650px;
     margin-bottom: 3.5rem;
-    line-height: 1.6;
+    line-height: 1.7;
     font-weight: 400;
     min-height: 4.5rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 @media (max-width: 1024px) {
@@ -470,20 +471,25 @@
 /* === Grid Cards & Features === */
 .section-header {
     text-align: center;
-    margin-bottom: 5rem;
+    margin-bottom: 6rem;
+    padding: 0 2rem;
 }
 
 .section-header h2 {
     font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 800;
-    margin-bottom: 1rem;
+    font-weight: 900;
+    margin-bottom: 1.5rem;
+    letter-spacing: -1px;
+    line-height: 1.2;
 }
 
 .section-header p {
-    color: #e2e8f0;
-    font-size: 1.2rem;
+    color: #cbd5e1;
+    font-size: 1.25rem;
     max-width: 800px;
     margin: 0 auto;
+    line-height: 1.7;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .grid-cards {
@@ -502,24 +508,44 @@
 }
 
 .glass-panel {
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(255, 255, 255, 0.03);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 24px;
     position: relative;
     overflow: hidden;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .p-card {
     padding: 3rem;
-    transition: all 0.4s var(--transition-smooth);
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+    overflow: hidden;
 }
 
 .p-card:hover {
-    transform: translateY(-8px) scale(1.02);
+    transform: translateY(-12px) scale(1.03);
     border-color: var(--neon-green);
-    box-shadow: 0 20px 40px rgba(0, 212, 255, 0.1);
+    box-shadow: 0 30px 60px rgba(0, 212, 255, 0.15);
+}
+
+.p-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at top right, rgba(0, 212, 255, 0.05), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+}
+
+.p-card:hover::before {
+    opacity: 1;
 }
 
 .p-icon {
@@ -530,14 +556,16 @@
 .p-card h3 {
     color: white;
     font-size: 1.5rem;
-    font-weight: 800;
+    font-weight: 900;
     margin-bottom: 1rem;
+    letter-spacing: -0.5px;
 }
 
 .p-card p {
-    color: #e2e8f0;
-    line-height: 1.6;
+    color: #cbd5e1;
+    line-height: 1.7;
     margin-bottom: 2rem;
+    font-size: 1.05rem;
 }
 
 /* === Metrics Section === */
@@ -569,25 +597,46 @@
 
 .security-card,
 .metric-card {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.04);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 32px;
     padding: 3rem 2rem;
     text-align: center;
-    transition: all 0.5s var(--transition-smooth);
+    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
+    position: relative;
+    overflow: hidden;
 }
 
 .security-card:hover,
 .metric-card:hover {
-    transform: translateY(-10px);
-    background: rgba(255, 255, 255, 0.06);
+    transform: translateY(-15px);
+    background: rgba(255, 255, 255, 0.08);
     border-color: var(--neon-blue);
-    box-shadow: 0 30px 60px -12px rgba(0, 212, 255, 0.2);
+    box-shadow: 0 40px 80px -15px rgba(0, 212, 255, 0.25);
+}
+
+.security-card::before,
+.metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at bottom left, rgba(0, 212, 255, 0.05), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+}
+
+.security-card:hover::before,
+.metric-card:hover::before {
+    opacity: 1;
 }
 
 .security-icon {
@@ -599,11 +648,13 @@
 .metric-card h3 {
     margin-bottom: 1rem;
     color: white;
+    font-weight: 900;
+    letter-spacing: -0.5px;
 }
 
 .m-val {
     display: block;
-    font-size: 4rem;
+    font-size: 4.5rem;
     font-weight: 900;
     line-height: 1;
     margin-bottom: 1rem;
@@ -611,6 +662,7 @@
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(0, 255, 157, 0.3);
 }
 
 @media (max-width: 900px) {
@@ -621,7 +673,7 @@
 
 /* === Giant Features === */
 .giant-features {
-    padding: 6rem 5%;
+    padding: 8rem 5%;
     max-width: 1200px;
     margin: 0 auto;
 }
@@ -629,9 +681,9 @@
 .giant-feature-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 4rem;
+    gap: 5rem;
     align-items: center;
-    margin-bottom: 8rem;
+    margin-bottom: 10rem;
 }
 
 .giant-feature-info,
@@ -665,8 +717,14 @@
 .premium-visual {
     width: 100%;
     border-radius: 30px;
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
-    transition: 0.5s var(--transition-smooth);
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+    transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.premium-visual:hover {
+    transform: scale(1.03);
+    box-shadow: 0 50px 100px rgba(0, 212, 255, 0.2);
 }
 
 /* === Reveal Animation === */
@@ -690,6 +748,7 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: gradientShift 4s ease-in-out infinite;
+    text-shadow: 0 0 40px rgba(0, 212, 255, 0.3);
 }
 
 .text-gradient-animated {
@@ -725,4 +784,58 @@
     50% {
         background-position: 100% 50%;
     }
+}
+
+/* === Mobile Optimizations === */
+@media (max-width: 768px) {
+    .hero-split {
+        padding: 8rem 1.5rem 4rem;
+    }
+
+    .p-card {
+        padding: 2rem 1.5rem;
+    }
+
+    .security-card,
+    .metric-card {
+        padding: 2rem 1.5rem;
+    }
+
+    .m-val {
+        font-size: 3.5rem;
+    }
+
+    .giant-feature-row {
+        gap: 3rem;
+        margin-bottom: 6rem;
+    }
+
+    .giant-features {
+        padding: 4rem 1.5rem;
+    }
+}
+
+/* === Accessibility Improvements === */
+@media (prefers-reduced-motion: reduce) {
+
+    .animate-on-scroll,
+    .p-card,
+    .security-card,
+    .metric-card,
+    .premium-visual {
+        transition: none !important;
+    }
+
+    .text-gradient,
+    .text-gradient-animated {
+        animation: none !important;
+    }
+}
+
+/* === Focus States for Accessibility === */
+.p-card:focus-within,
+.security-card:focus-within,
+.metric-card:focus-within {
+    outline: 2px solid var(--neon-blue);
+    outline-offset: 4px;
 }

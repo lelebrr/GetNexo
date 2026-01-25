@@ -4,14 +4,16 @@
  * WCAG 2.2 AA+ compliant
  */
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { colors } from '../tokens/colors';
 import { typography } from '../tokens/typography';
 import { spacing } from '../tokens/spacing';
 
+console.log('🛡️ Nexus ThemeContext Initializing...');
+
 // Theme configuration interface
 export const ThemeConfig = {
-    mode: 'light', // 'light' | 'dark' | 'auto'
+    mode: 'dark', // 'light' | 'dark' | 'auto'
     primaryColor: 'primary',
     secondaryColor: 'secondary',
     accentColor: 'accent',
@@ -26,14 +28,38 @@ export const ThemeConfig = {
     customTheme: {},
 };
 
+const defaultComputedTheme = {
+    colors: colors.dark,
+    typography: typography,
+    spacing: spacing,
+    mode: 'dark',
+    primaryColor: colors.primary,
+    secondaryColor: colors.secondary,
+    accentColor: colors.accent,
+    borderRadius: spacing.borderRadius.DEFAULT,
+    fontFamily: typography.fontFamily.sans,
+    fontSize: typography.fontSize.base,
+    motionEnabled: true,
+    motionIntensity: 'medium',
+    focusVisible: true,
+    highContrast: false,
+    customTheme: {},
+};
+
 // Theme context
 export const ThemeContext = createContext({
     theme: ThemeConfig,
     setTheme: () => { },
     toggleTheme: () => { },
     getThemeValue: () => { },
-    isDarkMode: false,
+    isDarkMode: true,
+    computedTheme: defaultComputedTheme
 });
+
+// Helper function to get safe computed theme
+const getSafeComputedTheme = (computedTheme) => {
+    return computedTheme || defaultComputedTheme;
+};
 
 // Theme provider component
 export const ThemeProvider = ({ children, initialTheme = ThemeConfig }) => {
@@ -116,7 +142,7 @@ export const ThemeProvider = ({ children, initialTheme = ThemeConfig }) => {
         fontFamily: typography.fontFamily[theme.fontFamily] || typography.fontFamily.sans,
         fontSize: typography.fontSize[theme.fontSize] || typography.fontSize.base,
         motionEnabled: theme.motionEnabled && !theme.reducedMotion,
-        motionIntensity: theme.motionIntensity,
+        motionIntensity: theme.motionIntensity || 'medium',
         focusVisible: theme.focusVisible,
         highContrast: theme.highContrast,
         customTheme: theme.customTheme,
@@ -142,39 +168,71 @@ export const ThemeProvider = ({ children, initialTheme = ThemeConfig }) => {
 export const useTheme = () => {
     const context = useContext(ThemeContext);
     if (!context) {
-        throw new Error('useTheme must be used within ThemeProvider');
+        console.warn('❌ useTheme used outside ThemeProvider. Falling back to default values.');
+        return {
+            theme: ThemeConfig,
+            setTheme: () => { },
+            toggleTheme: () => { },
+            getThemeValue: () => { },
+            isDarkMode: true,
+            computedTheme: defaultComputedTheme
+        };
     }
     return context;
 };
 
 // Hook to get computed theme values
 export const useComputedTheme = () => {
-    const { computedTheme } = useTheme();
-    return computedTheme;
+    const context = useTheme();
+    return context.computedTheme || defaultComputedTheme;
 };
 
 // Hook for motion preferences
 export const useMotion = () => {
-    const { computedTheme } = useTheme();
+    const context = useTheme();
+    const computedTheme = context.computedTheme || defaultComputedTheme;
+
+    const safeComputedTheme = computedTheme || {
+        motionEnabled: true,
+        motionIntensity: 'medium',
+        reducedMotion: false,
+        spacing: {
+            transition: {
+                duration: { DEFAULT: '200ms', fast: '150ms', fastest: '75ms', slow: '300ms', slower: '500ms', slowest: '700ms' },
+                timing: { ease: 'cubic-bezier(0.4, 0, 0.2, 1)', easeIn: 'cubic-bezier(0.4, 0, 1, 1)', easeOut: 'cubic-bezier(0, 0, 0.2, 1)', easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)', linear: 'linear' },
+            },
+            animation: {
+                fadeIn: { keyframes: { from: { opacity: 0 }, to: { opacity: 1 } }, duration: '200ms', timing: 'ease-out' },
+                fadeOut: { keyframes: { from: { opacity: 1 }, to: { opacity: 0 } }, duration: '200ms', timing: 'ease-in' },
+                slideIn: { keyframes: { from: { transform: 'translateY(-10px)', opacity: 0 }, to: { transform: 'translateY(0)', opacity: 1 } }, duration: '300ms', timing: 'ease-out' },
+                slideOut: { keyframes: { from: { transform: 'translateY(0)', opacity: 1 }, to: { transform: 'translateY(-10px)', opacity: 0 } }, duration: '200ms', timing: 'ease-in' },
+                scaleIn: { keyframes: { from: { transform: 'scale(0.95)', opacity: 0 }, to: { transform: 'scale(1)', opacity: 1 } }, duration: '200ms', timing: 'ease-out' },
+                scaleOut: { keyframes: { from: { transform: 'scale(1)', opacity: 1 }, to: { transform: 'scale(0.95)', opacity: 0 } }, duration: '150ms', timing: 'ease-in' },
+                shake: { keyframes: { '0%, 100%': { transform: 'translateX(0)' }, '10%, 30%, 50%, 70%, 90%': { transform: 'translateX(-2px)' }, '20%, 40%, 60%, 80%': { transform: 'translateX(2px)' } }, duration: '400ms', timing: 'ease-in-out' },
+                pulse: { keyframes: { '0%, 100%': { opacity: 1 }, '50%': { opacity: 0.5 } }, duration: '2000ms', timing: 'ease-in-out' },
+                bounce: { keyframes: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-25%)' } }, duration: '1000ms', timing: 'cubic-bezier(0.280, 0.840, 0.420, 1)' },
+            },
+        },
+    };
 
     const getMotionDuration = (duration = 'DEFAULT') => {
-        if (!computedTheme.motionEnabled) return '0ms';
-        return computedTheme.spacing.transition.duration[duration] ||
-            computedTheme.spacing.transition.duration.DEFAULT;
+        if (!safeComputedTheme.motionEnabled) return '0ms';
+        return safeComputedTheme.spacing?.transition?.duration?.[duration] ||
+            safeComputedTheme.spacing?.transition?.duration?.DEFAULT || '200ms';
     };
 
     const getMotionTiming = (timing = 'ease') => {
-        return computedTheme.spacing.transition.timing[timing] ||
-            computedTheme.spacing.transition.timing.ease;
+        return safeComputedTheme.spacing?.transition?.timing?.[timing] ||
+            safeComputedTheme.spacing?.transition?.timing?.ease || 'ease';
     };
 
     const getAnimation = (name) => {
-        if (!computedTheme.motionEnabled) return { keyframes: {}, duration: '0ms', timing: 'linear' };
-        return computedTheme.spacing.animation[name] || computedTheme.spacing.animation.fadeIn;
+        if (!safeComputedTheme.motionEnabled) return { keyframes: {}, duration: '0ms', timing: 'linear' };
+        return safeComputedTheme.spacing?.animation?.[name] || safeComputedTheme.spacing?.animation?.fadeIn || { keyframes: {}, duration: '0ms', timing: 'linear' };
     };
 
     const shouldAnimate = () => {
-        return computedTheme.motionEnabled && !computedTheme.reducedMotion;
+        return !!safeComputedTheme.motionEnabled && !safeComputedTheme.reducedMotion;
     };
 
     return {
@@ -182,41 +240,42 @@ export const useMotion = () => {
         getMotionTiming,
         getAnimation,
         shouldAnimate,
-        intensity: computedTheme.motionIntensity,
-        enabled: computedTheme.motionEnabled,
+        intensity: safeComputedTheme.motionIntensity,
+        enabled: safeComputedTheme.motionEnabled,
     };
 };
 
 // Hook for accessibility
 export const useAccessibility = () => {
-    const { computedTheme } = useTheme();
+    const context = useTheme();
+    const computedTheme = context.computedTheme || defaultComputedTheme;
 
     const getFocusStyles = () => ({
-        outline: computedTheme.focusVisible ? `2px solid ${computedTheme.colors.focus.ring}` : 'none',
+        outline: computedTheme.focusVisible ? `2px solid ${computedTheme.colors?.focus?.ring || '#00f7ff'}` : 'none',
         outlineOffset: computedTheme.focusVisible ? '2px' : '0',
         boxShadow: computedTheme.focusVisible
-            ? `0 0 0 4px ${computedTheme.colors.focus.ring}20`
+            ? `0 0 0 4px ${computedTheme.colors?.focus?.ring || '#00f7ff'}20`
             : 'none',
     });
 
     const getReducedMotion = () => {
-        return computedTheme.reducedMotion || !computedTheme.motionEnabled;
+        return !!computedTheme.reducedMotion || !computedTheme.motionEnabled;
     };
 
     const getHighContrast = () => {
-        return computedTheme.highContrast;
+        return !!computedTheme.highContrast;
     };
 
     const getSkipLinkStyles = () => ({
         position: 'absolute',
         top: '-100%',
         left: '0',
-        padding: computedTheme.spacing.space[4],
-        background: computedTheme.colors.primary[600],
-        color: computedTheme.colors.text.inverse,
-        zIndex: computedTheme.spacing.zIndex.max,
+        padding: computedTheme.spacing?.space?.[4] || '1rem',
+        background: computedTheme.colors?.primary?.[600] || '#00f7ff',
+        color: computedTheme.colors?.text?.inverse || '#000',
+        zIndex: computedTheme.spacing?.zIndex?.max || 9999,
         textDecoration: 'none',
-        borderRadius: computedTheme.borderRadius,
+        borderRadius: computedTheme.borderRadius || '4px',
         '&:focus': {
             top: '0',
             outline: '2px solid #fff',
@@ -277,4 +336,14 @@ export const useThemeConfig = () => {
         importTheme,
         validateTheme,
     };
+};
+
+export default {
+    ThemeProvider,
+    ThemeContext,
+    useTheme,
+    useComputedTheme,
+    useMotion,
+    useAccessibility,
+    useThemeConfig,
 };

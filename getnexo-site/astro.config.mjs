@@ -26,6 +26,9 @@ export default defineConfig({
     devToolbar: {
         enabled: false
     },
+    logging: {
+        level: 'info' // 'debug' pra ver MUITO mais
+    },
     integrations: [
         react(),
         tailwind({ applyBaseStyles: false }),
@@ -88,7 +91,7 @@ export default defineConfig({
         headers: {
             // CSP avançada com proteção contra XSS (para ambiente de desenvolvimento)
             // Em produção, o middleware gera nonces dinamicamente
-            'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.cloudflare.com static.cloudflareinsights.com https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://api.getnexo.com.br https://*.getnexo.com.br https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src * data: blob:; font-src 'self' https://fonts.gstatic.com; connect-src *; object-src 'none'; base-uri 'none'; frame-ancestors *; script-src-elem 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net; style-src-elem 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net https://fonts.googleapis.com;",
+            'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.cloudflare.com static.cloudflareinsights.com https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://api.getnexo.com.br https://*.getnexo.com.br https://www.googletagmanager.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src * data: blob:; font-src 'self' https://fonts.gstatic.com; connect-src *; object-src 'none'; base-uri 'none'; frame-ancestors *; script-src-elem 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net; style-src-elem 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net https://fonts.googleapis.com;",
             // Cache otimizado: 1 ano para assets estáticos, 1 dia para APIs
             'Cache-Control': 'public, max-age=31536000, immutable',
             // HSTS forte para todos os ambientes (não apenas Vercel)
@@ -96,8 +99,19 @@ export default defineConfig({
         }
     },
     vite: {
+        logLevel: 'info', // ou 'debug' pra ficar mais verboso ainda
+        optimizeDeps: {
+            include: ['react', 'react-dom']
+        },
+        resolve: {
+            dedupe: ['react', 'react-dom']
+        },
         server: {
-            allowedHosts: ['getnexo.com.br', 'admin.getnexo.com.br', 'www.getnexo.com.br', 'chat.getnexo.com.br']
+            allowedHosts: ['getnexo.com.br', 'admin.getnexo.com.br', 'www.getnexo.com.br', 'chat.getnexo.com.br'],
+            hmr: true,
+            watch: {
+                usePolling: true // se tiver problemas com arquivos não detectando mudança
+            }
         },
         plugins: !isVercel ? [{
             name: 'socket-io',
@@ -121,9 +135,7 @@ export default defineConfig({
             },
             rollupOptions: {
                 output: {
-                    manualChunks: {
-                        'vendor': ['react', 'react-dom', 'astro'],
-                    },
+                    // manualChunks removed to avoid React instance duplication issues
                     chunkFileNames: (chunkInfo) => {
                         return 'assets/[name]-[hash].js';
                     }
@@ -131,7 +143,7 @@ export default defineConfig({
             }
         },
         esbuild: {
-            drop: ['console', 'debugger'],
+            drop: isDev ? [] : ['console', 'debugger'],
         },
         // SSR config removida para evitar conflito CJS/ESM com React
         optimizeDeps: {

@@ -1,0 +1,12 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import SystemConfig from '../../components/admin/SystemConfig.jsx';
+
+const pageTitle = 'Multi-Loja';
+---
+
+<AdminLayout title={pageTitle}>
+    <div class="tab-container h-full">
+        <SystemConfig client:only="react" />
+    </div>
+</AdminLayout>

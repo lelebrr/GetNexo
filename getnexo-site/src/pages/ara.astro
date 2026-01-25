@@ -80,6 +80,149 @@ import AdminLayout from '../layouts/AdminLayout.astro';
   </div>
 </AdminLayout>
 
+<script>
+    // Gerenciamento de Estado e Dom
+    const textArea = document.querySelector('.editor-area textarea');
+    const executeBtn = document.querySelector('.btn-execute');
+    const modeBtns = document.querySelectorAll('.mode-opt');
+    const tokenDisplay = document.querySelector('.tokens');
+    const vaultList = document.querySelector('.vault-list');
+    const statusDot = document.querySelector('.status-badge .dot');
+    const statusText = document.querySelector('.status-badge');
+
+    let currentMode = 'Artigo Blog';
+    let isGenerating = false;
+
+    // Inicializar Vault do localStorage
+    let vault = JSON.parse(localStorage.getItem('ara_vault') || '[]');
+    renderVault();
+
+    // Troca de Modos
+    modeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            modeBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentMode = btn.textContent;
+            console.log(`[Ara] Modo alterado para: ${currentMode}`);
+        });
+    });
+
+    // Executar Geração
+    executeBtn.addEventListener('click', async () => {
+        const prompt = textArea.value.trim();
+        if (!prompt || isGenerating) return;
+
+        setLoading(true);
+
+        try {
+            const response = await fetch('/api/admin/ara/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt, mode: currentMode })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Adicionar ao vault
+                const newItem = {
+                    id: Date.now(),
+                    type: currentMode.split(' ')[0].toUpperCase(),
+                    name: prompt.substring(0, 30) + '...',
+                    content: data.content,
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    status: 'ok'
+                };
+
+                vault.unshift(newItem);
+                if (vault.length > 10) vault.pop(); // Limitar 10 itens
+                localStorage.setItem('ara_vault', JSON.stringify(vault));
+                
+                // Mostrar resultado
+                textArea.value = data.content;
+                tokenDisplay.textContent = `${data.tokens} tokens`;
+                renderVault();
+                
+                if (window.playNotification) window.playNotification();
+            } else {
+                alert('Erro na Ara: ' + (data.error || 'Falha na comunicação'));
+            }
+        } catch (error) {
+            console.error('Erro:', error);
+            alert('Erro crítico ao contatar a Ara.');
+        } finally {
+            setLoading(false);
+        }
+    });
+
+    function setLoading(loading) {
+        isGenerating = loading;
+        if (loading) {
+            executeBtn.innerHTML = 'PENSANDO... <span class="arr">⏳</span>';
+            executeBtn.style.opacity = '0.7';
+            statusDot.style.background = '#ffd500';
+            statusDot.style.boxShadow = '0 0 10px #ffd500';
+            textArea.disabled = true;
+        } else {
+            executeBtn.innerHTML = 'EXECUTAR CÓDIGO <span class="arr">→</span>';
+            executeBtn.style.opacity = '1';
+            statusDot.style.background = '#00ff9d';
+            statusDot.style.boxShadow = '0 0 10px #00ff9d';
+            textArea.disabled = false;
+        }
+    }
+
+    function renderVault() {
+        if (!vaultList) return;
+        
+        if (vault.length === 0) {
+            vaultList.innerHTML = '<div class="empty-vault">Cofre de criações vazio...</div>';
+            return;
+        }
+
+        vaultList.innerHTML = vault.map(item => `
+            <div class="vault-item" onclick="loadVaultItem(${item.id})">
+                <div class="v-left">
+                    <span class="v-type">${item.type}</span>
+                    <span class="v-name">${item.name}</span>
+                </div>
+                <div class="v-right">
+                    <span class="v-status ${item.status}">${item.status === 'ok' ? 'Live' : 'Draft'}</span>
+                    <span class="v-time">${item.time}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Função global para carregar item do vault (chamada via onclick)
+    window.loadVaultItem = (id) => {
+        const item = vault.find(i => i.id === id);
+        if (item) {
+            textArea.value = item.content;
+            // Atualizar modo visualmente
+            modeBtns.forEach(btn => {
+                if (item.type.includes(btn.textContent.split(' ')[0].toUpperCase())) {
+                    btn.click();
+                }
+            });
+        }
+    };
+
+    // Copiar para o clipboard
+    document.querySelector('.btn-vault-action')?.addEventListener('click', () => {
+        const content = textArea.value.trim();
+        if (!content) return;
+        
+        navigator.clipboard.writeText(content).then(() => {
+            const originalText = document.querySelector('.btn-vault-action').textContent;
+            document.querySelector('.btn-vault-action').textContent = 'COPIADO!';
+            setTimeout(() => {
+                document.querySelector('.btn-vault-action').textContent = originalText;
+            }, 2000);
+        });
+    });
+</script>
+
 <style>
     .ara-terminal {
         display: grid;

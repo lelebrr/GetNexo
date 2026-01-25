@@ -10,11 +10,11 @@ import LoginLayout from '../../layouts/LoginLayout.astro';
         <form id="login-form">
             <div class="input-group">
                 <label>Identifier</label>
-                <input type="text" id="username" placeholder="Username" required />
+                <input type="text" id="username" placeholder="Username" autocomplete="username" required />
             </div>
             <div class="input-group">
                 <label>Security Key</label>
-                <input type="password" id="password" placeholder="••••••••" required />
+                <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required />
             </div>
             
             <button type="submit" class="glow-btn">Initialize Connection</button>
@@ -23,7 +23,8 @@ import LoginLayout from '../../layouts/LoginLayout.astro';
     </div>
 
     <script>
-        import { login } from './auth.js';
+        import { login } from './auth.js?v=cachebust1';
+        // Force HMR check
 
         const form = document.getElementById('login-form');
         const errorMsg = document.getElementById('error-msg');

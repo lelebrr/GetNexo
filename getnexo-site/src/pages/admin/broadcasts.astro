@@ -1,0 +1,12 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import NotificationsCenter from '../../components/admin/NotificationsCenter.jsx';
+
+const pageTitle = 'Broadcasts';
+---
+
+<AdminLayout title={pageTitle}>
+    <div class="tab-container h-full">
+        <NotificationsCenter client:only="react" />
+    </div>
+</AdminLayout>

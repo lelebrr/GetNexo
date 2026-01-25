@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import SentimentIndicator from '../SentimentIndicator';
+import SentimentIndicator from '../SentimentMetric';
 
 // Mock de setTimeout
 jest.useFakeTimers();

@@ -1,13 +1,13 @@
 import React from 'react';
 
-export const Select = ({ value, onChange, options, required }) => (
+export const Select = ({ value, onChange, options = [], required }) => (
     <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
         required={required}
         className="w-full p-2 border rounded bg-white text-black"
     >
-        {options.map(opt => (
+        {options?.map(opt => (
             <option key={opt.value} value={opt.value}>{opt.label}</option>
         ))}
     </select>

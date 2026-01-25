@@ -1,98 +1,449 @@
 ---
 interface Props {
-	title: string;
+  title: string;
 }
 
-const { title } = Astro.props;
+const { title, activeTab } = Astro.props;
 const nonce = Astro.locals.nonce;
+
+const urlActive = Astro.url.searchParams.get('tab');
+
+// Map URL tab names back to internal Category IDs to ensure submenus load correctly
+const tabToCategoryMap = {
+  'marketing': 'broadcasts',
+  'strategy': 'magic',
+  'security': 'seguranca',
+  'loyalty': 'fidelidade',
+  'integrations': 'integracoes'
+};
+
+// Resolve active category: explicit prop > reverse mapped URL tab > direct URL tab > dashboard
+let resolvedActive = activeTab || (urlActive ? (tabToCategoryMap[urlActive] || urlActive) : 'dashboard');
+// Override the activeCategory variable that gets passed to the script
+let activeCategory = resolvedActive;
+const active = resolvedActive;
+
+import '../styles/global.css';
+import { Home, MessageCircle, Megaphone, Users, ShoppingCart, Brain, BarChart, Heart, DollarSign, Zap, Plug, Settings, ShieldCheck, CircleHelp, Tag, Layers, FileText } from 'lucide-react';
+
+const mainCategories = [
+  { name: "Dashboard", id: "dashboard", icon: Home, color: "indigo" },
+  { name: "Conversas Ao Vivo", id: "live", icon: MessageCircle, color: "cyan", count: 8 },
+  { name: "Marketing", id: "broadcasts", icon: Megaphone, color: "purple" },
+  { name: "CRM & Leads", id: "crm", icon: Users, color: "emerald" },
+  { name: "Produtos & Catálogo", id: "produtos", icon: ShoppingCart, color: "orange" },
+  { name: "Magic Replies IA", id: "magic", icon: Brain, color: "pink" },
+  { name: "PIX & Pagamentos", id: "pagamentos", icon: DollarSign, color: "green" },
+  { name: "Automations", id: "automations", icon: Zap, color: "yellow" },
+  { name: "Analytics & BI", id: "analytics", icon: BarChart, color: "blue" },
+  { name: "Fidelidade & Retenção", id: "fidelidade", icon: Heart, color: "red" },
+  { name: "Tags & Segmentos", id: "tags", icon: Tag, color: "teal" },
+  { name: "Integrações", id: "integracoes", icon: Plug, color: "violet" },
+  { name: "Multi-Loja", id: "multiloja", icon: Layers, color: "amber" },
+  { name: "Configurações Gerais", id: "config", icon: Settings, color: "gray" },
+  { name: "Segurança & Logs", id: "seguranca", icon: ShieldCheck, color: "rose" },
+  { name: "Relatórios Avançados", id: "relatorios", icon: FileText, color: "lime" },
+  { name: "Ajuda & Suporte", id: "ajuda", icon: CircleHelp, color: "amber" }
+];
+
+const submenus = {
+  dashboard: [
+    { title: "Visão Geral 24h", href: "/admin/dashboard/24h" },
+    { title: "Últimas 50 Vendas", href: "/admin/dashboard/recent-sales" },
+    { title: "Conversas Abertas Hoje", href: "/admin/dashboard/active-chats" },
+    { title: "ROI Última Campanha", href: "/admin/dashboard/roi-last" },
+    { title: "Alertas Pendentes", href: "/admin/dashboard/alerts" },
+    { title: "Top Produtos Hoje", href: "/admin/dashboard/top-products" },
+    { title: "Gráficos Customizados", href: "/admin/dashboard/custom" }
+  ],
+  live: [
+    { title: "Todas as Conversas", href: "/admin/live/all" },
+    { title: "Aguardando Resposta", href: "/admin/live/waiting" },
+    { title: "Prioritárias", href: "/admin/live/priority" },
+    { title: "Encerradas Hoje", href: "/admin/live/closed-today" },
+    { title: "Com Agente Humano", href: "/admin/live/human" },
+    { title: "Exportar Conversa", href: "/admin/live/export" },
+    { title: "Sentimento Atual", href: "/admin/live/sentiment" },
+    { title: "Notas Internas", href: "/admin/live/notes" }
+  ],
+  broadcasts: [
+    { title: "Criar Nova Campanha", href: "/admin/broadcasts/new" },
+    { title: "Campanhas em Andamento", href: "/admin/broadcasts/active" },
+    { title: "Histórico Completo", href: "/admin/broadcasts/history" },
+    { title: "A/B Testing Avançado", href: "/admin/broadcasts/abtest" },
+    { title: "Templates Salvos", href: "/admin/broadcasts/templates" },
+    { title: "Segmentação por Tags", href: "/admin/broadcasts/segments" },
+    { title: "Resultados & ROI", href: "/admin/broadcasts/results" },
+    { title: "Cancelar Envios", href: "/admin/broadcasts/cancel" }
+  ],
+  crm: [
+    { title: "Lista Total de Leads", href: "/admin/crm/leads" },
+    { title: "Funil 360º Visual", href: "/admin/crm/funnel" },
+    { title: "Follow-up Automático", href: "/admin/crm/followup" },
+    { title: "Abandonos de Carrinho", href: "/admin/crm/abandoned" },
+    { title: "Exportar CSV Completo", href: "/admin/crm/export" },
+    { title: "Importar de Excel", href: "/admin/crm/import" },
+    { title: "Histórico de Interações", href: "/admin/crm/interactions" }
+  ],
+  produtos: [
+    { title: "Todos os Produtos", href: "/admin/products" },
+    { title: "Criar Produto Novo", href: "/admin/products/new" },
+    { title: "Editar Preço & Estoque", href: "/admin/products/edit" },
+    { title: "Upload Imagens / Vídeo", href: "/admin/products/media" },
+    { title: "Modelos 3D (.glb)", href: "/admin/products/3d" },
+    { title: "Categorias & Subcategorias", href: "/admin/products/categories" },
+    { title: "Gerar Foto IA", href: "/admin/products/ai-image" },
+    { title: "Produtos Esgotados", href: "/admin/products/outofstock" }
+  ],
+  magic: [
+    { title: "Editor de Fluxos Visuais", href: "/admin/magic-replies/editor" },
+    { title: "Treinar IA com Dados", href: "/admin/magic-replies/train" },
+    { title: "Biblioteca de Respostas", href: "/admin/magic-replies/library" },
+    { title: "Teste Rápido no Chat", href: "/admin/magic-replies/test" },
+    { title: "Histórico de Uso IA", href: "/admin/magic-replies/usage" },
+    { title: "Respostas Personalizadas", href: "/admin/magic-replies/custom" }
+  ],
+  pagamentos: [
+    { title: "Chaves PIX Cadastradas", href: "/admin/payments/keys" },
+    { title: "Recebimentos Hoje", href: "/admin/payments/today" },
+    { title: "Histórico Completo", href: "/admin/payments/history" },
+    { title: "Reembolsos & Estornos", href: "/admin/payments/refunds" },
+    { title: "Mercado Pago / PicPay", href: "/admin/payments/gateways" },
+    { title: "Comprovantes Pendentes", href: "/admin/payments/pending" },
+    { title: "Configurar Taxas", href: "/admin/payments/rates" }
+  ],
+  automations: [
+    { title: "Criar Fluxo Novo", href: "/admin/automations/new" },
+    { title: "Meus Fluxos Ativos", href: "/admin/automations/list" },
+    { title: "Triggers por Evento", href: "/admin/automations/triggers" },
+    { title: "Actions & Condições", href: "/admin/automations/actions" },
+    { title: "Log de Execuções", href: "/admin/automations/logs" },
+    { title: "Integração com n8n", href: "/admin/automations/n8n" }
+  ],
+  analytics: [
+    { title: "ROI por Campanha", href: "/admin/analytics/roi" },
+    { title: "Vendas por Produto", href: "/admin/analytics/products" },
+    { title: "Mapa Geográfico", href: "/admin/analytics/geo" },
+    { title: "Taxa de Conversão", href: "/admin/analytics/conversion" },
+    { title: "Relatórios Customizados", href: "/admin/analytics/custom" },
+    { title: "Agendar Envio Email", href: "/admin/analytics/schedule" }
+  ],
+  fidelidade: [
+    { title: "Sistema de Pontos", href: "/admin/loyalty/points" },
+    { title: "Recompensas Ativas", href: "/admin/loyalty/rewards" },
+    { title: "Top 100 Clientes", href: "/admin/loyalty/top" },
+    { title: "Aniversariantes Mês", href: "/admin/loyalty/birthdays" },
+    { title: "Cupons Gerados", href: "/admin/loyalty/coupons" },
+    { title: "Notificações Pendentes", href: "/admin/loyalty/pending" }
+  ],
+  tags: [
+    { title: "Lista de Tags", href: "/admin/tags/list" },
+    { title: "Criar Nova Tag", href: "/admin/tags/new" },
+    { title: "Segmentos Dinâmicos", href: "/admin/tags/segments" },
+    { title: "Relatório por Tag", href: "/admin/tags/reports" }
+  ],
+  integracoes: [
+    { title: "100+ Integrações", href: "/admin/integrations/list" },
+    { title: "Adicionar Nova", href: "/admin/integrations/new" },
+    { title: "Webhooks", href: "/admin/integrations/webhooks" },
+    { title: "API Keys", href: "/admin/integrations/apikeys" },
+    { title: "Conectadas", href: "/admin/integrations/connected" },
+    { title: "Disponíveis", href: "/admin/integrations/available" }
+  ],
+  multiloja: [
+    { title: "Todas as Lojas", href: "/admin/multiloja/stores" },
+    { title: "Criar Nova Loja", href: "/admin/multiloja/new" },
+    { title: "Configurações por Loja", href: "/admin/multiloja/config" },
+    { title: "Produtos por Loja", href: "/admin/multiloja/products" },
+    { title: "Relatórios Consolidados", href: "/admin/multiloja/reports" }
+  ],
+  config: [
+    { title: "Configurações Gerais", href: "/admin/config/general" },
+    { title: "Usuários & Permissões", href: "/admin/config/users" },
+    { title: "Roles & Acessos", href: "/admin/config/roles" },
+    { title: "Notificações", href: "/admin/config/notifications" },
+    { title: "Email Templates", href: "/admin/config/email" },
+    { title: "SMS Templates", href: "/admin/config/sms" },
+    { title: "Webhooks Globais", href: "/admin/config/webhooks" }
+  ],
+  seguranca: [
+    { title: "Logs de Acesso", href: "/admin/security/logs" },
+    { title: "Auditoria Completa", href: "/admin/security/audit" },
+    { title: "Backups Automáticos", href: "/admin/security/backups" },
+    { title: "Restaurar Backup", href: "/admin/security/restore" },
+    { title: "Firewall & IPs", href: "/admin/security/firewall" },
+    { title: "2FA / MFA", href: "/admin/security/mfa" },
+    { title: "Sessões Ativas", href: "/admin/security/sessions" }
+  ],
+  relatorios: [
+    { title: "Relatórios Personalizados", href: "/admin/reports/custom" },
+    { title: "Exportar Dados", href: "/admin/reports/export" },
+    { title: "Agendamentos", href: "/admin/reports/schedule" },
+    { title: "Templates de Relatório", href: "/admin/reports/templates" },
+    { title: "Histórico de Envios", href: "/admin/reports/history" }
+  ],
+  ajuda: [
+    { title: "FAQ Completo", href: "/admin/help/faq" },
+    { title: "Suporte Técnico", href: "/admin/help/support" },
+    { title: "Documentação", href: "/admin/help/docs" },
+    { title: "Tutoriais", href: "/admin/help/tutorials" },
+    { title: "Status do Sistema", href: "/admin/help/status" },
+    { title: "Contato", href: "/admin/help/contact" }
+  ]
+};
+
+
 ---
 
 <!doctype html>
 <html lang="pt-BR">
-	<head>
-		<meta charset="UTF-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-		<meta name="generator" content={Astro.generator} />
-		<title>{title} | Admin Nexus</title>
-	</head>
-	<body class="admin-body">
-		<div class="sidebar">
-			<div class="logo">
-				NEXUS<span class="dot">.</span>
-			</div>
-			
-			<nav class="menu">
-				<div class="category">MAIN</div>
-				<a href="/admin" class="active"><span class="icon">📊</span> Dashboard</a>
-				<a href="/admin/blog"><span class="icon">📝</span> Blog / Conteúdo</a>
-				<a href="/admin/domains"><span class="icon">🌐</span> Domínios</a>
-				<a href="/ara"><span class="icon">🤖</span> IA (Ara)</a>
-				
-				<div class="category">GROWTH</div>
-				<a href="/admin?tab=strategy"><span class="icon">⚔️</span> Estratégia</a>
-				<a href="/admin?tab=marketing"><span class="icon">📢</span> Marketing</a>
-				<a href="/admin?tab=ab"><span class="icon">⚖️</span> A/B Tests</a>
-				
-				<div class="category">TECHNICAL</div>
-				<a href="/admin?tab=security"><span class="icon">🛡️</span> Segurança</a>
-				<a href="/admin?tab=performance"><span class="icon">⚡</span> Performance</a>
-				<a href="/admin?tab=logs"><span class="icon">📋</span> Logs</a>
-				<a href="/admin?tab=backup"><span class="icon">💾</span> Backup</a>
-				
-				<div class="category">CONFIG</div>
-				<a href="/admin?tab=users"><span class="icon">👥</span> Usuários</a>
-				<a href="/admin?tab=integrations"><span class="icon">🔌</span> Integrações</a>
-				<a href="/admin?tab=config"><span class="icon">⚙️</span> Configs</a>
-				<a href="/admin?tab=downloads"><span class="icon">📥</span> Downloads</a>
-				<a href="/admin?tab=notifications"><span class="icon">🔔</span> Notificações</a>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <meta name="generator" content={Astro.generator} />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="googlebot" content="noindex, nofollow" />
+    <title>{title} | Admin GetNexo</title>
+    <script is:inline>
+      window.onerror = function (msg, url, lineNo, columnNo, error) {
+        console.error('ERRO GLOBAL:', msg);
+        console.error('URL:', url);
+        console.error('Linha:', lineNo, 'Coluna:', columnNo);
+        console.error('Erro completo:', error);
+        return false; // deixa o erro aparecer no console
+      };
+      console.log('Erro global ativado – agora nada esconde!');
+    </script>
+  </head>
+  <body>
+    <script nonce={nonce} define:vars={{ submenus, mainCategories, activeCategory }}>
+      document.addEventListener("alpine:init", () => {
+        Alpine.data("sidebar", () => ({
+          active: activeCategory, // Force server state (URL) to drive UI, ignore stale localStorage
+          submenus: submenus,
+          mainCategories: mainCategories,
+          categoryToTabMap: {
+            dashboard: 'dashboard',
+            live: 'live',
+            broadcasts: 'marketing',
+            crm: 'crm',
+            produtos: 'produtos',
+            magic: 'strategy',
+            pagamentos: 'pagamentos',
+            automations: 'automations',
+            analytics: 'analytics',
+            fidelidade: 'loyalty',
+            tags: 'tags',
+            integracoes: 'integrations',
+            multiloja: 'multiloja',
+            config: 'config',
+            seguranca: 'security',
+            relatorios: 'relatorios',
+            ajuda: 'support'
+          },
+          notifications: {
+            conversations: 8,
+            sales: 3,
+            alerts: 2
+          },
+          toggle(event, cat) {
+            event.preventDefault();
+            this.active = cat;
+            localStorage.setItem("activeAdminCat", cat);
+            this.updateSidebar();
+            // Navigate to the tab using the mapping
+            // Navigate to the tab using the mapping
+            const tabName = this.categoryToTabMap[cat] || cat;
+            window.location.href = `/admin?tab=${tabName}`;
+          },
+          updateSidebar() {
+            const titleEl = document.getElementById('sidebar-title');
+            const navEl = document.getElementById('sidebar-nav');
+            if (titleEl && navEl) {
+              const cat = this.mainCategories.find(c => c.id === this.active);
+              titleEl.textContent = cat ? cat.name : 'Dashboard';
+              navEl.innerHTML = (this.submenus[this.active] || []).map(sub =>
+                `<a href="${sub.href}" class="block px-5 py-3 rounded-lg hover:bg-gray-800 text-gray-200 transition relative group">
+                  ${sub.title}
+                  ${sub.badge ? `<span class="absolute right-4 top-1/2 -translate-y-1/2 bg-red-600 text-white text-xs px-2 py-0.5 rounded-full">${sub.badge}</span>` : ''}
+                </a>`
+              ).join('');
+            }
+          },
+          updateNotifications() {
+            // Simula atualização de notificações em tempo real
+            this.notifications.conversations = Math.floor(Math.random() * 15) + 5;
+            this.notifications.sales = Math.floor(Math.random() * 5) + 1;
+            this.notifications.alerts = Math.floor(Math.random() * 3);
+          },
+          init() {
+            this.updateSidebar();
+            // Atualiza notificações a cada 30 segundos
+            setInterval(() => this.updateNotifications(), 30000);
+          }
+        }));
+      });
+    </script>
 
-				<div class="category">SYSTEM</div>
-				<a href="/" target="_blank"><span class="icon">↗</span> Ver Site</a>
-				<a href="#" class="logout"><span class="icon">🚪</span> Logout</a>
-			</nav>
+    <div x-data="sidebar" x-init="init()" class="flex flex-col h-screen bg-gray-950 text-white overflow-hidden">
+      <!-- Top Bar: Categorias principais com efeitos premium -->
+      <header class="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-black/95 via-black/90 to-black/95 backdrop-blur-xl border-b border-gray-800/50 px-8 py-4 shadow-2xl">
+        <div class="flex items-center justify-between max-w-screen-2xl mx-auto">
+          <div class="flex items-center space-x-8">
+            <!-- Logo com efeito neon -->
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center shadow-lg shadow-purple-500/30">
+                <span class="text-white font-bold text-lg">G</span>
+              </div>
+              <h1 class="text-2xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
+                GetNexo
+              </h1>
+            </div>
+            
+            <!-- Navegação principal com efeitos (Scroll Horizontal) -->
+            <nav class="flex-1 overflow-x-auto scrollbar-hide ml-8 mr-4 mask-linear-fade">
+              <div class="flex space-x-2 whitespace-nowrap py-1">
+                {mainCategories.map((cat) => (
+                  <button
+                    @click={`toggle($event, '${cat.id}')`}
+                    class:list={[
+                      "flex items-center px-4 py-2 rounded-full transition-all duration-300 relative group overflow-hidden shrink-0",
+                      active === cat.id
+                        ? `bg-gradient-to-r from-${cat.color}-600/40 to-${cat.color}-700/40 text-${cat.color}-300 border border-${cat.color}-500/50 shadow-lg shadow-${cat.color}-500/20`
+                        : `bg-gray-900/50 hover:bg-${cat.color}-900/30 text-gray-300 border border-gray-700/50 hover:border-${cat.color}-500/30`
+                    ]}
+                  >
+                    <span class="relative z-10 flex items-center text-sm font-medium">
+                      <cat.icon className="w-4 h-4 mr-2" />
+                      {cat.name}
+                      {cat.count && (
+                        <span class="ml-2 bg-red-600 text-white text-[10px] px-1.5 py-0.5 rounded-full shadow-md animate-pulse">
+                          {cat.count}
+                        </span>
+                      )}
+                    </span>
+                    {active === cat.id && (
+                      <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </nav>
+          </div>
+          
+          <!-- Área de notificações e usuário -->
+          <div class="flex items-center space-x-6">
+            <!-- Notificações em tempo real -->
+            <div class="flex items-center space-x-4">
+              <div class="flex items-center space-x-2 text-cyan-400 text-sm">
+                <span class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></span>
+                <span x-text="notifications.conversations"></span>
+                <span class="text-gray-500">conversas</span>
+              </div>
+              <div class="flex items-center space-x-2 text-emerald-400 text-sm">
+                <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                <span x-text="notifications.sales"></span>
+                <span class="text-gray-500">vendas</span>
+              </div>
+              <div class="flex items-center space-x-2 text-amber-400 text-sm" x-show="notifications.alerts > 0">
+                <span class="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></span>
+                <span x-text="notifications.alerts"></span>
+                <span class="text-gray-500">alertas</span>
+              </div>
+            </div>
+            
+            <!-- Perfil e logout -->
+            <div class="flex items-center space-x-4 border-l border-gray-700 pl-6">
+              <div class="text-right">
+                <div class="text-sm font-semibold text-white">Master: Leandro</div>
+                <div class="text-xs text-purple-400">Admin Full Access</div>
+              </div>
+              <a href="/logout" class="px-4 py-2 bg-red-600/20 hover:bg-red-600/40 text-red-400 hover:text-red-300 rounded-lg transition-all duration-300 border border-red-600/30 hover:border-red-500/50 text-sm font-medium">
+                Sair
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
 
-			<!-- Global Admin Scripts -->
-			<script src="/custom/js/command_palette.js" is:inline nonce={nonce}></script>
-			<script src="/custom/js/admin_sounds.js" is:inline nonce={nonce}></script>
-			<script src="/custom/js/holo_agent.js" is:inline nonce={nonce}></script>
+      <!-- Sidebar Esquerda: Submenus da categoria ativa com efeitos premium -->
+      <aside class="fixed left-0 top-16 w-72 h-full bg-gradient-to-b from-gray-900 to-gray-950 border-r border-gray-800/50 overflow-y-auto pt-6 px-4 shadow-xl">
+        <!-- Cabeçalho do sidebar com gradiente -->
+        <div class="mb-6 px-4">
+          <h2 class="text-lg font-bold text-white mb-1" id="sidebar-title">Dashboard</h2>
+          <div class="h-1 w-12 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full"></div>
+        </div>
+        
+        <!-- Navegação com efeitos -->
+        <nav class="space-y-1" id="sidebar-nav">
+          {submenus.dashboard.map((sub) => (
+            <a href={sub.href} class="group flex items-center justify-between px-5 py-3 rounded-lg bg-gray-900/50 hover:bg-gray-800 text-gray-300 hover:text-white transition-all duration-300 border border-transparent hover:border-gray-700/50">
+              <span class="flex items-center">
+                <span class="w-1.5 h-1.5 bg-gray-600 rounded-full mr-3 group-hover:bg-cyan-400 group-hover:scale-125 transition-all"></span>
+                {sub.title}
+              </span>
+              {sub.badge && (
+                <span class="bg-red-600/80 text-white text-xs px-2 py-0.5 rounded-full group-hover:bg-red-500 transition-colors">
+                  {sub.badge}
+                </span>
+              )}
+            </a>
+          ))}
+        </nav>
+        
+        <!-- Indicador de status do sistema -->
+        <div class="mt-8 px-4 py-3 bg-gray-900/50 rounded-lg border border-gray-800/50">
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-gray-500">Sistema</span>
+            <span class="flex items-center text-emerald-400">
+              <span class="w-2 h-2 bg-emerald-400 rounded-full mr-2 animate-pulse"></span>
+              Online
+            </span>
+          </div>
+        </div>
+      </aside>
 
-			<div class="user-profile">
-				<div class="avatar">L</div>
-				<div class="info">
-					<span class="name">Leandro</span>
-					<span class="role">Supreme Admin</span>
-				</div>
-			</div>
-		</div>
+      <!-- Área Central Grande (content) com efeitos premium -->
+      <main class="ml-72 mt-16 flex-1 overflow-hidden">
+        <!-- Barra de breadcrumbs e ações -->
+        <div class="bg-gray-900/50 border-b border-gray-800/50 px-10 py-4 flex items-center justify-between">
+          <div class="flex items-center space-x-2 text-sm text-gray-400">
+            <span>Admin</span>
+            <span class="text-gray-600">/</span>
+            <span class="text-white font-medium" id="current-section">Dashboard</span>
+          </div>
+          <div class="flex items-center space-x-3">
+            <button class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg text-sm transition-colors">
+              Atualizar
+            </button>
+            <button class="px-3 py-1.5 bg-purple-600/20 hover:bg-purple-600/40 text-purple-400 rounded-lg text-sm transition-colors border border-purple-600/30">
+              + Nova Ação
+            </button>
+          </div>
+        </div>
+        
+        <!-- Área de conteúdo com scroll suave -->
+        <div class="h-full overflow-y-auto p-8 scroll-smooth">
+          <div class="max-w-7xl mx-auto">
+            <slot />
+            
 
-		<main class="content">
-			<header>
-				<h1>{title}</h1>
-				<div class="header-actions">
-					<span class="status-indicator online">SYSTEM ONLINE</span>
-					<span class="time" id="clock">00:00</span>
-				</div>
-			</header>
-			
-			<div class="scroll-area">
-				<slot />
-			</div>
-		</main>
-
-		<script nonce={nonce}>
-			function updateClock() {
-				const now = new Date();
-				const time = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-				const el = document.getElementById('clock');
-				if (el) el.innerText = time;
-			}
-			setInterval(updateClock, 1000);
-			updateClock();
-		</script>
-	</body>
+            
+            <!-- Fallback se slot vazio -->
+            <div x-show="$el.parentNode.innerText.trim() === $el.innerText.trim()" class="text-center text-gray-500 text-xl mt-20" style="display: none;">
+              <div class="mb-4 text-6xl">👻</div>
+              <p>Conteúdo não carregado.</p>
+              <p class="text-sm mt-2">Clique em um menu à esquerda ou <a href="/admin" class="text-cyan-400 hover:underline">Recarregue o Dashboard</a>.</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
 </html>
 
 <style is:global>
@@ -106,6 +457,8 @@ const nonce = Astro.locals.nonce;
 		--text: #e0e0e0;
 		--text-muted: #666;
 		--neon-glow: 0 0 10px rgba(0, 247, 255, 0.3);
+		--purple-glow: 0 0 15px rgba(168, 85, 247, 0.4);
+		--pink-glow: 0 0 15px rgba(236, 72, 153, 0.4);
 	}
 
 	* { box-sizing: border-box; margin: 0; padding: 0; }
@@ -119,195 +472,385 @@ const nonce = Astro.locals.nonce;
 		overflow: hidden;
 	}
 
-	/* Sidebar Customization */
-	.sidebar {
-		width: 260px;
-		background: var(--sidebar);
-		border-right: 1px solid var(--border);
-		display: flex;
-		flex-direction: column;
-		padding: 1.5rem;
-		box-shadow: 5px 0 30px rgba(0,0,0,0.5);
-		z-index: 100;
+	/* Custom Scrollbar */
+	::-webkit-scrollbar {
+		width: 8px;
+		height: 8px;
 	}
-
-	.logo {
-		font-family: 'JetBrains Mono', monospace;
-		font-weight: 800;
-		font-size: 1.6rem;
-		margin-bottom: 3rem;
-		letter-spacing: -1px;
-		color: var(--gold);
-		text-shadow: 0 0 15px rgba(255, 196, 0, 0.2);
+	::-webkit-scrollbar-track {
+		background: #0a0a0a;
 	}
-	
-	.dot { color: var(--accent); text-shadow: 0 0 15px var(--accent); }
-
-	.menu {
-		display: flex;
-		flex-direction: column;
-		gap: 0.3rem;
-		flex: 1;
-		overflow-y: auto;
-	}
-
-	.category {
-		font-size: 0.65rem;
-		color: var(--gold);
-		font-weight: 800;
-		margin-top: 1.8rem;
-		margin-bottom: 0.5rem;
-		letter-spacing: 2px;
-		opacity: 0.6;
-	}
-
-	.menu a {
-		color: #888;
-		text-decoration: none;
-		padding: 0.8rem 1rem;
+	::-webkit-scrollbar-thumb {
+		background: linear-gradient(180deg, #333, #555);
 		border-radius: 4px;
-		font-size: 0.85rem;
-		transition: 0.3s;
-		display: flex;
-		align-items: center;
-		border-left: 2px solid transparent;
-		font-family: 'JetBrains Mono', monospace;
+	}
+	::-webkit-scrollbar-thumb:hover {
+		background: linear-gradient(180deg, #444, #666);
 	}
 
-	.menu a:hover, .menu a.active {
-		background: rgba(0, 247, 255, 0.05);
-		color: white;
-		border-left: 2px solid var(--accent);
-		text-shadow: 0 0 10px rgba(255,255,255,0.3);
+  /* Utility to hide scrollbar but keep functionality */
+  .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+  }
+  .scrollbar-hide {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+  }
+
+	/* Glow Effects */
+	.glow-purple { box-shadow: var(--purple-glow); }
+	.glow-pink { box-shadow: var(--pink-glow); }
+	.glow-cyan { box-shadow: var(--neon-glow); }
+
+	/* Gradient Text */
+	.gradient-text {
+		background: linear-gradient(135deg, #a855f7, #ec4899, #06b6d4);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
 	}
 
-	.logout { 
-		color: #555 !important; 
-		margin-top: 2rem;
-		border-top: 1px solid var(--border);
-		padding-top: 1rem !important;
-	}
-	.logout:hover { color: #ff3333 !important; border-left-color: #ff3333 !important; }
-
-	.user-profile {
-		display: flex;
-		align-items: center;
-		gap: 1rem;
-		padding: 1rem;
-		margin-top: 1rem;
-		background: rgba(255,255,255,0.02);
-		border-radius: 12px;
-		border: 1px solid var(--border);
-	}
-
-	.avatar {
-		width: 32px;
-		height: 32px;
-		background: linear-gradient(135deg, var(--accent), var(--gold));
-		border-radius: 4px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-weight: bold;
-		color: black;
-		font-size: 0.8rem;
-	}
-
-	.info { display: flex; flex-direction: column; }
-	.name { font-size: 0.85rem; font-weight: 700; color: white; }
-	.role { font-size: 0.65rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
-
-	/* Main Content */
-	.content {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		background: radial-gradient(circle at 50% 50%, #050505 0%, #000 100%);
-	}
-
-	header {
-		height: 70px;
-		border-bottom: 1px solid var(--border);
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 0 2.5rem;
-		background: rgba(5,5,5,0.8);
-		backdrop-filter: blur(10px);
-	}
-
-	header h1 { 
-		font-size: 1.1rem; 
-		font-family: 'JetBrains Mono', monospace;
-		color: var(--gold);
-		text-transform: uppercase;
-		letter-spacing: 1px;
-	}
-
-	.header-actions {
-		display: flex;
-		align-items: center;
-		gap: 2rem;
-		font-family: 'JetBrains Mono', monospace;
-		font-size: 0.75rem;
-	}
-
-	.status-indicator {
-		display: flex;
-		align-items: center;
-		gap: 0.6rem;
-		color: var(--accent);
-		font-weight: bold;
-	}
-	
-	.status-indicator::before {
-		content: '';
-		width: 6px;
-		height: 6px;
-		background: var(--accent);
-		border-radius: 50%;
-		box-shadow: 0 0 10px var(--accent);
-		animation: pulse 2s infinite;
-	}
-
-	@keyframes pulse {
-		0% { opacity: 1; transform: scale(1); }
-		50% { opacity: 0.5; transform: scale(1.2); }
-		100% { opacity: 1; transform: scale(1); }
-	}
-
-	.scroll-area {
-		flex: 1;
-		overflow-y: auto;
-		padding: 2.5rem;
-		scrollbar-width: thin;
-		scrollbar-color: var(--border) transparent;
-	}
-
-	.scroll-area::-webkit-scrollbar { width: 6px; }
-	.scroll-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
-
-	/* Cyberpunk Card Component Utility */
-	.cyber-card {
-		background: rgba(10, 10, 10, 0.6);
-		border: 1px solid var(--border);
-		border-radius: 8px;
-		padding: 1.5rem;
+	/* Button Hover Effects */
+	.btn-premium {
 		position: relative;
 		overflow: hidden;
-		transition: 0.3s;
+		transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	}
-	.cyber-card:hover {
-		border-color: var(--accent);
-		box-shadow: 0 0 20px rgba(0, 247, 255, 0.1);
-	}
-	.cyber-card::before {
+	.btn-premium::before {
 		content: '';
 		position: absolute;
-		top: 0; left: 0; width: 100%; height: 2px;
+		top: 0;
+		left: -100%;
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+		transition: left 0.5s;
+	}
+	.btn-premium:hover::before {
+		left: 100%;
+	}
+
+	/* Card Hover Effects */
+	.card-premium {
+		position: relative;
+		overflow: hidden;
+		transition: all 0.3s ease;
+	}
+	.card-premium::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 2px;
 		background: linear-gradient(90deg, transparent, var(--accent), transparent);
 		transform: translateX(-100%);
-		transition: 0.5s;
+		transition: transform 0.5s ease;
 	}
-	.cyber-card:hover::before { transform: translateX(100%); }
+	.card-premium:hover::before {
+		transform: translateX(100%);
+	}
+	.card-premium::after {
+		content: '';
+		position: absolute;
+		bottom: 0;
+		right: 0;
+		width: 100%;
+		height: 2px;
+		background: linear-gradient(90deg, transparent, var(--gold), transparent);
+		transform: translateX(100%);
+		transition: transform 0.5s ease;
+	}
+	.card-premium:hover::after {
+		transform: translateX(-100%);
+	}
+
+	/* Pulse Animation */
+	@keyframes pulse-glow {
+		0%, 100% { opacity: 1; box-shadow: 0 0 5px currentColor; }
+		50% { opacity: 0.7; box-shadow: 0 0 15px currentColor; }
+	}
+	.animate-pulse-glow {
+		animation: pulse-glow 2s ease-in-out infinite;
+	}
+
+	/* Slide In Animation */
+	@keyframes slideIn {
+		from { transform: translateX(-20px); opacity: 0; }
+		to { transform: translateX(0); opacity: 1; }
+	}
+	.animate-slide-in {
+		animation: slideIn 0.3s ease-out;
+	}
+
+	/* Fade In Animation */
+	@keyframes fadeIn {
+		from { opacity: 0; }
+		to { opacity: 1; }
+	}
+	.animate-fade-in {
+		animation: fadeIn 0.5s ease-out;
+	}
+
+	/* Gradient Border Effect */
+	.gradient-border {
+		position: relative;
+		background: #0a0a0a;
+	}
+	.gradient-border::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		padding: 1px;
+		background: linear-gradient(135deg, #a855f7, #ec4899, #06b6d4);
+		-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+		-webkit-mask-composite: xor;
+		mask-composite: exclude;
+	}
+
+	/* Neon Text Effect */
+	.neon-text {
+		text-shadow:
+			0 0 5px rgba(0, 247, 255, 0.8),
+			0 0 10px rgba(0, 247, 255, 0.6),
+			0 0 20px rgba(0, 247, 255, 0.4);
+	}
+
+	/* Cyberpunk Grid Background */
+	.cyber-grid {
+		background-image:
+			linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+		background-size: 50px 50px;
+	}
+
+	/* Glass Morphism */
+	.glass {
+		background: rgba(255, 255, 255, 0.05);
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+	}
+
+	/* Hover Lift Effect */
+	.hover-lift {
+		transition: transform 0.3s ease, box-shadow 0.3s ease;
+	}
+	.hover-lift:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+	}
+
+	/* Color Variants */
+	.color-indigo { color: #6366f1; }
+	.color-cyan { color: #06b6d4; }
+	.color-purple { color: #a855f7; }
+	.color-emerald { color: #10b981; }
+	.color-orange { color: #f97316; }
+	.color-pink { color: #ec4899; }
+	.color-green { color: #22c55e; }
+	.color-yellow { color: #eab308; }
+	.color-blue { color: #3b82f6; }
+	.color-red { color: #ef4444; }
+	.color-teal { color: #14b8a6; }
+	.color-violet { color: #8b5cf6; }
+	.color-amber { color: #f59e0b; }
+	.color-gray { color: #6b7280; }
+	.color-rose { color: #f43f5e; }
+	.color-lime { color: #84cc16; }
+
+	/* Background Variants */
+	.bg-indigo-900/30 { background-color: rgba(79, 70, 229, 0.3); }
+	.bg-cyan-900/30 { background-color: rgba(8, 145, 178, 0.3); }
+	.bg-purple-900/30 { background-color: rgba(109, 40, 217, 0.3); }
+	.bg-emerald-900/30 { background-color: rgba(6, 78, 59, 0.3); }
+	.bg-orange-900/30 { background-color: rgba(154, 52, 18, 0.3); }
+	.bg-pink-900/30 { background-color: rgba(131, 24, 67, 0.3); }
+	.bg-green-900/30 { background-color: rgba(20, 83, 45, 0.3); }
+	.bg-yellow-900/30 { background-color: rgba(113, 63, 18, 0.3); }
+	.bg-blue-900/30 { background-color: rgba(29, 78, 216, 0.3); }
+	.bg-red-900/30 { background-color: rgba(127, 29, 29, 0.3); }
+	.bg-teal-900/30 { background-color: rgba(19, 78, 74, 0.3); }
+	.bg-violet-900/30 { background-color: rgba(76, 29, 149, 0.3); }
+	.bg-amber-900/30 { background-color: rgba(120, 53, 15, 0.3); }
+	.bg-gray-900/30 { background-color: rgba(31, 41, 55, 0.3); }
+	.bg-rose-900/30 { background-color: rgba(136, 19, 55, 0.3); }
+	.bg-lime-900/30 { background-color: rgba(65, 84, 14, 0.3); }
+
+	/* Border Variants */
+	.border-indigo-500/50 { border-color: rgba(99, 102, 241, 0.5); }
+	.border-cyan-500/50 { border-color: rgba(6, 182, 212, 0.5); }
+	.border-purple-500/50 { border-color: rgba(168, 85, 247, 0.5); }
+	.border-emerald-500/50 { border-color: rgba(16, 185, 129, 0.5); }
+	.border-orange-500/50 { border-color: rgba(249, 115, 22, 0.5); }
+	.border-pink-500/50 { border-color: rgba(236, 72, 153, 0.5); }
+	.border-green-500/50 { border-color: rgba(34, 197, 94, 0.5); }
+	.border-yellow-500/50 { border-color: rgba(234, 179, 8, 0.5); }
+	.border-blue-500/50 { border-color: rgba(59, 130, 246, 0.5); }
+	.border-red-500/50 { border-color: rgba(239, 68, 68, 0.5); }
+	.border-teal-500/50 { border-color: rgba(20, 184, 166, 0.5); }
+	.border-violet-500/50 { border-color: rgba(139, 92, 246, 0.5); }
+	.border-amber-500/50 { border-color: rgba(245, 158, 11, 0.5); }
+	.border-gray-500/50 { border-color: rgba(107, 114, 128, 0.5); }
+	.border-rose-500/50 { border-color: rgba(244, 63, 94, 0.5); }
+	.border-lime-500/50 { border-color: rgba(132, 204, 22, 0.5); }
+
+	/* Text Variants */
+	.text-indigo-400 { color: #818cf8; }
+	.text-cyan-400 { color: #22d3ee; }
+	.text-purple-400 { color: #c084fc; }
+	.text-emerald-400 { color: #34d399; }
+	.text-orange-400 { color: #fb923c; }
+	.text-pink-400 { color: #f472b6; }
+	.text-green-400 { color: #4ade80; }
+	.text-yellow-400 { color: #facc15; }
+	.text-blue-400 { color: #60a5fa; }
+	.text-red-400 { color: #f87171; }
+	.text-teal-400 { color: #2dd4bf; }
+	.text-violet-400 { color: #a78bfa; }
+	.text-amber-400 { color: #fbbf24; }
+	.text-gray-400 { color: #9ca3af; }
+	.text-rose-400 { color: #fb7185; }
+	.text-lime-400 { color: #a3e635; }
+
+	/* Hover Variants */
+	.hover\:bg-indigo-900/30:hover { background-color: rgba(79, 70, 229, 0.3); }
+	.hover\:bg-cyan-900/30:hover { background-color: rgba(8, 145, 178, 0.3); }
+	.hover\:bg-purple-900/30:hover { background-color: rgba(109, 40, 217, 0.3); }
+	.hover\:bg-emerald-900/30:hover { background-color: rgba(6, 78, 59, 0.3); }
+	.hover\:bg-orange-900/30:hover { background-color: rgba(154, 52, 18, 0.3); }
+	.hover\:bg-pink-900/30:hover { background-color: rgba(131, 24, 67, 0.3); }
+	.hover\:bg-green-900/30:hover { background-color: rgba(20, 83, 45, 0.3); }
+	.hover\:bg-yellow-900/30:hover { background-color: rgba(113, 63, 18, 0.3); }
+	.hover\:bg-blue-900/30:hover { background-color: rgba(29, 78, 216, 0.3); }
+	.hover\:bg-red-900/30:hover { background-color: rgba(127, 29, 29, 0.3); }
+	.hover\:bg-teal-900/30:hover { background-color: rgba(19, 78, 74, 0.3); }
+	.hover\:bg-violet-900/30:hover { background-color: rgba(76, 29, 149, 0.3); }
+	.hover\:bg-amber-900/30:hover { background-color: rgba(120, 53, 15, 0.3); }
+	.hover\:bg-gray-900/30:hover { background-color: rgba(31, 41, 55, 0.3); }
+	.hover\:bg-rose-900/30:hover { background-color: rgba(136, 19, 55, 0.3); }
+	.hover\:bg-lime-900/30:hover { background-color: rgba(65, 84, 14, 0.3); }
+
+	/* Border Hover Variants */
+	.hover\:border-indigo-500/30:hover { border-color: rgba(99, 102, 241, 0.3); }
+	.hover\:border-cyan-500/30:hover { border-color: rgba(6, 182, 212, 0.3); }
+	.hover\:border-purple-500/30:hover { border-color: rgba(168, 85, 247, 0.3); }
+	.hover\:border-emerald-500/30:hover { border-color: rgba(16, 185, 129, 0.3); }
+	.hover\:border-orange-500/30:hover { border-color: rgba(249, 115, 22, 0.3); }
+	.hover\:border-pink-500/30:hover { border-color: rgba(236, 72, 153, 0.3); }
+	.hover\:border-green-500/30:hover { border-color: rgba(34, 197, 94, 0.3); }
+	.hover\:border-yellow-500/30:hover { border-color: rgba(234, 179, 8, 0.3); }
+	.hover\:border-blue-500/30:hover { border-color: rgba(59, 130, 246, 0.3); }
+	.hover\:border-red-500/30:hover { border-color: rgba(239, 68, 68, 0.3); }
+	.hover\:border-teal-500/30:hover { border-color: rgba(20, 184, 166, 0.3); }
+	.hover\:border-violet-500/30:hover { border-color: rgba(139, 92, 246, 0.3); }
+	.hover\:border-amber-500/30:hover { border-color: rgba(245, 158, 11, 0.3); }
+	.hover\:border-gray-500/30:hover { border-color: rgba(107, 114, 128, 0.3); }
+	.hover\:border-rose-500/30:hover { border-color: rgba(244, 63, 94, 0.3); }
+	.hover\:border-lime-500/30:hover { border-color: rgba(132, 204, 22, 0.3); }
+
+	/* Text Hover Variants */
+	.hover\:text-indigo-300:hover { color: #a5b4fc; }
+	.hover\:text-cyan-300:hover { color: #67e8f9; }
+	.hover\:text-purple-300:hover { color: #d8b4fe; }
+	.hover\:text-emerald-300:hover { color: #6ee7b7; }
+	.hover\:text-orange-300:hover { color: #fdba74; }
+	.hover\:text-pink-300:hover { color: #f9a8d4; }
+	.hover\:text-green-300:hover { color: #86efac; }
+	.hover\:text-yellow-300:hover { color: #fde047; }
+	.hover\:text-blue-300:hover { color: #93c5fd; }
+	.hover\:text-red-300:hover { color: #fca5a5; }
+	.hover\:text-teal-300:hover { color: #5eead4; }
+	.hover\:text-violet-300:hover { color: #c4b5fd; }
+	.hover\:text-amber-300:hover { color: #fcd34d; }
+	.hover\:text-gray-300:hover { color: #d1d5db; }
+	.hover\:text-rose-300:hover { color: #fda4af; }
+	.hover\:text-lime-300:hover { color: #bef264; }
+
+	/* Shadow Variants */
+	.shadow-purple-500/20 { box-shadow: 0 0 20px rgba(168, 85, 247, 0.2); }
+	.shadow-cyan-500/20 { box-shadow: 0 0 20px rgba(6, 182, 212, 0.2); }
+	.shadow-pink-500/20 { box-shadow: 0 0 20px rgba(236, 72, 153, 0.2); }
+	.shadow-emerald-500/20 { box-shadow: 0 0 20px rgba(16, 185, 129, 0.2); }
+	.shadow-orange-500/20 { box-shadow: 0 0 20px rgba(249, 115, 22, 0.2); }
+	.shadow-green-500/20 { box-shadow: 0 0 20px rgba(34, 197, 94, 0.2); }
+	.shadow-yellow-500/20 { box-shadow: 0 0 20px rgba(234, 179, 8, 0.2); }
+	.shadow-blue-500/20 { box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); }
+	.shadow-red-500/20 { box-shadow: 0 0 20px rgba(239, 68, 68, 0.2); }
+	.shadow-teal-500/20 { box-shadow: 0 0 20px rgba(20, 184, 166, 0.2); }
+	.shadow-violet-500/20 { box-shadow: 0 0 20px rgba(139, 92, 246, 0.2); }
+	.shadow-amber-500/20 { box-shadow: 0 0 20px rgba(245, 158, 11, 0.2); }
+	.shadow-gray-500/20 { box-shadow: 0 0 20px rgba(107, 114, 128, 0.2); }
+	.shadow-rose-500/20 { box-shadow: 0 0 20px rgba(244, 63, 94, 0.2); }
+	.shadow-lime-500/20 { box-shadow: 0 0 20px rgba(132, 204, 22, 0.2); }
+
+	/* Responsive Utilities */
+	@media (max-width: 1280px) {
+		.ml-72 { margin-left: 280px; }
+		aside { width: 280px; }
+	}
+
+	@media (max-width: 1024px) {
+		.ml-72 { margin-left: 0; }
+		aside {
+			width: 100%;
+			height: auto;
+			position: relative;
+			top: 0;
+			border-right: none;
+			border-bottom: 1px solid var(--border);
+		}
+		.flex-col { flex-direction: column; }
+	}
+
+	/* Custom Animations for Admin Layout */
+	@keyframes cyberPulse {
+		0%, 100% {
+			opacity: 1;
+			transform: scale(1);
+			filter: brightness(1);
+		}
+		50% {
+			opacity: 0.8;
+			transform: scale(1.02);
+			filter: brightness(1.2);
+		}
+	}
+	.cyber-pulse {
+		animation: cyberPulse 3s ease-in-out infinite;
+	}
+
+	/* Loading Spinner */
+	@keyframes spin {
+		to { transform: rotate(360deg); }
+	}
+	.spinner {
+		animation: spin 1s linear infinite;
+	}
+
+	/* Gradient Backgrounds */
+	.bg-gradient-cyber {
+		background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
+	}
+
+	.bg-gradient-neon {
+		background: linear-gradient(90deg,
+			rgba(168, 85, 247, 0.1) 0%,
+			rgba(236, 72, 153, 0.1) 50%,
+			rgba(6, 182, 212, 0.1) 100%);
+	}
+
+	/* Focus Styles */
+	:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 2px;
+	}
+
+	/* Selection Styles */
+	::selection {
+		background: rgba(168, 85, 247, 0.3);
+		color: white;
+	}
 </style>
+
