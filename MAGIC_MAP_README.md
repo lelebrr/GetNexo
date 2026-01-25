@@ -45,7 +45,7 @@ O Magic Map é um sistema completo de rastreamento de usuários em tempo real qu
 ### Endpoints Principais
 - **Produção**: `https://api.getnexo.com.br/api/tracking/...`
 - **Desenvolvimento**: `http://localhost:3000/api/tracking/...`
-- **Admin Dashboard**: `https://getnexo.com.br/admin/tracking-config`
+- **Admin Dashboard**: `http://localhost:4321/admin/tracking-config`
 
 ### Credenciais de Acesso
 - **API Key**: Configure em `.env` como `TRACKING_API_KEY`
@@ -53,9 +53,9 @@ O Magic Map é um sistema completo de rastreamento de usuários em tempo real qu
 - **Admin Password**: Configure em `.env` como `ADMIN_PASSWORD`
 
 ### Links Úteis
-- **Dashboard Admin**: https://getnexo.com.br/admin/tracking-config
-- **API Documentation**: https://api.getnexo.com.br/docs/tracking
-- **Privacy Policy**: https://getnexo.com.br/privacy
+- **Dashboard Admin**: http://localhost:4321/admin/tracking-config
+- **API Documentation**: http://localhost:3000/api/tracking/docs
+- **Privacy Policy**: http://localhost:4321/privacy
 
 ## 🚀 Como Usar
 

@@ -6,7 +6,7 @@ origincert: /root/.cloudflared/cert.pem
 ingress:
   # 1. Frontend (Landing Page) - PRODUCTION MODE
   - hostname: getnexo.com.br
-    service: http://frontend:4321
+    service: http://nginx:80
 
   # 2. Chatwoot / Widget Host - PRODUCTION MODE
   - hostname: chat.getnexo.com.br
@@ -18,7 +18,7 @@ ingress:
 
   # 4. Admin Panel (Frontend Route) - PRODUCTION MODE
   - hostname: admin.getnexo.com.br
-    service: http://frontend:4321
+    service: http://nginx:80
 
   # 5. N8N
   - hostname: n8n.getnexo.com.br

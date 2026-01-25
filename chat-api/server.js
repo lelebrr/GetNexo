@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const { streamChat, monitorPing } = require('./api/chat');
 const { uploadProduct } = require('./api/upload-product');
@@ -45,7 +46,12 @@ if (!process.env.DATABASE_URL && !process.env.POSTGRES_DB) {
     process.exit(1);
 }
 
-const allowedOrigin = process.env.CORS_ORIGIN || 'https://getnexo.com.br';
+const allowedOrigin = [
+    'https://getnexo.com.br',
+    'http://localhost:4321',
+    'http://localhost:3000',
+    process.env.CORS_ORIGIN
+].filter(Boolean);
 
 const app = express();
 const server = http.createServer(app);
@@ -249,6 +255,216 @@ app.post('/api/support/voice', async (req, res) => {
             fallback: 'Olá! Como posso ajudar você hoje?'
         });
     }
+});
+
+// Rota pra gerar imagem (Flux ou Stable Diffusion local)
+app.post('/api/generate-image', async (req, res) => {
+    const { prompt } = req.body;
+
+    // Aqui chama sua IA real (ex: Flux local ou API HuggingFace/Replicate)
+    // Implementação real usando Pollinations.ai para não depender de GPU local ou API Key no momento
+    try {
+        if (!prompt) return res.status(400).json({ error: 'Prompt required' });
+
+        const encodedPrompt = encodeURIComponent(prompt);
+        // Usando Pollinations.ai para gerar imagem real baseada no prompt
+        const generatedUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}`;
+
+        res.json({ imageUrl: generatedUrl, status: 'gerado' });
+    } catch (err) {
+        console.error('Image Generation Error:', err);
+        res.status(500).json({ error: 'Falha na geração' });
+    }
+});
+
+// Hybrid Chat: Catalog -> DeepSeek -> Generative Fallback
+async function gerarImagemHF(prompt, category = '') {
+    try {
+        // Reinforce category to avoid "fone" instead of "celular"
+        const refinedPrompt = `${category} ${prompt}, high quality professional product shot, premium e-commerce render, white background`.trim();
+
+        if (process.env.HF_KEY && !process.env.HF_KEY.startsWith('hf_XyZ')) {
+            const hfRes = await axios.post(
+                'https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell',
+                { inputs: refinedPrompt },
+                {
+                    headers: { 'Authorization': `Bearer ${process.env.HF_KEY}` },
+                    responseType: 'arraybuffer'
+                }
+            );
+            const base64 = Buffer.from(hfRes.data, 'binary').toString('base64');
+            return `data:image/png;base64,${base64}`;
+        }
+        throw new Error("No HF Key");
+    } catch (e) {
+        console.warn("HF Gen failed/skipped. Using valid placeholder.");
+        return `https://images.unsplash.com/photo-1505740420928-5e560c0c6d30e?auto=format&fit=crop&w=400&h=400`;
+    }
+}
+
+app.post('/api/chat', async (req, res) => {
+    const { message, history = [] } = req.body;
+    const query = message.toLowerCase();
+
+    // 1. Busca real no catálogo (Priority)
+    const produtoReal = catalogo.find(p =>
+        query.includes(p.id) ||
+        query.includes(p.nome.toLowerCase()) ||
+        (query.includes('tênis') && p.id.includes('tenis')) ||
+        (query.includes('pc') && p.id.includes('pc'))
+    );
+
+    try {
+        const deepseekKey = process.env.DEEPSEEK_API_KEY;
+        if (!deepseekKey) throw new Error("Missing DEEPSEEK_API_KEY");
+
+        // System prompt with context about found product
+        const systemPrompt = `
+Você é o vendedor VIP da GetNexo – IA Multimídia.
+
+Regras estritas:
+1. Após nome/email (ver histórico), use o nome sempre: "Beleza, [Nome]!"
+2. Se o usuário pedir produto (celular, tênis, PC...), e eu te disser que TA NO CATALOGO, use os dados reais.
+3. Se NÃO tiver no catálogo, crie um fake premium "Apex Edition" na hora.
+4. Fala vendedora, agressiva: +540% vendas, 98% conversão PIX.
+5. Termine com CTA PIX forte: "Quer fechar no PIX agora? 🔥"
+${produtoReal ? `\nPRODUTO ENCONTRADO NO ESTOQUE: ${JSON.stringify(produtoReal)}` : ''}
+    `;
+
+        const deepseekRes = await axios.post('https://api.deepseek.com/v1/chat/completions', {
+            model: 'deepseek-chat',
+            messages: [
+                { role: 'system', content: systemPrompt },
+                ...history.map(m => ({ role: m.role || 'user', content: m.content || '' })),
+                { role: 'user', content: message }
+            ],
+            temperature: 0.7
+        }, {
+            headers: {
+                'Authorization': `Bearer ${deepseekKey}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        let reply = deepseekRes.data.choices[0].message.content;
+        let extraCard = '';
+
+        if (produtoReal) {
+            const is3D = !!produtoReal.model3d;
+            const imageUrl = produtoReal.imagem || await gerarImagemHF(produtoReal.nome, 'product');
+
+            extraCard = `\n\n<div class="bg-gray-900 border-2 border-cyan-500/50 rounded-2xl p-5 mt-4 shadow-[0_0_30px_rgba(0,212,255,0.15)] relative overflow-hidden group">
+         <div class="absolute top-0 right-0 bg-cyan-500 text-black text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase tracking-tighter">Estoque Real</div>
+         <h3 class="text-xl font-black text-white mb-1 uppercase tracking-tight">${produtoReal.nome}</h3>
+         <p class="text-sm text-gray-400 mb-4 leading-tight">${produtoReal.descricao}</p>
+         <div class="relative rounded-xl overflow-hidden bg-black/40 border border-white/5 mb-4 group-hover:border-cyan-500/30 transition-colors">
+            ${is3D ? `
+               <div style="height:250px; width:100%; border-radius:8px; overflow:hidden; background:#111;">
+                  <model-viewer 
+                      src="http://localhost:4321${produtoReal.model3d}" 
+                      ar 
+                      ar-modes="webxr scene-viewer quick-look" 
+                      camera-controls 
+                      auto-rotate 
+                      shadow-intensity="1"
+                      style="width: 100%; height: 100%;"
+                      alt="${produtoReal.nome}">
+                  </model-viewer>
+                  <div class="absolute top-2 left-2 z-10 bg-black/60 backdrop-blur-md px-2 py-1 rounded-md border border-green-500/50 flex items-center gap-1"><span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span><span class="text-[9px] font-bold text-green-400 uppercase">3D Interativo</span></div>
+               </div>` : `<img src="${imageUrl}" alt="${produtoReal.nome}" class="w-full transform group-hover:scale-105 transition-transform duration-700" style="display:block;">`}
+         </div>
+         <div class="flex items-end justify-between gap-2">
+            <div>
+               <p class="text-[10px] text-cyan-500 font-bold uppercase tracking-widest mb-1">Preço Exclusivo</p>
+               <p class="text-3xl font-black text-white leading-none">R$ ${produtoReal.preco.toLocaleString('pt-BR')}</p>
+            </div>
+            <button onclick="alert('Checkout PIX para ${produtoReal.nome}')" class="bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-black px-4 py-3 rounded-xl shadow-lg hover:shadow-cyan-500/20 active:scale-95 transition-all text-sm">
+               COMPRAR AGORA
+            </button>
+         </div>
+         <p class="text-[9px] text-center text-gray-500 mt-4 uppercase tracking-[0.2em] opacity-50">${produtoReal.vendido || 'Verificado pela GetNexo'}</p>
+      </div>`;
+        } else if (/quero|tem|celular|barco|carro|comprar|ver|produto/i.test(query)) {
+            // Fake Gen
+            const category = query.includes('celular') ? 'smartphone' : query.includes('carro') ? 'car' : 'product';
+            const fakeName = `Nexus ${query.split(' ').slice(-1)[0].toUpperCase()} Quantum`;
+            const fakePrice = (Math.random() * 5000 + 4000).toFixed(2);
+
+            const imageUrl = await gerarImagemHF(message, category);
+
+            extraCard = `\n\n<div class="bg-gray-900 border-2 border-purple-500/50 rounded-2xl p-5 mt-4 shadow-[0_0_30px_rgba(168,85,247,0.15)] relative overflow-hidden group">
+         <div class="absolute top-0 right-0 bg-purple-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase tracking-tighter">Gerado VIP</div>
+         <h3 class="text-xl font-black text-white mb-1 uppercase tracking-tight">${fakeName}</h3>
+         <p class="text-sm text-gray-400 mb-4 leading-tight">Hardware exclusivo gerado pela nossa rede neural sob demanda para você.</p>
+         <div class="relative rounded-xl overflow-hidden bg-black/40 border border-white/5 mb-4 group-hover:border-purple-500/30 transition-colors">
+            <div class="absolute top-2 left-2 z-10 bg-black/60 backdrop-blur-md px-2 py-1 rounded-md border border-purple-500/50 flex items-center gap-1"><span class="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></span><span class="text-[9px] font-bold text-purple-400 uppercase">IA Nexus Core</span></div>
+            <img src="${imageUrl}" alt="Produto gerado" class="w-full transform group-hover:scale-105 transition-transform duration-700" style="display:block;">
+         </div>
+         <div class="flex items-end justify-between gap-2">
+            <div>
+               <p class="text-[10px] text-purple-400 font-bold uppercase tracking-widest mb-1">Oferta Instantânea</p>
+               <p class="text-3xl font-black text-white leading-none">R$ ${parseFloat(fakePrice).toLocaleString('pt-BR')}</p>
+            </div>
+            <button onclick="alert('Reserva IA iniciada para ${fakeName}')" class="bg-gradient-to-r from-purple-500 to-pink-600 text-white font-black px-4 py-3 rounded-xl shadow-lg hover:shadow-purple-500/20 active:scale-95 transition-all text-sm">
+               RESERVAR PIX
+            </button>
+         </div>
+         <p class="text-[9px] text-center text-purple-500 mt-4 uppercase tracking-[0.2em] font-bold animate-pulse">Estoque Gerado: 01 UNIDADE DISPONÍVEL</p>
+      </div>`;
+        }
+
+        reply += extraCard;
+        res.json({ reply, history: [...history, { role: 'user', content: message }, { role: 'assistant', content: reply }] });
+
+    } catch (err) {
+        console.error('Erro no chat:', err.message);
+        res.status(500).json({ reply: 'Ops... Me fala de novo o que você quer?' });
+    }
+});
+const catalogoPath = path.join(__dirname, 'data/catalogo.json');
+let catalogo = [];
+try {
+    catalogo = JSON.parse(require('fs').readFileSync(catalogoPath, 'utf8'));
+} catch (e) {
+    console.error('Erro ao carregar catálogo:', e);
+}
+
+app.post('/api/find-product', async (req, res) => {
+    const { query } = req.body;
+    if (!query) return res.status(400).json({ error: 'Query required' });
+
+    // 1. Busca no catálogo real (prioridade)
+    const termo = query.toLowerCase();
+    const produtoReal = catalogo.find(p =>
+        p.nome.toLowerCase().includes(termo) ||
+        termo.includes('tenis') && p.nome.toLowerCase().includes('tenis') ||
+        termo.includes('pc') && p.nome.toLowerCase().includes('pc')
+    );
+
+    if (produtoReal) {
+        // Enforce full URL/path for 3D model from frontend perspective
+        // Assuming models are served from http://localhost:4321/modelos/
+        return res.json({
+            ...produtoReal,
+            imagem: `https://image.pollinations.ai/prompt/${encodeURIComponent(produtoReal.nome)}`, // Fallback image if needed, or real one
+            type: 'real_3d'
+        });
+    }
+
+    // 2. Fallback: Geração IA (Produto inexistente no catálogo físico)
+    const fakePrice = (1000 + Math.random() * 2000).toFixed(2);
+    const fakeProduct = {
+        id: `gen-${Date.now()}`,
+        nome: `Nexus ${query} Edition`,
+        preco: parseFloat(fakePrice),
+        descricao: "Gerado sob demanda pela IA GetNexo. Exclusivo.",
+        model3d: null, // Sem 3D para gerados na hora (por enquanto)
+        imagem: `https://image.pollinations.ai/prompt/${encodeURIComponent(query)}`,
+        type: 'generated',
+        estoque: 'Produção Imediata'
+    };
+
+    res.json(fakeProduct);
 });
 
 // Register routes
@@ -541,6 +757,13 @@ app.post('/api/ml/sentiment', (req, res) => {
 const crypto = require('crypto');
 
 app.post('/api/login', async (req, res) => {
+    console.log('[DEBUG] Body recebido em /api/login:', req.body);
+    console.log('[DEBUG] Headers:', req.headers);
+
+    if (!req.body) {
+        return res.status(400).json({ error: 'Body vazio ou inválido. Envie email e password.' });
+    }
+
     const { email, password, code } = req.body;
     try {
         const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
@@ -566,6 +789,93 @@ app.get('/api/users', authenticate, (req, res) => {
         console.error('Error fetching users:', e);
         res.status(500).json({ error: 'Failed to fetch users' });
     }
+});
+
+// --- ADMIN API ENDPOINTS ---
+
+// Data Store for Admin Config (Simple JSON persistence for now)
+const ADMIN_DB_PATH = path.join(__dirname, 'data/admin_settings.json');
+let adminSettings = {
+    integrations: {},
+    system: { brandName: 'Nexus Enterprise', maintenanceMode: false },
+    notifications: {}
+};
+
+try {
+    if (fsSync.existsSync(ADMIN_DB_PATH)) {
+        adminSettings = JSON.parse(fsSync.readFileSync(ADMIN_DB_PATH, 'utf8'));
+    }
+} catch (e) {
+    console.error('Failed to load admin settings:', e);
+}
+
+const saveAdminSettings = () => {
+    try {
+        fsSync.writeFileSync(ADMIN_DB_PATH, JSON.stringify(adminSettings, null, 2));
+    } catch (e) {
+        console.error('Failed to save admin settings:', e);
+    }
+};
+
+app.get('/api/admin/config', authenticate, (req, res) => {
+    res.json(adminSettings.system || {});
+});
+
+app.post('/api/admin/config', authenticate, (req, res) => {
+    adminSettings.system = { ...adminSettings.system, ...req.body };
+    saveAdminSettings();
+    res.json({ success: true, settings: adminSettings.system });
+});
+
+app.get('/api/admin/integrations', authenticate, (req, res) => {
+    // Hide secrets in response if needed, or send as is for admin
+    res.json(adminSettings.integrations || {});
+});
+
+app.post('/api/admin/integrations', authenticate, (req, res) => {
+    adminSettings.integrations = { ...adminSettings.integrations, ...req.body };
+    saveAdminSettings();
+    res.json({ success: true });
+});
+
+app.get('/api/admin/notifications', authenticate, (req, res) => {
+    res.json(adminSettings.notifications || {});
+});
+
+app.post('/api/admin/notifications', authenticate, (req, res) => {
+    adminSettings.notifications = { ...adminSettings.notifications, ...req.body };
+    saveAdminSettings();
+    res.json({ success: true });
+});
+
+// Logs (Read from file or DB)
+app.post('/api/admin/clear-logs', authenticate, (req, res) => {
+    // In a real app, this would clear system_logs table or log files
+    console.log('[ADMIN] Logs cleared by user', req.user.id);
+    res.json({ success: true });
+});
+
+// Backups
+app.get('/api/admin/list-backups', authenticate, (req, res) => {
+    // Mock backups for now
+    res.json({
+        backups: [
+            { name: 'Auto-Backup Daily', date: new Date().toISOString(), size: '45MB' },
+            { name: 'Pre-Deploy Snapshot', date: new Date(Date.now() - 86400000).toISOString(), size: '42MB' }
+        ]
+    });
+});
+
+app.post('/api/admin/update-patterns', authenticate, (req, res) => {
+    console.log('[ADMIN] Update Patterns triggered');
+    // Trigger AI re-training or pattern matching update logic here
+    res.json({ success: true });
+});
+
+app.post('/api/admin/emergency-reset', authenticate, (req, res) => {
+    console.warn('[ADMIN] EMERGENCY RESET TRIGGERED');
+    // Dangerous operation: clear caches, restart services, etc.
+    res.json({ success: true, message: 'Reset scheduled' });
 });
 
 // Game endpoints
@@ -979,14 +1289,25 @@ if (productCount === 0) {
     }
 }
 
-// Admin user
-const userPass = bcrypt.hashSync('@Marlboro123#', 10);
+// Admin users
+const adminPass = bcrypt.hashSync('admin123', 10);
+const ownerPass = bcrypt.hashSync('@Marlboro123#', 10);
+
 try {
-    const existing = db.prepare('SELECT email FROM users WHERE email = ?').get('lelebrr@gmail.com');
-    if (!existing) {
-        db.prepare('INSERT INTO users (email, password, role_id) VALUES (?, ?, ?)').run('lelebrr@gmail.com', userPass, 1);
+    // Primary Test Admin
+    const adminExists = db.prepare('SELECT email FROM users WHERE email = ?').get('admin@getnexo.com.br');
+    if (!adminExists) {
+        db.prepare('INSERT INTO users (email, password, role_id) VALUES (?, ?, ?)').run('admin@getnexo.com.br', adminPass, 1);
     } else {
-        db.prepare('UPDATE users SET password = ? WHERE email = ?').run(userPass, 'lelebrr@gmail.com');
+        db.prepare('UPDATE users SET password = ? WHERE email = ?').run(adminPass, 'admin@getnexo.com.br');
+    }
+
+    // Owner Account (lelebrr)
+    const ownerExists = db.prepare('SELECT email FROM users WHERE email = ?').get('lelebrr@gmail.com');
+    if (!ownerExists) {
+        db.prepare('INSERT INTO users (email, password, role_id) VALUES (?, ?, ?)').run('lelebrr@gmail.com', ownerPass, 1);
+    } else {
+        db.prepare('UPDATE users SET password = ? WHERE email = ?').run(ownerPass, 'lelebrr@gmail.com');
     }
 } catch (e) {
     console.error('[AUTH] Admin setup error:', e.message);

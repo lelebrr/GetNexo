@@ -255,10 +255,16 @@ const submenus = {
             this.active = cat;
             localStorage.setItem("activeAdminCat", cat);
             this.updateSidebar();
-            // Navigate to the tab using the mapping
-            // Navigate to the tab using the mapping
-            const tabName = this.categoryToTabMap[cat] || cat;
-            window.location.href = `/admin?tab=${tabName}`;
+            this.updateSidebar();
+            
+            // Smart navigation: go to first submenu item if available
+            const menuItems = this.submenus[cat];
+            if (menuItems && menuItems.length > 0) {
+              window.location.href = menuItems[0].href;
+            } else {
+              // Fallback for dashboard or empty categories
+              window.location.href = cat === 'dashboard' ? '/admin' : `/admin/${cat}`;
+            }
           },
           updateSidebar() {
             const titleEl = document.getElementById('sidebar-title');

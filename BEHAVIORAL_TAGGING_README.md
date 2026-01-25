@@ -87,7 +87,7 @@ Sistema completo de tagging comportamental baseado em machine learning que permi
 ### Endpoints Principais
 - **Produção**: `https://api.getnexo.com.br/api/clustering/`
 - **Desenvolvimento**: `http://localhost:3000/api/clustering/`
-- **Admin Dashboard**: `https://getnexo.com.br/admin/behavioral-tagging`
+- **Admin Dashboard**: `http://localhost:4321/admin/behavioral-tagging`
 
 ### Credenciais de Acesso
 - **API Key**: Configure em `.env` como `BEHAVIORAL_API_KEY`
@@ -95,9 +95,9 @@ Sistema completo de tagging comportamental baseado em machine learning que permi
 - **Admin Password**: Configure em `.env` como `ADMIN_PASSWORD`
 
 ### Links Úteis
-- **Dashboard Admin**: https://getnexo.com.br/admin/behavioral-tagging
-- **API Documentation**: https://api.getnexo.com.br/docs/clustering
-- **Status Page**: https://status.getnexo.com.br/behavioral-tagging
+- **Dashboard Admin**: http://localhost:4321/admin/behavioral-tagging
+- **API Documentation**: http://localhost:3000/api/clustering/docs
+- **Status Page**: http://localhost:3000/status/behavioral-tagging
 
 ## Como Usar
 

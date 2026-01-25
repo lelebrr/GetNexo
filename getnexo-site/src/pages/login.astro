@@ -427,17 +427,17 @@ import ClientLayout from '../layouts/ClientLayout.astro';
         <div class="demo-accounts">
             <h3>🚀 Clique para testar rapidamente:</h3>
 
-            <div class="demo-account" onclick="fillDemo('admin@getnexo.com.br', 'admin123')">
+            <div class="demo-account" onclick="fillDemo('admin@getnexo.com.br', 'admin123', this)">
                 <div class="demo-label">Admin</div>
                 <div class="demo-creds">admin@getnexo.com.br</div>
             </div>
 
-            <div class="demo-account" onclick="fillDemo('revendedor@getnexo.com', 'demo123')">
+            <div class="demo-account" onclick="fillDemo('revendedor@getnexo.com', 'demo123', this)">
                 <div class="demo-label">Revendedor</div>
                 <div class="demo-creds">revendedor@getnexo.com</div>
             </div>
 
-            <div class="demo-account" onclick="fillDemo('cliente@getnexo.com', 'demo123')">
+            <div class="demo-account" onclick="fillDemo('cliente@getnexo.com', 'demo123', this)">
                 <div class="demo-label">Cliente</div>
                 <div class="demo-creds">cliente@getnexo.com</div>
             </div>
@@ -531,7 +531,7 @@ import ClientLayout from '../layouts/ClientLayout.astro';
     <script is:inline src="/fillDemo.js"></script>
 
     <script>
-        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3006' : '';
+        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3006' : 'https://getnexo.com.br';
 
         async function login(email, password) {
             try {
@@ -640,15 +640,22 @@ import ClientLayout from '../layouts/ClientLayout.astro';
         }
 
         // Fill demo credentials
-        function fillDemo(email, password) {
-            document.getElementById('email').value = email;
-            document.getElementById('password').value = password;
+        window.fillDemo = function(email, password, element) {
+            const emailInput = document.getElementById('email');
+            const passInput = document.getElementById('password');
+            
+            emailInput.value = email;
+            passInput.value = password;
+
+            // Dispatch input events just in case
+            emailInput.dispatchEvent(new Event('input'));
+            passInput.dispatchEvent(new Event('input'));
 
             // Add visual feedback
             const accounts = document.querySelectorAll('.demo-account');
             accounts.forEach(account => account.classList.remove('selected'));
 
-            event.currentTarget.classList.add('selected');
+            element.classList.add('selected');
         }
 
         // Check if already logged in

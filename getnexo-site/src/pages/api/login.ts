@@ -1,36 +1,29 @@
 import type { APIRoute } from 'astro';
-import { authenticateUser, generateToken } from '../../lib/auth.js';
 
 export const POST: APIRoute = async ({ request }) => {
-    const { email, password } = await request.json();
+    try {
+        const body = await request.json();
+        const response = await fetch('http://backend:3006/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body)
+        });
 
-    if (!email || !password) {
-        return new Response(JSON.stringify({ error: 'Email e senha são obrigatórios' }), {
-            status: 400,
+        const data = await response.json();
+
+        return new Response(JSON.stringify(data), {
+            status: response.status,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    } catch (error) {
+        console.error('Proxy error:', error);
+        return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
+            status: 500,
             headers: { 'Content-Type': 'application/json' }
         });
     }
-
-    const user = await authenticateUser(email, password);
-    if (!user) {
-        return new Response(JSON.stringify({ error: 'Credenciais inválidas' }), {
-            status: 401,
-            headers: { 'Content-Type': 'application/json' }
-        });
-    }
-
-    const token = generateToken(user);
-    return new Response(JSON.stringify({
-        token,
-        user: {
-            id: user.id,
-            email: user.email,
-            role: user.role,
-            name: user.name,
-            permissions: user.permissions
-        }
-    }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
-    });
 };
