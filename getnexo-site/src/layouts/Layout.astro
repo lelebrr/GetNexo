@@ -174,7 +174,8 @@ const clientId = Astro.locals.clientId || 'default';
 
   <script is:inline nonce={nonce}>
     // Aggressive Cache Buster & SW Killer
-    const VERSION = '1.8';
+    const VERSION = '1.9-rc1-BUILD-debug';
+    console.log(`%c GetNexo Site Version: ${VERSION}`, 'background: #222; color: #bada55; padding: 4px; border-radius: 4px;');
     if (localStorage.getItem('getnexo_v') !== VERSION) {
       localStorage.setItem('getnexo_v', VERSION);
       
