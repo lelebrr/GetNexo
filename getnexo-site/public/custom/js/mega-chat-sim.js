@@ -37,28 +37,17 @@
 
     // Helper for Trusted Types
     function setInnerHTML(element, html) {
-        if (window.trustedTypes && window.trustedTypes.createPolicy) {
-            let policy = window.getnexoPolicy;
-            if (!policy) {
-                try {
-                    policy = window.trustedTypes.createPolicy('getnexo-trusted', {
-                        createHTML: (string) => string
-                    });
-                    window.getnexoPolicy = policy;
-                } catch (e) {
-                    // Policy might already exist or name collision, try to retrieve it if stored or just use default
-                    policy = window.getnexoPolicy || (window.trustedTypes.defaultPolicy ? window.trustedTypes.defaultPolicy : null);
-                    // If we still don't have it and it exists but we can't get it, we are stuck unless we use a different name or just raw assign if allowed (unsafe-inline check)
-                    // But usually creating it once globally avoids this.
-                }
-            }
+        if (window.trustedTypes && window.trustedTypes.defaultPolicy) {
+            // Se existe politica default, o navegador converte automaticamente.
+            // Podemos atribuir direto.
+            element.innerHTML = html;
+            return;
+        }
 
-            if (policy) {
-                element.innerHTML = policy.createHTML(html);
-            } else {
-                // Fallback if policy creation failed but feature exists (strict mode might block this)
-                element.innerHTML = html;
-            }
+        const policy = window.getnexoPolicy || (window.getnexoTrustedTypes && window.getnexoTrustedTypes.policy);
+
+        if (policy && policy.createHTML) {
+            element.innerHTML = policy.createHTML(html);
         } else {
             element.innerHTML = html;
         }

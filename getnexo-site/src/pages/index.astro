@@ -59,7 +59,7 @@ const nonce = Astro.locals.nonce;
   
   <HomeSchema />
   
-  <HomeHero feriadoHoje={feriadoHoje} lang={lang} idiomaCurto={idiomaCurto} />
+  <HomeHero feriadoHoje={feriadoHoje} lang={lang} idiomaCurto={idiomaCurto} nonce={nonce} />
 
   <!-- Tour Guided Component -->
   <TourGuided slot="dock-left" targetPage="home" mobileOptimized={true} nonce={nonce} />

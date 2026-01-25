@@ -87,25 +87,38 @@ if (window.trustedTypes && window.trustedTypes.createPolicy) {
         }
     });
 
+    // === default Policy (FALLBACK) ===
+    // Esta política 'default' é usada automaticamente pelo navegador quando
+    // innerHTML é definido com uma string crua (sem TrustedHTML).
+    // Isso "desliga" o erro para bibliotecas de terceiros (Shepherd, etc.)
+    if (!window.trustedTypes.defaultPolicy) {
+        window.trustedTypes.createPolicy('default', {
+            createHTML: (string) => string,
+            createScript: (string) => string,
+            createScriptURL: (url) => url
+        });
+    }
+
     // Exporta as políticas para uso em outros módulos
+    // Mantém compatibilidade com mega-chat-sim.js que busca window.getnexoPolicy
+    window.getnexoPolicy = getnexoPolicy;
+
     window.getnexoTrustedTypes = {
         policy: getnexoPolicy,
         apiPolicy: apiDataPolicy
     };
 
-    console.log('Trusted Types: Políticas carregadas com sucesso');
+    console.log('Trusted Types: Políticas (incluindo default) carregadas com sucesso');
 } else {
-    console.warn('Trusted Types: Navegador não suporta Trusted Types');
+    // ... (fallback maintains same logic)
+    window.getnexoPolicy = {
+        createHTML: (string) => string,
+        createScript: (string) => string,
+        createScriptURL: (url) => url
+    };
 
-    // Fallback: cria uma política mínima para compatibilidade
     window.getnexoTrustedTypes = {
-        policy: {
-            createHTML: (string) => string,
-            createScript: (string) => string,
-            createScriptURL: (url) => url
-        },
-        apiPolicy: {
-            createHTML: (string) => string
-        }
+        policy: window.getnexoPolicy,
+        apiPolicy: { createHTML: (string) => string }
     };
 }

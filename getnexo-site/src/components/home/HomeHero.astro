@@ -1,5 +1,5 @@
 ---
-const { feriadoHoje, lang, idiomaCurto } = Astro.props;
+const { feriadoHoje, lang, idiomaCurto, nonce } = Astro.props;
 ---
 
 <section class="hero-split">
@@ -85,7 +85,7 @@ const { feriadoHoje, lang, idiomaCurto } = Astro.props;
   </div>
 </section>
 
-<script>
+<script nonce={nonce}>
 // Contador regressivo de 12 minutos que reinicia
 function startCountdown() {
   let minutes = 11;
