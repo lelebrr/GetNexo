@@ -329,9 +329,12 @@ const {
 </script>
 
 <button id="tour-btn" class="tour-trigger-btn" title="Tour Guiado" aria-label="Iniciar tour guiado" data-tour-target={targetPage} data-tour-autostart={autoStart.toString()} data-tour-mobile={mobileOptimized.toString()}>
-  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-    <circle cx="12" cy="12" r="10" />
-    <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" />
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2.5"/>
+    <path d="M12 4a8 8 0 0 1 8 8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M12 20a8 8 0 0 1-8-8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M8 12l4 4 4-4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="12" cy="12" r="2" fill="currentColor"/>
   </svg>
 </button>
 
