@@ -260,10 +260,29 @@ const submenus = {
             // Smart navigation: go to first submenu item if available
             const menuItems = this.submenus[cat];
             if (menuItems && menuItems.length > 0) {
-              window.location.href = menuItems[0].href;
+              // Use absolute URL to avoid conflicts with current URL parameters
+              const targetUrl = new URL(menuItems[0].href, window.location.origin);
+              // Clear any query parameters from the current URL and add the tab parameter
+              const tabParam = this.categoryToTabMap[cat];
+              if (tabParam) {
+                targetUrl.searchParams.set('tab', tabParam);
+              }
+              // Force reload to ensure content updates properly
+              const finalUrl = targetUrl.pathname + targetUrl.search;
+              window.location.href = finalUrl + (finalUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
             } else {
               // Fallback for dashboard or empty categories
-              window.location.href = cat === 'dashboard' ? '/admin' : `/admin/${cat}`;
+              const targetUrl = cat === 'dashboard'
+                ? new URL('/admin', window.location.origin)
+                : new URL(`/admin/${cat}`, window.location.origin);
+              // Clear any query parameters from the current URL and add the tab parameter
+              const tabParam = this.categoryToTabMap[cat];
+              if (tabParam) {
+                targetUrl.searchParams.set('tab', tabParam);
+              }
+              // Force reload to ensure content updates properly
+              const finalUrl = targetUrl.pathname + targetUrl.search;
+              window.location.href = finalUrl + (finalUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
             }
           },
           updateSidebar() {
@@ -434,7 +453,7 @@ const submenus = {
         
         <!-- Área de conteúdo com scroll suave -->
         <div class="h-full overflow-y-auto p-8 scroll-smooth">
-          <div class="max-w-7xl mx-auto">
+          <div class="w-full h-full">
             <slot />
             
 

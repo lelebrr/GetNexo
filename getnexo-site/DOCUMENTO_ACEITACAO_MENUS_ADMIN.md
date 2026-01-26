@@ -1,3 +1,4 @@
+
 # Documento de Aceitação - Correção dos Menus da Área Admin
 
 ## Data: 25 de Janeiro de 2026
