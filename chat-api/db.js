@@ -227,6 +227,18 @@ const initSchema = () => {
       insertCoupon.run('NEXO20', 'percentage', 20, '2026-12-31', 1);
       insertCoupon.run('REV50', 'fixed', 50, '2026-06-01', 1);
   }
+
+  // Migrations
+  try {
+    const productsInfo = db.pragma('table_info(products)');
+    const hasSku = productsInfo.some(col => col.name === 'sku');
+    if (!hasSku) {
+      console.log('Migrating products table: Adding sku column...');
+      db.prepare('ALTER TABLE products ADD COLUMN sku TEXT').run();
+    }
+  } catch (err) {
+    console.error('Migration error:', err);
+  }
 };
 
 initSchema();
