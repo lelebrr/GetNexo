@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 
 const API_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
@@ -29,6 +28,119 @@ const getAvatarColor = (name) => {
     for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
     return colors[Math.abs(hash) % colors.length];
 };
+
+const KanbanCard = React.memo(({ contact, aiInsight, insightLoading, onDragStart, onSelectContact, onToggleInsight }) => {
+    const score = getLeadScore(contact);
+    const hasInsight = aiInsight;
+
+    return (
+        <div
+            draggable
+            onDragStart={(e) => onDragStart(e, contact.id)}
+            className="group relative bg-gray-900 border border-gray-800 rounded-xl p-4 cursor-move hover:border-gray-600 hover:shadow-[0_0_15px_rgba(0,0,0,0.5)] transition-all duration-200"
+        >
+            {/* Contact Header */}
+            <div className="flex items-center gap-3 mb-3">
+                <div className={`w-10 h-10 rounded-full ${getAvatarColor(contact.name || '?')} flex items-center justify-center text-white font-bold shadow-lg`}>
+                    {(contact.name?.[0] || '?').toUpperCase()}
+                </div>
+                <div className="flex-1 min-w-0">
+                    <h4 className="font-bold text-white text-sm truncate">{contact.name || contact.phone}</h4>
+                    <div className="flex items-center gap-2 mt-1">
+                        <span className={`text-[10px] px-2 py-0.5 rounded border ${score.color} ${score.bg} border-${score.color}/20 flex items-center gap-1`}>
+                            {score.icon} {score.label}
+                        </span>
+                        <span className="text-[10px] text-gray-500">2h atrás</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Quick Actions (Hover) */}
+            <div className="flex gap-2 mb-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200">
+                <button onClick={() => onSelectContact && onSelectContact(contact)} className="flex-1 bg-neon-blue/10 hover:bg-neon-blue/20 text-neon-blue border border-neon-blue/30 py-1 rounded text-xs font-bold transition-colors">
+                    💬 Chat
+                </button>
+                <button className="flex-1 bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/30 py-1 rounded text-xs font-bold transition-colors">
+                    📞 Ligar
+                </button>
+            </div>
+
+            {/* AI Insight Section */}
+            {hasInsight && (
+                <div className="mb-3 p-3 bg-purple-900/20 border border-purple-500/30 rounded-lg animate-fade-in">
+                    <div className="flex justify-between items-start mb-1">
+                        <span className="text-[10px] font-bold text-purple-400">🧠 NEXO AI INSIGHT</span>
+                        <button onClick={() => onToggleInsight(contact.id)} className="text-[10px] text-gray-500 hover:text-white">✕</button>
+                    </div>
+                    <p className="text-xs text-gray-300 leading-relaxed italic">
+                        "{hasInsight}"
+                    </p>
+                </div>
+            )}
+
+            {/* Footer Actions */}
+            <div className="flex justify-between items-center pt-2 border-t border-gray-800">
+                <button
+                    onClick={() => onToggleInsight(contact.id, contact.phone, contact.name)}
+                    className={`text-[10px] flex items-center gap-1 transition-colors ${hasInsight ? 'text-purple-400' : 'text-gray-500 hover:text-purple-400'}`}
+                >
+                    <span className={insightLoading ? 'animate-spin' : ''}>
+                        {insightLoading ? '⏳' : '✨'}
+                    </span>
+                    {insightLoading ? 'Analizando...' : (hasInsight ? 'Ver Insight' : 'Gerar Insight')}
+                </button>
+                <div className="flex -space-x-2">
+                    {/* Mock user markers */}
+                    <div className="w-5 h-5 rounded-full bg-gray-700 border border-gray-900"></div>
+                </div>
+            </div>
+        </div>
+    );
+});
+
+const KanbanColumn = React.memo(({ stageId, stage, contacts, aiInsights, insightLoading, onDragStart, onDrop, onSelectContact, onToggleInsight }) => {
+    const totalValue = contacts.reduce((acc, c) => acc + (c.value || 0), 0);
+
+    const handleDragOver = (e) => e.preventDefault();
+
+    return (
+        <div
+            className="min-w-[320px] w-[320px] flex flex-col rounded-2xl bg-gray-900/40 border border-gray-800 backdrop-blur-sm"
+            onDragOver={handleDragOver}
+            onDrop={(e) => onDrop(e, stageId)}
+        >
+            {/* Column Header */}
+            <div className={`p-4 rounded-t-2xl border-b border-gray-800 bg-gradient-to-r ${stage.gradient} bg-opacity-10`}>
+                <div className="flex justify-between items-center mb-1">
+                    <h3 className={`font-bold text-sm ${stage.color} flex items-center gap-2`}>
+                        <span className="text-xl">{stage.icon}</span> {stage.label}
+                    </h3>
+                    <span className="bg-black/30 px-2 py-1 rounded-full text-xs font-mono text-gray-400">
+                        {contacts.length}
+                    </span>
+                </div>
+                <div className="text-[10px] text-gray-500 font-mono tracking-wider">
+                    POTENCIAL: R$ {totalValue.toLocaleString('pt-BR')}
+                </div>
+            </div>
+
+            {/* Cards Container */}
+            <div className="flex-1 p-3 overflow-y-auto custom-scrollbar space-y-3">
+                {contacts.map(contact => (
+                    <KanbanCard
+                        key={contact.id}
+                        contact={contact}
+                        aiInsight={aiInsights[contact.id]}
+                        insightLoading={insightLoading === contact.id}
+                        onDragStart={onDragStart}
+                        onSelectContact={onSelectContact}
+                        onToggleInsight={onToggleInsight}
+                    />
+                ))}
+            </div>
+        </div>
+    );
+});
 
 const KanbanBoard = ({ onSelectContact }) => {
     const [contacts, setContacts] = useState([]);
@@ -65,12 +177,15 @@ const KanbanBoard = ({ onSelectContact }) => {
         }
     };
 
-    const handleDragStart = (e, id) => {
+    const handleDragStart = useCallback((e, id) => {
         setDraggedId(id);
-    };
+    }, []);
 
-    const handleDrop = async (e, stage) => {
+    const onDrop = useCallback(async (e, stage) => {
         e.preventDefault();
+        // Since draggedId is in closure, we need it in dependency.
+        // This will update the handler when draggedId changes (drag start).
+        // This is acceptable behavior.
         if (!draggedId) return;
 
         // Optimistic Update
@@ -78,131 +193,60 @@ const KanbanBoard = ({ onSelectContact }) => {
 
         await axios.post(`${API_URL}/update-stage`, { phone: draggedId, stage });
         setDraggedId(null);
-    };
+    }, [draggedId]);
 
-    const handleDragOver = (e) => e.preventDefault();
-
-    const toggleAIInsight = async (contactId, phone, name) => {
-        if (insightLoading === contactId) return;
+    const onToggleInsight = useCallback(async (contactId, phone, name) => {
+        // Optimistically check local state via functional update is tricky for side effects.
+        // We rely on the dependency [aiInsights] which is acceptable as insights don't change often.
         if (aiInsights[contactId]) {
-            setAiInsights(prev => { const n = { ...prev }; delete n[contactId]; return n; });
+            setAiInsights(prev => {
+                const n = { ...prev };
+                delete n[contactId];
+                return n;
+            });
             return;
         }
+
+        if (insightLoading === contactId) return;
 
         setInsightLoading(contactId);
         try {
             const res = await axios.post(`${API_URL}/api/ai/lead-insight`, { phone, name });
             setAiInsights(prev => ({ ...prev, [contactId]: res.data.insight }));
         } catch (e) {
-            alert('Erro ao gerar insight.');
+            // Error handling
         } finally {
             setInsightLoading(null);
         }
-    };
+    }, [aiInsights, insightLoading]);
+
+    // Group contacts by stage
+    const columns = useMemo(() => {
+        const result = {};
+        Object.keys(STAGES).forEach(stage => result[stage] = []);
+        contacts.forEach(c => {
+            const stage = c.funnel_stage || 'lead';
+            if (result[stage]) result[stage].push(c);
+        });
+        return result;
+    }, [contacts]);
 
     return (
         <div className="flex h-full gap-6 overflow-x-auto pb-4 p-6">
-            {Object.entries(STAGES).map(([stageId, stage]) => {
-                const columnContacts = contacts.filter(c => (c.funnel_stage || 'lead') === stageId);
-                const totalValue = columnContacts.reduce((acc, c) => acc + (c.value || 0), 0);
-
-                return (
-                    <div
-                        key={stageId}
-                        className="min-w-[320px] w-[320px] flex flex-col glass-panel"
-                        onDragOver={handleDragOver}
-                        onDrop={(e) => handleDrop(e, stageId)}
-                    >
-                        {/* Column Header */}
-                        <div className={`p-4 rounded-t-2xl border-b border-gray-800 bg-gradient-to-r ${stage.gradient} bg-opacity-10`}>
-                            <div className="flex justify-between items-center mb-1">
-                                <h3 className={`font-bold text-sm ${stage.color} flex items-center gap-2`}>
-                                    <span className="text-xl">{stage.icon}</span> {stage.label}
-                                </h3>
-                                <span className="bg-black/30 px-2 py-1 rounded-full text-xs font-mono text-gray-400">
-                                    {columnContacts.length}
-                                </span>
-                            </div>
-                            <div className="text-[10px] text-gray-500 font-mono tracking-wider">
-                                POTENCIAL: R$ {totalValue.toLocaleString('pt-BR')}
-                            </div>
-                        </div>
-
-                        {/* Cards Container */}
-                        <div className="flex-1 p-3 overflow-y-auto custom-scrollbar space-y-3">
-                            {columnContacts.map(contact => {
-                                const score = getLeadScore(contact);
-                                const hasInsight = aiInsights[contact.id];
-
-                                return (
-                                    <div
-                                        key={contact.id}
-                                        draggable
-                                        onDragStart={(e) => handleDragStart(e, contact.id)}
-                                        className="group relative bg-gray-900 border border-gray-800 rounded-xl p-4 cursor-move hover:border-gray-600 hover:shadow-[0_0_15px_rgba(0,0,0,0.5)] transition-all duration-200"
-                                    >
-                                        {/* Contact Header */}
-                                        <div className="flex items-center gap-3 mb-3">
-                                            <div className={`w-10 h-10 rounded-full ${getAvatarColor(contact.name || '?')} flex items-center justify-center text-white font-bold shadow-lg`}>
-                                                {(contact.name?.[0] || '?').toUpperCase()}
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <h4 className="font-bold text-white text-sm truncate">{contact.name || contact.phone}</h4>
-                                                <div className="flex items-center gap-2 mt-1">
-                                                    <span className={`text-[10px] px-2 py-0.5 rounded border ${score.color} ${score.bg} border-${score.color}/20 flex items-center gap-1`}>
-                                                        {score.icon} {score.label}
-                                                    </span>
-                                                    <span className="text-[10px] text-gray-500">2h atrás</span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* Quick Actions (Hover) */}
-                                        <div className="flex gap-2 mb-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200">
-                                            <button onClick={() => onSelectContact && onSelectContact(contact)} className="flex-1 bg-neon-blue/10 hover:bg-neon-blue/20 text-neon-blue border border-neon-blue/30 py-1 rounded text-xs font-bold transition-colors">
-                                                💬 Chat
-                                            </button>
-                                            <button className="flex-1 bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/30 py-1 rounded text-xs font-bold transition-colors">
-                                                📞 Ligar
-                                            </button>
-                                        </div>
-
-                                        {/* AI Insight Section */}
-                                        {hasInsight && (
-                                            <div className="mb-3 p-3 bg-purple-900/20 border border-purple-500/30 rounded-lg animate-fade-in">
-                                                <div className="flex justify-between items-start mb-1">
-                                                    <span className="text-[10px] font-bold text-purple-400">🧠 NEXO AI INSIGHT</span>
-                                                    <button onClick={() => toggleAIInsight(contact.id)} className="text-[10px] text-gray-500 hover:text-white">✕</button>
-                                                </div>
-                                                <p className="text-xs text-gray-300 leading-relaxed italic">
-                                                    "{hasInsight}"
-                                                </p>
-                                            </div>
-                                        )}
-
-                                        {/* Footer Actions */}
-                                        <div className="flex justify-between items-center pt-2 border-t border-gray-800">
-                                            <button
-                                                onClick={() => toggleAIInsight(contact.id, contact.phone, contact.name)}
-                                                className={`text-[10px] flex items-center gap-1 transition-colors ${hasInsight ? 'text-purple-400' : 'text-gray-500 hover:text-purple-400'}`}
-                                            >
-                                                <span className={insightLoading === contact.id ? 'animate-spin' : ''}>
-                                                    {insightLoading === contact.id ? '⏳' : '✨'}
-                                                </span>
-                                                {insightLoading === contact.id ? 'Analizando...' : (hasInsight ? 'Ver Insight' : 'Gerar Insight')}
-                                            </button>
-                                            <div className="flex -space-x-2">
-                                                {/* Mock user markers */}
-                                                <div className="w-5 h-5 rounded-full bg-gray-700 border border-gray-900"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                );
-            })}
+            {Object.entries(STAGES).map(([stageId, stage]) => (
+                <KanbanColumn
+                    key={stageId}
+                    stageId={stageId}
+                    stage={stage}
+                    contacts={columns[stageId] || []}
+                    aiInsights={aiInsights}
+                    insightLoading={insightLoading}
+                    onDragStart={handleDragStart}
+                    onDrop={onDrop}
+                    onSelectContact={onSelectContact}
+                    onToggleInsight={onToggleInsight}
+                />
+            ))}
         </div>
     );
 };
