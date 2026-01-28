@@ -93,7 +93,9 @@ const nonce = Astro.locals.nonce;
           const script = document.createElement('script');
           script.src = src;
           script.defer = true;
-          script.nonce = '{nonce}';
+          // Try to get nonce from current script or meta tag
+          const currentNonce = document.querySelector('script[nonce]')?.nonce || '';
+          if (currentNonce) script.setAttribute('nonce', currentNonce);
           document.head.appendChild(script);
         });
         
