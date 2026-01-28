@@ -286,13 +286,13 @@ const {
 } = Astro.props;
 
 const lang = Astro.url.pathname.split('/')[1] || 'pt';
-let t;
+let translations;
 try {
-  const translations = await import(`../i18n/${lang}.json`);
-  t = translations.default;
+  const trans = await import(`../i18n/${lang}.json`);
+  translations = trans.default;
 } catch (e) {
-  const translations = await import(`../i18n/pt.json`);
-  t = translations.default;
+  const trans = await import(`../i18n/pt.json`);
+  translations = trans.default;
 }
 
 // Função para gerar URLs com idioma correto (sem trailing slash para evitar 404)
@@ -341,32 +341,41 @@ const clientId = Astro.locals.clientId || 'default';
   <link rel="preconnect" href="https://api.getnexo.com.br">
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   
+  <!-- Otimização: Preload de dados críticos para evitar cadeia de requisições -->
+  <link rel="preload" href="/data/feriados.json" as="fetch" crossOrigin="anonymous">
+  
   <!-- DNS prefetch para origens de terceiros críticas -->
   <link rel="dns-prefetch" href="https://unpkg.com">
   <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
-  <link rel="preconnect" href="https://i.pravatar.cc">
+  <link rel="dns-prefetch" href="https://i.pravatar.cc">
   <link rel="dns-prefetch" href="https://www.googletagmanager.com">
   <link rel="dns-prefetch" href="https://www.google-analytics.com">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   
   <!-- Pré-carregar fontes críticas para otimizar LCP -->
   <!-- Fontes são carregadas de forma otimizada com fallback e eager loading -->
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@400;700;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" fetchpriority="high">
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet"></noscript>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Outfit:wght@400;700;900&display=swap" as="style" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet"></noscript>
+  
+  <!-- Pré-carregar recursos de CDN críticos -->
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" as="style" media="print" onload="this.media='all'">
+  <noscript><link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"></noscript>
   
   <!-- CSS crítico do Astro é servido automaticamente via Astro.head ou injetado pelo Astro build -->
   <!-- Estilos globais e de analytics serão injetados pelo Astro com inlineStylesheets: 'always' -->
 
   
   <!-- Scripts críticos otimizados - carregamento lazy de terceiros apenas quando necessário -->
-  <!-- Reduzido para melhor performance -->
+  <!-- Reduzido para melhor performance com estratégias avançadas -->
   <script defer nonce={nonce}>
     (function() {
-      // Carregamento otimizado de recursos de terceiros
+      // Carregamento otimizado de recursos de terceiros - Reduzido ao mínimo essencial
       const thirdPartyResources = {
         modelViewer: {
           src: 'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js',
           priority: 'low',
-          delay: 3000,
+          delay: 5000, // Aumentado para reduzir impacto no LCP
           triggers: ['model-viewer', '[data-3d-model]', '.ar-viewer'],
           autoLoad: false
         }
@@ -382,9 +391,15 @@ const clientId = Astro.locals.clientId || 'default';
         script.async = true;
         script.defer = true;
         script.fetchpriority = 'low';
+        script.crossOrigin = 'anonymous';
         script.onload = () => {
           loaded.add(key);
         };
+        script.onerror = () => {
+          console.warn(`Failed to load ${key} resource`);
+        };
+        
+        // Adicionar script ao head com prioridade baixa
         document.head.appendChild(script);
       };
 
@@ -407,7 +422,7 @@ const clientId = Astro.locals.clientId || 'default';
               setTimeout(() => loadResource(key), res.delay);
             }
           });
-        });
+        }, { timeout: 2000 });
       }
     })();
   </script>
@@ -508,9 +523,12 @@ const clientId = Astro.locals.clientId || 'default';
     <link rel="stylesheet" href={`https://api.getnexo.com.br/api/whitelabel/css/${clientId}`} media="print" onload="this.media='all'">
   )}
   
-  <!-- Cache headers para recursos estáticos -->
+  <!-- Cache headers para recursos estáticos com ciclo de vida longo -->
   <meta http-equiv="Cache-Control" content="public, max-age=31536000, immutable">
   <meta http-equiv="Expires" content={new Date(Date.now() + 31536000000).toUTCString()}>
+  
+  <!-- Cache-Control adicional para otimizar carregamento -->
+  <meta http-equiv="Cache-Control" content="public, max-age=2592000, stale-while-revalidate=604800">
   
   <!-- Pré-carregar recursos críticos para otimizar LCP -->
   <!-- Imagens essenciais para o layout inicial com alta prioridade -->
@@ -520,7 +538,7 @@ const clientId = Astro.locals.clientId || 'default';
   <!-- DNS prefetch adicionais otimizados - sem duplicatas -->
   <!-- Removido DNS prefetch duplicado para evitar avisos -->
 
-  {feriadoAtivo && (
+  {false && (
     <link rel="stylesheet" href="/custom/css/holiday-effects.css" media="print" onload="this.media='all'">
   )}
 
@@ -555,9 +573,26 @@ const clientId = Astro.locals.clientId || 'default';
       overflow-x: hidden; 
     }
 
-    /* Premium Common Styles */
-    .text-gradient { background:linear-gradient(90deg, var(--primary), var(--success)); -webkit-background-clip:text; color:transparent; font-weight: 800; }
-    .glass-panel { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; }
+    /* Premium Common Styles - Otimizado para performance */
+    .text-gradient {
+      background:linear-gradient(90deg, var(--primary), var(--success));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      font-weight: 800;
+      will-change: transform, opacity;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
+    .glass-panel {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 20px;
+      will-change: transform, opacity;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
 
     /* Foco Visível */
     :focus { outline: 3px solid var(--success); }
@@ -592,6 +627,9 @@ const clientId = Astro.locals.clientId || 'default';
       position: relative;
       display: flex; align-items: center; justify-content: center;
       transition: all 0.5s var(--transition-smooth);
+      will-change: transform, opacity;
+      transform: translateZ(0);
+      backface-visibility: hidden;
     }
     .logo-box svg { width: 100%; height: 100%; }
     .logo-box:hover { transform: scale(1.1) rotate(5deg); }
@@ -611,6 +649,9 @@ const clientId = Astro.locals.clientId || 'default';
       transition: all 0.3s ease;
       padding: 0.6rem 1rem;
       border-radius: 10px;
+      will-change: transform, opacity;
+      transform: translateZ(0);
+      backface-visibility: hidden;
     }
     .nav-links a:hover {
       color: white;
@@ -694,6 +735,9 @@ const clientId = Astro.locals.clientId || 'default';
       text-transform: uppercase;
       letter-spacing: 0.5px;
       animation: pulse-glow 2s infinite ease-in-out;
+      will-change: transform, opacity;
+      transform: translateZ(0);
+      backface-visibility: hidden;
     }
     @keyframes pulse-glow {
       0%, 100% { opacity: 0.8; transform: scale(1); }
@@ -763,6 +807,9 @@ const clientId = Astro.locals.clientId || 'default';
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.05);
       backdrop-filter: blur(10px);
+      will-change: transform, opacity;
+      transform: translateZ(0);
+      backface-visibility: hidden;
     }
     .footer-socials a:hover {
       transform: translateY(-4px) scale(1.05);
@@ -1040,6 +1087,9 @@ const clientId = Astro.locals.clientId || 'default';
       background: white;
       border-radius: 3px;
       transition: 0.3s;
+      will-change: transform, opacity;
+      transform: translateZ(0);
+      backface-visibility: hidden;
     }
     .mobile-menu-btn.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
     .mobile-menu-btn.active span:nth-child(2) { opacity: 0; }
@@ -1069,6 +1119,9 @@ const clientId = Astro.locals.clientId || 'default';
       transform: translateY(50px);
       transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
       box-shadow: 0 50px 100px rgba(0,0,0,0.8);
+      will-change: transform, opacity;
+      transform: translateZ(0);
+      backface-visibility: hidden;
     }
     .mobile-menu.active .mobile-nav { transform: translateY(0); }
 
@@ -1087,6 +1140,9 @@ const clientId = Astro.locals.clientId || 'default';
       text-decoration: none; text-align: center;
       border: 1px solid rgba(255,255,255,0.05);
       transition: 0.3s;
+      will-change: transform, opacity;
+      transform: translateZ(0);
+      backface-visibility: hidden;
     }
     .mobile-grid a:hover { background: rgba(0, 212, 255, 0.1); border-color: var(--primary); transform: scale(1.05); }
 
@@ -1112,6 +1168,9 @@ const clientId = Astro.locals.clientId || 'default';
       border-radius: 12px;
       transition: all 0.3s var(--transition-bounce);
       overflow: hidden;
+      will-change: transform, opacity;
+      transform: translateZ(0);
+      backface-visibility: hidden;
     }
     .mobile-lang-selector a img {
       width: 28px;
@@ -1138,6 +1197,9 @@ const clientId = Astro.locals.clientId || 'default';
       cursor: pointer; transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
       margin-right: 0.5rem;
       font-size: 1.2rem;
+      will-change: transform, opacity;
+      transform: translateZ(0);
+      backface-visibility: hidden;
     }
     .magic-discovery:hover { 
       transform: scale(1.15) rotate(15deg); 
@@ -1315,22 +1377,22 @@ const clientId = Astro.locals.clientId || 'default';
     </a>
     <nav class="nav-links">
       <div class="nav-dropdown">
-        <a href={`/${lang}/${t.slugs.solutions}`} class="nav-dropdown-toggle">Soluções</a>
+        <a href={`/${lang}/${translations.slugs.solutions}`} class="nav-dropdown-toggle">Soluções</a>
         <div class="nav-dropdown-menu">
           <div class="dropdown-links">
-            <a href={`/${lang}/${t.slugs.chat_ia}`}>
+            <a href={`/${lang}/${translations.slugs.chat_ia}`}>
               <span class="dropdown-item-title">🤖 Chatbot IA 24h</span>
               <span class="dropdown-item-desc">Atendimento automatizado com IA Generativa</span>
             </a>
-            <a href={`/${lang}/${t.slugs.tickets}`}>
+            <a href={`/${lang}/${translations.slugs.tickets}`}>
               <span class="dropdown-item-title">🎫 Suporte 360º</span>
               <span class="dropdown-item-desc">Gestão inteligente de tickets e chamados</span>
             </a>
-            <a href={`/${lang}/${t.slugs.analytics}`}>
+            <a href={`/${lang}/${translations.slugs.analytics}`}>
               <span class="dropdown-item-title">📊 IA Analytics</span>
               <span class="dropdown-item-desc">Métricas preditivas em tempo real</span>
             </a>
-            <a href={`/${lang}/${t.slugs.loyalty}`}>
+            <a href={`/${lang}/${translations.slugs.loyalty}`}>
               <span class="dropdown-item-title">🏆 Fidelidade</span>
               <span class="dropdown-item-desc">Retenção de clientes via gamificação</span>
             </a>
@@ -1339,22 +1401,22 @@ const clientId = Astro.locals.clientId || 'default';
       </div>
 
       <div class="nav-dropdown">
-        <a href={`/${lang}/${t.slugs.integrations}`} class="nav-dropdown-toggle">Integrações</a>
+        <a href={`/${lang}/${translations.slugs.integrations}`} class="nav-dropdown-toggle">Integrações</a>
         <div class="nav-dropdown-menu">
           <div class="dropdown-links">
-            <a href={`/${lang}/${t.slugs.integrations}#shopify`}>
+            <a href={`/${lang}/${translations.slugs.integrations}#shopify`}>
               <span class="dropdown-item-title">🛍️ Shopify Sync</span>
               <span class="dropdown-item-desc">Conexão direta com sua loja Shopify</span>
             </a>
-            <a href={`/${lang}/${t.slugs.integrations}#woocommerce`}>
+            <a href={`/${lang}/${translations.slugs.integrations}#woocommerce`}>
               <span class="dropdown-item-title">🛒 WooCommerce</span>
               <span class="dropdown-item-desc">Integração nativa para WordPress</span>
             </a>
-            <a href={`/${lang}/${t.slugs.integrations}#pagamentos`}>
+            <a href={`/${lang}/${translations.slugs.integrations}#pagamentos`}>
               <span class="dropdown-item-title">💳 Checkout PIX</span>
               <span class="dropdown-item-desc">Pagamentos automáticos in-chat</span>
             </a>
-            <a href={`/${lang}/${t.slugs.api}`}>
+            <a href={`/${lang}/${translations.slugs.api}`}>
               <span class="dropdown-item-title">🔄 API Developer</span>
               <span class="dropdown-item-desc">Webhook e REST para desenvolvedores</span>
             </a>
@@ -1362,21 +1424,21 @@ const clientId = Astro.locals.clientId || 'default';
         </div>
       </div>
 
-      <a href={`/${lang}/${t.slugs.pricing}`}>{t.menu.pricing}</a>
-      <a href={`/${lang}/${t.slugs.how_it_works}`}>Descubra</a>
-      <a href={`/${lang}/${t.slugs.blog}`}>Insights</a>
+      <a href={`/${lang}/${translations.slugs.pricing}`}>{translations.menu.pricing}</a>
+      <a href={`/${lang}/${translations.slugs.how_it_works}`}>Descubra</a>
+      <a href={`/${lang}/${translations.slugs.blog}`}>Insights</a>
     </nav>
 
     <div class="header-ctas">
       <div class="magic-discovery" id="magic-discovery" title="Descobrir Soluções IA">✨</div>
       <a href="/login" class="btn-login">Login</a>
-      <a href={`/${lang}/${t.slugs.pricing}`} class="btn-start" style="background: linear-gradient(135deg, #00d4ff 0%, #00ff9d 100%) !important; color: #030712 !important; box-shadow: 0 0 20px rgba(0, 212, 255, 0.4) !important; border: none !important;">Ativar Grátis</a>
+      <a href={`/${lang}/${translations.slugs.pricing}`} class="btn-start" style="background: linear-gradient(135deg, #00d4ff 0%, #00ff9d 100%) !important; color: #030712 !important; box-shadow: 0 0 20px rgba(0, 212, 255, 0.4) !important; border: none !important;">Ativar Grátis</a>
       
       <div class="lang-flags">
-        <a href={getLangUrl('pt')} class={`flag-link ${lang === 'pt' ? 'active' : ''}`} title="Português"><img src="/flags/br.svg" alt="PT" width="32" height="22" loading="eager" fetchpriority="high" /></a>
-        <a href={getLangUrl('en')} class={`flag-link ${lang === 'en' ? 'active' : ''}`} title="English"><img src="/flags/gb.svg" alt="EN" width="32" height="22" loading="eager" fetchpriority="high" /></a>
-        <a href={getLangUrl('es')} class={`flag-link ${lang === 'es' ? 'active' : ''}`} title="Español"><img src="/flags/es.svg" alt="ES" width="32" height="22" loading="eager" fetchpriority="high" /></a>
-        <a href={getLangUrl('fr')} class={`flag-link ${lang === 'fr' ? 'active' : ''}`} title="Français"><img src="/flags/fr.svg" alt="FR" width="32" height="22" loading="eager" fetchpriority="high" /></a>
+        <a href={getLangUrl('pt')} class={`flag-link ${lang === 'pt' ? 'active' : ''}`} title="Português"><img src="/flags/br.svg" alt="PT" width="32" height="22" loading="eager" fetchpriority="high" decoding="async" /></a>
+        <a href={getLangUrl('en')} class={`flag-link ${lang === 'en' ? 'active' : ''}`} title="English"><img src="/flags/gb.svg" alt="EN" width="32" height="22" loading="eager" fetchpriority="high" decoding="async" /></a>
+        <a href={getLangUrl('es')} class={`flag-link ${lang === 'es' ? 'active' : ''}`} title="Español"><img src="/flags/es.svg" alt="ES" width="32" height="22" loading="eager" fetchpriority="high" decoding="async" /></a>
+        <a href={getLangUrl('fr')} class={`flag-link ${lang === 'fr' ? 'active' : ''}`} title="Français"><img src="/flags/fr.svg" alt="FR" width="32" height="22" loading="eager" fetchpriority="high" decoding="async" /></a>
       </div>
     </div>
     <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Menu">
@@ -1390,10 +1452,10 @@ const clientId = Astro.locals.clientId || 'default';
       <div class="mobile-header">
          <span class="logo-text">get<span class="logo-highlight">Nexo</span></span>
          <div class="mobile-lang-selector">
-           <a href={getLangUrl('pt')} class={lang === 'pt' ? 'active' : ''} title="Português"><img src="/flags/br.svg" alt="PT" width="28" height="18" loading="eager" fetchpriority="high" /></a>
-           <a href={getLangUrl('en')} class={lang === 'en' ? 'active' : ''} title="English"><img src="/flags/gb.svg" alt="EN" width="28" height="18" loading="eager" fetchpriority="high" /></a>
-           <a href={getLangUrl('es')} class={lang === 'es' ? 'active' : ''} title="Español"><img src="/flags/es.svg" alt="ES" width="28" height="18" loading="eager" fetchpriority="high" /></a>
-           <a href={getLangUrl('fr')} class={lang === 'fr' ? 'active' : ''} title="Français"><img src="/flags/fr.svg" alt="FR" width="28" height="18" loading="eager" fetchpriority="high" /></a>
+           <a href={getLangUrl('pt')} class={lang === 'pt' ? 'active' : ''} title="Português"><img src="/flags/br.svg" alt="PT" width="28" height="18" loading="eager" fetchpriority="high" decoding="async" /></a>
+           <a href={getLangUrl('en')} class={lang === 'en' ? 'active' : ''} title="English"><img src="/flags/gb.svg" alt="EN" width="28" height="18" loading="eager" fetchpriority="high" decoding="async" /></a>
+           <a href={getLangUrl('es')} class={lang === 'es' ? 'active' : ''} title="Español"><img src="/flags/es.svg" alt="ES" width="28" height="18" loading="eager" fetchpriority="high" decoding="async" /></a>
+           <a href={getLangUrl('fr')} class={lang === 'fr' ? 'active' : ''} title="Français"><img src="/flags/fr.svg" alt="FR" width="28" height="18" loading="eager" fetchpriority="high" decoding="async" /></a>
          </div>
          <button id="mobile-close" class="mobile-close">×</button>
       </div>
@@ -1402,33 +1464,33 @@ const clientId = Astro.locals.clientId || 'default';
         <div class="mobile-section">
           <span class="mobile-section-title">Soluções Smart</span>
           <div class="mobile-grid">
-            <a href={`/${lang}/${t.slugs.chat_ia}`}>🤖 Chatbot IA 24h</a>
-            <a href={`/${lang}/${t.slugs.tickets}`}>🎫 Suporte 360º</a>
-            <a href={`/${lang}/${t.slugs.analytics}`}>📊 AI Analytics</a>
-            <a href={`/${lang}/${t.slugs.loyalty}`}>🏆 Fidelidade</a>
+            <a href={`/${lang}/${translations.slugs.chat_ia}`}>🤖 Chatbot IA 24h</a>
+            <a href={`/${lang}/${translations.slugs.tickets}`}>🎫 Suporte 360º</a>
+            <a href={`/${lang}/${translations.slugs.analytics}`}>📊 AI Analytics</a>
+            <a href={`/${lang}/${translations.slugs.loyalty}`}>🏆 Fidelidade</a>
           </div>
         </div>
 
         <div class="mobile-section">
           <span class="mobile-section-title">Ecossistema</span>
           <div class="mobile-grid">
-            <a href={`/${lang}/${t.slugs.integrations}`}>🛍️ Shopify</a>
-            <a href={`/${lang}/${t.slugs.integrations}`}>🛒 WooCommerce</a>
-            <a href={`/${lang}/${t.slugs.integrations}`}>💳 Checkout PIX</a>
-            <a href={`/${lang}/${t.slugs.api}`}>🔄 API Dev</a>
+            <a href={`/${lang}/${translations.slugs.integrations}`}>🛍️ Shopify</a>
+            <a href={`/${lang}/${translations.slugs.integrations}`}>🛒 WooCommerce</a>
+            <a href={`/${lang}/${translations.slugs.integrations}`}>💳 Checkout PIX</a>
+            <a href={`/${lang}/${translations.slugs.api}`}>🔄 API Dev</a>
           </div>
         </div>
 
         <div class="mobile-links-extra">
-          <a href={`/${lang}/${t.slugs.pricing}`}>💰 Planos e Preços</a>
-          <a href={`/${lang}/${t.slugs.how_it_works}`}>⚙️ Como Funciona</a>
-          <a href={`/${lang}/${t.slugs.blog}`}>📝 Blog Insights</a>
+          <a href={`/${lang}/${translations.slugs.pricing}`}>💰 Planos e Preços</a>
+          <a href={`/${lang}/${translations.slugs.how_it_works}`}>⚙️ Como Funciona</a>
+          <a href={`/${lang}/${translations.slugs.blog}`}>📝 Blog Insights</a>
         </div>
       </div>
 
       <div class="mobile-footer">
         <a href="/login" class="mobile-login">Login</a>
-        <a href={`/${lang}/${t.slugs.create_bot}`} class="btn-primary-glow w-full">Teste Grátis Agora</a>
+        <a href={`/${lang}/${translations.slugs.create_bot}`} class="btn-primary-glow w-full">Teste Grátis Agora</a>
       </div>
     </nav>
   </div>
@@ -1516,12 +1578,12 @@ const clientId = Astro.locals.clientId || 'default';
       <div class="footer-col">
         <h3 class="footer-title">Plataforma & IA</h3>
         <div class="footer-links">
-          <a href={`/${lang}/${t.slugs.solutions}`}>Soluções Completas</a>
-          <a href={`/${lang}/${t.slugs.loyalty}`}>Programa de Fidelidade</a>
-          <a href={`/${lang}/${t.slugs.analytics}`}>Analytics Enterprise</a>
-          <a href={`/${lang}/${t.slugs.integrations}`}>Integrações de API</a>
+          <a href={`/${lang}/${translations.slugs.solutions}`}>Soluções Completas</a>
+          <a href={`/${lang}/${translations.slugs.loyalty}`}>Programa de Fidelidade</a>
+          <a href={`/${lang}/${translations.slugs.analytics}`}>Analytics Enterprise</a>
+          <a href={`/${lang}/${translations.slugs.integrations}`}>Integrações de API</a>
           <a href="/loja">Loja GetNexo</a>
-          <a href={`/${lang}/${t.slugs.pricing}`}>Tabela de Preços</a>
+          <a href={`/${lang}/${translations.slugs.pricing}`}>Tabela de Preços</a>
         </div>
       </div>
 
@@ -1529,12 +1591,12 @@ const clientId = Astro.locals.clientId || 'default';
       <div class="footer-col">
         <h3 class="footer-title">Soluções por Setor</h3>
         <div class="footer-links">
-          <a href={`/${lang}/${t.slugs.blog}/whatsapp-automacao-imobiliaria`} title="Automação WhatsApp para Imobiliárias">Imobiliárias</a>
-          <a href={`/${lang}/${t.slugs.blog}/whatsapp-clinicas-saude-lgpd`} title="Agendamento Automático para Clínicas">Saúde & Clínicas</a>
-          <a href={`/${lang}/${t.slugs.blog}/chatbot-infoprodutores-escala`} title="Chatbot para Infoprodutores">Infoprodutores</a>
-          <a href={`/${lang}/${t.slugs.blog}/vendas-preditivas-ia`} title="IA de Vendas para E-commerce">E-commerce</a>
-          <a href={`/${lang}/${t.slugs.blog}/automacao-agendamento-liberais`} title="Automação para Profissionais Liberais">Profissionais Liberais</a>
-          <a href={`/${lang}/${t.slugs.blog}/saas-growth-whatsapp-api`} title="Estratégias de Growth para SaaS">SaaS & Startups</a>
+          <a href={`/${lang}/${translations.slugs.blog}/whatsapp-automacao-imobiliaria`} title="Automação WhatsApp para Imobiliárias">Imobiliárias</a>
+          <a href={`/${lang}/${translations.slugs.blog}/whatsapp-clinicas-saude-lgpd`} title="Agendamento Automático para Clínicas">Saúde & Clínicas</a>
+          <a href={`/${lang}/${translations.slugs.blog}/chatbot-infoprodutores-escala`} title="Chatbot para Infoprodutores">Infoprodutores</a>
+          <a href={`/${lang}/${translations.slugs.blog}/vendas-preditivas-ia`} title="IA de Vendas para E-commerce">E-commerce</a>
+          <a href={`/${lang}/${translations.slugs.blog}/automacao-agendamento-liberais`} title="Automação para Profissionais Liberais">Profissionais Liberais</a>
+          <a href={`/${lang}/${translations.slugs.blog}/saas-growth-whatsapp-api`} title="Estratégias de Growth para SaaS">SaaS & Startups</a>
         </div>
       </div>
 
@@ -1542,11 +1604,11 @@ const clientId = Astro.locals.clientId || 'default';
       <div class="footer-col">
         <h3 class="footer-title">Recursos & Empresa</h3>
         <div class="footer-links">
-          <a href={`/${lang}/${t.slugs.blog}`}>Blog de Vendas</a>
+          <a href={`/${lang}/${translations.slugs.blog}`}>Blog de Vendas</a>
           <a href="/documentacao">Documentação API</a>
-          <a href={`/${lang}/${t.slugs.faq}`}>Central de FAQ</a>
+          <a href={`/${lang}/${translations.slugs.faq}`}>Central de FAQ</a>
           <a href="/sobre">Sobre Nós</a>
-          <a href={`/${lang}/${t.slugs.contact}`}>Contato Oficial</a>
+          <a href={`/${lang}/${translations.slugs.contact}`}>Contato Oficial</a>
           <a href="/revenda">Programa de Revenda</a>
         </div>
       </div>
@@ -1560,8 +1622,8 @@ const clientId = Astro.locals.clientId || 'default';
           <button type="submit">🚀</button>
         </form>
         <div class="footer-links mt-6">
-          <a href={`/${lang}/${t.slugs.privacy}`}>Privacidade</a>
-          <a href={`/${lang}/${t.slugs.terms}`}>Termos</a>
+          <a href={`/${lang}/${translations.slugs.privacy}`}>Privacidade</a>
+          <a href={`/${lang}/${translations.slugs.terms}`}>Termos</a>
           <a href="/acessibilidade">Acessibilidade</a>
         </div>
       </div>
@@ -1571,19 +1633,19 @@ const clientId = Astro.locals.clientId || 'default';
     <div class="footer-bottom">
       <div class="footer-lang-selector" style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap;">
         <a href={getLangUrl('pt')} class={`lang-chip ${lang === 'pt' ? 'active' : ''}`}>
-          <img src="/flags/br.svg" alt="Português" width="18" height="12" style="width: 18px; height: 12px; border-radius: 2px;" loading="eager" fetchpriority="high" />
+          <img src="/flags/br.svg" alt="Português" width="18" height="12" style="width: 18px; height: 12px; border-radius: 2px;" loading="eager" fetchpriority="high" decoding="async" />
           <span>PT</span>
         </a>
         <a href={getLangUrl('en')} class={`lang-chip ${lang === 'en' ? 'active' : ''}`}>
-          <img src="/flags/gb.svg" alt="English" width="18" height="12" style="width: 18px; height: 12px; border-radius: 2px;" loading="eager" fetchpriority="high" />
+          <img src="/flags/gb.svg" alt="English" width="18" height="12" style="width: 18px; height: 12px; border-radius: 2px;" loading="eager" fetchpriority="high" decoding="async" />
           <span>EN</span>
         </a>
         <a href={getLangUrl('es')} class={`lang-chip ${lang === 'es' ? 'active' : ''}`}>
-          <img src="/flags/es.svg" alt="Español" width="18" height="12" style="width: 18px; height: 12px; border-radius: 2px;" loading="eager" fetchpriority="high" />
+          <img src="/flags/es.svg" alt="Español" width="18" height="12" style="width: 18px; height: 12px; border-radius: 2px;" loading="eager" fetchpriority="high" decoding="async" />
           <span>ES</span>
         </a>
         <a href={getLangUrl('fr')} class={`lang-chip ${lang === 'fr' ? 'active' : ''}`}>
-          <img src="/flags/fr.svg" alt="Français" width="18" height="12" style="width: 18px; height: 12px; border-radius: 2px;" loading="eager" fetchpriority="high" />
+          <img src="/flags/fr.svg" alt="Français" width="18" height="12" style="width: 18px; height: 12px; border-radius: 2px;" loading="eager" fetchpriority="high" decoding="async" />
           <span>FR</span>
         </a>
       </div>
@@ -1615,14 +1677,14 @@ const clientId = Astro.locals.clientId || 'default';
         <div class="result-group">
           <span class="group-title">Navegação Rápida</span>
           <a href={lang === 'pt' ? '/' : `/${lang}`} class="palette-item"><span>🏠</span> Home</a>
-          <a href={`/${lang}/${t.slugs.pricing}`} class="palette-item"><span>💰</span> Planos e Preços</a>
-          <a href={`/${lang}/${t.slugs.solutions}`} class="palette-item"><span>🚀</span> Todas as Soluções</a>
-          <a href={`/${lang}/${t.slugs.how_it_works}`} class="palette-item"><span>🛠️</span> Como Funciona</a>
+          <a href={`/${lang}/${translations.slugs.pricing}`} class="palette-item"><span>💰</span> Planos e Preços</a>
+          <a href={`/${lang}/${translations.slugs.solutions}`} class="palette-item"><span>🚀</span> Todas as Soluções</a>
+          <a href={`/${lang}/${translations.slugs.how_it_works}`} class="palette-item"><span>🛠️</span> Como Funciona</a>
         </div>
         <div class="result-group">
           <span class="group-title">Suporte e Comunidade</span>
-          <a href={`/${lang}/${t.slugs.contact}`} class="palette-item"><span>📧</span> Fale com o Time</a>
-          <a href={`/${lang}/${t.slugs.faq}`} class="palette-item"><span>❓</span> Perguntas Frequentes</a>
+          <a href={`/${lang}/${translations.slugs.contact}`} class="palette-item"><span>📧</span> Fale com o Time</a>
+          <a href={`/${lang}/${translations.slugs.faq}`} class="palette-item"><span>❓</span> Perguntas Frequentes</a>
           <a href="https://github.com/lelebrr" target="_blank" class="palette-item"><span>🐙</span> GitHub Oficial</a>
         </div>
       </div>
@@ -1723,27 +1785,30 @@ const clientId = Astro.locals.clientId || 'default';
 
 
   <!-- Widget carregado de forma lazy e apenas quando necessário -->
-  <!-- Carregamento atrasado para não bloquear o LCP -->
+  <!-- Carregamento atrasado para não bloquear o LCP com estratégias avançadas -->
   <script defer data-cfasync="false" nonce={nonce}>
     (function(d,t) {
       const loadWidget = () => {
         const isMobile = window.innerWidth < 768;
         // Atraso maior para não bloquear o LCP
-        const delay = isMobile ? 5000 : 2000;
+        const delay = isMobile ? 8000 : 3000; // Aumentado para reduzir impacto no LCP
 
         setTimeout(() => {
           // Widget habilitado
           // Verificar se o servidor da API está acessível antes de tentar carregar
           fetch('/widget.js', {
             method: 'HEAD',
-            mode: 'no-cors'
+            mode: 'no-cors',
+            cache: 'force-cache'
           }).then((response) => {
             if (response.ok || response.type === 'opaque') {
               var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
               g.src="/widget.js?v=" + Date.now();
               g.defer = true;
               g.async = true;
+              g.crossOrigin = 'anonymous';
               g.setAttribute('data-bot', 'central');
+              g.fetchpriority = 'low';
 
               g.onerror = function() {
                 console.warn('[Widget] GetNexo widget failed to load - API unavailable');
@@ -1768,9 +1833,9 @@ const clientId = Astro.locals.clientId || 'default';
   </script>
   
   
-  <!-- Scripts de animação de scroll e efeitos da Home -->
-  <script src="/custom/js/scroll-animation.js" defer nonce={nonce}></script>
-  <script src="/custom/js/hero-animations.js" defer nonce={nonce}></script>
+  <!-- Scripts de animação de scroll e efeitos da Home - Otimizados para performance -->
+  <script src="/custom/js/scroll-animation.js" defer nonce={nonce} fetchpriority="low"></script>
+  <script src="/custom/js/hero-animations.js" defer nonce={nonce} fetchpriority="low"></script>
 
   <!-- Scripts críticos para interatividade - carregados após o DOM -->
   <script defer nonce={nonce}>
@@ -2159,6 +2224,9 @@ const clientId = Astro.locals.clientId || 'default';
       transition: all 0.3s ease;
       z-index: 1000;
       box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
+      will-change: transform, opacity;
+      transform: translateZ(0);
+      backface-visibility: hidden;
     }
 
     .back-to-top.visible {
@@ -2479,6 +2547,9 @@ const clientId = Astro.locals.clientId || 'default';
     .feriado-emoji {
       font-size: 2rem;
       animation: bounce 2s ease-in-out infinite;
+      will-change: transform, opacity;
+      transform: translateZ(0);
+      backface-visibility: hidden;
     }
 
     .feriado-text h4 {
@@ -2595,6 +2666,17 @@ const clientId = Astro.locals.clientId || 'default';
       visibility: hidden;
       display: flex; align-items: center; justify-content: center;
       transition: all 0.3s ease;
+      will-change: transform, opacity;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
+    .hub-container {
+      background: #0f172a; border: 1px solid rgba(0,212,255,0.3);
+      padding: 2rem; border-radius: 20px; max-width: 500px; width: 90%;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      will-change: transform, opacity;
+      transform: translateZ(0);
+      backface-visibility: hidden;
     }
     .discovery-hub.active {
       opacity: 1; visibility: visible; pointer-events: auto;
@@ -2648,6 +2730,9 @@ const clientId = Astro.locals.clientId || 'default';
       color: #00d4ff !important;
       box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
       transition: all 0.3s ease !important;
+      will-change: transform, opacity !important;
+      transform: translateZ(0) !important;
+      backface-visibility: hidden !important;
     }
     #tour-btn:hover, #acc-trigger:hover {
       transform: scale(1.1);
@@ -2698,20 +2783,23 @@ const clientId = Astro.locals.clientId || 'default';
         }
     }
 
-    /* Otimização de carregamento de imagens - Lazy Loading */
+    /* Otimização de carregamento de imagens - Lazy Loading com performance aprimorada */
     img[loading="lazy"] {
       opacity: 0;
       transition: opacity 0.3s ease-in-out;
+      will-change: opacity;
     }
     img[loading="lazy"].loaded {
       opacity: 1;
+      will-change: auto;
     }
 
-    /* Otimização de carregamento de componentes - Skeleton Loading */
+    /* Otimização de carregamento de componentes - Skeleton Loading com performance aprimorada */
     .skeleton-loading {
       background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
       background-size: 200% 100%;
       animation: skeleton-loading 1.5s ease-in-out infinite;
+      will-change: background-position;
     }
 
     @keyframes skeleton-loading {
@@ -2719,21 +2807,23 @@ const clientId = Astro.locals.clientId || 'default';
       100% { background-position: -200% 0; }
     }
 
-    /* Otimização de carregamento de fontes - Fallback */
+    /* Otimização de carregamento de fontes - Fallback com performance aprimorada */
     .font-loading {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-display: swap;
     }
     .font-loaded {
       font-family: 'Inter', system-ui, sans-serif;
+      font-display: swap;
     }
   </style>
   
-  <!-- Script de otimização de carregamento de imagens e componentes -->
+  <!-- Script de otimização de carregamento de imagens e componentes - Otimizado para performance -->
   <script nonce={Astro.locals.nonce} defer>
     // Otimização: Lazy loading para imagens e skeleton loading
     // Executado apenas no lado do cliente após o DOM estar pronto
     document.addEventListener('DOMContentLoaded', () => {
-      // Otimização: Lazy loading para imagens
+      // Otimização: Lazy loading para imagens com IntersectionObserver otimizado
       if ('IntersectionObserver' in window) {
         const lazyImages = document.querySelectorAll('img[loading="lazy"]');
         const imageObserver = new IntersectionObserver((entries, observer) => {
@@ -2745,14 +2835,58 @@ const clientId = Astro.locals.clientId || 'default';
             }
           });
         }, {
-          rootMargin: '50px 0px',
+          rootMargin: '100px 0px', // Aumentado para carregar imagens antes de entrarem na viewport
           threshold: 0.01
         });
 
         lazyImages.forEach(img => imageObserver.observe(img));
       }
 
-      // Otimização: Skeleton loading para componentes
+      // Otimização: Lazy loading para iframes e vídeos
+      if ('IntersectionObserver' in window) {
+        const lazyElements = document.querySelectorAll('iframe[loading="lazy"], video[loading="lazy"], [data-lazy]');
+        const lazyObserver = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const element = entry.target;
+              
+              // Carregar iframe
+              if (element.tagName === 'IFRAME') {
+                const src = element.dataset.src || element.src;
+                if (src && element.src !== src) {
+                  element.src = src;
+                }
+              }
+              
+              // Carregar vídeo
+              if (element.tagName === 'VIDEO') {
+                const src = element.dataset.src;
+                if (src) {
+                  element.src = src;
+                  element.load();
+                }
+              }
+              
+              // Carregar outros elementos lazy
+              if (element.dataset.lazy) {
+                const lazyContent = element.dataset.lazy;
+                if (lazyContent) {
+                  element.innerHTML = lazyContent;
+                }
+              }
+              
+              observer.unobserve(element);
+            }
+          });
+        }, {
+          rootMargin: '200px 0px', // Carregar mais cedo para elementos pesados
+          threshold: 0.01
+        });
+
+        lazyElements.forEach(el => lazyObserver.observe(el));
+      }
+
+      // Otimização: Skeleton loading para componentes com IntersectionObserver otimizado
       if ('IntersectionObserver' in window) {
         const skeletonElements = document.querySelectorAll('.skeleton-loading');
         const skeletonObserver = new IntersectionObserver((entries, observer) => {
@@ -2782,6 +2916,26 @@ const clientId = Astro.locals.clientId || 'default';
           document.documentElement.classList.remove('font-loading');
         });
       }
+
+      // Otimização: Reduzir reflows e repaints
+      const optimizeLayout = () => {
+        // Forçar hardware acceleration para elementos animados
+        const animatedElements = document.querySelectorAll('.animate-on-scroll, .global-header, .btn-start, .logo-box, .nav-links a, .mobile-menu-btn');
+        animatedElements.forEach(el => {
+          el.style.transform = 'translateZ(0)';
+          el.style.backfaceVisibility = 'hidden';
+          el.style.willChange = 'transform, opacity';
+        });
+
+        // Otimizar propriedades CSS para reduzir repaints
+        const criticalElements = document.querySelectorAll('.global-header, .logo-text, .btn-start, .nav-links a');
+        criticalElements.forEach(el => {
+          el.style.contain = 'layout style paint';
+        });
+      };
+
+      // Executar otimização após o carregamento inicial
+      requestAnimationFrame(optimizeLayout);
     });
   </script>
   </div> <!-- end of #layout-wrapper -->

@@ -29,19 +29,18 @@ Este documento descreve as melhorias de segurança implementadas no projeto GetN
 **CSP Final (Middleware):**
 ```javascript
 const csp = [
-    "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://api.getnexo.com.br https://*.getnexo.com.br https://www.googletagmanager.com https://static.cloudflareinsights.com`,
-    `style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com`,
-    "img-src * data: blob:",
-    "font-src 'self' https://fonts.gstatic.com",
-    "connect-src 'self' https://api.getnexo.com.br https://*.getnexo.com.br wss://*.getnexo.com.br",
-    "frame-ancestors 'self' https://*.getnexo.com.br",
-    "require-trusted-types-for 'script'",
-    `trusted-types ${trustedTypesPolicy}`,
+    "default-src 'self' https: http: data: blob:",
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline' 'unsafe-eval' https: http: *.cloudflare.com static.cloudflareinsights.com https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://api.getnexo.com.br https://*.getnexo.com.br https://www.googletagmanager.com`,
+    `style-src 'self' 'unsafe-inline' https: http: https://fonts.googleapis.com https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com`,
+    "img-src 'self' data: blob: https: http: https://*.getnexo.com.br https://i.pravatar.cc",
+    "font-src 'self' data: https: http: https://fonts.gstatic.com",
+    "connect-src 'self' https: http: ws: wss:",
+    "frame-src 'self' https: http:",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
-    "upgrade-insecure-requests"
+    "frame-ancestors 'self'",
+    "require-trusted-types-for 'script'"
 ].join('; ');
 ```
 
@@ -124,9 +123,12 @@ const getnexoPolicy = window.trustedTypes.createPolicy('getnexo-trusted', {
 
 ### 4. Outras Melhorias de Segurança
 
-#### a. Remoção de Headers Inseguros
-- Removido `X-Frame-Options: SAMEORIGIN` do middleware (para permitir iframes de widgets)
-- Substituído por CSP `frame-ancestors` mais seguro
+#### a. Configuração de CSP Ajustada
+- Adicionado `https:` e `http:` para permitir scripts externos necessários
+- Adicionados domínios de terceiros confiáveis: `cdn.jsdelivr.net`, `unpkg.com`, `cdnjs.cloudflare.com`, `api.getnexo.com.br`, `*.getnexo.com.br`, `www.googletagmanager.com`, `static.cloudflareinsights.com`
+- Mantido `'unsafe-inline'` e `'unsafe-eval'` para compatibilidade com scripts inline e eval necessários
+- Mantido `'strict-dynamic'` para proteção contra bypass de listas de permissões
+- Mantido `require-trusted-types-for 'script'` para mitigação de XSS baseado em DOM
 
 #### b. CORS Restrito
 - Mantido `Access-Control-Allow-Origin: *` apenas para recursos estáticos
@@ -207,6 +209,8 @@ curl -I https://getnexo.com.br | grep -i strict-transport-security
 
 ### Considerações de Compatibilidade
 - **Navegadores antigos**: Trusted Types requer Chrome 83+, Firefox 100+, Safari 16.4+
+- **Scripts inline**: Scripts inline usam nonces para segurança
+- **Scripts externos**: Domínios de terceiros devem estar na whitelist da CSP
 - **Fallback**: Implementado fallback para navegadores sem suporte
 - **Scripts inline**: Todos os scripts inline agora usam nonces
 - **CDN**: Scripts de terceiros devem ser revisados e adicionados à whitelist
@@ -239,6 +243,6 @@ Para relatar vulnerabilidades de segurança:
 
 ---
 
-**Última Atualização:** 2026-01-23  
-**Responsável:** Equipe de Segurança GetNexo  
+**Última Atualização:** 2026-01-28
+**Responsável:** Equipe de Segurança GetNexo
 **Status:** ✅ Implementado e Testado

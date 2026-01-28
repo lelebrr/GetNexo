@@ -1,0 +1,35 @@
+
+> getnexo-site@1.1.2 build
+> astro build
+
+02:14:14 [@astrojs/node] Enabling sessions with filesystem storage
+02:14:14 [content] Syncing content
+02:14:14 [content] Synced content
+02:14:14 [types] Generated 541ms
+02:14:14 [build] output: "server"
+02:14:14 [build] mode: "server"
+02:14:14 [build] directory: /home/lele/usenexo/getnexo-site/dist/
+02:14:14 [build] adapter: @astrojs/node
+02:14:14 [build] Collecting build info...
+02:14:14 [build] ✓ Completed in 782ms.
+02:14:14 [build] Building server entrypoints...
+02:14:15 [vite] transforming...
+02:14:24 [vite] ✓ 1385 modules transformed.
+02:14:24 [ERROR] [vite] ✗ Build failed in 9.56s
+02:14:24 [WARN] [router] getStaticPaths() ignored in dynamic page /src/pages/ar/[id].astro. Add `export const prerender = true;` to prerender the page as static HTML during the build process.
+Unexpected "t"
+  Location:
+    /home/lele/usenexo/getnexo-site/src/pages/index.astro:53:0
+  Stack trace:
+    at failureErrorWithLog (/home/lele/usenexo/node_modules/esbuild/lib/main.js:1467:15)
+    at responseCallbacks.<computed> (/home/lele/usenexo/node_modules/esbuild/lib/main.js:603:9)
+    at Socket.readFromStdout (/home/lele/usenexo/node_modules/esbuild/lib/main.js:581:7)
+    at addChunk (node:internal/streams/readable:561:12)
+    at Readable.push (node:internal/streams/readable:392:5)
+npm error Lifecycle script `build` failed with error:
+npm error code 1
+npm error path /home/lele/usenexo/getnexo-site
+npm error workspace getnexo-site@1.1.2
+npm error location /home/lele/usenexo/getnexo-site
+npm error command failed
+npm error command sh -c astro build

@@ -2,37 +2,39 @@
 import Layout from '../layouts/Layout.astro';
 import ROICalculator from '../components/ROICalculator.astro';
 import Testimonials from '../components/Testimonials.astro';
-import TourGuided from '../components/TourGuided.astro';
 import { verificaDataVariavel } from '../lib/feriados.js';
 import '../styles/index-premium.css';
 import HomeHero from '../components/home/HomeHero.astro';
 import HomeFeatures from '../components/home/HomeFeatures.astro';
 import HomeMetrics from '../components/home/HomeMetrics.astro';
 import HomeGiantFeatures from '../components/home/HomeGiantFeatures.astro';
+import HomeCTA from '../components/home/HomeCTA.astro';
 import HomeSecurity from '../components/home/HomeSecurity.astro';
 import HomeSchema from '../components/seo/HomeSchema.astro';
 import DemoModal from '../components/modals/DemoModal.astro';
 import ChatModal from '../components/modals/ChatModal.astro';
 import InteractiveModal from '../components/modals/InteractiveModal.astro';
 
-const title = "GetNexo - IA para Vendas WhatsApp 24/7 | API Oficial Meta";
-const description = "Automatize vendas no WhatsApp com IA Generativa. API Oficial Meta, PIX automático, CRM inteligente e Analytics. Aumente conversão em até 10x sem mensalidades fixas.";
-const keywords = "ia whatsapp vendas, chatbot whatsapp, automação whatsapp, api oficial meta, chatbot com pix, crm whatsapp, inteligência artificial vendas, chatbot grátis, recuperar carrinho whatsapp, chatbot auto-hospedado";
+const title = "GetNexo - Chatbot WhatsApp IA para Vendas 24h";
+const description = "Automatize suas vendas no WhatsApp com Inteligência Artificial Generativa.";
+const keywords = "whatsapp, ia, vendas";
 
 const lang = 'pt';
-const { default: t } = await import(`../i18n/pt.json`);
+// const { default: indexTranslations } = await import('../i18n/pt.json');
 
 import feriadosData from '../data/feriados.json';
 
 const hoje = new Date().toISOString().slice(0,10);
 const idiomaNavegador = typeof navigator !== 'undefined' ? (navigator.language || 'pt-BR') : 'pt-BR';
 const idiomaCurto = idiomaNavegador.split('-')[0];
+
 const feriadoHoje = feriadosData.feriados.find(f => {
   if (f.data === hoje) return true;
   const anoAtual = new Date().getFullYear();
   const dataCalculada = verificaDataVariavel(f.data, anoAtual);
   return dataCalculada === hoje;
 });
+
 const nonce = Astro.locals.nonce;
 ---
 
@@ -44,29 +46,9 @@ const nonce = Astro.locals.nonce;
     <HomeMetrics />
     <Testimonials />
     <ROICalculator />
-    <HomeGiantFeatures t={t} />
+    <HomeGiantFeatures />
+    <HomeCTA />
     <HomeSecurity lang={lang} />
-    <section class="py-32 bg-gradient-to-b from-gray-950 to-black relative overflow-hidden">
-      <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(34,211,238,0.1),transparent_70%)]"></div>
-      <div class="container mx-auto px-4 relative z-10">
-        <div class="text-center max-w-4xl mx-auto">
-          <h2 class="text-4xl md:text-6xl font-black mb-8 leading-tight">
-            Pronto pra <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">multiplicar suas vendas no WhatsApp</span>?
-          </h2>
-          <p class="text-xl text-gray-400 mb-12">
-            Junte-se a mais de 1.200 lojistas que já estão faturando alto com IA automática.
-          </p>
-          <a href="/precos" class="inline-block px-12 py-8 text-black font-black text-2xl rounded-full bg-gradient-to-r from-green-400 to-cyan-500 hover:from-green-300 hover:to-cyan-400 shadow-[0_0_50px_rgba(34,211,238,0.4)] transform hover:scale-110 transition-all duration-300">
-            Liberar Meu Bot GRÁTIS (7 Dias Sem Cartão)
-          </a>
-          <div class="mt-8 flex items-center justify-center gap-6 text-gray-500 font-bold uppercase text-xs tracking-widest">
-            <span>✅ Setup em 12min</span>
-            <span>✅ Zero Mensalidade</span>
-            <span>✅ Suporte VIP</span>
-          </div>
-        </div>
-      </div>
-    </section>
   </div>
   
   <div id="page-modals">
@@ -74,57 +56,11 @@ const nonce = Astro.locals.nonce;
     <ChatModal />
     <InteractiveModal />
   </div>
-  <!-- Carregamento otimizado de scripts - apenas quando necessário -->
-  <script nonce={Astro.locals.nonce} is:inline>
-    // Carregamento dinâmico e otimizado de scripts de demonstração
-    // Scripts são carregados apenas quando o usuário interage com elementos específicos
+
+  <script nonce={nonce} is:inline>
     (function() {
       'use strict';
-      
-      function loadDemoScripts() {
-        if (!window.getNexoState || window.getNexoState.scriptsLoaded || window.getNexoState.scriptsLoading) return;
-        
-        window.getNexoState.scriptsLoading = true;
-        
-        // Carrega scripts apenas quando elementos específicos encontrados
-        const scripts = [
-          '/custom/js/mega-chat-sim-v2.js',
-          '/custom/js/modals-demo.js'
-        ];
-        
-        const currentNonce = document.querySelector('script[nonce]')?.nonce || '';
-        
-        scripts.forEach(src => {
-          const script = document.createElement('script');
-          script.src = src;
-          script.defer = true;
-          script.fetchpriority = 'low';
-          if (currentNonce) script.setAttribute('nonce', currentNonce);
-          document.head.appendChild(script);
-          
-          if (src.includes('modals-demo.js')) {
-            script.onload = () => {
-              window.getNexoState.scriptsLoaded = true;
-              window.getNexoState.scriptsLoading = false;
-            };
-          }
-        });
-      }
-      
-      // Carrega scripts apenas quando o usuário clica em elementos de demonstração
-      document.addEventListener('click', (e) => {
-        const target = e.target.closest('#hero-demo-btn, #chat-fab, [data-open-modal]');
-        if (target) {
-          loadDemoScripts();
-        }
-      }, { passive: true });
-      
-      // Fallback: carrega após 5 segundos se não houver interação
-      setTimeout(() => {
-        if (window.getNexoState && !window.getNexoState.scriptsLoaded) {
-          loadDemoScripts();
-        }
-      }, 5000);
+      console.log('GetNexo Site Loaded');
     })();
   </script>
 </Layout>

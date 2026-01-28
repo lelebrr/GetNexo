@@ -51,7 +51,12 @@ if (window.trustedTypes && window.trustedTypes.createPolicy) {
                 'unpkg.com',
                 'cdnjs.cloudflare.com',
                 'googletagmanager.com',
-                'cloudflareinsights.com'
+                'cloudflareinsights.com',
+                'cdn.skypack.dev',
+                'openrouter.ai',
+                'fonts.googleapis.com',
+                'static.cloudflareinsights.com',
+                '*.cloudflare.com'
             ];
 
             try {

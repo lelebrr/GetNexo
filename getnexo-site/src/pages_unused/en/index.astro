@@ -12,7 +12,7 @@ const description = "Automate your WhatsApp sales with Generative AI. Official M
 const keywords = "whatsapp chatbot sales, ai for whatsapp, whatsapp automation sales, official whatsapp business api, chatbot with pix, crm for whatsapp, artificial intelligence sales assistant, whatsapp chatbot free, recover abandoned whatsapp cart, whatsapp auto-hosted chatbot";
 
 const lang = 'en';
-const { default: t } = await import(`../../i18n/en.json`);
+const { default: translations } = await import('../../i18n/en.json');
 
 import feriadosData from '../../data/feriados.json';
 
@@ -268,7 +268,7 @@ const homeSchema = {
         <span id="typing-text"></span><span class="cursor">|</span>
       </p>
       <div class="hero-ctas animate-on-scroll">
-        <a href={`/${lang}/${t.slugs.create_bot}`} class="btn-primary-glow">START NOW FOR FREE</a>
+        <a href={`/${lang}/${translations.slugs.create_bot}`} class="btn-primary-glow">START NOW FOR FREE</a>
         <button data-open-modal="demo" class="btn-surprise animate-on-scroll">TEST HERE.. SURPRISE YOURSELF</button>
       </div>
       <div class="hero-trust animate-on-scroll">
@@ -329,25 +329,25 @@ const homeSchema = {
         <div class="p-icon">🤖</div>
         <h3>Generative Sales AI</h3>
         <p>Virtual agent trained with your catalog that converts leads into profit 24/7 in a humanized way.</p>
-        <a href={`/${lang}/${t.slugs.analytics}`} class="p-link">Explore AI →</a>
+        <a href={`/${lang}/${translations.slugs.analytics}`} class="p-link">Explore AI →</a>
       </div>
       <div class="glass-panel p-card animate-on-scroll">
         <div class="p-icon">💰</div>
         <h3>Native Checkout & PIX</h3>
         <p>Fluid purchase experience with automatic PIX generation and confirmation without leaving the chat.</p>
-        <a href={`/${lang}/${t.slugs.analytics}`} class="p-link">View Checkout →</a>
+        <a href={`/${lang}/${translations.slugs.analytics}`} class="p-link">View Checkout →</a>
       </div>
       <div class="glass-panel p-card animate-on-scroll">
         <div class="p-icon">🚀</div>
         <h3>High-Performance Broadcast & Ads</h3>
         <p>Intelligent mass sending and Click-to-WhatsApp Ads with real-time ROI measurement.</p>
-        <a href={`/${lang}/${t.slugs.analytics}`} class="p-link">Activate Ads →</a>
+        <a href={`/${lang}/${translations.slugs.analytics}`} class="p-link">Activate Ads →</a>
       </div>
       <div class="glass-panel p-card animate-on-scroll">
         <div class="p-icon">👥</div>
         <h3>Strategic Pipeline & CRM</h3>
         <p>360º view of your funnel with multi-agent management and intelligent follow-up automation.</p>
-        <a href={`/${lang}/${t.slugs.analytics}`} class="p-link">Manage Leads →</a>
+        <a href={`/${lang}/${translations.slugs.analytics}`} class="p-link">Manage Leads →</a>
       </div>
     </div>
 
@@ -382,14 +382,14 @@ const homeSchema = {
         </div>
         <div class="giant-feature-info">
             <div class="feature-tag">Exclusive</div>
-            <h2 class="text-gradient">{t.features_giant.magic_replies.title}</h2>
-            <p>{t.features_giant.magic_replies.description}</p>
+            <h2 class="text-gradient">{translations.features_giant.magic_replies.title}</h2>
+            <p>{translations.features_giant.magic_replies.description}</p>
             <ul class="feature-bullets">
-                <li><span>✨</span> {t.features_giant.magic_replies.f1}</li>
-                <li><span>🧠</span> {t.features_giant.magic_replies.f2}</li>
-                <li><span>📈</span> {t.features_giant.magic_replies.f3}</li>
+                <li><span>✨</span> {translations.features_giant.magic_replies.f1}</li>
+                <li><span>🧠</span> {translations.features_giant.magic_replies.f2}</li>
+                <li><span>📈</span> {translations.features_giant.magic_replies.f3}</li>
             </ul>
-            <a href={`/${lang}/${t.slugs.analytics}`} class="btn-outline-glow">Learn about Magic Replies</a>
+            <a href={`/${lang}/${translations.slugs.analytics}`} class="btn-outline-glow">Learn about Magic Replies</a>
         </div>
     </div>
 
@@ -397,14 +397,14 @@ const homeSchema = {
     <div class="giant-feature-row reverse animate-on-scroll">
         <div class="giant-feature-info">
             <div class="feature-tag gold">Retention</div>
-            <h2 class="text-gradient">{t.features_giant.loyalty.title}</h2>
-            <p>{t.features_giant.loyalty.description}</p>
+            <h2 class="text-gradient">{translations.features_giant.loyalty.title}</h2>
+            <p>{translations.features_giant.loyalty.description}</p>
             <ul class="feature-bullets">
-                <li><span>🏆</span> {t.features_giant.loyalty.f1}</li>
-                <li><span>🎁</span> {t.features_giant.loyalty.f2}</li>
-                <li><span>❤️</span> {t.features_giant.loyalty.f3}</li>
+                <li><span>🏆</span> {translations.features_giant.loyalty.f1}</li>
+                <li><span>🎁</span> {translations.features_giant.loyalty.f2}</li>
+                <li><span>❤️</span> {translations.features_giant.loyalty.f3}</li>
             </ul>
-            <a href={`/${lang}/${t.slugs.analytics}`} class="btn-outline-glow">View Loyalty</a>
+            <a href={`/${lang}/${translations.slugs.analytics}`} class="btn-outline-glow">View Loyalty</a>
         </div>
         <div class="giant-feature-visual">
             <img src="/assets/features/loyalty.webp" alt="Loyalty System" width="501" height="501" class="premium-visual" />
@@ -418,14 +418,14 @@ const homeSchema = {
         </div>
         <div class="giant-feature-info">
             <div class="feature-tag blue">Intelligence</div>
-            <h2 class="text-gradient">{t.features_giant.analytics.title}</h2>
-            <p>{t.features_giant.analytics.description}</p>
+            <h2 class="text-gradient">{translations.features_giant.analytics.title}</h2>
+            <p>{translations.features_giant.analytics.description}</p>
             <ul class="feature-bullets">
-                <li><span>📊</span> {t.features_giant.analytics.f1}</li>
-                <li><span>📝</span> {t.features_giant.analytics.f2}</li>
-                <li><span>🌍</span> {t.features_giant.analytics.f3}</li>
+                <li><span>📊</span> {translations.features_giant.analytics.f1}</li>
+                <li><span>📝</span> {translations.features_giant.analytics.f2}</li>
+                <li><span>🌍</span> {translations.features_giant.analytics.f3}</li>
             </ul>
-            <a href={`/${lang}/${t.slugs.analytics}`} class="btn-outline-glow">Explore Data</a>
+            <a href={`/${lang}/${translations.slugs.analytics}`} class="btn-outline-glow">Explore Data</a>
         </div>
     </div>
 
@@ -433,14 +433,14 @@ const homeSchema = {
     <div class="giant-feature-row reverse animate-on-scroll">
         <div class="giant-feature-info">
             <div class="feature-tag green">Ecosystem</div>
-            <h2 class="text-gradient">{t.features_giant.integrations.title}</h2>
-            <p>{t.features_giant.integrations.description}</p>
+            <h2 class="text-gradient">{translations.features_giant.integrations.title}</h2>
+            <p>{translations.features_giant.integrations.description}</p>
             <ul class="feature-bullets">
-                <li><span>🔗</span> {t.features_giant.integrations.f1}</li>
-                <li><span>⚙️</span> {t.features_giant.integrations.f2}</li>
-                <li><span>📡</span> {t.features_giant.integrations.f3}</li>
+                <li><span>🔗</span> {translations.features_giant.integrations.f1}</li>
+                <li><span>⚙️</span> {translations.features_giant.integrations.f2}</li>
+                <li><span>📡</span> {translations.features_giant.integrations.f3}</li>
             </ul>
-            <a href={`/${lang}/${t.slugs.integrations}`} class="btn-outline-glow">View All Integrations</a>
+            <a href={`/${lang}/${translations.slugs.integrations}`} class="btn-outline-glow">View All Integrations</a>
         </div>
         <div class="giant-feature-visual">
             <img src="/assets/features/integrations.webp" alt="Integrations Map" width="501" height="501" class="premium-visual" />
@@ -497,7 +497,7 @@ const homeSchema = {
         <p class="security-notice">💡 WhatsApp Business security is not a luxury — it's a necessity.</p>
         <p class="security-benefit">With GetNexo, you have enterprise-level protection without complication or exorbitant cost.</p>
         <div class="security-actions">
-            <a href={`/${lang}/${t.slugs.create_bot}`} class="btn-primary-glow security-btn">Test Free Now →</a>
+            <a href={`/${lang}/${translations.slugs.create_bot}`} class="btn-primary-glow security-btn">Test Free Now →</a>
             <button data-open-modal="demo" class="btn-outline security-btn">View Certifications</button>
         </div>
         <p class="security-footer">© 2026 GetNexo. All rights reserved. | GetNexo: The vanguard in WhatsApp Automation and AI for Business.</p>
@@ -512,7 +512,7 @@ const homeSchema = {
             Dominate WhatsApp with the most robust infrastructure on the market. 💡 WhatsApp Business security is not a luxury — it's a necessity. Activate your AI in less than 10 minutes.
         </p>
         <div class="flex flex-col sm:flex-row gap-6 justify-center">
-            <a href={`/${lang}/${t.slugs.create_bot}`} class="btn-primary-glow">START NOW FOR FREE</a>
+            <a href={`/${lang}/${translations.slugs.create_bot}`} class="btn-primary-glow">START NOW FOR FREE</a>
             <button data-open-modal="demo" class="btn-outline">TEST AI DEMO</button>
         </div>
     </div>

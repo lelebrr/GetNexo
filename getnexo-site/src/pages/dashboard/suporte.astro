@@ -81,7 +81,7 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
             const msg = msgs[Math.floor(Math.random() * msgs.length)];
 
             const line = document.createElement('div');
-            line.innerHTML = `<span style="opacity:0.5;">[${now}]</span> <span style="color:${t.color}; font-weight:700;">${t.type}</span> ${msg}`;
+            line.innerHTML = `<span style="opacity:0.5;">[${now}]</span> <span style="color:${translations.color}; font-weight:700;">${translations.type}</span> ${msg}`;
             logs.appendChild(line);
             logs.scrollTop = logs.scrollHeight;
             

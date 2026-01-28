@@ -6,7 +6,7 @@ const description = "Compare GetNexo plans: Starter, Pro, and Enterprise. WhatsA
 const keywords = "getnexo price, whatsapp api plans, whatsapp bot value, whatsapp automation cost";
 
 const lang = 'en';
-const { default: t } = await import(`../../i18n/${lang}.json`);
+const { default: translations } = await import(`../../i18n/${lang}.json`);
 
 const plans = [
   {
@@ -276,13 +276,13 @@ const priceSchema = {
       {testimonialPricing.map(t => (
         <div class="testimonial-card glass-panel">
           <div class="t-header">
-            <span class="t-avatar">{t.avatar}</span>
+            <span class="t-avatar">{translations.avatar}</span>
             <div class="t-info">
-              <strong>{t.name}</strong>
-              <span>{t.company}</span>
+              <strong>{translations.name}</strong>
+              <span>{translations.company}</span>
             </div>
           </div>
-          <p class="t-text">"{t.text}"</p>
+          <p class="t-text">"{translations.text}"</p>
         </div>
       ))}
     </div>

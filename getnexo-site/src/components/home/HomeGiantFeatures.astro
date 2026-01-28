@@ -1,6 +1,39 @@
 ---
-const { t } = Astro.props;
+// Traduções simples para evitar erros de importação
+const translations = {
+  features_giantranslations: {
+    magic_replies: {
+      title: "Magic Replies IA",
+      description: "Respostas inteligentes que convertem automaticamente",
+      f1: "Respostas instantâneas com IA Generativa",
+      f2: "Aprende com cada conversa",
+      f3: "Aumenta taxa de conversão em 300%"
+    },
+    loyalty: {
+      title: "Programa de Fidelidade",
+      description: "Retenção de clientes com gamificação inteligente",
+      f1: "Sistema de pontos automático",
+      f2: "Descontos progressivos",
+      f3: "Clientes fiéis por vida"
+    },
+    analytics: {
+      title: "Analytics Preditivo",
+      description: "Inteligência que antecipa tendências",
+      f1: "Previsão de vendas com IA",
+      f2: "Análise de sentimento em tempo real",
+      f3: "Otimização de campanhas"
+    },
+    integrations: {
+      title: "Integrações Poderosas",
+      description: "Conexão com seu ecossistema digital",
+      f1: "Shopify, WooCommerce, Nuvemshop",
+      f2: "API RESTful completa",
+      f3: "Webhooks em tempo real"
+    }
+  }
+};
 ---
+
 <!-- Giant Features Showcase -->
 <section class="giant-features">
   <!-- Magic Replies -->
@@ -10,12 +43,12 @@ const { t } = Astro.props;
       </div>
       <div class="giant-feature-info">
           <div class="feature-tag">Exclusivo</div>
-          <h2 class="text-gradient">{t.features_giant.magic_replies.title}</h2>
-          <p>{t.features_giant.magic_replies.description}</p>
+          <h2 class="text-gradient">{translations.features_giantranslations.magic_replies.title}</h2>
+          <p>{translations.features_giantranslations.magic_replies.description}</p>
           <ul class="feature-bullets">
-              <li><span>✨</span> {t.features_giant.magic_replies.f1}</li>
-              <li><span>🧠</span> {t.features_giant.magic_replies.f2}</li>
-              <li><span>📈</span> {t.features_giant.magic_replies.f3}</li>
+              <li><span>✨</span> {translations.features_giantranslations.magic_replies.f1}</li>
+              <li><span>🧠</span> {translations.features_giantranslations.magic_replies.f2}</li>
+              <li><span>📈</span> {translations.features_giantranslations.magic_replies.f3}</li>
           </ul>
           <a href="/produtos/automacao" class="btn-outline-glow">Conhecer Magic Replies</a>
       </div>
@@ -25,12 +58,12 @@ const { t } = Astro.props;
   <div class="giant-feature-row reverse animate-on-scroll">
       <div class="giant-feature-info">
           <div class="feature-tag gold">Retenção</div>
-          <h2 class="text-gradient">{t.features_giant.loyalty.title}</h2>
-          <p>{t.features_giant.loyalty.description}</p>
+          <h2 class="text-gradient">{translations.features_giantranslations.loyalty.title}</h2>
+          <p>{translations.features_giantranslations.loyalty.description}</p>
           <ul class="feature-bullets">
-              <li><span>🏆</span> {t.features_giant.loyalty.f1}</li>
-              <li><span>🎁</span> {t.features_giant.loyalty.f2}</li>
-              <li><span>❤️</span> {t.features_giant.loyalty.f3}</li>
+              <li><span>🏆</span> {translations.features_giantranslations.loyalty.f1}</li>
+              <li><span>🎁</span> {translations.features_giantranslations.loyalty.f2}</li>
+              <li><span>❤️</span> {translations.features_giantranslations.loyalty.f3}</li>
           </ul>
           <a href="/produtos/vendas" class="btn-outline-glow">Ver Fidelidade</a>
       </div>
@@ -46,25 +79,26 @@ const { t } = Astro.props;
       </div>
       <div class="giant-feature-info">
           <div class="feature-tag blue">Inteligência</div>
-          <h2 class="text-gradient">{t.features_giant.analytics.title}</h2>
-          <p>{t.features_giant.analytics.description}</p>
+          <h2 class="text-gradient">{translations.features_giantranslations.analytics.title}</h2>
+          <p>{translations.features_giantranslations.analytics.description}</p>
           <ul class="feature-bullets">
-              <li><span>📊</span> {t.features_giant.analytics.f1}</li>
-              <li><span>📝</span> {t.features_giant.analytics.f2}</li>
-              <li><span>🌍</span> {t.features_giant.analytics.f3}</li>
+              <li><span>📊</span> {translations.features_giantranslations.analytics.f1}</li>
+              <li><span>📝</span> {translations.features_giantranslations.analytics.f2}</li>
+              <li><span>🌍</span> {translations.features_giantranslations.analytics.f3}</li>
           </ul>
           <a href="/produtos/crm" class="btn-outline-glow">Explorar Dados</a>
       </div>
+  </div>
   <!-- Integrations -->
   <div class="giant-feature-row reverse animate-on-scroll !mb-0 !pb-0">
       <div class="giant-feature-info">
           <div class="feature-tag green">Ecossistema</div>
-          <h2 class="text-gradient">{t.features_giant.integrations.title}</h2>
-          <p>{t.features_giant.integrations.description}</p>
+          <h2 class="text-gradient">{translations.features_giantranslations.integrations.title}</h2>
+          <p>{translations.features_giantranslations.integrations.description}</p>
           <ul class="feature-bullets">
-              <li><span>🔗</span> {t.features_giant.integrations.f1}</li>
-              <li><span>⚙️</span> {t.features_giant.integrations.f2}</li>
-              <li><span>📡</span> {t.features_giant.integrations.f3}</li>
+              <li><span>🔗</span> {translations.features_giantranslations.integrations.f1}</li>
+              <li><span>⚙️</span> {translations.features_giantranslations.integrations.f2}</li>
+              <li><span>📡</span> {translations.features_giantranslations.integrations.f3}</li>
           </ul>
           <a href="/integracoes" class="btn-outline-glow">Ver Todas as Integrações</a>
       </div>

@@ -147,12 +147,12 @@
 @keyframes festivePulse {
     from {
         border-color: rgba(255, 255, 255, 0.1);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        transform: scale(1);
     }
 
     to {
         border-color: var(--neon-blue);
-        box-shadow: 0 5px 20px rgba(0, 212, 255, 0.2);
+        transform: scale(1.02);
     }
 }
 
@@ -248,9 +248,11 @@
     0% {
         transform: scale(1);
     }
+
     50% {
         transform: scale(1.03);
     }
+
     100% {
         transform: scale(1);
     }
@@ -762,9 +764,11 @@
     0% {
         opacity: 0.9;
     }
+
     50% {
         opacity: 1;
     }
+
     100% {
         opacity: 0.9;
     }
@@ -774,9 +778,11 @@
     0% {
         opacity: 0.8;
     }
+
     50% {
         opacity: 1;
     }
+
     100% {
         opacity: 0.8;
     }
