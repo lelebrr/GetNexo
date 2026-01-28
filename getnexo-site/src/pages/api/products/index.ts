@@ -1,7 +1,11 @@
 import type { APIRoute } from 'astro';
 
-export const GET: APIRoute = async ({ request }) => {
-    const authHeader = request.headers.get('Authorization');
+export const GET: APIRoute = async ({ request, cookies }) => {
+    let authHeader = request.headers.get('Authorization');
+    if (!authHeader) {
+        const token = cookies.get('admin_token')?.value;
+        if (token) authHeader = `Bearer ${token}`;
+    }
 
     try {
         const backendUrl = process.env.INTERNAL_API_URL
@@ -31,8 +35,12 @@ export const GET: APIRoute = async ({ request }) => {
     }
 };
 
-export const POST: APIRoute = async ({ request }) => {
-    const authHeader = request.headers.get('Authorization');
+export const POST: APIRoute = async ({ request, cookies }) => {
+    let authHeader = request.headers.get('Authorization');
+    if (!authHeader) {
+        const token = cookies.get('admin_token')?.value;
+        if (token) authHeader = `Bearer ${token}`;
+    }
 
     try {
         const body = await request.json();
