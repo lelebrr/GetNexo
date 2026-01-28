@@ -4,7 +4,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
 
 <ClientLayout title="Dashboard - GetNexo Pro">
     <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         .welcome-header {
@@ -143,7 +143,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
         }
 
         .stat-desc {
-            color: #64748b;
+            color: #94a3b8;
             font-size: 0.85rem;
         }
 
@@ -266,7 +266,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
         }
 
         .activity-time {
-            color: #64748b;
+            color: #94a3b8;
             font-size: 0.8rem;
             margin-left: auto;
         }
@@ -366,7 +366,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
 
         .metric {
             font-size: 0.8rem;
-            color: #64748b;
+            color: #94a3b8;
         }
 
         .metric strong {
@@ -563,13 +563,13 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
     </div>
 
     <script is:inline>
-        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3006' : '/api-proxy';
+        const API_URL = '/api';
 
         // Load dashboard data
         async function loadDashboardData() {
             try {
                 const token = localStorage.getItem('token');
-                const res = await fetch(`${API_URL}/api/analytics/dashboard`, {
+                const res = await fetch(`${API_URL}/analytics/dashboard`, {
                     headers: { 'Authorization': token }
                 });
                 const data = await res.json();

@@ -36,7 +36,8 @@ const {
   breadcrumbs,
   structuredData,
   lang = Astro.url.pathname.split('/')[1] || 'pt',
-  nonce
+  nonce,
+  suppressDefaultSchema = false
 } = Astro.props;
 
 // Load translations for SEO
@@ -56,8 +57,6 @@ const twitterHandle = "@getnexo";
 ---
 
 <!-- Primary Meta Tags -->
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>{title}</title>
 <meta name="title" content={title} />
 <meta name="description" content={description} />
@@ -115,125 +114,138 @@ const twitterHandle = "@getnexo";
 {tags && tags.map(tag => <meta property="article:tag" content={tag} />)}
 
 <!-- Business/Local Business Schema - Carregado com defer -->
-<script defer type="application/ld+json" nonce={nonce} set:html={JSON.stringify({
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://getnexo.com.br/#organization",
-      "name": "GetNexo",
-      "url": "https://getnexo.com.br",
-      "logo": "https://getnexo.com.br/logo.svg",
-      "description": t.seo.organization_description,
-      "foundingDate": "2024",
-      "founder": {
-        "@type": "Person",
-        "name": "GetNexo Team"
-      },
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "telephone": "+55-11-99999-9999",
-        "contactType": "customer service",
-        "availableLanguage": ["Portuguese", "English", "Spanish", "French"],
-        "hoursAvailable": {
-          "@type": "OpeningHoursSpecification",
-          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-          "opens": "00:00",
-          "closes": "23:59"
+{!suppressDefaultSchema && (
+  <script type="application/ld+json" nonce={nonce} set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://getnexo.com.br/#organization",
+        "name": "GetNexo",
+        "url": "https://getnexo.com.br",
+        "logo": "https://getnexo.com.br/logo.svg",
+        "description": t.seo.organization_description,
+        "foundingDate": "2024",
+        "founder": {
+          "@type": "Person",
+          "name": "GetNexo Team"
+        },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+55-11-99999-9999",
+          "contactType": "customer service",
+          "availableLanguage": ["Portuguese", "English", "Spanish", "French"],
+          "hoursAvailable": {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+            "opens": "00:00",
+            "closes": "23:59"
+          }
+        },
+        "sameAs": [
+          "https://linkedin.com/company/getnexo",
+          "https://instagram.com/getnexo",
+          "https://github.com/lelebrr",
+          "https://youtube.com/@getnexo",
+          "https://tiktok.com/@getnexo",
+          "https://facebook.com/getnexo"
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "BR",
+          "addressRegion": "SP",
+          "addressLocality": "São Paulo",
+          "postalCode": "01000-000",
+          "streetAddress": "Rua da Consolação, 1000"
         }
       },
-      "sameAs": [
-        "https://linkedin.com/company/getnexo",
-        "https://instagram.com/getnexo",
-        "https://github.com/lelebrr",
-        "https://youtube.com/@getnexo",
-        "https://tiktok.com/@getnexo",
-        "https://facebook.com/getnexo"
-      ],
-      "address": {
-        "@type": "PostalAddress",
-        "addressCountry": "BR",
-        "addressRegion": "SP",
-        "addressLocality": "São Paulo"
-      }
-    },
-    {
-      "@type": "WebSite",
-      "@id": "https://getnexo.com.br/#website",
-      "url": "https://getnexo.com.br",
-      "name": siteName,
-      "description": t.seo.default_description,
-      "publisher": { "@id": "https://getnexo.com.br/#organization" },
-      "inLanguage": lang,
-      "copyrightHolder": { "@id": "https://getnexo.com.br/#organization" },
-      "potentialAction": [
-        {
-          "@type": "SearchAction",
-          "target": {
-            "@type": "EntryPoint",
-            "urlTemplate": "https://getnexo.com.br/buscar?q={search_term_string}"
-          },
-          "query-input": "required name=search_term_string"
-        }
-      ]
-    },
-    {
-      "@type": "SoftwareApplication",
-      "@id": "https://getnexo.com.br/#software",
-      "name": "GetNexo",
-      "applicationCategory": "BusinessApplication",
-      "operatingSystem": "Web, WhatsApp",
-      "softwareVersion": "2.0.0",
-      "author": { "@id": "https://getnexo.com.br/#organization" },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.9",
-        "ratingCount": "500"
-      }
-    },
-    {
-      "@type": "WebPage",
-      "@id": canonicalUrl + "#webpage",
-      "url": canonicalUrl,
-      "name": title,
-      "description": description,
-      "isPartOf": { "@id": "https://getnexo.com.br/#website" },
-      "primaryImageOfPage": {
-        "@type": "ImageObject",
-        "url": image,
-        "width": 1200,
-        "height": 630
+      {
+        "@type": "WebSite",
+        "@id": "https://getnexo.com.br/#website",
+        "url": "https://getnexo.com.br",
+        "name": siteName,
+        "description": t.seo.default_description,
+        "publisher": { "@id": "https://getnexo.com.br/#organization" },
+        "inLanguage": lang,
+        "copyrightHolder": { "@id": "https://getnexo.com.br/#organization" },
+        "potentialAction": [
+          {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://getnexo.com.br/buscar?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        ]
       },
-      "datePublished": publishedTime || "2024-01-01T00:00:00+00:00",
-      "dateModified": modifiedTime || "2024-12-31T23:59:59+00:00",
-      "author": { "@id": "https://getnexo.com.br/#organization" },
-      "publisher": { "@id": "https://getnexo.com.br/#organization" },
-      "inLanguage": lang,
-      "mainEntityOfPage": canonicalUrl,
-      "breadcrumb": breadcrumbs ? {
-        "@type": "BreadcrumbList",
-        "itemListElement": breadcrumbs.map((crumb, index) => ({
-          "@type": "ListItem",
-          "position": index + 1,
-          "name": crumb.name,
-          "item": `https://getnexo.com.br${crumb.url}`
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://getnexo.com.br/#software",
+        "name": "GetNexo",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web, WhatsApp",
+        "softwareVersion": "2.0.0",
+        "author": { "@id": "https://getnexo.com.br/#organization" },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.9",
+          "ratingCount": "500",
+          "bestRating": "5",
+          "worstRating": "1"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "BRL",
+          "priceValidUntil": "2026-12-31",
+          "description": "Plano gratuito com funcionalidades avançadas"
+        }
+      },
+      {
+        "@type": "WebPage",
+        "@id": canonicalUrl + "#webpage",
+        "url": canonicalUrl,
+        "name": title,
+        "description": description,
+        "isPartOf": { "@id": "https://getnexo.com.br/#website" },
+        "primaryImageOfPage": {
+          "@type": "ImageObject",
+          "url": image,
+          "width": 1200,
+          "height": 630
+        },
+        "datePublished": publishedTime || "2024-01-01T00:00:00+00:00",
+        "dateModified": modifiedTime || "2024-12-31T23:59:59+00:00",
+        "author": { "@id": "https://getnexo.com.br/#organization" },
+        "publisher": { "@id": "https://getnexo.com.br/#organization" },
+        "inLanguage": lang,
+        "mainEntityOfPage": canonicalUrl,
+        "breadcrumb": breadcrumbs ? {
+          "@type": "BreadcrumbList",
+          "itemListElement": breadcrumbs.map((crumb, index) => ({
+            "@type": "ListItem",
+            "position": index + 1,
+            "name": crumb.name,
+            "item": `https://getnexo.com.br${crumb.url}`
+          }))
+        } : undefined
+      },
+      ...(faq ? [{
+        "@type": "FAQPage",
+        "mainEntity": faq.map(item => ({
+          "@type": "Question",
+          "name": item.question,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": item.answer
+          }
         }))
-      } : undefined
-    },
-    ...(faq ? [{
-      "@type": "FAQPage",
-      "mainEntity": faq.map(item => ({
-        "@type": "Question",
-        "name": item.question,
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": item.answer
-        }
-      }))
-    }] : []),
-    ...(structuredData ? [structuredData] : [])
-  ].filter(Boolean)
-})}></script>
+      }] : []),
+      ...(structuredData ? [structuredData] : [])
+    ].filter(Boolean)
+  })}></script>
+)}
 
 <!-- Additional SEO Meta Tags -->
 <meta name="theme-color" content="#00d4ff" />
@@ -276,7 +288,7 @@ const twitterHandle = "@getnexo";
 
 <!-- Article Schema (if article) -->
 {type === "article" && (
-  <script defer type="application/ld+json" nonce={nonce} set:html={JSON.stringify({
+  <script type="application/ld+json" nonce={nonce} set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@type": "Article",
     "headline": title,

@@ -1,0 +1,77 @@
+```
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { Tag, Folder, Plus, ChevronRight, MoreVertical, Edit2 } from 'lucide-react';
+
+const categories = [
+  { id: 1, name: "Calçados", count: 124, status: "Visível", sub: ["Sneakers", "Social", "Esportivo"] },
+  { id: 2, name: "Acessórios", count: 85, status: "Visível", sub: ["Relógios", "Óculos", "Bonés"] },
+  { id: 3, name: "Eletrônicos", count: 210, status: "Oculto", sub: ["Smartphones", "Audio", "Smart Home"] },
+  { id: 4, name: "Roupas", count: 450, status: "Visível", sub: ["Camisetas", "Calças", "Casacos"] },
+];
+---
+
+<AdminLayout title="Categorias do Catálogo" activeTab="products">
+  <div class="space-y-8 animate-fade-in">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-white uppercase tracking-tight">Taxonomia do Catálogo</h1>
+        <p class="text-sm text-gray-400 mt-1">Organize seus produtos em categorias e subcategorias para melhor navegação.</p>
+      </div>
+      <button class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl flex items-center space-x-2 transition-all shadow-lg shadow-indigo-500/10">
+         <Plus className="w-5 h-5" />
+         <span>Nova Categoria</span>
+      </button>
+    </div>
+
+    <!-- Grid de Categorias -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+       {categories.map(cat => (
+         <div class="bg-gray-900/40 border border-gray-800 rounded-3xl p-8 hover:border-indigo-500/30 transition-all group">
+            <div class="flex items-start justify-between mb-8">
+               <div class="flex items-center space-x-4">
+                  <div class="w-12 h-12 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-400">
+                     <Folder className="w-6 h-6" />
+                  </div>
+                  <div>
+                     <h3 class="text-lg font-bold text-white uppercase tracking-tight">{cat.name}</h3>
+                     <p class="text-[10px] text-gray-500 font-black uppercase tracking-widest">{cat.count} Produtos vinculados</p>
+                  </div>
+               </div>
+               <div class:list={["text-[8px] font-black uppercase px-2 py-1 rounded", cat.status === 'Visível' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500']}>
+                  {cat.status}
+               </div>
+            </div>
+            
+            <div class="space-y-3 mb-8">
+               <p class="text-[10px] text-gray-600 font-bold uppercase tracking-widest">Subcategorias</p>
+               <div class="flex flex-wrap gap-2">
+                  {cat.sub.map(s => (
+                    <span class="text-[10px] bg-black/40 border border-gray-800 text-gray-400 px-3 py-1.5 rounded-xl hover:text-white hover:border-gray-700 transition-colors">
+                       {s}
+                    </span>
+                  ))}
+                  <button class="text-[10px] text-indigo-400 font-bold hover:underline">+ Adicionar</button>
+               </div>
+            </div>
+
+            <div class="pt-6 border-t border-gray-800/50 flex items-center justify-between">
+               <button class="flex items-center text-xs font-black text-gray-500 hover:text-white uppercase tracking-widest">
+                  Ver Coleção <ChevronRight className="w-4 h-4 ml-1" />
+               </button>
+               <div class="flex items-center space-x-2 opacity-50 group-hover:opacity-100 transition-opacity">
+                  <button class="p-2 hover:bg-gray-800 rounded-lg text-gray-400"><Edit2 className="w-3.5 h-3.5" /></button>
+                  <button class="p-2 hover:bg-gray-800 rounded-lg text-gray-400"><MoreVertical className="w-3.5 h-3.5" /></button>
+               </div>
+            </div>
+         </div>
+       ))}
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+```

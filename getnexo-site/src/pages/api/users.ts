@@ -4,7 +4,13 @@ export const GET: APIRoute = async ({ request }) => {
     const authHeader = request.headers.get('Authorization');
 
     try {
-        const response = await fetch('http://backend:3006/api/users', {
+        // Determinar a URL do backend baseado no ambiente
+        const isProduction = import.meta.env.PROD;
+        const backendUrl = isProduction
+            ? 'https://api.getnexo.com.br/api/users'
+            : 'http://localhost:3006/api/users';
+
+        const response = await fetch(backendUrl, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -32,7 +38,14 @@ export const POST: APIRoute = async ({ request }) => {
 
     try {
         const body = await request.json();
-        const response = await fetch('http://backend:3006/api/users', {
+
+        // Determinar a URL do backend baseado no ambiente
+        const isProduction = import.meta.env.PROD;
+        const backendUrl = isProduction
+            ? 'https://api.getnexo.com.br/api/users'
+            : 'http://localhost:3006/api/users';
+
+        const response = await fetch(backendUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

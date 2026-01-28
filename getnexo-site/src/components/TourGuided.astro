@@ -13,20 +13,35 @@ const {
 } = Astro.props;
 ---
 
-<!-- Shepherd.js CSS handled in global or local import - Carregado com defer -->
-<style is:global>
-  @import 'shepherd.js/dist/css/shepherd.css';
-</style>
+<!-- Shepherd.js CSS - Non-blocking load with lazy loading -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@13.0.0/dist/css/shepherd.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@13.0.0/dist/css/shepherd.css"></noscript>
 
 <script defer type="module">
-  import Shepherd from 'https://cdn.jsdelivr.net/npm/shepherd.js@13.0.0/+esm';
-  window.Shepherd = Shepherd;
+  // Lazy load Shepherd.js only when needed
+  let Shepherd = null;
+  let tourInstance = null;
+  let tourLoaded = false;
 
   const targetPage = document.querySelector('[data-tour-target]')?.getAttribute('data-tour-target') || 'home';
   const autoStart = document.querySelector('[data-tour-autostart]')?.getAttribute('data-tour-autostart') === 'true';
   const mobileOptimized = document.querySelector('[data-tour-mobile]')?.getAttribute('data-tour-mobile') !== 'false';
 
-  let tourInstance = null;
+  // Function to load Shepherd.js dynamically
+  async function loadShepherd() {
+    if (tourLoaded) return;
+    
+    try {
+      const module = await import('https://cdn.jsdelivr.net/npm/shepherd.js@13.0.0/+esm');
+      Shepherd = module.default;
+      window.Shepherd = Shepherd;
+      tourLoaded = true;
+      console.log('Shepherd.js loaded successfully');
+    } catch (error) {
+      console.error('Failed to load Shepherd.js:', error);
+      return null;
+    }
+  }
 
   function createTour() {
     // Detect mobile
@@ -51,7 +66,7 @@ const {
       }
     };
 
-    if (typeof Shepherd === 'undefined') {
+    if (!Shepherd) {
       console.warn('Shepherd.js not loaded, tour disabled');
       return null;
     }
@@ -295,28 +310,44 @@ const {
     });
   }
 
-  // Global function to start tour - EXTRA TIP FIX
-  window.startGetNexoTour = function() {
+  // Global function to start tour - Lazy load Shepherd.js
+  window.startGetNexoTour = async function() {
+    // Load Shepherd.js if not loaded
+    if (!Shepherd) {
+      console.log('Loading Shepherd.js...');
+      await loadShepherd();
+    }
+    
+    // Create tour if not created
     if (!tourInstance) {
-      console.warn('Tour não iniciado – forçando...');
+      console.log('Creating tour...');
       createTour();
     }
-    tourInstance?.start();
+    
+    // Start tour
+    if (tourInstance) {
+      tourInstance.start();
+    } else {
+      console.error('Failed to start tour');
+    }
   };
 
-  // Initialize on DOM ready
+  // Initialize on DOM ready - Only set up event listeners
   document.addEventListener('DOMContentLoaded', function() {
-    createTour();
-    
-    // Força o botão funcionar - FIX DEFINITIVO
-    document.getElementById('tour-btn')?.addEventListener('click', () => {
-      if (!window.startGetNexoTour) {
-        console.log('Tour não carregou ainda... carregando agora');
-        setTimeout(() => window.startGetNexoTour(), 200);
-      } else {
-        window.startGetNexoTour();
-      }
+    // Set up event listener for tour button
+    document.getElementById('tour-btn')?.addEventListener('click', async () => {
+      console.log('Tour button clicked - starting tour...');
+      await window.startGetNexoTour();
     });
+    
+    // Auto-start if configured (lazy load)
+    if (autoStart) {
+      // Small delay to ensure DOM is ready
+      setTimeout(async () => {
+        console.log('Auto-starting tour...');
+        await window.startGetNexoTour();
+      }, 1000);
+    }
   });
 
   // Export for external use

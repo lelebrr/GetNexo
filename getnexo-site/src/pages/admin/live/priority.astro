@@ -3,17 +3,308 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 
 <AdminLayout title="Prioritárias" activeTab="live">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-red-500 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg shadow-red-500/30 animate-pulse">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-      </svg>
+  <div class="space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <h1 class="text-3xl font-bold text-white">Prioritárias</h1>
+        <p class="text-gray-400 mt-1">Conversas com prioridade alta e atendimento imediato</p>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="refreshTickets()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Atualizar
+        </button>
+      </div>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      Prioritárias
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Conversas com prioridade alta e atendimento imediato.
-    </p>
+
+    <!-- Search and Filters -->
+    <div class="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="flex-1">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Buscar por nome, telefone ou ID..."
+            class="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition-colors"
+            oninput="filterTickets()"
+          >
+        </div>
+        <div class="flex gap-2">
+          <select id="statusFilter" onchange="filterTickets()" class="px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-orange-500 transition-colors">
+            <option value="">Todos os Status</option>
+            <option value="open">Aberto</option>
+            <option value="waiting">Aguardando</option>
+            <option value="closed">Fechado</option>
+          </select>
+          <select id="sentimentFilter" onchange="filterTickets()" class="px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-orange-500 transition-colors">
+            <option value="">Todos os Sentimentos</option>
+            <option value="positive">Positivo</option>
+            <option value="neutral">Neutro</option>
+            <option value="negative">Negativo</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="bg-gradient-to-br from-red-500/20 to-orange-500/20 border border-red-500/30 rounded-xl p-4">
+        <div class="text-2xl font-bold text-white" id="totalPriority">0</div>
+        <div class="text-sm text-gray-400">Total Prioritárias</div>
+      </div>
+      <div class="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-xl p-4">
+        <div class="text-2xl font-bold text-white" id="waitingPriority">0</div>
+        <div class="text-sm text-gray-400">Aguardando</div>
+      </div>
+      <div class="bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-xl p-4">
+        <div class="text-2xl font-bold text-white" id="openPriority">0</div>
+        <div class="text-sm text-gray-400">Em Atendimento</div>
+      </div>
+      <div class="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/30 rounded-xl p-4">
+        <div class="text-2xl font-bold text-white" id="avgResponseTime">0m</div>
+        <div class="text-sm text-gray-400">Tempo Médio</div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="hidden flex flex-col items-center justify-center min-h-[40vh]">
+      <div class="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+      <p class="text-gray-400">Carregando conversas prioritárias...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="errorState" class="hidden flex flex-col items-center justify-center min-h-[40vh] text-center space-y-4">
+      <div class="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="text-xl font-semibold text-white">Erro ao carregar</h3>
+      <p class="text-gray-400" id="errorMessage">Não foi possível carregar as conversas prioritárias.</p>
+      <button onclick="refreshTickets()" class="px-6 py-2 bg-orange-600 hover:bg-orange-500 text-white rounded-lg transition-colors">
+        Tentar novamente
+      </button>
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden flex flex-col items-center justify-center min-h-[40vh] text-center space-y-4">
+      <div class="w-16 h-16 bg-gray-700/50 rounded-full flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+      </div>
+      <h3 class="text-xl font-semibold text-white">Nenhuma conversa prioritária</h3>
+      <p class="text-gray-400">Não há conversas com prioridade alta no momento.</p>
+    </div>
+
+    <!-- Tickets List -->
+    <div id="ticketsList" class="hidden space-y-4">
+      <!-- Tickets will be rendered here -->
+    </div>
   </div>
+
+  <script>
+    let allTickets = [];
+    let filteredTickets = [];
+
+    async function loadTickets() {
+      const loadingState = document.getElementById('loadingState');
+      const errorState = document.getElementById('errorState');
+      const emptyState = document.getElementById('emptyState');
+      const ticketsList = document.getElementById('ticketsList');
+
+      // Show loading
+      loadingState.classList.remove('hidden');
+      errorState.classList.add('hidden');
+      emptyState.classList.add('hidden');
+      ticketsList.classList.add('hidden');
+
+      try {
+        const response = await fetch('http://localhost:3006/api/tickets?priority=1');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        
+        if (!data.success) {
+          throw new Error(data.message || 'Erro ao carregar tickets');
+        }
+
+        allTickets = data.tickets || [];
+        filteredTickets = [...allTickets];
+
+        // Update stats
+        updateStats();
+
+        // Render tickets
+        renderTickets();
+
+        // Show/hide states
+        loadingState.classList.add('hidden');
+        
+        if (allTickets.length === 0) {
+          emptyState.classList.remove('hidden');
+          ticketsList.classList.add('hidden');
+        } else {
+          emptyState.classList.add('hidden');
+          ticketsList.classList.remove('hidden');
+        }
+
+      } catch (error) {
+        console.error('Error loading tickets:', error);
+        loadingState.classList.add('hidden');
+        errorState.classList.remove('hidden');
+        document.getElementById('errorMessage').textContent = error.message;
+      }
+    }
+
+    function updateStats() {
+      const total = allTickets.length;
+      const waiting = allTickets.filter(t => t.status === 'waiting').length;
+      const open = allTickets.filter(t => t.status === 'open').length;
+      
+      // Calculate average response time (simplified)
+      const avgTime = allTickets.length > 0
+        ? Math.round(allTickets.reduce((sum, t) => sum + (t.last_message_at ? (Date.now() - new Date(t.last_message_at).getTime()) / 60000 : 0), 0) / allTickets.length)
+        : 0;
+
+      document.getElementById('totalPriority').textContent = total;
+      document.getElementById('waitingPriority').textContent = waiting;
+      document.getElementById('openPriority').textContent = open;
+      document.getElementById('avgResponseTime').textContent = avgTime + 'm';
+    }
+
+    function renderTickets() {
+      const container = document.getElementById('ticketsList');
+      
+      if (filteredTickets.length === 0) {
+        container.innerHTML = `
+          <div class="flex flex-col items-center justify-center min-h-[30vh] text-center space-y-4">
+            <div class="w-16 h-16 bg-gray-700/50 rounded-full flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-white">Nenhum resultado</h3>
+            <p class="text-gray-400">Nenhuma conversa encontrada com os filtros selecionados.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filteredTickets.map(ticket => {
+        const statusColors = {
+          open: 'bg-green-500/20 text-green-400 border-green-500/30',
+          waiting: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+          closed: 'bg-gray-500/20 text-gray-400 border-gray-500/30'
+        };
+
+        const sentimentColors = {
+          positive: 'bg-green-500/20 text-green-400 border-green-500/30',
+          neutral: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
+          negative: 'bg-red-500/20 text-red-400 border-red-500/30'
+        };
+
+        const priorityBadge = ticket.priority > 0
+          ? `<span class="px-2 py-1 bg-red-500/20 text-red-400 border border-red-500/30 rounded text-xs font-medium">Prioridade ${ticket.priority}</span>`
+          : '';
+
+        const lastMessageTime = ticket.last_message_at
+          ? new Date(ticket.last_message_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+          : 'Sem mensagens';
+
+        return `
+          <div class="bg-gray-800/50 border border-gray-700 rounded-xl p-4 hover:border-orange-500/50 transition-colors cursor-pointer" onclick="viewTicket('${ticket.id}')">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div class="flex-1">
+                <div class="flex items-center gap-3 mb-2">
+                  <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white font-bold">
+                    ${ticket.customer_name ? ticket.customer_name.charAt(0).toUpperCase() : '?'}
+                  </div>
+                  <div>
+                    <div class="font-semibold text-white">${ticket.customer_name || 'Cliente'}</div>
+                    <div class="text-sm text-gray-400">${ticket.customer_phone || 'Sem telefone'}</div>
+                  </div>
+                  ${priorityBadge}
+                </div>
+                <div class="text-sm text-gray-400 line-clamp-2">
+                  ${ticket.last_message || 'Sem mensagem recente'}
+                </div>
+              </div>
+              <div class="flex flex-col items-end gap-2">
+                <div class="flex gap-2">
+                  <span class="px-2 py-1 ${statusColors[ticket.status] || statusColors.open} rounded text-xs font-medium border">
+                    ${ticket.status === 'open' ? 'Aberto' : ticket.status === 'waiting' ? 'Aguardando' : 'Fechado'}
+                  </span>
+                  ${ticket.sentiment ? `<span class="px-2 py-1 ${sentimentColors[ticket.sentiment] || sentimentColors.neutral} rounded text-xs font-medium border">
+                    ${ticket.sentiment === 'positive' ? 'Positivo' : ticket.sentiment === 'negative' ? 'Negativo' : 'Neutro'}
+                  </span>` : ''}
+                </div>
+                <div class="text-xs text-gray-500">
+                  ${lastMessageTime}
+                </div>
+                <div class="flex gap-2 mt-2">
+                  <button onclick="event.stopPropagation(); assignAgent('${ticket.id}')" class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs transition-colors">
+                    Atribuir
+                  </button>
+                  <button onclick="event.stopPropagation(); closeTicket('${ticket.id}')" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs transition-colors">
+                    Fechar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function filterTickets() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const statusFilter = document.getElementById('statusFilter').value;
+      const sentimentFilter = document.getElementById('sentimentFilter').value;
+
+      filteredTickets = allTickets.filter(ticket => {
+        const matchesSearch = !searchTerm ||
+          (ticket.customer_name && ticket.customer_name.toLowerCase().includes(searchTerm)) ||
+          (ticket.customer_phone && ticket.customer_phone.toLowerCase().includes(searchTerm)) ||
+          (ticket.id && ticket.id.toLowerCase().includes(searchTerm));
+
+        const matchesStatus = !statusFilter || ticket.status === statusFilter;
+        const matchesSentiment = !sentimentFilter || ticket.sentiment === sentimentFilter;
+
+        return matchesSearch && matchesStatus && matchesSentiment;
+      });
+
+      renderTickets();
+    }
+
+    function refreshTickets() {
+      loadTickets();
+    }
+
+    function viewTicket(ticketId) {
+      // In a real implementation, this would navigate to a ticket detail page
+      alert(`Visualizar ticket: ${ticketId}\n\nEm uma implementação completa, isso abriria uma página com detalhes da conversa.`);
+    }
+
+    function assignAgent(ticketId) {
+      // In a real implementation, this would open a modal to assign an agent
+      alert(`Atribuir agente ao ticket: ${ticketId}\n\nEm uma implementação completa, isso abriria um modal para selecionar um agente.`);
+    }
+
+    function closeTicket(ticketId) {
+      // In a real implementation, this would close the ticket
+      if (confirm('Tem certeza que deseja fechar este ticket?')) {
+        alert(`Ticket ${ticketId} fechado.\n\nEm uma implementação completa, isso atualizaria o status no banco de dados.`);
+      }
+    }
+
+    // Load tickets on page load
+    document.addEventListener('DOMContentLoaded', loadTickets);
+  </script>
 </AdminLayout>

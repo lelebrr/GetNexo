@@ -531,11 +531,11 @@ import ClientLayout from '../layouts/ClientLayout.astro';
     <script is:inline src="/fillDemo.js"></script>
 
     <script>
-        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3006' : 'https://getnexo.com.br';
+        const API_URL = '/api';
 
         async function login(email, password) {
             try {
-                const response = await fetch(`${API_URL}/api/login`, {
+                const response = await fetch(`${API_URL}/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -663,7 +663,7 @@ import ClientLayout from '../layouts/ClientLayout.astro';
             const token = localStorage.getItem('token');
             if (token) {
                 // Verify token is still valid
-                fetch(`${API_URL}/api/users`, {
+                fetch(`${API_URL}/users`, {
                     headers: { 'Authorization': token }
                 }).then(response => {
                     if (response.ok) {
@@ -750,7 +750,7 @@ import ClientLayout from '../layouts/ClientLayout.astro';
             btn.disabled = true;
 
             try {
-                const response = await fetch(`${API_URL}/api/auth/forgot-password`, {
+                const response = await fetch(`${API_URL}/auth/forgot-password`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

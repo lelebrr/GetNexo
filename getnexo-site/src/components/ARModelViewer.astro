@@ -21,20 +21,11 @@ const finalUsdzUrl = usdzUrl || `/modelos/${productId}.usdz`;
 <!-- Botão no chat: -->
 <button
   onclick="verAR('${productId}')"
-  class="px-3 py-1 bg-green-500 text-white rounded text-sm">
+  class="px-3 py-1 bg-green-500 text-white rounded text-sm btn-ar-trigger">
   Ver em AR / Realidade Aumentada
 </button>
 
-<script define:vars={{ productId }} defer>
-  // Load model-viewer script if not loaded
-  if (!window.customElements || !window.customElements.get('model-viewer')) {
-    const script = document.createElement('script');
-    script.src = 'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js';
-    script.type = 'module';
-    script.loading = 'lazy';
-    document.head.appendChild(script);
-  }
-
+<script define:vars={{ productId }}>
   // Variáveis globais para controle de trial e permissões
   window.trialMode = true; // Em trial por padrão
   window.nexoChave = ['ar', '360']; // Chaves disponíveis no trial
@@ -55,7 +46,7 @@ const finalUsdzUrl = usdzUrl || `/modelos/${productId}.usdz`;
     const usdz = `/modelos/${produtoId}.usdz`;  // pro iPhone
 
     // Mobile: vai pro AR viewer do Google
-    if (window.customElements && window.customElements.get('model-viewer')) {
+    if (document.querySelector('model-viewer') || (window.customElements && window.customElements.get('model-viewer'))) {
       // Create modal
       const modal = document.createElement('div');
       modal.style.cssText = `
@@ -93,10 +84,10 @@ const finalUsdzUrl = usdzUrl || `/modelos/${productId}.usdz`;
         link.click();
       }
     } else {
-      // Fallback: abre na web
-      window.open(`/ar/${produtoId}`, '_blank');
+      // Fallback: abre na web ou tenta carregar se falhar
+       window.open(`/ar/${produtoId}`, '_blank');
     }
-  }
+  };
 </script>
 
 <!-- Em /ar/ .astro: -->

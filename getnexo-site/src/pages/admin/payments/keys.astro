@@ -1,19 +1,78 @@
+```
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { Key, Plus, Trash2, Copy, CheckCircle2, QrCode, Smartphone } from 'lucide-react';
+
+const pixKeys = [
+  { id: 1, type: "CNPJ", value: "45.123.456/0001-90", label: "Conta Principal", status: "Validada" },
+  { id: 2, type: "E-mail", value: "financeiro@getnexo.com.br", label: "Recebimentos Diversos", status: "Validada" },
+  { id: 3, type: "Aleatória", value: "a1b2c3d4-e5f6-g7h8-i9j0", label: "Backup Operacional", status: "Em Verificação" },
+];
 ---
 
-<AdminLayout title="Chaves PIX Cadastradas" activeTab="pagamentos">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center shadow-lg shadow-green-500/30 animate-pulse">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-      </svg>
+<AdminLayout title="Chaves PIX" activeTab="payments">
+  <div class="max-w-4xl mx-auto space-y-8 animate-fade-in py-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 bg-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.1)] rounded-2xl flex items-center justify-center border border-emerald-500/20">
+          <QrCode className="w-6 h-6 text-emerald-400" />
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-white uppercase tracking-tight">Gerenciar Chaves PIX</h1>
+          <p class="text-sm text-gray-400">Configure suas chaves para recebimento instantâneo.</p>
+        </div>
+      </div>
+      <button class="bg-emerald-500 hover:bg-emerald-400 text-black font-bold px-6 py-3 rounded-xl flex items-center space-x-2 transition-all shadow-lg shadow-emerald-500/20">
+        <Plus className="w-5 h-5" />
+        <span>Nova Chave PIX</span>
+      </button>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      Chaves PIX Cadastradas
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Gerencie chaves PIX para recebimentos.
-    </p>
+
+    <!-- Lista de Chaves -->
+    <div class="grid grid-cols-1 gap-4">
+      {pixKeys.map(key => (
+        <div class="bg-gray-900/40 border border-gray-800 p-6 rounded-3xl flex flex-col md:flex-row md:items-center justify-between gap-6 hover:border-emerald-500/30 transition-all group">
+          <div class="flex items-center space-x-6">
+             <div class="p-4 bg-black/40 rounded-2xl">
+                <Smartphone className="w-6 h-6 text-gray-500 group-hover:text-emerald-400 transition-colors" />
+             </div>
+             <div>
+                <div class="flex items-center space-x-3 mb-1">
+                   <h4 class="text-sm font-bold text-white uppercase tracking-tight">{key.label}</h4>
+                   <span class:list={["text-[8px] font-black uppercase px-2 py-0.5 rounded", key.status === 'Validada' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-orange-500/10 text-orange-400']}>{key.status}</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                   <p class="text-xs font-mono text-gray-500">{key.value}</p>
+                   <button class="text-gray-700 hover:text-white transition-colors"><Copy className="w-3 h-3" /></button>
+                </div>
+             </div>
+          </div>
+          
+          <div class="flex items-center space-x-2">
+             <button class="px-4 py-2 bg-gray-800 rounded-xl text-[10px] font-bold text-gray-400 hover:text-white hover:bg-gray-700 transition-all">Editar</button>
+             <button class="p-2 text-rose-500/50 hover:text-rose-500 hover:bg-rose-500/10 rounded-xl transition-all">
+                <Trash2 className="w-4 h-4" />
+             </button>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Info Box -->
+    <div class="p-8 bg-emerald-500/5 border border-emerald-500/10 rounded-[2.5rem] flex items-start space-x-6">
+      <div class="mt-1"><CheckCircle2 className="w-6 h-6 text-emerald-500" /></div>
+      <div class="space-y-2">
+        <h4 class="text-white font-bold uppercase tracking-tight">Liquidação 24/7 Ativa</h4>
+        <p class="text-sm text-gray-400 leading-relaxed">
+          Suas chaves estão configuradas para liquidação automática direta na conta bancária Nexus em até **10 segundos** após o pagamento do cliente.
+        </p>
+      </div>
+    </div>
   </div>
 </AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+```

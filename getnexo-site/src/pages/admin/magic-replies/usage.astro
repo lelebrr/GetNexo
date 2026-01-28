@@ -1,0 +1,90 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { BarChart3, TrendingUp, Zap, Target, MessageSquare, Clock } from 'lucide-react';
+
+const stats = [
+  { label: "Respostas Automáticas", value: "12.450", color: "blue", trend: "+12%" },
+  { label: "Acuracidade IA", value: "98.2%", color: "emerald", trend: "+0.5%" },
+  { label: "Tempo Economizado", value: "450h", color: "purple", trend: "32h/dia" },
+  { label: "Satisfação (CSAT)", value: "4.9/5", color: "yellow", trend: "Top 1%" },
+];
+---
+
+<AdminLayout title="Métricas de IA" activeTab="magic-replies">
+  <div class="space-y-8 animate-fade-in py-4">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-black text-white uppercase tracking-tighter flex items-center">
+          <BarChart3 className="w-8 h-8 text-cyan-400 mr-4" />
+          Performance do Cérebro
+        </h1>
+        <p class="text-sm text-gray-400 mt-1">Monitore o impacto da inteligência artificial no seu atendimento e conversão.</p>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+       {stats.map(s => (
+         <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2rem] hover:border-cyan-500/20 transition-all group overflow-hidden relative">
+            <div class:list={["absolute right-0 top-0 w-16 h-16 blur-2xl opacity-10", `bg-${s.color}-500`]}></div>
+            <p class="text-[10px] font-black uppercase text-gray-500 tracking-widest mb-2">{s.label}</p>
+            <div class="flex items-end justify-between">
+               <h2 class="text-3xl font-black text-white font-mono">{s.value}</h2>
+               <span class:list={["text-[10px] font-black", s.trend.includes('+') ? 'text-emerald-500' : 'text-cyan-400']}>{s.trend}</span>
+            </div>
+         </div>
+       ))}
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+       <!-- Performance Chart Placeholder -->
+       <div class="lg:col-span-2 bg-gray-900 border border-gray-800 rounded-[2.5rem] p-10 flex flex-col justify-end h-[400px] relative overflow-hidden group">
+          <div class="absolute inset-x-10 bottom-10 flex items-end justify-between h-48 space-x-2">
+             {[40, 65, 45, 90, 85, 60, 95].map((h, i) => (
+               <div class="relative group/bar flex-1 flex flex-col items-center">
+                  <div 
+                    class="w-full bg-cyan-500/10 border-t border-cyan-500/40 group-hover:bg-cyan-500/30 transition-all duration-500 rounded-t-lg"
+                    style={`height: ${h}%`}
+                  ></div>
+                  <span class="text-[8px] text-gray-600 mt-4 font-black uppercase tracking-tighter">Dia {i+1}</span>
+               </div>
+             ))}
+          </div>
+          <div class="absolute top-10 left-10">
+             <h3 class="text-lg font-bold text-white uppercase tracking-tight">Economia em Escala</h3>
+             <p class="text-xs text-gray-500 mt-1">Volume de mensagens processadas vs. Intervenção humana.</p>
+          </div>
+       </div>
+
+       <!-- Insights -->
+       <div class="bg-gray-900/40 border border-gray-800 rounded-[2.5rem] p-8 space-y-8">
+          <h3 class="text-xs font-black uppercase text-gray-600 tracking-[0.2em]">Insights Recentes</h3>
+          <div class="space-y-6">
+             <div class="flex items-start space-x-4">
+                <div class="w-8 h-8 bg-cyan-500/10 rounded-lg flex items-center justify-center text-cyan-400 shrink-0">
+                   <Target className="w-4 h-4" />
+                </div>
+                <p class="text-xs text-gray-400 leading-relaxed font-medium">A IA resolveu **89%** das dúvidas sobre frete sem precisar de um atendente real.</p>
+             </div>
+             <div class="flex items-start space-x-4">
+                <div class="w-8 h-8 bg-purple-500/10 rounded-lg flex items-center justify-center text-purple-400 shrink-0">
+                   <TrendingUp className="w-4 h-4" />
+                </div>
+                <p class="text-xs text-gray-400 leading-relaxed font-medium">Sua taxa de conversão subiu **4%** em leads abordados nos primeiros 30 segundos.</p>
+             </div>
+             <div class="flex items-start space-x-4">
+                <div class="w-8 h-8 bg-yellow-500/10 rounded-lg flex items-center justify-center text-yellow-400 shrink-0">
+                   <Clock className="w-4 h-4" />
+                </div>
+                <p class="text-xs text-gray-400 leading-relaxed font-medium">O horário de pico da IA é entre **22:00 e 02:00**, cobrindo o período off-line humano.</p>
+             </div>
+          </div>
+       </div>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

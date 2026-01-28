@@ -1,19 +1,93 @@
+```astro
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { ShoppingCart, Ghost, Zap, DollarSign, ArrowRight, MousePointer2 } from 'lucide-react';
+
+const abandonedCarts = [
+  { id: 1, user: "Fabio Henrique", value: "R$ 899,00", items: 3, time: "45 min atrás", risk: "Alta" },
+  { id: 2, user: "Gisele B.", value: "R$ 1.250,50", items: 1, time: "2h atrás", risk: "Média" },
+  { id: 3, user: "Unknown Guest", value: "R$ 340,00", items: 5, time: "5h atrás", risk: "Baixa" },
+];
 ---
 
 <AdminLayout title="Abandonos de Carrinho" activeTab="crm">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg shadow-yellow-500/30 animate-pulse">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-      </svg>
+  <div class="space-y-8 animate-fade-in">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-white flex items-center">
+          <Ghost className="w-8 h-8 text-indigo-400 mr-3 animate-pulse" />
+          Carrinhos Abandonados
+        </h1>
+        <p class="text-gray-400 mt-1">Recupere vendas que quase aconteceram com abordagens automáticas.</p>
+      </div>
+      <div class="p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl flex flex-col items-end">
+         <p class="text-[10px] uppercase font-black text-indigo-400 tracking-widest">Recuperável Estimado</p>
+         <p class="text-2xl font-black text-white">R$ 12.450,00</p>
+      </div>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      Abandonos de Carrinho
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Recupere carrinhos abandonados e aumente suas vendas.
-    </p>
+
+    <!-- Lista de Abandonos -->
+    <div class="bg-gray-900/30 border border-gray-800 rounded-3xl overflow-hidden">
+      <div class="p-6 border-b border-gray-800 flex items-center justify-between bg-black/20">
+         <h3 class="text-xs font-black uppercase text-gray-500 tracking-widest">Sessões Ativas em Risco</h3>
+         <button class="text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors">Ver Todos (124)</button>
+      </div>
+      <div class="divide-y divide-gray-800">
+        {abandonedCarts.map(cart => (
+          <div class="p-6 flex flex-col md:flex-row md:items-center justify-between hover:bg-white/[0.02] transition-colors group">
+            <div class="flex items-center space-x-6">
+               <div class="w-12 h-12 bg-gray-800 rounded-2xl flex items-center justify-center group-hover:bg-indigo-500/20 transition-colors">
+                  <ShoppingCart className="w-6 h-6 text-indigo-400" />
+               </div>
+               <div>
+                  <h4 class="text-sm font-bold text-white uppercase tracking-tight">{cart.user}</h4>
+                  <div class="flex items-center space-x-3 text-[10px] text-gray-500 font-medium">
+                     <span class="flex items-center"><DollarSign className="w-2.5 h-2.5 mr-0.5" /> {cart.value}</span>
+                     <span>•</span>
+                     <span>{cart.items} itens</span>
+                     <span>•</span>
+                     <span>{cart.time}</span>
+                  </div>
+               </div>
+            </div>
+            
+            <div class="mt-4 md:mt-0 flex items-center space-x-4">
+               <div class="text-right">
+                  <p class="text-[8px] uppercase font-black text-gray-600 mb-0.5 tracking-widest">Probabilidade de Compra</p>
+                  <span class:list={["text-[10px] font-black uppercase", cart.risk === 'Alta' ? 'text-emerald-500' : 'text-orange-500']}>{cart.risk}</span>
+               </div>
+               <button class="px-5 py-2.5 bg-indigo-600/10 border border-indigo-500/30 text-indigo-400 font-bold text-[10px] rounded-xl uppercase hover:bg-indigo-600 hover:text-white transition-all">
+                  Abordar Agora
+               </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Insights Mockup -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+       <div class="p-6 bg-black/40 border border-gray-800 rounded-3xl">
+          <Zap className="w-6 h-6 text-yellow-500 mb-4" />
+          <h4 class="text-sm font-bold text-white mb-2 uppercase tracking-tighter">Recuperação IA</h4>
+          <p class="text-xs text-gray-500 leading-relaxed">Sua taxa de recuperação aumentou **12%** após ativar o disparo automático de cupons via WhatsApp.</p>
+       </div>
+       <div class="p-6 bg-black/40 border border-gray-800 rounded-3xl">
+          <MousePointer2 className="w-6 h-6 text-blue-500 mb-4" />
+          <h4 class="text-sm font-bold text-white mb-2 uppercase tracking-tighter">Ponto de Fuga</h4>
+          <p class="text-xs text-gray-500 leading-relaxed">A maioria dos abandonos ocorre na etapa de **Cálculo de Frete**. Considere oferecer frete fixo.</p>
+       </div>
+       <div class="p-6 bg-black/40 border border-gray-800 rounded-3xl">
+          <ArrowRight className="w-6 h-6 text-purple-500 mb-4" />
+          <h4 class="text-sm font-bold text-white mb-2 uppercase tracking-tighter">Próximo Passo</h4>
+          <p class="text-xs text-gray-500 leading-relaxed">Teste um fluxo de recuperação via Instagram Direct para leads que vieram de Ads sociais.</p>
+       </div>
+    </div>
   </div>
 </AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+```

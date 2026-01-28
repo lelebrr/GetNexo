@@ -3,17 +3,65 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 
 <AdminLayout title="Alertas Pendentes" activeTab="dashboard">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/30 animate-pulse">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-        </svg>
+  <div class="space-y-6">
+    <div class="flex justify-between items-center">
+      <h1 class="text-3xl font-bold text-white">Centro de Alertas</h1>
+      <button class="text-sm text-gray-400 hover:text-white transition-colors">Marcar todos como lidos</button>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      Alertas Pendentes
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Verifique alertas e notificações importantes do sistema.
-    </p>
+
+    <!-- Alert List -->
+    <div class="grid gap-4">
+
+      <!-- Critical Alert -->
+      <div class="bg-red-900/10 border border-red-900/40 p-5 rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between group hover:border-red-500/40 transition-all">
+        <div class="flex items-start">
+          <div class="p-3 bg-red-500/20 rounded-lg text-red-500 mr-4">
+             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+          </div>
+          <div>
+            <h3 class="text-red-400 font-bold mb-1">Falha de Pagamento Gateway</h3>
+            <p class="text-gray-300 text-sm">Altas taxas de rejeição detectadas no Gateway 2 (PicPay). Verifique as configurações de API.</p>
+            <p class="text-xs text-red-500/70 mt-2 font-mono">Erro: 502 Bad Gateway • há 10 min</p>
+          </div>
+        </div>
+        <div class="mt-4 md:mt-0 flex space-x-3">
+          <button class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg font-medium transition-colors">Resolver</button>
+          <button class="px-4 py-2 bg-transparent border border-gray-700 text-gray-400 hover:text-white text-sm rounded-lg transition-colors">Ignorar</button>
+        </div>
+      </div>
+
+       <!-- Warning Alert -->
+      <div class="bg-amber-900/10 border border-amber-900/40 p-5 rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between group hover:border-amber-500/40 transition-all">
+        <div class="flex items-start">
+          <div class="p-3 bg-amber-500/20 rounded-lg text-amber-500 mr-4">
+             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+          <div>
+            <h3 class="text-amber-400 font-bold mb-1">Estoque Crítico</h3>
+            <p class="text-gray-300 text-sm">O produto "Smartwatch Series 8" está com menos de 5 unidades.</p>
+          </div>
+        </div>
+         <div class="mt-4 md:mt-0">
+          <button class="text-gray-400 hover:text-white text-sm underline">Ver Produto</button>
+        </div>
+      </div>
+
+      <!-- Info Alert -->
+      <div class="bg-blue-900/10 border border-blue-900/40 p-5 rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between group hover:border-blue-500/40 transition-all">
+        <div class="flex items-start">
+          <div class="p-3 bg-blue-500/20 rounded-lg text-blue-500 mr-4">
+             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+          </div>
+          <div>
+            <h3 class="text-blue-400 font-bold mb-1">Automação Executada</h3>
+            <p class="text-gray-300 text-sm">O fluxo "Recuperação de Carrinho - 24h" rodou para 150 leads com sucesso.</p>
+          </div>
+        </div>
+         <div class="mt-4 md:mt-0 text-sm text-gray-500">
+           há 2 horas
+        </div>
+      </div>
+
+    </div>
   </div>
 </AdminLayout>

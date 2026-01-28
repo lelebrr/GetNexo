@@ -1,0 +1,96 @@
+```
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { CreditCard, DollarSign, Download, Search, Filter, CheckCircle2, XCircle, Clock } from 'lucide-react';
+
+const transactions = [
+  { id: "TX-9082", customer: "Marcos Paulo", value: "R$ 450,00", method: "PIX", status: "Aprovado", date: "Há 10 min" },
+  { id: "TX-9081", customer: "Juliana Mendes", value: "R$ 1.200,00", method: "Credit Card", status: "Em Análise", date: "Há 45 min" },
+  { id: "TX-9080", customer: "Tech Solutions", value: "R$ 8.400,00", method: "Boleto", status: "Aguardando", date: "Há 2h" },
+  { id: "TX-9079", customer: "Fabio Henrique", value: "R$ 29,90", method: "PIX", status: "Negado", date: "Há 4h" },
+  { id: "TX-9078", customer: "Gisele B.", value: "R$ 540,10", method: "Credit Card", status: "Aprovado", date: "Hoje, 09:12" },
+];
+---
+
+<AdminLayout title="Histórico de Pagamentos" activeTab="payments">
+  <div class="space-y-8 animate-fade-in">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-white flex items-center uppercase tracking-tighter">
+          <CreditCard className="w-8 h-8 text-emerald-500 mr-3" />
+          Log de Transações
+        </h1>
+        <p class="text-gray-400 mt-1">Histórico completo de toda a movimentação financeira do sistema.</p>
+      </div>
+      <button class="px-6 py-3 bg-emerald-600/10 border border-emerald-500/20 text-emerald-400 font-bold rounded-2xl flex items-center space-x-2 hover:bg-emerald-500/20 transition-all">
+        <Download className="w-5 h-5" />
+        <span>Exportar CSV</span>
+      </button>
+    </div>
+
+    <!-- Filtros de Pagamento -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-gray-900/40 p-4 border border-gray-800 rounded-2xl">
+      <div class="relative col-span-1 md:col-span-2">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+        <input type="text" placeholder="Buscar por ID, Cliente ou Valor..." class="w-full bg-black/60 border border-gray-800 rounded-xl py-2 pl-10 pr-4 text-sm text-white focus:border-emerald-500 outline-none" />
+      </div>
+      <button class="bg-gray-800 text-gray-400 text-xs font-bold py-2 rounded-xl border border-gray-700 hover:text-white">Status: Todos</button>
+      <button class="bg-gray-800 text-gray-400 text-xs font-bold py-2 rounded-xl border border-gray-700 hover:text-white">Método: Todos</button>
+    </div>
+
+    <!-- Tabela de Transações -->
+    <div class="bg-gray-900/20 border border-gray-800 rounded-3xl overflow-hidden shadow-2xl">
+      <table class="w-full text-left">
+        <thead>
+          <tr class="bg-black/40 border-b border-gray-800">
+            <th class="px-6 py-4 text-[10px] font-black uppercase text-gray-500">ID da Transação</th>
+            <th class="px-6 py-4 text-[10px] font-black uppercase text-gray-500">Beneficiário</th>
+            <th class="px-6 py-4 text-[10px] font-black uppercase text-gray-500">Valor Bruto</th>
+            <th class="px-6 py-4 text-[10px] font-black uppercase text-gray-500">Método</th>
+            <th class="px-6 py-4 text-[10px] font-black uppercase text-gray-500">Status</th>
+            <th class="px-6 py-4 text-[10px] font-black uppercase text-gray-500 text-right">Data</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-800/50">
+          {transactions.map(tx => (
+            <tr class="hover:bg-emerald-500/5 transition-colors group">
+              <td class="px-6 py-5">
+                <span class="text-xs font-mono font-bold text-gray-400 group-hover:text-emerald-400 transition-colors">{tx.id}</span>
+              </td>
+              <td class="px-6 py-5">
+                <span class="text-sm font-bold text-white uppercase tracking-tight">{tx.customer}</span>
+              </td>
+              <td class="px-6 py-5">
+                <span class="text-sm font-bold text-white font-mono">{tx.value}</span>
+              </td>
+              <td class="px-6 py-5">
+                <span class="text-[10px] bg-white/5 border border-white/10 px-2 py-1 rounded text-gray-400 font-bold uppercase">{tx.method}</span>
+              </td>
+              <td class="px-6 py-5">
+                <div class="flex items-center space-x-2">
+                   {tx.status === 'Aprovado' && <CheckCircle2 className="w-3 h-3 text-emerald-500" />}
+                   {tx.status === 'Negado' && <XCircle className="w-3 h-3 text-rose-500" />}
+                   {tx.status === 'Aguardando' && <Clock className="w-3 h-3 text-orange-500" />}
+                   {tx.status === 'Em Análise' && <Clock className="w-3 h-3 text-blue-500" />}
+                   <span class:list={[
+                     "text-[10px] font-black uppercase",
+                     tx.status === 'Aprovado' ? 'text-emerald-500' : (tx.status === 'Negado' ? 'text-rose-500' : 'text-gray-500')
+                   ]}>{tx.status}</span>
+                </div>
+              </td>
+              <td class="px-6 py-5 text-right font-medium text-[10px] text-gray-600">
+                {tx.date}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+```

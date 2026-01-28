@@ -3,17 +3,103 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 
 <AdminLayout title="ROI Última Campanha" activeTab="dashboard">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/30 animate-pulse">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-        </svg>
-    </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      ROI Última Campanha
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Analise o retorno da sua última campanha de marketing.
-    </p>
+  <div class="space-y-8">
+     <!-- Campaign Header -->
+     <div class="bg-gradient-to-r from-purple-900/40 to-pink-900/40 border border-purple-500/30 p-6 rounded-2xl relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-4 opacity-10">
+           <svg xmlns="http://www.w3.org/2000/svg" class="h-32 w-32 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" /></svg>
+        </div>
+        <div class="relative z-10">
+          <div class="flex items-center justify-between mb-2">
+             <span class="text-purple-300 text-sm font-medium uppercase tracking-wider">Campanha Ativa</span>
+             <span class="bg-green-500 text-white text-xs px-2 py-1 rounded font-bold">EM ANDAMENTO</span>
+          </div>
+          <h1 class="text-3xl font-bold text-white mb-2">Lançamento de Verão 2026</h1>
+          <p class="text-purple-200/60 max-w-xl">Campanha focada em retargeting via WhatsApp e Instagram Ads para a nova coleção.</p>
+        </div>
+     </div>
+
+     <!-- Metrics Grid -->
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+       <!-- Investimento -->
+       <div class="bg-gray-900/50 border border-gray-800 p-6 rounded-xl">
+         <p class="text-gray-400 text-sm mb-1">Total Investido e Custo</p>
+         <h2 class="text-3xl font-bold text-white mb-2">R$ 4.500,00</h2>
+         <div class="flex items-center text-sm">
+            <span class="text-gray-500">CPC Médio:</span>
+            <span class="text-white font-mono ml-2">R$ 1,45</span>
+         </div>
+       </div>
+       
+       <!-- Retorno -->
+       <div class="bg-gray-900/50 border border-gray-800 p-6 rounded-xl">
+         <p class="text-gray-400 text-sm mb-1">Receita Gerada</p>
+         <h2 class="text-3xl font-bold text-emerald-400 mb-2">R$ 28.350,00</h2>
+         <div class="flex items-center text-sm">
+            <span class="text-gray-500">Ticket Médio:</span>
+            <span class="text-white font-mono ml-2">R$ 180,00</span>
+         </div>
+       </div>
+
+       <!-- ROAS -->
+       <div class="bg-gray-900/50 border border-gray-800 p-6 rounded-xl flex flex-col justify-center items-center relative overflow-hidden group">
+         <div class="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+         <p class="text-gray-400 text-sm mb-1 relative z-10">ROAS (Retorno)</p>
+         <h2 class="text-4xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent relative z-10">6.3x</h2>
+         <span class="text-emerald-400 text-xs font-bold mt-2 relative z-10">+18% vs média</span>
+       </div>
+     </div>
+
+     <!-- Funnel Visualization -->
+     <div class="bg-gray-900/50 border border-gray-800 p-8 rounded-xl">
+       <h3 class="text-lg font-semibold text-white mb-6">Funil de Conversão</h3>
+       <div class="space-y-4">
+         
+         <!-- Stage 1 -->
+         <div class="relative">
+           <div class="flex justify-between text-sm text-gray-400 mb-1">
+             <span>Impressões / Alcance</span>
+             <span>150.000</span>
+           </div>
+           <div class="h-4 bg-gray-800 rounded-full overflow-hidden">
+             <div class="h-full bg-indigo-500 w-full rounded-full"></div>
+           </div>
+         </div>
+
+         <!-- Stage 2 -->
+         <div class="relative">
+           <div class="flex justify-between text-sm text-gray-400 mb-1">
+             <span>Cliques no Link (CTR 3%)</span>
+             <span>4.500</span>
+           </div>
+           <div class="h-4 bg-gray-800 rounded-full overflow-hidden">
+             <div class="h-full bg-indigo-400 w-[60%] rounded-full"></div>
+           </div>
+         </div>
+
+         <!-- Stage 3 -->
+         <div class="relative">
+           <div class="flex justify-between text-sm text-gray-400 mb-1">
+             <span>Iniciaram Checkout</span>
+             <span>650</span>
+           </div>
+           <div class="h-4 bg-gray-800 rounded-full overflow-hidden">
+             <div class="h-full bg-purple-500 w-[30%] rounded-full"></div>
+           </div>
+         </div>
+
+         <!-- Stage 4 -->
+         <div class="relative">
+           <div class="flex justify-between text-sm text-gray-400 mb-1">
+             <span>Compras Confirmadas</span>
+             <span class="font-bold text-white">158</span>
+           </div>
+           <div class="h-4 bg-gray-800 rounded-full overflow-hidden">
+             <div class="h-full bg-emerald-500 w-[15%] rounded-full"></div>
+           </div>
+         </div>
+       </div>
+     </div>
+
   </div>
 </AdminLayout>

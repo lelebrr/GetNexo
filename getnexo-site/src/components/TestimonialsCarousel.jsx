@@ -5,7 +5,7 @@ const testimonialsData = [
         name: "Joao do Tenis",
         handle: "@joao_do_tenis",
         company: "Dono da Loja de Calçados",
-        photo: "https://i.pravatar.cc/150?u=joao",
+        photo: "https://i.pravatar.cc/60?u=joao",
         quote: "O AR vendeu 200 pares em 1 dia. Nunca vi nada igual no meu checkout.",
         results: "+R$ 42k/mês",
         resultLabel: "faturamento extra",
@@ -15,7 +15,7 @@ const testimonialsData = [
         name: "Mariana Silva",
         handle: "@mari_modaplus",
         company: "CEO da ModaPlus",
-        photo: "https://i.pravatar.cc/150?u=mari",
+        photo: "https://i.pravatar.cc/60?u=mari",
         quote: "Setup em 12 minutos e já estava vendendo automaticamente. Economia real de tempo e dinheiro.",
         results: "R$ 8.5k",
         resultLabel: "economia/mês",
@@ -25,7 +25,7 @@ const testimonialsData = [
         name: "Roberto Santos",
         handle: "@robertotech",
         company: "Proprietário TechStore",
-        photo: "https://i.pravatar.cc/150?u=roberto",
+        photo: "https://i.pravatar.cc/60?u=roberto",
         quote: "O PIX integrado é show! Clientes pagam direto no chat sem fricção.",
         results: "98%",
         resultLabel: "conversão",
@@ -35,7 +35,7 @@ const testimonialsData = [
         name: "Ana Oliveira",
         handle: "@ana_oliveira",
         company: "CEO da ScaleTech",
-        photo: "https://i.pravatar.cc/150?u=ana",
+        photo: "https://i.pravatar.cc/60?u=ana",
         quote: "Com a IA generativa do GetNexo, meu WhatsApp atende 3.200% mais clientes sem contratar ninguém.",
         results: "+3.200%",
         resultLabel: "escalabilidade",
@@ -45,7 +45,7 @@ const testimonialsData = [
         name: "Pedro Lima",
         handle: "@pedro_lima",
         company: "Dono da Loja Digital",
-        photo: "https://i.pravatar.cc/150?u=pedro",
+        photo: "https://i.pravatar.cc/60?u=pedro",
         quote: "Instalação em 12 minutos, zero mensalidade. Meu negócio já fatura sozinho enquanto durmo.",
         results: "12 min",
         resultLabel: "setup",
@@ -55,7 +55,7 @@ const testimonialsData = [
         name: "Julia Costa",
         handle: "@julia_costa",
         company: "E-commerce Manager",
-        photo: "https://i.pravatar.cc/150?u=julia",
+        photo: "https://i.pravatar.cc/60?u=julia",
         quote: "O PIX no chat fechou 98% das vendas. Clientes pagam direto sem sair do WhatsApp.",
         results: "Zero",
         resultLabel: "abandono",
@@ -197,7 +197,7 @@ const TestimonialsCarousel = () => {
                                         )}
                                     </div>
                                     <div>
-                                        <h4 className="text-white font-bold leading-tight">{t.name}</h4>
+                                        <h3 className="text-white font-bold leading-tight">{t.name}</h3>
                                         <span className="text-cyan-400 text-sm">{t.handle}</span>
                                     </div>
                                 </div>
@@ -234,16 +234,17 @@ const TestimonialsCarousel = () => {
             </button>
 
             {/* Dots Pagination - Centered Items */}
-            <div className="mt-8 flex justify-center gap-2">
+            <div className="mt-8 flex justify-center gap-2" role="navigation" aria-label="Navegação do slider de depoimentos">
                 {Array.from({ length: maxIndex + 1 }).map((_, idx) => (
                     <button
                         key={idx}
                         onClick={() => goToSlide(idx)}
                         className={`h-2 rounded-full transition-all duration-300 ${currentIndex === idx
-                                ? 'w-8 bg-cyan-400'
-                                : 'w-2 bg-slate-700 hover:bg-slate-600'
+                            ? 'w-8 bg-cyan-400'
+                            : 'w-2 bg-slate-700 hover:bg-slate-600'
                             }`}
                         aria-label={`Ir para slide ${idx + 1}`}
+                        aria-current={currentIndex === idx ? 'true' : 'false'}
                     />
                 ))}
             </div>

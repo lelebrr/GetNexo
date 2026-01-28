@@ -1,19 +1,97 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { Trophy, Medal, Star, User, ArrowUpRight, Crown } from 'lucide-react';
+
+const topCustomers = [
+  { rank: 1, name: "Fabio Henrique", points: "12,450", orders: 28, level: "Diamante" },
+  { rank: 2, name: "Juliana Mendes", points: "8,920", orders: 15, level: "Platina" },
+  { rank: 3, name: "Marcos Paulo", points: "7,100", orders: 22, level: "Platina" },
+  { rank: 4, name: "Gisele B.", points: "5,400", orders: 10, level: "Ouro" },
+];
 ---
 
-<AdminLayout title="Top 100 Clientes" activeTab="fidelidade">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-purple-500 to-violet-500 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/30 animate-pulse">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-      </svg>
+<AdminLayout title="Ranking de Fidelidade" activeTab="loyalty">
+  <div class="space-y-10 animate-fade-in py-4">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-black text-white uppercase tracking-tighter flex items-center">
+          <Trophy className="w-8 h-8 text-yellow-500 mr-4" />
+          Hall da Fama
+        </h1>
+        <p class="text-sm text-gray-500 font-medium mt-1">Os clientes mais engajados e valiosos da sua operação.</p>
+      </div>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      Top 100 Clientes
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Ranking dos 100 clientes mais engajados.
-    </p>
+
+    <!-- Top 3 Podium Mockup -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-end pb-10">
+       <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] text-center space-y-4 h-[250px] flex flex-col justify-center order-2 md:order-1 border-b-4 border-b-slate-400">
+          <Medal className="w-10 h-10 text-slate-400 mx-auto" />
+          <div>
+             <p class="text-lg font-bold text-white uppercase tracking-tight">{topCustomers[1].name}</p>
+             <p class="text-xs text-gray-500 font-black uppercase tracking-widest">{topCustomers[1].points} PTS</p>
+          </div>
+       </div>
+
+       <div class="bg-gradient-to-t from-yellow-600/10 to-indigo-600/10 border border-yellow-500/20 p-10 rounded-[3rem] text-center space-y-6 h-[320px] flex flex-col justify-center order-1 md:order-2 relative border-b-4 border-b-yellow-500">
+          <Crown className="w-16 h-16 text-yellow-500 mx-auto animate-bounce" />
+          <div>
+             <p class="text-2xl font-black text-white uppercase tracking-tighter">{topCustomers[0].name}</p>
+             <p class="text-sm text-yellow-500 font-black uppercase tracking-[0.3em]">{topCustomers[0].points} PTS</p>
+          </div>
+          <div class="absolute -top-4 -right-4 bg-yellow-500 text-black text-[10px] font-black px-4 py-1 rounded-full uppercase">#1 Global</div>
+       </div>
+
+       <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] text-center space-y-4 h-[220px] flex flex-col justify-center order-3 border-b-4 border-b-orange-700">
+          <Medal className="w-10 h-10 text-orange-700 mx-auto" />
+          <div>
+             <p class="text-lg font-bold text-white uppercase tracking-tight">{topCustomers[2].name}</p>
+             <p class="text-xs text-gray-500 font-black uppercase tracking-widest">{topCustomers[2].points} PTS</p>
+          </div>
+       </div>
+    </div>
+
+    <!-- Leaderboard Table -->
+    <div class="bg-gray-900/20 border border-gray-800 rounded-3xl overflow-hidden backdrop-blur-md">
+      <table class="w-full text-left">
+        <thead>
+          <tr class="bg-black/40">
+            <th class="px-8 py-5 text-[10px] font-black uppercase text-gray-600 tracking-widest text-center w-20">Rank</th>
+            <th class="px-8 py-5 text-[10px] font-black uppercase text-gray-600 tracking-widest">Cliente</th>
+            <th class="px-8 py-5 text-[10px] font-black uppercase text-gray-600 tracking-widest">Nível</th>
+            <th class="px-8 py-5 text-[10px] font-black uppercase text-gray-600 tracking-widest">Pedidos</th>
+            <th class="px-8 py-5 text-[10px] font-black uppercase text-gray-600 tracking-widest text-right">Acúmulo</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-800/50">
+          {topCustomers.map(c => (
+             <tr class="hover:bg-white/[0.02] transition-colors group">
+               <td class="px-8 py-6 text-center">
+                  <span class="text-sm font-black text-gray-500 font-mono">#{c.rank}</span>
+               </td>
+               <td class="px-8 py-6">
+                  <div class="flex items-center space-x-4">
+                     <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-gray-500 group-hover:bg-indigo-500 group-hover:text-white transition-all">
+                        <User className="w-5 h-5" />
+                     </div>
+                     <span class="text-sm font-bold text-white uppercase tracking-tight">{c.name}</span>
+                  </div>
+               </td>
+               <td class="px-8 py-6">
+                  <span class:list={["text-[8px] font-black uppercase px-2 py-1 rounded", c.level === 'Diamante' ? 'bg-cyan-500/10 text-cyan-400' : 'bg-indigo-500/10 text-indigo-400']}>{c.level}</span>
+               </td>
+               <td class="px-8 py-6 text-xs text-gray-500 font-bold font-mono">{c.orders}</td>
+               <td class="px-8 py-6 text-right">
+                  <span class="text-sm font-black text-white font-mono">{c.points}</span>
+               </td>
+             </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   </div>
 </AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

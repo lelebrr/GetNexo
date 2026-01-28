@@ -103,7 +103,7 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
     </div>
 
     <script is:inline>
-        const API = 'https://api.getnexo.com.br';
+        const API = '/api';
 
         // Tone Selection
         document.querySelectorAll('.tone-opt').forEach(btn => {
@@ -116,7 +116,7 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
         // Backend Sync
         async function loadData() {
             try {
-                const res = await fetch(`${API}/api/config`, { headers: window.getAuthHeader() });
+                const res = await fetch(`${API}/config`, { headers: window.getAuthHeader() });
                 const data = await res.json();
                 if (data.geminiKey) document.getElementById('geminiKey').value = data.geminiKey;
                 if (data.openRouterKey) document.getElementById('openRouterKey').value = data.openRouterKey;
@@ -142,7 +142,7 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
             };
             
             try {
-                await fetch(`${API}/api/config`, {
+                await fetch(`${API}/config`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', ...window.getAuthHeader() },
                     body: JSON.stringify(payload)
@@ -170,7 +170,6 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
             color: #64748b; padding: 1.2rem; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s;
             font-size: 0.8rem;
         }
-        .tone-opt:hover { background: rgba(255,255,255,0.08); color: white; transform: translateY(-2px); }
         .tone-opt.active { background: rgba(0, 255, 157, 0.1); border-color: var(--neon-green); color: var(--neon-green); box-shadow: 0 0 20px rgba(0,255,157,0.15); }
         textarea:focus { border-color: var(--neon-blue); background: rgba(0,0,0,0.5); }
         .btn-cta-dash:hover { transform: scale(1.02); filter: brightness(1.1); }

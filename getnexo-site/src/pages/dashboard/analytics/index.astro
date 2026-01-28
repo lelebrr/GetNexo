@@ -51,7 +51,7 @@ import HeatmapChart from '../../../components/analytics/HeatmapChart.jsx';
 
             {/* Magic Map - Tempo Real */}
             <div class="mb-8">
-                <MagicMap client:load />
+                <MagicMap client:only="react" />
             </div>
 
             {/* Heatmaps */}
@@ -61,19 +61,19 @@ import HeatmapChart from '../../../components/analytics/HeatmapChart.jsx';
                     dateRange="7d"
                     heatmapType="click"
                     title="Heatmap de Cliques - Home"
-                    client:load
+                    client:only="react"
                 />
                 <HeatmapChart
                     pageUrl="/precos"
                     dateRange="7d"
                     heatmapType="attention"
                     title="Heatmap de Atenção - Preços"
-                    client:load
+                    client:only="react"
                 />
             </div>
 
             {/* Dashboard Analytics */}
-            <AnalyticsDashboard client:load />
+            <AnalyticsDashboard client:only="react" />
         </div>
     </div>
 

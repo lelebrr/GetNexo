@@ -3,17 +3,294 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 
 <AdminLayout title="Sentimento Atual" activeTab="live">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-pink-500 to-rose-500 rounded-2xl flex items-center justify-center shadow-lg shadow-pink-500/30 animate-pulse">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
+  <div class="space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <h1 class="text-3xl font-bold text-white">Sentimento Atual</h1>
+        <p class="text-gray-400 mt-1">Análise de sentimento das conversas ativas</p>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="refreshSentiment()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Atualizar
+        </button>
+      </div>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      Sentimento Atual
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Análise de sentimento das conversas ativas.
-    </p>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-xl p-4">
+        <div class="text-2xl font-bold text-white" id="positiveCount">0</div>
+        <div class="text-sm text-gray-400">Positivas</div>
+        <div class="text-xs text-green-400 mt-1" id="positivePercent">0%</div>
+      </div>
+      <div class="bg-gradient-to-br from-gray-500/20 to-slate-500/20 border border-gray-500/30 rounded-xl p-4">
+        <div class="text-2xl font-bold text-white" id="neutralCount">0</div>
+        <div class="text-sm text-gray-400">Neutras</div>
+        <div class="text-xs text-gray-400 mt-1" id="neutralPercent">0%</div>
+      </div>
+      <div class="bg-gradient-to-br from-red-500/20 to-orange-500/20 border border-red-500/30 rounded-xl p-4">
+        <div class="text-2xl font-bold text-white" id="negativeCount">0</div>
+        <div class="text-sm text-gray-400">Negativas</div>
+        <div class="text-xs text-red-400 mt-1" id="negativePercent">0%</div>
+      </div>
+    </div>
+
+    <!-- Chart Container -->
+    <div class="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
+      <h2 class="text-xl font-semibold text-white mb-4">Distribuição de Sentimentos</h2>
+      <div id="chartContainer" class="h-64 flex items-end justify-around gap-4">
+        <!-- Chart bars will be rendered here -->
+      </div>
+    </div>
+
+    <!-- Recent Conversations by Sentiment -->
+    <div class="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
+      <h2 class="text-xl font-semibold text-white mb-4">Conversas Recentes</h2>
+      <div class="flex gap-2 mb-4">
+        <button onclick="filterBySentiment('')" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded text-sm transition-colors" id="filterAll">Todas</button>
+        <button onclick="filterBySentiment('positive')" class="px-3 py-1 bg-green-600 hover:bg-green-500 text-white rounded text-sm transition-colors" id="filterPositive">Positivas</button>
+        <button onclick="filterBySentiment('neutral')" class="px-3 py-1 bg-gray-600 hover:bg-gray-500 text-white rounded text-sm transition-colors" id="filterNeutral">Neutras</button>
+        <button onclick="filterBySentiment('negative')" class="px-3 py-1 bg-red-600 hover:bg-red-500 text-white rounded text-sm transition-colors" id="filterNegative">Negativas</button>
+      </div>
+      <div id="conversationsList" class="space-y-3">
+        <!-- Conversations will be rendered here -->
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="hidden flex flex-col items-center justify-center min-h-[40vh]">
+      <div class="w-12 h-12 border-4 border-pink-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+      <p class="text-gray-400">Carregando análise de sentimentos...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="errorState" class="hidden flex flex-col items-center justify-center min-h-[40vh] text-center space-y-4">
+      <div class="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="text-xl font-semibold text-white">Erro ao carregar</h3>
+      <p class="text-gray-400" id="errorMessage">Não foi possível carregar a análise de sentimentos.</p>
+      <button onclick="refreshSentiment()" class="px-6 py-2 bg-pink-600 hover:bg-pink-500 text-white rounded-lg transition-colors">
+        Tentar novamente
+      </button>
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden flex flex-col items-center justify-center min-h-[40vh] text-center space-y-4">
+      <div class="w-16 h-16 bg-gray-700/50 rounded-full flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="text-xl font-semibold text-white">Nenhuma conversa ativa</h3>
+      <p class="text-gray-400">Não há conversas ativas para análise de sentimento.</p>
+    </div>
   </div>
+
+  <script>
+    let allTickets = [];
+    let filteredTickets = [];
+    let currentFilter = '';
+
+    async function loadSentimentData() {
+      const loadingState = document.getElementById('loadingState');
+      const errorState = document.getElementById('errorState');
+      const emptyState = document.getElementById('emptyState');
+
+      // Show loading
+      loadingState.classList.remove('hidden');
+      errorState.classList.add('hidden');
+      emptyState.classList.add('hidden');
+
+      try {
+        // Fetch active tickets (open and waiting)
+        const response = await fetch('/api/tickets?status=open&status=waiting');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        
+        if (!data.success) {
+          throw new Error(data.message || 'Erro ao carregar tickets');
+        }
+
+        allTickets = data.tickets || [];
+        filteredTickets = [...allTickets];
+
+        // Update stats
+        updateStats();
+
+        // Render chart
+        renderChart();
+
+        // Render conversations
+        renderConversations();
+
+        // Show/hide states
+        loadingState.classList.add('hidden');
+        
+        if (allTickets.length === 0) {
+          emptyState.classList.remove('hidden');
+        } else {
+          emptyState.classList.add('hidden');
+        }
+
+      } catch (error) {
+        console.error('Error loading sentiment data:', error);
+        loadingState.classList.add('hidden');
+        errorState.classList.remove('hidden');
+        document.getElementById('errorMessage').textContent = error.message;
+      }
+    }
+
+    function updateStats() {
+      const total = allTickets.length;
+      const positive = allTickets.filter(t => t.sentiment === 'positive').length;
+      const neutral = allTickets.filter(t => t.sentiment === 'neutral').length;
+      const negative = allTickets.filter(t => t.sentiment === 'negative').length;
+
+      document.getElementById('positiveCount').textContent = positive;
+      document.getElementById('neutralCount').textContent = neutral;
+      document.getElementById('negativeCount').textContent = negative;
+
+      document.getElementById('positivePercent').textContent = total > 0 ? `${Math.round((positive / total) * 100)}%` : '0%';
+      document.getElementById('neutralPercent').textContent = total > 0 ? `${Math.round((neutral / total) * 100)}%` : '0%';
+      document.getElementById('negativePercent').textContent = total > 0 ? `${Math.round((negative / total) * 100)}%` : '0%';
+    }
+
+    function renderChart() {
+      const container = document.getElementById('chartContainer');
+      const total = allTickets.length;
+      
+      if (total === 0) {
+        container.innerHTML = `
+          <div class="text-center text-gray-500 w-full">
+            <p>Nenhum dado para exibir</p>
+          </div>
+        `;
+        return;
+      }
+
+      const positive = allTickets.filter(t => t.sentiment === 'positive').length;
+      const neutral = allTickets.filter(t => t.sentiment === 'neutral').length;
+      const negative = allTickets.filter(t => t.sentiment === 'negative').length;
+
+      const maxHeight = 200;
+      const positiveHeight = (positive / total) * maxHeight;
+      const neutralHeight = (neutral / total) * maxHeight;
+      const negativeHeight = (negative / total) * maxHeight;
+
+      container.innerHTML = `
+        <div class="flex flex-col items-center flex-1">
+          <div class="w-16 bg-gradient-to-t from-green-600 to-green-400 rounded-t-lg transition-all duration-500" style="height: ${positiveHeight}px"></div>
+          <div class="text-sm text-green-400 mt-2 font-semibold">${positive}</div>
+          <div class="text-xs text-gray-400">Positivas</div>
+        </div>
+        <div class="flex flex-col items-center flex-1">
+          <div class="w-16 bg-gradient-to-t from-gray-600 to-gray-400 rounded-t-lg transition-all duration-500" style="height: ${neutralHeight}px"></div>
+          <div class="text-sm text-gray-400 mt-2 font-semibold">${neutral}</div>
+          <div class="text-xs text-gray-400">Neutras</div>
+        </div>
+        <div class="flex flex-col items-center flex-1">
+          <div class="w-16 bg-gradient-to-t from-red-600 to-red-400 rounded-t-lg transition-all duration-500" style="height: ${negativeHeight}px"></div>
+          <div class="text-sm text-red-400 mt-2 font-semibold">${negative}</div>
+          <div class="text-xs text-gray-400">Negativas</div>
+        </div>
+      `;
+    }
+
+    function renderConversations() {
+      const container = document.getElementById('conversationsList');
+      
+      if (filteredTickets.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8 text-gray-500">
+            <p>Nenhuma conversa encontrada</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filteredTickets.slice(0, 10).map(ticket => {
+        const sentimentColors = {
+          positive: 'bg-green-500/20 text-green-400 border-green-500/30',
+          neutral: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
+          negative: 'bg-red-500/20 text-red-400 border-red-500/30'
+        };
+
+        const sentimentLabels = {
+          positive: 'Positivo',
+          neutral: 'Neutro',
+          negative: 'Negativo'
+        };
+
+        const lastMessageTime = ticket.last_message_at
+          ? new Date(ticket.last_message_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+          : 'Sem mensagens';
+
+        return `
+          <div class="flex items-center justify-between bg-gray-900/50 rounded-lg p-3 border border-gray-700">
+            <div class="flex-1">
+              <div class="font-medium text-white">${ticket.customer_name || 'Cliente'}</div>
+              <div class="text-sm text-gray-400">${ticket.last_message || 'Sem mensagem'}</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="px-2 py-1 ${sentimentColors[ticket.sentiment] || sentimentColors.neutral} rounded text-xs font-medium border">
+                ${sentimentLabels[ticket.sentiment] || 'Neutro'}
+              </span>
+              <span class="text-xs text-gray-500">${lastMessageTime}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function filterBySentiment(sentiment) {
+      currentFilter = sentiment;
+      
+      // Update button styles
+      const buttons = ['filterAll', 'filterPositive', 'filterNeutral', 'filterNegative'];
+      buttons.forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+          btn.classList.remove('bg-gray-700', 'bg-green-600', 'bg-gray-600', 'bg-red-600');
+          btn.classList.add('bg-gray-700');
+        }
+      });
+
+      // Set active button
+      const activeButton = sentiment === '' ? 'filterAll' : `filter${sentiment.charAt(0).toUpperCase() + sentiment.slice(1)}`;
+      const activeBtn = document.getElementById(activeButton);
+      if (activeBtn) {
+        activeBtn.classList.remove('bg-gray-700');
+        if (sentiment === 'positive') activeBtn.classList.add('bg-green-600');
+        else if (sentiment === 'neutral') activeBtn.classList.add('bg-gray-600');
+        else if (sentiment === 'negative') activeBtn.classList.add('bg-red-600');
+      }
+
+      // Filter tickets
+      if (sentiment === '') {
+        filteredTickets = [...allTickets];
+      } else {
+        filteredTickets = allTickets.filter(t => t.sentiment === sentiment);
+      }
+
+      renderConversations();
+    }
+
+    function refreshSentiment() {
+      loadSentimentData();
+    }
+
+    // Load data on page load
+    document.addEventListener('DOMContentLoaded', loadSentimentData);
+  </script>
 </AdminLayout>

@@ -4,7 +4,7 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
 
 <ClientLayout title="Serviços - GetNexo Pro">
     <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         .services-header {
@@ -473,7 +473,7 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
     </div>
 
     <script is:inline>
-        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3006' : '/api-proxy';
+        const API_URL = '';
         let currentTab = 'active';
         let servicesUsageChart;
 

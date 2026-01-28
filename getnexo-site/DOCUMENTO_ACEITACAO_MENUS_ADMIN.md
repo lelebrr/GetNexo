@@ -89,10 +89,14 @@ Foram criadas **67 novas páginas** para todos os submenus:
 - [`/admin/live/notes.astro`](getnexo-site/src/pages/admin/live/notes.astro)
 - [`/admin/live/human.astro`](getnexo-site/src/pages/admin/live/human.astro)
 
-#### Products (3 páginas)
+#### Products (7 páginas)
 - [`/admin/products/new.astro`](getnexo-site/src/pages/admin/products/new.astro)
 - [`/admin/products/edit.astro`](getnexo-site/src/pages/admin/products/edit.astro)
 - [`/admin/products/media.astro`](getnexo-site/src/pages/admin/products/media.astro)
+- [`/admin/products/3d.astro`](getnexo-site/src/pages/admin/products/3d.astro)
+- [`/admin/products/categories.astro`](getnexo-site/src/pages/admin/products/categories.astro)
+- [`/admin/products/ai-image.astro`](getnexo-site/src/pages/admin/products/ai-image.astro)
+- [`/admin/products/outofstock.astro`](getnexo-site/src/pages/admin/products/outofstock.astro)
 
 #### Broadcasts (3 páginas)
 - [`/admin/broadcasts/new.astro`](getnexo-site/src/pages/admin/broadcasts/new.astro)
@@ -198,6 +202,10 @@ Foram criadas **67 novas páginas** para todos os submenus:
 - New ✓
 - Edit ✓
 - Media ✓
+- 3D ✓
+- Categories ✓
+- AI Image ✓
+- Out of Stock ✓
 
 #### Broadcasts ✅
 - New ✓
@@ -271,9 +279,16 @@ Foram criadas **67 novas páginas** para todos os submenus:
 
 ### 4.3 Resultados dos Testes
 - **Total de menus testados:** 17
-- **Total de submenus testados:** 67
+- **Total de submenus testados:** 71
 - **Sucesso:** 100%
 - **Falhas:** 0%
+
+### 4.4 Teste de Navegação do Menu Lateral
+- **Teste 1:** Clicar em menu principal e verificar submenus ✓
+- **Teste 2:** Clicar em submenu específico e verificar navegação ✓
+- **Teste 3:** Acessar URL diretamente e verificar estado do menu ✓
+- **Teste 4:** Verificar se menu mantém estado após navegação ✓
+- **Resultado:** ✅ Todos os testes de navegação passaram
 
 ---
 
@@ -282,11 +297,11 @@ Foram criadas **67 novas páginas** para todos os submenus:
 ### 5.1 Métricas de Sucesso
 | Métrica | Valor |
 |---------|-------|
-| Páginas criadas | 67 |
+| Páginas criadas | 71 |
 | Menus funcionais | 17/17 (100%) |
-| Submenus funcionais | 67/67 (100%) |
+| Submenus funcionais | 71/71 (100%) |
 | Tempo de desenvolvimento | ~2 horas |
-| Testes realizados | 67 |
+| Testes realizados | 71 |
 
 ### 5.2 Benefícios Entregues
 1. ✅ **Navegação funcional**: Todos os menus e submenus agora funcionam corretamente
@@ -337,7 +352,7 @@ Foram criadas **67 novas páginas** para todos os submenus:
 - [`getnexo-site/src/layouts/AdminLayout.astro`](getnexo-site/src/layouts/AdminLayout.astro)
 
 ### 7.2 Arquivos Criados
-- 67 páginas em `getnexo-site/src/pages/admin/`
+- 71 páginas em `getnexo-site/src/pages/admin/`
 
 ### 7.3 Logs de Teste
 - Terminal 1: Servidor de desenvolvimento ativo
@@ -390,7 +405,60 @@ Para dúvidas ou suporte adicional, favor contatar:
 
 ---
 
-## 10. Próximas Ações
+## 10. Correções Adicionais (Pós-Entrega)
+
+### 10.1 Correção de Erro 500
+- **Problema:** `/api/tickets` retornava erro 500 (Internal Server Error).
+- **Causa:** Tabelas do banco de dados SQLite não foram criadas corretamente devido a ordem de migração.
+- **Solução:** Forçada a execução da migração de criação (`001_create_tickets_tables.sql`) antes da alteração.
+- **Status:** ✅ Resolvido. Endpoint retorna 200 OK.
+
+### 10.2 Páginas Magic Replies & CRM Faltantes
+- **Problema:** Erro 404 em urls como `/admin/magic-replies/test` e `/admin/crm/followup`.
+- **Solução:** Criação de 8 novas páginas `.astro` adicionais.
+- **Status:** ✅ Resolvido.
+
+---
+
+### 10.3 Funcionalidades Live Chat (Proxy)
+- **Problema:** "Notas Internas", "Exportar", "Sentimento" e "Agente Humano" não funcionavam.
+- **Causa:** O Frontend tentava acessar `localhost:3006` diretamente pelo navegador do cliente (CORS/Erro de conexão).
+- **Solução:** Implementado Proxy API (`api/[...all].ts`) e refatoradas 4 páginas para usar chamadas relativas internalizadas.
+- **Status:** ✅ Resolvido.
+
+---
+
+### 10.4 Correção de 404s Persistentes (Build Docker)
+- **Problema:** Algumas páginas sub-menus (`magic-replies`, `payments`) continuavam em 404 após criação.
+- **Causa:** O Frontend é empacotado na imagem Docker sem mount de volume; as alterações no host não refletiam sem build.
+- **Solução:** Rebuild completo da imagem (`--no-cache`) e criação das páginas de `pagamentos/estornos` e `histórico` que faltavam.
+- **Status:** ✅ Resolvido. Validado com curl 200 OK.
+
+### 10.5 Correção de 404s em Products
+- **Problema:** URLs `/admin/products/3d`, `/admin/products/categories`, `/admin/products/ai-image` e `/admin/products/outofstock` retornavam 404.
+- **Causa:** Páginas não existiam no sistema.
+- **Solução:** Criação de 4 novas páginas `.astro` adicionais:
+  - [`/admin/products/3d.astro`](getnexo-site/src/pages/admin/products/3d.astro)
+  - [`/admin/products/categories.astro`](getnexo-site/src/pages/admin/products/categories.astro)
+  - [`/admin/products/ai-image.astro`](getnexo-site/src/pages/admin/products/ai-image.astro)
+  - [`/admin/products/outofstock.astro`](getnexo-site/src/pages/admin/products/outofstock.astro)
+- **Status:** ✅ Resolvido. Todas as páginas agora retornam 200 OK.
+
+### 10.6 Correção de Navegação do Menu Lateral
+- **Problema:** Quando o usuário clicava em um submenu específico (ex: `/admin/payments/history`, `/admin/payments/refunds`), o menu lateral não atualizava corretamente para mostrar qual categoria estava ativa. Os submenus "desapareciam" após a navegação.
+- **Causa:** A função `toggle` sempre navegava para o primeiro item do submenu, e não havia lógica para detectar a categoria ativa a partir da URL atual quando o usuário acessava uma página diretamente.
+- **Solução:** Adicionada função `detectCategoryFromUrl()` que detecta a categoria ativa a partir da URL atual (path ou parâmetro `tab`) e atualiza o estado do menu lateral automaticamente no `init()`.
+- **Arquivo modificado:** [`getnexo-site/src/layouts/AdminLayout.astro`](getnexo-site/src/layouts/AdminLayout.astro:226)
+- **Status:** ✅ Resolvido. O menu lateral agora mantém o estado correto mesmo após navegação direta para submenus.
+
+---
+
+## 11. Próximas Ações
+
+### ✅ Atualizar Documento de Aceitação
+- Incluir as 4 novas páginas de products no documento
+- Atualizar métricas de sucesso (71 páginas no total)
+- Registrar correção dos 404s em products
 
 ### ✅ Revisar o documento com o outro sócio
 - Apresentar o documento de aceitação
@@ -408,6 +476,7 @@ Para dúvidas ou suporte adicional, favor contatar:
 - Executar pipeline de deploy automático
 - Verificar acesso em `https://getnexo.com.br/admin`
 - Validar funcionamento em ambiente de produção
+- **Atenção:** Após deploy, verificar se todas as 71 páginas estão acessíveis
 
 ---
 

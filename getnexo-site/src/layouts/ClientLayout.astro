@@ -6,122 +6,20 @@ interface Props {
 const { title } = Astro.props;
 const nonce = Astro.locals.nonce;
 
-// Importações dos ícones
-import { Home, MessageCircle, ShoppingCart, Package, Megaphone, DollarSign, BarChart, Settings, Heart, Zap, Cube } from 'lucide-react';
+// Importa o componente de sidebar
+import ClientSidebar from '../components/ClientSidebar.astro';
 
-// Menu base sempre disponível
-const clienteMenuBase = [
-  {
-    title: "Dashboard Pessoal",
-    href: "/minha-conta",
-    icon: Home,
-    color: "blue",
-    badge: "Início"
-  },
-  {
-    title: "Conversas",
-    href: "/minha-conta/conversas",
-    icon: MessageCircle,
-    color: "cyan",
-    count: 12  // ex: novas mensagens não lidas
-  },
-  {
-    title: "Vendas",
-    href: "/minha-conta/vendas",
-    icon: ShoppingCart,
-    color: "green",
-    count: 5   // vendas pendentes
-  },
-  {
-    title: "Produtos",
-    href: "/minha-conta/produtos",
-    icon: Package,
-    color: "orange",
-    subItems: [
-      { title: "Lista de Produtos", href: "/minha-conta/produtos/lista" },
-      { title: "Novo Produto", href: "/minha-conta/produtos/novo" }
-    ]
-  },
-  {
-    title: "Campanhas",
-    href: "/minha-conta/campanhas",
-    icon: Megaphone,
-    color: "purple",
-    subItems: [
-      { title: "Criar Broadcast", href: "/minha-conta/campanhas/nova" },
-      { title: "Histórico", href: "/minha-conta/campanhas/historico" }
-    ]
-  },
-  {
-    title: "Pagamentos",
-    href: "/minha-conta/pagamentos",
-    icon: DollarSign,
-    color: "green"
-  },
-  {
-    title: "Relatórios",
-    href: "/minha-conta/relatorios",
-    icon: BarChart,
-    color: "indigo"
-  },
-  {
-    title: "Configurações",
-    href: "/minha-conta/config",
-    icon: Settings,
-    color: "gray",
-    subItems: [
-      { title: "Perfil", href: "/minha-conta/config/perfil" },
-      { title: "Números WhatsApp", href: "/minha-conta/config/numeros" }
-    ]
-  }
-];
-
-// Módulos extras baseados no plano
-const extrasPorPlano = {
-  fidelidade: {
-    title: "Fidelidade",
-    href: "/minha-conta/fidelidade",
-    icon: Heart,
-    color: "red",
-    subItems: [
-      { title: "Pontos dos Clientes", href: "/minha-conta/fidelidade/pontos" },
-      { title: "Recompensas", href: "/minha-conta/fidelidade/recompensas" }
-    ]
-  },
-  automations: {
-    title: "Automations",
-    href: "/minha-conta/automations",
-    icon: Zap,
-    color: "yellow"
-  },
-  produtos3d: {
-    title: "Modelos 3D",
-    href: "/minha-conta/produtos/3d",
-    icon: Cube,
-    color: "amber"
-  }
-};
-
-// Simulação do plano do usuário (em produção viria do DB)
-const planoUsuario = {
-  hasFidelidade: true,
-  hasAutomations: false,
-  hasProdutos3D: true
-};
-
-// Monta menu completo dinamicamente
-const extras = [];
-if (planoUsuario.hasFidelidade) extras.push(extrasPorPlano.fidelidade);
-if (planoUsuario.hasAutomations) extras.push(extrasPorPlano.automations);
-if (planoUsuario.hasProdutos3D) extras.push(extrasPorPlano.produtos3d);
-
-const menuCompleto = [...clienteMenuBase, ...extras];
+// Simulação de módulos contratados pelo cliente (em produção viria do DB)
+// Exemplo: ['white-label', 'ia-avancada', 'produtos-3d', 'relatorios-roi', 'fidelidade', 'meta-integration', 'pix-automatico', 'automacao-avancada']
+const clienteModules = ['white-label', 'produtos-3d', 'fidelidade', 'meta-integration', 'pix-automatico'];
+const clientePlano = 'Revenda Pro';
 ---
 
 <!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -133,111 +31,9 @@ const menuCompleto = [...clienteMenuBase, ...extras];
     <title>{title} | Minha Loja - GetNexo</title>
   </head>
   <body>
-    <script nonce={nonce} define:vars={{ menuCompleto }}>
-      document.addEventListener("alpine:init", () => {
-        Alpine.data("clienteSidebar", () => ({
-          menuCompleto: menuCompleto,
-          activeItem: window.location.pathname,
-          mobileMenuOpen: false,
-          toggleMobileMenu() {
-            this.mobileMenuOpen = !this.mobileMenuOpen;
-          },
-          isActive(href) {
-            return this.activeItem === href || this.activeItem.startsWith(href + '/');
-          }
-        }));
-      });
-    </script>
-
-    <div x-data="clienteSidebar" class="flex flex-col min-h-screen bg-gray-50">
-      <!-- Mobile Header -->
-      <header class="lg:hidden bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-          <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-            <span class="text-white font-bold text-sm">G</span>
-          </div>
-          <h1 class="text-lg font-bold text-gray-900">Minha Loja</h1>
-        </div>
-        <button @click="toggleMobileMenu" class="p-2 rounded-lg hover:bg-gray-100">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path x-show="!mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-            <path x-show="mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </button>
-      </header>
-
-      <!-- Mobile Menu Overlay -->
-      <div x-show="mobileMenuOpen" x-transition class="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50" @click="toggleMobileMenu"></div>
-
+    <div class="flex flex-col min-h-screen bg-gray-50">
       <!-- Sidebar -->
-      <aside
-        class="fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform lg:transform-none transition-transform duration-300 ease-in-out"
-        :class="{ '-translate-x-full lg:translate-x-0': !mobileMenuOpen, 'translate-x-0': mobileMenuOpen }"
-      >
-        <!-- Logo e título -->
-        <div class="p-6 border-b border-gray-200">
-          <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-              <span class="text-white font-bold text-lg">G</span>
-            </div>
-            <div>
-              <h1 class="text-xl font-bold text-gray-900">Minha Loja</h1>
-              <p class="text-sm text-gray-500">GetNexo</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Menu de navegação -->
-        <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-          {menuCompleto.map((item) => (
-            <div>
-              <a
-                href={item.href}
-                class="flex items-center px-4 py-3 rounded-lg transition-all duration-200 group"
-                :class="isActive(item.href) ? `bg-${item.color}-50 text-${item.color}-700 border-r-2 border-${item.color}-500` : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'"
-              >
-                <item.icon class={`w-5 h-5 mr-3 ${isActive(item.href) ? `text-${item.color}-500` : 'text-gray-400 group-hover:text-gray-600'}`} />
-                <span class="flex-1">{item.title}</span>
-                {item.count && (
-                  <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full ml-2">
-                    {item.count}
-                  </span>
-                )}
-                {item.badge && (
-                  <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full ml-2">
-                    {item.badge}
-                  </span>
-                )}
-              </a>
-
-              {item.subItems && (
-                <div class="ml-8 mt-1 space-y-1" x-show="isActive(item.href)" x-transition>
-                  {item.subItems.map((sub) => (
-                    <a
-                      href={sub.href}
-                      class="block py-2 px-4 text-sm rounded-lg transition-colors"
-                      :class="isActive(sub.href) ? `text-${item.color}-600 bg-${item.color}-50` : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
-                    >
-                      {sub.title}
-                    </a>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-        </nav>
-
-        <!-- Footer da sidebar -->
-        <div class="p-4 border-t border-gray-200">
-          <div class="flex items-center justify-between text-xs text-gray-500">
-            <span>Status</span>
-            <span class="flex items-center text-green-600">
-              <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-              Online
-            </span>
-          </div>
-        </div>
-      </aside>
+      <ClientSidebar modules={clienteModules} plano={clientePlano} />
 
       <!-- Main Content -->
       <main class="flex-1 lg:ml-0">

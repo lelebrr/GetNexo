@@ -1,0 +1,57 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Histórico Completo" activeTab="broadcasts">
+  <div class="space-y-6">
+    <div class="flex justify-between items-center">
+      <div>
+        <h1 class="text-3xl font-bold text-white">Histórico de Campanhas</h1>
+        <p class="text-gray-400">Todos os envios realizados</p>
+      </div>
+      <button class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm">Exportar Relatório</button>
+    </div>
+
+    <!-- Tabela -->
+    <div class="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden">
+      <table class="w-full text-left">
+        <thead>
+          <tr class="bg-gray-900 text-gray-400 text-xs uppercase border-b border-gray-800">
+            <th class="p-4">Campanha</th>
+            <th class="p-4">Canal</th>
+            <th class="p-4">Data</th>
+            <th class="p-4 text-center">Enviados</th>
+            <th class="p-4 text-center">Taxa Abertura</th>
+            <th class="p-4 text-center">Status</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-800 text-sm">
+          <tr class="hover:bg-gray-800/30 transition-colors">
+            <td class="p-4 font-medium text-white">Promoção Black Friday</td>
+            <td class="p-4"><span class="bg-green-500/10 text-green-400 px-2 py-1 rounded text-xs border border-green-500/20">WhatsApp</span></td>
+            <td class="p-4 text-gray-400">24/11/2025</td>
+            <td class="p-4 text-center text-white">15.420</td>
+            <td class="p-4 text-center text-emerald-400 font-bold">98%</td>
+            <td class="p-4 text-center"><span class="text-gray-400 text-xs">Concluído</span></td>
+          </tr>
+           <tr class="hover:bg-gray-800/30 transition-colors">
+            <td class="p-4 font-medium text-white">Natal Antecipado</td>
+            <td class="p-4"><span class="bg-pink-500/10 text-pink-400 px-2 py-1 rounded text-xs border border-pink-500/20">Instagram DM</span></td>
+            <td class="p-4 text-gray-400">10/12/2025</td>
+            <td class="p-4 text-center text-white">5.800</td>
+            <td class="p-4 text-center text-emerald-400 font-bold">45%</td>
+            <td class="p-4 text-center"><span class="text-gray-400 text-xs">Concluído</span></td>
+          </tr>
+           <tr class="hover:bg-gray-800/30 transition-colors">
+            <td class="p-4 font-medium text-white">Lançamento Coleção X</td>
+            <td class="p-4"><span class="bg-blue-500/10 text-blue-400 px-2 py-1 rounded text-xs border border-blue-500/20">Email</span></td>
+            <td class="p-4 text-gray-400">05/01/2026</td>
+            <td class="p-4 text-center text-white">42.000</td>
+            <td class="p-4 text-center text-yellow-400 font-bold">22%</td>
+            <td class="p-4 text-center"><span class="text-gray-400 text-xs">Concluído</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</AdminLayout>

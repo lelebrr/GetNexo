@@ -51,12 +51,20 @@
     // Parallax for floating elements (Subtle)
     function initParallax() {
         const floatingElements = document.querySelectorAll('.f-pill');
+        let ticking = false;
+
         window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            floatingElements.forEach(element => {
-                const rate = scrolled * -0.2;
-                element.style.transform = `translateY(${rate}px)`;
-            });
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const scrolled = window.scrollY; // Use scrollY instead of deprecated pageYOffset
+                    floatingElements.forEach(element => {
+                        const rate = scrolled * -0.2;
+                        element.style.transform = `translate3d(0, ${rate}px, 0)`; // Use translate3d
+                    });
+                    ticking = false;
+                });
+                ticking = true;
+            }
         });
     }
 
@@ -78,27 +86,64 @@
         });
     }
 
-    // Magnetic buttons with enhanced effects
+    // Magnetic buttons with enhanced effects - Otimizado para evitar reflow
     function initMagneticButtons() {
         document.querySelectorAll('.btn-primary-glow, .btn-outline, .btn-surprise').forEach(button => {
+            let rect = null;
+            let pendingUpdate = false;
+            let pendingX = 0;
+            let pendingY = 0;
+            let centerX = 0;
+            let centerY = 0;
+            let isHovering = false;
+            let dimensionsCached = false;
+
+            // Cache dimensions once on initialization to avoid reflow
+            function cacheDimensions() {
+                if (!dimensionsCached) {
+                    rect = button.getBoundingClientRect();
+                    centerX = rect.width / 2;
+                    centerY = rect.height / 2;
+                    dimensionsCached = true;
+                }
+            }
+
+            button.addEventListener('mouseenter', function () {
+                isHovering = true;
+                // Use cached dimensions instead of calling getBoundingClientRect()
+                cacheDimensions();
+            });
+
             button.addEventListener('mousemove', function (e) {
-                const rect = this.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                this.style.setProperty('--x', `${x}px`);
-                this.style.setProperty('--y', `${y}px`);
+                if (!rect || !isHovering) return;
 
-                // Add subtle glow effect
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const deltaX = (x - centerX) / centerX;
-                const deltaY = (y - centerY) / centerY;
+                // Store values for batch update without triggering reflow
+                pendingX = e.clientX - rect.left;
+                pendingY = e.clientY - rect.top;
 
-                this.style.transform = `translate(${deltaX * 2}px, ${deltaY * 2}px)`;
+                if (!pendingUpdate) {
+                    pendingUpdate = true;
+                    requestAnimationFrame(() => {
+                        // Batch all style updates to avoid layout thrashing
+                        button.style.setProperty('--x', `${pendingX}px`);
+                        button.style.setProperty('--y', `${pendingY}px`);
+
+                        // Add subtle glow effect - using cached center values
+                        const deltaX = (pendingX - centerX) / centerX;
+                        const deltaY = (pendingY - centerY) / centerY;
+
+                        // Use translate3d for hardware acceleration
+                        button.style.transform = `translate3d(${deltaX * 2}px, ${deltaY * 2}px, 0)`;
+
+                        pendingUpdate = false;
+                    });
+                }
             });
 
             button.addEventListener('mouseleave', function () {
+                isHovering = false;
                 this.style.transform = 'translate(0, 0)';
+                // Don't reset rect to avoid reflow on next mouseenter
             });
         });
     }
@@ -126,8 +171,15 @@
             bubble.textContent = '';
             chatContainer.appendChild(bubble);
 
-            // Auto scroll to bottom
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+            // Auto scroll to bottom optimized
+            requestAnimationFrame(() => {
+                if (chatContainer) {
+                    chatContainer.scrollTo({
+                        top: chatContainer.scrollHeight,
+                        behavior: 'smooth'
+                    });
+                }
+            });
 
             return bubble;
         }
@@ -163,7 +215,7 @@
         typeMessage(firstBubble, messages[0].text);
     }
 
-    // Enhanced scroll progress indicator
+    // Enhanced scroll progress indicator - Otimizado para evitar reflow
     function initScrollProgress() {
         const progressBar = document.createElement('div');
         progressBar.className = 'scroll-progress-bar';
@@ -174,16 +226,38 @@
             height: 3px;
             background: linear-gradient(90deg, #00d4ff, #00ff9d);
             z-index: 9999;
-            transition: width 0.1s ease;
-            width: 0%;
+            transition: transform 0.1s linear;
+            width: 100%;
+            transform-origin: 0 50%;
+            transform: scaleX(0);
         `;
         document.body.appendChild(progressBar);
 
+        let ticking = false;
+        // Cache dimensions to avoid layout thrashing
+        let docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+
+        window.addEventListener('resize', () => {
+            // Debounce resize events
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        });
+
         window.addEventListener('scroll', () => {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrollPercent = (scrollTop / scrollHeight) * 100;
-            progressBar.style.width = scrollPercent + '%';
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const scrollTop = window.scrollY;
+                    const scrollPercent = docHeight > 0 ? (scrollTop / docHeight) : 0;
+                    progressBar.style.transform = `scaleX(${scrollPercent})`;
+                    ticking = false;
+                });
+                ticking = true;
+            }
         });
     }
 

@@ -293,7 +293,7 @@ const { nonce } = Astro.props;
   }
 </style>
 
-<script defer nonce={nonce}>
+<script nonce={nonce}>
   /* interface Window removed for JS compatibility */
 
   class CookieConsentManager {
@@ -373,7 +373,7 @@ const { nonce } = Astro.props;
       }
     }
 
-    setConsent(consent: any) {
+    setConsent(consent) {
       console.log('[CookieConsent] setConsent called with:', consent);
       localStorage.setItem('cookie-consent', JSON.stringify(consent));
       this.consent = consent;

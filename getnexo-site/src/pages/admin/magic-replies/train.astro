@@ -1,19 +1,98 @@
+```
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { BrainCircuit, Upload, CheckCircle, Clock, Zap, MessageSquare, AlertCircle } from 'lucide-react';
+
+const trainingDocs = [
+  { id: 1, name: "FAQ_Geral_V2.pdf", size: "2.5 MB", date: "Há 2h", status: "Processado" },
+  { id: 2, name: "Script_Vendas_WhatsApp.txt", size: "45 KB", date: "Ontem", status: "Processado" },
+  { id: 3, name: "Politica_Trocas.pdf", size: "850 KB", date: "24 Jan", status: "Processando" },
+];
 ---
 
-<AdminLayout title="Treinar IA com Dados" activeTab="magic">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-rose-500 to-red-500 rounded-2xl flex items-center justify-center shadow-lg shadow-rose-500/30 animate-pulse">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-      </svg>
+<AdminLayout title="Treinamento de IA" activeTab="magic-replies">
+  <div class="max-w-5xl mx-auto space-y-10 animate-fade-in py-4">
+    <div class="flex items-center space-x-6">
+      <div class="w-16 h-16 bg-indigo-500/20 rounded-3xl flex items-center justify-center border border-indigo-500/20 shadow-2xl shadow-indigo-500/10">
+        <BrainCircuit className="w-8 h-8 text-indigo-400 animate-pulse" />
+      </div>
+      <div>
+        <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Base de Conhecimento IA</h1>
+        <p class="text-sm text-gray-500 font-medium">Alimente o cérebro da sua IA com documentos, links e conversas históricas.</p>
+      </div>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      Treinar IA com Dados
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Treine sua IA com dados reais para respostas mais precisas.
-    </p>
+
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-10">
+       <!-- Upload & Info -->
+       <div class="lg:col-span-3 space-y-8">
+          <div class="p-10 bg-gray-900/40 border border-gray-800 rounded-[2.5rem] border-dashed flex flex-col items-center justify-center text-center space-y-6 hover:border-indigo-500/40 transition-all group">
+             <div class="w-20 h-20 bg-indigo-600/10 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Upload className="w-8 h-8 text-indigo-500" />
+             </div>
+             <div class="space-y-2">
+                <h3 class="text-lg font-bold text-white uppercase tracking-tight">Importar Dados</h3>
+                <p class="text-xs text-gray-600 max-w-xs mx-auto">Arraste manuais em PDF, planilhas de estoque ou TXT para treinar seu modelo.</p>
+             </div>
+             <button class="px-8 py-3 bg-indigo-600 text-white font-black text-[10px] rounded-xl uppercase tracking-[0.2em] shadow-lg shadow-indigo-600/20 hover:bg-indigo-500 transition-all">Selecionar Arquivos</button>
+          </div>
+
+          <div class="bg-gray-900/20 border border-gray-800 rounded-3xl overflow-hidden">
+             <div class="p-6 border-b border-gray-800 bg-black/40 flex items-center justify-between">
+                <h4 class="text-[10px] font-black uppercase text-gray-500 tracking-widest">Documentos de Treinamento</h4>
+             </div>
+             <div class="divide-y divide-gray-800/50">
+                {trainingDocs.map(doc => (
+                  <div class="p-5 flex items-center justify-between hover:bg-white/[0.02] transition-colors">
+                     <div class="flex items-center space-x-4">
+                        <MessageSquare className="w-4 h-4 text-gray-600" />
+                        <div>
+                           <p class="text-xs font-bold text-white uppercase mt-0.5">{doc.name}</p>
+                           <p class="text-[8px] text-gray-600 uppercase font-black">{doc.size} • {doc.date}</p>
+                        </div>
+                     </div>
+                     <div class="flex items-center space-x-3">
+                        <span class:list={["text-[8px] font-black uppercase", doc.status === 'Processado' ? 'text-emerald-500' : 'text-orange-500']}>{doc.status}</span>
+                        {doc.status === 'Processado' ? <CheckCircle className="w-3.5 h-3.5 text-emerald-500" /> : <Clock className="w-3.5 h-3.5 text-orange-500 animate-spin" />}
+                     </div>
+                  </div>
+                ))}
+             </div>
+          </div>
+       </div>
+
+       <!-- Stats Box -->
+       <div class="lg:col-span-2 space-y-6">
+          <div class="p-8 bg-gradient-to-br from-indigo-900/20 to-transparent border border-indigo-500/20 rounded-[2rem] space-y-4">
+             <Zap className="w-6 h-6 text-indigo-400" />
+             <h4 class="text-sm font-bold text-white uppercase tracking-tight">Estado do Modelo</h4>
+             <div class="space-y-4">
+                <div class="space-y-1">
+                   <div class="flex justify-between text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+                      <span>Nível de Especialidade</span>
+                      <span class="text-indigo-400">92%</span>
+                   </div>
+                   <div class="w-full h-1 backgorund-gray-800 rounded-full overflow-hidden">
+                      <div class="w-[92%] h-full bg-indigo-500"></div>
+                   </div>
+                </div>
+                <p class="text-[10px] text-gray-400 leading-relaxed italic">"O modelo atual foi alimentado com 42 documentos e possui alta taxa de acerto em perguntas sobre suporte e precificação."</p>
+             </div>
+          </div>
+
+          <div class="p-6 bg-black/40 border border-gray-800 rounded-2xl flex items-start space-x-4">
+             <AlertCircle className="w-5 h-5 text-orange-500 shrink-0" />
+             <div class="space-y-1">
+                <p class="text-[10px] font-bold text-white leading-tight uppercase">Sugestão de Treino</p>
+                <p class="text-[9px] text-gray-600 font-medium">Detectamos 12 perguntas sem resposta sobre "Envios Internacionais". Adicione material sobre esse tema.</p>
+             </div>
+          </div>
+       </div>
+    </div>
   </div>
 </AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+```

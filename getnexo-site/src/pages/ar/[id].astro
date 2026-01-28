@@ -68,7 +68,46 @@ const nonce = Astro.locals.nonce;
     )}
   </div>
 
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js" nonce={nonce}></script>
+  <!-- Lazy loading do model-viewer - carregado apenas quando necessário -->
+  <script defer nonce={nonce}>
+    // Carregar model-viewer apenas quando o elemento for visível
+    function loadModelViewerWhenVisible() {
+      if (typeof window !== 'undefined' && 'IntersectionObserver' in window) {
+        const modelViewer = document.querySelector('model-viewer');
+        if (modelViewer) {
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                // Carregar o script do model-viewer
+                const script = document.createElement('script');
+                script.type = 'module';
+                script.src = 'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js';
+                script.nonce = nonce;
+                script.onload = () => {
+                  observer.unobserve(modelViewer);
+                  console.log('Model-viewer carregado com sucesso');
+                };
+                script.onerror = () => {
+                  console.warn('Falha ao carregar model-viewer');
+                  observer.unobserve(modelViewer);
+                };
+                document.head.appendChild(script);
+              }
+            });
+          }, { rootMargin: '100px 0px' });
+          
+          observer.observe(modelViewer);
+        }
+      }
+    }
+
+    // Iniciar quando o DOM estiver pronto
+    if (document.readyState === 'complete') {
+      loadModelViewerWhenVisible();
+    } else {
+      window.addEventListener('load', loadModelViewerWhenVisible);
+    }
+  </script>
   
   <style>
     @keyframes pulse {

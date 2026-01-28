@@ -3,7 +3,14 @@ import type { APIRoute } from 'astro';
 export const POST: APIRoute = async ({ request }) => {
     try {
         const body = await request.json();
-        const response = await fetch('http://backend:3006/api/login', {
+
+        // Determinar a URL do backend baseado no ambiente
+        const isProduction = import.meta.env.PROD;
+        const backendUrl = isProduction
+            ? 'https://api.getnexo.com.br/api/login'
+            : 'http://localhost:3006/api/login';
+
+        const response = await fetch(backendUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

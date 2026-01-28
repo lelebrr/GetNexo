@@ -1,0 +1,92 @@
+```
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { Box, Layers, PlayCircle, Eye, Settings, Download, MoreHorizontal, Plus } from 'lucide-react';
+
+const models = [
+  { id: 1, name: "Sneaker_Fusion_V2.glb", poly: "450k", status: "Renderizado", date: "Há 1h", premium: true },
+  { id: 2, name: "Watch_Ultra_Case.usdz", poly: "1.2M", status: "Processando", date: "Há 4h", premium: false },
+  { id: 3, name: "Luxury_Chair_Full.obj", poly: "820k", status: "Erro na Malha", date: "Ontem", premium: true },
+];
+---
+
+<AdminLayout title="Modelos 3D" activeTab="products">
+  <div class="space-y-8 animate-fade-in">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-white flex items-center uppercase tracking-tighter">
+          <Box className="w-8 h-8 text-indigo-400 mr-3 animate-pulse" />
+          Nexus 3D Viewer
+        </h1>
+        <p class="text-sm text-gray-500 mt-1">Gerencie modelos tridimensionais para visualização em Realidade Aumentada.</p>
+      </div>
+      <button class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl flex items-center space-x-2 transition-all shadow-lg shadow-indigo-500/10">
+         <Layers className="w-5 h-5" />
+         <span>Novo Modelo 3D</span>
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+       <!-- Preview Principal -->
+       <div class="lg:col-span-2 bg-gray-900 border border-gray-800 rounded-[2.5rem] p-1 overflow-hidden relative group">
+          <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_#111_0%,_#000_100%)]"></div>
+          <div class="relative z-10 h-[500px] flex items-center justify-center">
+             <div class="text-center space-y-6">
+                <Box className="w-24 h-24 text-gray-800 mx-auto group-hover:text-indigo-500 transition-all duration-700 hover:scale-110" />
+                <div class="space-y-2">
+                   <p class="text-[10px] font-black uppercase text-gray-600 tracking-[0.4em]">3D Engine Initialized</p>
+                   <p class="text-2xl font-black text-white group-hover:text-indigo-400 transition-colors uppercase">Aguardando Seleção de Asset</p>
+                </div>
+             </div>
+             
+             <!-- Floating Controls -->
+             <div class="absolute bottom-10 flex space-x-4 opacity-50 group-hover:opacity-100 transition-opacity">
+                <button class="p-3 bg-black/60 border border-white/5 rounded-full text-white"><Settings className="w-5 h-5" /></button>
+                <button class="p-3 bg-black/60 border border-white/5 rounded-full text-white"><PlayCircle className="w-5 h-5" /></button>
+                <button class="p-3 bg-black/60 border border-white/5 rounded-full text-white"><Eye className="w-5 h-5" /></button>
+             </div>
+          </div>
+       </div>
+
+       <!-- Lista de Modelos -->
+       <div class="space-y-4">
+          <h3 class="text-xs font-black text-gray-500 uppercase tracking-widest ml-1 mb-6">Modelos Disponíveis</h3>
+          {models.map(m => (
+            <div class="bg-gray-900/50 border border-gray-800 p-6 rounded-3xl hover:bg-gray-900 transition-all group relative overflow-hidden">
+               {m.premium && <div class="absolute top-0 right-0 p-1 bg-yellow-500/10 text-yellow-500 text-[6px] font-black px-2 rounded-bl-xl uppercase tracking-tighter">HD Premium</div>}
+               
+               <div class="flex items-center space-x-4">
+                  <div class:list={["w-10 h-10 rounded-xl flex items-center justify-center shrink-0", m.status === 'Renderizado' ? 'bg-indigo-500/10 text-indigo-400' : (m.status === 'Processando' ? 'bg-cyan-500/10 text-cyan-400' : 'bg-rose-500/10 text-rose-500')]}>
+                     <Box className="w-5 h-5" />
+                  </div>
+                  <div>
+                     <h4 class="text-xs font-black text-white uppercase tracking-tight truncate w-32">{m.name}</h4>
+                     <p class="text-[9px] text-gray-600 font-mono">{m.poly} Tris • {m.date}</p>
+                  </div>
+               </div>
+               
+               <div class="mt-4 pt-4 border-t border-gray-800/50 flex items-center justify-between">
+                  <span class:list={["text-[8px] font-black uppercase", m.status === 'Renderizado' ? 'text-emerald-500' : (m.status === 'Processando' ? 'text-orange-500' : 'text-rose-500')]}>{m.status}</span>
+                  <div class="flex items-center space-x-2">
+                     <button class="text-gray-700 hover:text-white"><Eye className="w-3.5 h-3.5" /></button>
+                     <button class="text-gray-700 hover:text-white"><Download className="w-3.5 h-3.5" /></button>
+                     <button class="text-gray-700 hover:text-white"><MoreHorizontal className="w-3.5 h-3.5" /></button>
+                  </div>
+               </div>
+            </div>
+          ))}
+          
+          <button class="w-full py-5 border border-dashed border-gray-800 rounded-[2rem] text-[10px] font-black uppercase text-gray-600 hover:text-gray-400 hover:border-gray-700 transition-all flex flex-col items-center space-y-2">
+             <Plus className="w-4 h-4" />
+             <span>Upload New GLB/OBJ</span>
+          </button>
+       </div>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+```

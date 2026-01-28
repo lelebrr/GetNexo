@@ -1,0 +1,69 @@
+```
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { History, MessageSquare, PhoneCall, Mail, Package, AlertCircle, Search } from 'lucide-react';
+
+const interactions = [
+  { id: 1, type: "WhatsApp", lead: "Ricardo Silva", content: "Solicitou orçamento para 50 unidades do Combo X1.", time: "há 12 min", icon: MessageSquare, color: "emerald" },
+  { id: 2, type: "Sistema", lead: "Juliana Costa", content: "Tag 'Prioridade Alta' adicionada automaticamente pela IA.", time: "há 1h", icon: AlertCircle, color: "orange" },
+  { id: 3, type: "Email", lead: "Empresa ABC", content: "Report de ROI enviado com sucesso.", time: "hoje, 09:20", icon: Mail, color: "blue" },
+  { id: 4, type: "Compra", lead: "Fabio Henrique", content: "Pagamento aprovado: R$ 899,00 via PIX.", time: "hoje, 08:45", icon: Package, color: "purple" },
+  { id: 5, type: "Call", lead: "Marcos G.", content: "Ligação finalizada (Duração: 05:22).", time: "ontem", icon: PhoneCall, color: "cyan" },
+];
+---
+
+<AdminLayout title="Histórico de Interações" activeTab="crm">
+  <div class="max-w-4xl mx-auto space-y-8 animate-fade-in py-4">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-white flex items-center uppercase tracking-tight">
+          <History className="w-6 h-6 mr-3 text-indigo-400" />
+          Timeline de Atividades
+        </h1>
+        <p class="text-xs text-gray-500 font-medium mt-1">Timeline em tempo real de todas as interações do CRM.</p>
+      </div>
+      <div class="relative w-64">
+         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-600" />
+         <input type="text" placeholder="Filtrar eventos..." class="w-full bg-gray-900 border border-gray-800 rounded-xl py-2 pl-9 pr-4 text-xs text-white focus:border-indigo-500 outline-none" />
+      </div>
+    </div>
+
+    <!-- Linha do Tempo -->
+    <div class="relative pl-8 space-y-12 before:absolute before:left-3 before:top-2 before:bottom-2 before:w-px before:bg-gray-800">
+      {interactions.map((event) => (
+        <div class="relative group">
+          <!-- Ícone Flutuante -->
+          <div class:list={["absolute -left-11 top-0 w-6 h-6 rounded-lg flex items-center justify-center border border-gray-800 group-hover:scale-110 transition-transform bg-black z-10 shadow-lg shadow-black", `text-${event.color}-400 group-hover:bg-${event.color}-500/10`]}>
+            <event.icon className="w-3.5 h-3.5" />
+          </div>
+          
+          <div class="bg-gray-900/30 border border-gray-800 p-6 rounded-3xl hover:border-gray-700 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="space-y-1">
+               <div class="flex items-center space-x-2">
+                  <span class="text-sm font-bold text-white">{event.lead}</span>
+                  <span class="text-[8px] font-black uppercase tracking-widest text-gray-600 bg-gray-800 px-1.5 py-0.5 rounded">{event.type}</span>
+               </div>
+               <p class="text-xs text-gray-400 leading-relaxed max-w-lg">{event.content}</p>
+            </div>
+            <div class="shrink-0 flex items-center space-x-2 text-xs text-gray-600 font-medium">
+               <span class="w-1.5 h-1.5 bg-gray-700 rounded-full"></span>
+               <span>{event.time}</span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="py-10 text-center">
+       <button class="px-8 py-3 border border-gray-800 rounded-2xl text-[10px] font-black uppercase text-gray-500 hover:text-white hover:border-white/10 transition-all tracking-[0.25em]">
+          Carregar Atividades Anteriores
+       </button>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+```

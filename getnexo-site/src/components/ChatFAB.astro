@@ -5,9 +5,52 @@
   </svg>
 </button>
 
-<script defer>
+<script>
+  // Carregamento dinâmico do script de modais apenas quando necessário
+  let scriptsLoaded = false;
+  let scriptsLoading = false;
+  
+  function loadModalScripts() {
+    if (scriptsLoaded || scriptsLoading) return;
+    
+    scriptsLoading = true;
+    
+    // Carrega o script de modais dinamicamente
+    const script = document.createElement('script');
+    script.src = '/custom/js/modals-demo.js';
+    script.isInline = true;
+    document.head.appendChild(script);
+    
+    scriptsLoaded = true;
+    console.log('Script de modais carregado dinamicamente');
+  }
+  
   document.getElementById('chat-fab').addEventListener('click', () => {
-    if (typeof abrirModalDemo === 'function') abrirModalDemo();
-    else alert('Demo chat ainda em setup – em breve!');
+    // Carrega o script se ainda não foi carregado
+    if (!scriptsLoaded) {
+      loadModalScripts();
+      // Aguarda um pouco para o script carregar antes de chamar a função
+      setTimeout(() => {
+        if (typeof abrirModalDemo === 'function') {
+          abrirModalDemo();
+        } else {
+          // Se o script ainda não estiver pronto, tenta novamente
+          setTimeout(() => {
+            if (typeof abrirModalDemo === 'function') {
+              abrirModalDemo();
+            } else {
+              alert('Demo chat ainda em setup – em breve!');
+            }
+          }, 500);
+        }
+      }, 300);
+    } else {
+      // Script já carregado, chama a função diretamente
+      if (typeof abrirModalDemo === 'function') {
+        abrirModalDemo();
+      } else {
+        alert('Demo chat ainda em setup – em breve!');
+      }
+    }
   });
 </script>

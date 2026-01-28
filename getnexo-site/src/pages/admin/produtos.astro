@@ -65,9 +65,7 @@ import Layout from '../../layouts/Layout.astro';
   </div>
 
   <script is:inline>
-    const API_URL = window.location.hostname === 'localhost' 
-      ? 'http://localhost:8080' 
-      : 'https://api.getnexo.com.br';
+    const API_URL = '/api';
     
     const modal = document.getElementById('modal');
     const form = document.getElementById('form-product');
@@ -75,7 +73,7 @@ import Layout from '../../layouts/Layout.astro';
     
     async function loadProducts() {
       try {
-        const res = await fetch(`${API_URL}/api/products`);
+        const res = await fetch(`${API_URL}/products`);
         const products = await res.json();
         
         if (products.length === 0) {
@@ -119,7 +117,7 @@ import Layout from '../../layouts/Layout.astro';
     // Edit product
     window.editProduct = async (id) => {
       try {
-        const res = await fetch(`${API_URL}/api/products`);
+        const res = await fetch(`${API_URL}/products`);
         const products = await res.json();
         const product = products.find(p => p.id === id);
         
@@ -144,7 +142,7 @@ import Layout from '../../layouts/Layout.astro';
       if (!confirm('Tem certeza que deseja excluir este produto?')) return;
       
       try {
-        await fetch(`${API_URL}/api/products/${id}`, { method: 'DELETE' });
+        await fetch(`${API_URL}/products/${id}`, { method: 'DELETE' });
         loadProducts();
       } catch (e) {
         console.error('Error:', e);
@@ -167,7 +165,7 @@ import Layout from '../../layouts/Layout.astro';
       };
       
       try {
-        const url = id ? `${API_URL}/api/products/${id}` : `${API_URL}/api/products`;
+        const url = id ? `${API_URL}/products/${id}` : `${API_URL}/products`;
         const method = id ? 'PUT' : 'POST';
         
         const res = await fetch(url, {

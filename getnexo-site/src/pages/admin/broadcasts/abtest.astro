@@ -3,17 +3,57 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 
 <AdminLayout title="A/B Testing Avançado" activeTab="broadcasts">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg shadow-cyan-500/30 animate-pulse">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-      </svg>
+  <div class="space-y-8">
+    <div class="flex justify-between items-center">
+      <div>
+        <h1 class="text-3xl font-bold text-white">Testes A/B</h1>
+        <p class="text-gray-400">Otimize suas conversões comparando variações</p>
+      </div>
+      <button class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium">+ Criar Novo Teste</button>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      A/B Testing Avançado
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Teste diferentes versões de suas campanhas e otimize resultados.
-    </p>
+
+    <!-- Test Container -->
+    <div class="bg-gray-900/50 border border-gray-800 p-8 rounded-xl">
+       
+       <div class="text-center mb-8">
+          <h2 class="text-2xl font-bold text-white">Teste: Assunto do Email - Promoção</h2>
+          <p class="text-emerald-400 font-bold mt-2">DURAÇÃO: 24H RESTANTES</p>
+       </div>
+
+       <div class="flex flex-col md:flex-row gap-8 items-stretch">
+          
+          <!-- Variant A -->
+          <div class="flex-1 bg-gray-800/30 rounded-xl p-6 border-t-4 border-gray-500 relative">
+             <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-700 text-gray-300 px-3 py-1 text-xs rounded-full font-bold">VARIAÇÃO A (Controle)</div>
+             <div class="mt-4 text-center">
+                <p class="text-gray-400 italic mb-4">"Oferta imperdível para você!"</p>
+                <div class="text-4xl font-black text-gray-300">12.5%</div>
+                <p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Taxa de Abertura</p>
+             </div>
+          </div>
+
+          <!-- VS Badge -->
+          <div class="flex items-center justify-center">
+             <div class="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center font-black text-xl italic text-gray-500">VS</div>
+          </div>
+
+          <!-- Variant B -->
+          <div class="flex-1 bg-indigo-900/20 rounded-xl p-6 border-t-4 border-indigo-500 relative shadow-lg shadow-indigo-500/10 transform scale-105">
+             <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-600 text-white px-3 py-1 text-xs rounded-full font-bold shadow-lg">VARIAÇÃO B (Vencedora)</div>
+              <div class="mt-4 text-center">
+                <p class="text-gray-300 italic mb-4">"🔥 Seu cupom de 50% expira hoje"</p>
+                <div class="text-5xl font-black text-indigo-400">28.4%</div>
+                <p class="text-xs text-indigo-300/70 uppercase tracking-widest mt-1">Taxa de Abertura</p>
+                <p class="text-emerald-400 text-xs font-bold mt-2">+127% melhor desempenho</p>
+             </div>
+          </div>
+
+       </div>
+
+       <div class="mt-8 text-center pt-8 border-t border-gray-800">
+          <button class="text-gray-400 hover:text-white text-sm underline">Ver detalhes estatísticos completos</button>
+       </div>
+
+    </div>
   </div>
 </AdminLayout>

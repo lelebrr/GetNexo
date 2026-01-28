@@ -67,7 +67,7 @@ const { feriadoHoje, lang, idiomaCurto, nonce } = Astro.props;
                   </div>
                    <div class="chat-input-sim">
                       <div class="sim-mic">🎤</div>
-                      <span class="text-[10px] md:text-xs">Digite aqui: 'Quero um tênis preto 42' ou 'Mostrar catálogo'</span>
+                      <span class="text-xs md:text-sm text-slate-100 font-medium">Digite aqui: 'Quero um tênis preto 42' ou 'Mostrar catálogo'</span>
                       <div class="sim-audio-icon">🎧</div>
                       <div class="sim-send">🚀</div>
                   </div>
@@ -83,7 +83,7 @@ const { feriadoHoje, lang, idiomaCurto, nonce } = Astro.props;
   </div>
 </section>
 
-<script defer>
+<script>
 // Contador regressivo de 12 minutos que reinicia
 function startCountdown() {
   let minutes = 11;
@@ -106,13 +106,68 @@ function startCountdown() {
   }, 1000);
 }
 document.addEventListener("DOMContentLoaded", startCountdown);
+
+// Carregamento dinâmico do script de modais apenas quando necessário
+let scriptsLoaded = false;
+let scriptsLoading = false;
+
+function loadModalScripts() {
+  if (scriptsLoaded || scriptsLoading) return;
+  
+  scriptsLoading = true;
+  
+  // Carrega o script de modais dinamicamente
+  const script = document.createElement('script');
+  script.src = '/custom/js/modals-demo.js';
+  script.isInline = true;
+  document.head.appendChild(script);
+  
+  scriptsLoaded = true;
+  console.log('Script de modais carregado dinamicamente');
+}
+
+// Modificar o botão para carregar o script dinamicamente
+document.addEventListener('DOMContentLoaded', () => {
+  const demoButton = document.querySelector('[onclick*="abrirModalDemo"]');
+  if (demoButton) {
+    demoButton.addEventListener('click', (e) => {
+      // Carrega o script se ainda não foi carregado
+      if (!scriptsLoaded) {
+        loadModalScripts();
+        // Aguarda um pouco para o script carregar antes de chamar a função
+        setTimeout(() => {
+          if (typeof abrirModalDemo === 'function') {
+            abrirModalDemo();
+          } else {
+            // Se o script ainda não estiver pronto, tenta novamente
+            setTimeout(() => {
+              if (typeof abrirModalDemo === 'function') {
+                abrirModalDemo();
+              } else {
+                alert('Demo chat ainda em setup – em breve!');
+              }
+            }, 500);
+          }
+        }, 300);
+      } else {
+        // Script já carregado, chama a função diretamente
+        if (typeof abrirModalDemo === 'function') {
+          abrirModalDemo();
+        } else {
+          alert('Demo chat ainda em setup – em breve!');
+        }
+      }
+    });
+  }
+});
 </script>
 
 <style>
-  /* Novas Estilizações Baseadas na Foto - Otimizado para LCP */
+  /* Novas Estilizações Baseadas na Foto - Otimizado para LCP e CLS */
   .premium-header-badge {
     margin-bottom: 2rem;
     opacity: 0;
+    will-change: transform, opacity;
     animation: fadeInHero 0.5s ease-in-out 0.2s forwards;
   }
   @keyframes fadeInHero {
@@ -134,6 +189,9 @@ document.addEventListener("DOMContentLoaded", startCountdown);
     letter-spacing: 1px;
     box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
     font-family: 'Outfit', sans-serif;
+    /* Otimização: evitar reflow durante animação */
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
 
   .hero-main-title {
@@ -145,7 +203,11 @@ document.addEventListener("DOMContentLoaded", startCountdown);
     letter-spacing: -2px;
     font-family: 'Outfit', sans-serif;
     opacity: 0;
+    will-change: transform, opacity;
     animation: fadeInHero 0.5s ease-in-out 0.4s forwards;
+    /* Otimização: evitar reflow durante animação */
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
   .text-gradient-premium {
     background: linear-gradient(90deg, #00d4ff, #00ff9d);
@@ -169,6 +231,9 @@ document.addEventListener("DOMContentLoaded", startCountdown);
     gap: 1.5rem;
     margin-bottom: 2.5rem;
     align-items: flex-start;
+    /* Otimização: evitar reflow durante animação */
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
   
   .cta-link-rocket {
@@ -177,6 +242,9 @@ document.addEventListener("DOMContentLoaded", startCountdown);
     font-size: 1.1rem;
     font-weight: 700;
     transition: all 0.3s ease;
+    /* Otimização: evitar reflow durante animação */
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
   .cta-link-rocket:hover {
     color: white;
@@ -197,6 +265,9 @@ document.addEventListener("DOMContentLoaded", startCountdown);
     box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
     border: none;
     cursor: pointer;
+    /* Otimização: evitar reflow durante animação */
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
   .btn-cyan-premium:hover {
     transform: translateY(-5px) scale(1.02);
@@ -221,6 +292,9 @@ document.addEventListener("DOMContentLoaded", startCountdown);
     border-radius: 20px;
     gap: 1.5rem;
     backdrop-filter: blur(10px);
+    /* Otimização: evitar reflow durante animação */
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
   .pill-badge {
     display: flex;

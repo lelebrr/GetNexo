@@ -673,8 +673,8 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
     </div>
 
     <script is:inline>
-        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3006' : '/api';
-        const API_CONFIG_URL = `${API_URL}/config`;
+        const API_URL = '/api';
+        const API_CONFIG_URL = API_URL + '/config';
         let authToken = localStorage.getItem('auth_token');
 
         // Settings management functions

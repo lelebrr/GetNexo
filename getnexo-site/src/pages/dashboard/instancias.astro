@@ -18,14 +18,14 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
     <div id="instances-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap:1.5rem;">
         <!-- Loading Skeleton -->
         <div class="glass-panel" style="padding:1.5rem; height:200px; display:flex; align-items:center; justify-content:center;">
-            <div style="color:#64748b;">Carregando instâncias...</div>
+            <div style="color:#94a3b8;">Carregando instâncias...</div>
         </div>
     </div>
 
     <!-- New Instance Modal -->
     <div id="modal-new-instance" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(5px); z-index:1000; display:none; align-items:center; justify-content:center;">
         <div class="glass-panel" style="width:400px; padding:2rem; background:#0f172a; border:1px solid #334155; position:relative;">
-            <button onclick="closeModal()" style="position:absolute; top:15px; right:15px; background:none; border:none; color:#64748b; font-size:1.5rem; cursor:pointer;">&times;</button>
+            <button onclick="closeModal()" style="position:absolute; top:15px; right:15px; background:none; border:none; color:#94a3b8; font-size:1.5rem; cursor:pointer;">&times;</button>
             
             <h2 style="margin:0 0 1.5rem; color:white;">Nova Conexão</h2>
             
@@ -44,7 +44,7 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
                 <div id="qr-container" style="background:white; padding:10px; border-radius:10px; display:inline-block; margin-bottom:1rem;">
                     <img id="qr-image" src="" style="width:200px; height:200px; display:block;" />
                 </div>
-                <div id="connection-log" style="font-family:'JetBrains Mono', monospace; font-size:0.7rem; color:#64748b; height:60px; overflow-y:auto; text-align:left; background:black; padding:10px; border-radius:6px; margin-bottom:1rem;">
+                <div id="connection-log" style="font-family:'JetBrains Mono', monospace; font-size:0.7rem; color:#94a3b8; height:60px; overflow-y:auto; text-align:left; background:black; padding:10px; border-radius:6px; margin-bottom:1rem;">
                     > Aguardando leitura...
                 </div>
                 <button onclick="closeModal()" style="background:none; border:1px solid #334155; color:white; padding:8px 16px; border-radius:6px; cursor:pointer;">Cancelar</button>
@@ -54,7 +54,7 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
     </div>
 
     <script is:inline>
-        const API = 'https://api.getnexo.com.br'; // or local
+        const API = '/api';
         const grid = document.getElementById('instances-grid');
 
         // Helpers
@@ -62,7 +62,7 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
 
         async function fetchInstances() {
             try {
-                // Mock API call - Replace with fetch(`${API}/api/whatsapp/instances`)
+                // Mock API call - Replace with fetch(`${API}/whatsapp/instances`)
                 // Simulating response
                 await new Promise(r => setTimeout(r, 800)); 
                 
@@ -94,15 +94,15 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
                     <div style="padding:1.5rem; background:rgba(0,0,0,0.2);">
                         <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
                             <div style="text-align:center;">
-                                <div style="font-size:0.7rem; color:#64748b; text-transform:uppercase;">Bateria</div>
+                                <div style="font-size:0.7rem; color:#94a3b8; text-transform:uppercase;">Bateria</div>
                                 <div style="font-size:1rem; color:white; font-weight:700;">${inst.battery}%</div>
                             </div>
                             <div style="text-align:center;">
-                                <div style="font-size:0.7rem; color:#64748b; text-transform:uppercase;">Uptime</div>
+                                <div style="font-size:0.7rem; color:#94a3b8; text-transform:uppercase;">Uptime</div>
                                 <div style="font-size:1rem; color:white; font-weight:700;">99.9%</div>
                             </div>
                             <div style="text-align:center;">
-                                <div style="font-size:0.7rem; color:#64748b; text-transform:uppercase;">Latência</div>
+                                <div style="font-size:0.7rem; color:#94a3b8; text-transform:uppercase;">Latência</div>
                                 <div style="font-size:1rem; color:var(--neon-blue); font-weight:700;">24ms</div>
                             </div>
                         </div>

@@ -3,17 +3,339 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 
 <AdminLayout title="Aguardando Resposta" activeTab="live">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg shadow-cyan-500/30 animate-pulse">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
+  <div id="tickets-container" class="space-y-6">
+    <!-- Header e Status Geral -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-3xl font-bold text-white">Aguardando Resposta</h1>
+        <p class="text-gray-400">Conversas que aguardam resposta do cliente ou do agente</p>
+      </div>
+      <div class="flex space-x-3">
+        <div class="px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-lg flex items-center space-x-2">
+          <span class="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
+          <span class="text-amber-400 text-sm font-semibold" id="waiting-tickets">0 Aguardando</span>
+        </div>
+        <div class="px-4 py-2 bg-cyan-500/10 border border-cyan-500/20 rounded-lg flex items-center space-x-2">
+          <span class="w-2 h-2 bg-cyan-500 rounded-full"></span>
+          <span class="text-cyan-400 text-sm font-semibold" id="total-tickets">0 Total</span>
+        </div>
+      </div>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      Aguardando Resposta
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Conversas que aguardam resposta dos agentes.
-    </p>
+
+    <!-- Filtros -->
+    <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-4">
+      <div class="flex flex-wrap gap-4 items-center">
+        <div class="flex-1 min-w-[200px]">
+          <input 
+            type="text" 
+            id="search-input" 
+            placeholder="Buscar por nome, telefone ou mensagem..." 
+            class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+          >
+        </div>
+        <select id="channel-filter" class="bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-amber-500">
+          <option value="">Todos os Canais</option>
+          <option value="whatsapp">WhatsApp</option>
+          <option value="telegram">Telegram</option>
+          <option value="instagram">Instagram</option>
+          <option value="facebook">Facebook</option>
+        </select>
+        <button id="refresh-btn" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-lg transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Atualizar
+        </button>
+      </div>
+    </div>
+
+    <!-- Lista de Conversas -->
+    <div id="tickets-list" class="space-y-4">
+      <!-- Os tickets serão carregados aqui via JavaScript -->
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading-state" class="hidden flex flex-col items-center justify-center min-h-[40vh]">
+      <div class="w-16 h-16 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+      <p class="text-gray-400">Carregando conversas...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="hidden flex flex-col items-center justify-center min-h-[40vh] text-center space-y-4">
+      <div class="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+      </div>
+      <h3 class="text-xl font-semibold text-gray-300">Nenhuma conversa aguardando</h3>
+      <p class="text-gray-500">Não há conversas aguardando resposta no momento.</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="error-state" class="hidden flex flex-col items-center justify-center min-h-[40vh] text-center space-y-4">
+      <div class="w-20 h-20 bg-red-900/20 rounded-full flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+      </div>
+      <h3 class="text-xl font-semibold text-red-400">Erro ao carregar conversas</h3>
+      <p class="text-gray-500" id="error-message">Ocorreu um erro ao tentar carregar as conversas.</p>
+      <button id="retry-btn" class="px-6 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg transition-colors">
+        Tentar Novamente
+      </button>
+    </div>
   </div>
+
+  <script>
+    // API Configuration
+    const API_BASE_URL = 'http://localhost:3006/api/tickets';
+    
+    // DOM Elements
+    const ticketsList = document.getElementById('tickets-list');
+    const loadingState = document.getElementById('loading-state');
+    const emptyState = document.getElementById('empty-state');
+    const errorState = document.getElementById('error-state');
+    const errorMessage = document.getElementById('error-message');
+    const searchInput = document.getElementById('search-input');
+    const channelFilter = document.getElementById('channel-filter');
+    const refreshBtn = document.getElementById('refresh-btn');
+    const retryBtn = document.getElementById('retry-btn');
+    const waitingTickets = document.getElementById('waiting-tickets');
+    const totalTickets = document.getElementById('total-tickets');
+
+    // State
+    let allTickets = [];
+    let filteredTickets = [];
+
+    // Show/hide states
+    function showLoading() {
+      ticketsList.classList.add('hidden');
+      emptyState.classList.add('hidden');
+      errorState.classList.add('hidden');
+      loadingState.classList.remove('hidden');
+    }
+
+    function showTickets() {
+      loadingState.classList.add('hidden');
+      emptyState.classList.add('hidden');
+      errorState.classList.add('hidden');
+      ticketsList.classList.remove('hidden');
+    }
+
+    function showEmpty() {
+      loadingState.classList.add('hidden');
+      ticketsList.classList.add('hidden');
+      errorState.classList.add('hidden');
+      emptyState.classList.remove('hidden');
+    }
+
+    function showError(message) {
+      loadingState.classList.add('hidden');
+      ticketsList.classList.add('hidden');
+      emptyState.classList.add('hidden');
+      errorState.classList.remove('hidden');
+      errorMessage.textContent = message;
+    }
+
+    // Format date
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diff = now - date;
+      
+      if (diff < 60000) return 'Agora';
+      if (diff < 3600000) return `${Math.floor(diff / 60000)}m atrás`;
+      if (diff < 86400000) return `${Math.floor(diff / 3600000)}h atrás`;
+      if (diff < 604800000) return `${Math.floor(diff / 86400000)}d atrás`;
+      
+      return date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    // Format time
+    function formatTime(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // Get status badge
+    function getStatusBadge(status) {
+      const badges = {
+        open: { text: 'Aberta', class: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30' },
+        waiting: { text: 'Aguardando', class: 'bg-amber-500/20 text-amber-400 border-amber-500/30' },
+        closed: { text: 'Encerrada', class: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' },
+        priority: { text: 'Prioritária', class: 'bg-red-500/20 text-red-400 border-red-500/30' }
+      };
+      
+      const badge = badges[status] || { text: status, class: 'bg-gray-500/20 text-gray-400 border-gray-500/30' };
+      return `<span class="px-2 py-1 rounded text-xs font-semibold border ${badge.class}">${badge.text}</span>`;
+    }
+
+    // Get channel badge
+    function getChannelBadge(channel) {
+      const channels = {
+        whatsapp: { text: 'WhatsApp', class: 'bg-green-500/20 text-green-400 border-green-500/30' },
+        telegram: { text: 'Telegram', class: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },
+        instagram: { text: 'Instagram', class: 'bg-pink-500/20 text-pink-400 border-pink-500/30' },
+        facebook: { text: 'Facebook', class: 'bg-blue-600/20 text-blue-400 border-blue-600/30' }
+      };
+      
+      const channelInfo = channels[channel] || { text: channel, class: 'bg-gray-500/20 text-gray-400 border-gray-500/30' };
+      return `<span class="px-2 py-1 rounded text-xs font-semibold border ${channelInfo.class}">${channelInfo.text}</span>`;
+    }
+
+    // Get priority badge
+    function getPriorityBadge(priority) {
+      if (priority === 0) return '';
+      
+      const priorityInfo = {
+        1: { text: 'Alta', class: 'bg-orange-500/20 text-orange-400 border-orange-500/30' },
+        2: { text: 'Urgente', class: 'bg-red-500/20 text-red-400 border-red-500/30' }
+      };
+      
+      const info = priorityInfo[priority] || { text: 'Prioridade', class: 'bg-gray-500/20 text-gray-400 border-gray-500/30' };
+      return `<span class="px-2 py-1 rounded text-xs font-semibold border ${info.class}">${info.text}</span>`;
+    }
+
+    // Get sentiment badge
+    function getSentimentBadge(sentiment) {
+      if (!sentiment) return '';
+      
+      const sentiments = {
+        positive: { text: 'Positivo', class: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' },
+        negative: { text: 'Negativo', class: 'bg-red-500/20 text-red-400 border-red-500/30' },
+        neutral: { text: 'Neutro', class: 'bg-gray-500/20 text-gray-400 border-gray-500/30' },
+        mixed: { text: 'Misto', class: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' }
+      };
+      
+      const info = sentiments[sentiment] || { text: sentiment, class: 'bg-gray-500/20 text-gray-400 border-gray-500/30' };
+      return `<span class="px-2 py-1 rounded text-xs font-semibold border ${info.class}">${info.text}</span>`;
+    }
+
+    // Render ticket card
+    function renderTicketCard(ticket) {
+      const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(ticket.customer_name || 'Cliente')}&background=${ticket.status === 'waiting' ? 'F59E0B' : '666666'}&color=fff`;
+      
+      return `
+        <div class="bg-gray-900/50 border border-gray-800 p-4 rounded-xl hover:border-amber-500/50 transition-all group flex flex-col md:flex-row items-center justify-between">
+          <div class="flex items-center w-full md:w-auto mb-4 md:mb-0">
+            <div class="relative mr-4">
+              <img src="${avatarUrl}" class="w-12 h-12 rounded-full border-2 border-gray-800" alt="Avatar">
+              ${ticket.status === 'waiting' ? '<span class="absolute bottom-0 right-0 w-3 h-3 bg-amber-500 border-2 border-gray-900 rounded-full animate-pulse"></span>' : ''}
+            </div>
+            <div>
+              <h3 class="font-semibold text-white">${ticket.customer_name || 'Cliente'}</h3>
+              <p class="text-sm text-gray-400 truncate w-48 md:w-64">${ticket.last_message || 'Sem mensagem'}</p>
+              <div class="flex items-center space-x-2 mt-1 flex-wrap gap-1">
+                ${getChannelBadge(ticket.channel)}
+                ${getStatusBadge(ticket.status)}
+                ${getPriorityBadge(ticket.priority)}
+                ${getSentimentBadge(ticket.sentiment)}
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center space-x-6 w-full md:w-auto justify-between md:justify-end">
+            <div class="text-right">
+              <p class="text-xs text-gray-500">Tempo de Espera</p>
+              <p class="text-sm font-mono ${ticket.status === 'waiting' ? 'text-amber-400' : 'text-gray-400'}">${formatTime(ticket.created_at)}</p>
+            </div>
+            
+            <div class="flex items-center space-x-2">
+              ${ticket.assigned_agent_name ? `<img src="https://ui-avatars.com/api/?name=${encodeURIComponent(ticket.assigned_agent_name)}&background=random" class="w-8 h-8 rounded-full border border-gray-700" title="Agente: ${ticket.assigned_agent_name}">` : ''}
+              <button onclick="viewTicket(${ticket.id})" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                Ver Conversa
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Update stats
+    function updateStats() {
+      const total = allTickets.length;
+      const waiting = allTickets.filter(t => t.status === 'waiting').length;
+      
+      waitingTickets.textContent = `${waiting} Aguardando`;
+      totalTickets.textContent = `${total} Total`;
+    }
+
+    // Filter tickets
+    function filterTickets() {
+      const searchTerm = searchInput.value.toLowerCase();
+      const channel = channelFilter.value;
+
+      filteredTickets = allTickets.filter(ticket => {
+        // Search filter
+        const matchesSearch = !searchTerm || 
+          (ticket.customer_name && ticket.customer_name.toLowerCase().includes(searchTerm)) ||
+          (ticket.customer_phone && ticket.customer_phone.includes(searchTerm)) ||
+          (ticket.last_message && ticket.last_message.toLowerCase().includes(searchTerm));
+
+        // Channel filter
+        const matchesChannel = !channel || ticket.channel === channel;
+
+        return matchesSearch && matchesChannel;
+      });
+
+      renderTickets();
+    }
+
+    // Render tickets
+    function renderTickets() {
+      if (filteredTickets.length === 0) {
+        showEmpty();
+        return;
+      }
+
+      showTickets();
+      ticketsList.innerHTML = filteredTickets.map(renderTicketCard).join('');
+    }
+
+    // Load tickets
+    async function loadTickets() {
+      showLoading();
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}?status=waiting`);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.tickets && data.tickets.length > 0) {
+          allTickets = data.tickets;
+          filteredTickets = [...allTickets];
+          updateStats();
+          renderTickets();
+        } else {
+          allTickets = [];
+          filteredTickets = [];
+          updateStats();
+          showEmpty();
+        }
+      } catch (error) {
+        console.error('Erro ao carregar tickets:', error);
+        showError('Não foi possível carregar as conversas. Verifique a conexão com o servidor.');
+      }
+    }
+
+    // View ticket
+    function viewTicket(ticketId) {
+      window.location.href = `/admin/live/ticket/${ticketId}`;
+    }
+
+    // Event listeners
+    searchInput.addEventListener('input', filterTickets);
+    channelFilter.addEventListener('change', filterTickets);
+    refreshBtn.addEventListener('click', loadTickets);
+    retryBtn.addEventListener('click', loadTickets);
+
+    // Load tickets on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      loadTickets();
+    });
+  </script>
 </AdminLayout>

@@ -1,8 +1,81 @@
 ---
 // Testimonials.astro - Reconstructed from live site
+import OptimizedAvatar from './OptimizedAvatar.astro';
+
+// Dados dos depoimentos com avatares otimizados
+const testimonials = [
+  {
+    name: "Joao do Tenis",
+    handle: "@joao_do_tenis",
+    avatar: "https://i.pravatar.cc/60?u=joao",
+    initials: "JT",
+    gradient: "linear-gradient(135deg, #3b82f6, #06b6d4)",
+    result: "+R$ 42k/mês",
+    resultLabel: "faturamento extra",
+    quote: "O AR vendeu 200 pares em 1 dia. Nunca vi nada igual no meu checkout."
+  },
+  {
+    name: "Mariana Silva",
+    handle: "@mari_modaplus",
+    avatar: "https://i.pravatar.cc/60?u=mari",
+    initials: "MS",
+    gradient: "linear-gradient(135deg, #ec4899, #8b5cf6)",
+    result: "R$ 8.5k",
+    resultLabel: "economia/mês",
+    quote: "Setup em 12 minutos e já estava vendendo automaticamente. Economia real de tempo e dinheiro."
+  },
+  {
+    name: "Roberto Santos",
+    handle: "@robertotech",
+    avatar: "https://i.pravatar.cc/60?u=roberto",
+    initials: "RS",
+    gradient: "linear-gradient(135deg, #10b981, #3b82f6)",
+    result: "98%",
+    resultLabel: "conversão",
+    quote: "O PIX integrado é show! Clientes pagam direto no chat sem fricção."
+  },
+  {
+    name: "Ana Oliveira",
+    handle: "@ana_oliveira",
+    avatar: "https://i.pravatar.cc/60?u=ana",
+    initials: "AO",
+    gradient: "linear-gradient(135deg, #f59e0b, #ef4444)",
+    result: "+3.200%",
+    resultLabel: "escalabilidade",
+    quote: "Com a IA generativa do GetNexo, meu WhatsApp atende 3.200% mais clientes sem contratar ninguém."
+  },
+  {
+    name: "Pedro Lima",
+    handle: "@pedro_lima",
+    avatar: "https://i.pravatar.cc/60?u=pedro",
+    initials: "PL",
+    gradient: "linear-gradient(135deg, #6366f1, #a855f7)",
+    result: "12 min",
+    resultLabel: "setup",
+    quote: "Instalação em 12 minutos, zero mensalidade. Meu negócio já fatura sozinho enquanto durmo."
+  },
+  {
+    name: "Julia Costa",
+    handle: "@julia_costa",
+    avatar: "https://i.pravatar.cc/60?u=julia",
+    initials: "JC",
+    gradient: "linear-gradient(135deg, #14b8a6, #22c55e)",
+    result: "Zero",
+    resultLabel: "abandono",
+    quote: "O PIX no chat fechou 98% das vendas. Clientes pagam direto sem sair do WhatsApp."
+  }
+];
 ---
 
-<section class="testimonials-root"> <div class="glow-bg top-left"></div> <div class="glow-bg bottom-right"></div> <div class="content-wrapper"> <div class="section-header"> <span class="badge">Prova Social</span> <h2>Quem usa, <span class="gradient-text">vende mais</span>.</h2> <p>Junte-se a centenas de lojistas que automatizaram suas vendas e escalaram seus resultados com o GetNexo.</p> </div> <div class="carousel-outer" id="carousel-outer"> <!-- Arrows (Inside outer but outside slider) --> <button class="arrow-btn prev" id="carousel-prev" aria-label="Anterior"> <svg viewBox="0 0 24 24" width="32" height="32" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"> <polyline points="15 18 9 12 15 6"></polyline> </svg> </button> <div class="slider-viewport" id="slider-viewport"> <div class="slider-track" id="slider-track"> <div class="testimonial-card"> <div class="card-header"> <div class="avatar-wrapper"> <img src="https://i.pravatar.cc/150?u=joao" alt="Joao do Tenis" class="avatar-img" loading="lazy"> <div class="verified-indicator"> <svg viewBox="0 0 24 24" width="12" height="12" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg> </div> </div> <div class="user-info"> <h4 class="user-name">Joao do Tenis</h4> <span class="user-handle">@joao_do_tenis</span> <span class="verified-label">⭐ Verificado</span> </div> </div> <div class="results-box"> <div class="res-val">+R$ 42k/mês</div> <div class="res-lbl">faturamento extra</div> </div> <div class="quote-box"> <svg class="quote-icon" fill="#22d3ee" viewBox="0 0 24 24"><path d="M14.017 21L14.017 18C14.017 16.896 14.896 16.017 16.017 16.017H19.017V11H14.017V6H20.017V16.017C20.017 18.756 17.756 21 15.017 21H14.017ZM4.017 21V18C4.017 16.896 4.896 16.017 6.017 16.017H9.017V11H4.017V6H10.017V16.017C10.017 18.756 7.756 21 5.017 21H4.017Z"></path></svg> <p>O AR vendeu 200 pares em 1 dia. Nunca vi nada igual no meu checkout.</p> </div> </div><div class="testimonial-card"> <div class="card-header"> <div class="avatar-wrapper"> <img src="https://i.pravatar.cc/150?u=mari" alt="Mariana Silva" class="avatar-img" loading="lazy"> <div class="verified-indicator"> <svg viewBox="0 0 24 24" width="12" height="12" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg> </div> </div> <div class="user-info"> <h4 class="user-name">Mariana Silva</h4> <span class="user-handle">@mari_modaplus</span> <span class="verified-label">⭐ Verificado</span> </div> </div> <div class="results-box"> <div class="res-val">R$ 8.5k</div> <div class="res-lbl">economia/mês</div> </div> <div class="quote-box"> <svg class="quote-icon" fill="#22d3ee" viewBox="0 0 24 24"><path d="M14.017 21L14.017 18C14.017 16.896 14.896 16.017 16.017 16.017H19.017V11H14.017V6H20.017V16.017C20.017 18.756 17.756 21 15.017 21H14.017ZM4.017 21V18C4.017 16.896 4.896 16.017 6.017 16.017H9.017V11H4.017V6H10.017V16.017C10.017 18.756 7.756 21 5.017 21H4.017Z"></path></svg> <p>Setup em 12 minutos e já estava vendendo automaticamente. Economia real de tempo e dinheiro.</p> </div> </div><div class="testimonial-card"> <div class="card-header"> <div class="avatar-wrapper"> <img src="https://i.pravatar.cc/150?u=roberto" alt="Roberto Santos" class="avatar-img" loading="lazy"> <div class="verified-indicator"> <svg viewBox="0 0 24 24" width="12" height="12" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg> </div> </div> <div class="user-info"> <h4 class="user-name">Roberto Santos</h4> <span class="user-handle">@robertotech</span> <span class="verified-label">⭐ Verificado</span> </div> </div> <div class="results-box"> <div class="res-val">98%</div> <div class="res-lbl">conversão</div> </div> <div class="quote-box"> <svg class="quote-icon" fill="#22d3ee" viewBox="0 0 24 24"><path d="M14.017 21L14.017 18C14.017 16.896 14.896 16.017 16.017 16.017H19.017V11H14.017V6H20.017V16.017C20.017 18.756 17.756 21 15.017 21H14.017ZM4.017 21V18C4.017 16.896 4.896 16.017 6.017 16.017H9.017V11H4.017V6H10.017V16.017C10.017 18.756 7.756 21 5.017 21H4.017Z"></path></svg> <p>O PIX integrado é show! Clientes pagam direto no chat sem fricção.</p> </div> </div><div class="testimonial-card"> <div class="card-header"> <div class="avatar-wrapper"> <img src="https://i.pravatar.cc/150?u=ana" alt="Ana Oliveira" class="avatar-img" loading="lazy"> <div class="verified-indicator"> <svg viewBox="0 0 24 24" width="12" height="12" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg> </div> </div> <div class="user-info"> <h4 class="user-name">Ana Oliveira</h4> <span class="user-handle">@ana_oliveira</span> <span class="verified-label">⭐ Verificado</span> </div> </div> <div class="results-box"> <div class="res-val">+3.200%</div> <div class="res-lbl">escalabilidade</div> </div> <div class="quote-box"> <svg class="quote-icon" fill="#22d3ee" viewBox="0 0 24 24"><path d="M14.017 21L14.017 18C14.017 16.896 14.896 16.017 16.017 16.017H19.017V11H14.017V6H20.017V16.017C20.017 18.756 17.756 21 15.017 21H14.017ZM4.017 21V18C4.017 16.896 4.896 16.017 6.017 16.017H9.017V11H4.017V6H10.017V16.017C10.017 18.756 7.756 21 5.017 21H4.017Z"></path></svg> <p>Com a IA generativa do GetNexo, meu WhatsApp atende 3.200% mais clientes sem contratar ninguém.</p> </div> </div><div class="testimonial-card"> <div class="card-header"> <div class="avatar-wrapper"> <img src="https://i.pravatar.cc/150?u=pedro" alt="Pedro Lima" class="avatar-img" loading="lazy"> <div class="verified-indicator"> <svg viewBox="0 0 24 24" width="12" height="12" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg> </div> </div> <div class="user-info"> <h4 class="user-name">Pedro Lima</h4> <span class="user-handle">@pedro_lima</span> <span class="verified-label">⭐ Verificado</span> </div> </div> <div class="results-box"> <div class="res-val">12 min</div> <div class="res-lbl">setup</div> </div> <div class="quote-box"> <svg class="quote-icon" fill="#22d3ee" viewBox="0 0 24 24"><path d="M14.017 21L14.017 18C14.017 16.896 14.896 16.017 16.017 16.017H19.017V11H14.017V6H20.017V16.017C20.017 18.756 17.756 21 15.017 21H14.017ZM4.017 21V18C4.017 16.896 4.896 16.017 6.017 16.017H9.017V11H4.017V6H10.017V16.017C10.017 18.756 7.756 21 5.017 21H4.017Z"></path></svg> <p>Instalação em 12 minutos, zero mensalidade. Meu negócio já fatura sozinho enquanto durmo.</p> </div> </div><div class="testimonial-card"> <div class="card-header"> <div class="avatar-wrapper"> <img src="https://i.pravatar.cc/150?u=julia" alt="Julia Costa" class="avatar-img" loading="lazy"> <div class="verified-indicator"> <svg viewBox="0 0 24 24" width="12" height="12" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg> </div> </div> <div class="user-info"> <h4 class="user-name">Julia Costa</h4> <span class="user-handle">@julia_costa</span> <span class="verified-label">⭐ Verificado</span> </div> </div> <div class="results-box"> <div class="res-val">Zero</div> <div class="res-lbl">abandono</div> </div> <div class="quote-box"> <svg class="quote-icon" fill="#22d3ee" viewBox="0 0 24 24"><path d="M14.017 21L14.017 18C14.017 16.896 14.896 16.017 16.017 16.017H19.017V11H14.017V6H20.017V16.017C20.017 18.756 17.756 21 15.017 21H14.017ZM4.017 21V18C4.017 16.896 4.896 16.017 6.017 16.017H9.017V11H4.017V6H10.017V16.017C10.017 18.756 7.756 21 5.017 21H4.017Z"></path></svg> <p>O PIX no chat fechou 98% das vendas. Clientes pagam direto sem sair do WhatsApp.</p> </div> </div> </div> </div> <button class="arrow-btn next" id="carousel-next" aria-label="Próximo"> <svg viewBox="0 0 24 24" width="32" height="32" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"> <polyline points="9 18 15 12 9 6"></polyline> </svg> </button> </div> <!-- Dots --> <div class="slider-dots" id="slider-dots"> <button class="dot active" data-index="0"></button><button class="dot " data-index="1"></button><button class="dot " data-index="2"></button><button class="dot " data-index="3"></button><button class="dot " data-index="4"></button><button class="dot " data-index="5"></button> </div> <div class="cta-bottom" style="text-align: center; margin-top: 3rem;">
+<section class="testimonials-root"> <div class="glow-bg top-left"></div> <div class="glow-bg bottom-right"></div> <div class="content-wrapper"> <div class="section-header"> <span class="badge">Prova Social</span> <h2>Quem usa, <span class="gradient-text">vende mais</span>.</h2> <p>Junte-se a centenas de lojistas que automatizaram suas vendas e escalaram seus resultados com o GetNexo.</p> </div> <div class="carousel-outer" id="carousel-outer"> <!-- Arrows (Inside outer but outside slider) --> <button class="arrow-btn prev" id="carousel-prev" aria-label="Anterior"> <svg viewBox="0 0 24 24" width="32" height="32" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"> <polyline points="15 18 9 12 15 6"></polyline> </svg> </button> <div class="slider-viewport" id="slider-viewport"> <div class="slider-track" id="slider-track">
+          {testimonials.map((testimonial, index) => (
+            <div class="testimonial-card"> <div class="card-header"> <div class="avatar-wrapper"> <OptimizedAvatar src={testimonial.avatar} alt={testimonial.name} size={60} loading="lazy" /> <div class="verified-indicator"> <svg viewBox="0 0 24 24" width="12" height="12" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg> </div> </div> <div class="user-info"> <h3 class="user-name">{testimonial.name}</h3> <span class="user-handle">{testimonial.handle}</span> <span class="verified-label">⭐ Verificado</span> </div> </div> <div class="results-box"> <div class="res-val">{testimonial.result}</div> <div class="res-lbl">{testimonial.resultLabel}</div> </div> <div class="quote-box"> <svg class="quote-icon" fill="#22d3ee" viewBox="0 0 24 24"><path d="M14.017 21L14.017 18C14.017 16.896 14.896 16.017 16.017 16.017H19.017V11H14.017V6H20.017V16.017C20.017 18.756 17.756 21 15.017 21H14.017ZM4.017 21V18C4.017 16.896 4.896 16.017 6.017 16.017H9.017V11H4.017V6H10.017V16.017C10.017 18.756 7.756 21 5.017 21H4.017Z"></path></svg> <p>{testimonial.quote}</p> </div> </div>
+          ))}
+        </div> </div> <button class="arrow-btn next" id="carousel-next" aria-label="Próximo"> <svg viewBox="0 0 24 24" width="32" height="32" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"> <polyline points="9 18 15 12 9 6"></polyline> </svg> </button> </div> <!-- Dots --> <div class="slider-dots" id="slider-dots">
+          {testimonials.map((testimonial, index) => (
+            <button class={`dot ${index === 0 ? 'active' : ''}`} data-index={index} aria-label={`Ver depoimento de ${testimonial.name}`} aria-controls="slider-track" aria-current={index === 0 ? 'true' : 'false'} title={`Ver depoimento de ${testimonial.name}`}></button>
+          ))}
+        </div> <div class="cta-bottom" style="text-align: center; margin-top: 3rem;">
         <a href="/depoimentos" class="cta-button">
           Ver todas as histórias
           <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
@@ -97,7 +170,64 @@
 </script>
 
 <style>
-.section-header{text-align:center;margin-bottom:5rem}.badge{display:inline-block;padding:6px 16px;background:#22d3ee1a;border:1px solid rgba(34,211,238,.2);color:#22d3ee;font-size:.8rem;font-weight:800;text-transform:uppercase;letter-spacing:2px;border-radius:100px;margin-bottom:1.5rem}.section-header h2{font-size:clamp(2.5rem,6vw,4rem);font-weight:900;color:#fff;margin-bottom:1.5rem;line-height:1;letter-spacing:-2px}.gradient-text{background:linear-gradient(135deg,#22d3ee,#0ea5e9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.section-header p{color:#94a3b8;font-size:1.25rem;max-width:700px;margin:0 auto;line-height:1.6}.testimonials-root{position:relative;padding:8rem 0;background:#020617;overflow:hidden}.content-wrapper{max-width:1400px;margin:0 auto;padding:0 2rem;position:relative;z-index:10}.glow-bg{position:absolute;width:500px;height:500px;border-radius:50%;filter:blur(150px);opacity:.05;pointer-events:none}.top-left{top:-100px;left:-100px;background:#0ff}.bottom-right{bottom:-100px;right:-100px;background:#0f0}.section-header{text-align:center;margin-bottom:4rem}.badge{display:inline-block;padding:6px 16px;background:#22d3ee1a;border:1px solid rgba(34,211,238,.2);color:#22d3ee;font-size:.75rem;font-weight:800;border-radius:100px;margin-bottom:1rem;text-transform:uppercase;letter-spacing:1px}.section-header h2{font-size:clamp(2.5rem,5vw,4rem);font-weight:900;color:#fff;margin-bottom:1rem;line-height:1;letter-spacing:-2px}.gradient-text{background:linear-gradient(90deg,#22d3ee,#10b981);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.section-header p{color:#94a3b8;font-size:1.2rem;max-width:700px;margin:0 auto}.carousel-outer{position:relative;display:flex;align-items:center;gap:1.5rem}.slider-viewport{flex:1;overflow:hidden;padding:2rem .5rem}.slider-track{display:flex;gap:2rem;transition:transform .6s cubic-bezier(.16,1,.3,1)}.testimonial-card{flex:0 0 100%;background:#ffffff05;border:1px solid rgba(255,255,255,.05);border-radius:2.5rem;padding:3rem;backdrop-filter:blur(10px);transition:.4s}@media(min-width:768px){.testimonial-card{flex:0 0 calc(50% - 1rem)}}@media(min-width:1100px){.testimonial-card{flex:0 0 calc(33.333% - 1.35rem)}}.testimonial-card:hover{transform:translateY(-8px);border-color:#22d3ee33;background:#ffffff0a}.arrow-btn{width:72px;height:72px;background:#0f172ae6;border:2px solid rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:50;transition:all .3s cubic-bezier(.4,0,.2,1);flex-shrink:0;box-shadow:0 10px 30px #00000080}.arrow-btn svg{width:40px;height:40px;stroke-width:3;transition:transform .3s ease}.arrow-btn:hover{background:#22d3ee;border-color:#22d3ee;box-shadow:0 0 30px #22d3ee99;transform:translateY(-50%) scale(1.1)}.arrow-btn.prev:hover svg{transform:translate(-3px)}.arrow-btn.next:hover svg{transform:translate(3px)}.arrow-btn:hover svg{stroke:#000}.nav-arrow.prev{left:-36px}.nav-arrow.next{right:-36px}@media(max-width:1024px){.arrow-btn{width:60px;height:60px}.arrow-btn svg{width:32px;height:32px}}@media(max-width:600px){.arrow-btn{width:50px;height:50px}.arrow-btn svg{width:28px;height:28px}.arrow-btn.prev{left:-15px}.arrow-btn.next{right:-15px}}.card-header{display:flex;align-items:center;gap:1rem;margin-bottom:2rem}.avatar-wrapper{position:relative;width:64px;height:64px;flex-shrink:0}.avatar-img{width:100%;height:100%;border-radius:50%;-o-object-fit:cover;object-fit:cover;border:2px solid rgba(34,211,238,.2)}.verified-indicator{position:absolute;bottom:0;right:0;background:#fbbf24;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;border:2.5px solid #020617}.user-name{color:#fff;margin:0;font-weight:800;font-size:1.1rem;line-height:1.2}.user-handle{color:#22d3ee;display:block;font-size:.85rem;font-weight:600;opacity:.8}.verified-label{display:block;color:#475569;font-size:.65rem;font-weight:800;text-transform:uppercase;margin-top:2px}.results-box{border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:1.5rem;margin-bottom:2rem}.res-val{display:block;font-size:2.5rem;font-weight:900;color:#fff;line-height:1;margin-bottom:.3rem}.res-lbl{color:#64748b;font-weight:800;font-size:.75rem;text-transform:uppercase;letter-spacing:1px}.quote-box{position:relative}.quote-icon{width:1.5rem;height:1.5rem;opacity:.3;margin-bottom:.8rem}.quote-box p{color:#cbd5e1;font-style:italic;font-size:1rem;line-height:1.6;margin:0}.slider-dots{display:flex;justify-content:center;gap:.6rem;margin-top:3rem}.dot{width:6px;height:6px;border-radius:50%;background:#ffffff1a;border:none;cursor:pointer;transition:.3s}.dot.active{width:24px;border-radius:6px;background:#22d3ee}
+  .testimonials-root { position: relative; padding: 8rem 0; background: #020617; overflow: hidden; }
+  .content-wrapper { max-width: 1400px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 10; }
+  .glow-bg { position: absolute; width: 500px; height: 500px; border-radius: 50%; filter: blur(150px); opacity: .05; pointer-events: none; }
+  .top-left { top: -100px; left: -100px; background: #0ff; }
+  .bottom-right { bottom: -100px; right: -100px; background: #0f0; }
+  .section-header { text-align: center; margin-bottom: 4rem; }
+  .badge { display: inline-block; padding: 6px 16px; background: #22d3ee1a; border: 1px solid rgba(34,211,238,.2); color: #22d3ee; font-size: .75rem; font-weight: 800; border-radius: 100px; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+  .section-header h2 { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; color: #fff; margin-bottom: 1rem; line-height: 1; letter-spacing: -2px; }
+  .gradient-text { background: linear-gradient(90deg, #22d3ee, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .section-header p { color: #94a3b8; font-size: 1.2rem; max-width: 700px; margin: 0 auto; }
+  .carousel-outer { position: relative; display: flex; align-items: center; gap: 1.5rem; }
+  .slider-viewport { flex: 1; overflow: hidden; padding: 2rem .5rem; }
+  .slider-track { display: flex; gap: 2rem; transition: transform .6s cubic-bezier(.16,1,.3,1); will-change: transform; }
+  .testimonial-card { flex: 0 0 100%; background: #ffffff05; border: 1px solid rgba(255,255,255,.05); border-radius: 2.5rem; padding: 3rem; backdrop-filter: blur(10px); transition: .4s; will-change: transform; }
+  @media (min-width: 768px) { .testimonial-card { flex: 0 0 calc(50% - 1rem); } }
+  @media (min-width: 1100px) { .testimonial-card { flex: 0 0 calc(33.333% - 1.35rem); } }
+  .testimonial-card:hover { transform: translateY(-8px); border-color: #22d3ee33; background: #ffffff0a; will-change: transform; }
+  .arrow-btn { width: 72px; height: 72px; background: #0f172ae6; border: 2px solid rgba(255,255,255,.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 50; transition: all .3s cubic-bezier(.4,0,.2,1); flex-shrink: 0; box-shadow: 0 10px 30px #00000080; will-change: transform; }
+  .arrow-btn svg { width: 40px; height: 40px; stroke-width: 3; transition: transform .3s ease; }
+  .arrow-btn:hover { background: #22d3ee; border-color: #22d3ee; box-shadow: 0 0 30px #22d3ee99; transform: translateY(-50%) scale(1.1); will-change: transform; }
+  .arrow-btn.prev:hover svg { transform: translate(-3px); }
+  .arrow-btn.next:hover svg { transform: translate(3px); }
+  .arrow-btn:hover svg { stroke: #000; }
+  .nav-arrow.prev { left: -36px; }
+  .nav-arrow.next { right: -36px; }
+  @media (max-width: 1024px) { .arrow-btn { width: 60px; height: 60px; } .arrow-btn svg { width: 32px; height: 32px; } }
+  @media (max-width: 600px) { .arrow-btn { width: 50px; height: 50px; } .arrow-btn svg { width: 28px; height: 28px; } .arrow-btn.prev { left: -15px; } .arrow-btn.next { right: -15px; } }
+  .card-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; }
+  .avatar-wrapper { position: relative; width: 60px; height: 60px; flex-shrink: 0; }
+  .avatar-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid rgba(34,211,238,.2); }
+  .verified-indicator { position: absolute; bottom: 0; right: 0; background: #fbbf24; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border: 2.5px solid #020617; }
+  /* Avatar Placeholder Styles */
+  .avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    color: rgba(255,255,255,0.9);
+    font-size: 1rem;
+    border: 2px solid rgba(34,211,238,.2);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  }
+  .user-name { color: #fff; margin: 0; font-weight: 800; font-size: 1.1rem; line-height: 1.2; }
+  .user-name h3 { margin: 0; font-size: inherit; font-weight: inherit; }
+  .user-handle { color: #22d3ee; display: block; font-size: .85rem; font-weight: 600; opacity: .8; }
+  .verified-label { display: block; color: #475569; font-size: .65rem; font-weight: 800; text-transform: uppercase; margin-top: 2px; }
+  .results-box { border-bottom: 1px solid rgba(255,255,255,.05); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+  .res-val { display: block; font-size: 2.5rem; font-weight: 900; color: #fff; line-height: 1; margin-bottom: .3rem; }
+  .res-lbl { color: #94a3b8; font-weight: 800; font-size: .75rem; text-transform: uppercase; letter-spacing: 1px; }
+  .quote-box { position: relative; }
+  .quote-icon { width: 1.5rem; height: 1.5rem; opacity: .3; margin-bottom: .8rem; }
+  .quote-box p { color: #cbd5e1; font-style: italic; font-size: 1rem; line-height: 1.6; margin: 0; }
+  .slider-dots { display: flex; justify-content: center; gap: .6rem; margin-top: 3rem; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: #ffffff1a; border: none; cursor: pointer; transition: .3s; will-change: width, border-radius; }
+  .dot.active { width: 24px; border-radius: 6px; background: #22d3ee; will-change: width, border-radius; }
   
   .cta-bottom {
     display: flex;
@@ -122,6 +252,7 @@
     transition: all 0.3s ease;
     text-decoration: none;
     cursor: pointer;
+    will-change: transform, background;
   }
 
   .cta-button:hover {
@@ -129,13 +260,31 @@
     color: #020617;
     box-shadow: 0 0 30px rgba(34, 211, 238, 0.4);
     transform: translateY(-2px);
+    will-change: transform, background;
   }
 
   .cta-button svg {
     transition: transform 0.3s ease;
+    will-change: transform;
   }
 
   .cta-button:hover svg {
     transform: translateX(4px);
+    will-change: transform;
+  }
+
+  /* Avatar Placeholder Styles */
+  .avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    color: rgba(255,255,255,0.9);
+    font-size: 1rem;
+    border: 2px solid rgba(34,211,238,.2);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
   }
 </style>

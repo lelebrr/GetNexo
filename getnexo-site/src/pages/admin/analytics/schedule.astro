@@ -1,0 +1,81 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { Mail, Clock, Send, Plus, Trash2, Edit3, CheckCircle2 } from 'lucide-react';
+
+const schedules = [
+  { id: 1, title: "Report Executivo Diário", recipients: "ceo@getnexo.com.br", time: "08:00", frequency: "Diário", active: true },
+  { id: 2, name: "Status de Vendas Semanal", recipients: "sales@getnexo.com.br", time: "09:00", frequency: "Segunda-feira", active: true },
+  { id: 3, name: "Alerta de Crise (IA)", recipients: "admin@getnexo.com.br", time: "Real-time", frequency: "Event-based", active: false },
+];
+---
+
+<AdminLayout title="Agendar Envio Email" activeTab="analytics">
+  <div class="max-w-5xl mx-auto space-y-8 py-4 animate-fade-in">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 bg-cyan-500/20 rounded-2xl flex items-center justify-center border border-cyan-500/30">
+          <Mail className="w-6 h-6 text-cyan-400" />
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-white">Agendamentos de Relatórios</h1>
+          <p class="text-sm text-gray-400">Automatize o envio de KPIs por email para sua equipe.</p>
+        </div>
+      </div>
+      <button class="bg-cyan-500 hover:bg-cyan-400 text-black font-bold px-6 py-3 rounded-xl flex items-center space-x-2 transition-all shadow-lg shadow-cyan-500/10">
+        <Plus className="w-5 h-5" />
+        <span>Novo Agendamento</span>
+      </button>
+    </div>
+
+    <!-- Lista de Agendamentos -->
+    <div class="space-y-4">
+      {schedules.map((s) => (
+        <div class="bg-gray-900/50 border border-gray-800 p-6 rounded-3xl flex flex-col md:flex-row md:items-center justify-between gap-6 hover:border-cyan-500/40 transition-all group">
+          <div class="flex items-center space-x-6">
+            <div class:list={["w-3 h-12 rounded-full", s.active ? 'bg-cyan-500' : 'bg-gray-800']}></div>
+            <div class="space-y-1">
+              <h3 class="text-lg font-bold text-white uppercase tracking-tight">{s.title || s.name}</h3>
+              <div class="flex items-center space-x-4 text-xs text-gray-500">
+                <span class="flex items-center"><Mail className="w-3 h-3 mr-1" /> {s.recipients}</span>
+                <span class="flex items-center"><Clock className="w-3 h-3 mr-1" /> {s.time} ({s.frequency})</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-2 mr-4">
+              <span class="text-[10px] uppercase font-bold text-gray-500">{s.active ? 'Ativo' : 'Pausado'}</span>
+              <div class:list={["w-8 h-4 rounded-full relative transition-colors", s.active ? 'bg-cyan-600/40' : 'bg-gray-800']}>
+                <div class:list={["absolute top-0.5 w-3 h-3 rounded-full bg-white transition-all", s.active ? 'right-0.5' : 'left-0.5']}></div>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2 opacity-50 group-hover:opacity-100 transition-opacity">
+              <button class="p-2 hover:bg-gray-800 rounded-lg text-gray-300"><Edit3 className="w-4 h-4" /></button>
+              <button class="p-2 hover:bg-red-900/40 rounded-lg text-red-500"><Trash2 className="w-4 h-4" /></button>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Box de Destaque -->
+    <div class="p-8 bg-black/40 border border-gray-800 rounded-3xl flex items-center space-x-8">
+      <div class="hidden sm:block">
+        <div class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center">
+          <Send className="w-8 h-8 text-gray-500" />
+        </div>
+      </div>
+      <div>
+        <h4 class="text-white font-bold mb-2">Envio em tempo real está disponível</h4>
+        <p class="text-sm text-gray-400">
+          Combine gatilhos de automação com o envio de email para ser alertado instantaneamente sobre quedas bruscas de conversão ou picos de atendimento.
+        </p>
+      </div>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

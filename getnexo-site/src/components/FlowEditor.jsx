@@ -60,7 +60,7 @@ const FlowEditor = () => {
         const token = localStorage.getItem('token');
         if (!token) return; // or redirect
 
-        fetch(`/api-proxy/api/flows/${flowId}`, {
+        fetch(`/api/flows/${flowId}`, {
             headers: { 'Authorization': token }
         })
             .then(res => res.json())
@@ -80,7 +80,7 @@ const FlowEditor = () => {
     const saveFlow = () => {
         const token = localStorage.getItem('token');
         const method = flowId ? 'PUT' : 'POST';
-        const url = flowId ? `/api-proxy/api/flows/${flowId}` : '/api-proxy/api/flows';
+        const url = flowId ? `/api/flows/${flowId}` : '/api/flows';
 
         fetch(url, {
             method,

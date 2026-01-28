@@ -253,20 +253,71 @@ import SEO from '../../components/SEO.astro';
                             <button onclick="this.parentElement.parentElement.remove()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
                         </div>
                         <div id="teste-ar-${produtoId}" class="w-full h-96 bg-gray-800 rounded-lg">
-                            <model-viewer
-                                src="/modelos/${produtoId}.glb"
-                                ios-src="/modelos/${produtoId}.usdz"
-                                ar
-                                ar-modes="webxr scene-viewer quick-look"
-                                camera-orbit="-45deg 55deg 2m"
-                                auto-rotate
-                                shadow-intensity="1"
-                                style="width: 100%; height: 100%;"
-                            ></model-viewer>
+                            <!-- Model-viewer será carregado lazy quando o modal for aberto -->
+                            <div class="flex items-center justify-center h-full text-gray-400">
+                                <div class="text-center">
+                                    <div class="text-4xl mb-2">🥽</div>
+                                    <p>Carregando visualização AR...</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `;
                 document.body.appendChild(modal);
+
+                // Carregar model-viewer apenas quando o modal for aberto
+                this.loadModelViewerForAR(produtoId);
+            }
+
+            loadModelViewerForAR(produtoId) {
+                // Verificar se o model-viewer já foi carregado
+                if (window.customElements && window.customElements.get('model-viewer')) {
+                    this.initModelViewer(produtoId);
+                    return;
+                }
+
+                // Carregar o script do model-viewer
+                const script = document.createElement('script');
+                script.type = 'module';
+                script.src = 'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js';
+                script.onload = () => {
+                    console.log('Model-viewer carregado com sucesso');
+                    this.initModelViewer(produtoId);
+                };
+                script.onerror = () => {
+                    console.warn('Falha ao carregar model-viewer');
+                    const container = document.querySelector(`#teste-ar-${produtoId} > div`);
+                    if (container) {
+                        container.innerHTML = `
+                            <div class="flex items-center justify-center h-full text-red-400">
+                                <div class="text-center">
+                                    <div class="text-4xl mb-2">❌</div>
+                                    <p>Falha ao carregar visualização AR</p>
+                                </div>
+                            </div>
+                        `;
+                    }
+                };
+                document.head.appendChild(script);
+            }
+
+            initModelViewer(produtoId) {
+                const container = document.getElementById(`teste-ar-${produtoId}`);
+                if (!container) return;
+
+                // Substituir o placeholder pelo model-viewer
+                container.innerHTML = `
+                    <model-viewer
+                        src="/modelos/${produtoId}.glb"
+                        ios-src="/modelos/${produtoId}.usdz"
+                        ar
+                        ar-modes="webxr scene-viewer quick-look"
+                        camera-orbit="-45deg 55deg 2m"
+                        auto-rotate
+                        shadow-intensity="1"
+                        style="width: 100%; height: 100%;"
+                    ></model-viewer>
+                `;
             }
 
             setupEventListeners() {

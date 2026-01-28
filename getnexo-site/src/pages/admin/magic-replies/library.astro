@@ -1,19 +1,84 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { Book, Search, Filter, Plus, MessageCircle, Star, Sparkles, MoreHorizontal } from 'lucide-react';
+
+const suggestions = [
+  { id: 1, title: "Saudação Empática", category: "Atendimento", usage: 1250, score: 98, content: "Olá! Tudo bem? Entendo perfeitamente sua dúvida. Deixe-me te ajudar com isso..." },
+  { id: 2, title: "Quebra de Objeção: Preço", category: "Vendas", usage: 840, score: 85, content: "Entendo que o investimento parece alto, mas considere que este produto dura 3x mais que o concorrente..." },
+  { id: 3, title: "Finalização de Protocolo", category: "Suporte", usage: 3200, score: 99, content: "Fico feliz em ter resolvido! Há algo mais que eu possa fazer por você hoje?" },
+];
 ---
 
-<AdminLayout title="Biblioteca de Respostas" activeTab="magic">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-purple-500 to-violet-500 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/30 animate-pulse">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-      </svg>
+<AdminLayout title="Biblioteca de Respostas" activeTab="magic-replies">
+  <div class="space-y-8 animate-fade-in py-4">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-black text-white uppercase tracking-tighter flex items-center">
+          <Book className="w-8 h-8 text-indigo-400 mr-4" />
+          Artes de Resposta
+        </h1>
+        <p class="text-sm text-gray-500 font-medium mt-1">Sua coleção curada de templates e sugestões inteligentes geradas pela IA.</p>
+      </div>
+      <button class="bg-indigo-600 hover:bg-indigo-500 text-white font-black px-6 py-3 rounded-2xl flex items-center space-x-3 transition-all shadow-xl shadow-indigo-500/10 uppercase text-[10px] tracking-widest">
+        <Plus className="w-5 h-5" />
+        <span>Novo Template</span>
+      </button>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      Biblioteca de Respostas
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Gerencie respostas salvas e templates de mensagens.
-    </p>
+
+    <!-- Filtros -->
+    <div class="flex flex-col md:flex-row gap-4 bg-gray-900/40 p-4 border border-gray-800 rounded-2xl">
+      <div class="relative flex-1">
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
+        <input type="text" placeholder="Filtrar por tema ou palavra-chave..." class="w-full bg-black/40 border border-gray-800 rounded-xl py-3 pl-12 pr-4 text-sm text-white focus:border-indigo-500 outline-none transition-all" />
+      </div>
+      <div class="flex space-x-2">
+        <button class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-xl text-xs font-black text-gray-500 hover:text-white uppercase tracking-widest transition-all">
+          <Filter className="w-4 h-4 mr-2 inline" /> Categorias
+        </button>
+      </div>
+    </div>
+
+    <!-- Lista de Sugestões -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {suggestions.map(s => (
+        <div class="bg-gray-900/50 border border-gray-800 p-8 rounded-[2.5rem] hover:border-indigo-500/30 transition-all group relative overflow-hidden">
+           <div class="absolute -right-4 -top-4 w-24 h-24 bg-indigo-500/5 rotate-12 blur-2xl group-hover:bg-indigo-500/10 transition-colors"></div>
+           
+           <div class="flex items-start justify-between mb-6">
+              <div class="space-y-1">
+                 <div class="flex items-center space-x-2">
+                    <span class="text-[8px] font-black uppercase text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded">{s.category}</span>
+                    <div class="flex items-center text-yellow-500 text-[8px] font-black">
+                       <Star className="w-2.5 h-2.5 mr-0.5 fill-yellow-500" /> {s.score}% Match
+                    </div>
+                 </div>
+                 <h3 class="text-xl font-bold text-white uppercase tracking-tight group-hover:text-indigo-400 transition-colors mt-2">{s.title}</h3>
+              </div>
+              <button class="text-gray-700 hover:text-white"><MoreHorizontal className="w-5 h-5" /></button>
+           </div>
+           
+           <div class="p-4 bg-black/40 border border-white/5 rounded-2xl mb-8">
+              <p class="text-xs text-gray-500 leading-relaxed italic line-clamp-2">"{s.content}"</p>
+           </div>
+
+           <div class="flex items-center justify-between pt-6 border-t border-gray-800/50">
+              <div class="flex items-center space-x-4">
+                 <div class="flex items-center text-[10px] text-gray-600 font-bold uppercase tracking-widest">
+                    <MessageCircle className="w-3.5 h-3.5 mr-1.5 text-gray-800" /> {s.usage} Usos
+                 </div>
+                 <div class="flex items-center text-[10px] text-gray-600 font-bold uppercase tracking-widest">
+                    <Sparkles className="w-3.5 h-3.5 mr-1.5 text-indigo-900" /> IA Verified
+                 </div>
+              </div>
+              <button class="text-[10px] font-black uppercase text-indigo-400 hover:text-white transition-colors">Editar Template —&gt;</button>
+           </div>
+        </div>
+      ))}
+    </div>
   </div>
 </AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

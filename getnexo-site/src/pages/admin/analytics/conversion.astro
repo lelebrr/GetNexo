@@ -1,0 +1,105 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { TrendingUp, Users, Target, ArrowRight, Filter, ChevronDown } from 'lucide-react';
+
+const stats = [
+  { label: 'Taxa de Conversão Geral', value: '4.8%', trend: '+0.5%', color: 'emerald' },
+  { label: 'Leads Qualificados', value: '1,280', trend: '+12%', color: 'blue' },
+  { label: 'Conversões (Vendas)', value: '62', trend: '+8.2%', color: 'purple' },
+  { label: 'CPL Médio', value: 'R$ 12.50', trend: '-15%', color: 'cyan' },
+];
+
+const conversionSteps = [
+  { name: 'Visitantes do Site', count: '10,000', percentage: '100%', color: 'bg-gray-800' },
+  { name: 'Iniciou Checkout', count: '2,500', percentage: '25%', color: 'bg-indigo-500/20' },
+  { name: 'Preencheu Dados', count: '850', percentage: '8.5%', color: 'bg-indigo-500/40' },
+  { name: 'Pagamento Confirmado', count: '480', percentage: '4.8%', color: 'bg-emerald-500' },
+];
+---
+
+<AdminLayout title="Taxa de Conversão" activeTab="analytics">
+  <div class="space-y-8 animate-fade-in">
+    <!-- Header/Filters -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-3xl font-bold text-white flex items-center">
+          <Target className="w-8 h-8 text-emerald-500 mr-3" />
+          Análise de Conversão
+        </h1>
+        <p class="text-gray-400">Acompanhe a eficiência do seu funil de vendas em tempo real.</p>
+      </div>
+      <div class="flex items-center space-x-3">
+        <button class="px-4 py-2 bg-gray-900 border border-gray-800 rounded-xl text-sm font-medium text-gray-300 hover:bg-gray-800 flex items-center">
+          <Filter className="w-4 h-4 mr-2" />
+          Últimos 30 dias
+          <ChevronDown className="w-4 h-4 ml-2 opacity-50" />
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {stats.map(s => (
+        <div class="bg-gray-900/50 border border-gray-800 p-6 rounded-2xl hover:border-emerald-500/30 transition-all">
+          <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">{s.label}</p>
+          <div class="flex items-end justify-between">
+            <h3 class="text-2xl font-bold text-white">{s.value}</h3>
+            <span class:list={["text-xs font-bold px-1.5 py-0.5 rounded", s.trend.startsWith('+') ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500']}>
+              {s.trend}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Funil de Vendas -->
+      <div class="lg:col-span-2 bg-gray-900/30 border border-gray-800 rounded-3xl p-8">
+        <h3 class="text-lg font-bold text-white mb-8">Funil de Conversão Visual</h3>
+        <div class="space-y-4">
+          {conversionSteps.map((step, i) => (
+            <div class="relative">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-bold text-gray-300">{step.name}</span>
+                <span class="text-sm font-mono text-gray-400">{step.count} ({step.percentage})</span>
+              </div>
+              <div class="h-10 w-full bg-gray-950 rounded-xl overflow-hidden border border-gray-800/50 p-1">
+                <div 
+                  class:list={["h-full rounded-lg transition-all duration-1000 ease-out", step.color]} 
+                  style={`width: ${step.percentage}`}
+                ></div>
+              </div>
+              {i < conversionSteps.length - 1 && (
+                <div class="flex justify-center -my-1 relative z-10">
+                  <div class="bg-gray-900 p-1 rounded-full border border-gray-800">
+                    <ChevronDown className="w-4 h-4 text-emerald-500/50" />
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Insight Card -->
+      <div class="bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-500/20 rounded-3xl p-8 flex flex-col justify-between">
+        <div>
+          <TrendingUp className="w-10 h-10 text-emerald-500 mb-6" />
+          <h3 class="text-xl font-bold text-white mb-4">Insight da IA</h3>
+          <p class="text-sm text-gray-400 leading-relaxed">
+            Sua taxa de abandono no checkout caiu **15%** esta semana. Usuários que interagem com o bot de Magic IA têm uma conversão **3x maior**.
+          </p>
+        </div>
+        <button class="mt-8 w-full py-4 bg-emerald-500 text-black font-bold rounded-2xl flex items-center justify-center space-x-2 hover:bg-emerald-400 transition-all">
+          <span>Otimizar Funil</span>
+          <ArrowRight className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

@@ -3,17 +3,438 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 
 <AdminLayout title="Notas Internas" activeTab="live">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-purple-500 to-violet-500 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/30 animate-pulse">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-      </svg>
+  <div class="space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <h1 class="text-3xl font-bold text-white">Notas Internas</h1>
+        <p class="text-gray-400 mt-1">Gerencie notas internas das conversas</p>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="refreshNotes()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Atualizar
+        </button>
+        <button onclick="openNewNoteModal()" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Nova Nota
+        </button>
+      </div>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      Notas Internas
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Gerencie notas internas das conversas.
-    </p>
+
+    <!-- Search and Filters -->
+    <div class="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="flex-1">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Buscar por nota, cliente ou ticket..."
+            class="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors"
+            oninput="filterNotes()"
+          >
+        </div>
+        <div class="flex gap-2">
+          <select id="ticketFilter" onchange="filterNotes()" class="px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-colors">
+            <option value="">Todos os Tickets</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="bg-gradient-to-br from-purple-500/20 to-violet-500/20 border border-purple-500/30 rounded-xl p-4">
+        <div class="text-2xl font-bold text-white" id="totalNotes">0</div>
+        <div class="text-sm text-gray-400">Total de Notas</div>
+      </div>
+      <div class="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/30 rounded-xl p-4">
+        <div class="text-2xl font-bold text-white" id="ticketsWithNotes">0</div>
+        <div class="text-sm text-gray-400">Tickets com Notas</div>
+      </div>
+      <div class="bg-gradient-to-br from-pink-500/20 to-rose-500/20 border border-pink-500/30 rounded-xl p-4">
+        <div class="text-2xl font-bold text-white" id="avgNotesPerTicket">0</div>
+        <div class="text-sm text-gray-400">Média por Ticket</div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="hidden flex flex-col items-center justify-center min-h-[40vh]">
+      <div class="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+      <p class="text-gray-400">Carregando notas internas...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="errorState" class="hidden flex flex-col items-center justify-center min-h-[40vh] text-center space-y-4">
+      <div class="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="text-xl font-semibold text-white">Erro ao carregar</h3>
+      <p class="text-gray-400" id="errorMessage">Não foi possível carregar as notas internas.</p>
+      <button onclick="refreshNotes()" class="px-6 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors">
+        Tentar novamente
+      </button>
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden flex flex-col items-center justify-center min-h-[40vh] text-center space-y-4">
+      <div class="w-16 h-16 bg-gray-700/50 rounded-full flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+        </svg>
+      </div>
+      <h3 class="text-xl font-semibold text-white">Nenhuma nota interna</h3>
+      <p class="text-gray-400">Não há notas internas registradas.</p>
+    </div>
+
+    <!-- Notes List -->
+    <div id="notesList" class="hidden space-y-4">
+      <!-- Notes will be rendered here -->
+    </div>
   </div>
+
+  <!-- New Note Modal -->
+  <div id="newNoteModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div class="bg-gray-800 rounded-xl p-6 w-full max-w-lg border border-gray-700">
+      <h2 class="text-xl font-semibold text-white mb-4">Nova Nota Interna</h2>
+      <div class="space-y-4">
+        <div>
+          <label class="text-sm text-gray-400">Ticket</label>
+          <select id="modalTicketSelect" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-purple-500 transition-colors">
+            <option value="">Selecione um ticket</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-sm text-gray-400">Nota</label>
+          <textarea id="modalNoteContent" rows="4" class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors" placeholder="Digite a nota interna..."></textarea>
+        </div>
+        <div class="flex gap-2 justify-end">
+          <button onclick="closeNewNoteModal()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors">
+            Cancelar
+          </button>
+          <button onclick="saveNote()" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors">
+            Salvar Nota
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let allNotes = [];
+    let filteredNotes = [];
+    let allTickets = [];
+
+    async function loadNotes() {
+      const loadingState = document.getElementById('loadingState');
+      const errorState = document.getElementById('errorState');
+      const emptyState = document.getElementById('emptyState');
+      const notesList = document.getElementById('notesList');
+
+      // Show loading
+      loadingState.classList.remove('hidden');
+      errorState.classList.add('hidden');
+      emptyState.classList.add('hidden');
+      notesList.classList.add('hidden');
+
+      try {
+        // Fetch notes
+        // Fetch notes
+        const notesResponse = await fetch('/api/tickets/notes');
+        
+        if (!notesResponse.ok) {
+          throw new Error(`HTTP error! status: ${notesResponse.status}`);
+        }
+
+        const notesData = await notesResponse.json();
+        
+        if (!notesData.success) {
+          throw new Error(notesData.message || 'Erro ao carregar notas');
+        }
+
+        allNotes = notesData.notes || [];
+        filteredNotes = [...allNotes];
+
+        // Fetch tickets for dropdown
+        // Fetch tickets for dropdown
+        const ticketsResponse = await fetch('/api/tickets');
+        
+        if (!ticketsResponse.ok) {
+          throw new Error(`HTTP error! status: ${ticketsResponse.status}`);
+        }
+
+        const ticketsData = await ticketsResponse.json();
+        
+        if (!ticketsData.success) {
+          throw new Error(ticketsData.message || 'Erro ao carregar tickets');
+        }
+
+        allTickets = ticketsData.tickets || [];
+
+        // Update stats
+        updateStats();
+
+        // Update ticket dropdowns
+        updateTicketDropdowns();
+
+        // Render notes
+        renderNotes();
+
+        // Show/hide states
+        loadingState.classList.add('hidden');
+        
+        if (allNotes.length === 0) {
+          emptyState.classList.remove('hidden');
+          notesList.classList.add('hidden');
+        } else {
+          emptyState.classList.add('hidden');
+          notesList.classList.remove('hidden');
+        }
+
+      } catch (error) {
+        console.error('Error loading notes:', error);
+        loadingState.classList.add('hidden');
+        errorState.classList.remove('hidden');
+        document.getElementById('errorMessage').textContent = error.message;
+      }
+    }
+
+    function updateStats() {
+      const total = allNotes.length;
+      const ticketsWithNotes = new Set(allNotes.map(n => n.ticket_id)).size;
+      const avgPerTicket = ticketsWithNotes > 0 ? Math.round(total / ticketsWithNotes) : 0;
+
+      document.getElementById('totalNotes').textContent = total;
+      document.getElementById('ticketsWithNotes').textContent = ticketsWithNotes;
+      document.getElementById('avgNotesPerTicket').textContent = avgPerTicket;
+    }
+
+    function updateTicketDropdowns() {
+      const ticketFilter = document.getElementById('ticketFilter');
+      const modalTicketSelect = document.getElementById('modalTicketSelect');
+
+      // Clear existing options
+      ticketFilter.innerHTML = '<option value="">Todos os Tickets</option>';
+      modalTicketSelect.innerHTML = '<option value="">Selecione um ticket</option>';
+
+      // Add ticket options
+      allTickets.forEach(ticket => {
+        const option1 = document.createElement('option');
+        option1.value = ticket.id;
+        option1.textContent = `${ticket.customer_name || 'Cliente'} - ${ticket.id}`;
+        ticketFilter.appendChild(option1);
+
+        const option2 = document.createElement('option');
+        option2.value = ticket.id;
+        option2.textContent = `${ticket.customer_name || 'Cliente'} - ${ticket.id}`;
+        modalTicketSelect.appendChild(option2);
+      });
+    }
+
+    function renderNotes() {
+      const container = document.getElementById('notesList');
+      
+      if (filteredNotes.length === 0) {
+        container.innerHTML = `
+          <div class="flex flex-col items-center justify-center min-h-[30vh] text-center space-y-4">
+            <div class="w-16 h-16 bg-gray-700/50 rounded-full flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-white">Nenhum resultado</h3>
+            <p class="text-gray-400">Nenhuma nota encontrada com os filtros selecionados.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filteredNotes.map(note => {
+        const ticket = allTickets.find(t => t.id === note.ticket_id);
+        const ticketName = ticket ? (ticket.customer_name || 'Cliente') : 'Ticket desconhecido';
+        const ticketPhone = ticket ? (ticket.customer_phone || 'Sem telefone') : '';
+
+        return `
+          <div class="bg-gray-800/50 border border-gray-700 rounded-xl p-4 hover:border-purple-500/50 transition-colors">
+            <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+              <div class="flex-1">
+                <div class="flex items-center gap-3 mb-2">
+                  <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-violet-500 rounded-full flex items-center justify-center text-white font-bold">
+                    ${ticketName.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <div class="font-semibold text-white">${ticketName}</div>
+                    <div class="text-sm text-gray-400">${ticketPhone}</div>
+                  </div>
+                </div>
+                <div class="text-sm text-gray-300 mt-2 p-3 bg-gray-900/50 rounded-lg">
+                  ${note.content}
+                </div>
+              </div>
+              <div class="flex flex-col items-end gap-2">
+                <div class="text-xs text-gray-500">
+                  ${new Date(note.created_at).toLocaleString('pt-BR')}
+                </div>
+                <div class="flex gap-2 mt-2">
+                  <button onclick="editNote('${note.id}')" class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs transition-colors">
+                    Editar
+                  </button>
+                  <button onclick="deleteNote('${note.id}')" class="px-3 py-1 bg-red-600 hover:bg-red-500 text-white rounded text-xs transition-colors">
+                    Excluir
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function filterNotes() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const ticketFilter = document.getElementById('ticketFilter').value;
+
+      filteredNotes = allNotes.filter(note => {
+        const matchesSearch = !searchTerm ||
+          (note.content && note.content.toLowerCase().includes(searchTerm)) ||
+          (note.ticket_id && note.ticket_id.toLowerCase().includes(searchTerm));
+
+        const matchesTicket = !ticketFilter || note.ticket_id === ticketFilter;
+
+        return matchesSearch && matchesTicket;
+      });
+
+      renderNotes();
+    }
+
+    function refreshNotes() {
+      loadNotes();
+    }
+
+    function openNewNoteModal() {
+      document.getElementById('newNoteModal').classList.remove('hidden');
+    }
+
+    function closeNewNoteModal() {
+      document.getElementById('newNoteModal').classList.add('hidden');
+      document.getElementById('modalTicketSelect').value = '';
+      document.getElementById('modalNoteContent').value = '';
+    }
+
+    async function saveNote() {
+      const ticketId = document.getElementById('modalTicketSelect').value;
+      const content = document.getElementById('modalNoteContent').value.trim();
+
+      if (!ticketId) {
+        alert('Por favor, selecione um ticket.');
+        return;
+      }
+
+      if (!content) {
+        alert('Por favor, digite uma nota.');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/tickets/notes', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ticket_id: ticketId,
+            content: content,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.success) {
+          throw new Error(data.message || 'Erro ao salvar nota');
+        }
+
+        closeNewNoteModal();
+        refreshNotes();
+
+      } catch (error) {
+        console.error('Error saving note:', error);
+        alert(`Erro ao salvar nota: ${error.message}`);
+      }
+    }
+
+    async function editNote(noteId) {
+      const note = allNotes.find(n => n.id === noteId);
+      if (!note) return;
+
+      const newContent = prompt('Editar nota:', note.content);
+      if (newContent === null || newContent.trim() === '') return;
+
+      try {
+        const response = await fetch(`/api/tickets/notes/${noteId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            content: newContent.trim(),
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.success) {
+          throw new Error(data.message || 'Erro ao editar nota');
+        }
+
+        refreshNotes();
+
+      } catch (error) {
+        console.error('Error editing note:', error);
+        alert(`Erro ao editar nota: ${error.message}`);
+      }
+    }
+
+    async function deleteNote(noteId) {
+      if (!confirm('Tem certeza que deseja excluir esta nota?')) return;
+
+      try {
+        const response = await fetch(`/api/tickets/notes/${noteId}`, {
+          method: 'DELETE',
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.success) {
+          throw new Error(data.message || 'Erro ao excluir nota');
+        }
+
+        refreshNotes();
+
+      } catch (error) {
+        console.error('Error deleting note:', error);
+        alert(`Erro ao excluir nota: ${error.message}`);
+      }
+    }
+
+    // Load notes on page load
+    document.addEventListener('DOMContentLoaded', loadNotes);
+  </script>
 </AdminLayout>

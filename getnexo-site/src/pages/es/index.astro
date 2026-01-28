@@ -360,8 +360,64 @@ const homeSchema = {
   </section>
 
 <script is:inline src="/custom/js/hero-animations.js"></script>
-<script is:inline src="/custom/js/mega-chat-sim.js"></script>
-<script is:inline src="/custom/js/modals-demo.js"></script>
-<script is:inline src="/custom/js/click-fireworks.js"></script>
+<script is:inline>
+  // Carregamento dinâmico de scripts de demonstração para otimizar performance
+  // Scripts são carregados apenas quando o usuário interage com a página
+  (function() {
+    'use strict';
+    
+    let scriptsLoaded = false;
+    let scriptsLoading = false;
+    
+    function loadDemoScripts() {
+      if (scriptsLoaded || scriptsLoading) return;
+      
+      scriptsLoading = true;
+      
+      // Carrega os scripts de demonstração dinamicamente
+      const scripts = [
+        '/custom/js/mega-chat-sim.js',
+        '/custom/js/modals-demo.js',
+        '/custom/js/click-fireworks.js'
+      ];
+      
+      scripts.forEach(src => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.isInline = true;
+        document.head.appendChild(script);
+      });
+      
+      scriptsLoaded = true;
+      console.log('Scripts de demonstração carregados dinamicamente');
+    }
+    
+    // Carrega scripts quando o usuário interage pela primeira vez
+    const interactionEvents = ['click', 'scroll', 'mousemove', 'touchstart'];
+    
+    function handleFirstInteraction() {
+      loadDemoScripts();
+      // Remove listeners após o primeiro carregamento
+      interactionEvents.forEach(event => {
+        document.removeEventListener(event, handleFirstInteraction);
+      });
+    }
+    
+    // Adiciona listeners de interação
+    interactionEvents.forEach(event => {
+      document.addEventListener(event, handleFirstInteraction, { once: true });
+    });
+    
+    // Também carrega quando o DOM estiver pronto (para garantir que os elementos existam)
+    document.addEventListener('DOMContentLoaded', () => {
+      // Verifica se há elementos que precisam dos scripts
+      const hasDemoElements = document.querySelector('[onclick*="abrirModalDemo"], [onclick*="abrirModalChat"], [onclick*="abrirModalIA"]');
+      if (hasDemoElements) {
+        // Adia o carregamento para não bloquear o render inicial
+        setTimeout(loadDemoScripts, 1000);
+      }
+    });
+  })();
+</script>
 
 </Layout>

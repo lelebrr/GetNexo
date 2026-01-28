@@ -1,0 +1,30 @@
+---
+// Logout logic
+Astro.cookies.delete('admin_token', { path: '/' });
+---
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Logging out...</title>
+    <script>
+        // Clear client-side token
+        localStorage.removeItem('adminToken');
+        // Redirect to login
+        window.location.href = '/admin/login';
+    </script>
+</head>
+<body style="background: black; color: white; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: sans-serif;">
+    <div style="text-align: center;">
+        <div style="width: 40px; height: 40px; border: 4px solid #333; border-top-color: #00f7ff; border-radius: 50%; animate: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+        <p>Encerrando sessão com segurança...</p>
+    </div>
+
+    <style>
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</body>
+</html>

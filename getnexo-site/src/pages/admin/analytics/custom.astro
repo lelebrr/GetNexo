@@ -1,0 +1,86 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { FileText, Plus, Search, Calendar, MoreVertical, Download, Eye } from 'lucide-react';
+
+const savedReports = [
+  { id: 1, name: "Desempenho Semanal", type: "Vendas", lastRun: "Hoje, 10:30", status: "Pronto" },
+  { id: 2, name: "Engagement de Leads", type: "Atendimento", lastRun: "Ontem, 18:15", status: "Pronto" },
+  { id: 3, name: "ROI por Campanha WhatsApp", type: "Marketing", lastRun: "24 Jan 2026", status: "Processando" },
+  { id: 4, name: "Top Produtos (Consolidado)", type: "Estoque", lastRun: "22 Jan 2026", status: "Pronto" },
+  { id: 5, name: "Tempo Médio de Resposta", type: "Performance", lastRun: "20 Jan 2026", status: "Pronto" },
+];
+---
+
+<AdminLayout title="Relatórios Customizados" activeTab="analytics">
+  <div class="space-y-8 animate-fade-in">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-white flex items-center">
+          <FileText className="w-8 h-8 text-violet-500 mr-3" />
+          Relatórios Customizados
+        </h1>
+        <p class="text-gray-400 mt-1">Gere visualizações de dados personalizadas conforme sua necessidade.</p>
+      </div>
+      <button class="px-6 py-3 bg-violet-600/20 text-violet-400 font-bold rounded-2xl border border-violet-500/30 flex items-center space-x-2 hover:bg-violet-600/30 transition-all">
+        <Plus className="w-5 h-5" />
+        <span>Criar Novo Relatório</span>
+      </button>
+    </div>
+
+    <!-- Barra de Ferramentas -->
+    <div class="flex flex-col sm:flex-row gap-4 bg-gray-900/30 p-4 rounded-2xl border border-gray-800">
+      <div class="relative flex-1">
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
+        <input type="text" placeholder="Buscar relatório pelo nome..." class="w-full bg-black/40 border border-gray-800 rounded-xl py-2 pl-12 pr-4 text-sm text-white focus:border-violet-500 outline-none transition-all" />
+      </div>
+      <div class="flex items-center space-x-2">
+        <button class="px-4 py-2 bg-gray-900 border border-gray-800 rounded-xl text-xs font-bold text-gray-400 hover:text-white transition-colors">Todos os Tipos</button>
+        <button class="px-4 py-2 bg-gray-900 border border-gray-800 rounded-xl text-xs font-bold text-gray-400 hover:text-white transition-colors">Mais Recentes</button>
+      </div>
+    </div>
+
+    <!-- Lista de Relatórios -->
+    <div class="bg-gray-900/30 border border-gray-800 rounded-3xl overflow-hidden backdrop-blur-sm">
+      <table class="w-full text-left">
+        <thead>
+          <tr class="border-b border-gray-800 bg-black/20">
+            <th class="px-6 py-4 text-xs font-black uppercase text-gray-500 tracking-wider">Nome do Relatório</th>
+            <th class="px-6 py-4 text-xs font-black uppercase text-gray-500 tracking-wider">Categoria</th>
+            <th class="px-6 py-4 text-xs font-black uppercase text-gray-500 tracking-wider">Última Execução</th>
+            <th class="px-6 py-4 text-xs font-black uppercase text-gray-500 tracking-wider text-right">Ações</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-800/50">
+          {savedReports.map((report) => (
+            <tr class="hover:bg-white/5 transition-colors group">
+              <td class="px-6 py-5">
+                <div class="flex items-center">
+                  <div class="p-2 bg-gray-800 rounded-lg mr-4 group-hover:bg-violet-500/20 transition-colors">
+                    <FileText className="w-4 h-4 text-violet-400" />
+                  </div>
+                  <span class="text-sm font-bold text-white uppercase tracking-tight">{report.name}</span>
+                </div>
+              </td>
+              <td class="px-6 py-5">
+                <span class="text-xs font-medium text-gray-400 bg-gray-800 px-2 py-1 rounded">{report.type}</span>
+              </td>
+              <td class="px-6 py-5 font-mono text-xs text-gray-500">{report.lastRun}</td>
+              <td class="px-6 py-5">
+                <div class="flex items-center justify-end space-x-2 opacity-50 group-hover:opacity-100 transition-opacity">
+                  <button class="p-2 hover:bg-gray-700 rounded-lg text-gray-300" title="Ver"><Eye className="w-4 h-4" /></button>
+                  <button class="p-2 hover:bg-gray-700 rounded-lg text-gray-300" title="Download"><Download className="w-4 h-4" /></button>
+                  <button class="p-2 hover:bg-gray-700 rounded-lg text-gray-300"><MoreVertical className="w-4 h-4" /></button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

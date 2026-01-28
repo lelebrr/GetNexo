@@ -1,0 +1,402 @@
+---
+// ClientSidebar.astro - Menu premium completo para dashboard do cliente
+// Focado em conversão e upsell de módulos
+
+const { modules = [], plano = 'Básico' } = Astro.props;
+const moduleSet = new Set(modules);
+
+// Itens padrão (sempre visíveis)
+const defaultItems = [
+  { name: 'Dashboard', icon: 'home', link: '/client/dashboard' },
+  { name: 'Minhas Vendas', icon: 'shopping-cart', link: '/client/sales' },
+  { name: 'Funil de Vendas', icon: 'funnel-chart', link: '/client/funnel' },
+  { name: 'Contatos / CRM', icon: 'users', link: '/client/contacts' },
+  { name: 'Produtos / Catálogo', icon: 'package', link: '/client/products' },
+  { name: 'Configurações', icon: 'settings', link: '/client/settings' },
+  { name: 'Suporte 24h', icon: 'life-buoy', link: '/client/support' },
+  { name: 'Sair', icon: 'log-out', link: '/api/logout' },
+];
+
+// Seção Estatísticas com submenus
+const statsSection = {
+  name: 'Estatísticas',
+  icon: 'line-chart',
+  link: '/client/stats',
+  subItems: [
+    { name: 'Visão Geral', icon: 'eye', link: '/client/stats/overview' },
+    { name: 'Gráfico de Vendas', icon: 'bar-chart', link: '/client/stats/sales-chart' },
+    { name: 'ROI Avançado', icon: 'trending-up', link: '/client/stats/roi', premium: true, price: 'R$ 99/mês' },
+    { name: 'Taxa de Conversão', icon: 'percent', link: '/client/stats/conversion' },
+  ]
+};
+
+// Novos itens principais
+const newItems = [
+  { name: 'Relatórios', icon: 'file-text', link: '/client/reports', premium: true, price: 'R$ 79/mês', badge: 'Novo' },
+  { name: 'Ranking Revendas', icon: 'trophy', link: '/client/ranking', premium: true, price: 'R$ 49/mês' },
+  { name: 'Notificações', icon: 'bell', link: '/client/notifications', badge: '3' },
+];
+
+// Seções Premium (condicionais)
+const premiumSections = [
+  {
+    name: 'White Label',
+    icon: 'paintbrush',
+    link: '/client/white-label',
+    module: 'white-label',
+    description: 'Personaliza logo, cores e nome da marca',
+    price: 'R$ 97/mês'
+  },
+  {
+    name: 'IA Avançada',
+    icon: 'bot',
+    link: '/client/ai',
+    module: 'ia-avancada',
+    description: 'Prompts customizados e respostas inteligentes',
+    price: 'R$ 147/mês'
+  },
+  {
+    name: 'Produtos 3D',
+    icon: 'cube',
+    link: '/client/3d-products',
+    module: 'produtos-3d',
+    description: 'Modelos 3D no WhatsApp',
+    price: 'R$ 77/mês'
+  },
+  {
+    name: 'Relatórios ROI',
+    icon: 'bar-chart-3',
+    link: '/client/analytics',
+    module: 'relatorios-roi',
+    description: 'Gráficos ROI, Meta Ads + PIX',
+    price: 'R$ 127/mês'
+  },
+  {
+    name: 'Programa Fidelidade',
+    icon: 'heart-handshake',
+    link: '/client/loyalty',
+    module: 'fidelidade',
+    description: 'Pontos, cupons e cashback',
+    price: 'R$ 87/mês'
+  },
+  {
+    name: 'Integrações Meta',
+    icon: 'facebook',
+    link: '/client/meta',
+    module: 'meta-integration',
+    description: 'Configurações completas Facebook/Instagram',
+    price: 'R$ 197/mês'
+  },
+  {
+    name: 'PIX Automático',
+    icon: 'coins',
+    link: '/client/pix',
+    module: 'pix-automatico',
+    description: 'Dispara comprovante instantâneo',
+    price: 'R$ 67/mês'
+  },
+  {
+    name: 'Automação Avançada',
+    icon: 'zap',
+    link: '/client/automations',
+    module: 'automacao-avancada',
+    description: 'n8n custom, workflows',
+    price: 'R$ 177/mês'
+  },
+];
+
+// Ícones SVG (Lucide icons)
+const icons = {
+  home: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+  'shopping-cart': `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H6.12"/></svg>`,
+  'funnel-chart': `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`,
+  users: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  package: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.27 6.96 8.74 4.96"/><path d="m12.03 10.03 8.74-4.96"/></svg>`,
+  settings: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>`,
+  'life-buoy': `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m4.93 19.07 4.24-4.24"/><path d="m14.83 9.17 4.24-4.24"/></svg>`,
+  'log-out': `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>`,
+  paintbrush: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12.5 12.5 2.5 2.5"/><path d="M12 22c4.97 0 9-4.03 9-9-4.97 0-9 4.03-9 9Z"/><path d="M12 22c-4.97 0-9-4.03-9-9 4.97 0 9 4.03 9 9Z"/><path d="M12 22c4.97 0 9-4.03 9-9-4.97 0-9 4.03-9 9Z"/><path d="M12 22c-4.97 0-9-4.03-9-9 4.97 0 9 4.03 9 9Z"/></svg>`,
+  bot: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4"/><path d="M12 12v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8"/><path d="M12 12V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v6"/><path d="M12 12v4a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-4"/><circle cx="8" cy="16" r="1"/><circle cx="16" cy="16" r="1"/></svg>`,
+  cube: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 16-8-4-8 4m16 0-8 4-8-4"/><path d="M12 2v20"/><path d="M2 12l10-5 10 5-10 5z"/></svg>`,
+  'bar-chart-3': `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>`,
+  'heart-handshake': `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M12 12v.01"/><path d="M16 16v.01"/><path d="M8 12v.01"/></svg>`,
+  facebook: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>`,
+  coins: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="m11 8 3-3-3-3"/></svg>`,
+  zap: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+  rocket: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>`,
+  lock: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+  'check-circle': `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
+  'chevron-right': `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>`,
+  'x': `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>`,
+  'menu': `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="21" y1="6" y2="6"/><line x1="3" x2="21" y1="12" y2="12"/><line x1="3" x2="21" y1="18" y2="18"/></svg>`,
+  'line-chart': `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>`,
+  'bar-chart': `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/></svg>`,
+  'trending-up': `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`,
+  percent: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 16a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4"/><path d="M7 8a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4"/></svg>`,
+  'file-text': `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`,
+  trophy: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>`,
+  bell: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>`,
+  eye: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`,
+  'chevron-down': `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>`,
+};
+
+// Verifica se módulo está contratado
+const isModuleActive = (module) => moduleSet.has(module);
+---
+
+<div 
+  x-data="{ 
+    sidebarOpen: false,
+    toggleSidebar() { this.sidebarOpen = !this.sidebarOpen; }
+  }"
+  class="relative"
+>
+  <!-- Mobile Menu Button -->
+  <button 
+    @click="toggleSidebar()"
+    class="lg:hidden fixed top-4 left-4 z-50 p-2 bg-gray-900 text-cyan-400 rounded-lg hover:bg-gray-800 transition-colors"
+    aria-label="Toggle menu"
+  >
+    {icons.menu}
+  </button>
+
+  <!-- Overlay for mobile -->
+  <div 
+    x-show="sidebarOpen" 
+    @click="toggleSidebar()"
+    x-transition.opacity
+    class="fixed inset-0 bg-black/70 z-40 lg:hidden"
+  ></div>
+
+  <!-- Sidebar -->
+  <aside 
+    x-show="sidebarOpen"
+    x-transition:enter="transition ease-out duration-300"
+    x-transition:enter-start="-translate-x-full"
+    x-transition:enter-end="translate-x-0"
+    x-transition:leave="transition ease-in duration-300"
+    x-transition:leave-start="translate-x-0"
+    x-transition:leave-end="-translate-x-full"
+    class="fixed inset-y-0 left-0 z-50 w-72 bg-gradient-to-b from-gray-950 to-black text-white overflow-y-auto lg:static lg:translate-x-0 border-r border-cyan-900/50"
+  >
+    <!-- Topo -->
+    <div class="p-6 border-b border-cyan-900/30">
+      <!-- Logo -->
+      <a 
+        href="/client/dashboard" 
+        class="flex items-center gap-3 text-xl font-bold text-white hover:text-cyan-400 transition-colors mb-4"
+      >
+        <span class="text-cyan-400">
+          {icons.rocket}
+        </span>
+        JetNexus
+      </a>
+
+      <!-- Bem-vindo e Plano -->
+      <div class="space-y-2">
+        <p class="text-sm text-gray-400">Bem-vindo, <span class="text-white font-medium">Cliente</span></p>
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-cyan-900/30 rounded-full text-xs font-medium text-cyan-400 border border-cyan-800/50">
+          <span>Plano {plano}</span>
+        </div>
+      </div>
+
+      <!-- Botão Upgrade -->
+      <a
+        href="/client/upgrade"
+        class="mt-4 flex items-center justify-center gap-2 w-full py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-medium rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-300 shadow-lg shadow-green-900/20"
+        aria-label="Upgrade para plano premium - R$ 99/mês"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+        Upgrade Plano
+      </a>
+    </div>
+
+    <!-- Menu Principal -->
+    <nav class="p-4 space-y-1">
+      <!-- Seção Estatísticas (com submenu expansível) -->
+      <div x-data="{ open: false }">
+        <button
+          @click="open = !open"
+          class="flex items-center w-full py-3 px-4 rounded-lg text-gray-300 hover:bg-cyan-900/20 hover:text-white transition-all duration-300 group"
+          aria-label="Expandir submenu de Estatísticas"
+        >
+          <span class="text-cyan-400 group-hover:text-cyan-300 transition-colors mr-3">
+            {icons['line-chart']}
+          </span>
+          <span class="font-medium flex-1">Estatísticas</span>
+          <span class="text-cyan-400 group-hover:text-cyan-300 transition-colors">
+            {icons['chevron-down']}
+          </span>
+        </button>
+        
+        <div
+          x-show="open"
+          x-transition:enter="transition ease-out duration-200"
+          x-transition:enter-start="opacity-0 -translate-y-2"
+          x-transition:enter-end="opacity-100 translate-y-0"
+          x-transition:leave="transition ease-in duration-150"
+          x-transition:leave-start="opacity-100 translate-y-0"
+          x-transition:leave-end="opacity-0 -translate-y-2"
+          class="pl-12 space-y-1 mt-1"
+        >
+          {statsSection.subItems.map(subItem => {
+            const isPremium = subItem.premium;
+            return (
+              <a
+                href={subItem.link}
+                class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-400 hover:bg-cyan-900/20 hover:text-white transition-all duration-300 group"
+              >
+                <span class="text-gray-500 group-hover:text-cyan-300 transition-colors">
+                  {icons[subItem.icon]}
+                </span>
+                <span class="flex-1">{subItem.name}</span>
+                {isPremium && (
+                  <span class="text-xs text-cyan-400 bg-cyan-900/20 px-2 py-0.5 rounded-full">
+                    {subItem.price}
+                  </span>
+                )}
+              </a>
+            );
+          })}
+        </div>
+      </div>
+
+      <!-- Itens Padrão -->
+      {defaultItems.map(item => (
+        <a
+          href={item.link}
+          class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-cyan-900/20 hover:text-white transition-all duration-300 group"
+        >
+          <span class="text-cyan-400 group-hover:text-cyan-300 transition-colors">
+            {icons[item.icon]}
+          </span>
+          <span class="font-medium flex-1">{item.name}</span>
+          {item.link === '/api/logout' && (
+            <span class="text-xs text-gray-500 group-hover:text-gray-400">Sair</span>
+          )}
+        </a>
+      ))}
+
+      <!-- Novos Itens Principais -->
+      {newItems.map(item => {
+        const isPremium = item.premium;
+        return (
+          <a
+            href={item.link}
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-cyan-900/20 hover:text-white transition-all duration-300 group"
+          >
+            <span class="text-cyan-400 group-hover:text-cyan-300 transition-colors">
+              {icons[item.icon]}
+            </span>
+            <span class="font-medium flex-1">{item.name}</span>
+            {item.badge && (
+              <span class="text-xs text-cyan-400 bg-cyan-900/20 px-2 py-0.5 rounded-full">
+                {item.badge}
+              </span>
+            )}
+            {isPremium && (
+              <span class="text-xs text-cyan-400 bg-cyan-900/20 px-2 py-0.5 rounded-full">
+                {item.price}
+              </span>
+            )}
+          </a>
+        );
+      })}
+
+      <!-- Seção Premium -->
+      <div class="mt-6 pt-4 border-t border-cyan-900/30">
+        <p class="px-4 text-xs text-cyan-400 uppercase tracking-wider mb-3 font-semibold">
+          ✨ Premium Features
+        </p>
+        
+        {premiumSections.map(item => {
+          const isActive = isModuleActive(item.module);
+          return (
+            <div class="mb-1">
+              {isActive ? (
+                <a
+                  href={item.link}
+                  class="flex items-center gap-3 px-4 py-3 rounded-lg bg-cyan-900/20 text-white hover:bg-cyan-800/30 transition-all duration-300 group"
+                >
+                  <span class="text-cyan-400 group-hover:text-cyan-300 transition-colors">
+                    {icons[item.icon]}
+                  </span>
+                  <span class="font-medium flex-1">{item.name}</span>
+                  <span class="flex items-center gap-1 text-xs text-green-400 bg-green-900/30 px-2 py-0.5 rounded-full">
+                    {icons['check-circle']}
+                    Desbloqueado
+                  </span>
+                </a>
+              ) : (
+                <button
+                  @click="toggleSidebar()"
+                  class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-500 hover:bg-gray-800/50 hover:text-gray-300 transition-all duration-300 group"
+                  aria-label={`Adquirir ${item.name} - ${item.price}`}
+                >
+                  <span class="text-gray-600 group-hover:text-gray-400 transition-colors">
+                    {icons.lock}
+                  </span>
+                  <span class="font-medium flex-1 text-left">{item.name}</span>
+                  <span class="flex items-center gap-1 text-xs text-cyan-400 bg-cyan-900/20 px-2 py-0.5 rounded-full">
+                    {item.price}
+                    {icons['chevron-right']}
+                  </span>
+                </button>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </nav>
+
+    <!-- Footer com contagem de módulos -->
+    <div class="p-4 mt-auto border-t border-cyan-900/30">
+      <div class="flex items-center justify-between text-xs">
+        <span class="text-gray-400">Módulos ativos</span>
+        <span class="text-cyan-400 font-semibold">{modules.length} / {premiumSections.length}</span>
+      </div>
+      <div class="mt-2 h-1.5 bg-gray-800 rounded-full overflow-hidden">
+        <div 
+          class="h-full bg-gradient-to-r from-cyan-500 to-emerald-500 transition-all duration-500"
+          style={`width: ${(modules.length / premiumSections.length) * 100}%`}
+        ></div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<style>
+  /* Custom scrollbar */
+  aside::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  aside::-webkit-scrollbar-track {
+    background: #0a0a0a;
+  }
+  
+  aside::-webkit-scrollbar-thumb {
+    background: #0891b2;
+    border-radius: 3px;
+  }
+  
+  aside::-webkit-scrollbar-thumb:hover {
+    background: #06b6d4;
+  }
+
+  /* Active state */
+  a[href]:active {
+    transform: scale(0.98);
+  }
+
+  /* Button glow effect */
+  .bg-gradient-to-r {
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+  }
+
+  @keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+</style>

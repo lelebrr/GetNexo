@@ -1,0 +1,60 @@
+---
+// OptimizedAvatar.astro - Componente otimizado para imagens de avatar
+// Reduz o tamanho de download de 150x150 para 60x60 (economia de ~17 KiB por imagem)
+
+interface Props {
+  src: string;
+  alt: string;
+  size?: number;
+  loading?: 'lazy' | 'eager';
+  className?: string;
+}
+
+const { src, alt, size = 60, loading = 'lazy', className = '' } = Astro.props;
+
+// Extrair parâmetros da URL para otimização
+const url = new URL(src);
+const baseUrl = url.origin + url.pathname;
+
+// Adicionar parâmetros de otimização para pravatar.cc
+let optimizedSrc = src;
+if (src.includes('pravatar.cc')) {
+  // Reduzir de 150x150 para 60x60
+  optimizedSrc = src.replace('/150?', '/60?');
+}
+---
+
+<img
+  src={optimizedSrc}
+  alt={alt}
+  width={size}
+  height={size}
+  loading={loading}
+  class={`avatar-img ${className}`}
+  decoding="async"
+  fetchpriority={loading === 'eager' ? 'high' : 'low'}
+  data-astro-cid-aadlzisc=""
+/>
+
+<style>
+  .avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(34, 211, 238, 0.2);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+    will-change: transform;
+  }
+
+  .avatar-img:hover {
+    transform: scale(1.1);
+    border-color: rgba(34, 211, 238, 0.5);
+  }
+
+  /* Otimização para evitar reflow */
+  .avatar-img {
+    content-visibility: auto;
+    contain: layout style paint;
+  }
+</style>

@@ -1,0 +1,21 @@
+---
+import ResellerLayout from '../../layouts/ResellerLayout.astro';
+
+const { slug } = Astro.params;
+const title = slug ? slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, ' ') : 'Página em Construção';
+---
+
+<ResellerLayout title={title}>
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; text-align: center; padding: 2rem;">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">🚧</div>
+        <h1 style="color: #00f3ff; font-size: 2rem; margin-bottom: 1rem; text-transform: capitalize;">
+            {title}
+        </h1>
+        <p style="color: #94a3b8; font-size: 1.1rem; max-width: 500px; margin-bottom: 2rem;">
+            Esta funcionalidade está sendo implementada e estará disponível em breve.
+        </p>
+        <button onclick="history.back()" style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.8rem 1.5rem; border-radius: 8px; cursor: pointer; transition: all 0.3s ease;">
+            Voltar
+        </button>
+    </div>
+</ResellerLayout>

@@ -59,7 +59,9 @@ export default defineConfig({
     ],
     compressHTML: true,
     build: {
-        inlineStylesheets: 'auto', // Mudado de 'always' para 'auto' para evitar conflitos com Rocket Loader
+        inlineStylesheets: 'always', // Inlining de CSS crítico para evitar bloqueio de renderização
+        // Otimização: gerar chunks CSS menores para melhor paralelização
+        chunkSizeWarningLimit: 200, // Reduzido de 500 para 200 KB
     },
     image: {
         service: {
@@ -121,33 +123,30 @@ export default defineConfig({
         }] : [],
         build: {
             target: 'es2017',
-            cssCodeSplit: true,
-            chunkSizeWarningLimit: 500,
+            target: 'es2017',
+            // cssCodeSplit: true, // Removed to allow Astro inlineStylesheets: 'always' to work fully
+            chunkSizeWarningLimit: 200,
             modulePreload: {
-                polyfill: false // Desabilitado para evitar conflitos com Rocket Loader
-            },
-            // Adicionar headers para forçar desabilitação do Rocket Loader
-            security: {
-                contentSecurityPolicy: {
-                    'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-                    'style-src': ["'self'", "'unsafe-inline'"],
-                }
+                polyfill: false
             },
             rollupOptions: {
                 output: {
-                    // manualChunks removed to avoid React instance duplication issues
-                    chunkFileNames: (chunkInfo) => {
-                        return 'assets/[name]-[hash].js';
-                    }
+                    chunkFileNames: 'assets/[name]-[hash].js',
+                    assetFileNames: (assetInfo) => {
+                        if (assetInfo.name && assetInfo.name.endsWith('.css')) {
+                            return 'assets/[name]-[hash].css';
+                        }
+                        return 'assets/[name]-[hash].[ext]';
+                    },
+                    // Removed manualChunks for CSS to allow proper inlining by Astro
                 }
             }
         },
         esbuild: {
             drop: isDev ? [] : ['console', 'debugger'],
+            minify: true,
         },
-        // SSR config removida para evitar conflito CJS/ESM com React
         optimizeDeps: {
-            // Garante que React seja pré-empacotado para dev
             include: ['react', 'react-dom']
         }
     }

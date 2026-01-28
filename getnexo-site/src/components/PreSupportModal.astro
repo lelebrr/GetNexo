@@ -70,14 +70,14 @@ const { nonce } = Astro.props;
 </div>
 
 <!-- Schema.org Speakable -->
-<script defer nonce={nonce}>
+<script nonce={nonce}>
   const speakable = document.createElement('meta');
   speakable.name = 'speakable';
   speakable.content = '.modal-header, #btn-text, #btn-voice, #voice-status';
   document.head.appendChild(speakable);
 </script>
 
-<script defer nonce={nonce}>
+<script nonce={nonce}>
   // PreSupportModal v2.0 - Estado Reativo e Acessibilidade WCAG 2.2 AA
   class PreSupportModal {
     constructor() {
@@ -255,7 +255,7 @@ const { nonce } = Astro.props;
         this.showVoiceFeedback('Ouvindo...');
       };
 
-      this.recognition.onresult = (event: any) => {
+      this.recognition.onresult = (event) => {
         const lastResult = event.results[event.results.length - 1];
         const transcript = lastResult[0].transcript;
 
@@ -268,7 +268,7 @@ const { nonce } = Astro.props;
         }
       };
 
-      this.recognition.onerror = (event: any) => {
+      this.recognition.onerror = (event) => {
         let message = 'Erro ao reconhecer voz.';
         switch (event.error) {
           case 'no-speech':

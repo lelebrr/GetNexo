@@ -1,19 +1,70 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { ShieldCheck, Zap, Globe, Plus, ToggleLeft as Toggle, Settings, ExternalLink } from 'lucide-react';
+
+const gateways = [
+  { id: 1, name: "Nexus Pay (Nativo)", type: "Direto", fee: "1.99%", status: "Ativo", icon: ShieldCheck, color: "emerald" },
+  { id: 2, name: "Stripe Connect", type: "Cartão / Int.", fee: "3.99% + R$ 0,50", status: "Ativo", icon: Globe, color: "blue" },
+  { id: 3, name: "Mercado Pago", type: "Multimeios", fee: "4.99%", status: "Pausado", icon: Zap, color: "cyan" },
+];
 ---
 
-<AdminLayout title="Mercado Pago / PicPay" activeTab="pagamentos">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg shadow-cyan-500/30 animate-pulse">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-      </svg>
+<AdminLayout title="Gateways de Pagamento" activeTab="payments">
+  <div class="space-y-8 animate-fade-in">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-white uppercase tracking-tight">Canais de Recebimento</h1>
+        <p class="text-sm text-gray-500 font-medium">Configure e gerencie seus processadores de pagamento e taxas.</p>
+      </div>
+      <button class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl flex items-center space-x-2 transition-all shadow-lg shadow-indigo-500/10">
+        <Plus className="w-5 h-5" />
+        <span>Instalar Novo Gateway</span>
+      </button>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      Mercado Pago / PicPay
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Configure e gerencie gateways de pagamento.
-    </p>
+
+    <!-- Lista de Gateways -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {gateways.map(g => (
+        <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2rem] flex flex-col justify-between hover:border-gray-700 transition-all group relative overflow-hidden">
+          <div class:list={["absolute right-0 top-0 w-24 h-24 blur-3xl opacity-10", `bg-${g.color}-500`]}></div>
+          
+          <div class="space-y-6">
+            <div class="flex items-center justify-between">
+               <div class:list={["w-12 h-12 rounded-2xl flex items-center justify-center", `bg-${g.color}-500/10 text-${g.color}-400`]}>
+                  <g.icon className="w-6 h-6" />
+               </div>
+               <div class:list={["text-[8px] font-black uppercase px-2 py-1 rounded-md", g.status === 'Ativo' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-gray-800 text-gray-500']}>
+                  {g.status}
+               </div>
+            </div>
+            
+            <div>
+               <h3 class="text-xl font-bold text-white tracking-tight">{g.name}</h3>
+               <p class="text-xs text-gray-500 mt-1">{g.type} • Fee: <span class="font-mono text-white font-bold">{g.fee}</span></p>
+            </div>
+          </div>
+
+          <div class="mt-8 pt-6 border-t border-gray-800 flex items-center justify-between">
+             <button class="text-[10px] font-black uppercase text-gray-500 hover:text-white flex items-center transition-colors">
+                <Settings className="w-3.5 h-3.5 mr-1" /> Configurar
+             </button>
+             <button class="text-[10px] font-black uppercase text-gray-500 hover:text-white flex items-center transition-colors">
+                Docs <ExternalLink className="w-3 h-3 ml-1" />
+             </button>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Security Banner -->
+    <div class="bg-gradient-to-r from-emerald-600/10 to-transparent border-l-4 border-emerald-500 p-8 rounded-r-3xl">
+       <h4 class="text-white font-bold mb-1 uppercase tracking-tighter">Certificado PCI DSS Level 1</h4>
+       <p class="text-xs text-gray-500 leading-relaxed">Sua infraestrutura de pagamentos está em conformidade com os mais altos padrões de segurança globais. Os dados sensíveis dos cartões nunca tocam seus servidores.</p>
+    </div>
   </div>
 </AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
