@@ -729,51 +729,59 @@
 /* === Reveal Animation - Legacy replaced by animate-on-scroll in Layout.astro === */
 .animate-on-scroll {
     opacity: 0;
-    transform: translateY(30px);
-    transition: 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform: translateY(30px) translateO(0);
+    transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: opacity, transform;
+    backface-visibility: hidden;
 }
 
 .animate-on-scroll.animate-in {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) translateZ(0);
 }
 
 /* === Helper Utilities === */
 .text-gradient {
-    background: linear-gradient(135deg, #00d4ff 0%, #00ff9d 50%, #00d4ff 100%);
-    background-size: 200% 200%;
+    /* Static fallback/base */
+    background: linear-gradient(135deg, #00d4ff 0%, #00ff9d 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: gradientShift 4s ease-in-out infinite;
-    will-change: opacity;
+
+    /* Composited animation using hue-rotate instead of layout-trashing background-position */
+    animation: premiumHueShift 8s infinite alternate;
+    will-change: filter;
+
+    /* Hardware acceleration */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+
+    /* Text Shadow for depth (static) */
     text-shadow: 0 0 40px rgba(0, 212, 255, 0.3);
 }
 
 .text-gradient-animated {
-    background: linear-gradient(270deg, #00d4ff, #00ff9d, #ffd700, #00d4ff);
-    background-size: 200% 200%;
+    /* Similar optimization for the animated variant */
+    background: linear-gradient(135deg, #00d4ff, #00ff9d, #ffd700);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: textGradientMove 8s ease infinite;
-    will-change: opacity;
+    animation: premiumHueShift 6s infinite alternate;
+    will-change: filter;
+    transform: translateZ(0);
 }
 
-@keyframes textGradientMove {
+@keyframes premiumHueShift {
     0% {
-        opacity: 0.9;
-    }
-
-    50% {
-        opacity: 1;
+        filter: hue-rotate(0deg) brightness(1);
     }
 
     100% {
-        opacity: 0.9;
+        filter: hue-rotate(30deg) brightness(1.2);
     }
 }
 
+/* Legacy keyframes kept for compatibility if needed elsewhere, but unused by new gradients */
 @keyframes gradientShift {
     0% {
         opacity: 0.8;

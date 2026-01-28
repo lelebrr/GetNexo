@@ -110,7 +110,7 @@ const canShowAR = trialMode || hasARModule;
             <div class="upgrade-icon">🔄</div>
             <h4>Visualização 360° Premium</h4>
             <p>Adicione rotação interativa ao seu produto</p>
-            <button class="upgrade-btn" onclick="showUpgrade('360')">
+            <button class="upgrade-btn upgrade-btn-action" data-upgrade-type="360">
               Ativar por R$ 97
             </button>
           </div>
@@ -120,7 +120,7 @@ const canShowAR = trialMode || hasARModule;
             <div class="upgrade-icon">📱</div>
             <h4>Realidade Aumentada</h4>
             <p>Permita que clientes vejam produtos na casa deles</p>
-            <button class="upgrade-btn" onclick="showUpgrade('ar')">
+            <button class="upgrade-btn upgrade-btn-action" data-upgrade-type="ar">
               Ativar por R$ 97
             </button>
           </div>
@@ -356,6 +356,17 @@ const canShowAR = trialMode || hasARModule;
             pane.classList.add('active');
           }
         });
+      });
+    });
+
+    // Attach listeners to upgrade buttons
+    const upgradeBtns = container.querySelectorAll('.upgrade-btn-action');
+    upgradeBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const moduleType = btn.getAttribute('data-upgrade-type');
+        if (moduleType) {
+          showUpgrade(moduleType);
+        }
       });
     });
   });

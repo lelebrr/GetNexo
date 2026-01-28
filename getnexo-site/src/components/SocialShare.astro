@@ -65,8 +65,8 @@ const encodedDescription = encodeURIComponent(description);
 
     {showCopy && (
       <button
+        id="copy-link-btn"
         class="share-btn copy-link"
-        onclick="copyToClipboard()"
         aria-label="Copiar link"
       >
         <span class="share-icon">🔗</span>
@@ -220,7 +220,7 @@ const encodedDescription = encodeURIComponent(description);
 
 <script nonce={Astro.locals.nonce}>
   // Copy to clipboard functionality
-  window.copyToClipboard = async function() {
+  const copyToClipboard = async function() {
     const url = window.location.href;
     try {
       await navigator.clipboard.writeText(url);
@@ -263,6 +263,12 @@ const encodedDescription = encodeURIComponent(description);
 
   // Track social share events
   document.addEventListener('DOMContentLoaded', () => {
+    // Attach copy listener
+    const copyBtn = document.getElementById('copy-link-btn');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', copyToClipboard);
+    }
+
     const shareButtons = document.querySelectorAll('.share-btn:not(.copy-link)');
 
     shareButtons.forEach(button => {
@@ -281,11 +287,11 @@ const encodedDescription = encodeURIComponent(description);
         // Show success feedback
         const originalText = button.innerHTML;
         button.innerHTML = '<span class="share-icon">✅</span> Compartilhado!';
-        (button as HTMLElement).style.background = 'var(--success)';
+        (button).style.background = 'var(--success)';
 
         setTimeout(() => {
           button.innerHTML = originalText;
-          (button as HTMLElement).style.background = '';
+          (button).style.background = '';
         }, 1500);
       });
     });

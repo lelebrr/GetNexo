@@ -21,7 +21,7 @@ const {
     <div class="ar-fallback">
       <img src={fallbackImage} alt="GetNexo AR Preview" class="ar-preview-image" />
       <p>Realidade Aumentada não suportada neste dispositivo</p>
-      <button class="ar-fallback-btn" onclick="openFallbackView()">
+      <button id="ar-fallback-btn" class="ar-fallback-btn">
         Ver em 3D Simulado
       </button>
     </div>
@@ -204,6 +204,17 @@ const {
       } else {
         this.showFallback();
       }
+
+      this.setupFallbackButton();
+    }
+
+    setupFallbackButton() {
+        const fallbackBtn = document.getElementById('ar-fallback-btn');
+        if (fallbackBtn) {
+            fallbackBtn.addEventListener('click', () => {
+                window.openFallbackView();
+            });
+        }
     }
 
     async checkARSupport() {
@@ -263,16 +274,16 @@ const {
       this.renderer.xr.setSession(session);
 
       // Hide fallback, show canvas
-      (document.querySelector('.ar-fallback') as HTMLElement).style.display = 'none';
-      (document.getElementById('ar-canvas') as HTMLElement).style.display = 'block';
+      (document.querySelector('.ar-fallback')).style.display = 'none';
+      (document.getElementById('ar-canvas')).style.display = 'block';
 
       this.animate();
     }
 
     enterSimulatedAR() {
       // Fallback: show 3D model in regular view
-      (document.querySelector('.ar-fallback') as HTMLElement).style.display = 'none';
-      (document.getElementById('ar-canvas') as HTMLElement).style.display = 'block';
+      (document.querySelector('.ar-fallback')).style.display = 'none';
+      (document.getElementById('ar-canvas')).style.display = 'block';
 
       this.camera.position.z = 5;
       this.animate();
@@ -404,14 +415,40 @@ const {
     if (!viewer || !fallback) return;
 
     // Show simulated 3D view
-    (fallback as HTMLElement).innerHTML = `
-      <div style="text-align: center;">
-        <h3>Visualização 3D Simulada</h3>
-        <p>O GetNexo em realidade aumentada</p>
-        <div style="width: 200px; height: 200px; background: linear-gradient(45deg, #00d4ff, #00ff9d); border-radius: 12px; margin: 20px auto; display: flex; align-items: center; justify-content: center; font-size: 48px;">N</div>
-        <button onclick="this.parentElement.parentElement.style.display='flex'" class="ar-fallback-btn" style="margin-top: 20px;">Voltar</button>
-      </div>
-    `;
+    (fallback).innerHTML = '';
+    
+    // Create elements programmatically
+    const container = document.createElement('div');
+    container.style.textAlign = 'center';
+    
+    const title = document.createElement('h3');
+    title.textContent = 'Visualização 3D Simulada';
+    
+    const subtitle = document.createElement('p');
+    subtitle.textContent = 'O GetNexo em realidade aumentada';
+    
+    const logoBox = document.createElement('div');
+    logoBox.style.cssText = 'width: 200px; height: 200px; background: linear-gradient(45deg, #00d4ff, #00ff9d); border-radius: 12px; margin: 20px auto; display: flex; align-items: center; justify-content: center; font-size: 48px;';
+    logoBox.textContent = 'N';
+    
+    const backBtn = document.createElement('button');
+    backBtn.textContent = 'Voltar';
+    backBtn.className = 'ar-fallback-btn';
+    backBtn.style.marginTop = '20px';
+    backBtn.addEventListener('click', () => {
+        fallback.style.display = 'flex';
+        // Re-render original fallback if needed, but simple display toggle might suffice if we didn't clear innerHTML.
+        // Since we cleared innerHTML, we need to reload the page or restore state. 
+        // For simplicity, we just reload since this is a rare fallback flow.
+        window.location.reload();
+    });
+
+    container.appendChild(title);
+    container.appendChild(subtitle);
+    container.appendChild(logoBox);
+    container.appendChild(backBtn);
+    
+    fallback.appendChild(container);
   };
 
   // Initialize AR viewer

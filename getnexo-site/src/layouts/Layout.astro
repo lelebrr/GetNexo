@@ -355,11 +355,14 @@ const clientId = Astro.locals.clientId || 'default';
   
   <!-- Pré-carregar fontes críticas para otimizar LCP -->
   <!-- Fontes são carregadas de forma otimizada com fallback e eager loading -->
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Outfit:wght@400;700;900&display=swap" as="style" media="print" onload="this.media='all'">
+  <!-- Pré-carregar fontes críticas para otimizar LCP -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Outfit:wght@400;700;900&display=swap" as="style">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Outfit:wght@400;700;900&display=swap" media="print" class="deferred-styles">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet"></noscript>
   
   <!-- Pré-carregar recursos de CDN críticos -->
-  <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" as="style" media="print" onload="this.media='all'">
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" as="style">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" media="print" class="deferred-styles">
   <noscript><link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"></noscript>
   
   <!-- CSS crítico do Astro é servido automaticamente via Astro.head ou injetado pelo Astro build -->
@@ -370,6 +373,13 @@ const clientId = Astro.locals.clientId || 'default';
   <!-- Reduzido para melhor performance com estratégias avançadas -->
   <script defer nonce={nonce}>
     (function() {
+      // CSS Deferred Loading Logic (Replaces inline onload handlers)
+      var deferredStyles = document.querySelectorAll('.deferred-styles');
+      deferredStyles.forEach(function(link) {
+        link.media = 'all'; // Switch immediately if script runs (async/defer might race)
+        link.onload = function() { this.media = 'all'; }; // Redundant but safe
+      });
+
       // Carregamento otimizado de recursos de terceiros - Reduzido ao mínimo essencial
       const thirdPartyResources = {
         modelViewer: {
@@ -392,6 +402,8 @@ const clientId = Astro.locals.clientId || 'default';
         script.defer = true;
         script.fetchpriority = 'low';
         script.crossOrigin = 'anonymous';
+        // Nonce is required if strict-dynamic is active and script is external (browsers handle this variously, but safer to add if we can)
+        // However, with strict-dynamic, scripts inserted by nonced scripts are trusted.
         script.onload = () => {
           loaded.add(key);
         };

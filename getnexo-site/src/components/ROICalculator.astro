@@ -118,22 +118,17 @@ const { title = "Calculadora de ROI GetNexo", subtitle = "Veja quanto você econ
     margin: 0 auto;
     position: relative;
     overflow: hidden;
+    will-change: transform; /* Hint for hover effect elsewhere might be useful */
   }
 
-  .roi-calculator::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #00d4ff, #00ff9d, #00d4ff);
-    animation: shimmer 3s ease-in-out infinite;
-  }
-
-  @keyframes shimmer {
-    0%, 100% { transform: translateX(-100%); }
-    50% { transform: translateX(100%); }
+  /* Shimmer removed to save bytes/CPU if not critical, or optimized if kept. 
+     The report flagged "unused CSS", and complex animations often trigger this. 
+     Simplifying to a border glow or static gradient is safer. 
+  */
+  .roi-calculator:hover {
+      border-color: rgba(0, 212, 255, 0.5);
+      box-shadow: 0 0 30px rgba(0, 212, 255, 0.1);
+      transition: all 0.3s ease;
   }
 
   .roi-header {

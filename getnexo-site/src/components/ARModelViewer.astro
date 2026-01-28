@@ -20,7 +20,7 @@ const finalUsdzUrl = usdzUrl || `/modelos/${productId}.usdz`;
 
 <!-- Botão no chat: -->
 <button
-  onclick="verAR('${productId}')"
+  id={`btn-ar-${productId}`}
   class="px-3 py-1 bg-green-500 text-white rounded text-sm btn-ar-trigger">
   Ver em AR / Realidade Aumentada
 </button>
@@ -55,22 +55,31 @@ const finalUsdzUrl = usdzUrl || `/modelos/${productId}.usdz`;
         align-items: center; justify-content: center;
       `;
 
-      modal.innerHTML = `
-        <div style="position: relative; width: 90vw; height: 90vh; background: white; border-radius: 10px;">
-          <button onclick="this.parentElement.parentElement.remove()" style="position: absolute; top: 10px; right: 10px; background: #333; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; z-index: 10000;">×</button>
-          <model-viewer
-            src="${glb}"
-            ios-src="${usdz}"
-            ar
-            ar-modes="webxr scene-viewer quick-look"
-            camera-orbit="-45deg 55deg 2m"
-            auto-rotate
-            shadow-intensity="1"
-            style="width: 100%; height: 100%; border-radius: 10px;"
-          ></model-viewer>
-        </div>
-      `;
+      const modalContent = document.createElement('div');
+      modalContent.style.cssText = "position: relative; width: 90vw; height: 90vh; background: white; border-radius: 10px;";
 
+      // Create close button properly
+      const closeBtn = document.createElement('button');
+      closeBtn.innerText = "×";
+      closeBtn.style.cssText = "position: absolute; top: 10px; right: 10px; background: #333; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; z-index: 10000; font-size: 24px; display: flex; align-items: center; justify-content: center;";
+      
+      closeBtn.addEventListener('click', () => {
+        modal.remove();
+      });
+
+      const modelViewer = document.createElement('model-viewer');
+      modelViewer.setAttribute('src', glb);
+      modelViewer.setAttribute('ios-src', usdz);
+      modelViewer.setAttribute('ar', '');
+      modelViewer.setAttribute('ar-modes', 'webxr scene-viewer quick-look');
+      modelViewer.setAttribute('camera-orbit', '-45deg 55deg 2m');
+      modelViewer.setAttribute('auto-rotate', '');
+      modelViewer.setAttribute('shadow-intensity', '1');
+      modelViewer.style.cssText = "width: 100%; height: 100%; border-radius: 10px;";
+
+      modalContent.appendChild(closeBtn);
+      modalContent.appendChild(modelViewer);
+      modal.appendChild(modalContent);
       document.body.appendChild(modal);
 
       // iPhone: se suportar USDZ
@@ -78,7 +87,7 @@ const finalUsdzUrl = usdzUrl || `/modelos/${productId}.usdz`;
         const link = document.createElement('a');
         link.href = usdz;
         link.rel = 'ar';
-        link.onclick = () => modal.remove();
+        link.addEventListener('click', () => modal.remove());
         link.style.display = 'none';
         document.body.appendChild(link);
         link.click();
@@ -88,6 +97,14 @@ const finalUsdzUrl = usdzUrl || `/modelos/${productId}.usdz`;
        window.open(`/ar/${produtoId}`, '_blank');
     }
   };
+
+  // Attach listener to button
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById(`btn-ar-${productId}`);
+    if (btn) {
+      btn.addEventListener('click', () => window.verAR(productId));
+    }
+  });
 </script>
 
 <!-- Em /ar/ .astro: -->
@@ -103,7 +120,7 @@ const finalUsdzUrl = usdzUrl || `/modelos/${productId}.usdz`;
 
 <style>
   /* Estilos simples para o botão AR */
-  button {
+  button.btn-ar-trigger {
     background: linear-gradient(135deg, #10b981, #059669);
     border: none;
     border-radius: 8px;
@@ -114,7 +131,7 @@ const finalUsdzUrl = usdzUrl || `/modelos/${productId}.usdz`;
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
   }
 
-  button:hover {
+  button.btn-ar-trigger:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
   }
