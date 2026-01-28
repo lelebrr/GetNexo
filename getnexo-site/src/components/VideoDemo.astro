@@ -39,7 +39,7 @@ const {
 
     <!-- Custom Play Button Overlay -->
     <div class="video-overlay" id="video-overlay">
-      <div class="play-button" onclick="playVideo()">
+      <div class="play-button" id="play-button-overlay">
         <div class="play-icon">▶</div>
         <div class="play-text">Ver Demo IA</div>
       </div>
@@ -58,18 +58,18 @@ const {
     <!-- Video Controls (if custom controls enabled) -->
     {!controls && (
       <div class="custom-controls" id="custom-controls">
-        <button class="control-btn play-pause" onclick="togglePlayPause()">
+        <button class="control-btn play-pause" id="play-pause-btn">
           <span class="play-icon">▶</span>
           <span class="pause-icon" style="display: none;">⏸</span>
         </button>
         <div class="progress-bar">
           <div class="progress-fill" id="progress-fill"></div>
         </div>
-        <button class="control-btn volume" onclick="toggleMute()">
+        <button class="control-btn volume" id="volume-btn">
           <span class="volume-on">🔊</span>
           <span class="volume-off" style="display: none;">🔇</span>
         </button>
-        <button class="control-btn fullscreen" onclick="toggleFullscreen()">
+        <button class="control-btn fullscreen" id="fullscreen-btn">
           <span>⛶</span>
         </button>
       </div>
@@ -415,6 +415,15 @@ const {
     if (progressFill && progressFill.parentElement) {
       progressFill.parentElement.addEventListener('click', seekVideo);
     }
+
+    // Event Listeners for buttons (replacing inline onclick)
+    const playOverlay = document.getElementById('play-button-overlay');
+    if (playOverlay) playOverlay.addEventListener('click', playVideo);
+
+    if (playPauseBtn) playPauseBtn.addEventListener('click', togglePlayPause);
+    if (volumeBtn) volumeBtn.addEventListener('click', toggleMute);
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+    if (fullscreenBtn) fullscreenBtn.addEventListener('click', toggleFullscreen);
   }
 
   function playVideo() {

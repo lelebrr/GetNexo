@@ -100,7 +100,7 @@ const { title = "Calculadora de ROI GetNexo", subtitle = "Veja quanto você econ
   </div>
 
   <div class="roi-cta">
-    <button class="roi-cta-btn" onclick="scrollToPricing()">
+    <button class="roi-cta-btn" id="roi-cta-btn-element">
       Começar Agora → R$ 97/mês
     </button>
     <p class="roi-note">Investimento recuperado em até 30 dias</p>
@@ -333,10 +333,10 @@ const { title = "Calculadora de ROI GetNexo", subtitle = "Veja quanto você econ
 
   /* Animation for result updates */
   .result-updating {
-    animation: pulse 0.3s ease-in-out;
+    animation: roi-pulse 0.3s ease-in-out;
   }
 
-  @keyframes pulse {
+  @keyframes roi-pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.7; }
   }
@@ -406,6 +406,10 @@ const { title = "Calculadora de ROI GetNexo", subtitle = "Veja quanto você econ
         this.parentElement.style.transform = 'scale(1)';
       });
     });
+    
+    // Add click listener for the CTA button (replacing inline onclick)
+    const roiCtaBtn = document.getElementById('roi-cta-btn-element');
+    if (roiCtaBtn) roiCtaBtn.addEventListener('click', scrollToPricing);
   });
 
   // Make functions globally available

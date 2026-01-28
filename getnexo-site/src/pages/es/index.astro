@@ -14,7 +14,8 @@ const keywords = "chatbot whatsapp ventas, ia para whatsapp, automatización wha
 const lang = 'es';
 const { default: t } = await import(`../../i18n/es.json`);
 
-const feriadosData = await fetch('/data/feriados.json').then(r => r.json()).catch(() => ({ feriados: [] }));
+import feriadosData from '../../data/feriados.json';
+
 const hoje = new Date().toISOString().slice(0,10);
 const idiomaNavegador = typeof navigator !== 'undefined' ? (navigator.language || 'es-ES') : 'es-ES';
 const idiomaCurto = idiomaNavegador.split('-')[0];
@@ -127,7 +128,7 @@ const homeSchema = {
       </p>
       <div class="hero-ctas animate-on-scroll">
         <a href={`/${lang}/${t.slugs.create_bot}`} class="btn-primary-glow">COMIENZA GRATIS AHORA</a>
-        <button onclick="window.abrirModalDemo()" class="btn-surprise animate-on-scroll">PRUEBA AQUÍ.. SORPRÉNDETE</button>
+        <button data-open-modal="demo" class="btn-surprise animate-on-scroll">PRUEBA AQUÍ.. SORPRÉNDETE</button>
       </div>
       <div class="hero-trust animate-on-scroll">
         <span>✅ API Oficial Meta</span>
@@ -339,8 +340,8 @@ const homeSchema = {
         <p class="security-notice">💡 Seguridad WhatsApp Business no es lujo — es necesidad.</p>
         <p class="security-benefit">Con GetNexo, tienes protección de nivel enterprise sin complicación ni costo exorbitante.</p>
         <div class="security-actions">
-            <a href={`/${lang}/${t.slugs.create_bot}`} class="btn-primary-glow security-btn">Prueba Gratis Ahora →</a>
-            <button onclick="abrirModalDemo()" class="btn-outline security-btn">Ver Certificaciones</button>
+            <a href={`/${lang}/${t.slugs.create_bot}`} class="btn-primary-glow security-btn">Prueba Gratis Agora →</a>
+            <button data-open-modal="demo" class="btn-outline security-btn">Ver Certificaciones</button>
         </div>
         <p class="security-footer">© 2026 GetNexo. Todos los derechos reservados. | GetNexo: La vanguardia en Automatización WhatsApp y IA para Negocios.</p>
     </div>
@@ -354,7 +355,7 @@ const homeSchema = {
         </p>
         <div class="flex flex-col sm:flex-row gap-6 justify-center">
             <a href={`/${lang}/${t.slugs.create_bot}`} class="btn-primary-glow">COMIENZA GRATIS AHORA</a>
-            <button onclick="window.abrirModalDemo()" class="btn-outline">PRUEBA DEMO IA</button>
+            <button data-open-modal="demo" class="btn-outline">PRUEBA DEMO IA</button>
         </div>
     </div>
   </section>
@@ -362,61 +363,46 @@ const homeSchema = {
 <script nonce={Astro.locals.nonce} is:inline src="/custom/js/hero-animations.js"></script>
 <script nonce={Astro.locals.nonce} is:inline>
   // Carregamento dinâmico de scripts de demonstração para otimizar performance
-  // Scripts são carregados apenas quando o usuário interage com a página
   (function() {
     'use strict';
     
-    let scriptsLoaded = false;
-    let scriptsLoading = false;
-    
     function loadDemoScripts() {
-      if (scriptsLoaded || scriptsLoading) return;
+      if (!window.getNexoState || window.getNexoState.scriptsLoaded || window.getNexoState.scriptsLoading) return;
       
-      scriptsLoading = true;
+      window.getNexoState.scriptsLoading = true;
       
-      // Carrega os scripts de demonstração dinamicamente
       const scripts = [
         '/custom/js/mega-chat-sim.js',
         '/custom/js/modals-demo.js',
         '/custom/js/click-fireworks.js'
       ];
       
+      const currentNonce = document.querySelector('script[nonce]')?.nonce || '';
+      
       scripts.forEach(src => {
         const script = document.createElement('script');
         script.src = src;
-        script.isInline = true;
+        script.defer = true;
+        if (currentNonce) script.setAttribute('nonce', currentNonce);
         document.head.appendChild(script);
       });
       
-      scriptsLoaded = true;
-      console.log('Scripts de demonstração carregados dinamicamente');
+      window.getNexoScriptsLoaded = true;
     }
     
-    // Carrega scripts quando o usuário interage pela primeira vez
-    const interactionEvents = ['click', 'scroll', 'mousemove', 'touchstart'];
-    
-    function handleFirstInteraction() {
-      loadDemoScripts();
-      // Remove listeners após o primeiro carregamento
-      interactionEvents.forEach(event => {
-        document.removeEventListener(event, handleFirstInteraction);
-      });
-    }
-    
-    // Adiciona listeners de interação
-    interactionEvents.forEach(event => {
-      document.addEventListener(event, handleFirstInteraction, { once: true });
-    });
-    
-    // Também carrega quando o DOM estiver pronto (para garantir que os elementos existam)
-    document.addEventListener('DOMContentLoaded', () => {
-      // Verifica se há elementos que precisam dos scripts
-      const hasDemoElements = document.querySelector('[onclick*="abrirModalDemo"], [onclick*="abrirModalChat"], [onclick*="abrirModalIA"]');
-      if (hasDemoElements) {
-        // Adia o carregamento para não bloquear o render inicial
-        setTimeout(loadDemoScripts, 1000);
+    document.addEventListener('click', (e) => {
+      const target = e.target.closest('#hero-demo-btn, #chat-fab, [data-open-modal]');
+      if (target) {
+        loadDemoScripts();
+        if (target.dataset.openModal === 'demo' && typeof window.abrirModalDemo === 'function') {
+           window.abrirModalDemo();
+        }
       }
-    });
+    }, { passive: true });
+    
+    setTimeout(() => {
+      if (!window.getNexoScriptsLoaded) loadDemoScripts();
+    }, 5000);
   })();
 </script>
 

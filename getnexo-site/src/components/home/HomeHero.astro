@@ -30,7 +30,7 @@ const { feriadoHoje, lang, idiomaCurto, nonce } = Astro.props;
         🚀 LIBERAR MEU BOT GRÁTIS AGORA
       </a>
 
-      <button onclick="window.abrirModalDemo()" class="btn-cyan-premium">
+      <button id="hero-demo-btn" class="btn-cyan-premium">
         <span class="emoji">🤖</span> FALAR COM DEMO IA
       </button>
     </div>
@@ -108,41 +108,42 @@ function startCountdown() {
 document.addEventListener("DOMContentLoaded", startCountdown);
 
 // Carregamento dinâmico do script de modais apenas quando necessário
-let scriptsLoaded = false;
-let scriptsLoading = false;
-
 function loadModalScripts() {
-  if (scriptsLoaded || scriptsLoading) return;
+  if (!window.getNexoState || window.getNexoState.scriptsLoaded || window.getNexoState.scriptsLoading) return;
   
-  scriptsLoading = true;
+  window.getNexoState.scriptsLoading = true;
   
   // Carrega o script de modais dinamicamente
   const script = document.createElement('script');
   script.src = '/custom/js/modals-demo.js';
-  script.isInline = true;
+  script.defer = true;
+  if (nonce) script.setAttribute('nonce', nonce);
   document.head.appendChild(script);
   
-  scriptsLoaded = true;
-  console.log('Script de modais carregado dinamicamente');
+  script.onload = () => {
+    window.getNexoState.scriptsLoaded = true;
+    window.getNexoState.scriptsLoading = false;
+    console.log('Script de modais carregado via HomeHero');
+  };
 }
 
 // Modificar o botão para carregar o script dinamicamente
 document.addEventListener('DOMContentLoaded', () => {
-  const demoButton = document.querySelector('[onclick*="abrirModalDemo"]');
+  const demoButton = document.getElementById('hero-demo-btn');
   if (demoButton) {
     demoButton.addEventListener('click', (e) => {
       // Carrega o script se ainda não foi carregado
-      if (!scriptsLoaded) {
+      if (!window.getNexoState || !window.getNexoState.scriptsLoaded) {
         loadModalScripts();
         // Aguarda um pouco para o script carregar antes de chamar a função
         setTimeout(() => {
-          if (typeof abrirModalDemo === 'function') {
-            abrirModalDemo();
+          if (typeof window.abrirModalDemo === 'function') {
+            window.abrirModalDemo();
           } else {
             // Se o script ainda não estiver pronto, tenta novamente
             setTimeout(() => {
-              if (typeof abrirModalDemo === 'function') {
-                abrirModalDemo();
+              if (typeof window.abrirModalDemo === 'function') {
+                window.abrirModalDemo();
               } else {
                 alert('Demo chat ainda em setup – em breve!');
               }
@@ -151,8 +152,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 300);
       } else {
         // Script já carregado, chama a função diretamente
-        if (typeof abrirModalDemo === 'function') {
-          abrirModalDemo();
+        if (typeof window.abrirModalDemo === 'function') {
+          window.abrirModalDemo();
         } else {
           alert('Demo chat ainda em setup – em breve!');
         }

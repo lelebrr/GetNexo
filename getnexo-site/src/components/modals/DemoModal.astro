@@ -12,12 +12,12 @@
         <h3 class="text-3xl font-extrabold text-white mb-2">Escolha sua Experiência</h3>
         <p class="text-gray-400">Transforme seu atendimento com a potência da IA GetNexo</p>
       </div>
-      <button onclick="fecharModalDemo()" class="text-white/50 hover:text-white transition-all text-4xl">&times;</button>
+      <button id="close-demo-modal-btn" class="text-white/50 hover:text-white transition-all text-4xl">&times;</button>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
       <!-- Option 1 -->
-      <div onclick="abrirModalChat()" class="group relative p-6 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 hover:border-neon-blue/50 transition-all cursor-pointer overflow-hidden">
+      <div id="open-chat-modal-option" class="group relative p-6 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 hover:border-neon-blue/50 transition-all cursor-pointer overflow-hidden">
         <div class="text-3xl mb-4 group-hover:scale-110 transition-transform">💬</div>
         <h4 class="text-xl font-bold text-white mb-2">Chat IA Completo</h4>
         <p class="text-sm text-gray-400">Demonstração de conversa fluida e natural.</p>
@@ -25,7 +25,7 @@
       </div>
 
       <!-- Option 2 -->
-      <div onclick="abrirModalIA()" class="group relative p-6 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 hover:border-cyber-gold/50 transition-all cursor-pointer overflow-hidden">
+      <div id="open-ia-modal-option" class="group relative p-6 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 hover:border-cyber-gold/50 transition-all cursor-pointer overflow-hidden">
         <div class="text-3xl mb-4 group-hover:scale-110 transition-transform">🤖</div>
         <h4 class="text-xl font-bold text-white mb-2">IA Multimídia</h4>
         <p class="text-sm text-gray-400">Produtos, cards e experiências imersivas.</p>
@@ -33,7 +33,7 @@
       </div>
 
       <!-- Option 3 -->
-      <div onclick="window.open('https://wa.me/5511999999999', '_blank')" class="group relative p-6 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 hover:border-matrix-green/50 transition-all cursor-pointer overflow-hidden">
+      <div id="open-whats-demo-option" class="group relative p-6 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 hover:border-matrix-green/50 transition-all cursor-pointer overflow-hidden">
         <div class="text-3xl mb-4 group-hover:scale-110 transition-transform">📱</div>
         <h4 class="text-xl font-bold text-white mb-2">Demo WhatsApp</h4>
         <p class="text-sm text-gray-400">A experiência real no aplicativo oficial.</p>
@@ -42,3 +42,41 @@
     </div>
   </div>
 </div>
+
+<script nonce={Astro.locals.nonce}>
+  document.addEventListener('DOMContentLoaded', () => {
+    const closeBtn = document.getElementById('close-demo-modal-btn');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        if (typeof window.fecharModalDemo === 'function') {
+          window.fecharModalDemo();
+        }
+      });
+    }
+
+    const chatOption = document.getElementById('open-chat-modal-option');
+    if (chatOption) {
+      chatOption.addEventListener('click', () => {
+        if (typeof window.abrirModalChat === 'function') {
+          window.abrirModalChat();
+        }
+      });
+    }
+
+    const iaOption = document.getElementById('open-ia-modal-option');
+    if (iaOption) {
+      iaOption.addEventListener('click', () => {
+        if (typeof window.abrirModalIA === 'function') {
+          window.abrirModalIA();
+        }
+      });
+    }
+
+    const whatsOption = document.getElementById('open-whats-demo-option');
+    if (whatsOption) {
+      whatsOption.addEventListener('click', () => {
+        window.open('https://wa.me/5511999999999', '_blank');
+      });
+    }
+  });
+</script>

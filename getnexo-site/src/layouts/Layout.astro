@@ -320,44 +320,8 @@ function getLangUrl(targetLang) {
   }
 }
 
-// Verificar feriados ativos para carregar CSS condicionalmente
-// Otimização: carregar de forma assíncrona para não bloquear a renderização inicial
-let feriadoAtivo = false;
-let feriadoData = null;
-
-// Verificação de feriados movida para o lado do cliente para evitar erros no servidor
-if (typeof window !== 'undefined') {
-  // Use requestIdleCallback to avoid blocking the main thread for holiday check
-  const checkHolidays = async () => {
-    try {
-      const feriadosResponse = await fetch('/data/feriados.json');
-      const data = await feriadosResponse.json();
-      const hoje = new Date().toISOString().slice(0,10);
-      const ano = new Date().getFullYear();
-
-      const { verificaDataVariavel } = await import('../lib/feriados.js');
-
-      const feriadoHoje = data.feriados.find(f => {
-        if (f.data === hoje) return true;
-        const dataCalculada = verificaDataVariavel(f.data, ano);
-        return dataCalculada === hoje;
-      });
-
-      if (feriadoHoje) {
-        document.body.classList.add('feriado-ativo');
-        // If there's a specific holiday effect CSS, it can be loaded here
-      }
-    } catch (error) {
-      console.log('Erro ao verificar feriados:', error);
-    }
-  };
-
-  if ('requestIdleCallback' in window) {
-    window.requestIdleCallback(checkHolidays);
-  } else {
-    setTimeout(checkHolidays, 3000); // Fallback for browsers without idle callback
-  }
-}
+// Otimização: Verificação de feriados em tempo de build para evitar redeclaração e latência
+const isFeriadoBuild = false; // Pode ser passado via props se necessário
 
 const nonce = Astro.locals.nonce;
 const trustedTypesPolicy = Astro.locals.trustedTypesPolicy || 'getnexo-trusted';
@@ -393,26 +357,18 @@ const clientId = Astro.locals.clientId || 'default';
   <!-- Estilos globais e de analytics serão injetados pelo Astro com inlineStylesheets: 'always' -->
 
   
-  <!-- Scripts críticos otimizados - removidos scripts que não existem -->
-  <!-- Carregamento otimizado com lazy loading para melhor performance -->
-  
-  <!-- Script de otimização de carregamento de recursos de terceiros -->
+  <!-- Scripts críticos otimizados - carregamento lazy de terceiros apenas quando necessário -->
+  <!-- Reduzido para melhor performance -->
   <script defer nonce={nonce}>
     (function() {
+      // Carregamento otimizado de recursos de terceiros
       const thirdPartyResources = {
-        shepherd: {
-          src: 'https://cdn.jsdelivr.net/npm/shepherd.js@13.0.0/dist/js/shepherd.min.js',
-          priority: 'medium',
-          delay: 2000,
-          triggers: ['[data-tour]', '.tour-trigger'],
-          autoLoad: true // Load on idle
-        },
         modelViewer: {
           src: 'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js',
           priority: 'low',
-          delay: 5000,
-          triggers: ['model-viewer', '[data-3d-model]', '.ar-viewer', '.btn-ar-trigger'], // Added trigger class
-          autoLoad: false // Only load if trigger present or interaction
+          delay: 3000,
+          triggers: ['model-viewer', '[data-3d-model]', '.ar-viewer'],
+          autoLoad: false
         }
       };
 
@@ -425,24 +381,14 @@ const clientId = Astro.locals.clientId || 'default';
         script.src = res.src;
         script.async = true;
         script.defer = true;
-        script.fetchpriority = res.priority === 'low' ? 'low' : 'auto';
+        script.fetchpriority = 'low';
         script.onload = () => {
           loaded.add(key);
-          console.log(`Resource loaded: ${key}`);
         };
         document.head.appendChild(script);
       };
 
-      // 1. Interaction triggers (Global Delegated)
-      document.addEventListener('mouseover', (e) => {
-         Object.keys(thirdPartyResources).forEach(key => {
-          const res = thirdPartyResources[key];
-          if (res.triggers.some(t => e.target.closest(t))) {
-            loadResource(key);
-          }
-        });
-      }, { once: false, capture: true, passive: true }); // Keep listener for hover over AR buttons
-
+      // Carrega apenas quando o usuário interage com elementos AR
       document.addEventListener('click', (e) => {
         Object.keys(thirdPartyResources).forEach(key => {
           const res = thirdPartyResources[key];
@@ -452,31 +398,16 @@ const clientId = Astro.locals.clientId || 'default';
         });
       }, { once: false, capture: true, passive: true });
 
-      // 2. Delayed loading (Idle) or Presence check
-      const initIdleLoad = () => {
-        Object.keys(thirdPartyResources).forEach(key => {
-          const res = thirdPartyResources[key];
-          
-          // Check if elements are already in DOM
-          const isPresent = res.triggers.some(t => document.querySelector(t));
-          
-          if (res.autoLoad || isPresent) {
-             const delay = isPresent ? 1000 : res.delay; // Load faster if present
-             setTimeout(() => {
-                if (window.requestIdleCallback) {
-                  window.requestIdleCallback(() => loadResource(key));
-                } else {
-                  loadResource(key);
-                }
-             }, delay);
-          }
+      // Carregamento atrasado para não bloquear o LCP
+      if ('requestIdleCallback' in window) {
+        window.requestIdleCallback(() => {
+          Object.keys(thirdPartyResources).forEach(key => {
+            const res = thirdPartyResources[key];
+            if (res.autoLoad) {
+              setTimeout(() => loadResource(key), res.delay);
+            }
+          });
         });
-      };
-
-      if (document.readyState === 'complete') {
-        initIdleLoad();
-      } else {
-        window.addEventListener('load', initIdleLoad);
       }
     })();
   </script>
@@ -489,9 +420,10 @@ const clientId = Astro.locals.clientId || 'default';
       font-weight: 800;
       visibility: visible !important;
       opacity: 1 !important;
+      font-display: swap;
     }
     
-    /* Animações otimizadas para composição */
+    /* Animações otimizadas para composição - versão melhorada */
     .animate-on-scroll {
       opacity: 0;
       transform: translateY(30px);
@@ -499,6 +431,7 @@ const clientId = Astro.locals.clientId || 'default';
       will-change: transform, opacity;
       transform: translateZ(0);
       backface-visibility: hidden;
+      contain: layout style paint;
     }
     .animate-on-scroll.animate-in {
       opacity: 1;
@@ -512,6 +445,9 @@ const clientId = Astro.locals.clientId || 'default';
     img { width: auto; height: auto; }
     .hero-title { opacity: 0; animation: fadeIn 0.5s ease-in-out forwards; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    
+    /* Prevenir Layout Shift na Logo */
+    .logo-link { min-width: 150px; min-height: 44px; }
   </style>
   
   <!-- Script de trusted-types-policy removido - não existe no projeto -->
@@ -521,6 +457,12 @@ const clientId = Astro.locals.clientId || 'default';
       try {
         var bgType = localStorage.getItem('getnexo-bg-type') || 'animated';
         document.documentElement.setAttribute('data-bg-type', bgType);
+        
+        // Initialize global state for dynamic scripts
+        window.getNexoState = {
+          scriptsLoaded: false,
+          scriptsLoading: false
+        };
         
         // Use explicit assignment to avoid SyntaxError with object literals if transpilation varies
         window.GETNEXO_CONFIG = {};
@@ -1238,15 +1180,13 @@ const clientId = Astro.locals.clientId || 'default';
   </style>
 </head>
 <body style="background:var(--dark);">
-  <div style="background: #ff0000; color: white; text-align: center; padding: 5px; font-weight: bold; z-index: 999999; position: relative; width: 100%;">
-    VERSÃO DEPLOY: 28/01/2026 - 01:30 - DEBUG MODE
-  </div>
 
-  <div class="skip-links">
-    <a href="#main-content" class="skip-link">Pular para conteúdo principal</a>
-    <a href="#main-nav" class="skip-link">Pular para navegação</a>
-    <a href="#breadcrumb-nav" class="skip-link">Pular para breadcrumbs</a>
-  </div>
+  <div id="layout-wrapper">
+    <div class="skip-links">
+      <a href="#main-content" class="skip-link">Pular para conteúdo principal</a>
+      <a href="#main-nav" class="skip-link">Pular para navegação</a>
+      <a href="#breadcrumb-nav" class="skip-link">Pular para breadcrumbs</a>
+    </div>
 
   <script defer nonce={nonce}>
     // Sincronização de Fundo Global
@@ -1828,6 +1768,9 @@ const clientId = Astro.locals.clientId || 'default';
   </script>
   
   
+  <!-- Scripts de animação de scroll e efeitos da Home -->
+  <script src="/custom/js/scroll-animation.js" defer nonce={nonce}></script>
+  <script src="/custom/js/hero-animations.js" defer nonce={nonce}></script>
 
   <!-- Scripts críticos para interatividade - carregados após o DOM -->
   <script defer nonce={nonce}>
@@ -1926,42 +1869,66 @@ const clientId = Astro.locals.clientId || 'default';
     });
   </script>
 
-  <!-- Carregamento otimizado de feriados - movido para idle callback -->
+  <!-- Carregamento otimizado de feriados - totalmente não bloqueante -->
   <script nonce={Astro.locals.nonce} defer>
     // Verificação de feriados otimizada - executada apenas quando o sistema está ocioso
-    if ('requestIdleCallback' in window) {
-      window.requestIdleCallback(() => {
-        // Verificação leve de feriados
-        fetch('/data/feriados.json', { cache: 'force-cache' })
-          .then(response => response.json())
-          .then(data => {
-            const hoje = new Date().toISOString().slice(0,10);
-            const feriadoHoje = data.feriados.find(f => f.data === hoje);
-            if (feriadoHoje) {
-              document.body.classList.add('feriado-ativo');
-            }
-          })
-          .catch(() => {
-            // Silenciosamente falha se não conseguir carregar os feriados
-          });
-      });
-    } else {
-      // Fallback para browsers sem idle callback
-      setTimeout(() => {
-        fetch('/data/feriados.json', { cache: 'force-cache' })
-          .then(response => response.json())
-          .then(data => {
-            const hoje = new Date().toISOString().slice(0,10);
-            const feriadoHoje = data.feriados.find(f => f.data === hoje);
-            if (feriadoHoje) {
-              document.body.classList.add('feriado-ativo');
-            }
-          })
-          .catch(() => {
-            // Silenciosamente falha se não conseguir carregar os feriados
-          });
-      }, 5000);
-    }
+    // Não bloqueia a linha de execução principal
+    (function() {
+      const checkHolidays = () => {
+        const hoje = new Date().toISOString().slice(0,10);
+        
+        // Usa cache do navegador para evitar requisições repetidas
+        if (window.getnexoHolidayCache && window.getnexoHolidayCache.date === hoje) {
+          if (window.getnexoHolidayCache.hasHoliday) {
+            document.body.classList.add('feriado-ativo');
+          }
+          return;
+        }
+
+        // Fetch otimizado com timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000);
+
+        fetch('/data/feriados.json', {
+          cache: 'force-cache',
+          signal: controller.signal
+        })
+        .then(response => {
+          clearTimeout(timeoutId);
+          return response.json();
+        })
+        .then(data => {
+          const feriadoHoje = data.feriados.find(f => f.data === hoje);
+          const hasHoliday = !!feriadoHoje;
+          
+          // Cache no localStorage para evitar requisições futuras
+          try {
+            localStorage.setItem('getnexo-holiday-cache', JSON.stringify({
+              date: hoje,
+              hasHoliday: hasHoliday,
+              timestamp: Date.now()
+            }));
+          } catch (e) {
+            // Ignora erros de localStorage
+          }
+          
+          if (hasHoliday) {
+            document.body.classList.add('feriado-ativo');
+          }
+        })
+        .catch(() => {
+          // Silenciosamente falha - feriados não são críticos
+        });
+      };
+
+      // Executa apenas quando o sistema está ocioso
+      if ('requestIdleCallback' in window) {
+        window.requestIdleCallback(checkHolidays, { timeout: 2000 });
+      } else {
+        // Fallback não bloqueante
+        setTimeout(checkHolidays, 3000);
+      }
+    })();
   </script>
 
   <script nonce={Astro.locals.nonce} defer>
@@ -2697,13 +2664,13 @@ const clientId = Astro.locals.clientId || 'default';
     /* Mobile adjustments */
     @media (max-width: 768px) {
       .dock-left {
-        gap: 15px;
-        left: 15px;
-        bottom: 20px;
+        gap: 20px;
+        left: 20px;
+        bottom: 140px; /* Further increased to safely clear cookie banner height (~130px) */
       }
       #tour-btn, #acc-trigger {
-        width: 45px !important;
-        height: 45px !important;
+        width: 48px !important;
+        height: 48px !important;
       }
     }
     .dock-right {
@@ -2724,7 +2691,11 @@ const clientId = Astro.locals.clientId || 'default';
     }
 
     @media (max-width: 768px) {
-        .dock-right { bottom: 10px; right: 10px; gap: 8px; }
+        .dock-right { 
+          bottom: 140px; /* Further increased to safely clear cookie banner height (~130px) */
+          right: 20px; 
+          gap: 12px; 
+        }
     }
 
     /* Otimização de carregamento de imagens - Lazy Loading */
@@ -2813,5 +2784,6 @@ const clientId = Astro.locals.clientId || 'default';
       }
     });
   </script>
+  </div> <!-- end of #layout-wrapper -->
 </body>
 </html>

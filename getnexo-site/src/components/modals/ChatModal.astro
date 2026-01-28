@@ -9,7 +9,7 @@
         <h3 class="text-2xl text-cyber-gold font-jetbrains">Demo GetNexo – IA Multimídia</h3>
         <p class="text-gray-300">IA responde e fala sozinha</p>
       </div>
-      <button onclick="fecharModalChat()" class="text-neon-blue text-3xl hover:text-white">×</button>
+      <button id="close-chat-modal-btn" class="text-neon-blue text-3xl hover:text-white">×</button>
     </div>
 
     <div class="chat-container flex-1 overflow-hidden flex flex-col">
@@ -28,19 +28,69 @@
             </ul>
             <p class="text-cyber-gold text-xs mt-2 font-medium">💡 Teste comigo! Experimente:</p>
             <div class="flex flex-wrap gap-1 mt-2">
-              <button onclick="preencherMensagemModal('Quero um tênis branco')" class="bg-matrix-green/20 hover:bg-matrix-green/30 text-matrix-green text-xs px-2 py-1 rounded border border-matrix-green/30">Quero um tênis branco</button>
-              <button onclick="preencherMensagemModal('Tem algum carro preto?')" class="bg-cyber-gold/20 hover:bg-cyber-gold/30 text-cyber-gold text-xs px-2 py-1 rounded border border-cyber-gold/30">Tem carro preto?</button>
-              <button onclick="preencherMensagemModal('Procurando um PC gamer')" class="bg-neon-blue/20 hover:bg-neon-blue/30 text-neon-blue text-xs px-2 py-1 rounded border border-neon-blue/30">PC gamer barato</button>
+              <button class="preset-msg-btn bg-matrix-green/20 hover:bg-matrix-green/30 text-matrix-green text-xs px-2 py-1 rounded border border-matrix-green/30" data-msg="Quero um tênis branco">Quero um tênis branco</button>
+              <button class="preset-msg-btn bg-cyber-gold/20 hover:bg-cyber-gold/30 text-cyber-gold text-xs px-2 py-1 rounded border border-cyber-gold/30" data-msg="Tem algum carro preto?">Tem carro preto?</button>
+              <button class="preset-msg-btn bg-neon-blue/20 hover:bg-neon-blue/30 text-neon-blue text-xs px-2 py-1 rounded border border-neon-blue/30" data-msg="Procurando um PC gamer">PC gamer barato</button>
             </div>
           </div>
         </div>
       </div>
 
       <div class="input-bar flex gap-2">
-        <input id="chat-input-modal" type="text" placeholder="Pergunte qualquer coisa..." class="flex-1 bg-void-black border border-neon-blue text-white rounded p-2" onkeydown="handleKeyPressModal(event)" />
-        <button onclick="sendMessageModal()" class="bg-cyber-gold text-black px-4 py-2 rounded">Enviar</button>
-        <button onclick="iniciarVozModal()" class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded">🎤 Voz</button>
+        <input id="chat-input-modal" type="text" placeholder="Pergunte qualquer coisa..." class="flex-1 bg-void-black border border-neon-blue text-white rounded p-2" />
+        <button id="send-msg-modal-btn" class="bg-cyber-gold text-black px-4 py-2 rounded">Enviar</button>
+        <button id="start-voice-modal-btn" class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded">🎤 Voz</button>
       </div>
     </div>
   </div>
 </div>
+
+<script nonce={Astro.locals.nonce}>
+  document.addEventListener('DOMContentLoaded', () => {
+    const closeBtn = document.getElementById('close-chat-modal-btn');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        if (typeof window.fecharModalChat === 'function') {
+          window.fecharModalChat();
+        }
+      });
+    }
+
+    const sendBtn = document.getElementById('send-msg-modal-btn');
+    if (sendBtn) {
+      sendBtn.addEventListener('click', () => {
+        if (typeof window.sendMessageModal === 'function') {
+          window.sendMessageModal();
+        }
+      });
+    }
+
+    const voiceBtn = document.getElementById('start-voice-modal-btn');
+    if (voiceBtn) {
+      voiceBtn.addEventListener('click', () => {
+        if (typeof window.iniciarVozModal === 'function') {
+          window.iniciarVozModal();
+        }
+      });
+    }
+
+    const chatInput = document.getElementById('chat-input-modal');
+    if (chatInput) {
+      chatInput.addEventListener('keydown', (e) => {
+        if (typeof window.handleKeyPressModal === 'function') {
+          window.handleKeyPressModal(e);
+        }
+      });
+    }
+
+    const presetBtns = document.querySelectorAll('.preset-msg-btn');
+    presetBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const msg = btn.getAttribute('data-msg');
+        if (msg && typeof window.preencherMensagemModal === 'function') {
+          window.preencherMensagemModal(msg);
+        }
+      });
+    });
+  });
+</script>

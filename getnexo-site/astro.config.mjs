@@ -57,9 +57,9 @@ export default defineConfig({
             },
         }),
     ],
-    compressHTML: false,
+    compressHTML: true,
     build: {
-        inlineStylesheets: 'auto', // Changed from 'always' to 'auto' to reduce head size and fix charset position
+        inlineStylesheets: 'always', // Inlining de CSS crítico para evitar bloqueio de renderização
         // Otimização: gerar chunks CSS menores para melhor paralelização
         chunkSizeWarningLimit: 200, // Reduzido de 500 para 200 KB
     },

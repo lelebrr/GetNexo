@@ -41,7 +41,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
     ].join('; ');
 
     response.headers.set('Content-Security-Policy', csp);
-    response.headers.set('X-Nonce', nonce); // Debug help
+    response.headers.set('X-Nonce', nonce);
+
+    // 🛡️ Enhanced Security Headers for PageSpeed & Security
+    response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+    response.headers.set('Cross-Origin-Opener-Policy', 'same-origin');
+    response.headers.set('Cross-Origin-Resource-Policy', 'same-origin');
+    response.headers.set('X-Content-Type-Options', 'nosniff');
+    response.headers.set('X-Frame-Options', 'SAMEORIGIN');
+    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
     return response;
 });
