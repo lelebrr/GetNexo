@@ -272,7 +272,7 @@ schemas.push(breadcrumbSchema);
 
 <!-- Schema.org JSON-LD completo -->
 {schemas.map(schema => (
-  <script type="application/ld+json" set:html={JSON.stringify(schema)}></script>
+  <script nonce={Astro.locals.nonce} type="application/ld+json" set:html={JSON.stringify(schema)}></script>
 ))}
 
 <!-- Preload crítico para Core Web Vitals A+ -->

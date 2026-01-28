@@ -242,7 +242,7 @@ const keywords = "contacto getnexo, soporte whatsapp api, derechos lgpd, dpo get
   @media (max-width: 768px) { .contact-grid { grid-template-columns: 1fr; } .form-row { grid-template-columns: 1fr; } .lgpd-form-wrap { padding: 2rem; } .hours-grid { grid-template-columns: 1fr; } }
 </style>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
   // Form handling for LGPD/GDPR requests
   document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('lgpd-request-form');

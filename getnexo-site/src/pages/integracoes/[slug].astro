@@ -55,7 +55,7 @@ const keywords = `integração ${name} whatsapp, api whatsapp ${name}, bot whats
   <button type="button" onclick="toggleCognitiveSupport()" aria-label="Ativar suporte cognitivo com linguagem simples" style="margin: 0 0.25rem; padding: 0.25rem 0.5rem; border: 1px solid #000; background: #fff;">🧠 Cognição</button>
 </div>
 
-<script>
+<script nonce={Astro.locals.nonce}>
   function toggleHighContrast() {
     document.body.classList.toggle("high-contrast");
     localStorage.setItem("highContrast", document.body.classList.contains("high-contrast").toString());
@@ -496,7 +496,7 @@ const keywords = `integração ${name} whatsapp, api whatsapp ${name}, bot whats
   <p>Recursos disponíveis: Alto contraste, fonte grande, navegação por teclado, screen readers.</p>
   <button onclick="document.getElementById('accessibility-statement').classList.add('sr-only')">Fechar</button>
 </div>
-  <script type="application/ld+json" set:html={JSON.stringify({
+  <script nonce={Astro.locals.nonce} type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": `Integração ${name} com WhatsApp GetNexo`,

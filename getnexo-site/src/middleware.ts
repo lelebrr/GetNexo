@@ -23,20 +23,21 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
     const response = await next();
 
-    // Configurar CSP dinâmico - Modo Permissivo para Debug
-    // Removido strict-dynamic para permitir whitelists normais
+    // Configurar CSP dinâmico - Strict Mode com Nonce
+    // 'strict-dynamic' permite scripts com nonce correto carregar dependências
     const csp = [
-        `default-src 'self' *`,
-        `script-src 'self' 'unsafe-inline' 'unsafe-eval' * blob: data:`,
-        `style-src 'self' 'unsafe-inline' *`,
-        `img-src 'self' data: blob: *`,
-        `font-src 'self' data: *`,
-        `connect-src 'self' *`,
-        `frame-src 'self' *`,
+        `default-src 'self' https: data: blob:`,
+        `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline' 'unsafe-eval' https: http:`,
+        `style-src 'self' 'unsafe-inline' https: http:`,
+        `img-src 'self' data: blob: https: http:`,
+        `font-src 'self' data: https: http:`,
+        `connect-src 'self' https: http: ws: wss:`,
+        `frame-src 'self' https: http:`,
         `object-src 'none'`,
         `base-uri 'self'`,
         `form-action 'self'`,
-        `frame-ancestors 'self'`
+        `frame-ancestors 'self'`,
+        `require-trusted-types-for 'script'`
     ].join('; ');
 
     response.headers.set('Content-Security-Policy', csp);

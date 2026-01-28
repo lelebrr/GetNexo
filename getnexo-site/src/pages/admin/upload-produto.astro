@@ -126,7 +126,7 @@ const pageTitle = "Gerenciar Produtos 360°/3D | GetNexo Admin";
         </main>
     </div>
 
-    <script is:inline>
+    <script nonce={Astro.locals.nonce} is:inline>
         const form = document.getElementById('uploadForm');
         const progressContainer = document.getElementById('progressContainer');
         const progressBar = document.getElementById('progressBar');

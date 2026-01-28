@@ -114,7 +114,7 @@ const fallbackSrcset = `
   }
 </style>
 
-<script>
+<script nonce={Astro.locals.nonce}>
   // Lazy loading avançado com Intersection Observer
   class OptimizedImageLoader {
     images: Map<any, any>;

@@ -140,7 +140,7 @@ if (slug && lang) {
     </div>
 </AdminLayout>
 
-<script>
+<script nonce={Astro.locals.nonce}>
     // Função para gerar slug a partir do título
     function generateSlug(title) {
         return title

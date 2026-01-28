@@ -33,7 +33,7 @@ const description = "Teste tudo: síntese de voz brasileira, geração de imagen
   .reveal.active { opacity: 1; transform: translateY(0); }
 </style>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
   document.addEventListener('DOMContentLoaded', () => {
     const reveals = document.querySelectorAll('.reveal');
     reveals.forEach(el => el.classList.add('active'));

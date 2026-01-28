@@ -4,7 +4,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
 
 <ClientLayout title="Dashboard - GetNexo Pro">
     <!-- Chart.js -->
-    <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script nonce={Astro.locals.nonce} is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         .welcome-header {
@@ -562,7 +562,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
 
     </div>
 
-    <script is:inline>
+    <script nonce={Astro.locals.nonce} is:inline>
         const API_URL = '/api';
 
         // Load dashboard data

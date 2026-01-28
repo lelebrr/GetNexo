@@ -97,7 +97,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     </div>
   </div>
 
-  <script>
+  <script nonce={Astro.locals.nonce}>
     // API Configuration
     const API_BASE_URL = 'http://localhost:3006/api/tickets';
     

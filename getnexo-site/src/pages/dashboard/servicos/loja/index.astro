@@ -334,7 +334,7 @@ import ClientLayout from '../../../../layouts/ClientLayout.astro';
 
     </div>
 
-    <script is:inline>
+    <script nonce={Astro.locals.nonce} is:inline>
         let allServices = [];
         let currentCategory = 'all';
 

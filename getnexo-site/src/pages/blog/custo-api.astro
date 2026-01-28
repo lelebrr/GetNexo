@@ -423,7 +423,7 @@ const schema = {
     </div>
   </article>
 
-  <script is:inline>
+  <script nonce={Astro.locals.nonce} is:inline>
     // Simple interactive logic
     const inputMsgs = document.getElementById('messagesPerMonth');
     const inputTicket = document.getElementById('averageTicket');
@@ -513,7 +513,7 @@ const schema = {
   .table-of-contents a:hover { text-decoration: underline; }
 </style>
 
-<script>
+<script nonce={Astro.locals.nonce}>
   // Interactive Calculator Logic
   function updateCalculator() {
     const messages = parseInt((document.getElementById('messagesPerMonth') as HTMLInputElement).value) || 10000;

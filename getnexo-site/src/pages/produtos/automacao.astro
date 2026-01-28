@@ -292,11 +292,11 @@ const comparisonData = [
 <Layout title={title} description={description} keywords={keywords}>
 
   <!-- SEO Schemas -->
-  <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
-  <script type="application/ld+json" set:html={JSON.stringify(softwareSchema)} />
-  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
-  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
-  <script type="application/ld+json" set:html={JSON.stringify(productSchema)} />
+  <script nonce={Astro.locals.nonce} type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+  <script nonce={Astro.locals.nonce} type="application/ld+json" set:html={JSON.stringify(softwareSchema)} />
+  <script nonce={Astro.locals.nonce} type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  <script nonce={Astro.locals.nonce} type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script nonce={Astro.locals.nonce} type="application/ld+json" set:html={JSON.stringify(productSchema)} />
 
   <!-- Hero Section -->
   <section class="prod-hero relative overflow-hidden text-center" aria-label="Automação WhatsApp com IA Generativa">

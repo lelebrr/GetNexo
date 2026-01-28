@@ -186,7 +186,7 @@ import ResellerLayout from '../../layouts/ResellerLayout.astro';
     </div>
 
     <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script nonce={Astro.locals.nonce} src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         .stats-card {
@@ -505,7 +505,7 @@ import ResellerLayout from '../../layouts/ResellerLayout.astro';
         }
     </style>
 
-    <script is:inline>
+    <script nonce={Astro.locals.nonce} is:inline>
         const API_URL = '';
 
         // Enhanced data loading

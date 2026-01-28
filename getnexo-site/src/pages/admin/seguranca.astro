@@ -857,7 +857,7 @@ const description = "Dashboard de segurança em tempo real com detecção de inv
   }
 </style>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
   // Particles
   const canvas = document.getElementById('particles-canvas');
   const ctx = canvas.getContext('2d');

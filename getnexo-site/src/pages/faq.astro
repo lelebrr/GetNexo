@@ -666,7 +666,7 @@ const breadcrumbs = [
   }
 </style>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
   // FAQ Search and Filter Functionality
   function buscarFaq() {
     const searchTerm = document.getElementById('faq-search').value.toLowerCase();

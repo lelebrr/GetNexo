@@ -73,7 +73,9 @@ const testimonials = [
           ))}
         </div> </div> <button class="arrow-btn next" id="carousel-next" aria-label="Próximo"> <svg viewBox="0 0 24 24" width="32" height="32" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"> <polyline points="9 18 15 12 9 6"></polyline> </svg> </button> </div> <!-- Dots --> <div class="slider-dots" id="slider-dots">
           {testimonials.map((testimonial, index) => (
-            <button class={`dot ${index === 0 ? 'active' : ''}`} data-index={index} aria-label={`Ver depoimento de ${testimonial.name}`} aria-controls="slider-track" aria-current={index === 0 ? 'true' : 'false'} title={`Ver depoimento de ${testimonial.name}`}></button>
+            <button class={`dot ${index === 0 ? 'active' : ''}`} data-index={index} aria-label={`Ver depoimento de ${testimonial.name}`} aria-controls="slider-track" aria-current={index === 0 ? 'true' : 'false'} title={`Ver depoimento de ${testimonial.name}`}>
+              <span class="sr-only">Ver depoimento de {testimonial.name}</span>
+            </button>
           ))}
         </div> <div class="cta-bottom" style="text-align: center; margin-top: 3rem;">
         <a href="/depoimentos" class="cta-button">
@@ -82,7 +84,7 @@ const testimonials = [
         </a>
       </div> </div> </section>
 
-<script>
+<script nonce={Astro.locals.nonce}>
   (function() {
     const initSlider = () => {
       const track = document.getElementById('slider-track');

@@ -672,7 +672,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
         </div>
     </div>
 
-    <script is:inline>
+    <script nonce={Astro.locals.nonce} is:inline>
         const API_URL = '/api';
         const API_CONFIG_URL = API_URL + '/config';
         let authToken = localStorage.getItem('auth_token');

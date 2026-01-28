@@ -86,7 +86,7 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
     </div>
   </div>
 
-  <script is:inline>
+  <script nonce={Astro.locals.nonce} is:inline>
     const API_URL = window.location.hostname === 'localhost' 
       ? 'http://localhost:8080' 
       : 'https://api.getnexo.com.br';

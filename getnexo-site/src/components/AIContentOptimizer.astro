@@ -71,7 +71,7 @@ const { } = Astro.props;
 </div>
 
 <!-- AI Content Enhancement Scripts -->
-<script>
+<script nonce={Astro.locals.nonce}>
   // AI Content Optimization Engine
   class AIContentOptimizer {
     constructor(content, keywords = []) {

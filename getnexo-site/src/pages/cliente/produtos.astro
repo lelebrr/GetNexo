@@ -142,7 +142,7 @@ import SEO from '../../components/SEO.astro';
     </div>
 
     <!-- Scripts -->
-    <script>
+    <script nonce={Astro.locals.nonce}>
         // Gerenciamento de produtos
         class ProdutosManager {
             constructor() {

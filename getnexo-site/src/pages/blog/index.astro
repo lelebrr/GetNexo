@@ -478,7 +478,7 @@ const posts = [
       </div>
     </main>
   </div>
-  <script is:inline>
+  <script nonce={Astro.locals.nonce} is:inline>
     // Blog Search Filtering Logic
     const urlParams = new URLSearchParams(window.location.search);
     const searchQuery = urlParams.get('q')?.toLowerCase();
@@ -533,8 +533,8 @@ const posts = [
     .empty-search p { color: #94a3b8; margin-bottom: 2.5rem; }
   </style>
 
-  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
-  <script type="application/ld+json" is:inline set:html={JSON.stringify(speakableSchema)}></script>
+  <script nonce={Astro.locals.nonce} type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+  <script nonce={Astro.locals.nonce} type="application/ld+json" is:inline set:html={JSON.stringify(speakableSchema)}></script>
 </Layout>
 
 <style>

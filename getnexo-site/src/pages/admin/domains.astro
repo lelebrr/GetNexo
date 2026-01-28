@@ -110,7 +110,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     </div>
 </AdminLayout>
 
-<script>
+<script nonce={Astro.locals.nonce}>
     // Interatividade para os Switches (Toggles)
     document.querySelectorAll('.switch').forEach(toggle => {
         toggle.addEventListener('click', () => {

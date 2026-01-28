@@ -528,9 +528,9 @@ import ClientLayout from '../layouts/ClientLayout.astro';
     </div>
 
     <!-- Fill Demo Script -->
-    <script is:inline src="/fillDemo.js"></script>
+    <script nonce={Astro.locals.nonce} is:inline src="/fillDemo.js"></script>
 
-    <script>
+    <script nonce={Astro.locals.nonce}>
         const API_URL = '/api';
 
         async function login(email, password) {

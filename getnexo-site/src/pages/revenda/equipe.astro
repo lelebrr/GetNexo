@@ -80,7 +80,7 @@ import ResellerLayout from '../../layouts/ResellerLayout.astro';
     .text-red { color: #ff003c; }
 </style>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
     const API_URL = '';
 
     async function loadMembers() {

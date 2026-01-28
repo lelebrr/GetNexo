@@ -219,7 +219,7 @@ import Layout from '../../layouts/Layout.astro';
     </div>
   </div>
 
-  <script is:inline>
+  <script nonce={Astro.locals.nonce} is:inline>
     // Simplified logic for brevity in this translation
     let currentUser = null;
     let selectedTheme = 'neon';

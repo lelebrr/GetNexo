@@ -681,7 +681,7 @@ const categories = [...new Set(integrations.map(i => i.category))];
   }
 </style>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
   // Tab filtering
   const tabs = document.querySelectorAll('.tab');
   const cards = document.querySelectorAll('.integration-card');

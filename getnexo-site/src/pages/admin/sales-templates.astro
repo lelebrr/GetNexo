@@ -20,7 +20,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         </div>
     </div>
 
-    <script>
+    <script nonce={Astro.locals.nonce}>
         import React from 'react';
         import { createRoot } from 'react-dom/client';
         import SalesTemplatesManagement from '../../components/sales/SalesTemplatesManagement.jsx';

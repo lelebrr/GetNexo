@@ -67,7 +67,7 @@ const { feriadoHoje, lang, idiomaCurto, nonce } = Astro.props;
                   </div>
                    <div class="chat-input-sim">
                       <div class="sim-mic">🎤</div>
-                      <span class="text-xs md:text-sm text-slate-100 font-medium">Digite aqui: 'Quero um tênis preto 42' ou 'Mostrar catálogo'</span>
+                      <span class="text-xs md:text-sm text-white font-bold">Digite aqui: 'Quero um tênis preto 42' ou 'Mostrar catálogo'</span>
                       <div class="sim-audio-icon">🎧</div>
                       <div class="sim-send">🚀</div>
                   </div>
@@ -83,7 +83,7 @@ const { feriadoHoje, lang, idiomaCurto, nonce } = Astro.props;
   </div>
 </section>
 
-<script>
+<script nonce={Astro.locals.nonce}>
 // Contador regressivo de 12 minutos que reinicia
 function startCountdown() {
   let minutes = 11;

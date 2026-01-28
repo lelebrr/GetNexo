@@ -82,7 +82,7 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
     @keyframes pop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
   </style>
 
-  <script is:inline>
+  <script nonce={Astro.locals.nonce} is:inline>
       const msgBox = document.getElementById('sim-messages');
       const inputBox = document.getElementById('sim-input-box');
       const sendBtn = document.getElementById('send-sim');

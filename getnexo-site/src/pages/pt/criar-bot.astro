@@ -1,5 +1,5 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from '../../layouts/Layout.astro';
 ---
 <Layout title="Criar Plugin GetNexo – Instale em qualquer site">
   <!-- intl-tel-input CSS -->
@@ -220,7 +220,7 @@ import Layout from '../layouts/Layout.astro';
   </div>
 
   <!-- Removido intl-tel-input que estava causando problemas -->
-  <script is:inline>
+  <script nonce={Astro.locals.nonce} is:inline>
     // State Management
     let currentUser = null;
     let registrationData = {};
@@ -412,7 +412,7 @@ import Layout from '../layouts/Layout.astro';
         ? 'http://localhost:8080/widget.js'
         : '/widget.js';
       
-      const code = `<script src="${scriptUrl}" data-bot="${botId}" data-theme="${selectedTheme}"><\/script>`;
+      const code = `<script nonce={Astro.locals.nonce} src="${scriptUrl}" data-bot="${botId}" data-theme="${selectedTheme}"><\/script>`;
       document.getElementById('widget-code').textContent = code;
       goToStep(3);
     }

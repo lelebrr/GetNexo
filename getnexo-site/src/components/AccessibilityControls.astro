@@ -472,7 +472,7 @@ const { showPanel = true } = Astro.props;
   }
 </style>
 
-<script>
+<script nonce={Astro.locals.nonce}>
   document.addEventListener('DOMContentLoaded', () => {
     // Elements
     const trigger = document.getElementById('acc-trigger');

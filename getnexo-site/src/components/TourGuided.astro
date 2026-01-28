@@ -17,7 +17,7 @@ const {
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@13.0.0/dist/css/shepherd.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@13.0.0/dist/css/shepherd.css"></noscript>
 
-<script defer type="module">
+<script nonce={Astro.locals.nonce} defer type="module">
   // Lazy load Shepherd.js only when needed
   let Shepherd = null;
   let tourInstance = null;

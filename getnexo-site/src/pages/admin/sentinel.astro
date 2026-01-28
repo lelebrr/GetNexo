@@ -79,8 +79,8 @@ const dados = {
     <h2 class="text-2xl text-neon-blue mb-4">Rank Tracker – 300 Keywords</h2>
     <div class="bg-gray-900 border border-cyan-500 rounded p-6">
       <canvas id="rankChart"></canvas>
-      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-      <script define:vars={{ rankData: [dados.rankMedio.pt, dados.rankMedio.es, dados.rankMedio.fr, dados.rankMedio.en] }}>
+      <script nonce={Astro.locals.nonce} src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script nonce={Astro.locals.nonce} define:vars={{ rankData: [dados.rankMedio.pt, dados.rankMedio.es, dados.rankMedio.fr, dados.rankMedio.en] }}>
         new Chart(document.getElementById('rankChart'), {
           type: 'radar',
           data: {

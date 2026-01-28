@@ -52,7 +52,7 @@ import ResellerLayout from '../../layouts/ResellerLayout.astro';
         </div>
     </main>
 
-    <script is:inline>
+    <script nonce={Astro.locals.nonce} is:inline>
         const API_URL = '';
         
         document.getElementById('btn-criar').addEventListener('click', async () => {

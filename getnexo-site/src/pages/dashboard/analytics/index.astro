@@ -77,7 +77,7 @@ import HeatmapChart from '../../../components/analytics/HeatmapChart.jsx';
         </div>
     </div>
 
-    <script>
+    <script nonce={Astro.locals.nonce}>
         // Script para controlar os controles de período
         document.getElementById('time-range-select').addEventListener('change', (e) => {
             // Disparar evento para atualizar o dashboard

@@ -165,7 +165,7 @@ const categories = [...new Set(integrations.map(i => i.category))];
   @media (max-width: 900px) { .integrations-hero h1 { font-size: 2.5rem; } .benefits-grid { grid-template-columns: 1fr; } }
 </style>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
   // Tab filtering
   const tabs = document.querySelectorAll('.tab');
   const cards = document.querySelectorAll('.integration-card');

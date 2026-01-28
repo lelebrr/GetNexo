@@ -78,8 +78,8 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
 
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script is:inline>
+  <script nonce={Astro.locals.nonce} src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script nonce={Astro.locals.nonce} is:inline>
     const ctx = document.getElementById('funnelChart').getContext('2d');
     new Chart(ctx, {
         type: 'bar',

@@ -106,7 +106,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     </div>
   </div>
 
-  <script>
+  <script nonce={Astro.locals.nonce}>
     let allTickets = [];
     let filteredTickets = [];
 

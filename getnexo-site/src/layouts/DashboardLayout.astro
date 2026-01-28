@@ -107,7 +107,7 @@ const nonce = Astro.locals.nonce;
 <body class="antialiased">
     <div id="neural-bg" class="neural-canvas" style="display: none;"></div>
 
-    <script is:inline>
+    <script nonce={Astro.locals.nonce} is:inline>
         (function() {
             const bgType = localStorage.getItem('getnexo-bg-type') || 'blobs';
             const neuralCanvas = document.getElementById('neural-bg');
@@ -222,7 +222,7 @@ const nonce = Astro.locals.nonce;
         #notif-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
     </style>
 
-    <script is:inline>
+    <script nonce={Astro.locals.nonce} is:inline>
         document.addEventListener('DOMContentLoaded', () => {
             // User Menu Toggle
             const userTrigger = document.getElementById('user-menu-trigger');

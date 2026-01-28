@@ -53,7 +53,7 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
         </div>
     </div>
 
-    <script is:inline>
+    <script nonce={Astro.locals.nonce} is:inline>
         const API = '/api';
         const grid = document.getElementById('instances-grid');
 

@@ -219,9 +219,9 @@ const trustBadges = [
 <Layout title={title} description={description} keywords={keywords}>
 
   <!-- SEO Schemas -->
-  <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
-  <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
-  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script nonce={Astro.locals.nonce} type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+  <script nonce={Astro.locals.nonce} type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+  <script nonce={Astro.locals.nonce} type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
 
   <!-- Hero Section -->
   <section class="cases-hero" aria-label="Casos de Uso GetNexo">
@@ -409,7 +409,7 @@ const trustBadges = [
 
 </Layout>
 
-<script>
+<script nonce={Astro.locals.nonce}>
   // ROI Calculator
   function calculateROI() {
     const leads = parseFloat(document.getElementById('leads').value) || 0;

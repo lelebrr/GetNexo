@@ -154,7 +154,7 @@ import Layout from '../../layouts/Layout.astro';
 
 </Layout>
 
-<script>
+<script nonce={Astro.locals.nonce}>
   const API_URL = window.location.hostname === 'localhost'
       ? 'http://localhost:8080'
       : 'https://api.getnexo.com.br';
@@ -684,4 +684,4 @@ import Layout from '../../layouts/Layout.astro';
   }
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script nonce={Astro.locals.nonce} src="https://cdn.jsdelivr.net/npm/chart.js"></script>

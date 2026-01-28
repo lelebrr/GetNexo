@@ -4,7 +4,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
 
 <ClientLayout title="Machine Learning & IA - Admin">
     <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script nonce={Astro.locals.nonce} src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         .ml-container {
@@ -595,7 +595,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
         </div>
     </div>
 
-    <script is:inline>
+    <script nonce={Astro.locals.nonce} is:inline>
         const API_URL = '';
 
         // Load ML/AI data

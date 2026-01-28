@@ -140,7 +140,7 @@ if (user && !error) {
     }
 </style>
 
-<script>
+<script nonce={Astro.locals.nonce}>
     // Generate QR Code for demo email
     import QRCode from 'qrcode';
 

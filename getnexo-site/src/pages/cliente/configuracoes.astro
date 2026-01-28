@@ -900,7 +900,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
 
     </div>
 
-    <script>
+    <script nonce={Astro.locals.nonce}>
         // Função para atualizar o preview do botão do chat
         function updateChatPreview() {
             const previewButton = document.getElementById('chat-preview-button');
@@ -1233,7 +1233,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
         });
     </script>
 
-<script>
+<script nonce={Astro.locals.nonce}>
     // JavaScript para alternar entre as abas
     document.addEventListener('DOMContentLoaded', function() {
         const tabButtons = document.querySelectorAll('.tab-button');

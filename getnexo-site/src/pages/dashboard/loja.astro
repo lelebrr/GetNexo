@@ -31,7 +31,7 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
         <p style="color:#94a3b8;">Buscando produtos no Bling/Tiny</p>
     </div>
 
-    <script is:inline>
+    <script nonce={Astro.locals.nonce} is:inline>
         const products = [
             { id: 1, name: 'Consultoria Premium', price: 997.00, stock: 999, image: 'https://ui-avatars.com/api/?name=CP&background=00d4ff&color=000&size=200' },
             { id: 2, name: 'E-book: Vendas com IA', price: 47.90, stock: 1540, image: 'https://ui-avatars.com/api/?name=EB&background=10b981&color=000&size=200' },

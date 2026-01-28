@@ -71,7 +71,7 @@ import Layout from '../layouts/Layout.astro';
 </style>
 
 <!-- Speakable pro voice search -->
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
   document.querySelectorAll('[role="article"]').forEach(el => {
     el.addEventListener('focus', () => {
       // Anuncia nome do badge pra leitor de tela

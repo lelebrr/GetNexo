@@ -81,7 +81,7 @@ const keywords = `o que é ${item.slug}, definicao ${item.slug}, significado ${i
   </section>
 
   <!-- Schema.org Definition -->
-  <script type="application/ld+json" is:inline set:html={JSON.stringify({
+  <script nonce={Astro.locals.nonce} type="application/ld+json" is:inline set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@type": "DefinedTerm",
     "name": item.term,

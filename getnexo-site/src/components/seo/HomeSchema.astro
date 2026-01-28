@@ -201,4 +201,4 @@ const homeSchema = {
 };
 ---
 
-<script type="application/ld+json" is:inline set:html={JSON.stringify(homeSchema)}></script>
+<script nonce={Astro.locals.nonce} type="application/ld+json" is:inline set:html={JSON.stringify(homeSchema)}></script>

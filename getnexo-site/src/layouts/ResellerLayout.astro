@@ -388,7 +388,7 @@ const { title } = Astro.props;
 		</main>
 
 		<!-- Scripts -->
-		<script>
+		<script nonce={Astro.locals.nonce}>
 			function toggleSidebar() {
 				const sidebar = document.getElementById('sidebar');
 				sidebar.classList.toggle('open');

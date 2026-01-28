@@ -243,9 +243,6 @@
         const styleSheet = document.createElement("style");
         styleSheet.innerText = dynamicStyles;
         document.head.appendChild(styleSheet);
-        const styleSheet = document.createElement("style");
-        styleSheet.innerText = styles;
-        document.head.appendChild(styleSheet);
 
         const root = document.createElement('div');
         root.id = 'getnexo-root';
@@ -588,40 +585,6 @@
             if (el) el.remove();
         }
 
-        function showGameToast(message) {
-            const toast = document.createElement('div');
-            toast.textContent = message;
-            toast.style.cssText = `
-                position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-                background: ${primaryColor}; color: white; padding: 15px 25px;
-                border-radius: 10px; font-weight: bold; z-index: 2147483649;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            `;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
-
-        function appendMessage(text, type) {
-            const div = document.createElement('div');
-            div.className = `gn-msg ${type}`;
-            div.innerHTML = text;
-            chatBody.appendChild(div);
-            chatBody.scrollTop = chatBody.scrollHeight;
-        }
-
-        function appendLoading() {
-            const id = 'loading-' + Date.now();
-            const div = document.createElement('div');
-            div.id = id; div.className = 'gn-msg bot gn-loading';
-            div.innerHTML = '<span></span><span></span><span></span>';
-            chatBody.appendChild(div);
-            return id;
-        }
-
-        function removeLoading(id) {
-            const el = document.getElementById(id);
-            if (el) el.remove();
-        }
     }
 
     if (document.readyState === 'complete') { init(); } else { window.addEventListener('load', init); }

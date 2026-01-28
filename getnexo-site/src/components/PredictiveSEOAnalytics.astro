@@ -75,7 +75,7 @@ const {
   </div>
 </div>
 
-<script define:vars={{ enableRealTime }}>
+<script nonce={Astro.locals.nonce} define:vars={{ enableRealTime }}>
   // Advanced Predictive SEO Analytics Engine
   class PredictiveSEOAnalytics {
     historicalData;

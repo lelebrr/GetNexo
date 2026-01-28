@@ -414,7 +414,7 @@ export default function DemoChatComTudozinho() {
                         onChange={e => setInput(e.target.value)}
                         onKeyDown={e => e.key === 'Enter' && responder()}
                         placeholder="Digite aqui: 'Quero um tênis preto 42' ou 'Mostrar catálogo'"
-                        className="input-chat flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 transition"
+                        className="input-chat flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-cyan-500 transition"
                     />
                     <button
                         onClick={responder}

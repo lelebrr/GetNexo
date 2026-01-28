@@ -69,7 +69,7 @@ const nonce = Astro.locals.nonce;
   <ChatModal />
   <InteractiveModal />
   <script defer nonce={nonce} src="/custom/js/hero-animations.js"></script>
-  <script is:inline>
+  <script nonce={Astro.locals.nonce} is:inline>
     // Carregamento dinâmico de scripts de demonstração para otimizar performance
     // Scripts são carregados apenas quando o usuário interage com a página
     (function() {

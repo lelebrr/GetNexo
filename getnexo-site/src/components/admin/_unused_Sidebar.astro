@@ -412,7 +412,7 @@ const colorClasses = {
   </div>
 </aside>
 
-<script>
+<script nonce={Astro.locals.nonce}>
   // JavaScript para controlar os drop-downs
   document.addEventListener('DOMContentLoaded', () => {
     const menuItems = document.querySelectorAll('[data-has-sub="true"]');

@@ -98,12 +98,12 @@ const homeSchema = {
   )}
 
   {feriadoHoje && (
-    <script is:inline define:vars={{ efeito: feriadoHoje.efeito }}>
+    <script nonce={Astro.locals.nonce} is:inline define:vars={{ efeito: feriadoHoje.efeito }}>
       document.body.classList.add(efeito);
     </script>
   )}
 
-  <script type="application/ld+json" is:inline set:html={JSON.stringify(homeSchema)}></script>
+  <script nonce={Astro.locals.nonce} type="application/ld+json" is:inline set:html={JSON.stringify(homeSchema)}></script>
 
   <section class="hero-split">
     <div class="hero-content">
@@ -359,8 +359,8 @@ const homeSchema = {
     </div>
   </section>
 
-<script is:inline src="/custom/js/hero-animations.js"></script>
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline src="/custom/js/hero-animations.js"></script>
+<script nonce={Astro.locals.nonce} is:inline>
   // Carregamento dinâmico de scripts de demonstração para otimizar performance
   // Scripts são carregados apenas quando o usuário interage com a página
   (function() {

@@ -42,7 +42,7 @@ const description = "Experimente o poder da Ara em nosso ambiente de testes. Pe√
   </section>
 </Layout>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
     const input = document.getElementById('shell-input');
     const output = document.getElementById('shell-output');
 

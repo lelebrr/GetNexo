@@ -52,7 +52,7 @@ import PanelLayout from '../../layouts/PanelLayout.astro';
     .modal-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem; }
 </style>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
     const API_URL = '';
 
     async function loadDomains() {

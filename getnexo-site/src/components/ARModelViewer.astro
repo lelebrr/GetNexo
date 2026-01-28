@@ -25,7 +25,7 @@ const finalUsdzUrl = usdzUrl || `/modelos/${productId}.usdz`;
   Ver em AR / Realidade Aumentada
 </button>
 
-<script define:vars={{ productId }}>
+<script nonce={Astro.locals.nonce} define:vars={{ productId }}>
   // Variáveis globais para controle de trial e permissões
   window.trialMode = true; // Em trial por padrão
   window.nexoChave = ['ar', '360']; // Chaves disponíveis no trial

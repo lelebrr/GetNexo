@@ -7,7 +7,7 @@ const keywords = "chatbot ia 24h, gpt4 turbo whatsapp, chatbot conversacional in
 
 <Layout title={title} description={description} keywords={keywords}>
   <!-- Schema.org Rich Snippets para Chatbot IA -->
-  <script type="application/ld+json" >
+  <script nonce={Astro.locals.nonce} type="application/ld+json" >
     {
       "@context": "https://schema.org",
       "@type": "Product",

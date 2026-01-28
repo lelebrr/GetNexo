@@ -189,7 +189,7 @@ import ClientLayout from '../../../../layouts/ClientLayout.astro';
 
     </div>
 
-    <script is:inline>
+    <script nonce={Astro.locals.nonce} is:inline>
         async function loadServiceHistory() {
             try {
                 const token = localStorage.getItem('token');

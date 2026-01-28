@@ -52,7 +52,7 @@ import ResellerLayout from '../../layouts/ResellerLayout.astro';
     .status-trial { color: #ffd700; }
 </style>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
     const API_URL = '';
     let allClients = [];
 

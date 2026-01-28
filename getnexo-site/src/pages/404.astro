@@ -164,7 +164,7 @@ import Layout from '../layouts/Layout.astro';
   }
 </style>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
   // Konami Code Easter Egg
   const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown'];
   let konamiIndex = 0;

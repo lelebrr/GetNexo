@@ -567,7 +567,7 @@ const keywords = "getnexo contact, whatsapp api support, gdpr rights, getnexo dp
   }
 </style>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
   // Form handling for GDPR requests
   document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('lgpd-request-form');

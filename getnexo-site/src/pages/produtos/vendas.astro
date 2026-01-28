@@ -298,7 +298,7 @@ const integrations = [
 ---
 
 <Layout title={title} description={description} keywords={keywords}>
-  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  <script nonce={Astro.locals.nonce} type="application/ld+json" set:html={JSON.stringify(schema)} />
 
   <!-- Hero Section -->
   <section class="prod-hero relative py-20 px-4 text-center overflow-hidden" aria-label="Introdução Vendas WhatsApp">

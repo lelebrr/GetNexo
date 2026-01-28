@@ -102,7 +102,7 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
 
     </div>
 
-    <script is:inline>
+    <script nonce={Astro.locals.nonce} is:inline>
         const API = '/api';
 
         // Tone Selection

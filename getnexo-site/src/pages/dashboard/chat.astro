@@ -103,7 +103,7 @@ import OmniChatApp from '../../components/OmniChatApp.jsx';
         .quick-reply-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(0,212,255,0.3); }
     </style>
 
-    <script is:inline>
+    <script nonce={Astro.locals.nonce} is:inline>
         function startNewChat() { alert('Iniciando nova conversa...'); }
         function openBulkActions() { alert('Abrindo ações em massa...'); }
         function exportChats() { alert('Exportando conversas...'); }

@@ -80,7 +80,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
   </div>
 </AdminLayout>
 
-<script>
+<script nonce={Astro.locals.nonce}>
     // Gerenciamento de Estado e Dom
     const textArea = document.querySelector('.editor-area textarea');
     const executeBtn = document.querySelector('.btn-execute');

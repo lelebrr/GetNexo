@@ -49,7 +49,7 @@ const {
   }
 </style>
 
-<script>
+<script nonce={Astro.locals.nonce}>
   class LazyComponentLoader {
     components: Map<string, any>;
     observer: IntersectionObserver | null;

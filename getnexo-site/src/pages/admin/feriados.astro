@@ -465,7 +465,7 @@ function calculaDataFeriado(feriado, ano = new Date().getFullYear()) {
     </div>
   </main>
 
-  <script>
+  <script nonce={Astro.locals.nonce}>
     // Estado da configuração
     let feriadosConfig = configData.config.feriados;
 

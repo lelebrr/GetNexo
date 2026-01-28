@@ -243,11 +243,11 @@ const trustBadges = [
 <Layout title={title} description={description} keywords={keywords}>
 
   <!-- SEO Schemas -->
-  <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
-  <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
-  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
-  <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
-  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  <script nonce={Astro.locals.nonce} type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+  <script nonce={Astro.locals.nonce} type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+  <script nonce={Astro.locals.nonce} type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script nonce={Astro.locals.nonce} type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+  <script nonce={Astro.locals.nonce} type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 
   <!-- Hero Section -->
   <section class="article-hero" aria-label="WhatsApp Automação Imobiliária">

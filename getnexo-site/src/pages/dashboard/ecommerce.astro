@@ -271,7 +271,7 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
         .flex-center { display: flex; align-items: center; justify-content: center; }
     </style>
 
-    <script is:inline>
+    <script nonce={Astro.locals.nonce} is:inline>
         async function testShopify() { alert('Enviando handshake para Shopify... OK!'); }
         async function syncShopify() { alert('Iniciando indexação de catálogo para o cérebro da Ara...'); }
         async function testWoo() { alert('Testando conexão WooCommerce...'); }

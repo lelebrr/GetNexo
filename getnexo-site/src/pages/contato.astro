@@ -567,7 +567,7 @@ const keywords = "contato getnexo, suporte whatsapp api, direitos lgpd, dpo getn
   }
 </style>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
   // Form handling for LGPD requests
   document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('lgpd-request-form');

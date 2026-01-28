@@ -535,7 +535,7 @@ const breadcrumbs = [
   }
 </style>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
   // Magic Replies Demo Animation
   let currentStep = 1;
   const totalSteps = 5;

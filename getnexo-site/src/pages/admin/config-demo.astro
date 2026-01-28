@@ -148,7 +148,7 @@ const config = {
     </div>
   </div>
 
-  <script>
+  <script nonce={Astro.locals.nonce}>
     let configAtual = { ...config }
 
     function atualizarPreview() {

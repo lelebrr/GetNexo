@@ -26,7 +26,7 @@
   </div>
 </div>
 
-<script>
+<script nonce={Astro.locals.nonce}>
   // Carregar Three.js de forma lazy
   const loadThreeJS = () => {
     return new Promise((resolve, reject) => {

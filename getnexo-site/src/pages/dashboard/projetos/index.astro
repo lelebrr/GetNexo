@@ -437,7 +437,7 @@ import ClientLayout from '../../../layouts/ClientLayout.astro';
 
     </div>
 
-    <script is:inline>
+    <script nonce={Astro.locals.nonce} is:inline>
         const API_URL = '';
 
         let allProjects = [];

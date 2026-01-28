@@ -182,7 +182,7 @@ const totalPosts = allPosts.length;
     )}
 </AdminLayout>
 
-<script>
+<script nonce={Astro.locals.nonce}>
     // Busca em tempo real
     const searchInput = document.getElementById('searchInput');
     

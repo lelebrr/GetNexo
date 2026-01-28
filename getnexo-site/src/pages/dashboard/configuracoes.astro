@@ -210,7 +210,7 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
         }
     </style>
 
-    <script is:inline>
+    <script nonce={Astro.locals.nonce} is:inline>
         // Settings page interactions
         document.addEventListener('DOMContentLoaded', () => {
             // Add form validation and save functionality

@@ -138,7 +138,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     </div>
   </div>
 
-  <script>
+  <script nonce={Astro.locals.nonce}>
     let exportHistory = [];
     let lastExportFile = null;
 

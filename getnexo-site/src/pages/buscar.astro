@@ -150,7 +150,7 @@ const keywords = "buscar getnexo, busca site, encontrar conteudo";
   }
 </style>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
   document.getElementById('search-btn').addEventListener('click', () => {
     const query = document.getElementById('search-input').value.trim();
     if (query) {

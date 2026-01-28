@@ -365,7 +365,8 @@ const clientId = Astro.locals.clientId || 'default';
 ---
 <!DOCTYPE html>
 <html lang={lang} data-bg-type="animated">
-<head><meta charset="UTF-8" />
+<head>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="version" content="1.1.0-BUST-CACHE" />
   
@@ -394,9 +395,9 @@ const clientId = Astro.locals.clientId || 'default';
   
   <!-- Pré-carregar scripts críticos para otimizar LCP -->
   <!-- Scripts carregados com defer para não bloquear o DOM -->
-  <script defer src="/custom/js/scroll-animation.js"></script>
+  <script nonce={Astro.locals.nonce} defer src="/custom/js/scroll-animation.js"></script>
   <script defer src="/custom/js/click-fireworks.js" nonce={nonce}></script>
-  <script defer src="/scripts/layout-effects.js"></script>
+  <script nonce={Astro.locals.nonce} defer src="/scripts/layout-effects.js"></script>
   
   <!-- Script de otimização de carregamento de recursos de terceiros -->
   <script defer nonce={nonce}>
@@ -517,9 +518,9 @@ const clientId = Astro.locals.clientId || 'default';
   </style>
   
   <!-- Carregar trusted-types-policy de forma assíncrona -->
-  <script defer src="/custom/js/trusted-types-policy.js"></script>
+  <script nonce={Astro.locals.nonce} defer src="/custom/js/trusted-types-policy.js"></script>
   
-  <script define:vars={{ trustedTypesPolicy }}>
+  <script nonce={Astro.locals.nonce} define:vars={{ trustedTypesPolicy }}>
     (function() {
       try {
         const bgType = localStorage.getItem('getnexo-bg-type') || 'animated';
@@ -574,13 +575,11 @@ const clientId = Astro.locals.clientId || 'default';
   
   <!-- Pré-carregar recursos críticos para otimizar LCP -->
   <!-- Imagens essenciais para o layout inicial com alta prioridade -->
-  <link rel="preload" href="/assets/logo.png" as="image" type="image/png" fetchpriority="high">
-  <link rel="preload" href="/assets/og-poster.jpg" as="image" type="image/jpeg" fetchpriority="high">
+  <!-- Removido preload para evitar avisos - as imagens serão carregadas normalmente -->
   
   <!-- Pré-carregar recursos de terceiros críticos -->
   <!-- DNS prefetch adicionais otimizados - sem duplicatas -->
-  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
-  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+  <!-- Removido DNS prefetch duplicado para evitar avisos -->
 
   {feriadoAtivo && (
     <link rel="stylesheet" href="/custom/css/holiday-effects.css" media="print" onload="this.media='all'">
@@ -1793,8 +1792,7 @@ const clientId = Astro.locals.clientId || 'default';
         const delay = isMobile ? 5000 : 2000;
 
         setTimeout(() => {
-          // Widget temporariamente desabilitado
-          return;
+          // Widget habilitado
           // Verificar se o servidor da API está acessível antes de tentar carregar
           fetch('/widget.js', {
             method: 'HEAD',
@@ -1929,12 +1927,12 @@ const clientId = Astro.locals.clientId || 'default';
   </script>
 
   <!-- Carregamento assíncrono de feriados - não bloqueia o LCP -->
-  <script defer>
+  <script nonce={Astro.locals.nonce} defer>
     // Otimização: o código foi movido para o Layout.astro para carregar após o DOM estar pronto
     // Este script agora apenas mantém a compatibilidade
   </script>
 
-  <script defer>
+  <script nonce={Astro.locals.nonce} defer>
     function mostrarNotificacaoFeriado(feriado) {
       const notification = document.createElement('div');
       notification.className = 'feriado-notification glass-panel';
@@ -1949,8 +1947,8 @@ const clientId = Astro.locals.clientId || 'default';
         </div>
       `;
 
-      if (window.trustedTypes && window.trustedTypes.defaultPolicy) {
-        notification.innerHTML = htmlContent;
+      if (window.trustedTypes && window.trustedTypes.createHTML) {
+        notification.innerHTML = window.trustedTypes.createHTML(htmlContent);
       } else if (window.getnexoPolicy && window.getnexoPolicy.createHTML) {
         notification.innerHTML = window.getnexoPolicy.createHTML(htmlContent);
       } else {
@@ -2728,7 +2726,7 @@ const clientId = Astro.locals.clientId || 'default';
   </style>
   
   <!-- Script de otimização de carregamento de imagens e componentes -->
-  <script defer>
+  <script nonce={Astro.locals.nonce} defer>
     // Otimização: Lazy loading para imagens e skeleton loading
     // Executado apenas no lado do cliente após o DOM estar pronto
     document.addEventListener('DOMContentLoaded', () => {

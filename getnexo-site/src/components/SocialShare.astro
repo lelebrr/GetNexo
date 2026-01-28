@@ -218,7 +218,7 @@ const encodedDescription = encodeURIComponent(description);
   }
 </style>
 
-<script>
+<script nonce={Astro.locals.nonce}>
   // Copy to clipboard functionality
   window.copyToClipboard = async function() {
     const url = window.location.href;

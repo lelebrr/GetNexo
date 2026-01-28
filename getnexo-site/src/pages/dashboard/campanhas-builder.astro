@@ -109,7 +109,7 @@ import DashboardLayout from '../../layouts/DashboardLayout.astro';
     .text-gradient { background: linear-gradient(90deg, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
   </style>
 
-  <script is:inline>
+  <script nonce={Astro.locals.nonce} is:inline>
       document.querySelectorAll('.seg-opt').forEach(opt => {
           opt.onclick = () => {
               document.querySelectorAll('.seg-opt').forEach(o => o.classList.remove('active'));

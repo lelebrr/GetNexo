@@ -15,8 +15,8 @@ const {
 ---
 
 <!-- Google Analytics 4 Script - Carregado com defer para não bloquear renderização -->
-<script defer src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}></script>
-<script define:vars={{ measurementId }}>
+<script nonce={Astro.locals.nonce} defer src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}></script>
+<script nonce={Astro.locals.nonce} define:vars={{ measurementId }}>
   window.dataLayer = window.dataLayer || [];
 
   function gtag(){dataLayer.push(arguments);}
@@ -48,7 +48,7 @@ const {
 
 <!-- Enhanced E-commerce Tracking -->
 {enableEcommerce && (
-  <script define:vars={{ measurementId }}>
+  <script nonce={Astro.locals.nonce} define:vars={{ measurementId }}>
     // E-commerce events tracking
     window.gtagEcommerce = {
       // Product view
@@ -116,7 +116,7 @@ const {
 )}
 
 <!-- Custom Events Tracking -->
-<script>
+<script nonce={Astro.locals.nonce}>
   // Enhanced user interaction tracking
   document.addEventListener('DOMContentLoaded', () => {
     // Track time on page
@@ -238,7 +238,7 @@ const {
 
 <!-- Heatmap Integration (Microsoft Clarity) -->
 {enableHeatmaps && (
-  <script>
+  <script nonce={Astro.locals.nonce}>
     (function(c,l,a,r,i,t,y){
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
         t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
@@ -248,7 +248,7 @@ const {
 )}
 
 <!-- Conversion tracking for specific goals -->
-<script>
+<script nonce={Astro.locals.nonce}>
   // Track bot creation/conversion
   window.trackBotCreation = (planType = 'self-hosted') => {
     gtag('event', 'bot_creation', {
@@ -307,7 +307,7 @@ const {
 </script>
 
 <!-- Enhanced E-commerce for SaaS -->
-<script>
+<script nonce={Astro.locals.nonce}>
   // Track subscription events
   window.trackSubscription = (planType, action = 'start') => {
     const value = planType === 'pro' ? 97 : 0;

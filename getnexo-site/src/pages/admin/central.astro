@@ -64,7 +64,7 @@ import Layout from '../../layouts/Layout.astro';
   }
 </style>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
   // Force hide chat widgets and accessibility buttons on admin page
   document.addEventListener('DOMContentLoaded', function() {
     const hideElements = [
@@ -3380,5 +3380,5 @@ Use o cupom: BLACK50"></textarea>
 </style>
 
 
-<script src="/scripts/adminPanel.js" defer></script>
+<script nonce={Astro.locals.nonce} src="/scripts/adminPanel.js" defer></script>
 </Layout>

@@ -22,7 +22,7 @@ import LoginLayout from '../../layouts/LoginLayout.astro';
         </form>
     </div>
 
-    <script>
+    <script nonce={Astro.locals.nonce}>
         import { login } from './auth.js?v=cachebust1';
         // Force HMR check
 

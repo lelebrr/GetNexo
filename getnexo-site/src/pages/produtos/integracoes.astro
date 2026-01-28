@@ -139,9 +139,9 @@ const stats = [
 <Layout title={title} description={description} keywords={keywords}>
 
   <!-- SEO Schemas -->
-  <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
-  <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
-  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script nonce={Astro.locals.nonce} type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+  <script nonce={Astro.locals.nonce} type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+  <script nonce={Astro.locals.nonce} type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
 
   <!-- Hero Section -->
   <section class="integrations-hero" aria-label="Integrações GetNexo">

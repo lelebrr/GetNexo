@@ -63,7 +63,7 @@ import TicketForm from '../../../../components/tickets/TicketForm.jsx';
         </div>
     </div>
 
-    <script>
+    <script nonce={Astro.locals.nonce}>
         // Script para controlar o modal de criação
         document.getElementById('create-ticket-btn').addEventListener('click', () => {
             document.getElementById('ticket-modal').classList.remove('hidden');

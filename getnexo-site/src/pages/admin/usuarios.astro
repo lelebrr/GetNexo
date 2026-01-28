@@ -451,7 +451,7 @@ import Layout from '../../layouts/Layout.astro';
   }
 </style>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
   const API_URL = window.location.hostname === 'localhost' 
     ? '/api/admin'
     : '/api/admin';

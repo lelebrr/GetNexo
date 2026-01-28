@@ -388,11 +388,11 @@ const priceSchema = {
     </div>
   </section>
 
-  <script type="application/ld+json" is:inline set:html={JSON.stringify(priceSchema)}></script>
+  <script nonce={Astro.locals.nonce} type="application/ld+json" is:inline set:html={JSON.stringify(priceSchema)}></script>
 
 </Layout>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
   const leadSlider = document.getElementById('lead-slider');
   const costSlider = document.getElementById('cost-slider');
   const leadVal = document.getElementById('lead-value');

@@ -251,7 +251,7 @@ const feriadosVariaveis = totalFeriados - feriadosFixos;
         <a href="/" class="back-link">🏠 Voltar ao Site Principal</a>
     </div>
 
-    <script>
+    <script nonce={Astro.locals.nonce}>
         // Pequeno script para mostrar que o sistema está ativo
         console.log('🎉 Sistema de Feriados GetNexo carregado com sucesso!');
         console.log('📊 Total de feriados:', {totalFeriados});

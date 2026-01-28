@@ -216,7 +216,7 @@ import Layout from '../layouts/Layout.astro';
     }
 </style>
 
-<script>
+<script nonce={Astro.locals.nonce}>
     const API_URL = ''; 
     // Usually via nginx /api goes to 3006, but if local dev, might need direct port.
     // Assuming backend is at 3006 and site at 4321.

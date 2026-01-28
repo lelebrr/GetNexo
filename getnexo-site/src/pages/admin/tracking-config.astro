@@ -225,7 +225,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     </div>
 </AdminLayout>
 
-<script>
+<script nonce={Astro.locals.nonce}>
     document.addEventListener('DOMContentLoaded', function() {
         loadConfiguration();
         updateSystemStats();

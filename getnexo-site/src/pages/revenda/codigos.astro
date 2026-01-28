@@ -72,7 +72,7 @@ import ResellerLayout from '../../layouts/ResellerLayout.astro';
     .info-box { margin-top: 2rem; color: #666; font-size: 0.9rem; text-align: center; }
 </style>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
     const API_URL = '';
 
     async function loadCode() {
