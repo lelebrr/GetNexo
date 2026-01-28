@@ -19,7 +19,7 @@ A **GetNexo** é uma plataforma completa de **IA para e-commerce** com mais de *
 ### ✨ **Novidades v1.4.1 (SEO & Integrations)**
 
 #### 🔍 **SEO Engine Dinâmico**
-- **Sitemap Dinâmico**: Geração automática de URLs para todas as integrações (`/integracoes/*`) baseada em dados estruturados.
+- **Sitemap Dinâmico**: Geração automática de URLs para Integrações (`/integracoes/*`), Glossário (`/glossario/*`) e Segmentos.
 - **Limpeza Internacional**: Remoção de "Soft 404s" em versões traduzidas, garantindo saúde técnica do SEO.
 - **Indexação Otimizada**: Cobertura de 100% das páginas de produtos e funcionalidades no Google/Bing.
 

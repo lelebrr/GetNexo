@@ -23,7 +23,10 @@ const initSchema = () => {
       role TEXT DEFAULT 'client',
       role_id INTEGER DEFAULT 3,
       reseller_id INTEGER,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      plan TEXT DEFAULT 'Standard',
+      domain TEXT,
+      status TEXT DEFAULT 'active'
     )`,
     `CREATE TABLE IF NOT EXISTS reseller_profiles (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -231,6 +234,31 @@ const initSchema = () => {
       requested_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       processed_at DATETIME,
       FOREIGN KEY(reseller_id) REFERENCES users(id)
+    )`,
+    `CREATE TABLE IF NOT EXISTS analytics_logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      ip TEXT,
+      method TEXT,
+      path TEXT,
+      status_code INTEGER,
+      user_agent TEXT,
+      duration INTEGER,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`,
+    `CREATE TABLE IF NOT EXISTS security_events (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      type TEXT NOT NULL,
+      ip TEXT,
+      severity TEXT DEFAULT 'low',
+      description TEXT,
+      details TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`,
+    `CREATE TABLE IF NOT EXISTS ip_rules (
+      ip TEXT PRIMARY KEY,
+      rule TEXT DEFAULT 'allow', -- allow, block
+      reason TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`
   ];
 
@@ -254,27 +282,27 @@ const initSchema = () => {
   if (usersCount === 0) {
     console.log('Seeding initial users...');
     const insertUser = db.prepare('INSERT OR IGNORE INTO users (id, email, password, name, role, role_id, reseller_id) VALUES (?, ?, ?, ?, ?, ?, ?)');
-    
+
     // Admin
     insertUser.run(1, 'admin@getnexo.com.br', bcrypt.hashSync('admin123', 10), 'Administrador', 'superadmin', 1, null);
-    
+
     // Reseller
     insertUser.run(2, 'revendedor@getnexo.com', bcrypt.hashSync('demo123', 10), 'Revendedor', 'reseller', 2, null);
-    
+
     // Client (Linked to Reseller 2)
     insertUser.run(3, 'cliente@getnexo.com', bcrypt.hashSync('demo123', 10), 'Cliente', 'client', 3, 2);
-    
+
     // Extra Admin (teu login)
     insertUser.run(4, 'lelebrr@gmail.com', bcrypt.hashSync('master2026', 10), 'Lele', 'superadmin', 1, null);
-    
+
     // Seed Reseller Profile
     const insertProfile = db.prepare('INSERT OR IGNORE INTO reseller_profiles (user_id, balance, commission_rate, referral_code) VALUES (?, ?, ?, ?)');
     insertProfile.run(2, 12450.00, 0.15, 'NEXO-REV-2026');
-    
+
     // Seed Commissions
     const insertCommission = db.prepare('INSERT OR IGNORE INTO commissions (reseller_id, source_user_id, amount, description, status, created_at) VALUES (?, ?, ?, ?, ?, ?)');
     insertCommission.run(2, 3, 450.00, 'Comissão Assinatura Cliente', 'paid', new Date(Date.now() - 5 * 3600 * 1000).toISOString());
-    
+
     console.log('Users seeded successfully.');
   }
 
@@ -307,6 +335,33 @@ const initSchema = () => {
     if (!hasSku) {
       console.log('Migrating products table: Adding sku column...');
       db.prepare('ALTER TABLE products ADD COLUMN sku TEXT').run();
+    }
+
+    // Check for users columns
+    const usersInfo = db.pragma('table_info(users)');
+    const hasPlan = usersInfo.some(col => col.name === 'plan');
+    const hasDomain = usersInfo.some(col => col.name === 'domain');
+    const hasStatus = usersInfo.some(col => col.name === 'status');
+
+    if (!hasPlan) {
+      console.log('Migrating users table: Adding plan column...');
+      db.prepare("ALTER TABLE users ADD COLUMN plan TEXT DEFAULT 'Standard'").run();
+    }
+    if (!hasDomain) {
+      console.log('Migrating users table: Adding domain column...');
+      db.prepare("ALTER TABLE users ADD COLUMN domain TEXT").run();
+    }
+    if (!hasStatus) {
+      console.log('Migrating users table: Adding status column...');
+      db.prepare("ALTER TABLE users ADD COLUMN status TEXT DEFAULT 'active'").run();
+    }
+
+    // Check for marketing_assets columns
+    const marketingInfo = db.pragma('table_info(marketing_assets)');
+    const hasClicks = marketingInfo.some(col => col.name === 'clicks');
+    if (!hasClicks) {
+      console.log('Migrating marketing_assets table: Adding clicks column...');
+      db.prepare("ALTER TABLE marketing_assets ADD COLUMN clicks INTEGER DEFAULT 0").run();
     }
   } catch (err) {
     console.error('Migration error:', err);

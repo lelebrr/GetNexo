@@ -38,8 +38,8 @@ List all clients linked to the reseller account, including commission calculatio
     "id": 3,
     "nome": "Cliente",
     "email": "cliente@getnexo.com",
-    "dominio": "N/A",
-    "plano": "Standard",
+    "dominio": "loja-cliente.com",
+    "plano": "Enterprise",
     "status": "active",
     "receita": "R$ 3.000,00",
     "comissao": "R$ 450,00",
@@ -56,7 +56,9 @@ Creates a new client account linked to the reseller.
 {
   "nome": "Novo Cliente",
   "email": "novo@cliente.com",
-  "password": "senha123" // Optional, default: mudar123
+  "password": "senha123", // Optional, default: mudar123
+  "plan": "Enterprise", // Optional, default: Standard
+  "domain": "cliente-novo.com" // Optional
 }
 ```
 
@@ -123,7 +125,7 @@ Retrieves active marketing assets (banners, links, PDFs) stored in the database.
 ```json
 {
   "links": [
-    { "name": "Página Inicial (GetNexo)", "url": "https://getnexo.com.br/?ref=REV123", "clicks": 0 }
+    { "name": "Página Inicial (GetNexo)", "url": "https://getnexo.com.br/?ref=REV123", "clicks": 150 }
   ],
   "assets": [
     { "name": "Banner 728x90", "type": "Image", "url": "/assets/marketing/banner-h.png" }
@@ -180,6 +182,13 @@ Stores reseller specific settings.
 - `referral_code`: Unique code
 - `bank_info`: JSON string of bank details
 
+### `users` (Enhanced for Reseller)
+- `id`, `email`, `password`, `name`, `role`
+- `reseller_id`: FK to `users` (Reseller responsible)
+- `plan`: Subscription plan (e.g. 'Standard', 'Enterprise')
+- `domain`: Customer's connected domain
+- `status`: Account status ('active', 'inactive')
+
 ### `commissions`
 Tracks earnings.
 - `reseller_id`: FK to `users`
@@ -199,6 +208,7 @@ Stores available marketing materials.
 - `name`: Display name
 - `url`: Resource URL
 - `active`: Boolean
+- `clicks`: Count of clicks (for links)
 
 ### `coupons`
 Stores discount codes.

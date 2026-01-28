@@ -16,6 +16,45 @@ if (!JWT_SECRET) {
   process.exit(1);
 }
 
+// Analytics Middleware
+const analyticsMiddleware = (req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    try {
+      db.prepare(`
+        INSERT INTO analytics_logs (ip, method, path, status_code, user_agent, duration)
+        VALUES (?, ?, ?, ?, ?, ?)
+      `).run(
+        req.ip || req.connection.remoteAddress,
+        req.method,
+        req.path,
+        res.statusCode,
+        req.get('User-Agent'),
+        duration
+      );
+
+      // Simple Security event logging for failures
+      if (res.statusCode >= 400 && res.statusCode < 500) {
+        db.prepare(`
+            INSERT INTO security_events (type, ip, severity, description)
+            VALUES (?, ?, ?, ?)
+          `).run('HTTP_ERROR', req.ip || req.connection.remoteAddress, 'low', `Status ${res.statusCode} on ${req.path}`);
+      } else if (res.statusCode >= 500) {
+        db.prepare(`
+            INSERT INTO security_events (type, ip, severity, description)
+            VALUES (?, ?, ?, ?)
+          `).run('SERVER_ERROR', req.ip || req.connection.remoteAddress, 'medium', `Status ${res.statusCode} on ${req.path}`);
+      }
+    } catch (err) {
+      console.error('Analytics logging error:', err);
+    }
+  });
+  next();
+};
+
+app.use(analyticsMiddleware);
+
 // Security Headers
 app.use(helmet());
 
@@ -104,6 +143,7 @@ const paymentRoutes = require('./routes/paymentRoutes');
 const supportRoutes = require('./routes/support');
 const aiRoutes = require('./routes/ai');
 const revendaRoutes = require('./routes/revenda');
+const dockerRoutes = require('./routes/docker');
 const a2aRoutes = require('./routes/a2a');
 const ap2Routes = require('./routes/ap2');
 
@@ -123,6 +163,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/support', supportRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/revenda', revendaRoutes);
+app.use('/api/docker', dockerRoutes);
 app.use('/api/a2a', a2aRoutes);
 app.use('/api/ap2', ap2Routes);
 
@@ -141,6 +182,11 @@ app.post('/api/login', authLimiter, async (req, res) => {
 
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
+      db.prepare(`
+        INSERT INTO security_events (type, ip, severity, description)
+        VALUES (?, ?, ?, ?)
+      `).run('AUTH_FAILURE', req.ip || req.connection.remoteAddress, 'medium', `Failed login attempt for ${email}`);
+
       return res.status(401).json({ error: 'Credenciais inválidas' });
     }
 
@@ -324,18 +370,20 @@ const tickets = [
 ];
 
 // Iniciar servidor
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor de autenticação rodando na porta ${PORT}`);
-  console.log(`📝 Endpoints disponíveis:`);
-  console.log(` POST /api/login - Login de usuário`);
-  console.log(` GET /api/users - Verificar usuário logado`);
-  console.log(` POST /api/auth/forgot-password - Redefinir senha`);
-  console.log(` POST /api/auth/register - Criar conta`);
-  console.log(` GET /api/health - Health check`);
-  console.log(` GET /api/ai/seo/stats - AI SEO Stats`);
-  console.log(` GET /api/ai/security/audit - AI Security Audit`);
-  console.log(`\n🔑 Credenciais de demonstração:`);
-  console.log(` Cliente: cliente@getnexo.com / demo123`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`🚀 Servidor de autenticação rodando na porta ${PORT}`);
+    console.log(`📝 Endpoints disponíveis:`);
+    console.log(` POST /api/login - Login de usuário`);
+    console.log(` GET /api/users - Verificar usuário logado`);
+    console.log(` POST /api/auth/forgot-password - Redefinir senha`);
+    console.log(` POST /api/auth/register - Criar conta`);
+    console.log(` GET /api/health - Health check`);
+    console.log(` GET /api/ai/seo/stats - AI SEO Stats`);
+    console.log(` GET /api/ai/security/audit - AI Security Audit`);
+    console.log(`\n🔑 Credenciais de demonstração:`);
+    console.log(` Cliente: cliente@getnexo.com / demo123`);
+  });
+}
 
 module.exports = app;

@@ -13,14 +13,18 @@ A análise e otimização dos arquivos de sitemap para o site multilingual GetNe
 
 ### 2. Expansão Dinâmica do Sitemap PT
 - **Ação**: Implementação de geração dinâmica de URLs no `sitemap-pt.xml.ts`.
-- **Fonte de Dados**: `src/data/integrationData.js`
-- **Novas Páginas Indexadas**: Todas as páginas de integração (ex: `/integracoes/shopify`, `/integracoes/vtex`) são agora adicionadas automaticamente ao sitemap.
-- **Cobertura**: 100% das páginas de integração e páginas estáticas principais (Sobre, Termos, API, etc.) estão cobertas.
+- **Fonte de Dados**: `src/data/integrationData.js`, `src/data/glossaryData.js`.
+- **Novas Páginas Indexadas**:
+    - **Integrações**: Todas as páginas de integração (ex: `/integracoes/shopify`, `/integracoes/vtex`).
+    - **Glossário**: Termos técnicos (ex: `/glossario/api-oficial`, `/glossario/webhook`).
+    - **Segmentos**: Páginas de vendas por setor (ex: `/segmentos/delivery`, `/segmentos/clinicas`).
+- **Limpeza**: Remoção de redirecionamentos `/pt/` para focar na autoridade das URLs canônicas `/`.
+- **Cobertura**: 100% das páginas de integração, glossário, segmentos e estáticas cobertas.
 
 ### 3. Ajuste de Hreflang
-- **Ação**: Remoção das tags `hreflang` globais no `Layout.astro` que apontavam automaticamente para versões traduzidas inexistentes.
-- **Motivo**: Prevenir que o Google tentasse indexar URLs como `getnexo.com.br/en/precos` que retornariam 404.
-- **Estado Atual**: `x-default` aponta para a URL canônica da página.
+- **Ação**: Refinamento da lógica no `SEO.astro`.
+- **Mudança**: As tags `hreflang` agora são geradas **exclusivamente** para rotas do Blog (`/blog/*`), que é a única seção atualmente traduzida (index).
+- **Correção**: Links para `/pt` no hreflang foram corrigidos para apontar para a URL canônica (ex: `https://getnexo.com.br/blog` em vez de `/pt/blog`).
 
 ## Dados Quantitativos (Pós-Otimização)
 

@@ -99,12 +99,16 @@ const twitterHandle = "@getnexo";
 <meta property="twitter:creator" content={twitterHandle} />
 <meta property="twitter:site" content={twitterHandle} />
 
-<!-- i18n Alternate Links (Hreflang) -->
-<link rel="alternate" hreflang="pt" href={`https://getnexo.com.br/pt${currentPath}`} />
-<link rel="alternate" hreflang="en" href={`https://getnexo.com.br/en${currentPath}`} />
-<link rel="alternate" hreflang="es" href={`https://getnexo.com.br/es${currentPath}`} />
-<link rel="alternate" hreflang="fr" href={`https://getnexo.com.br/fr${currentPath}`} />
-<link rel="alternate" hreflang="x-default" href={`https://getnexo.com.br/pt${currentPath}`} />
+<!-- i18n Alternate Links (Hreflang) - Enabled only for Blog pages -->
+{(currentPath === '/blog' || currentPath === '/blog/' || currentPath.startsWith('/blog/')) && (
+  <>
+    <link rel="alternate" hreflang="pt" href={`https://getnexo.com.br${currentPath}`} />
+    <link rel="alternate" hreflang="en" href={`https://getnexo.com.br/en${currentPath}`} />
+    <link rel="alternate" hreflang="es" href={`https://getnexo.com.br/es${currentPath}`} />
+    <link rel="alternate" hreflang="fr" href={`https://getnexo.com.br/fr${currentPath}`} />
+    <link rel="alternate" hreflang="x-default" href={`https://getnexo.com.br${currentPath}`} />
+  </>
+)}
 
 <!-- Article Meta Tags (if applicable) -->
 {publishedTime && <meta property="article:published_time" content={publishedTime} />}

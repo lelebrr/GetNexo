@@ -1,5 +1,6 @@
 # Dockerfile para o frontend Astro
-FROM node:20-alpine
+# FROM node:20-alpine
+FROM getnexo/frontend:latest
 
 WORKDIR /app
 

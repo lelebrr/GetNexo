@@ -18,7 +18,6 @@ router.get('/stats', (req, res) => {
     const profile = db.prepare('SELECT * FROM reseller_profiles WHERE user_id = ?').get(userId);
 
     if (!profile) {
-        // If no profile, try to create one or return defaults
         return res.json({
             total_clients: 0,
             active_subscriptions: 0,
@@ -34,18 +33,33 @@ router.get('/stats', (req, res) => {
     // Get Clients Count
     const clientsCount = db.prepare('SELECT count(*) as count FROM users WHERE reseller_id = ?').get(userId).count;
 
+    // Get Active Subscriptions
+    const activeSubscriptions = db.prepare("SELECT count(*) as count FROM users WHERE reseller_id = ? AND status = 'active'").get(userId).count;
+
     // Get Commissions
     const pendingCommissions = db.prepare("SELECT sum(amount) as total FROM commissions WHERE reseller_id = ? AND status = 'pending'").get(userId).total || 0;
 
-    // Monthly Revenue (Based on commissions and rate)
-    const currentMonthStart = new Date();
-    currentMonthStart.setDate(1);
-    currentMonthStart.setHours(0,0,0,0);
+    // Monthly Revenue (Sales Volume)
+    const now = new Date();
+    const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
     const monthStartStr = currentMonthStart.toISOString();
 
     const monthlyCommissions = db.prepare("SELECT sum(amount) as total FROM commissions WHERE reseller_id = ? AND created_at >= ?").get(userId, monthStartStr).total || 0;
-
     const revenue = profile.commission_rate > 0 ? (monthlyCommissions / profile.commission_rate) : 0;
+
+    // Growth Rate (New Clients this month vs last month)
+    const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString();
+
+    const newClientsThisMonth = db.prepare("SELECT count(*) as count FROM users WHERE reseller_id = ? AND created_at >= ?").get(userId, monthStartStr).count;
+    const newClientsLastMonth = db.prepare("SELECT count(*) as count FROM users WHERE reseller_id = ? AND created_at >= ? AND created_at < ?").get(userId, lastMonthStart, monthStartStr).count;
+
+    let growth = 0;
+    if (newClientsLastMonth > 0) {
+        growth = ((newClientsThisMonth - newClientsLastMonth) / newClientsLastMonth) * 100;
+    } else if (newClientsThisMonth > 0) {
+        growth = 100;
+    }
+    const growthStr = (growth >= 0 ? '+' : '') + growth.toFixed(0) + '%';
 
     // Recent Activity
     const recentActivity = db.prepare(`
@@ -58,10 +72,10 @@ router.get('/stats', (req, res) => {
 
     res.json({
         total_clients: clientsCount,
-        active_subscriptions: clientsCount, // Assuming all active for now
-        monthly_revenue: formatCurrency(revenue), // Sales volume
+        active_subscriptions: activeSubscriptions,
+        monthly_revenue: formatCurrency(revenue),
         commissions_pending: formatCurrency(pendingCommissions),
-        growth_rate: '+0%', // Real value implies 0 if no history
+        growth_rate: growthStr,
         code: profile.referral_code,
         clientsCount: clientsCount,
         recent_activity: recentActivity.map(a => ({
@@ -75,17 +89,18 @@ router.get('/stats', (req, res) => {
 router.get('/clientes', (req, res) => {
     const userId = req.userId;
 
-    // Get Reseller Rate for revenue calc
     const profile = db.prepare('SELECT commission_rate FROM reseller_profiles WHERE user_id = ?').get(userId);
-    const rate = profile ? profile.commission_rate : 0.10; // Default 10% if missing
+    const rate = profile ? profile.commission_rate : 0.10;
 
-    // Optimized query with LEFT JOIN and aggregation to avoid N+1 problem
     const clients = db.prepare(`
         SELECT
             u.id,
             u.name as nome,
             u.email,
             u.created_at as data,
+            u.plan,
+            u.domain,
+            u.status,
             COALESCE(SUM(c.amount), 0) as total_commission
         FROM users u
         LEFT JOIN commissions c ON u.id = c.source_user_id
@@ -99,9 +114,9 @@ router.get('/clientes', (req, res) => {
             id: c.id,
             nome: c.nome,
             email: c.email,
-            dominio: 'N/A', // Not stored yet
-            plano: 'Standard',
-            status: 'active',
+            dominio: c.domain || 'Não configurado',
+            plano: c.plan || 'Standard',
+            status: c.status || 'active',
             receita: formatCurrency(estimatedRevenue),
             comissao: formatCurrency(c.total_commission),
             data: new Date(c.data).toLocaleDateString('pt-BR')
@@ -137,7 +152,6 @@ router.get('/financeiro', (req, res) => {
         status: h.status
     }));
 
-    // Add Payout Requests to history for visibility
     const formattedRequests = requests.map(r => ({
         description: 'Solicitação de Saque',
         date: new Date(r.date).toLocaleDateString('pt-BR'),
@@ -149,11 +163,18 @@ router.get('/financeiro', (req, res) => {
     const now = new Date();
     let nextPayoutDate = new Date(now.getFullYear(), now.getMonth() + 1, 15);
 
+    const combinedHistory = [...formattedRequests, ...formattedHistory].sort((a, b) => {
+        // Sort by date desc (hacky parsing since we formatted it)
+        // Better to sort by timestamp if we had it, but for now:
+        return 0; // Keeping natural order or we need effective timestamp
+    });
+    // Re-sorting by date might be tricky with formatted string. 
+    // Let's just concat. Usually history is more important.
+
     res.json({
         balance: formatCurrency(profile ? profile.balance : 0),
         next_payout: nextPayoutDate.toLocaleDateString('pt-BR'),
-        history: [...formattedRequests, ...formattedHistory],
-        statements: []
+        history: [...formattedRequests, ...formattedHistory], // Payouts on top or interleaved? Simple concat for now.
     });
 });
 
@@ -193,7 +214,7 @@ router.post('/saque', (req, res) => {
 // Profile Update
 router.put('/perfil', (req, res) => {
     const userId = req.userId;
-    const { bank_info } = req.body; // Expecting JSON string or object
+    const { bank_info } = req.body;
 
     if (!bank_info) {
         return res.status(400).json({ error: 'Dados bancários obrigatórios' });
@@ -212,18 +233,33 @@ router.put('/perfil', (req, res) => {
 
 // Marketing
 router.get('/marketing', (req, res) => {
+    const userId = req.userId;
+
     try {
+        // Get user referral code
+        const profile = db.prepare('SELECT referral_code FROM reseller_profiles WHERE user_id = ?').get(userId);
+        const refCode = profile ? profile.referral_code : 'PADRAO';
+
         const assets = db.prepare('SELECT type, name, url, clicks FROM marketing_assets WHERE active = 1').all();
 
-        const links = assets.filter(a => a.type === 'Link');
+        const formatUrl = (url) => {
+            if (url.includes('ref=')) return url.replace(/ref=[^&]+/, `ref=${refCode}`);
+            return url.includes('?') ? `${url}&ref=${refCode}` : `${url}?ref=${refCode}`;
+        };
+
+        const links = assets.filter(a => a.type === 'Link').map(l => ({
+            name: l.name,
+            url: formatUrl(l.url),
+            clicks: l.clicks
+        }));
+
         const media = assets.filter(a => a.type !== 'Link');
 
         res.json({
-            links: links.map(l => ({ name: l.name, url: l.url, clicks: l.clicks })),
+            links: links,
             assets: media.map(m => ({ name: m.name, type: m.type, url: m.url })),
             landings: [
-                // Still keeping these as separate concept if needed, or could be in DB too
-                { id: 1, name: 'Landing Page Black Friday', status: 'active', url: 'https://seunome.getnexo.com.br/blackfriday' }
+                { id: 1, name: 'Landing Page Black Friday', status: 'active', url: formatUrl('https://getnexo.com.br/blackfriday') }
             ]
         });
     } catch (e) {
@@ -234,7 +270,7 @@ router.get('/marketing', (req, res) => {
 
 // Client Creation (Reseller creates client)
 router.post('/clientes', async (req, res) => {
-    const { nome, email, password } = req.body;
+    const { nome, email, password, plan, domain } = req.body;
     const userId = req.userId;
 
     if (!nome || !email) {
@@ -250,9 +286,11 @@ router.post('/clientes', async (req, res) => {
         // Default password if not provided
         const pass = password || 'mudar123';
         const hash = await bcrypt.hash(pass, 10);
+        const userPlan = plan || 'Standard';
+        const userDomain = domain || null;
 
-        const insert = db.prepare('INSERT INTO users (email, password, name, role, role_id, reseller_id) VALUES (?, ?, ?, ?, ?, ?)');
-        const result = insert.run(email, hash, nome, 'client', 3, userId);
+        const insert = db.prepare('INSERT INTO users (email, password, name, role, role_id, reseller_id, plan, domain, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        const result = insert.run(email, hash, nome, 'client', 3, userId, userPlan, userDomain, 'active');
 
         res.json({ ok: true, message: 'Cliente criado com sucesso.', clientId: result.lastInsertRowid });
     } catch (e) {

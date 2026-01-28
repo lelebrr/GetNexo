@@ -62,11 +62,12 @@ const title = "SEO IA – Otimização Autônoma";
           </div>
 
           <div class="space-y-4">
-            <template x-for="rec in stats.recommendations" :key="rec.id">
+            <template x-for="rec in stats.recommendations" :key="rec.message">
               <div class="flex items-start p-4 rounded-2xl bg-black/40 border border-gray-800 group hover:border-cyan-500/50 transition-all">
                 <div class="p-2 mr-4 rounded-lg" :class="rec.priority === 'High' ? 'bg-red-500/10' : 'bg-cyan-500/10'">
-                   <AlertCircle x-show="rec.priority === 'High'" className="w-5 h-5 text-red-500" />
-                   <Sparkles x-show="rec.priority !== 'High'" className="w-5 h-5 text-cyan-400" />
+                   <!-- Icons from lucide will be rendered via class or just placeholders for Alpine -->
+                   <div x-show="rec.priority === 'High'" class="w-5 h-5 text-red-500 flex items-center justify-center">⚠</div>
+                   <div x-show="rec.priority !== 'High'" class="w-5 h-5 text-cyan-400 flex items-center justify-center">✨</div>
                 </div>
                 <div class="flex-1">
                   <div class="flex items-center justify-between mb-1">
@@ -86,61 +87,71 @@ const title = "SEO IA – Otimização Autônoma";
         <!-- Metrics Grid -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div class="bg-gray-900/40 border border-gray-800 p-6 rounded-3xl text-center">
-             <span class="block text-2xl font-black text-white" x-text="stats.metrics.performance">--</span>
-             <span class="text-[10px] text-gray-500 uppercase font-bold">Performance</span>
+             <span class="block text-2xl font-black text-white" x-text="stats.loadTime + 'ms'">--</span>
+             <span class="text-[10px] text-gray-500 uppercase font-bold">Velocidade</span>
           </div>
           <div class="bg-gray-900/40 border border-gray-800 p-6 rounded-3xl text-center">
-             <span class="block text-2xl font-black text-white" x-text="stats.metrics.accessibility">--</span>
-             <span class="text-[10px] text-gray-500 uppercase font-bold">Acessibilidade</span>
+             <span class="block text-2xl font-black text-white" x-text="stats.visits_last_7d">--</span>
+             <span class="text-[10px] text-gray-500 uppercase font-bold">Visitas (7d)</span>
           </div>
           <div class="bg-gray-900/40 border border-gray-800 p-6 rounded-3xl text-center">
-             <span class="block text-2xl font-black text-white" x-text="stats.metrics.best_practices">--</span>
-             <span class="text-[10px] text-gray-500 uppercase font-bold">Práticas</span>
+             <span class="block text-2xl font-black text-white" x-text="stats.links">--</span>
+             <span class="text-[10px] text-gray-500 uppercase font-bold">Links Internos</span>
           </div>
-          <div class="bg-gray-900/40 border border-gray-800 p-6 rounded-3xl text-center">
-             <span class="block text-2xl font-black text-white" x-text="stats.metrics.seo">--</span>
-             <span class="text-[10px] text-gray-500 uppercase font-bold">SEO Técnico</span>
+          <div class="bg-gray-900/40 border border-gray-800 p-6 rounded-3xl text-center border-cyan-500/30">
+             <span class="block text-2xl font-black text-cyan-400" x-text="stats.score">--</span>
+             <span class="text-[10px] text-gray-500 uppercase font-bold">Score Geral</span>
           </div>
         </div>
+
+        <!-- Competitor Analysis Card -->
+        <section class="bg-gray-900/40 border border-gray-800 rounded-3xl p-8 backdrop-blur-sm">
+           <div class="flex items-center space-x-3 mb-6">
+              <Globe className="w-6 h-6 text-blue-400" />
+              <h3 class="text-xl font-bold text-white">Análise de Concorrentes IA</h3>
+           </div>
+           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+             <template x-for="comp in stats.competitors" :key="comp.name">
+               <div class="p-4 rounded-2xl bg-white/5 border border-gray-800">
+                  <p class="text-white font-bold mb-2 font-mono" x-text="comp.name">--</p>
+                  <p class="text-[10px] text-gray-400 leading-tight" x-text="comp.advantage">--</p>
+               </div>
+             </template>
+           </div>
+        </section>
       </div>
 
       <!-- 2. Keyword Tracker -->
-      <section class="bg-gray-900/40 border border-gray-800 rounded-3xl p-8 backdrop-blur-sm">
-        <div class="flex items-center space-x-3 mb-8">
-           <TrendingUp className="w-6 h-6 text-emerald-400" />
-           <h3 class="text-xl font-bold text-white">Ranking de Keywords</h3>
-        </div>
-
-        <div class="space-y-6">
-          <template x-for="kw in stats.keywords" :key="kw.term">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-white font-bold" x-text="kw.term">--</p>
-                <div class="flex items-center space-x-2 text-[10px]">
-                  <span class="text-gray-500" x-text="'Vol: ' + kw.volume">--</span>
-                  <span class="text-gray-700">•</span>
-                  <span class="px-1.5 py-0.5 rounded-md bg-gray-800 text-gray-400" x-text="kw.difficulty">--</span>
-                </div>
-              </div>
-              <div class="flex items-center" :class="kw.trend === 'up' ? 'text-emerald-400' : 'text-gray-500'">
-                 <TrendingUp x-show="kw.trend === 'up'" className="w-4 h-4 mr-1" />
-                 <Minus x-show="kw.trend !== 'up'" className="w-4 h-4 mr-1" />
-                 <span class="text-xs font-black uppercase" x-text="kw.trend === 'up' ? '+12%' : 'Estável'">--</span>
-              </div>
+      <aside class="space-y-8 text-white">
+        <section class="bg-gray-900/40 border border-gray-800 rounded-3xl p-8 backdrop-blur-sm h-full">
+            <div class="flex items-center space-x-3 mb-8">
+               <TrendingUp className="w-6 h-6 text-emerald-400" />
+               <h3 class="text-xl font-bold text-white">Palavras-Chave Ideais</h3>
             </div>
-          </template>
-        </div>
 
-        <div class="mt-10 p-4 rounded-2xl bg-gradient-to-br from-gray-800 to-black border border-gray-700">
-           <p class="text-[10px] font-bold text-gray-500 uppercase mb-2 tracking-widest">IA Predictor</p>
-           <p class="text-xs text-gray-400 leading-relaxed italic">
-             "O termo <span class="text-white">automação whatsapp 2026</span> está subindo. Recomendo criar um artigo hoje para capturar esse tráfego."
-           </p>
-           <button class="mt-4 w-full py-2 bg-cyan-600 hover:bg-cyan-500 text-black text-xs font-black rounded-lg transition-all">
-             Gerar Artigo com IA
-           </button>
-        </div>
-      </section>
+            <div class="space-y-6">
+              <template x-for="kw in stats.suggested_keywords" :key="kw">
+                <div class="flex items-center justify-between group">
+                  <div class="flex items-center space-x-3">
+                    <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                    <p class="text-white font-medium group-hover:text-emerald-400 transition-colors" x-text="kw">--</p>
+                  </div>
+                  <TrendingUp className="w-4 h-4 text-emerald-500/50" />
+                </div>
+              </template>
+            </div>
+
+            <div class="mt-10 p-6 rounded-2xl bg-gradient-to-br from-cyan-900/40 to-black border border-cyan-500/20">
+               <p class="text-[10px] font-bold text-cyan-500 uppercase mb-2 tracking-widest">IA Insight</p>
+               <p class="text-xs text-gray-300 leading-relaxed italic" x-text="stats.summary">
+                 --
+               </p>
+               <button class="mt-4 w-full py-3 bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-black rounded-xl transition-all transform hover:scale-[1.02]">
+                 Otimizar Agora
+               </button>
+            </div>
+        </section>
+      </aside>
 
     </div>
   </div>
@@ -151,28 +162,21 @@ const title = "SEO IA – Otimização Autônoma";
     return {
       stats: {
         score: 0,
-        health_status: '--',
-        metrics: {
-            performance: 0,
-            accessibility: 0,
-            best_practices: 0,
-            seo: 0
-        },
-        keywords: [],
+        loadTime: 0,
+        visits_last_7d: 0,
+        links: 0,
         recommendations: [],
-        summary: ''
+        suggested_keywords: [],
+        competitors: [],
+        summary: 'Iniciando análise...',
+        niche: ''
       },
       async fetchData() {
         try {
           const res = await fetch('/api/ai/seo/stats');
           if (res.ok) {
             const data = await res.json();
-            // Ensure metrics exist to prevent undefined errors if backend returns partial data
-            this.stats = {
-                ...this.stats,
-                ...data,
-                metrics: { ...this.stats.metrics, ...(data.metrics || {}) }
-            };
+            this.stats = data;
           }
         } catch (e) {
           console.error('Erro ao buscar stats SEO:', e);

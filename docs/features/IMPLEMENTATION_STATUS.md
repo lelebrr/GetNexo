@@ -115,10 +115,10 @@ Baseado na análise dos documentos `USER_FEATURES.md` e `PRE_SUPPORT_MODAL.md`, 
 - ✅ **Monitoramento de SLA** e uptime
 
 ### 🤝 13. Sistema de Revenda (Real & DB)
-- ✅ **Dashboard de Revenda** com métricas reais (SQLite)
-- ✅ **Gestão de Clientes** com cálculo de comissão dinâmico
-- ✅ **Sistema Financeiro** com histórico e solicitação de saque
-- ✅ **Materiais de Marketing** gerenciados via banco de dados
+- ✅ **Dashboard de Revenda** com métricas reais e dinâmicas (SQLite)
+- ✅ **Gestão de Clientes** completa (Planos, Domínios, Status)
+- ✅ **Sistema Financeiro** com histórico e solicitação de saque em tempo real
+- ✅ **Materiais de Marketing** com rastreamento de cliques e links personalizados
 - ✅ **API Restful** completa (`/api/revenda`) protegida via JWT
 - ✅ **Autenticação** real com hash de senha e tokens
 

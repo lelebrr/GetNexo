@@ -63,37 +63,46 @@ const title = "Segurança IA – Monitoramento Autônomo";
           </template>
         </div>
 
-        <section class="bg-gray-950 border border-gray-800 rounded-3xl overflow-hidden">
+        <section class="bg-gray-950 border border-gray-800 rounded-3xl overflow-hidden shadow-2xl">
           <div class="p-6 border-b border-gray-800 bg-gray-900/20 flex items-center justify-between">
             <div class="flex items-center space-x-2">
               <Terminal className="w-5 h-5 text-rose-400" />
-              <h3 class="text-sm font-bold text-white uppercase tracking-widest">Log de Eventos Detectados</h3>
+              <h3 class="text-sm font-bold text-white uppercase tracking-widest">Log de Eventos em Tempo Real</h3>
             </div>
-            <span class="text-[10px] text-rose-500 font-bold animate-pulse">LIVE UPDATE</span>
+            <div class="flex items-center space-x-2">
+               <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+               <span class="text-[10px] text-red-500 font-bold uppercase">Monitorando Atividade</span>
+            </div>
           </div>
           
-          <div class="p-2 space-y-1 font-mono text-xs">
+          <div class="p-2 space-y-1 font-mono text-xs max-h-[400px] overflow-y-auto custom-scrollbar">
             <template x-for="event in audit.recent_events" :key="event.time + event.event">
-              <div class="p-3 flex items-start space-x-4 hover:bg-white/5 transition-all rounded-lg">
-                <span class="text-gray-600" x-text="'['+event.time+']'">--</span>
-                <span class="font-bold px-1.5 rounded" :class="event.type === 'Critical' ? 'bg-red-500/20 text-red-400' : 'bg-rose-500/10 text-rose-300'" x-text="event.type">--</span>
+              <div class="p-3 flex items-start space-x-4 hover:bg-white/5 transition-all rounded-lg border-b border-white/5 last:border-0">
+                <span class="text-gray-600 shrink-0" x-text="'['+event.time+']'">--</span>
+                <span class="font-bold px-1.5 rounded shrink-0" :class="event.severity === 'high' ? 'bg-red-500/20 text-red-400' : (event.severity === 'medium' ? 'bg-orange-500/20 text-orange-400' : 'bg-rose-500/10 text-rose-300')" x-text="event.type">--</span>
                 <span class="text-gray-400" x-text="event.event">--</span>
               </div>
             </template>
           </div>
         </section>
 
-        <!-- Threat Map Placeholder -->
-        <div class="grid grid-cols-2 gap-4">
-           <div class="bg-gray-900/40 p-6 rounded-3xl border border-gray-800 flex flex-col items-center justify-center">
-              <Activity className="w-8 h-8 text-rose-500 mb-2 opacity-50" />
-              <span class="text-2xl font-black text-white">47</span>
-              <span class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Bot Scans Bloqueados</span>
+        <!-- Threat Metrics -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+           <div class="bg-gray-900/40 p-6 rounded-3xl border border-gray-800 text-center group hover:border-red-500/30 transition-all">
+              <span class="block text-2xl font-black text-white" x-text="audit.auth_failures_1h">--</span>
+              <span class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Falhas de Login (1h)</span>
            </div>
-           <div class="bg-gray-900/40 p-6 rounded-3xl border border-gray-800 flex flex-col items-center justify-center">
-              <Lock className="w-8 h-8 text-rose-500 mb-2 opacity-50" />
-              <span class="text-2xl font-black text-white">0</span>
-              <span class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Vazamentos Detectados</span>
+           <div class="bg-gray-900/40 p-6 rounded-3xl border border-gray-800 text-center group hover:border-red-500/30 transition-all">
+              <span class="block text-2xl font-black text-white" x-text="audit.server_errors_1h">--</span>
+              <span class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Erros de Servidor</span>
+           </div>
+           <div class="bg-gray-900/40 p-6 rounded-3xl border border-gray-800 text-center group hover:border-red-500/30 transition-all">
+              <span class="block text-2xl font-black text-white" x-text="audit.suspicious_ips_found">--</span>
+              <span class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">IPs Suspeitos</span>
+           </div>
+           <div class="bg-gray-900/40 p-6 rounded-3xl border border-gray-800 text-center group hover:border-red-500/30 transition-all">
+              <span class="block text-2xl font-black text-white" x-text="audit.blocked_ips_total">--</span>
+              <span class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Total Bloqueados</span>
            </div>
         </div>
       </div>
@@ -102,36 +111,72 @@ const title = "Segurança IA – Monitoramento Autônomo";
       <aside class="space-y-6">
         <section class="bg-rose-950/20 border border-rose-500/20 rounded-3xl p-8 relative overflow-hidden group">
            <div class="relative z-10">
-              <div class="flex items-center space-x-2 mb-4">
-                 <Zap className="w-5 h-5 text-rose-400" />
-                 <h4 class="text-sm font-black text-white uppercase tracking-widest">Insight do Guardião IA</h4>
+              <div class="flex items-center justify-between mb-6">
+                 <div class="flex items-center space-x-2">
+                    <Zap className="w-5 h-5 text-rose-400" />
+                    <h4 class="text-sm font-black text-white uppercase tracking-widest">IA Vulnerability Shield</h4>
+                 </div>
+                 <div class="flex flex-col items-end">
+                    <span class="text-2xl font-black text-rose-500" x-text="audit.risk_score + '%'">--</span>
+                    <span class="text-[8px] text-gray-500 uppercase">Risk Level</span>
+                 </div>
               </div>
-              <p class="text-rose-100/80 leading-relaxed italic text-sm mb-6" x-text="'&quot;' + audit.ai_insights + '&quot;'">
-                --
-              </p>
-              <button class="w-full py-4 bg-rose-600 hover:bg-rose-500 text-white font-black rounded-2xl transition-all shadow-lg shadow-rose-900/40" @click="fetchAudit()">
-                 Executar Varredura Profunda
-              </button>
+
+              <!-- Risk Progress Bar -->
+              <div class="w-full h-1.5 bg-gray-800 rounded-full mb-8 overflow-hidden">
+                 <div class="h-full bg-rose-500 transition-all duration-1000" :style="'width: ' + audit.risk_score + '%'"></div>
+              </div>
+
+              <div class="space-y-6">
+                <div>
+                   <p class="text-[10px] font-bold text-rose-400 uppercase mb-3 px-2 border-l-2 border-rose-500">Ameaças Detectadas</p>
+                   <div class="space-y-2">
+                      <template x-for="threat in audit.threats" :key="threat">
+                        <div class="p-3 rounded-xl bg-red-500/5 border border-red-500/10 text-xs text-rose-100/70" x-text="threat"></div>
+                      </template>
+                   </div>
+                </div>
+
+                <div>
+                   <p class="text-[10px] font-bold text-emerald-400 uppercase mb-3 px-2 border-l-2 border-emerald-500">Recomendações de Defesa</p>
+                   <div class="space-y-2">
+                      <template x-for="rec in audit.recommendations" :key="rec">
+                        <div class="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/10 text-xs text-emerald-100/70" x-text="rec"></div>
+                      </template>
+                   </div>
+                </div>
+              </div>
+
+              <div class="mt-8 pt-6 border-t border-white/5">
+                <p class="text-xs text-gray-500 leading-relaxed italic mb-6" x-text="'&quot;' + audit.summary + '&quot;'">
+                  --
+                </p>
+                <button class="w-full py-4 bg-rose-600 hover:bg-rose-500 text-white font-black rounded-2xl transition-all shadow-lg shadow-rose-900/40 active:scale-95" @click="fetchAudit()">
+                   Varredura Profunda (Deep Scan)
+                </button>
+              </div>
            </div>
            <div class="absolute -bottom-8 -right-8 w-32 h-32 bg-rose-500/10 blur-3xl group-hover:bg-rose-500/20 transition-all"></div>
         </section>
 
         <!-- Quick Access -->
-        <div class="bg-gray-900/40 rounded-3xl border border-gray-800 p-6">
-           <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Perímetro de Defesa</h4>
+        <div class="bg-gray-900/40 rounded-3xl border border-gray-800 p-6 shadow-xl">
+           <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Perímetro de Defesa Ativo</h4>
            <div class="space-y-3">
-              <a href="/admin/security/firewall" class="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-all group">
-                 <span class="text-sm text-gray-300">Configurar Firewall</span>
-                 <Shield className="w-4 h-4 text-gray-600 group-hover:text-rose-500" />
-              </a>
-              <a href="/admin/security/audit" class="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-all group">
-                 <span class="text-sm text-gray-300">Auditoria Completa</span>
-                 <Eye className="w-4 h-4 text-gray-600 group-hover:text-rose-500" />
-              </a>
-              <a href="/admin/security/backups" class="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-all group">
-                 <span class="text-sm text-gray-300">Snapshot de Backup</span>
-                 <Zap className="w-4 h-4 text-gray-600 group-hover:text-rose-500" />
-              </a>
+              <button class="w-full flex items-center justify-between p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-all group text-left">
+                 <div class="flex items-center space-x-3">
+                    <Shield className="w-4 h-4 text-rose-500" />
+                    <span class="text-sm text-gray-300 font-medium">Auto-Patching</span>
+                 </div>
+                 <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-bold">LIGADO</span>
+              </button>
+              <button class="w-full flex items-center justify-between p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-all group text-left">
+                 <div class="flex items-center space-x-3">
+                    <Lock className="w-4 h-4 text-rose-500" />
+                    <span class="text-sm text-gray-300 font-medium">EncrypGuard V2</span>
+                 </div>
+                 <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-bold">ATIVO</span>
+              </button>
            </div>
         </div>
       </aside>
@@ -146,11 +191,16 @@ const title = "Segurança IA – Monitoramento Autônomo";
       audit: {
         threat_level: 'Calculando...',
         system_status: 'Scanning...',
+        risk_score: 0,
+        threats: [],
+        recommendations: [],
+        summary: 'Iniciando análise...',
         active_protections: [],
         recent_events: [],
-        ai_insights: 'Aguardando análise da IA...',
-        failed_transactions_24h: 0,
-        new_contacts_1h: 0
+        auth_failures_1h: 0,
+        server_errors_1h: 0,
+        suspicious_ips_found: 0,
+        blocked_ips_total: 0
       },
       async fetchAudit() {
         try {
@@ -161,7 +211,7 @@ const title = "Segurança IA – Monitoramento Autônomo";
           }
         } catch (e) {
           console.error('Erro ao buscar auditoria de segurança:', e);
-          this.audit.ai_insights = 'Falha na conexão com o sistema de monitoramento.';
+          this.audit.summary = 'Falha na conexão com o sistema de monitoramento.';
         }
       },
       init() {

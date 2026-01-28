@@ -212,10 +212,10 @@ const ChatInterface = () => {
     };
 
     return (
-        <div className="flex h-[80vh] gap-6">
+        <div className="flex flex-col lg:flex-row h-[80vh] gap-6">
 
             {/* Sidebar - Contact List */}
-            <div className="w-1/3 flex flex-col glass-panel rounded-2xl border border-gray-800 overflow-hidden">
+            <div className={`flex flex-col glass-panel rounded-2xl border border-gray-800 overflow-hidden ${activeContact ? 'hidden lg:flex w-full lg:w-1/3' : 'w-full lg:w-1/3 flex'}`}>
                 <div className="p-4 border-b border-gray-800 bg-black/40 backdrop-blur-md sticky top-0 z-10 space-y-3">
                     {/* Multichannel Mock Tabs */}
                     <div className="flex gap-1 bg-gray-900 p-1 rounded-lg">
@@ -246,28 +246,37 @@ const ChatInterface = () => {
             </div>
 
             {/* Main Chat Area */}
-            <div className="flex-1 flex flex-col glass-panel rounded-2xl border border-gray-800 overflow-hidden relative">
+            <div className={`flex flex-col glass-panel rounded-2xl border border-gray-800 overflow-hidden relative ${activeContact ? 'flex w-full lg:flex-1' : 'hidden lg:flex lg:flex-1'}`}>
                 {activeContact ? (
                     <>
                         {/* Chat Header */}
                         <div className="p-4 border-b border-gray-800 bg-black/40 backdrop-blur-md flex justify-between items-center z-10">
-                            <div>
-                                <h3 className="font-bold text-xl text-white flex items-center gap-2">
-                                    {activeContact.name || activeContact.phone}
-                                    {ticket?.status === 'resolved' && <span className="text-xs bg-green-900 text-green-300 px-2 rounded-full border border-green-700">RESOLVIDO</span>}
-                                </h3>
-                                <div className="text-xs flex gap-3 text-gray-400">
-                                    <select
-                                        className="bg-transparent border-none outline-none cursor-pointer hover:text-neon-blue transition-colors"
-                                        value={ticket?.assigned_to || ""}
-                                        onChange={(e) => handleAssign(e.target.value)}
-                                    >
-                                        <option value="">👤 Atribuir a...</option>
-                                        {agents.map(a => <option key={a.id} value={a.id}>{a.email}</option>)}
-                                    </select>
-                                    {ticket?.status !== 'resolved' && (
-                                        <button onClick={handleResolve} className="hover:text-green-400">✅ Resolver</button>
-                                    )}
+                            <div className="flex items-center gap-3">
+                                {/* Back Button Mobile */}
+                                <button
+                                    onClick={() => setActiveContact(null)}
+                                    className="lg:hidden text-gray-400 hover:text-white mr-2"
+                                >
+                                    ←
+                                </button>
+                                <div>
+                                    <h3 className="font-bold text-xl text-white flex items-center gap-2">
+                                        {activeContact.name || activeContact.phone}
+                                        {ticket?.status === 'resolved' && <span className="text-xs bg-green-900 text-green-300 px-2 rounded-full border border-green-700">RESOLVIDO</span>}
+                                    </h3>
+                                    <div className="text-xs flex gap-3 text-gray-400">
+                                        <select
+                                            className="bg-transparent border-none outline-none cursor-pointer hover:text-neon-blue transition-colors"
+                                            value={ticket?.assigned_to || ""}
+                                            onChange={(e) => handleAssign(e.target.value)}
+                                        >
+                                            <option value="">👤 Atribuir a...</option>
+                                            {agents.map(a => <option key={a.id} value={a.id}>{a.email}</option>)}
+                                        </select>
+                                        {ticket?.status !== 'resolved' && (
+                                            <button onClick={handleResolve} className="hover:text-green-400">✅ Resolver</button>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                             <div className="flex gap-2">

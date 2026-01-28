@@ -1,5 +1,6 @@
 # Dockerfile para o backend Node.js
-FROM node:20-alpine
+# FROM node:20-alpine
+FROM getnexo/backend:latest
 
 WORKDIR /app
 

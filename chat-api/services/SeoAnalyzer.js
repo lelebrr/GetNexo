@@ -1,5 +1,6 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
+const db = require('../db');
 
 class SeoAnalyzer {
     async analyze(url) {
@@ -19,6 +20,21 @@ class SeoAnalyzer {
             const imagesWithoutAlt = $('img:not([alt])').length;
             const links = $('a').length;
 
+            // Simple Keyword Extraction
+            const text = $('body').text();
+            const words = text.toLowerCase().match(/\b(\w{4,})\b/g) || [];
+            const freq = {};
+            words.forEach(w => freq[w] = (freq[w] || 0) + 1);
+            const topKeywords = Object.entries(freq)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5)
+                .map(e => e[0]);
+
+            // Visits from analytics_logs
+            const now = new Date();
+            const last7d = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+            const visits7d = db.prepare("SELECT COUNT(*) as count FROM analytics_logs WHERE created_at >= ?").get(last7d).count;
+
             // Score Calculation Rule
             let score = 100;
             if (!title) score -= 20;
@@ -28,6 +44,8 @@ class SeoAnalyzer {
             if (loadTime > 1500) score -= 10;
             if (loadTime > 3000) score -= 10;
 
+            const niche = db.prepare("SELECT value FROM settings WHERE key = 'store_name'").get()?.value || 'E-commerce';
+
             return {
                 url,
                 loadTime,
@@ -36,16 +54,22 @@ class SeoAnalyzer {
                 h1,
                 images: { total: images, missing_alt: imagesWithoutAlt },
                 links,
+                top_keywords: topKeywords,
+                visits_last_7d: visits7d,
+                niche,
                 score: Math.max(0, score),
                 health_status: score > 80 ? 'Excellent' : (score > 50 ? 'Fair' : 'Critical')
             };
 
         } catch (error) {
+            console.error('SEO Analyzer Error:', error.message);
             return {
                 error: error.message,
                 score: 0,
                 images: { total: 0, missing_alt: 0 },
-                health_status: 'Unreachable'
+                health_status: 'Unreachable',
+                top_keywords: [],
+                visits_last_7d: 0
             };
         }
     }

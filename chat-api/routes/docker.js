@@ -5,10 +5,10 @@ const fs = require('fs');
 const path = require('path');
 
 // Middleware para autenticação
-const authenticateToken = require('../middleware/auth');
+// const authenticateToken = require('../middleware/auth'); // Commented out as global auth is used
 
-// Aplicar autenticação a todas as rotas
-router.use(authenticateToken);
+// Aplicar autenticação a todas as rotas - Handled globally in server.js, but keeping basic check if needed?
+// router.use(authenticateToken); 
 
 // Cache para containers (atualizado a cada 30 segundos)
 let containersCache = {
@@ -28,16 +28,16 @@ function executeDockerCommand(args, callback) {
     // execFile executes the file directly without a shell
     execFile('/usr/bin/docker', args, { timeout: 10000 }, (error, stdout, stderr) => {
         if (error && error.code === 'ENOENT') {
-             // Fallback if docker is not in /usr/bin
-             execFile('docker', args, { timeout: 10000 }, (err, out, serr) => {
-                 if (err) {
+            // Fallback if docker is not in /usr/bin
+            execFile('docker', args, { timeout: 10000 }, (err, out, serr) => {
+                if (err) {
                     console.error('Erro ao executar comando Docker:', err);
                     callback(err, null);
                     return;
-                 }
-                 callback(null, out || serr);
-             });
-             return;
+                }
+                callback(null, out || serr);
+            });
+            return;
         }
         if (error) {
             console.error('Erro ao executar comando Docker:', error);
@@ -249,18 +249,18 @@ router.post('/deploy', (req, res) => {
             if (isValidPort(port)) {
                 args.push('-p', port);
             } else {
-                 return res.status(400).json({ error: `Porta inválida: ${port}` });
+                return res.status(400).json({ error: `Porta inválida: ${port}` });
             }
         }
     }
 
     if (env && env.length > 0) {
         for (const envVar of env) {
-             if (isValidEnv(envVar)) {
+            if (isValidEnv(envVar)) {
                 args.push('-e', envVar);
-             } else {
+            } else {
                 return res.status(400).json({ error: `Variável de ambiente inválida: ${envVar}` });
-             }
+            }
         }
     }
 

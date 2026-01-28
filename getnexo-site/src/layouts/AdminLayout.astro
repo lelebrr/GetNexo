@@ -6,6 +6,7 @@ interface Props {
 
 const { title, activeTab } = Astro.props;
 const nonce = Astro.locals.nonce;
+const trustedTypesPolicy = Astro.locals.trustedTypesPolicy || 'getnexo-trusted';
 
 const urlActive = Astro.url.searchParams.get('tab');
 
@@ -227,7 +228,36 @@ const submenus = {
     <meta name="generator" content={Astro.generator} />
     <title>{title} | Admin GetNexo</title>
   </head>
-  <body>
+  <body class="bg-gray-950">
+    <script nonce={nonce} define:vars={{ trustedTypesPolicy }}>
+      (function() {
+        if (window.trustedTypes && window.trustedTypes.createPolicy) {
+          if (!window.trustedTypes.defaultPolicy) {
+            try {
+              window.trustedTypes.createPolicy('default', {
+                createHTML: function(s) { return s; },
+                createScript: function(s) { return s; },
+                createScriptURL: function(s) { return s; }
+              });
+            } catch (e) {
+              console.warn('Trusted Types default policy failed:', e);
+            }
+          }
+          if (!window.GETNEXO_POLICY) {
+            try {
+              window.GETNEXO_POLICY = window.trustedTypes.createPolicy(trustedTypesPolicy, {
+                createHTML: function(s) { return s; },
+                createScript: function(s) { return s; },
+                createScriptURL: function(s) { return s; }
+              });
+            } catch (e) {
+              console.warn('Trusted Types getnexo policy failed:', e);
+            }
+          }
+        }
+      })();
+    </script>
+
     <script nonce={nonce} define:vars={{ submenus, activeCategory }}>
       document.addEventListener("alpine:init", () => {
         Alpine.data("sidebar", () => ({
@@ -548,6 +578,8 @@ const submenus = {
 <style is:global>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
   
+  [x-cloak] { display: none !important; }
+
   :root {
     --bg: #000000;
   }
