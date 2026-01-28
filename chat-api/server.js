@@ -24,6 +24,7 @@ const couponRoutes = require('./routes/coupons');
 const automationRoutes = require('./routes/automations');
 const settingsRoutes = require('./routes/settings');
 const paymentRoutes = require('./routes/paymentRoutes');
+const supportRoutes = require('./routes/support');
 const aiRoutes = require('./routes/ai');
 const revendaRoutes = require('./routes/revenda');
 
@@ -40,6 +41,7 @@ app.use('/api/coupons', couponRoutes);
 app.use('/api/automations', automationRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/support', supportRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/revenda', revendaRoutes);
 
