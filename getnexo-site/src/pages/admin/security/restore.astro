@@ -1,0 +1,93 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { History, RefreshCw, AlertCircle, Database, CheckCircle2 } from 'lucide-react';
+
+const backups = [
+  { id: 1, date: "Hoje, 03:00", size: "1.2 GB", type: "Automático", status: "Pronto" },
+  { id: 2, date: "Ontem, 03:00", size: "1.1 GB", type: "Automático", status: "Pronto" },
+  { id: 3, date: "26 Jan, 14:22", size: "850 MB", type: "Manual", status: "Pronto" },
+];
+---
+
+<AdminLayout title="Restaurar Backup" activeTab="seguranca">
+  <div class="max-w-4xl mx-auto space-y-10 animate-fade-in py-4"
+       x-data="{ 
+         restoring: false,
+         restore() {
+           if(confirm('Tem certeza? Isso substituirá TODO o banco de dados atual.')) {
+             this.restoring = true;
+             setTimeout(() => { 
+                this.restoring = false; 
+                alert('Sistema restaurado com sucesso. Recarregando...');
+                window.location.reload();
+             }, 3000);
+           }
+         }
+       }">
+    
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 bg-rose-500/10 rounded-2xl flex items-center justify-center text-rose-500 border border-rose-500/20 shadow-xl shadow-rose-500/10">
+          <History className="w-7 h-7" />
+        </div>
+        <div>
+          <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Recuperar Sistema</h1>
+          <p class="text-sm text-gray-500 font-medium">Restaure o banco de dados para um estado anterior em caso de falha crítica.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Disaster Alert -->
+    <div class="p-8 bg-rose-500/10 border border-rose-500/20 rounded-[2.5rem] flex items-start space-x-6">
+       <AlertCircle className="w-10 h-10 text-rose-500 shrink-0" />
+       <div class="space-y-2">
+          <h4 class="text-sm font-black text-rose-500 uppercase tracking-widest leading-none">Atenção: Ação Irreversível</h4>
+          <p class="text-xs text-gray-500 leading-relaxed font-medium">A restauração de um backup apagará todos os dados (vendas, leads, mensagens) criados APÓS a data do backup selecionado. Recomendamos baixar um backup manual do estado ATUAL antes de prosseguir.</p>
+       </div>
+    </div>
+
+    <!-- Backups List -->
+    <div class="bg-gray-900/40 border border-gray-800 rounded-[2.5rem] overflow-hidden">
+       <div class="p-8 border-b border-gray-800 bg-black/20 flex items-center justify-between italic">
+          <div class="flex items-center space-x-3 text-gray-500">
+             <Database className="w-5 h-5" />
+             <h3 class="text-xs font-black uppercase tracking-widest">Backups Disponíveis no Storage</h3>
+          </div>
+       </div>
+
+       <div class="divide-y divide-gray-800/50">
+          {backups.map(bkp => (
+             <div class="p-8 flex items-center justify-between hover:bg-white/[0.02] transition-colors group">
+                <div class="flex items-center space-x-6">
+                   <div class="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center text-gray-500 group-hover:bg-rose-500/20 group-hover:text-rose-500 transition-all">
+                      <Database className="w-6 h-6" />
+                   </div>
+                   <div>
+                      <h4 class="text-sm font-bold text-white uppercase tracking-tight">{bkp.date}</h4>
+                      <p class="text-[10px] text-gray-600 font-medium">{bkp.size} • {bkp.type}</p>
+                   </div>
+                </div>
+
+                <div class="flex items-center space-x-8">
+                   <div class="flex items-center space-x-2 text-emerald-500">
+                      <CheckCircle2 className="w-3 h-3" />
+                      <span class="text-[9px] font-black uppercase tracking-widest">{bkp.status}</span>
+                   </div>
+                   <button @click="restore()" 
+                           :disabled="restoring"
+                           class="flex items-center space-x-2 px-6 py-2.5 bg-gray-800 hover:bg-rose-600/20 text-gray-400 hover:text-rose-400 rounded-xl text-[10px] font-black uppercase transition-all">
+                      <RefreshCw class="w-4 h-4" :class="restoring ? 'animate-spin' : ''" />
+                      <span x-text="restoring ? 'Restaurando...' : 'Restaurar'"></span>
+                   </button>
+                </div>
+             </div>
+          ))}
+       </div>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

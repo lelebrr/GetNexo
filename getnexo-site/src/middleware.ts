@@ -26,18 +26,19 @@ export const onRequest = defineMiddleware(async (context, next) => {
     // Configurar CSP dinâmico - Strict Mode com Nonce
     // 'strict-dynamic' permite scripts com nonce correto carregar dependências
     const csp = [
-        `default-src 'self' https: http: data: blob:`,
+        "default-src 'self' https: http: data: blob:",
         `script-src 'self' 'nonce-${nonce}' 'unsafe-eval' 'strict-dynamic' https: http: 'unsafe-inline' *.cloudflare.com static.cloudflareinsights.com https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://api.getnexo.com.br https://*.getnexo.com.br https://www.googletagmanager.com https://cdn.skypack.dev https://openrouter.ai https://fonts.googleapis.com`,
-        `style-src 'self' 'unsafe-inline' https: http: https://fonts.googleapis.com https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com`,
-        `img-src 'self' data: blob: https: http: https://*.getnexo.com.br https://i.pravatar.cc https://*.pravatar.cc`,
-        `font-src 'self' data: https: http: https://fonts.gstatic.com`,
-        `connect-src 'self' https: http: ws: wss:`,
-        `frame-src 'self' https: http:`,
-        `object-src 'none'`,
-        `base-uri 'self'`,
-        `form-action 'self'`,
-        `frame-ancestors 'self'`,
-        `require-trusted-types-for 'script'`
+        "style-src 'self' 'unsafe-inline' https: http: https://fonts.googleapis.com https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com",
+        "img-src 'self' data: blob: https: http: https://*.getnexo.com.br https://i.pravatar.cc https://*.pravatar.cc",
+        "font-src 'self' data: https: http: https://fonts.gstatic.com",
+        "connect-src 'self' https: http: ws: wss:",
+        "frame-src 'self' https: http:",
+        "object-src 'none'",
+        "base-uri 'self'",
+        "form-action 'self'",
+        "frame-ancestors 'self'",
+        "require-trusted-types-for 'script'",
+        "trusted-types getnexo-trusted default"
     ].join('; ');
 
     response.headers.set('Content-Security-Policy', csp);

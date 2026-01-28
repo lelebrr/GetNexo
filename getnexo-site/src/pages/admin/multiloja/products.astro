@@ -1,0 +1,102 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { ShoppingBag, Search, Filter, Plus, Store, CheckCircle2, AlertCircle } from 'lucide-react';
+
+const storeProducts = [
+  { id: 1, name: "Tênis Ultra Boost", store: "Loja Principal", price: "R$ 899,00", stock: 45, status: "Sincronizado" },
+  { id: 2, name: "Camiseta Dry Fit", store: "Outlet Nexo", price: "R$ 120,50", stock: 12, status: "Pendente" },
+  { id: 3, name: "Relógio Smart V2", store: "Loja Principal", price: "R$ 1.450,00", stock: 0, status: "Esgotado" },
+];
+---
+
+<AdminLayout title="Produtos por Loja" activeTab="multiloja">
+  <div class="max-w-6xl mx-auto space-y-10 animate-fade-in py-4">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-500 border border-amber-500/20 shadow-xl shadow-amber-500/10">
+          <ShoppingBag className="w-7 h-7" />
+        </div>
+        <div>
+          <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Inventário Multi-Loja</h1>
+          <p class="text-sm text-gray-500 font-medium">Gerencie o estoque e preços em todas as suas unidades conectadas.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-gray-900/40 p-4 border border-gray-800 rounded-[2rem]">
+       <div class="md:col-span-2 relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
+          <input type="text" placeholder="Buscar produto por nome ou SKU..." class="w-full bg-black/40 border border-gray-800 rounded-2xl py-3 pl-12 pr-4 text-xs text-white focus:border-amber-500 outline-none" />
+       </div>
+       <div class="relative">
+          <Store className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
+          <select class="w-full bg-black/40 border border-gray-800 rounded-2xl py-3 pl-12 pr-4 text-xs text-gray-400 focus:border-amber-500 outline-none appearance-none">
+             <option>Todas as Lojas</option>
+             <option>Loja Principal</option>
+             <option>Outlet Nexo</option>
+          </select>
+       </div>
+       <button class="bg-gray-800 hover:bg-gray-700 text-white font-black text-[10px] uppercase tracking-widest rounded-2xl flex items-center justify-center space-x-2 transition-all">
+          <Filter className="w-4 h-4" />
+          <span>Filtros</span>
+       </button>
+    </div>
+
+    <!-- Inventory Table -->
+    <div class="bg-gray-900/20 border border-gray-800 rounded-[2.5rem] overflow-hidden">
+       <table class="w-full text-left border-collapse">
+          <thead>
+             <tr class="bg-black/40 border-b border-gray-800">
+                <th class="px-8 py-5 text-[10px] font-black uppercase text-gray-500 tracking-widest">Produto</th>
+                <th class="px-8 py-5 text-[10px] font-black uppercase text-gray-500 tracking-widest">Loja Origem</th>
+                <th class="px-8 py-5 text-[10px] font-black uppercase text-gray-500 tracking-widest">Preço Unit.</th>
+                <th class="px-8 py-5 text-[10px] font-black uppercase text-gray-500 tracking-widest">Estoque</th>
+                <th class="px-8 py-5 text-[10px] font-black uppercase text-gray-500 tracking-widest">Sincronia</th>
+             </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-800/50">
+             {storeProducts.map(prod => (
+                <tr class="hover:bg-white/[0.02] transition-colors group">
+                   <td class="px-8 py-6">
+                      <div class="flex items-center space-x-4">
+                         <div class="w-10 h-10 bg-gray-800 rounded-lg flex-shrink-0"></div>
+                         <h4 class="text-sm font-bold text-white uppercase tracking-tight">{prod.name}</h4>
+                      </div>
+                   </td>
+                   <td class="px-8 py-6">
+                      <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">{prod.store}</span>
+                   </td>
+                   <td class="px-8 py-6">
+                      <span class="text-sm font-mono font-bold text-white">{prod.price}</span>
+                   </td>
+                   <td class="px-8 py-6">
+                      <span class:list={["text-sm font-bold", prod.stock === 0 ? 'text-rose-500' : 'text-amber-500']}>{prod.stock} un</span>
+                   </td>
+                   <td class="px-8 py-6">
+                      <div class="flex items-center space-x-2">
+                         {prod.status === 'Sincronizado' ? (
+                            <div class="flex items-center space-x-1.5 text-emerald-500">
+                               <CheckCircle2 className="w-4 h-4" />
+                               <span class="text-[9px] font-black uppercase">Ativo</span>
+                            </div>
+                         ) : (
+                            <div class="flex items-center space-x-1.5 text-rose-500">
+                               <AlertCircle className="w-4 h-4" />
+                               <span class="text-[9px] font-black uppercase">{prod.status}</span>
+                            </div>
+                         )}
+                      </div>
+                   </td>
+                </tr>
+             ))}
+          </tbody>
+       </table>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

@@ -168,15 +168,18 @@
         return `
         #getnexo-root {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            position: fixed;
-            bottom: 20px;
-            ${widgetPosition.includes('left') ? 'left: 20px;' : 'right: 20px;'}
-            z-index: 2147483647;
+            position: fixed !important;
+            top: auto !important;
+            bottom: 30px !important;
+            ${widgetPosition.includes('left') ? 'left: 30px !important;' : 'right: 30px !important;'}
+            z-index: 2147483647 !important;
             display: flex;
             flex-direction: column;
             align-items: ${widgetPosition.includes('left') ? 'flex-start' : 'flex-end'};
             gap: 15px;
             pointer-events: none;
+            width: auto;
+            height: auto;
         }
         #getnexo-root > * { pointer-events: auto; }
         #getnexo-btn {

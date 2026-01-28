@@ -1,0 +1,285 @@
+---
+import ClientLayout from '../layouts/ClientLayout.astro';
+---
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GetNexo - Criar Conta</title>
+    <link rel="icon" href="/favicon.ico">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: linear-gradient(135deg, #0f0f1a 0%, #1e1e2e 50%, #2d2d44 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: linear-gradient(135deg, #1e1e2e 0%, #2d2d44 100%);
+            border: 1px solid #00f7ff;
+            border-radius: 16px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 247, 255, 0.1);
+            position: relative;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00f7ff, #00ff9d, #00f7ff);
+            border-radius: 18px;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header .logo {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #00f7ff, #00ff9d);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1rem;
+            box-shadow: 0 10px 30px rgba(0, 247, 255, 0.3);
+        }
+
+        .login-header h1 {
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, #00f7ff, #00ff9d);
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #00f7ff;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.9rem;
+            background: #1a1a2e;
+            border: 1px solid #00f7ff;
+            border-radius: 12px;
+            color: white;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 247, 255, 0.1);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #00ff9d;
+            box-shadow: 0 0 0 3px rgba(0, 255, 157, 0.2), 0 4px 20px rgba(0, 247, 255, 0.3);
+            background: #1e1e2e;
+        }
+
+        .eye-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #00f7ff;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #00f7ff, #00ff9d);
+            border: none;
+            border-radius: 12px;
+            color: black;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            box-shadow: 0 8px 25px rgba(0, 247, 255, 0.3);
+            position: relative;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 247, 255, 0.4);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .signup-cta {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+        }
+
+        .signup-cta a {
+            color: #00ff9d;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: none;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div class="logo">N</div>
+            <h1>Criar Conta</h1>
+            <p style="color: #94a3b8; font-size: 0.9rem;">Comece seu teste grátis de 7 dias</p>
+        </div>
+
+        <div id="error-message" class="error-message"></div>
+
+        <form id="register-form">
+            <div class="form-group">
+                <label for="name">Nome Completo</label>
+                <input type="text" id="name" name="name" placeholder="Seu nome" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="whatsapp">WhatsApp</label>
+                <input type="tel" id="whatsapp" name="whatsapp" placeholder="(11) 99999-9999" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <div class="input-group">
+                    <input type="password" id="password" name="password" placeholder="Mínimo 8 caracteres" required minlength="8" autocomplete="new-password">
+                    <button type="button" class="eye-toggle" id="toggle-password-btn">👁️</button>
+                </div>
+            </div>
+
+            <button type="submit" class="login-btn" id="register-btn">
+                Criar Conta Grátis
+            </button>
+        </form>
+
+        <div class="signup-cta">
+            <p style="color: #94a3b8; margin-bottom: 0.5rem; font-size: 0.9rem;">Já tem uma conta?</p>
+            <a href="/login">Fazer Login →</a>
+        </div>
+    </div>
+
+    <!-- Script de toggle password e registro -->
+    <script nonce={Astro.locals.nonce}>
+        // Toggle Password
+        const toggleBtn = document.getElementById('toggle-password-btn');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                const passwordInput = document.getElementById('password');
+                const eyeIcon = toggleBtn;
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    eyeIcon.textContent = '🙈';
+                } else {
+                    passwordInput.type = 'password';
+                    eyeIcon.textContent = '👁️';
+                }
+            });
+        }
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = document.getElementById('register-btn');
+            const errorDiv = document.getElementById('error-message');
+            const originalText = btn.textContent;
+            
+            // Basic validation
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const phone = document.getElementById('whatsapp').value;
+
+            btn.disabled = true;
+            btn.textContent = 'Criando conta...';
+            errorDiv.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/register', { // Endpoint a ser verificado/criado
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password, phone })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Auto login or redirect
+                    window.location.href = '/login?registered=true';
+                } else {
+                    throw new Error(data.error || 'Erro ao criar conta.');
+                }
+            } catch (err) {
+                errorDiv.textContent = err.message;
+                errorDiv.style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        });
+    </script>
+</body>
+</html>

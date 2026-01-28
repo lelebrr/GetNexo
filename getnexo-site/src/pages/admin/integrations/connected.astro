@@ -1,0 +1,72 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { ToggleRight, Settings, Trash2, ExternalLink, Zap, RefreshCw } from 'lucide-react';
+
+const connections = [
+  { id: 1, name: 'Shopify Store', status: 'Conectado', lastSync: '12 min atrás', type: 'E-commerce', color: 'bg-emerald-500' },
+  { id: 2, name: 'Meta WhatsApp API', status: 'Conectado', lastSync: '1 min atrás', type: 'Mensageria', color: 'bg-blue-500' },
+  { id: 3, name: 'Bling ERP', status: 'Erro na Sinc', lastSync: '2 dias atrás', type: 'Gestão', color: 'bg-rose-500' },
+];
+---
+
+<AdminLayout title="Integrações Ativas" activeTab="integracoes">
+  <div class="max-w-6xl mx-auto space-y-10 animate-fade-in py-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 bg-violet-500/10 rounded-2xl flex items-center justify-center text-violet-500 border border-violet-500/20 shadow-xl shadow-violet-500/10">
+          <Zap className="w-7 h-7" />
+        </div>
+        <div>
+          <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Minhas Conexões</h1>
+          <p class="text-sm text-gray-500">Acompanhe a saúde e o status das suas integrações ativas.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+       {connections.map(conn => (
+          <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] hover:border-violet-500/20 transition-all group flex flex-col justify-between">
+             <div class="flex items-center justify-between mb-8">
+                <div class:list={["w-3 h-3 rounded-full", conn.color, "shadow-[0_0_10px_rgba(var(--tw-color-opacity))] animate-pulse"]}></div>
+                <div class="flex items-center space-x-2">
+                   <button class="p-2.5 bg-gray-800/50 text-gray-400 hover:text-white rounded-xl transition-all"><Settings className="w-4 h-4" /></button>
+                </div>
+             </div>
+
+             <div class="space-y-2">
+                <p class="text-[9px] font-black text-gray-600 uppercase tracking-[0.2em]">{conn.type}</p>
+                <h3 class="text-xl font-bold text-white uppercase tracking-tight leading-tight">{conn.name}</h3>
+                <div class="flex items-center space-x-2 text-[10px] font-medium text-gray-500">
+                   <RefreshCw className="w-3 h-3" />
+                   <span x-text="'Sincronizado ' + conn.lastSync">Sincronizado {conn.lastSync}</span>
+                </div>
+             </div>
+
+             <div class="mt-8 pt-8 border-t border-gray-800/50 flex items-center justify-between gap-4">
+                <div class="flex items-center space-x-2">
+                   <span class:list={["text-[10px] font-black uppercase tracking-widest", conn.status === 'Conectado' ? 'text-emerald-500' : 'text-rose-500']}>{conn.status}</span>
+                </div>
+                <button class="flex items-center space-x-2 px-4 py-2 bg-gray-800 hover:bg-rose-600/20 text-gray-400 hover:text-rose-400 rounded-xl text-[10px] font-black uppercase transition-all">
+                   <Trash2 className="w-3.5 h-3.5" />
+                   <span>Desconectar</span>
+                </button>
+             </div>
+          </div>
+       ))}
+    </div>
+
+    <!-- Empty State / Add New -->
+    <a href="/admin/integrations/available" class="block p-10 bg-black/40 border-2 border-dashed border-gray-800 rounded-[3rem] hover:border-violet-500/40 transition-all group text-center space-y-4">
+       <div class="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mx-auto text-gray-600 group-hover:text-violet-500 transition-colors">
+          <Zap className="w-8 h-8" />
+       </div>
+       <h4 class="text-lg font-bold text-white uppercase tracking-tight">Expandir Ecossistema</h4>
+       <p class="text-sm text-gray-500 max-w-sm mx-auto">Explore novas integrações e automatize ainda mais sua operação.</p>
+    </a>
+  </div>
+</AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

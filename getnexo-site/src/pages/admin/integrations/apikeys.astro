@@ -1,0 +1,88 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { Key, Plus, Trash2, Copy, ShieldCheck, ShieldAlert, RefreshCw } from 'lucide-react';
+---
+
+<AdminLayout title="Chaves de API" activeTab="integracoes">
+  <div class="max-w-4xl mx-auto space-y-10 animate-fade-in py-4"
+       x-data="{ 
+         keys: [
+           { id: 1, name: 'Produção App Mobile', key: 'nx_live_5829ac...', created: 'Há 5 meses', status: 'Ativo' },
+           { id: 2, name: 'Integração n8n Local', key: 'nx_test_a921b0...', created: 'Há 12 dias', status: 'Ativo' }
+         ],
+         copied: false,
+         copy(key) {
+           navigator.clipboard.writeText(key);
+           this.copied = true;
+           setTimeout(() => { this.copied = false }, 2000);
+         }
+       }">
+    
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 bg-cyan-500/10 rounded-2xl flex items-center justify-center text-cyan-500 border border-cyan-500/20 shadow-xl shadow-cyan-500/10">
+          <Key className="w-7 h-7" />
+        </div>
+        <div>
+          <h1 class="text-3xl font-black text-white uppercase tracking-tighter">API Keys</h1>
+          <p class="text-sm text-gray-500">Chaves de acesso para integrar sistemas externos com sua conta.</p>
+        </div>
+      </div>
+      <button class="px-6 py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-black rounded-2xl flex items-center space-x-2 transition-all shadow-lg shadow-cyan-600/20 uppercase text-xs tracking-widest">
+         <Plus className="w-5 h-5" />
+         <span>Gerar Nova Chave</span>
+      </button>
+    </div>
+
+    <!-- Security Warning -->
+    <div class="p-6 bg-amber-500/5 border border-amber-500/20 rounded-[2rem] flex items-start space-x-6">
+       <ShieldAlert className="w-8 h-8 text-amber-500 shrink-0" />
+       <div class="space-y-1">
+          <p class="text-xs font-bold text-amber-500 uppercase tracking-tight">Segurança Crítica</p>
+          <p class="text-[10px] text-gray-500 leading-relaxed font-medium">Nunca compartilhe suas chaves de produção. Com elas, qualquer um pode ler seus dados de vendas e disparar mensagens em seu nome.</p>
+       </div>
+    </div>
+
+    <!-- Keys List -->
+    <div class="space-y-4">
+       <template x-for="item in keys" :key="item.id">
+          <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] hover:border-cyan-500/20 transition-all group">
+             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <div class="space-y-2">
+                   <div class="flex items-center space-x-3">
+                      <h3 class="text-sm font-bold text-white uppercase tracking-tight" x-text="item.name"></h3>
+                      <span class="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 text-[8px] font-black uppercase rounded-md" x-text="item.status"></span>
+                   </div>
+                   <p class="text-[10px] text-gray-600 font-medium font-mono" x-text="item.key"></p>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                   <button @click="copy(item.key)" class="p-3 bg-gray-800 hover:bg-cyan-600/20 text-gray-400 hover:text-cyan-400 rounded-xl transition-all relative">
+                      <Copy className="w-4 h-4" />
+                      <span x-show="copied" class="absolute -top-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-cyan-500 text-white text-[8px] font-black rounded uppercase">Copiado</span>
+                   </button>
+                   <button class="p-3 bg-gray-800 hover:bg-white/10 text-gray-400 hover:text-white rounded-xl transition-all">
+                      <RefreshCw className="w-4 h-4" />
+                   </button>
+                   <button class="p-3 bg-gray-800 hover:bg-rose-600/20 text-gray-400 hover:text-rose-400 rounded-xl transition-all">
+                      <Trash2 className="w-4 h-4" />
+                   </button>
+                </div>
+             </div>
+             <div class="mt-6 pt-6 border-t border-gray-800/50 flex items-center space-x-6">
+                <div class="flex items-center space-x-2">
+                   <ShieldCheck className="w-3 h-3 text-emerald-500" />
+                   <span class="text-[9px] font-black text-gray-600 uppercase tracking-widest">Escopo: Leitura e Escrita</span>
+                </div>
+                <span class="text-[9px] font-black text-gray-700 uppercase tracking-widest" x-text="'Criada ' + item.created"></span>
+             </div>
+          </div>
+       </template>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

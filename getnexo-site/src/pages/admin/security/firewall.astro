@@ -1,0 +1,85 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { Shield, Lock, Plus, Trash2, ShieldAlert, Globe, Server } from 'lucide-react';
+
+const blockedIps = [
+  { ip: "192.168.1.104", region: "Unknown", reason: "Brute Force", date: "Há 2h" },
+  { ip: "45.12.3.88", region: "Russia", reason: "Known Bot", date: "Ontem" },
+];
+---
+
+<AdminLayout title="Firewall & IPs" activeTab="seguranca">
+  <div class="max-w-4xl mx-auto space-y-10 animate-fade-in py-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 bg-rose-500/10 rounded-2xl flex items-center justify-center text-rose-500 border border-rose-500/20 shadow-xl shadow-rose-500/10">
+          <Shield className="w-7 h-7" />
+        </div>
+        <div>
+          <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Segurança Perimetral</h1>
+          <p class="text-sm text-gray-500 font-medium">Gerencie regras de acesso e bloqueie IPs maliciosos em tempo real.</p>
+        </div>
+      </div>
+      <button class="px-6 py-3 bg-rose-600 hover:bg-rose-500 text-white font-black rounded-2xl flex items-center space-x-2 transition-all shadow-lg shadow-rose-600/20 uppercase text-xs tracking-widest">
+         <Plus className="w-5 h-5" />
+         <span>Banir IP</span>
+      </button>
+    </div>
+
+    <!-- Active Protection Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+       <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] flex items-center space-x-6">
+          <div class="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center text-emerald-500">
+             <Server className="w-6 h-6" />
+          </div>
+          <div class="space-y-1">
+             <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">WAF Status</p>
+             <h3 class="text-xl font-black text-white uppercase italic tracking-tighter">Ativo & Protegido</h3>
+          </div>
+       </div>
+       <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] flex items-center space-x-6">
+          <div class="w-12 h-12 bg-rose-500/10 rounded-xl flex items-center justify-center text-rose-500">
+             <ShieldAlert className="w-6 h-6" />
+          </div>
+          <div class="space-y-1">
+             <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Ameaças Bloqueadas</p>
+             <h3 class="text-xl font-black text-white italic">4.218 / mês</h3>
+          </div>
+       </div>
+    </div>
+
+    <!-- Blocked List -->
+    <div class="bg-gray-900/40 border border-gray-800 rounded-[2.5rem] overflow-hidden">
+       <div class="p-8 border-b border-gray-800 bg-black/20 flex items-center space-x-3">
+          <Lock className="w-5 h-5 text-gray-500" />
+          <h3 class="text-xs font-black uppercase text-gray-400 tracking-widest">Lista Negra de Acesso</h3>
+       </div>
+
+       <div class="divide-y divide-gray-800/50">
+          {blockedIps.map(item => (
+             <div class="p-8 flex items-center justify-between hover:bg-white/[0.02] transition-colors group">
+                <div class="flex items-center space-x-6">
+                   <div class="w-10 h-10 bg-gray-800 rounded-xl flex items-center justify-center text-gray-600 group-hover:text-rose-500 transition-colors">
+                      <Globe className="w-5 h-5" />
+                   </div>
+                   <div>
+                      <h4 class="text-sm font-bold text-white uppercase tracking-tight font-mono">{item.ip}</h4>
+                      <p class="text-[10px] text-gray-500 font-medium">{item.region} • {item.reason}</p>
+                   </div>
+                </div>
+
+                <div class="flex items-center space-x-6">
+                   <span class="text-[10px] text-gray-600 font-black uppercase tracking-widest italic">{item.date}</span>
+                   <button class="p-3 bg-gray-800 hover:bg-rose-600/20 text-gray-500 hover:text-rose-400 rounded-xl transition-all"><Trash2 className="w-4 h-4" /></button>
+                </div>
+             </div>
+          ))}
+       </div>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

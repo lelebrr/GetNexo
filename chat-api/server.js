@@ -11,6 +11,36 @@ const JWT_SECRET = process.env.JWT_SECRET || 'getnexo-secret-key-2026';
 app.use(cors());
 app.use(express.json());
 
+// Importar Rotas
+const crmRoutes = require('./routes/crm');
+const loyaltyRoutes = require('./routes/loyalty');
+const magicRoutes = require('./routes/magic-replies');
+const webhookRoutes = require('./routes/webhooks');
+const seriesRoutes = require('./routes/series');
+const ticketRoutes = require('./routes/tickets');
+const productRoutes = require('./routes/products');
+const analyticsRoutes = require('./routes/analytics');
+const couponRoutes = require('./routes/coupons');
+const automationRoutes = require('./routes/automations');
+const settingsRoutes = require('./routes/settings');
+const aiRoutes = require('./routes/ai');
+const revendaRoutes = require('./routes/revenda');
+
+// Montar Rotas
+app.use('/api/crm', crmRoutes);
+app.use('/api/loyalty', loyaltyRoutes);
+app.use('/api/magic', magicRoutes);
+app.use('/api/webhooks', webhookRoutes);
+app.use('/api/series', seriesRoutes);
+app.use('/api/tickets', ticketRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/coupons', couponRoutes);
+app.use('/api/automations', automationRoutes);
+app.use('/api/settings', settingsRoutes);
+app.use('/api/ai', aiRoutes);
+app.use('/api/revenda', revendaRoutes);
+
 // Database simulada (em produção, usar banco de dados real)
 const users = [
     {
@@ -246,8 +276,62 @@ app.listen(PORT, () => {
     console.log(`   POST /api/auth/forgot-password - Redefinir senha`);
     console.log(`   POST /api/auth/register - Criar conta`);
     console.log(`   GET  /api/health - Health check`);
+    console.log(`   GET  /api/ai/seo/stats - AI SEO Stats`);
+    console.log(`   GET  /api/ai/security/audit - AI Security Audit`);
     console.log(`\n🔑 Credenciais de demonstração:`);
-    console.log(`   Admin: admin@getnexo.com.br / admin123`);
-    console.log(`   Revendedor: revendedor@getnexo.com / demo123`);
     console.log(`   Cliente: cliente@getnexo.com / demo123`);
 });
+
+// Mock Tickets Data
+const tickets = [
+    {
+        id: 1,
+        customer_name: 'João Silva',
+        customer_phone: '5511999999999',
+        last_message: 'Olá, gostaria de saber mais sobre os planos.',
+        status: 'open',
+        channel: 'whatsapp',
+        priority: 1,
+        sentiment: 'neutral',
+        created_at: new Date(Date.now() - 1000 * 60 * 5).toISOString(), // 5 min ago
+        assigned_agent_name: 'Maria Atendente'
+    },
+    {
+        id: 2,
+        customer_name: 'Tech Solutions Ltda',
+        customer_phone: '5511988888888',
+        last_message: 'Estou com problemas na integração da API.',
+        status: 'priority',
+        channel: 'telegram',
+        priority: 2,
+        sentiment: 'negative',
+        created_at: new Date(Date.now() - 1000 * 60 * 60).toISOString(), // 1 hour ago
+        assigned_agent_name: 'Carlos Suporte'
+    },
+    {
+        id: 3,
+        customer_name: 'Ana Pereira',
+        customer_phone: '5521977777777',
+        last_message: 'Obrigada pelo atendimento!',
+        status: 'closed',
+        channel: 'instagram',
+        priority: 0,
+        sentiment: 'positive',
+        created_at: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1 day ago
+        assigned_agent_name: 'Maria Atendente'
+    },
+    {
+        id: 4,
+        customer_name: 'Marcos Oliveira',
+        customer_phone: '5531966666666',
+        last_message: 'Aguardando retorno sobre o orçamento.',
+        status: 'waiting',
+        channel: 'whatsapp',
+        priority: 1,
+        sentiment: 'neutral',
+        created_at: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 min ago
+        assigned_agent_name: null
+    }
+];
+
+// O endpoint /api/tickets agora é tratado por ticketRoutes montado acima

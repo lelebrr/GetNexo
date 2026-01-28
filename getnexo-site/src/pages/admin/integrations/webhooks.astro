@@ -1,19 +1,101 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { Radio, Plus, Trash2, Edit3, CircleCheck, CircleDashed, Filter, Activity, Terminal } from 'lucide-react';
 ---
 
 <AdminLayout title="Webhooks" activeTab="integracoes">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-pink-500 to-rose-500 rounded-2xl flex items-center justify-center shadow-lg shadow-pink-500/30 animate-pulse">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-      </svg>
+  <div class="max-w-6xl mx-auto space-y-10 animate-fade-in py-4"
+       x-data="{ 
+         activeTab: 'config',
+         webhooks: [
+           { id: 1, url: 'https://n8n.ext.com/webhook/sales', events: 'order.created', status: 'Ativo' },
+           { id: 2, url: 'https://api.site.com/sync', events: 'customer.updated', status: 'Falhando' }
+         ]
+       }">
+    
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 bg-rose-500/10 rounded-2xl flex items-center justify-center text-rose-500 border border-rose-500/20 shadow-xl shadow-rose-500/10">
+          <Radio className="w-7 h-7" />
+        </div>
+        <div>
+          <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Webhooks</h1>
+          <p class="text-sm text-gray-500 font-medium">Configure notificações em tempo real para eventos do sistema.</p>
+        </div>
+      </div>
+      <button class="px-6 py-3 bg-rose-600 hover:bg-rose-500 text-white font-black rounded-2xl flex items-center space-x-2 transition-all shadow-lg shadow-rose-600/20 uppercase text-xs tracking-widest">
+         <Plus className="w-5 h-5" />
+         <span>Novo Webhook</span>
+      </button>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      Webhooks
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Configure webhooks para integrações em tempo real.
-    </p>
+
+    <!-- Tabs -->
+    <div class="flex border-b border-gray-800">
+       <button @click="activeTab = 'config'" :class="activeTab === 'config' ? 'border-b-2 border-rose-500 text-white' : 'text-gray-500 hover:text-gray-300'" class="px-8 py-4 text-[10px] font-black uppercase tracking-widest transition-all">Configurações</button>
+       <button @click="activeTab = 'logs'" :class="activeTab === 'logs' ? 'border-b-2 border-rose-500 text-white' : 'text-gray-500 hover:text-gray-300'" class="px-8 py-4 text-[10px] font-black uppercase tracking-widest transition-all">Logs de Entrega</button>
+    </div>
+
+    <!-- Config list -->
+    <div x-show="activeTab === 'config'" class="space-y-4">
+       <template x-for="hook in webhooks" :key="hook.id">
+          <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] hover:border-rose-500/20 transition-all group">
+             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <div class="space-y-2 flex-1">
+                   <div class="flex items-center space-x-3">
+                      <span class="text-xs font-mono font-bold text-white italic" x-text="hook.url"></span>
+                      <span class="px-2 py-0.5 bg-gray-800 text-gray-400 text-[8px] font-black uppercase rounded-md" x-text="hook.events"></span>
+                   </div>
+                   <div class="flex items-center space-x-2">
+                      <div class="w-2 h-2 rounded-full" :class="hook.status === 'Ativo' ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'"></div>
+                      <span class="text-[9px] font-black uppercase tracking-widest text-gray-500" x-text="hook.status"></span>
+                   </div>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                   <button class="p-3 bg-gray-800 hover:bg-white/10 text-gray-400 hover:text-white rounded-xl transition-all"><Edit3 className="w-4 h-4" /></button>
+                   <button class="p-3 bg-gray-800 hover:bg-rose-600/20 text-gray-400 hover:text-rose-400 rounded-xl transition-all"><Trash2 className="w-4 h-4" /></button>
+                </div>
+             </div>
+          </div>
+       </template>
+    </div>
+
+    <!-- Logs list -->
+    <div x-show="activeTab === 'logs'" class="bg-black/40 border border-gray-800 rounded-[2.5rem] overflow-hidden">
+       <div class="p-6 border-b border-gray-800 bg-black/40 flex items-center justify-between italic">
+          <div class="flex items-center space-x-2 text-gray-500">
+             <Terminal className="w-4 h-4" />
+             <span class="text-[10px] font-black uppercase tracking-widest">Console de Saída</span>
+          </div>
+       </div>
+       <div class="p-4 font-mono text-[11px] space-y-2">
+          <div class="flex items-center space-x-4 text-emerald-400/80">
+             <span class="text-gray-600">[11:54:02]</span>
+             <span class="font-bold">POST</span>
+             <span>200 OK</span>
+             <span class="flex-1 italic truncate">https://n8n.ext.com/webhook/sales</span>
+             <span>142ms</span>
+          </div>
+          <div class="flex items-center space-x-4 text-rose-400/80">
+             <span class="text-gray-600">[11:52:15]</span>
+             <span class="font-bold">POST</span>
+             <span>500 Internal Server Error</span>
+             <span class="flex-1 italic truncate">https://api.site.com/sync</span>
+             <span>2.4s</span>
+          </div>
+          <div class="flex items-center space-x-4 text-emerald-400/80">
+             <span class="text-gray-600">[11:50:58]</span>
+             <span class="font-bold">POST</span>
+             <span>200 OK</span>
+             <span class="flex-1 italic truncate">https://n8n.ext.com/webhook/sales</span>
+             <span>189ms</span>
+          </div>
+       </div>
+    </div>
   </div>
 </AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

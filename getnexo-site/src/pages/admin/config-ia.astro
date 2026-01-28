@@ -104,9 +104,7 @@ import Layout from '../../layouts/Layout.astro';
 </Layout>
 
 <script nonce={Astro.locals.nonce} is:inline>
-  const API_URL = window.location.hostname === 'localhost' 
-      ? 'http://localhost:3006' 
-      : 'https://api.getnexo.com.br';
+  const API_URL = '';
 
   function updateDeepSeekPricing() {
     const model = document.getElementById('deepseek-model-select').value;

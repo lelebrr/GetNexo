@@ -5,6 +5,7 @@ import '../styles/global.css';
 const { title = "GetNexo Dashboard" } = Astro.props;
 const currentPath = Astro.url.pathname;
 const nonce = Astro.locals.nonce;
+const trustedTypesPolicy = Astro.locals.trustedTypesPolicy || 'getnexo-trusted';
 ---
 
 <!doctype html>
@@ -107,8 +108,23 @@ const nonce = Astro.locals.nonce;
 <body class="antialiased">
     <div id="neural-bg" class="neural-canvas" style="display: none;"></div>
 
-    <script nonce={Astro.locals.nonce} is:inline>
+    <script nonce={Astro.locals.nonce} define:vars={{ trustedTypesPolicy }}>
         (function() {
+            // Initialize Trusted Types policies
+            if (window.trustedTypes && window.trustedTypes.createPolicy) {
+                if (!window.trustedTypes.defaultPolicy) {
+                    try {
+                        window.trustedTypes.createPolicy('default', {
+                            createHTML: function(s) { return s; },
+                            createScript: function(s) { return s; },
+                            createScriptURL: function(s) { return s; }
+                        });
+                    } catch (e) {
+                        console.warn('Trusted Types default policy already exists or failed:', e);
+                    }
+                }
+            }
+
             const bgType = localStorage.getItem('getnexo-bg-type') || 'blobs';
             const neuralCanvas = document.getElementById('neural-bg');
             const oldBg = document.getElementById('old-bg');

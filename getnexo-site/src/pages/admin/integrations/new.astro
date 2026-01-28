@@ -1,19 +1,76 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { Plus, Search, Globe, Shield, Zap, ChevronRight, X } from 'lucide-react';
 ---
 
-<AdminLayout title="Adicionar Nova" activeTab="integracoes">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/30 animate-pulse">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-      </svg>
+<AdminLayout title="Adicionar Integração" activeTab="integracoes">
+  <div class="max-w-5xl mx-auto space-y-10 animate-fade-in py-4"
+       x-data="{ 
+         search: '',
+         apps: [
+           { name: 'Shopify', desc: 'E-commerce v2', color: 'bg-emerald-600' },
+           { name: 'WooCommerce', desc: 'WordPress Plugin', color: 'bg-purple-600' },
+           { name: 'Mercado Pago', desc: 'Gateway de Pagamento', color: 'bg-blue-400' },
+           { name: 'n8n', desc: 'Workflow Automation', color: 'bg-orange-500' },
+           { name: 'Bling', desc: 'Gestão de ERP', color: 'bg-emerald-400' },
+           { name: 'Zapier', desc: 'Cloud Integration', color: 'bg-orange-600' }
+         ]
+       }">
+    
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 bg-purple-500/10 rounded-2xl flex items-center justify-center text-purple-500 border border-purple-500/20 shadow-xl shadow-purple-500/10">
+          <Plus className="w-7 h-7" />
+        </div>
+        <div>
+          <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Conectar Serviço</h1>
+          <p class="text-sm text-gray-500 font-medium">Selecione uma plataforma para sincronizar com sua conta.</p>
+        </div>
+      </div>
+      <a href="/admin/integrations/list" class="p-3 bg-gray-900 border border-gray-800 text-gray-500 hover:text-white rounded-xl transition-all"><X className="w-5 h-5" /></a>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      Adicionar Nova
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Conecte uma nova integração ao seu sistema.
-    </p>
+
+    <!-- Search -->
+    <div class="relative max-w-xl">
+       <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
+       <input type="text" x-model="search" placeholder="Buscar app por nome ou categoria..." class="w-full bg-gray-900 border border-gray-800 rounded-2xl py-4 pl-12 pr-4 text-sm text-white focus:border-purple-500 outline-none transition-all placeholder:text-gray-700 font-medium" />
+    </div>
+
+    <!-- Apps Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+       <template x-for="app in apps.filter(a => a.name.toLowerCase().includes(search.toLowerCase()))" :key="app.name">
+          <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] hover:border-purple-500/30 transition-all group cursor-pointer relative overflow-hidden">
+             <div class="absolute -right-4 -top-4 w-24 h-24 blur-3xl opacity-0 group-hover:opacity-20 transition-opacity" :class="app.color"></div>
+             
+             <div class="flex items-center justify-between mb-8">
+                <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-xl transition-transform group-hover:scale-110" :class="app.color" x-text="app.name[0]"></div>
+                <div class="p-2 bg-gray-800 rounded-lg text-gray-500 group-hover:text-purple-400 transition-colors">
+                   <ChevronRight className="w-4 h-4" />
+                </div>
+             </div>
+
+             <div class="space-y-1">
+                <h3 class="text-lg font-bold text-white uppercase tracking-tight" x-text="app.name"></h3>
+                <p class="text-[10px] text-gray-500 font-medium uppercase tracking-widest" x-text="app.desc"></p>
+             </div>
+          </div>
+       </template>
+
+       <!-- Custom / Manual -->
+       <div class="bg-black/40 border-2 border-dashed border-gray-800 p-8 rounded-[2.5rem] hover:border-purple-500/20 transition-all group cursor-pointer flex flex-col items-center justify-center text-center space-y-4">
+          <div class="w-12 h-12 bg-gray-900 rounded-full flex items-center justify-center text-gray-600 group-hover:text-purple-500 transition-colors">
+             <Globe className="w-6 h-6" />
+          </div>
+          <div>
+             <h4 class="text-sm font-bold text-white uppercase tracking-tight">API Customizada</h4>
+             <p class="text-[10px] text-gray-600 font-medium leading-relaxed">Conecte qualquer sistema via Webhooks ou REST API.</p>
+          </div>
+       </div>
+    </div>
   </div>
 </AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

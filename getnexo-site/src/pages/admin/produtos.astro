@@ -11,47 +11,105 @@ import Layout from '../../layouts/Layout.astro';
     <a href="/criar-bot" class="nav-link">🤖 Criar Bot</a>
   </nav>
 
-  <div class="page-container">
+  <div class="page-container" 
+       x-data="{ 
+         products: [], 
+         loading: true,
+         modalOpen: false,
+         editingProduct: { id: '', name: '', price: '', stock: 10, image_url: '', description: '' },
+         
+         async fetchProducts() {
+           this.loading = true;
+           try {
+             const res = await fetch('/api/products');
+             this.products = await res.json();
+           } catch (e) {
+             console.error('Erro ao carregar produtos:', e);
+           } finally {
+             this.loading = false;
+           }
+         },
+         
+         openModal(product = null) {
+           if (product) {
+             this.editingProduct = { ...product };
+           } else {
+             this.editingProduct = { id: '', name: '', price: '', stock: 10, image_url: '', description: '' };
+           }
+           this.modalOpen = true;
+         },
+         
+         async saveProduct() {
+           try {
+             const method = this.editingProduct.id ? 'PUT' : 'POST';
+             const url = this.editingProduct.id 
+               ? `/api/products/${this.editingProduct.id}` 
+               : '/api/products';
+             
+             const res = await fetch(url, {
+               method,
+               headers: { 'Content-Type': 'application/json' },
+               body: JSON.stringify(this.editingProduct)
+             });
+             
+             if (res.ok) {
+               this.modalOpen = false;
+               this.fetchProducts();
+             }
+           } catch (e) {
+             alert('Erro ao salvar produto');
+           }
+         },
+         
+         async deleteProduct(id) {
+           if (!confirm('Excluir este produto?')) return;
+           try {
+             await fetch(`/api/products/${id}`, { method: 'DELETE' });
+             this.fetchProducts();
+           } catch (e) {
+             alert('Erro ao excluir');
+           }
+         }
+       }"
+       x-init="fetchProducts()">
     <header class="page-header">
       <h1>🛍️ Produtos</h1>
-      <button id="btn-new" class="btn-primary">+ Novo Produto</button>
+      <button @click="openModal()" class="btn-primary">+ Novo Produto</button>
     </header>
 
     <!-- Modal -->
-    <div id="modal" class="modal" style="display:none;">
-      <div class="modal-content">
-        <h2 id="modal-title">Novo Produto</h2>
-        <form id="form-product">
-          <input type="hidden" name="id" id="product-id" />
-          
+    <div x-show="modalOpen" class="modal" style="display:none;" x-cloak>
+      <div class="modal-content" @click.away="modalOpen = false">
+        <h2 x-text="editingProduct.id ? 'Editar Produto' : 'Novo Produto'"></h2>
+        <form @submit.prevent="saveProduct()">
           <div class="field">
             <label>Nome do Produto *</label>
-            <input type="text" name="name" id="product-name" placeholder="Ex: Camiseta Neon" required />
+            <input type="text" x-model="editingProduct.name" placeholder="Ex: Camiseta Neon" required />
           </div>
           
           <div class="field-row">
             <div class="field">
               <label>Preço (R$) *</label>
-              <input type="number" name="price" id="product-price" placeholder="99.90" step="0.01" required />
+              <input type="number" x-model="editingProduct.price" placeholder="99.90" step="0.01" required />
             </div>
             <div class="field">
               <label>Estoque</label>
-              <input type="number" name="stock" id="product-stock" placeholder="10" value="10" />
+              <input type="number" x-model="editingProduct.stock" placeholder="10" />
             </div>
           </div>
           
           <div class="field">
             <label>URL da Imagem</label>
-            <input type="url" name="image_url" id="product-image" placeholder="https://..." />
+            <input type="url" x-model="editingProduct.image_url" placeholder="https://..." />
           </div>
           
           <div class="field">
             <label>Descrição</label>
-            <textarea name="description" id="product-desc" rows="3" placeholder="Descrição do produto..."></textarea>
+            <textarea x-model="editingProduct.description" rows="3" placeholder="Descrição do produto..."></textarea>
           </div>
           
           <div class="modal-actions">
-            <button type="button" id="btn-cancel" class="btn-secondary">Cancelar</button>
+            <button type="button" @click="modalOpen = false" class="btn-secondary">Cancelar</button>
             <button type="submit" class="btn-primary">Salvar</button>
           </div>
         </form>
@@ -59,133 +117,31 @@ import Layout from '../../layouts/Layout.astro';
     </div>
 
     <!-- Products Grid -->
-    <div id="products-grid" class="products-grid">
-      <p style="color:#64748b; text-align:center; grid-column:1/-1; padding:4rem;">Carregando...</p>
+    <div class="products-grid">
+      <div x-show="loading" class="col-span-full py-20 text-center text-gray-500 uppercase font-black tracking-widest animate-pulse">
+         Sincronizando Catálogo...
+      </div>
+      
+      <template x-for="p in products" :key="p.id">
+        <div class="product-card">
+          <img :src="p.image_url || 'https://placehold.co/200x200/1e293b/64748b?text=Sem+Imagem'" :alt="p.name" class="product-image" />
+          <div class="product-info">
+            <h3 x-text="p.name"></h3>
+            <p class="product-price" x-text="'R$ ' + parseFloat(p.price).toFixed(2)"></p>
+            <p class="product-stock" x-text="'Estoque: ' + (p.stock || 0)"></p>
+          </div>
+          <div class="product-actions">
+            <button @click="openModal(p)" class="btn-icon" title="Editar">✏️</button>
+            <button @click="deleteProduct(p.id)" class="btn-icon" title="Excluir">🗑️</button>
+          </div>
+        </div>
+      </template>
+
+      <div x-show="!loading && products.length === 0" class="col-span-full py-20 text-center text-gray-500 uppercase font-black tracking-widest">
+         Nenhum produto encontrado.
+      </div>
     </div>
   </div>
-
-  <script nonce={Astro.locals.nonce} is:inline>
-    const API_URL = '/api';
-    
-    const modal = document.getElementById('modal');
-    const form = document.getElementById('form-product');
-    const grid = document.getElementById('products-grid');
-    
-    async function loadProducts() {
-      try {
-        const res = await fetch(`${API_URL}/products`);
-        const products = await res.json();
-        
-        if (products.length === 0) {
-          grid.innerHTML = '<p style="color:#64748b; text-align:center; grid-column:1/-1; padding:4rem;">Nenhum produto cadastrado</p>';
-          return;
-        }
-        
-        grid.innerHTML = products.map(p => `
-          <div class="product-card" data-id="${p.id}">
-            <img src="${p.image_url || 'https://placehold.co/200x200/1e293b/64748b?text=Sem+Imagem'}" alt="${p.name}" class="product-image" />
-            <div class="product-info">
-              <h3>${p.name}</h3>
-              <p class="product-price">R$ ${p.price.toFixed(2)}</p>
-              <p class="product-stock">Estoque: ${p.stock || 0}</p>
-            </div>
-            <div class="product-actions">
-              <button onclick="editProduct(${p.id})" class="btn-icon" title="Editar">✏️</button>
-              <button onclick="deleteProduct(${p.id})" class="btn-icon" title="Excluir">🗑️</button>
-            </div>
-          </div>
-        `).join('');
-      } catch (e) {
-        console.error('Error:', e);
-        grid.innerHTML = '<p style="color:#f87171; text-align:center; grid-column:1/-1;">Erro ao carregar produtos</p>';
-      }
-    }
-    
-    // Open modal for new product
-    document.getElementById('btn-new').onclick = () => {
-      form.reset();
-      document.getElementById('product-id').value = '';
-      document.getElementById('modal-title').textContent = 'Novo Produto';
-      modal.style.display = 'flex';
-    };
-    
-    // Close modal
-    document.getElementById('btn-cancel').onclick = () => {
-      modal.style.display = 'none';
-    };
-    
-    // Edit product
-    window.editProduct = async (id) => {
-      try {
-        const res = await fetch(`${API_URL}/products`);
-        const products = await res.json();
-        const product = products.find(p => p.id === id);
-        
-        if (!product) return alert('Produto não encontrado');
-        
-        document.getElementById('product-id').value = product.id;
-        document.getElementById('product-name').value = product.name;
-        document.getElementById('product-price').value = product.price;
-        document.getElementById('product-stock').value = product.stock || 0;
-        document.getElementById('product-image').value = product.image_url || '';
-        document.getElementById('product-desc').value = product.description || '';
-        
-        document.getElementById('modal-title').textContent = 'Editar Produto';
-        modal.style.display = 'flex';
-      } catch (e) {
-        console.error('Error:', e);
-      }
-    };
-    
-    // Delete product
-    window.deleteProduct = async (id) => {
-      if (!confirm('Tem certeza que deseja excluir este produto?')) return;
-      
-      try {
-        await fetch(`${API_URL}/products/${id}`, { method: 'DELETE' });
-        loadProducts();
-      } catch (e) {
-        console.error('Error:', e);
-        alert('Erro ao excluir produto');
-      }
-    };
-    
-    // Submit form
-    form.onsubmit = async (e) => {
-      e.preventDefault();
-      const data = new FormData(form);
-      const id = data.get('id');
-      
-      const payload = {
-        name: data.get('name'),
-        price: parseFloat(data.get('price')),
-        stock: parseInt(data.get('stock')) || 0,
-        image_url: data.get('image_url') || null,
-        description: data.get('description') || null
-      };
-      
-      try {
-        const url = id ? `${API_URL}/products/${id}` : `${API_URL}/products`;
-        const method = id ? 'PUT' : 'POST';
-        
-        const res = await fetch(url, {
-          method,
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        
-        if (!res.ok) throw new Error('Failed');
-        
-        modal.style.display = 'none';
-        loadProducts();
-      } catch (e) {
-        console.error('Error:', e);
-        alert('Erro ao salvar produto');
-      }
-    };
-    
-    loadProducts();
-  </script>
 </Layout>
 
 <style>

@@ -1,19 +1,124 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { Plug, Zap, CheckCircle2, AlertCircle, ArrowUpRight, Plus, ExternalLink, RefreshCw } from 'lucide-react';
 ---
 
-<AdminLayout title="100+ Integrações" activeTab="integracoes">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-violet-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg shadow-violet-500/30 animate-pulse">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
-      </svg>
+<AdminLayout title="Dashboard de Integrações" activeTab="integracoes">
+  <div class="max-w-6xl mx-auto space-y-10 animate-fade-in py-4">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 bg-violet-500/10 rounded-2xl flex items-center justify-center text-violet-500 border border-violet-500/20 shadow-xl shadow-violet-500/10">
+          <Plug className="w-7 h-7" />
+        </div>
+        <div>
+          <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Ecosistema Nexus</h1>
+          <p class="text-sm text-gray-500">Gerencie e monitore o fluxo de dados entre seus sistemas favoritos.</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-3">
+         <div class="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+            <span class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">2 Conexões Ativas</span>
+         </div>
+      </div>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      100+ Integrações
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Explore e conecte mais de 100 integrações disponíveis.
-    </p>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+       <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] space-y-4 group cursor-pointer hover:border-violet-500/20 transition-all">
+          <div class="flex justify-between items-start">
+             <div class="p-3 bg-violet-500/10 rounded-xl text-violet-500 group-hover:bg-violet-500 group-hover:text-white transition-all">
+                <Plus className="w-6 h-6" />
+             </div>
+             <ArrowUpRight className="w-5 h-5 text-gray-700" />
+          </div>
+          <div>
+             <h3 class="text-lg font-bold text-white uppercase tracking-tight">Nova Conexão</h3>
+             <p class="text-[10px] text-gray-500 font-medium">Configure uma nova API ou Webhook.</p>
+          </div>
+       </div>
+
+       <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] space-y-4 group cursor-pointer hover:border-blue-500/20 transition-all">
+          <div class="flex justify-between items-start">
+             <div class="p-3 bg-blue-500/10 rounded-xl text-blue-500">
+                <Zap className="w-6 h-6" />
+             </div>
+             <ArrowUpRight className="w-5 h-5 text-gray-700" />
+          </div>
+          <div>
+             <h3 class="text-lg font-bold text-white uppercase tracking-tight">Marketplace</h3>
+             <p class="text-[10px] text-gray-500 font-medium">Explore apps pré-configurados.</p>
+          </div>
+       </div>
+
+       <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] space-y-4 group cursor-pointer hover:border-emerald-500/20 transition-all">
+          <div class="flex justify-between items-start">
+             <div class="p-3 bg-emerald-500/10 rounded-xl text-emerald-500">
+                <RefreshCw className="w-6 h-6" />
+             </div>
+             <ArrowUpRight className="w-5 h-5 text-gray-700" />
+          </div>
+          <div>
+             <h3 class="text-lg font-bold text-white uppercase tracking-tight">Logs de Sincronia</h3>
+             <p class="text-[10px] text-gray-500 font-medium">Audite o tráfego de dados.</p>
+          </div>
+       </div>
+    </div>
+
+    <!-- Active Integrations Preview -->
+    <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] space-y-8">
+       <div class="flex items-center justify-between">
+          <h3 class="text-sm font-black uppercase text-gray-400 tracking-widest">Health Check das Conexões</h3>
+          <button class="text-[10px] font-black uppercase text-violet-500 hover:text-violet-400 transition-colors">Ver todas conectadas</button>
+       </div>
+
+       <div class="space-y-4">
+          <div class="flex items-center justify-between p-6 bg-black/40 border border-gray-800 rounded-3xl group">
+             <div class="flex items-center space-x-6">
+                <div class="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center text-white font-black italic">S</div>
+                <div>
+                   <h4 class="text-sm font-bold text-white uppercase tracking-tight italic">Shopify Store</h4>
+                   <p class="text-[10px] text-gray-500 font-medium">Última venda importada há 4 min</p>
+                </div>
+             </div>
+             <div class="flex items-center space-x-2 text-emerald-500">
+                <CheckCircle2 className="w-4 h-4" />
+                <span class="text-[9px] font-black uppercase tracking-widest">Estável</span>
+             </div>
+          </div>
+
+          <div class="flex items-center justify-between p-6 bg-black/40 border border-gray-800 rounded-3xl group">
+             <div class="flex items-center space-x-6">
+                <div class="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center text-white font-black italic">M</div>
+                <div>
+                   <h4 class="text-sm font-bold text-white uppercase tracking-tight italic">Meta WhatsApp API</h4>
+                   <p class="text-[10px] text-gray-500 font-medium">Fluxo constante de mensagens</p>
+                </div>
+             </div>
+             <div class="flex items-center space-x-2 text-emerald-500">
+                <CheckCircle2 className="w-4 h-4" />
+                <span class="text-[9px] font-black uppercase tracking-widest">Estável</span>
+             </div>
+          </div>
+
+          <div class="flex items-center justify-between p-6 bg-rose-500/5 border border-rose-500/20 rounded-3xl group">
+             <div class="flex items-center space-x-6">
+                <div class="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center text-white font-black italic">B</div>
+                <div>
+                   <h4 class="text-sm font-bold text-white uppercase tracking-tight italic">Bling ERP</h4>
+                   <p class="text-[10px] text-gray-500 font-medium">Token expirado ou inválido</p>
+                </div>
+             </div>
+             <div class="flex items-center space-x-2 text-rose-500">
+                <AlertCircle className="w-4 h-4" />
+                <span class="text-[9px] font-black uppercase tracking-widest">Erro Crítico</span>
+             </div>
+          </div>
+       </div>
+    </div>
   </div>
 </AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

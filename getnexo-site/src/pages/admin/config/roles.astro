@@ -1,19 +1,69 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { Shield, Lock, Plus, Check, MoreVertical, Search, Edit3, Trash2, Key } from 'lucide-react';
+
+const roles = [
+  { id: 1, name: "Super Admin", users: 1, access: "Total", color: "bg-emerald-500" },
+  { id: 2, name: "Vendedor", users: 3, access: "Apenas Pedidos/CRM", color: "bg-blue-500" },
+  { id: 3, name: "Auditor", users: 1, access: "Apenas Relatórios", color: "bg-amber-500" },
+  { id: 4, name: "Estoquista", users: 2, access: "Apenas Produtos", color: "bg-purple-500" },
+];
 ---
 
-<AdminLayout title="Roles & Acessos" activeTab="config">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-slate-500 to-gray-500 rounded-2xl flex items-center justify-center shadow-lg shadow-slate-500/30 animate-pulse">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-      </svg>
+<AdminLayout title="Cargos & Permissões" activeTab="config">
+  <div class="max-w-5xl mx-auto space-y-10 animate-fade-in py-4">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 bg-gray-500/10 rounded-2xl flex items-center justify-center text-white border border-gray-500/20 shadow-xl shadow-gray-500/10">
+          <Shield className="w-7 h-7" />
+        </div>
+        <div>
+          <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Níveis de Acesso</h1>
+          <p class="text-sm text-gray-500 font-medium">Defina detalhadamente quais módulos cada cargo pode visualizar ou editar.</p>
+        </div>
+      </div>
+      <button class="px-6 py-3 bg-white text-black font-black rounded-2xl flex items-center space-x-2 transition-all hover:bg-gray-200 uppercase text-xs tracking-widest">
+         <Plus className="w-5 h-5" />
+         <span>Novo Cargo</span>
+      </button>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      Roles & Acessos
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Gerencie roles e níveis de acesso do sistema.
-    </p>
+
+    <!-- Roles Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+       {roles.map(role => (
+          <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] hover:border-white/20 transition-all group flex flex-col justify-between h-[280px]">
+             <div>
+                <div class="flex justify-between items-start mb-6">
+                   <div class="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center text-gray-500 group-hover:bg-white group-hover:text-black transition-all">
+                      <Lock className="w-6 h-6" />
+                   </div>
+                   <div class:list={["w-3 h-3 rounded-full", role.color]}></div>
+                </div>
+                <h3 class="text-lg font-bold text-white uppercase tracking-tight leading-tight">{role.name}</h3>
+                <p class="text-[10px] text-gray-500 font-medium mt-1 uppercase tracking-widest">{role.users} usuários vinculados</p>
+             </div>
+
+             <div class="pt-6 border-t border-gray-800/50 flex items-center justify-between">
+                <span class="text-[8px] font-black text-gray-600 uppercase tracking-widest italic">{role.access}</span>
+                <div class="flex items-center space-x-2">
+                   <button class="p-2.5 bg-gray-800/50 text-gray-500 hover:text-white rounded-xl transition-all"><Edit3 className="w-4 h-4" /></button>
+                </div>
+             </div>
+          </div>
+       ))}
+
+       <!-- Template / Quick Set -->
+       <div class="bg-black/40 border-2 border-dashed border-gray-800 p-8 rounded-[2.5rem] hover:border-white/10 transition-all group cursor-pointer flex flex-col items-center justify-center text-center space-y-4">
+          <div class="w-14 h-14 bg-gray-900 rounded-full flex items-center justify-center text-gray-700 group-hover:bg-white group-hover:text-black transition-all">
+             <Key className="w-6 h-6" />
+          </div>
+          <p class="text-[10px] text-gray-600 font-black uppercase tracking-widest leading-relaxed">Importar Template<br/>de Permissões</p>
+       </div>
+    </div>
   </div>
 </AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

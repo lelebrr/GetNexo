@@ -12,7 +12,64 @@ const leads = [
 ---
 
 <AdminLayout title="Lista Total de Leads" activeTab="crm">
-  <div class="space-y-6 animate-fade-in">
+  <div class="space-y-6 animate-fade-in" 
+       x-data="{ 
+         leads: [], 
+         loading: true, 
+         search: '',
+         statusFilter: 'all',
+         editModalOpen: false,
+         editingLead: { id: '', name: '', status: '' },
+         
+         async fetchLeads() {
+           this.loading = true;
+           try {
+             const url = new URL('/api/crm/customers', window.location.origin);
+             if (this.search) url.searchParams.append('search', this.search);
+             if (this.statusFilter !== 'all') url.searchParams.append('status', this.statusFilter);
+             
+             const data = await fetch(url).then(res => res.json());
+             this.leads = data.customers;
+           } catch (e) {
+             console.error('Erro ao carregar leads:', e);
+           } finally {
+             this.loading = false;
+           }
+         },
+         
+         openEditModal(lead) {
+           this.editingLead = { ...lead };
+           this.editModalOpen = true;
+         },
+         
+         async saveLead() {
+           try {
+             const res = await fetch(`/api/crm/customers/${this.editingLead.id}`, {
+               method: 'PATCH',
+               headers: { 'Content-Type': 'application/json' },
+               body: JSON.stringify({ name: this.editingLead.name, status: this.editingLead.status })
+             });
+             if (res.ok) {
+               this.editModalOpen = false;
+               this.fetchLeads();
+             }
+           } catch (e) {
+             alert('Erro ao salvar lead');
+           }
+         },
+         
+         async deleteLead(id) {
+           if (!confirm('Tem certeza que deseja remover este lead?')) return;
+           try {
+             await fetch(`/api/crm/customers/${id}`, { method: 'DELETE' });
+             await this.fetchLeads();
+           } catch (e) {
+             alert('Erro ao remover lead');
+           }
+         }
+       }" 
+       x-init="fetchLeads()"
+       @search-updated.window="search = $event.detail; fetchLeads()">
     <div class="flex items-center justify-between">
       <div>
         <h1 class="text-2xl font-bold text-white uppercase tracking-tight">Gerenciamento de Leads</h1>
@@ -28,70 +85,109 @@ const leads = [
     <div class="flex flex-col md:flex-row gap-4 bg-gray-900/40 p-4 border border-gray-800 rounded-2xl">
       <div class="relative flex-1">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-        <input type="text" placeholder="Buscar por nome, email ou telefone..." class="w-full bg-black/60 border border-gray-800 rounded-xl py-2 pl-10 pr-4 text-sm text-white focus:border-indigo-500 outline-none" />
+        <input type="text" 
+               x-model="search" 
+               @input.debounce.500ms="fetchLeads()"
+               placeholder="Buscar por nome ou ID..." 
+               class="w-full bg-black/60 border border-gray-800 rounded-xl py-2 pl-10 pr-4 text-sm text-white focus:border-indigo-500 outline-none" />
       </div>
       <div class="flex space-x-2">
-        <button class="px-4 py-2 bg-gray-800 border border-gray-700 rounded-xl text-xs font-bold text-gray-400 hover:text-white flex items-center">
-            <Filter className="w-3 h-3 mr-2" /> Filtros
-        </button>
+        <select x-model="statusFilter" @change="fetchLeads()" class="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-xs font-bold text-gray-400 outline-none focus:text-white">
+          <option value="all">Todos os Status</option>
+          <option value="lead">Lead</option>
+          <option value="qualified">Qualificado</option>
+          <option value="closed">Fechado</option>
+        </select>
       </div>
     </div>
 
     <!-- Tabela -->
     <div class="bg-gray-900/20 border border-gray-800 rounded-2xl overflow-hidden backdrop-blur-md">
-      <table class="w-full text-left">
+      <div x-show="loading" class="p-20 flex flex-col items-center justify-center space-y-4">
+         <div class="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+         <p class="text-xs text-gray-500 uppercase font-black tracking-widest">Sincronizando Leads...</p>
+      </div>
+
+      <table x-show="!loading" class="w-full text-left">
         <thead>
           <tr class="bg-black/40 border-b border-gray-800">
             <th class="px-6 py-4 text-[10px] font-black uppercase text-gray-500">Nome / Contato</th>
             <th class="px-6 py-4 text-[10px] font-black uppercase text-gray-500">Status</th>
-            <th class="px-6 py-4 text-[10px] font-black uppercase text-gray-500">Segmentação</th>
+            <th class="px-6 py-4 text-[10px] font-black uppercase text-gray-500">Mensagens</th>
             <th class="px-6 py-4 text-[10px] font-black uppercase text-gray-500 text-right">Ações</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-800/50">
-          {leads.map(lead => (
+          <template x-for="lead in leads" :key="lead.id">
             <tr class="hover:bg-indigo-500/5 transition-colors group">
               <td class="px-6 py-4">
                 <div class="flex items-center space-x-3">
-                  <div class="w-10 h-10 bg-indigo-500/10 rounded-full flex items-center justify-center text-indigo-400 font-bold">
-                    {lead.name[0]}
+                  <div class="w-10 h-10 bg-indigo-500/10 rounded-full flex items-center justify-center text-indigo-400 font-bold uppercase" x-text="lead.name ? lead.name[0] : '?'">
                   </div>
                   <div>
-                    <h4 class="text-sm font-bold text-white">{lead.name}</h4>
-                    <p class="text-[10px] text-gray-500 flex items-center">
-                      <Mail className="w-2.5 h-2.5 mr-1" /> {lead.email}
-                    </p>
+                    <h4 class="text-sm font-bold text-white uppercase tracking-tight" x-text="lead.name || 'Sem Nome'"></h4>
+                    <p class="text-[10px] text-gray-500 flex items-center" x-text="lead.id"></p>
                   </div>
                 </div>
               </td>
               <td class="px-6 py-4">
-                <span class:list={[
-                  "text-[9px] font-black uppercase px-2 py-0.5 rounded",
-                  lead.status === 'Novo' ? 'bg-cyan-500/10 text-cyan-400' : 
-                  lead.status === 'Quente' ? 'bg-orange-500/10 text-orange-400' :
-                  lead.status === 'Convertido' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-gray-800 text-gray-500'
-                ]}>
-                  {lead.status}
+                <span :class="{
+                  'bg-cyan-500/10 text-cyan-400': lead.status === 'lead',
+                  'bg-orange-500/10 text-orange-400': lead.status === 'qualified',
+                  'bg-emerald-500/10 text-emerald-400': lead.status === 'closed',
+                  'bg-gray-800 text-gray-500': !['lead', 'qualified', 'closed'].includes(lead.status)
+                }" class="text-[9px] font-black uppercase px-2 py-0.5 rounded" x-text="lead.status">
                 </span>
               </td>
               <td class="px-6 py-4">
-                <div class="flex flex-wrap gap-1">
-                  {lead.tags.map(tag => (
-                    <span class="text-[8px] bg-white/5 text-gray-400 border border-white/10 px-1.5 py-0.5 rounded flex items-center">
-                      <Tag className="w-2 h-2 mr-1 opacity-50" /> {tag}
-                    </span>
-                  ))}
-                </div>
+                 <span class="text-[10px] text-gray-400 font-mono" x-text="lead.message_count || 0"></span>
               </td>
               <td class="px-6 py-4 text-right">
-                <button class="p-2 text-gray-500 hover:text-white transition-colors">
-                  <MoreHorizontal className="w-4 h-4" />
-                </button>
+                <div class="flex items-center justify-end space-x-2">
+                   <button @click="openEditModal(lead)" class="p-2 text-gray-400 hover:text-indigo-400 transition-colors" title="Editar Contato">
+                     <Settings className="w-4 h-4" />
+                   </button>
+                   <button @click="deleteLead(lead.id)" class="p-2 text-gray-400 hover:text-red-500 transition-colors" title="Excluir Contato">
+                     <Trash2 className="w-4 h-4" />
+                   </button>
+                </div>
               </td>
             </tr>
-          ))}
+          </template>
         </tbody>
       </table>
+    </div>
+
+    <!-- Edit Modal -->
+    <div x-show="editModalOpen" 
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         style="display: none;" x-cloak>
+      <div class="bg-gray-900 border border-gray-800 w-full max-w-md rounded-[2.5rem] p-8 space-y-6 shadow-2xl" @click.away="editModalOpen = false">
+        <h3 class="text-xl font-bold text-white uppercase tracking-tight">Editar Lead</h3>
+        
+        <div class="space-y-4">
+          <div class="space-y-1">
+            <label class="text-[10px] font-black uppercase text-gray-500 tracking-widest">Nome do Cliente</label>
+            <input type="text" x-model="editingLead.name" class="w-full bg-black/40 border border-gray-800 rounded-xl py-3 px-4 text-white focus:border-indigo-500 outline-none" />
+          </div>
+          <div class="space-y-1">
+            <label class="text-[10px] font-black uppercase text-gray-500 tracking-widest">Status no Funil</label>
+            <select x-model="editingLead.status" class="w-full bg-black/40 border border-gray-800 rounded-xl py-3 px-4 text-white focus:border-indigo-500 outline-none">
+              <option value="lead">Lead</option>
+              <option value="qualified">Qualificado</option>
+              <option value="closed">Fechado</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex space-x-3 pt-4">
+          <button @click="editModalOpen = false" class="flex-1 py-3 bg-gray-800 hover:bg-gray-700 text-gray-400 font-bold rounded-2xl transition-all uppercase text-[10px] tracking-widest">Cancelar</button>
+          <button @click="saveLead()" class="flex-1 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl transition-all uppercase text-[10px] tracking-widest">Salvar Alterações</button>
+        </div>
+      </div>
     </div>
   </div>
 </AdminLayout>

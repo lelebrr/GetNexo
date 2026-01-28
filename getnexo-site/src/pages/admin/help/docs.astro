@@ -1,19 +1,84 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { Book, Search, FileText, ChevronRight, Play, ExternalLink, Library } from 'lucide-react';
+
+const categories = [
+  { name: "Primeiros Passos", articles: 12, icon: Play, color: "bg-blue-500" },
+  { name: "Configurações Globais", articles: 45, icon: Library, color: "bg-purple-500" },
+  { name: "API & Integrações", articles: 32, icon: Book, color: "bg-emerald-500" },
+];
 ---
 
-<AdminLayout title="Documentação" activeTab="ajuda">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/30 animate-pulse">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-      </svg>
+<AdminLayout title="Documentação NEXO" activeTab="suporte">
+  <div class="max-w-6xl mx-auto space-y-10 animate-fade-in py-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-500 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+          <Book className="w-7 h-7" />
+        </div>
+        <div>
+          <h1 class="text-3xl font-black text-white uppercase tracking-tighter italic">Nexo Docs</h1>
+          <p class="text-sm text-gray-500 font-medium">Explore guias técnicos detalhados e documentação de desenvolvedor.</p>
+        </div>
+      </div>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      Documentação
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Documentação técnica completa do sistema.
-    </p>
+
+    <!-- Search Tool -->
+    <div class="bg-gray-900 border border-gray-800 p-8 rounded-[3rem] space-y-6 shadow-2xl">
+       <div class="relative max-w-2xl mx-auto">
+          <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" />
+          <input type="text" placeholder="Buscar em mais de 200 artigos técnicos..." class="w-full bg-black/40 border border-gray-800 rounded-2xl py-5 pl-16 pr-6 text-[11px] text-white focus:border-emerald-500 outline-none transition-all placeholder:text-gray-700 font-bold uppercase tracking-widest" />
+       </div>
+    </div>
+
+    <!-- Categories Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+       {categories.map(cat => (
+          <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] hover:border-emerald-500/20 transition-all group cursor-pointer relative overflow-hidden flex flex-col justify-between h-[220px]">
+             <div class="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/5 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+             
+             <div>
+                <div class:list={["w-12 h-12 rounded-xl flex items-center justify-center text-white mb-6 shadow-lg", cat.color]}>
+                   <cat.icon className="w-6 h-6" />
+                </div>
+                <h3 class="text-lg font-bold text-white uppercase tracking-tight italic">{cat.name}</h3>
+                <p class="text-[10px] text-gray-600 font-black uppercase tracking-widest mt-1">{cat.articles} Artigos detalhados</p>
+             </div>
+             
+             <div class="flex items-center text-emerald-500 text-[9px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all translate-x-[-10px] group-hover:translate-x-0">
+                <span>Explorar Guias</span>
+                <ChevronRight className="w-3.5 h-3.5 ml-1" />
+             </div>
+          </div>
+       ))}
+    </div>
+
+    <!-- Latest Updates -->
+    <div class="bg-gray-900/40 border border-gray-800 rounded-[2.5rem] overflow-hidden">
+       <div class="p-8 border-b border-gray-800 bg-black/20 flex items-center justify-between">
+          <h3 class="text-xs font-black uppercase text-gray-400 tracking-widest">Atualizações Recentes (v4.2)</h3>
+       </div>
+       <div class="divide-y divide-gray-800/50">
+          <div class="p-8 flex items-center justify-between hover:bg-white/[0.02] transition-colors group cursor-pointer">
+             <div class="flex items-center space-x-6">
+                <FileText className="w-5 h-5 text-gray-600 group-hover:text-emerald-500 transition-colors" />
+                <h4 class="text-sm font-bold text-white uppercase tracking-tight italic line-clamp-1">Guia de Implementação do Pixel de Conversão v2</h4>
+             </div>
+             <span class="text-[9px] font-black text-gray-700 uppercase tracking-widest shrink-0">Há 2 dias</span>
+          </div>
+          <div class="p-8 flex items-center justify-between hover:bg-white/[0.02] transition-colors group cursor-pointer">
+             <div class="flex items-center space-x-6">
+                <FileText className="w-5 h-5 text-gray-600 group-hover:text-emerald-500 transition-colors" />
+                <h4 class="text-sm font-bold text-white uppercase tracking-tight italic line-clamp-1">Tutorial: Sincronização de Estoque entre Múltiplos Domínios</h4>
+             </div>
+             <span class="text-[9px] font-black text-gray-700 uppercase tracking-widest shrink-0">Há 4 dias</span>
+          </div>
+       </div>
+    </div>
   </div>
 </AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

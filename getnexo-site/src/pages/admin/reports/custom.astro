@@ -1,19 +1,87 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { Filter, Search, Plus, BarChart4, Download, Save, Table, Layout, Calendar, DollarSign, ShoppingCart, Percent, TrendingUp } from 'lucide-react';
 ---
 
-<AdminLayout title="Relatórios Personalizados" activeTab="relatorios">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-lime-500 to-green-500 rounded-2xl flex items-center justify-center shadow-lg shadow-lime-500/30 animate-pulse">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-      </svg>
+<AdminLayout title="Relatórios Customizados" activeTab="relatorios">
+  <div class="max-w-6xl mx-auto space-y-10 animate-fade-in py-4"
+       x-data="{ 
+         step: 1,
+         selection: [],
+         metrics: [
+           { id: 'revenue', name: 'Receita Total', icon: 'DollarSign' },
+           { id: 'orders', name: 'Volume de Pedidos', icon: 'ShoppingCart' },
+           { id: 'conversion', name: 'Taxa de Conversão', icon: 'Percent' },
+           { id: 'aov', name: 'Ticket Médio', icon: 'TrendingUp' }
+         ],
+         toggleMetric(id) {
+           if(this.selection.includes(id)) {
+             this.selection = this.selection.filter(x => x !== id);
+           } else {
+             this.selection.push(id);
+           }
+         }
+       }">
+    
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500 border border-blue-500/20 shadow-xl shadow-blue-500/10">
+          <BarChart4 className="w-7 h-7" />
+        </div>
+        <div>
+          <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Analytics Builder</h1>
+          <p class="text-sm text-gray-500 font-medium">Construa sua própria visão de dados selecionando métricas e dimensões.</p>
+        </div>
+      </div>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      Relatórios Personalizados
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Crie relatórios personalizados com os dados que você precisa.
-    </p>
+
+    <!-- Wizard Steps -->
+    <div class="flex items-center space-x-4 bg-gray-900/40 p-2 border border-gray-800 rounded-3xl w-fit">
+       <button @click="step = 1" :class="step === 1 ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:bg-gray-800'" class="px-6 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all">1. Métricas</button>
+       <button @click="step = 2" :class="step === 2 ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:bg-gray-800'" class="px-6 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all">2. Filtros</button>
+       <button @click="step = 3" :class="step === 3 ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:bg-gray-800'" class="px-6 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all">3. Visualização</button>
+    </div>
+
+    <!-- Step 1 Content -->
+    <div x-show="step === 1" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-in">
+       <template x-for="item in metrics" :key="item.id">
+          <div @click="toggleMetric(item.id)" 
+               class="p-8 bg-gray-900/40 border-2 rounded-[2.5rem] cursor-pointer transition-all group relative overflow-hidden h-[200px] flex flex-col justify-between"
+               :class="selection.includes(item.id) ? 'border-blue-600 bg-blue-600/5' : 'border-gray-800 hover:border-gray-700'">
+             
+             <div class="flex justify-between items-start mb-8">
+                <div class="w-10 h-10 bg-gray-800 rounded-xl flex items-center justify-center text-gray-500 transition-colors"
+                     :class="selection.includes(item.id) ? 'bg-blue-600 text-white' : ''">
+                   <Table className="w-5 h-5" />
+                </div>
+                <div x-show="selection.includes(item.id)" class="bg-blue-600 rounded-full p-1"><Plus className="w-3 h-3 text-white rotate-45" /></div>
+             </div>
+             <div>
+                <h4 class="text-sm font-bold text-white uppercase tracking-tight" x-text="item.name"></h4>
+                <p class="text-[9px] text-gray-500 font-medium mt-1 uppercase tracking-widest italic" x-text="selection.includes(item.id) ? 'Selecionado' : 'Disponível'"></p>
+             </div>
+          </div>
+       </template>
+    </div>
+
+    <!-- Bottom Actions -->
+    <div class="flex items-center justify-between pt-10 border-t border-gray-800">
+       <div class="flex items-center space-x-2 text-gray-500">
+          <Calendar className="w-4 h-4" />
+          <span class="text-[10px] font-black uppercase tracking-widest">Período: Últimos 7 dias</span>
+       </div>
+       <div class="flex items-center space-x-3">
+          <button class="px-8 py-4 bg-gray-900 border border-gray-800 text-gray-500 font-black rounded-2xl hover:text-white transition-all text-xs uppercase tracking-widest">Resetar</button>
+          <button @click="step < 3 ? step++ : null" 
+                  class="px-8 py-4 bg-blue-600 text-white font-black rounded-2xl hover:bg-blue-500 transition-all text-xs uppercase tracking-widest shadow-xl shadow-blue-600/20">
+             Próximo Passo
+          </button>
+       </div>
+    </div>
   </div>
 </AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

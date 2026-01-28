@@ -1,0 +1,73 @@
+---
+import ResellerLayout from '../../layouts/ResellerLayout.astro';
+---
+
+<ResellerLayout title="Extratos Detalhados">
+    <div class="header">
+        <h2 class="text-neon-blue">📄 EXTRATOS MENSAIS</h2>
+        <p class="text-gray-400 text-sm">Visualize o detalhamento de cada fechamento de ciclo.</p>
+    </div>
+
+    <div class="grid-container" id="statements-grid">
+        <p style="grid-column: 1/-1; text-align: center; color: #666; padding: 3rem;">CARREGANDO EXTRATOS...</p>
+    </div>
+
+</ResellerLayout>
+
+<style>
+    .header { margin-bottom: 2rem; }
+    .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+    
+    .statement-card { background: #0a0a0a; border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; transition: all 0.3s; border-top: 4px solid #334155; }
+    .statement-card:hover { transform: translateY(-5px); border-color: #00f3ff; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
+    
+    .month { display: block; font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 1rem; }
+    .details { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem; }
+    .detail-row { display: flex; justify-content: space-between; font-size: 0.85rem; color: #94a3b8; }
+    .detail-row .val { color: #cbd5e1; font-weight: 600; }
+    
+    .btn-download { display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; padding: 0.8rem; background: rgba(0, 243, 255, 0.05); color: #00f3ff; border: 1px solid rgba(0, 243, 255, 0.2); border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 0.8rem; transition: all 0.2s; }
+    .btn-download:hover { background: #00f3ff; color: #000; }
+</style>
+
+<script is:inline>
+    async function fetchStatements() {
+        try {
+            const res = await fetch('/api/revenda/financeiro');
+            const data = await res.json();
+            const grid = document.getElementById('statements-grid');
+            
+            if (!data.statements || data.statements.length === 0) {
+                grid.innerHTML = '<p style="grid-column:1/-1; text-align:center;">NENHUM EXTRATO DISPONÍVEL</p>';
+                return;
+            }
+
+            grid.innerHTML = data.statements.map(s => `
+                <div class="statement-card">
+                    <span class="month">${s.month}</span>
+                    <div class="details">
+                        <div class="detail-row">
+                            <span>Total Comissionado</span>
+                            <span class="val">${s.total}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>Base de Clientes</span>
+                            <span class="val">${s.clients}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>Status</span>
+                            <span class="val" style="color:#00ff9d;">PROCESSADO</span>
+                        </div>
+                    </div>
+                    <a href="${s.url}" class="btn-download">
+                        <span>📥</span> BAIXAR DETALHAMENTO
+                    </a>
+                </div>
+            `).join('');
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    fetchStatements();
+</script>

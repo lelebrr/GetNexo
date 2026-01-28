@@ -5,19 +5,19 @@ const { feriadoHoje, lang, idiomaCurto, nonce } = Astro.props;
 <section class="hero-split">
   <div class="hero-content">
     <!-- Top Badge - Estilo Premium do User -->
-    <div class="premium-header-badge animate-on-scroll">
+    <div class="premium-header-badge">
        <div class="inner-badge">
          <span class="rocket">🚀</span>
          TRANSFORME SEU WHATSAPP EM UMA MÁQUINA DE VENDAS 24/7
        </div>
     </div>
     
-    <h1 class="hero-main-title animate-on-scroll">
+    <h1 class="hero-main-title">
       VENDA MAIS COM IA<br />
       <span class="text-gradient-premium">NO SEU WHATSAPP 24/7</span>
     </h1>
 
-    <div class="hero-subtitle-box animate-on-scroll">
+    <div class="hero-subtitle-box">
       <p>
         <strong>+1.200 lojas</strong> já faturam com GetNexo: <strong>+890% em vendas</strong>, <strong>R$ 12k economia/mês</strong>.<br />
         Setup em 12 minutos • Zero mensalidade • 7 dias GRÁTIS sem cartão
@@ -25,7 +25,7 @@ const { feriadoHoje, lang, idiomaCurto, nonce } = Astro.props;
     </div>
 
     <!-- DUAL CTA - Estilo Foto -->
-    <div class="hero-actions-box animate-on-scroll">
+    <div class="hero-actions-box">
       <a href="/precos" class="cta-link-rocket">
         🚀 LIBERAR MEU BOT GRÁTIS AGORA
       </a>
@@ -167,13 +167,9 @@ document.addEventListener('DOMContentLoaded', () => {
   /* Novas Estilizações Baseadas na Foto - Otimizado para LCP e CLS */
   .premium-header-badge {
     margin-bottom: 2rem;
-    opacity: 0;
-    will-change: transform, opacity;
-    animation: fadeInHero 0.5s ease-in-out 0.2s forwards;
-  }
-  @keyframes fadeInHero {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    /* Otimização LCP: Exibir imediatamente */
+    opacity: 1;
+    transform: translateY(0);
   }
   .inner-badge {
     display: inline-flex;
@@ -203,12 +199,9 @@ document.addEventListener('DOMContentLoaded', () => {
     margin-bottom: 2rem;
     letter-spacing: -2px;
     font-family: 'Outfit', sans-serif;
-    opacity: 0;
-    will-change: transform, opacity;
-    animation: fadeInHero 0.5s ease-in-out 0.4s forwards;
-    /* Otimização: evitar reflow durante animação */
-    transform: translateZ(0);
-    backface-visibility: hidden;
+    /* Otimização LCP: Exibir imediatamente */
+    opacity: 1;
+    transform: translateY(0);
   }
   .text-gradient-premium {
     background: linear-gradient(90deg, #00d4ff, #00ff9d);
@@ -232,6 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
     gap: 1.5rem;
     margin-bottom: 2.5rem;
     align-items: flex-start;
+    width: 100%;
     /* Otimização: evitar reflow durante animação */
     transform: translateZ(0);
     backface-visibility: hidden;
@@ -318,7 +312,17 @@ document.addEventListener('DOMContentLoaded', () => {
     .hero-main-title { text-align: center; }
     .premium-header-badge { display: flex; justify-content: center; }
     .hero-content { display: flex; flex-direction: column; align-items: center; }
-    .trust-pill-bar { flex-direction: column; gap: 0.5rem; border-radius: 30px; width: 100%; }
+    .trust-pill-bar { flex-direction: column; gap: 0.8rem; border-radius: 30px; width: 100%; padding: 1.2rem; }
     .pill-divider { display: none; }
+  }
+
+  @media (max-width: 480px) {
+    .hero-main-title { font-size: 2.2rem; letter-spacing: -1px; margin-bottom: 1.5rem; }
+    .hero-subtitle-box p { font-size: 1rem; line-height: 1.5; }
+    .btn-cyan-premium { width: 100%; justify-content: center; padding: 1rem; font-size: 1rem; }
+    .cta-link-rocket { font-size: 0.95rem; }
+    .trust-pill-bar { gap: 0.6rem; padding: 1rem; }
+    .pill-badge { font-size: 0.8rem; }
+    .scarcity-line { font-size: 0.85rem; margin-bottom: 2rem; }
   }
 </style>

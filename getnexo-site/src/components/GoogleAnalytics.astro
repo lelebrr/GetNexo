@@ -131,18 +131,30 @@ const {
       });
     });
 
-    // Track scroll depth
+    // Track scroll depth with high-performance throttling
     let maxScroll = 0;
+    let scrollTicking = false;
+
     window.addEventListener('scroll', () => {
-      const scrollPercent = Math.round((window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100);
-      if (scrollPercent > maxScroll && scrollPercent % 25 === 0) {
-        maxScroll = scrollPercent;
-        gtag('event', 'scroll_depth', {
-          percent_scrolled: scrollPercent,
-          page_location: window.location.href
+      if (!scrollTicking) {
+        window.requestAnimationFrame(() => {
+          const scrollHeight = document.documentElement.scrollHeight;
+          const viewHeight = window.innerHeight;
+          const height = scrollHeight - viewHeight;
+          const scrollPercent = height > 0 ? Math.round((window.scrollY / height) * 100) : 0;
+          
+          if (scrollPercent > maxScroll && scrollPercent % 25 === 0) {
+            maxScroll = scrollPercent;
+            gtag('event', 'scroll_depth', {
+              percent_scrolled: scrollPercent,
+              page_location: window.location.href
+            });
+          }
+          scrollTicking = false;
         });
+        scrollTicking = true;
       }
-    });
+    }, { passive: true });
 
     // Track outbound links
     document.addEventListener('click', (e) => {

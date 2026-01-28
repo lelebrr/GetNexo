@@ -1,0 +1,182 @@
+---
+import AdminLayout from '../../../../layouts/AdminLayout.astro';
+import { Search, TrendingUp, AlertCircle, CheckCircle, BarChart3, Globe, Zap, Cpu, Sparkles, Minus } from 'lucide-react';
+
+const title = "SEO IA – Otimização Autônoma";
+---
+
+<AdminLayout title={title} activeTab="seo">
+  <div class="seo-dashboard" x-data="seoIA()">
+    <!-- Header Hero -->
+    <header class="mb-10 relative overflow-hidden rounded-3xl bg-gradient-to-br from-cyan-900/40 to-blue-900/20 border border-cyan-500/20 p-8 lg:p-12">
+      <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+        <div class="max-w-2xl">
+          <div class="flex items-center space-x-3 mb-4">
+            <div class="p-2 bg-cyan-500/20 rounded-lg">
+              <Cpu className="w-5 h-5 text-cyan-400 animate-pulse" />
+            </div>
+            <span class="text-xs font-bold text-cyan-400 tracking-widest uppercase">Agent GetNexo SEO</span>
+          </div>
+          <h2 class="text-4xl lg:text-5xl font-black text-white mb-4 leading-tight">
+            Sua IA cuidando do <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Tráfego Orgânico</span>
+          </h2>
+          <p class="text-gray-400 text-lg leading-relaxed">
+            Analisei seu site agora mesmo. Você está com <span class="text-cyan-400 font-bold" x-text="stats.score + '%'">--</span> de saúde SEO. 
+            Abaixo estão as ações sugeridas para dominar a primeira página.
+          </p>
+        </div>
+
+        <!-- Score Circle -->
+        <div class="flex flex-col items-center">
+            <div class="relative w-40 h-40">
+                <svg class="w-full h-full" viewBox="0 0 100 100">
+                    <circle class="text-gray-800" stroke-width="8" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50"/>
+                    <circle class="text-cyan-500" stroke-width="8" :stroke-dasharray="2 * Math.PI * 40" :stroke-dashoffset="2 * Math.PI * 40 * (1 - stats.score/100)" stroke-linecap="round" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50" style="transition: stroke-dashoffset 1.5s ease-in-out; transform: rotate(-90deg); transform-origin: 50% 50%;"/>
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <span class="text-4xl font-black text-white" x-text="stats.score">--</span>
+                    <span class="text-[10px] text-gray-500 uppercase font-bold">SEO Score</span>
+                </div>
+            </div>
+        </div>
+      </div>
+      
+      <!-- Decorative Background -->
+      <div class="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 blur-[100px] rounded-full"></div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+      
+      <!-- 1. Technical Audit -->
+      <div class="lg:col-span-2 space-y-8">
+        <section class="bg-gray-900/40 border border-gray-800 rounded-3xl p-8 backdrop-blur-sm">
+          <div class="flex items-center justify-between mb-8">
+             <div class="flex items-center space-x-3">
+               <Zap className="w-6 h-6 text-yellow-400" />
+               <h3 class="text-xl font-bold text-white">Insights Dinâmicos da IA</h3>
+             </div>
+             <button class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-xs font-bold text-white rounded-xl transition-all border border-gray-700" @click="fetchData()">
+               Re-analisar Site
+             </button>
+          </div>
+
+          <div class="space-y-4">
+            <template x-for="rec in stats.recommendations" :key="rec.id">
+              <div class="flex items-start p-4 rounded-2xl bg-black/40 border border-gray-800 group hover:border-cyan-500/50 transition-all">
+                <div class="p-2 mr-4 rounded-lg" :class="rec.priority === 'High' ? 'bg-red-500/10' : 'bg-cyan-500/10'">
+                   <AlertCircle x-show="rec.priority === 'High'" className="w-5 h-5 text-red-500" />
+                   <Sparkles x-show="rec.priority !== 'High'" className="w-5 h-5 text-cyan-400" />
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="text-xs font-bold uppercase tracking-widest text-gray-500" x-text="rec.type">--</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded-md" :class="rec.priority === 'High' ? 'bg-red-500/20 text-red-400' : 'bg-cyan-500/20 text-cyan-400'" x-text="rec.priority">--</span>
+                  </div>
+                  <p class="text-white font-medium" x-text="rec.message">--</p>
+                </div>
+                <button class="ml-4 opacity-0 group-hover:opacity-100 transition-all text-cyan-400 hover:text-cyan-300 text-xs font-bold">
+                  Corrigir Agora →
+                </button>
+              </div>
+            </template>
+          </div>
+        </section>
+
+        <!-- Metrics Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="bg-gray-900/40 border border-gray-800 p-6 rounded-3xl text-center">
+             <span class="block text-2xl font-black text-white" x-text="stats.metrics.performance">--</span>
+             <span class="text-[10px] text-gray-500 uppercase font-bold">Performance</span>
+          </div>
+          <div class="bg-gray-900/40 border border-gray-800 p-6 rounded-3xl text-center">
+             <span class="block text-2xl font-black text-white" x-text="stats.metrics.accessibility">--</span>
+             <span class="text-[10px] text-gray-500 uppercase font-bold">Acessibilidade</span>
+          </div>
+          <div class="bg-gray-900/40 border border-gray-800 p-6 rounded-3xl text-center">
+             <span class="block text-2xl font-black text-white" x-text="stats.metrics.best_practices">--</span>
+             <span class="text-[10px] text-gray-500 uppercase font-bold">Práticas</span>
+          </div>
+          <div class="bg-gray-900/40 border border-gray-800 p-6 rounded-3xl text-center">
+             <span class="block text-2xl font-black text-white" x-text="stats.metrics.seo">--</span>
+             <span class="text-[10px] text-gray-500 uppercase font-bold">SEO Técnico</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Keyword Tracker -->
+      <section class="bg-gray-900/40 border border-gray-800 rounded-3xl p-8 backdrop-blur-sm">
+        <div class="flex items-center space-x-3 mb-8">
+           <TrendingUp className="w-6 h-6 text-emerald-400" />
+           <h3 class="text-xl font-bold text-white">Ranking de Keywords</h3>
+        </div>
+
+        <div class="space-y-6">
+          <template x-for="kw in stats.keywords" :key="kw.term">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-white font-bold" x-text="kw.term">--</p>
+                <div class="flex items-center space-x-2 text-[10px]">
+                  <span class="text-gray-500" x-text="'Vol: ' + kw.volume">--</span>
+                  <span class="text-gray-700">•</span>
+                  <span class="px-1.5 py-0.5 rounded-md bg-gray-800 text-gray-400" x-text="kw.difficulty">--</span>
+                </div>
+              </div>
+              <div class="flex items-center" :class="kw.trend === 'up' ? 'text-emerald-400' : 'text-gray-500'">
+                 <TrendingUp x-show="kw.trend === 'up'" className="w-4 h-4 mr-1" />
+                 <Minus x-show="kw.trend !== 'up'" className="w-4 h-4 mr-1" />
+                 <span class="text-xs font-black uppercase" x-text="kw.trend === 'up' ? '+12%' : 'Estável'">--</span>
+              </div>
+            </div>
+          </template>
+        </div>
+
+        <div class="mt-10 p-4 rounded-2xl bg-gradient-to-br from-gray-800 to-black border border-gray-700">
+           <p class="text-[10px] font-bold text-gray-500 uppercase mb-2 tracking-widest">IA Predictor</p>
+           <p class="text-xs text-gray-400 leading-relaxed italic">
+             "O termo <span class="text-white">automação whatsapp 2026</span> está subindo. Recomendo criar um artigo hoje para capturar esse tráfego."
+           </p>
+           <button class="mt-4 w-full py-2 bg-cyan-600 hover:bg-cyan-500 text-black text-xs font-black rounded-lg transition-all">
+             Gerar Artigo com IA
+           </button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</AdminLayout>
+
+<script is:inline>
+  function seoIA() {
+    return {
+      stats: {
+        score: 0,
+        metrics: {},
+        keywords: [],
+        recommendations: []
+      },
+      async fetchData() {
+        try {
+          const res = await fetch('/api/ai/seo/stats');
+          const data = await res.json();
+          this.stats = data;
+        } catch (e) {
+          console.error('Erro ao buscar stats SEO:', e);
+        }
+      },
+      init() {
+        this.fetchData();
+      }
+    }
+  }
+</script>
+
+<style>
+  .seo-dashboard {
+    animation: fadeIn 0.5s ease-out;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>

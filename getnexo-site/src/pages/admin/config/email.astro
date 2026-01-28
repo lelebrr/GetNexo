@@ -1,0 +1,83 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { Mail, Plus, Edit3, Trash2, Send, Save, Eye } from 'lucide-react';
+
+const templates = [
+  { id: 1, name: "Boas-vindas ao Cliente", subject: "Bem-vindo à {{store_name}}!", category: "Transacional" },
+  { id: 2, name: "Recuperação de Carrinho", subject: "Você esqueceu algo especial...", category: "Marketing" },
+  { id: 3, name: "Confirmação de Pagamento", subject: "Pagamento Aprovado: Pedido #{{order_id}}", category: "Vendas" },
+];
+---
+
+<AdminLayout title="Templates de Email" activeTab="config">
+  <div class="max-w-6xl mx-auto space-y-10 animate-fade-in py-4">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 bg-gray-500/10 rounded-2xl flex items-center justify-center text-white border border-gray-500/20 shadow-xl shadow-gray-500/10">
+          <Mail className="w-7 h-7" />
+        </div>
+        <div>
+          <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Email Marketing</h1>
+          <p class="text-sm text-gray-500 font-medium">Personalize a comunicação automática enviada aos seus clientes.</p>
+        </div>
+      </div>
+      <button class="px-6 py-3 bg-white text-black font-black rounded-2xl flex items-center space-x-2 transition-all hover:bg-gray-200 uppercase text-xs tracking-widest">
+         <Plus className="w-5 h-5" />
+         <span>Novo Layout</span>
+      </button>
+    </div>
+
+    <!-- SMTP Config Quick Access -->
+    <div class="p-8 bg-indigo-600/10 border border-indigo-500/20 rounded-[2.5rem] flex items-center justify-between group cursor-pointer hover:bg-indigo-600/20 transition-all">
+       <div class="flex items-center space-x-6">
+          <div class="w-12 h-12 bg-indigo-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-500/40">
+             <Save className="w-6 h-6" />
+          </div>
+          <div>
+             <h3 class="text-lg font-bold text-white uppercase tracking-tight">Configurar SMTP / SendGrid</h3>
+             <p class="text-[10px] text-gray-400 font-medium uppercase tracking-widest">Garanta 99% de entregabilidade configurando suas chaves de API.</p>
+          </div>
+       </div>
+       <button class="p-3 bg-gray-800 rounded-xl text-gray-400 group-hover:text-white transition-colors">
+          <Send className="w-5 h-5" />
+       </button>
+    </div>
+
+    <!-- Templates List -->
+    <div class="bg-gray-900/20 border border-gray-800 rounded-[2.5rem] overflow-hidden">
+       <div class="p-8 border-b border-gray-800 bg-black/20 flex items-center justify-between">
+          <h3 class="text-xs font-black uppercase text-gray-400 tracking-widest">Meus Templates</h3>
+       </div>
+
+       <div class="divide-y divide-gray-800/50">
+          {templates.map(tpl => (
+             <div class="p-8 flex items-center justify-between hover:bg-white/[0.02] transition-colors group">
+                <div class="flex items-center space-x-8">
+                   <div class="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center text-gray-500 group-hover:bg-white group-hover:text-black transition-all">
+                      <Mail className="w-6 h-6" />
+                   </div>
+                   <div>
+                      <h4 class="text-sm font-bold text-white uppercase tracking-tight">{tpl.name}</h4>
+                      <p class="text-[10px] text-gray-600 font-mono italic">Assunto: {tpl.subject}</p>
+                   </div>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                   <span class="px-3 py-1 bg-gray-800 text-gray-400 text-[8px] font-black uppercase rounded-lg tracking-widest">{tpl.category}</span>
+                   <div class="flex items-center space-x-2">
+                       <button class="p-2.5 bg-gray-800/50 text-gray-500 hover:text-white rounded-xl transition-all"><Eye className="w-4 h-4" /></button>
+                       <button class="p-2.5 bg-gray-800/50 text-gray-500 hover:text-white rounded-xl transition-all"><Edit3 className="w-4 h-4" /></button>
+                       <button class="p-2.5 bg-gray-800/50 text-gray-500 hover:text-rose-400 rounded-xl transition-all"><Trash2 className="w-4 h-4" /></button>
+                   </div>
+                </div>
+             </div>
+          ))}
+       </div>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

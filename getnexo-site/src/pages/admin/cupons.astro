@@ -1,405 +1,206 @@
 ---
-import DashboardLayout from '../../layouts/DashboardLayout.astro';
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { Ticket, Plus, Trash2, Edit3, CheckCircle, XCircle } from 'lucide-react';
 ---
-<DashboardLayout title="Cupons de Desconto | Admin GetNexo">
-  <div class="cupons-page">
-    <header class="page-header">
-      <h1>🎟️ Cupons de Desconto</h1>
-      <button id="btn-new" class="btn-primary">+ Novo Cupom</button>
-    </header>
 
-    <!-- Create/Edit Form Modal -->
-    <div id="modal" class="modal" style="display:none;">
-      <div class="modal-content">
-        <h2 id="modal-title">Novo Cupom</h2>
-        <form id="form-coupon">
-          <input type="hidden" name="id" id="coupon-id" />
-          
-          <div class="field">
-            <label>Código do Cupom *</label>
-            <input type="text" name="code" id="coupon-code" placeholder="Ex: DESCONTO10" required />
-          </div>
-          
-          <div class="field-row">
-            <div class="field">
-              <label>Tipo de Desconto</label>
-              <select name="discount_type" id="coupon-type">
-                <option value="percentage">Porcentagem (%)</option>
-                <option value="fixed">Valor Fixo (R$)</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Valor do Desconto *</label>
-              <input type="number" name="discount_value" id="coupon-value" placeholder="10" step="0.01" required />
-            </div>
-          </div>
-          
-          <div class="field-row">
-            <div class="field">
-              <label>Pedido Mínimo (R$)</label>
-              <input type="number" name="min_order_value" id="coupon-min" placeholder="0" step="0.01" value="0" />
-            </div>
-            <div class="field">
-              <label>Máximo de Usos (0 = ilimitado)</label>
-              <input type="number" name="max_uses" id="coupon-max" placeholder="0" value="0" />
-            </div>
-          </div>
-          
-          <div class="field">
-            <label>Data de Expiração</label>
-            <input type="date" name="expires_at" id="coupon-expires" />
-          </div>
-          
-          <div class="field checkbox-field">
-            <label>
-              <input type="checkbox" name="active" id="coupon-active" checked />
-              Cupom Ativo
-            </label>
-          </div>
-          
-          <div class="modal-actions">
-            <button type="button" id="btn-cancel" class="btn-secondary">Cancelar</button>
-            <button type="submit" class="btn-primary">Salvar</button>
-          </div>
-        </form>
+<AdminLayout title="Cupons de Desconto" activeTab="cupons">
+  <div class="space-y-6 animate-fade-in" 
+       x-data="{ 
+         coupons: [], 
+         loading: true,
+         modalOpen: false,
+         editingCoupon: { id: '', code: '', discount_type: 'percentage', discount_value: '', min_order_value: 0, max_uses: 0, expires_at: '', active: true },
+         
+         async fetchCoupons() {
+           this.loading = true;
+           try {
+             const res = await fetch('/api/coupons');
+             this.coupons = await res.json();
+           } catch (e) {
+             console.error('Erro ao carregar cupons:', e);
+           } finally {
+             this.loading = false;
+           }
+         },
+         
+         openModal(coupon = null) {
+           if (coupon) {
+             this.editingCoupon = { ...coupon, expires_at: coupon.expires_at ? coupon.expires_at.split('T')[0] : '' };
+           } else {
+             this.editingCoupon = { id: '', code: '', discount_type: 'percentage', discount_value: '', min_order_value: 0, max_uses: 0, expires_at: '', active: true };
+           }
+           this.modalOpen = true;
+         },
+         
+         async saveCoupon() {
+           try {
+             const method = this.editingCoupon.id ? 'PUT' : 'POST';
+             const url = this.editingCoupon.id 
+               ? `/api/coupons/${this.editingCoupon.id}`
+               : '/api/coupons';
+             
+             const res = await fetch(url, {
+               method,
+               headers: { 'Content-Type': 'application/json' },
+               body: JSON.stringify(this.editingCoupon)
+             });
+             
+             if (res.ok) {
+               this.modalOpen = false;
+               this.fetchCoupons();
+             } else {
+               const err = await res.json();
+               alert(err.error || 'Erro ao salvar cupom');
+             }
+           } catch (e) {
+             alert('Erro na requisição');
+           }
+         },
+         
+         async deleteCoupon(id) {
+           if (!confirm('Excluir este cupom permanentemente?')) return;
+           try {
+             await fetch(`/api/coupons/${id}`, { method: 'DELETE' });
+             this.fetchCoupons();
+           } catch (e) {
+             alert('Erro ao excluir');
+           }
+         }
+       }" 
+       x-init="fetchCoupons()">
+    
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-white uppercase tracking-tight">Cupons de Desconto</h1>
+        <p class="text-sm text-gray-400">Gerencie códigos promocionais e descontos fixos ou percentuais.</p>
+      </div>
+      <button @click="openModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-5 py-2.5 rounded-xl flex items-center space-x-2 transition-all">
+        <Plus className="w-4 h-4" />
+        <span>Novo Cupom</span>
+      </button>
+    </div>
+
+    <!-- Tabela -->
+    <div class="bg-gray-900/20 border border-gray-800 rounded-2xl overflow-hidden backdrop-blur-md">
+      <div x-show="loading" class="p-20 flex flex-col items-center justify-center space-y-4">
+         <div class="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+         <p class="text-xs text-gray-500 uppercase font-black tracking-widest">Carregando Cupons...</p>
+      </div>
+
+      <table x-show="!loading" class="w-full text-left">
+        <thead>
+          <tr class="bg-black/40 border-b border-gray-800">
+            <th class="px-6 py-4 text-[10px] font-black uppercase text-gray-500">Código</th>
+            <th class="px-6 py-4 text-[10px] font-black uppercase text-gray-500">Desconto</th>
+            <th class="px-6 py-4 text-[10px] font-black uppercase text-gray-500">Mínimo</th>
+            <th class="px-6 py-4 text-[10px] font-black uppercase text-gray-500">Usos</th>
+            <th class="px-6 py-4 text-[10px] font-black uppercase text-gray-500 text-right">Ações</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-800/50">
+          <template x-for="coupon in coupons" :key="coupon.id">
+            <tr class="hover:bg-indigo-500/5 transition-colors group">
+              <td class="px-6 py-4">
+                <div class="flex items-center space-x-3">
+                  <div class="w-8 h-8 bg-indigo-500/10 rounded-lg flex items-center justify-center text-indigo-400">
+                    <Ticket className="w-4 h-4" />
+                  </div>
+                  <span class="text-sm font-black text-white uppercase tracking-widest font-mono" x-text="coupon.code"></span>
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <span class="text-sm font-bold text-emerald-400" x-text="coupon.discount_type === 'percentage' ? coupon.discount_value + '%' : 'R$ ' + parseFloat(coupon.discount_value).toFixed(2)"></span>
+              </td>
+              <td class="px-6 py-4">
+                <span class="text-xs text-gray-500" x-text="'R$ ' + parseFloat(coupon.min_order_value).toFixed(2)"></span>
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex items-center space-x-2">
+                   <span class="text-xs text-white font-bold" x-text="coupon.uses_count"></span>
+                   <span class="text-[10px] text-gray-600 uppercase" x-text="coupon.max_uses > 0 ? '/ ' + coupon.max_uses : '(Ilimitado)'"></span>
+                </div>
+              </td>
+              <td class="px-6 py-4 text-right">
+                <div class="flex items-center justify-end space-x-2">
+                   <button @click="openModal(coupon)" class="p-2 text-gray-500 hover:text-indigo-400 transition-colors">
+                     <Edit3 className="w-4 h-4" />
+                   </button>
+                   <button @click="deleteCoupon(coupon.id)" class="p-2 text-gray-500 hover:text-red-500 transition-colors">
+                     <Trash2 className="w-4 h-4" />
+                   </button>
+                </div>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+      
+      <div x-show="!loading && coupons.length === 0" class="p-20 text-center">
+        <p class="text-gray-500 text-sm">Nenhum cupom cadastrado ainda.</p>
       </div>
     </div>
 
-    <!-- Coupons Table -->
-    <div class="table-container">
-      <table id="coupons-table">
-        <thead>
-          <tr>
-            <th>Código</th>
-            <th>Desconto</th>
-            <th>Mín. Pedido</th>
-            <th>Usos</th>
-            <th>Expira</th>
-            <th>Status</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="coupons-body">
-          <tr><td colspan="7" style="text-align:center; color:#64748b;">Carregando...</td></tr>
-        </tbody>
-      </table>
+    <!-- Modal Form -->
+    <div x-show="modalOpen" 
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         style="display: none;" x-cloak>
+      <div class="bg-gray-900 border border-gray-800 w-full max-w-lg rounded-[2.5rem] p-8 space-y-6 shadow-2xl" @click.away="modalOpen = false">
+        <h3 class="text-xl font-bold text-white uppercase tracking-tight" x-text="editingCoupon.id ? 'Editar Cupom' : 'Novo Cupom'"></h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="col-span-2 space-y-1">
+            <label class="text-[10px] font-black uppercase text-gray-500 tracking-widest">Código do Cupom</label>
+            <input type="text" x-model="editingCoupon.code" placeholder="Ex: VERAO2026" class="w-full bg-black/40 border border-gray-800 rounded-xl py-3 px-4 text-white focus:border-indigo-500 outline-none uppercase font-mono" />
+          </div>
+          
+          <div class="space-y-1">
+            <label class="text-[10px] font-black uppercase text-gray-500 tracking-widest">Tipo</label>
+            <select x-model="editingCoupon.discount_type" class="w-full bg-black/40 border border-gray-800 rounded-xl py-3 px-4 text-white focus:border-indigo-500 outline-none">
+              <option value="percentage">Porcentagem (%)</option>
+              <option value="fixed">Valor Fixo (R$)</option>
+            </select>
+          </div>
+          
+          <div class="space-y-1">
+            <label class="text-[10px] font-black uppercase text-gray-500 tracking-widest">Valor do Desconto</label>
+            <input type="number" x-model="editingCoupon.discount_value" step="0.01" class="w-full bg-black/40 border border-gray-800 rounded-xl py-3 px-4 text-white focus:border-indigo-500 outline-none" />
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-[10px] font-black uppercase text-gray-500 tracking-widest">Pedido Mínimo (R$)</label>
+            <input type="number" x-model="editingCoupon.min_order_value" step="0.01" class="w-full bg-black/40 border border-gray-800 rounded-xl py-3 px-4 text-white focus:border-indigo-500 outline-none" />
+          </div>
+          
+          <div class="space-y-1">
+            <label class="text-[10px] font-black uppercase text-gray-500 tracking-widest">Limite de Usos</label>
+            <input type="number" x-model="editingCoupon.max_uses" class="w-full bg-black/40 border border-gray-800 rounded-xl py-3 px-4 text-white focus:border-indigo-500 outline-none" />
+          </div>
+
+          <div class="col-span-2 space-y-1">
+            <label class="text-[10px] font-black uppercase text-gray-500 tracking-widest">Data de Expiração</label>
+            <input type="date" x-model="editingCoupon.expires_at" class="w-full bg-black/40 border border-gray-800 rounded-xl py-3 px-4 text-white focus:border-indigo-500 outline-none" />
+          </div>
+          
+          <div class="col-span-2 flex items-center space-x-3 pt-2">
+            <input type="checkbox" x-model="editingCoupon.active" id="active" class="w-5 h-5 rounded border-gray-800 bg-black/40 text-indigo-600 focus:ring-indigo-500" />
+            <label for="active" class="text-sm text-gray-400 font-bold uppercase tracking-tight">Cupom Ativo e Visível</label>
+          </div>
+        </div>
+
+        <div class="flex space-x-3 pt-4">
+          <button @click="modalOpen = false" class="flex-1 py-3 bg-gray-800 hover:bg-gray-700 text-gray-400 font-bold rounded-2xl transition-all uppercase text-[10px] tracking-widest">Cancelar</button>
+          <button @click="saveCoupon()" class="flex-1 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl transition-all uppercase text-[10px] tracking-widest">Salvar Cupom</button>
+        </div>
+      </div>
     </div>
   </div>
-
-  <script nonce={Astro.locals.nonce} is:inline>
-    const API_URL = window.location.hostname === 'localhost' 
-      ? 'http://localhost:8080' 
-      : 'https://api.getnexo.com.br';
-    
-    const modal = document.getElementById('modal');
-    const form = document.getElementById('form-coupon');
-    const tbody = document.getElementById('coupons-body');
-    
-    // Load coupons
-    async function loadCoupons() {
-      try {
-        const res = await fetch(`${API_URL}/api/coupons`);
-        const coupons = await res.json();
-        
-        if (coupons.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#64748b;">Nenhum cupom cadastrado</td></tr>';
-          return;
-        }
-        
-        tbody.innerHTML = coupons.map(c => `
-          <tr data-id="${c.id}">
-            <td><code class="coupon-code">${c.code}</code></td>
-            <td>${c.discount_type === 'percentage' ? c.discount_value + '%' : 'R$ ' + c.discount_value.toFixed(2)}</td>
-            <td>R$ ${c.min_order_value.toFixed(2)}</td>
-            <td>${c.uses_count}${c.max_uses > 0 ? ' / ' + c.max_uses : ''}</td>
-            <td>${c.expires_at ? new Date(c.expires_at).toLocaleDateString('pt-BR') : '—'}</td>
-            <td><span class="status ${c.active ? 'active' : 'inactive'}">${c.active ? 'Ativo' : 'Inativo'}</span></td>
-            <td class="actions">
-              <button onclick="editCoupon(${c.id})" class="btn-icon" title="Editar">✏️</button>
-              <button onclick="deleteCoupon(${c.id})" class="btn-icon" title="Excluir">🗑️</button>
-            </td>
-          </tr>
-        `).join('');
-      } catch (e) {
-        console.error('Error loading coupons:', e);
-        tbody.innerHTML = '<tr><td colspan="7" style="color:red;">Erro ao carregar cupons</td></tr>';
-      }
-    }
-    
-    // Open modal for new coupon
-    document.getElementById('btn-new').onclick = () => {
-      form.reset();
-      document.getElementById('coupon-id').value = '';
-      document.getElementById('modal-title').textContent = 'Novo Cupom';
-      document.getElementById('coupon-active').checked = true;
-      modal.style.display = 'flex';
-    };
-    
-    // Close modal
-    document.getElementById('btn-cancel').onclick = () => {
-      modal.style.display = 'none';
-    };
-    
-    // Edit coupon
-    window.editCoupon = async (id) => {
-      try {
-        const res = await fetch(`${API_URL}/api/coupons`);
-        const coupons = await res.json();
-        const coupon = coupons.find(c => c.id === id);
-        
-        if (!coupon) return alert('Cupom não encontrado');
-        
-        document.getElementById('coupon-id').value = coupon.id;
-        document.getElementById('coupon-code').value = coupon.code;
-        document.getElementById('coupon-type').value = coupon.discount_type;
-        document.getElementById('coupon-value').value = coupon.discount_value;
-        document.getElementById('coupon-min').value = coupon.min_order_value;
-        document.getElementById('coupon-max').value = coupon.max_uses;
-        document.getElementById('coupon-expires').value = coupon.expires_at ? coupon.expires_at.split('T')[0] : '';
-        document.getElementById('coupon-active').checked = coupon.active;
-        
-        document.getElementById('modal-title').textContent = 'Editar Cupom';
-        modal.style.display = 'flex';
-      } catch (e) {
-        console.error('Error:', e);
-      }
-    };
-    
-    // Delete coupon
-    window.deleteCoupon = async (id) => {
-      if (!confirm('Tem certeza que deseja excluir este cupom?')) return;
-      
-      try {
-        await fetch(`${API_URL}/api/coupons/${id}`, { method: 'DELETE' });
-        loadCoupons();
-      } catch (e) {
-        console.error('Error:', e);
-        alert('Erro ao excluir cupom');
-      }
-    };
-    
-    // Submit form (create or update)
-    form.onsubmit = async (e) => {
-      e.preventDefault();
-      const data = new FormData(form);
-      const id = data.get('id');
-      
-      const payload = {
-        code: data.get('code'),
-        discount_type: data.get('discount_type'),
-        discount_value: parseFloat(data.get('discount_value')),
-        min_order_value: parseFloat(data.get('min_order_value')) || 0,
-        max_uses: parseInt(data.get('max_uses')) || 0,
-        expires_at: data.get('expires_at') || null,
-        active: document.getElementById('coupon-active').checked
-      };
-      
-      try {
-        const url = id ? `${API_URL}/api/coupons/${id}` : `${API_URL}/api/coupons`;
-        const method = id ? 'PUT' : 'POST';
-        
-        const res = await fetch(url, {
-          method,
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        
-        if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.error || 'Failed');
-        }
-        
-        modal.style.display = 'none';
-        loadCoupons();
-      } catch (e) {
-        console.error('Error:', e);
-        alert('Erro: ' + e.message);
-      }
-    };
-    
-    // Initial load
-    loadCoupons();
-  </script>
-</DashboardLayout>
+</AdminLayout>
 
 <style>
-  .cupons-page {
-    padding: 2rem;
-  }
-  
-  .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-  }
-  
-  .page-header h1 {
-    color: #00ff9d;
-    font-size: 2rem;
-    margin: 0;
-  }
-  
-  .btn-primary {
-    background: linear-gradient(90deg, #00d4ff, #00ff9d);
-    color: black;
-    padding: 0.8rem 1.5rem;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-  .btn-primary:hover { transform: scale(1.05); }
-  
-  .btn-secondary {
-    background: #334155;
-    color: white;
-    padding: 0.8rem 1.5rem;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-  }
-  
-  .table-container {
-    background: rgba(20,30,50,0.6);
-    border-radius: 12px;
-    overflow: hidden;
-  }
-  
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  th, td {
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid #1e293b;
-  }
-  
-  th {
-    background: #0f172a;
-    color: #94a3b8;
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-  }
-  
-  td { color: #e5e7eb; }
-  
-  .coupon-code {
-    background: #00ff9d22;
-    color: #00ff9d;
-    padding: 0.3rem 0.6rem;
-    border-radius: 4px;
-    font-family: monospace;
-    font-weight: bold;
-  }
-  
-  .status {
-    padding: 0.3rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
-  }
-  .status.active { background: #00ff9d22; color: #00ff9d; }
-  .status.inactive { background: #f8717122; color: #f87171; }
-  
-  .actions {
-    display: flex;
-    gap: 0.5rem;
-  }
-  
-  .btn-icon {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 1.2rem;
-    padding: 0.3rem;
-    opacity: 0.7;
-    transition: opacity 0.2s;
-  }
-  .btn-icon:hover { opacity: 1; }
-  
-  /* Modal */
-  .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-  
-  .modal-content {
-    background: #1e293b;
-    padding: 2rem;
-    border-radius: 12px;
-    width: 100%;
-    max-width: 500px;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-  
-  .modal-content h2 {
-    color: #00d4ff;
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-  }
-  
-  .field {
-    margin-bottom: 1rem;
-  }
-  
-  .field label {
-    display: block;
-    color: #94a3b8;
-    font-size: 0.9rem;
-    margin-bottom: 0.3rem;
-  }
-  
-  .field input, .field select {
-    width: 100%;
-    padding: 0.8rem;
-    border-radius: 8px;
-    background: #0f172a;
-    color: white;
-    border: 1px solid #334155;
-    font-size: 1rem;
-  }
-  
-  .field input:focus, .field select:focus {
-    outline: none;
-    border-color: #00d4ff;
-  }
-  
-  .field-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-  }
-  
-  .checkbox-field label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-  }
-  
-  .checkbox-field input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-  }
-  
-  .modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  [x-cloak] { display: none !important; }
 </style>

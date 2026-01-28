@@ -1,0 +1,96 @@
+---
+import AdminLayout from '../../../../layouts/AdminLayout.astro';
+import { Shield, Lock, Settings, AlertTriangle, List } from 'lucide-react';
+
+const title = "Smart Firewall";
+---
+
+<AdminLayout title={title} activeTab="security-ia">
+  <div class="max-w-5xl mx-auto space-y-8 animate-fade-in">
+    
+    <header class="flex items-center gap-4">
+      <div class="p-3 bg-gradient-to-br from-red-600 to-red-800 rounded-xl shadow-lg shadow-red-900/30">
+        <Shield className="w-8 h-8 text-white" />
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold text-white">Configuração do WAF</h1>
+        <p class="text-gray-400 text-sm mt-1">Web Application Firewall gerido por Inteligência Artificial.</p>
+      </div>
+    </header>
+
+    <!-- General Settings -->
+    <div class="bg-gray-900/40 border border-gray-800 rounded-3xl overflow-hidden backdrop-blur-sm">
+      <div class="p-6 border-b border-gray-800 flex items-center gap-2">
+        <Settings className="w-5 h-5 text-gray-400" />
+        <h3 class="font-bold text-white">Regras Globais</h3>
+      </div>
+      
+      <div class="divide-y divide-gray-800/50">
+        <!-- Rule 1 -->
+        <div class="p-6 flex items-center justify-between hover:bg-white/5 transition-colors">
+          <div class="flex items-start gap-4">
+             <div class="mt-1"><Lock className="w-5 h-5 text-emerald-400" /></div>
+             <div>
+               <h4 class="font-bold text-white text-sm">Proteção contra SQL Injection</h4>
+               <p class="text-gray-500 text-xs mt-1">Bloqueia padrões conhecidos de injeção em inputs e URLs.</p>
+             </div>
+          </div>
+          <div class="relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full bg-emerald-500 transition-colors">
+            <span class="translate-x-6 inline-block h-4 w-4 transform rounded-full bg-white transition-transform"></span>
+          </div>
+        </div>
+
+        <!-- Rule 2 -->
+        <div class="p-6 flex items-center justify-between hover:bg-white/5 transition-colors">
+          <div class="flex items-start gap-4">
+             <div class="mt-1"><AlertTriangle className="w-5 h-5 text-emerald-400" /></div>
+             <div>
+               <h4 class="font-bold text-white text-sm">XSS (Cross-Site Scripting) Shield</h4>
+               <p class="text-gray-500 text-xs mt-1">Sanitização automática de payloads script maliciosos.</p>
+             </div>
+          </div>
+          <div class="relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full bg-emerald-500 transition-colors">
+            <span class="translate-x-6 inline-block h-4 w-4 transform rounded-full bg-white transition-transform"></span>
+          </div>
+        </div>
+
+         <!-- Rule 3 -->
+        <div class="p-6 flex items-center justify-between hover:bg-white/5 transition-colors">
+          <div class="flex items-start gap-4">
+             <div class="mt-1"><Shield className="w-5 h-5 text-gray-500" /></div>
+             <div>
+               <h4 class="font-bold text-white text-sm">Geo-Blocking (Bloqueio por País)</h4>
+               <p class="text-gray-500 text-xs mt-1">Bloquear acessos de países de alto risco (ex: Rússia, China).</p>
+             </div>
+          </div>
+          <div class="relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full bg-gray-700 transition-colors">
+            <span class="translate-x-1 inline-block h-4 w-4 transform rounded-full bg-gray-400 transition-transform"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Whitelist -->
+    <div class="bg-gray-900/40 border border-gray-800 rounded-3xl p-6">
+       <div class="flex items-center justify-between mb-4">
+         <h3 class="font-bold text-white flex items-center gap-2">
+           <List className="w-5 h-5 text-blue-400" />
+           IP Whitelist
+         </h3>
+         <button class="text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-lg transition-all font-bold">Adicionar IP</button>
+       </div>
+       <div class="space-y-2">
+         <div class="flex justify-between items-center p-3 bg-black/20 rounded-xl border border-gray-800">
+           <span class="text-gray-300 font-mono text-xs">172.20.0.1 (Local)</span>
+           <span class="text-emerald-500 text-[10px] font-bold uppercase">Trusted</span>
+         </div>
+       </div>
+    </div>
+
+  </div>
+</AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.4s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

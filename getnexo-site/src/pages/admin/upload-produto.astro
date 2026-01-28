@@ -154,7 +154,7 @@ const pageTitle = "Gerenciar Produtos 360°/3D | GetNexo Admin";
             progressContainer.classList.remove('hidden');
             
             try {
-                const response = await fetch('http://localhost:3006/api/upload-product', {
+                const response = await fetch('/api/upload-product', {
                     method: 'POST',
                     body: formData
                 });

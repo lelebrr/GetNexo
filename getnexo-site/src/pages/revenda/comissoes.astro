@@ -1,0 +1,100 @@
+---
+import ResellerLayout from '../../layouts/ResellerLayout.astro';
+---
+
+<ResellerLayout title="Minhas Comissões">
+    <div class="header">
+        <h2 class="text-neon-blue">💰 MINHAS COMISSÕES</h2>
+        <button class="btn-primary">SOLICITAR SAQUE</button>
+    </div>
+
+    <!-- Stats summary -->
+    <div class="stats-summary" id="finance-summary">
+        <div class="stat-item loading">
+            <span class="label">SALDO DISPONÍVEL</span>
+            <span class="value">R$ 0,00</span>
+        </div>
+        <div class="stat-item loading">
+            <span class="label">PRÓXIMO PAGAMENTO</span>
+            <span class="value">--</span>
+        </div>
+    </div>
+
+    <!-- Commissions Table -->
+    <div class="table-card">
+        <h3>HISTÓRICO DE COMISSÕES</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>DESCRIÇÃO</th>
+                        <th>DATA</th>
+                        <th>VALOR</th>
+                        <th>STATUS</th>
+                    </tr>
+                </thead>
+                <tbody id="commissions-body">
+                    <tr><td colspan="4" style="text-align:center; padding: 2rem;">CARREGANDO HISTÓRICO...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</ResellerLayout>
+
+<style>
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    .btn-primary { background: #00ff9d; color: #000; border: none; padding: 0.8rem 1.5rem; border-radius: 4px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; }
+    .btn-primary:hover { background: #00cc7d; }
+
+    .stats-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+    .stat-item { background: #0a0a0a; border: 1px solid #334155; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #00ff9d; }
+    .stat-item .label { display: block; font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.5rem; }
+    .stat-item .value { font-size: 1.5rem; font-weight: 700; color: #fff; }
+
+    .table-card { background: #0a0a0a; border: 1px solid #334155; border-radius: 8px; padding: 1.5rem; }
+    .table-card h3 { font-size: 0.9rem; color: #00f3ff; margin-bottom: 1.5rem; }
+    
+    .table-container { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; padding: 1rem; color: #94a3b8; border-bottom: 1px solid #334155; font-size: 0.8rem; }
+    td { padding: 1rem; border-bottom: 1px solid #1a1a1a; color: #cbd5e1; font-size: 0.85rem; }
+    
+    .status-paid { color: #00ff9d; font-weight: bold; }
+    .status-pending { color: #f59e0b; font-weight: bold; }
+
+    .loading .value { animation: pulse 1.5s infinite ease-in-out; }
+    @keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 0.6; } 100% { opacity: 0.3; } }
+</style>
+
+<script is:inline>
+    async function fetchFinance() {
+        try {
+            const res = await fetch('/api/revenda/financeiro');
+            const data = await res.json();
+            updateUI(data);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    function updateUI(data) {
+        const statsItems = document.querySelectorAll('.stat-item');
+        statsItems[0].querySelector('.value').textContent = data.balance;
+        statsItems[0].classList.remove('loading');
+        statsItems[1].querySelector('.value').textContent = data.next_payout;
+        statsItems[1].classList.remove('loading');
+
+        const tbody = document.getElementById('commissions-body');
+        tbody.innerHTML = data.history.map(h => `
+            <tr>
+                <td>${h.description}</td>
+                <td>${h.date}</td>
+                <td style="color:#fff; font-weight:bold;">${h.amount}</td>
+                <td><span class="status-${h.status}">${h.status === 'paid' ? 'PAGO' : 'PENDENTE'}</span></td>
+            </tr>
+        `).join('');
+    }
+
+    fetchFinance();
+</script>

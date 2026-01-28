@@ -4,7 +4,10 @@ import { Settings, Zap, Play, CheckCircle, ArrowRight, Save } from 'lucide-react
 ---
 
 <AdminLayout title="Criar Fluxo Novo" activeTab="automations">
-  <div x-data="{ step: 1, flowName: '', trigger: '', action: '' }" class="max-w-4xl mx-auto space-y-8 py-8 animate-fade-in">
+  <div 
+    x-data="automations" 
+    class="max-w-4xl mx-auto space-y-8 py-8 animate-fade-in"
+  >
     <!-- Header Decorativo -->
     <div class="flex items-center space-x-4 mb-12">
       <div class="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg shadow-yellow-500/20">
@@ -20,14 +23,18 @@ import { Settings, Zap, Play, CheckCircle, ArrowRight, Save } from 'lucide-react
     <div class="relative flex justify-between items-center mb-12">
       <div class="absolute inset-0 top-1/2 -translate-y-1/2 h-0.5 bg-gray-800 w-full z-0"></div>
       
-      <template x-for="i in [1, 2, 3]">
+      <template x-for="i in steps" :key="i">
         <div class="relative z-10 flex flex-col items-center">
           <div 
             :class="step >= i ? 'bg-yellow-500 text-black' : 'bg-gray-900 text-gray-500 border border-gray-800'"
             class="w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all duration-500"
             x-text="step > i ? '✓' : i"
           ></div>
-          <span class="text-[10px] uppercase tracking-widest mt-2 font-bold" :class="step >= i ? 'text-yellow-500' : 'text-gray-600'" x-text="i == 1 ? 'Setup' : (i == 2 ? 'Trigger' : 'Action')"></span>
+          <span 
+            class="text-[10px] uppercase tracking-widest mt-2 font-bold" 
+            :class="step >= i ? 'text-yellow-500' : 'text-gray-600'" 
+            x-text="getStepLabel(i)"
+          ></span>
         </div>
       </template>
     </div>
@@ -36,7 +43,7 @@ import { Settings, Zap, Play, CheckCircle, ArrowRight, Save } from 'lucide-react
     <div class="bg-gray-900/40 backdrop-blur-xl border border-gray-800 rounded-3xl p-8 shadow-2xl transition-all duration-300">
       
       <!-- Passo 1: Setup Inicial -->
-      <div x-show="step === 1" x-transition.opacity.duration.300ms class="space-y-6">
+      <div x-show="step === 1" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-6">
         <div class="space-y-2">
           <label class="text-sm font-semibold text-gray-300 ml-1">Nome do Fluxo</label>
           <input 
@@ -54,7 +61,7 @@ import { Settings, Zap, Play, CheckCircle, ArrowRight, Save } from 'lucide-react
         </div>
         <div class="pt-4 flex justify-end">
           <button 
-            @click="if(flowName) step = 2"
+            @click="nextStep()"
             :disabled="!flowName"
             class="px-8 py-4 bg-yellow-500 hover:bg-yellow-400 disabled:opacity-50 disabled:hover:bg-yellow-500 text-black font-bold rounded-2xl flex items-center space-x-2 transition-all shadow-lg shadow-yellow-500/20"
           >
@@ -65,17 +72,12 @@ import { Settings, Zap, Play, CheckCircle, ArrowRight, Save } from 'lucide-react
       </div>
 
       <!-- Passo 2: Seleção de Gatilho -->
-      <div x-show="step === 2" x-transition.opacity.duration.300ms class="space-y-6">
+      <div x-show="step === 2" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-6">
         <h3 class="text-xl font-bold text-white mb-4">Escolha o Gatilho (Trigger)</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <template x-for="t in [
-            { id: 'msg', title: 'Mensagem Recebida', desc: 'Quando o cliente envia qualquer mensagem.' },
-            { id: 'tag', title: 'Tag Adicionada', desc: 'Quando uma tag específica é associada.' },
-            { id: 'cart', title: 'Carrinho Abandonado', desc: 'Após 2h sem finalização de compra.' },
-            { id: 'close', title: 'Atendimento Encerrado', desc: 'Após o fechamento do ticket.' }
-          ]">
+          <template x-for="t in triggers" :key="t.id">
             <button 
-              @click="trigger = t.id"
+              @click="setTrigger(t.id)"
               :class="trigger === t.id ? 'border-yellow-500 bg-yellow-500/10' : 'border-gray-800 bg-black/20 hover:border-gray-700'"
               class="text-left p-6 rounded-2xl border transition-all group"
             >
@@ -90,9 +92,9 @@ import { Settings, Zap, Play, CheckCircle, ArrowRight, Save } from 'lucide-react
           </template>
         </div>
         <div class="pt-6 flex justify-between">
-          <button @click="step = 1" class="px-8 py-4 text-gray-400 hover:text-white transition-colors">Voltar</button>
+          <button @click="prevStep()" class="px-8 py-4 text-gray-400 hover:text-white transition-colors">Voltar</button>
           <button 
-            @click="if(trigger) step = 3"
+            @click="nextStep()"
             :disabled="!trigger"
             class="px-8 py-4 bg-yellow-500 hover:bg-yellow-400 disabled:opacity-50 text-black font-bold rounded-2xl flex items-center space-x-2 transition-all"
           >
@@ -103,17 +105,12 @@ import { Settings, Zap, Play, CheckCircle, ArrowRight, Save } from 'lucide-react
       </div>
 
       <!-- Passo 3: Definição de Ação -->
-      <div x-show="step === 3" x-transition.opacity.duration.300ms class="space-y-6">
+      <div x-show="step === 3" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-6">
         <h3 class="text-xl font-bold text-white mb-4">O que deve acontecer? (Action)</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <template x-for="a in [
-            { id: 'wa', title: 'Enviar WhatsApp', desc: 'Envia template ou mensagem direta.' },
-            { id: 'tag', title: 'Atribuir Tag', desc: 'Organiza automaticamente o lead.' },
-            { id: 'agent', title: 'Transf. para Agente', desc: 'Move para a fila humana.' },
-            { id: 'webhook', title: 'Disparar Webhook', desc: 'Integra com sistemas externos.' }
-          ]">
+          <template x-for="a in actions" :key="a.id">
             <button 
-              @click="action = a.id"
+              @click="setAction(a.id)"
               :class="action === a.id ? 'border-yellow-500 bg-yellow-500/10' : 'border-gray-800 bg-black/20 hover:border-gray-700'"
               class="text-left p-6 rounded-2xl border transition-all group"
             >
@@ -128,9 +125,9 @@ import { Settings, Zap, Play, CheckCircle, ArrowRight, Save } from 'lucide-react
           </template>
         </div>
         <div class="pt-6 flex justify-between">
-          <button @click="step = 2" class="px-8 py-4 text-gray-400 hover:text-white transition-colors">Voltar</button>
+          <button @click="prevStep()" class="px-8 py-4 text-gray-400 hover:text-white transition-colors">Voltar</button>
           <button 
-            @click="if(action) { alert('Fluxo salvo com sucesso!'); window.location.href='/admin/automations/list'; }"
+            @click="saveFlow()"
             :disabled="!action"
             class="px-8 py-4 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-black font-bold rounded-2xl flex items-center space-x-2 transition-all shadow-lg shadow-emerald-500/20"
           >
@@ -153,3 +150,75 @@ import { Settings, Zap, Play, CheckCircle, ArrowRight, Save } from 'lucide-react
     to { opacity: 1; transform: translateY(0); }
   }
 </style>
+
+<script nonce={Astro.locals.nonce}>
+  document.addEventListener('alpine:init', () => {
+    Alpine.data('automations', () => ({
+      step: 1,
+      flowName: '',
+      trigger: '',
+      action: '',
+      steps: [1, 2, 3],
+      
+      triggers: [
+        { id: 'msg', title: 'Mensagem Recebida', desc: 'Quando o cliente envia qualquer mensagem.' },
+        { id: 'tag', title: 'Tag Adicionada', desc: 'Quando uma tag específica é associada.' },
+        { id: 'cart', title: 'Carrinho Abandonado', desc: 'Após 2h sem finalização de compra.' },
+        { id: 'close', title: 'Atendimento Encerrado', desc: 'Após o fechamento do ticket.' }
+      ],
+
+      actions: [
+        { id: 'wa', title: 'Enviar WhatsApp', desc: 'Envia template ou mensagem direta.' },
+        { id: 'tag', title: 'Atribuir Tag', desc: 'Organiza automaticamente o lead.' },
+        { id: 'agent', title: 'Transf. para Agente', desc: 'Move para a fila humana.' },
+        { id: 'webhook', title: 'Disparar Webhook', desc: 'Integra com sistemas externos.' }
+      ],
+
+      setTrigger(id) {
+        this.trigger = id;
+      },
+
+      setAction(id) {
+        this.action = id;
+      },
+
+      nextStep() {
+        if (this.step === 1 && this.flowName) this.step = 2;
+        else if (this.step === 2 && this.trigger) this.step = 3;
+      },
+
+      prevStep() {
+        if (this.step > 1) this.step--;
+      },
+
+      getStepLabel(i) {
+        return i === 1 ? 'Setup' : (i === 2 ? 'Trigger' : 'Action');
+      },
+
+      async saveFlow() {
+        if (this.action) {
+          try {
+            const res = await fetch('/api/automations', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                name: this.flowName,
+                trigger_id: this.trigger,
+                action_id: this.action
+              })
+            });
+            
+            if (res.ok) {
+              alert('Fluxo salvo com sucesso!');
+              window.location.href='/admin/automations/list';
+            } else {
+              alert('Erro ao salvar fluxo');
+            }
+          } catch (e) {
+            alert('Erro na requisição');
+          }
+        }
+      }
+    }));
+  });
+</script>

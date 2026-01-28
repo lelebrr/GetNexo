@@ -3,7 +3,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 
 <AdminLayout title="Últimas 50 Vendas" activeTab="dashboard">
-  <div class="space-y-6">
+  <div x-data="recentSales" class="space-y-6 animate-fade-in">
     <!-- Header e Filtros -->
      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
@@ -11,8 +11,15 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         <p class="text-gray-400">Transações recentes em tempo real</p>
       </div>
       <div class="flex items-center space-x-2">
-        <input type="text" placeholder="Buscar ID ou Cliente..." class="bg-gray-900 border border-gray-800 text-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:border-emerald-500 text-sm">
-        <button class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg shadow-lg shadow-emerald-600/20 text-sm font-medium transition-all">
+        <input 
+          type="text" 
+          x-model="search"
+          @input.debounce.500ms="fetchSales(true)"
+          placeholder="Buscar ID ou Cliente..." 
+          class="bg-gray-900 border border-gray-800 text-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:border-emerald-500 text-sm"
+        >
+        <button @click="exportCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg shadow-lg shadow-emerald-600/20 text-sm font-medium transition-all flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
           Exportar CSV
         </button>
       </div>
@@ -33,153 +40,145 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-800 text-sm">
+            <template x-for="sale in filteredSales" :key="sale.id">
+              <tr class="hover:bg-gray-800/50 transition-colors group">
+                <td class="p-4">
+                  <span 
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border"
+                    :class="{
+                      'bg-emerald-500/10 text-emerald-400 border-emerald-500/20': sale.status === 'Aprovado',
+                      'bg-yellow-500/10 text-yellow-400 border-yellow-500/20': sale.status === 'Pendente',
+                      'bg-red-500/10 text-red-400 border-red-500/20': sale.status === 'Cancelado'
+                    }"
+                  >
+                    <span 
+                      class="w-1.5 h-1.5 rounded-full mr-1.5"
+                      :class="{
+                        'bg-emerald-500': sale.status === 'Aprovado',
+                        'bg-yellow-500 animate-pulse': sale.status === 'Pendente',
+                        'bg-red-500': sale.status === 'Cancelado'
+                      }"
+                    ></span>
+                    <span x-text="sale.status"></span>
+                  </span>
+                </td>
+                <td class="p-4">
+                  <div class="flex items-center">
+                    <div 
+                      class="h-8 w-8 rounded-full flex items-center justify-center text-white font-bold text-xs mr-3"
+                      :class="sale.avatarColor"
+                      x-text="sale.initials"
+                    ></div>
+                    <div>
+                      <div class="font-medium text-white" x-text="sale.name"></div>
+                      <div class="text-gray-500 text-xs" x-text="sale.email"></div>
+                    </div>
+                  </div>
+                </td>
+                <td class="p-4 text-gray-300">
+                  <span x-text="sale.product"></span> 
+                  <span x-show="sale.more > 0" class="text-gray-500 text-xs ml-1" x-text="`+${sale.more} outro`"></span>
+                </td>
+                <td class="p-4 text-gray-400" x-text="sale.date"></td>
+                <td 
+                  class="p-4 text-right font-medium"
+                  :class="sale.status === 'Cancelado' ? 'text-gray-400 line-through' : (sale.status === 'Pendente' ? 'text-white' : 'text-emerald-400')"
+                  x-text="formatCurrency(sale.value)"
+                ></td>
+                <td class="p-4 text-center">
+                  <button class="text-gray-500 hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>
+                  </button>
+                </td>
+              </tr>
+            </template>
             
-            {/* Linha 1 */}
-            <tr class="hover:bg-gray-800/50 transition-colors group">
-              <td class="p-4">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-1.5"></span>
-                  Aprovado
-                </span>
-              </td>
-              <td class="p-4">
-                <div class="flex items-center">
-                  <div class="h-8 w-8 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-xs mr-3">
-                    AL
-                  </div>
-                  <div>
-                    <div class="font-medium text-white">Ana Lúcia</div>
-                    <div class="text-gray-500 text-xs">ana.lucia@email.com</div>
-                  </div>
-                </div>
-              </td>
-              <td class="p-4 text-gray-300">
-                1x Smartwatch Series 8 <span class="text-gray-500 text-xs ml-1">+1 outro</span>
-              </td>
-              <td class="p-4 text-gray-400">
-                Hoje, 14:32
-              </td>
-              <td class="p-4 text-right font-medium text-emerald-400">
-                R$ 1.250,00
-              </td>
-              <td class="p-4 text-center">
-                <button class="text-gray-500 hover:text-white transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>
-                </button>
-              </td>
+            <tr x-show="filteredSales.length === 0">
+               <td colspan="6" class="p-8 text-center text-gray-500">
+                  Nenhuma venda encontrada.
+               </td>
             </tr>
-
-             {/* Linha 2 */}
-            <tr class="hover:bg-gray-800/50 transition-colors group">
-              <td class="p-4">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
-                  <span class="w-1.5 h-1.5 bg-yellow-500 rounded-full mr-1.5 animate-pulse"></span>
-                  Pendente
-                </span>
-              </td>
-              <td class="p-4">
-                <div class="flex items-center">
-                  <div class="h-8 w-8 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-500 flex items-center justify-center text-white font-bold text-xs mr-3">
-                    CR
-                  </div>
-                  <div>
-                    <div class="font-medium text-white">Carlos Roberto</div>
-                    <div class="text-gray-500 text-xs">carlos.r@email.com</div>
-                  </div>
-                </div>
-              </td>
-              <td class="p-4 text-gray-300">
-                2x Capa Protetora iPhone 14
-              </td>
-              <td class="p-4 text-gray-400">
-                Hoje, 14:15
-              </td>
-              <td class="p-4 text-right font-medium text-white">
-                R$ 198,00
-              </td>
-              <td class="p-4 text-center">
-                <button class="text-gray-500 hover:text-white transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>
-                </button>
-              </td>
-            </tr>
-
-             {/* Linha 3 */}
-            <tr class="hover:bg-gray-800/50 transition-colors group">
-              <td class="p-4">
-                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-500/10 text-red-400 border border-red-500/20">
-                  <span class="w-1.5 h-1.5 bg-red-500 rounded-full mr-1.5"></span>
-                  Cancelado
-                </span>
-              </td>
-              <td class="p-4">
-                <div class="flex items-center">
-                   <div class="h-8 w-8 rounded-full bg-gray-700 flex items-center justify-center text-gray-300 font-bold text-xs mr-3">
-                    MR
-                  </div>
-                  <div>
-                    <div class="font-medium text-white">Mariana Rita</div>
-                    <div class="text-gray-500 text-xs">mari.rita@email.com</div>
-                  </div>
-                </div>
-              </td>
-              <td class="p-4 text-gray-300">
-                1x Fonte Carregadora 20W
-              </td>
-              <td class="p-4 text-gray-400">
-                Hoje, 13:50
-              </td>
-              <td class="p-4 text-right font-medium text-gray-400 line-through">
-                R$ 149,90
-              </td>
-              <td class="p-4 text-center">
-                <button class="text-gray-500 hover:text-white transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>
-                </button>
-              </td>
-            </tr>
-
-             {/* Linha 4 */}
-            <tr class="hover:bg-gray-800/50 transition-colors group">
-              <td class="p-4">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-1.5"></span>
-                  Aprovado
-                </span>
-              </td>
-              <td class="p-4">
-                <div class="flex items-center">
-                  <div class="h-8 w-8 rounded-full bg-gradient-to-tr from-amber-500 to-orange-500 flex items-center justify-center text-white font-bold text-xs mr-3">
-                    PJ
-                  </div>
-                  <div>
-                    <div class="font-medium text-white">Pedro Joaquim</div>
-                    <div class="text-gray-500 text-xs">pedro.j@email.com</div>
-                  </div>
-                </div>
-              </td>
-              <td class="p-4 text-gray-300">
-                1x Monitor UltraWide 29"
-              </td>
-              <td class="p-4 text-gray-400">
-                Hoje, 13:42
-              </td>
-              <td class="p-4 text-right font-medium text-emerald-400">
-                R$ 1.890,00
-              </td>
-              <td class="p-4 text-center">
-                 <button class="text-gray-500 hover:text-white transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>
-                </button>
-              </td>
-            </tr>
-
           </tbody>
         </table>
       </div>
       <div class="p-4 border-t border-gray-800 bg-gray-900/30 flex justify-center">
-          <button class="text-gray-400 hover:text-white text-sm font-medium transition-colors">Carregar mais...</button>
+          <button @click="loadMore()" class="text-gray-400 hover:text-white text-sm font-medium transition-colors">Carregar mais...</button>
       </div>
     </div>
   </div>
+
+<script nonce={Astro.locals.nonce}>
+  document.addEventListener('alpine:init', () => {
+    Alpine.data('recentSales', () => ({
+      search: '',
+      sales: [],
+      loading: true,
+      limit: 10,
+      offset: 0,
+      hasMore: true,
+
+      async init() {
+        await this.fetchSales();
+      },
+
+      async fetchSales(reset = false) {
+        if (reset) {
+          this.offset = 0;
+          this.sales = [];
+          this.hasMore = true;
+        }
+        
+        this.loading = true;
+        try {
+          const url = new URL('/api/analytics/recent-sales', window.location.origin);
+          url.searchParams.append('limit', this.limit);
+          url.searchParams.append('offset', this.offset);
+          if (this.search) url.searchParams.append('search', this.search);
+          
+          const res = await fetch(url.toString());
+          const data = await res.json();
+          
+          const newSales = data.sales.map(s => ({
+            id: s.id,
+            status: s.status === 'paid' ? 'Aprovado' : (s.status === 'pending' ? 'Pendente' : 'Cancelado'),
+            name: s.customer_name || 'Cliente Desconhecido',
+            initials: (s.customer_name || 'C').charAt(0).toUpperCase(),
+            email: s.customer_id || '',
+            product: s.payment_method || 'Venda GetNexo',
+            more: 0,
+            date: new Date(s.created_at).toLocaleString('pt-BR'),
+            value: s.amount,
+            avatarColor: 'bg-indigo-600'
+          }));
+
+          this.sales = [...this.sales, ...newSales];
+          this.hasMore = newSales.length === this.limit;
+          this.offset += this.limit;
+        } catch (e) {
+          console.error('Erro ao buscar vendas:', e);
+        } finally {
+          this.loading = false;
+        }
+      },
+
+      get filteredSales() {
+        return this.sales;
+      },
+
+      formatCurrency(value) {
+        return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+      },
+
+      async loadMore() {
+        if (!this.loading && this.hasMore) {
+          await this.fetchSales();
+        }
+      },
+
+      async exportCSV() {
+        window.location.href = '/api/analytics/export-sales';
+      }
+    }));
+  });
+</script>
 </AdminLayout>

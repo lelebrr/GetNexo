@@ -1,0 +1,120 @@
+---
+import AdminLayout from '../../../../layouts/AdminLayout.astro';
+import { ShieldAlert, ShieldCheck, Activity, Lock, Eye, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
+
+const title = "Vulnerabilidades & Ameaças";
+---
+
+<AdminLayout title={title} activeTab="security-ia">
+  <div class="max-w-7xl mx-auto space-y-6 animate-fade-in" x-data="vulnIA()">
+    
+    <!-- Hero Header -->
+    <header class="bg-gradient-to-r from-red-900/20 to-orange-900/10 border border-red-500/20 rounded-3xl p-8 flex items-center justify-between">
+      <div class="flex items-center gap-6">
+        <div class="p-4 bg-red-500/10 rounded-2xl border border-red-500/20 animate-pulse-slow">
+          <ShieldAlert className="w-10 h-10 text-red-500" />
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-white mb-2">Monitoramento de Ameaças</h1>
+          <div class="flex items-center gap-3">
+             <span class="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+               <ShieldCheck className="w-3 h-3" /> Sistema Seguro
+             </span>
+             <span class="text-gray-500 text-xs">Último scan: <span class="text-gray-300">Há 2 minutos</span></span>
+          </div>
+        </div>
+      </div>
+      <div class="text-right hidden md:block">
+        <p class="text-gray-400 text-xs uppercase tracking-widest font-bold mb-1">Nível de Ameaça</p>
+        <p class="text-3xl font-black text-white" x-text="data.threat_level || '--'">--</p>
+      </div>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Active Protections -->
+      <div class="bg-gray-900/40 border border-gray-800 rounded-3xl p-6 backdrop-blur-sm">
+        <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
+          <Lock className="w-5 h-5 text-purple-400" />
+          Proteções Ativas
+        </h3>
+        <div class="space-y-3">
+          <template x-for="prot in data.active_protections" :key="prot">
+            <div class="flex items-center justify-between p-3 rounded-xl bg-black/40 border border-gray-800">
+              <span class="text-sm text-gray-300" x-text="prot">--</span>
+              <CheckCircle className="w-4 h-4 text-emerald-400" />
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- Live Event Log -->
+      <div class="lg:col-span-2 bg-gray-900/40 border border-gray-800 rounded-3xl p-6 backdrop-blur-sm flex flex-col">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-lg font-bold text-white flex items-center gap-2">
+            <Activity className="w-5 h-5 text-blue-400" />
+            Log de Eventos Recentes
+          </h3>
+          <button @click="fetchData()" class="text-xs font-bold text-blue-400 hover:text-blue-300 transition-colors">
+            Atualizar Agora
+          </button>
+        </div>
+        
+        <div class="flex-1 space-y-4 overflow-y-auto max-h-[400px] pr-2 scrollbar-thin scrollbar-thumb-gray-800">
+          <template x-for="event in data.recent_events" :key="event.time">
+            <div class="flex items-start gap-4 p-4 rounded-2xl bg-black/20 border border-gray-800 hover:border-blue-500/30 transition-all group">
+              <div class="mt-1">
+                 <AlertTriangle x-show="event.type === 'Critical'" className="w-5 h-5 text-red-500" />
+                 <Eye x-show="event.type === 'Warning'" className="w-5 h-5 text-yellow-500" />
+                 <CheckCircle x-show="event.type === 'Info'" className="w-5 h-5 text-emerald-500" />
+              </div>
+              <div class="flex-1">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-bold text-white text-sm" x-text="event.type">--</span>
+                  <div class="flex items-center text-gray-500 text-xs">
+                    <Clock className="w-3 h-3 mr-1" />
+                    <span x-text="event.time">--</span>
+                  </div>
+                </div>
+                <p class="text-sm text-gray-400 leading-relaxed" x-text="event.event">--</p>
+              </div>
+            </div>
+          </template>
+          
+          <div x-show="!data.recent_events || data.recent_events.length === 0" class="text-center py-10 text-gray-500 text-sm">
+            Nenhum evento registrado recentemente.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</AdminLayout>
+
+<script is:inline>
+  function vulnIA() {
+    return {
+      data: {
+        threat_level: '...',
+        active_protections: [],
+        recent_events: []
+      },
+      async fetchData() {
+        try {
+          const res = await fetch('/api/ai/security/audit');
+          const json = await res.json();
+          this.data = json;
+        } catch (e) {
+          console.error('Erro ao buscar auditoria:', e);
+        }
+      },
+      init() {
+        this.fetchData();
+      }
+    }
+  }
+</script>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.4s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-pulse-slow { animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+</style>

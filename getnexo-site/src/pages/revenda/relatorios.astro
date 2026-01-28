@@ -1,0 +1,91 @@
+---
+import ResellerLayout from '../../layouts/ResellerLayout.astro';
+---
+
+<ResellerLayout title="Relatórios e Analytics">
+    <div class="header">
+        <h2 class="text-neon-blue">📋 RELATÓRIOS DETALHADOS</h2>
+    </div>
+
+    <!-- Quick Insights -->
+    <div class="insights-grid">
+        <div class="insight-card">
+            <h3>TAXA DE RENOVAÇÃO</h3>
+            <div class="v">94.2%</div>
+            <p>Retenção da sua base atual</p>
+        </div>
+        <div class="insight-card">
+            <h3>CONVERSÃO DE TRIAL</h3>
+            <div class="v">32.8%</div>
+            <p>Leads que viraram clientes</p>
+        </div>
+        <div class="insight-card">
+            <h3>LTV MÉDIO</h3>
+            <div class="v">R$ 1.240</div>
+            <p>Valor por cliente (estimado)</p>
+        </div>
+    </div>
+
+    <!-- Available Reports -->
+    <div class="reports-section">
+        <h3>RELATÓRIOS DISPONÍVEIS PARA DOWNLOAD</h3>
+        <div class="reports-list">
+            <div class="report-row">
+                <div class="rep-info">
+                    <span class="icon">📄</span>
+                    <div>
+                        <span class="name">Desempenho de Vendas - Janeiro 2026</span>
+                        <span class="meta">PDF • Gerado em 28/01 • 1.2 MB</span>
+                    </div>
+                </div>
+                <button class="btn-down">DOWNLOAD</button>
+            </div>
+            <div class="report-row">
+                <div class="rep-info">
+                    <span class="icon">📊</span>
+                    <div>
+                        <span class="name">Previsão de Receita (Q1 2026)</span>
+                        <span class="meta">XLSX • Gerado em 25/01 • 450 KB</span>
+                    </div>
+                </div>
+                <button class="btn-down">DOWNLOAD</button>
+            </div>
+            <div class="report-row">
+                <div class="rep-info">
+                    <span class="icon">👥</span>
+                    <div>
+                        <span class="name">Churn Analysis & Feedback</span>
+                        <span class="meta">PDF • Gerado em 20/01 • 2.5 MB</span>
+                    </div>
+                </div>
+                <button class="btn-down">DOWNLOAD</button>
+            </div>
+        </div>
+    </div>
+
+</ResellerLayout>
+
+<style>
+    .header { margin-bottom: 2rem; }
+    .insights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+    .insight-card { background: #0a0a0a; border: 1px solid #334155; padding: 1.5rem; border-radius: 8px; }
+    .insight-card h3 { font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.5rem; }
+    .insight-card .v { font-size: 1.5rem; font-weight: 700; color: #00ff9d; margin-bottom: 0.25rem; }
+    .insight-card p { font-size: 0.75rem; color: #64748b; }
+
+    .reports-section { background: #0a0a0a; border: 1px solid #334155; border-radius: 8px; padding: 2rem; }
+    .reports-section h3 { font-size: 0.9rem; color: #00f3ff; margin-bottom: 2rem; }
+    
+    .reports-list { display: flex; flex-direction: column; gap: 1rem; }
+    .report-row { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem; background: rgba(255, 255, 255, 0.02); border-radius: 8px; border: 1px solid transparent; transition: all 0.2s; }
+    .report-row:hover { background: rgba(255, 255, 255, 0.05); border-color: #334155; }
+    
+    .rep-info { display: flex; align-items: center; gap: 1rem; }
+    .rep-info .icon { font-size: 1.5rem; }
+    .rep-info div { display: flex; flex-direction: column; }
+    .rep-info .name { color: #fff; font-weight: 600; font-size: 0.9rem; }
+    .rep-info .meta { color: #64748b; font-size: 0.7rem; }
+
+    .btn-down { background: none; border: 1px solid rgba(0, 255, 157, 0.2); color: #00ff9d; padding: 0.5rem 1rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: all 0.2s; }
+    .btn-down:hover { background: #00ff9d; color: #000; }
+</style>

@@ -145,10 +145,7 @@ const isModuleActive = (module) => moduleSet.has(module);
 ---
 
 <div 
-  x-data="{ 
-    sidebarOpen: false,
-    toggleSidebar() { this.sidebarOpen = !this.sidebarOpen; }
-  }"
+  x-data="clientSidebar"
   class="relative"
 >
   <!-- Mobile Menu Button -->
@@ -157,7 +154,7 @@ const isModuleActive = (module) => moduleSet.has(module);
     class="lg:hidden fixed top-4 left-4 z-50 p-2 bg-gray-900 text-cyan-400 rounded-lg hover:bg-gray-800 transition-colors"
     aria-label="Toggle menu"
   >
-    {icons.menu}
+    <Fragment set:html={icons.menu} />
   </button>
 
   <!-- Overlay for mobile -->
@@ -187,7 +184,7 @@ const isModuleActive = (module) => moduleSet.has(module);
         class="flex items-center gap-3 text-xl font-bold text-white hover:text-cyan-400 transition-colors mb-4"
       >
         <span class="text-cyan-400">
-          {icons.rocket}
+          <Fragment set:html={icons.rocket} />
         </span>
         JetNexus
       </a>
@@ -214,23 +211,23 @@ const isModuleActive = (module) => moduleSet.has(module);
     <!-- Menu Principal -->
     <nav class="p-4 space-y-1">
       <!-- Seção Estatísticas (com submenu expansível) -->
-      <div x-data="{ open: false }">
+      <div>
         <button
-          @click="open = !open"
+          @click="toggleStats()"
           class="flex items-center w-full py-3 px-4 rounded-lg text-gray-300 hover:bg-cyan-900/20 hover:text-white transition-all duration-300 group"
           aria-label="Expandir submenu de Estatísticas"
         >
           <span class="text-cyan-400 group-hover:text-cyan-300 transition-colors mr-3">
-            {icons['line-chart']}
+            <Fragment set:html={icons['line-chart']} />
           </span>
           <span class="font-medium flex-1">Estatísticas</span>
           <span class="text-cyan-400 group-hover:text-cyan-300 transition-colors">
-            {icons['chevron-down']}
+            <Fragment set:html={icons['chevron-down']} />
           </span>
         </button>
         
         <div
-          x-show="open"
+          x-show="statsOpen"
           x-transition:enter="transition ease-out duration-200"
           x-transition:enter-start="opacity-0 -translate-y-2"
           x-transition:enter-end="opacity-100 translate-y-0"
@@ -247,7 +244,7 @@ const isModuleActive = (module) => moduleSet.has(module);
                 class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-400 hover:bg-cyan-900/20 hover:text-white transition-all duration-300 group"
               >
                 <span class="text-gray-500 group-hover:text-cyan-300 transition-colors">
-                  {icons[subItem.icon]}
+                  <Fragment set:html={icons[subItem.icon]} />
                 </span>
                 <span class="flex-1">{subItem.name}</span>
                 {isPremium && (
@@ -268,7 +265,7 @@ const isModuleActive = (module) => moduleSet.has(module);
           class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-cyan-900/20 hover:text-white transition-all duration-300 group"
         >
           <span class="text-cyan-400 group-hover:text-cyan-300 transition-colors">
-            {icons[item.icon]}
+            <Fragment set:html={icons[item.icon]} />
           </span>
           <span class="font-medium flex-1">{item.name}</span>
           {item.link === '/api/logout' && (
@@ -286,7 +283,7 @@ const isModuleActive = (module) => moduleSet.has(module);
             class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-cyan-900/20 hover:text-white transition-all duration-300 group"
           >
             <span class="text-cyan-400 group-hover:text-cyan-300 transition-colors">
-              {icons[item.icon]}
+              <Fragment set:html={icons[item.icon]} />
             </span>
             <span class="font-medium flex-1">{item.name}</span>
             {item.badge && (
@@ -323,7 +320,7 @@ const isModuleActive = (module) => moduleSet.has(module);
                   </span>
                   <span class="font-medium flex-1">{item.name}</span>
                   <span class="flex items-center gap-1 text-xs text-green-400 bg-green-900/30 px-2 py-0.5 rounded-full">
-                    {icons['check-circle']}
+                    <Fragment set:html={icons['check-circle']} />
                     Desbloqueado
                   </span>
                 </a>
@@ -334,12 +331,12 @@ const isModuleActive = (module) => moduleSet.has(module);
                   aria-label={`Adquirir ${item.name} - ${item.price}`}
                 >
                   <span class="text-gray-600 group-hover:text-gray-400 transition-colors">
-                    {icons.lock}
+                    <Fragment set:html={icons.lock} />
                   </span>
                   <span class="font-medium flex-1 text-left">{item.name}</span>
                   <span class="flex items-center gap-1 text-xs text-cyan-400 bg-cyan-900/20 px-2 py-0.5 rounded-full">
                     {item.price}
-                    {icons['chevron-right']}
+                    <Fragment set:html={icons['chevron-right']} />
                   </span>
                 </button>
               )}
@@ -400,3 +397,20 @@ const isModuleActive = (module) => moduleSet.has(module);
     50% { background-position: 100% 50%; }
   }
 </style>
+
+<script nonce={Astro.locals.nonce}>
+  document.addEventListener('alpine:init', () => {
+    Alpine.data('clientSidebar', () => ({
+      sidebarOpen: false,
+      statsOpen: false,
+ 
+      toggleSidebar() {
+        this.sidebarOpen = !this.sidebarOpen;
+      },
+ 
+      toggleStats() {
+        this.statsOpen = !this.statsOpen;
+      }
+    }));
+  });
+</script>

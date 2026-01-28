@@ -118,7 +118,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 
       try {
         const today = new Date().toISOString().split('T')[0];
-        const response = await fetch(`http://localhost:3006/api/tickets?status=closed&date=${today}`);
+        const response = await fetch(`/api/tickets?status=closed&date=${today}`);
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

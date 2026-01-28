@@ -1,0 +1,50 @@
+---
+import ResellerLayout from '../../layouts/ResellerLayout.astro';
+---
+
+<ResellerLayout title="Fale com a GetNexo">
+    <div class="contact-container">
+        <div class="contact-header">
+            <h2 class="text-neon-blue">CANAIS DE CONTATO DIRETO</h2>
+            <p>Suporte exclusivo para parceiros e revendedores.</p>
+        </div>
+
+        <div class="contact-grid">
+            <div class="contact-card">
+                <div class="icon-wrap" style="background: #25D366;">🟢</div>
+                <h3>WhatsApp Suporte</h3>
+                <p>Atendimento rápido via chat para urgências técnicas.</p>
+                <a href="https://wa.me/5511999999999" target="_blank" class="contact-btn">CHAMAR NO WHATSAPP</a>
+            </div>
+
+            <div class="contact-card">
+                <div class="icon-wrap" style="background: #ea4335;">📧</div>
+                <h3>E-mail de Parcerias</h3>
+                <p>Assuntos comerciais, contratos e pagamentos.</p>
+                <a href="mailto:parceiros@getnexo.com.br" class="contact-btn">ENVIAR E-MAIL</a>
+            </div>
+        </div>
+    </div>
+</ResellerLayout>
+
+<style>
+    .contact-container { max-width: 900px; margin: 0 auto; padding: 2rem 0; }
+    .contact-header { text-align: center; margin-bottom: 4rem; }
+    .contact-header h2 { font-size: 2rem; margin-bottom: 1rem; }
+    .contact-header p { color: #94a3b8; }
+
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .contact-card { background: #0a0a0a; border: 1px solid #334155; padding: 3rem 2rem; border-radius: 20px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+    
+    .icon-wrap { width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 1.5rem; }
+    
+    .contact-card h3 { color: #fff; font-size: 1.25rem; margin-bottom: 1rem; }
+    .contact-card p { color: #94a3b8; font-size: 0.9rem; line-height: 1.6; margin-bottom: 2rem; flex: 1; }
+    
+    .contact-btn { width: 100%; padding: 1rem; background: rgba(255, 255, 255, 0.05); color: #fff; text-decoration: none; font-weight: bold; border-radius: 10px; border: 1px solid #334155; transition: all 0.2s; }
+    .contact-btn:hover { background: #fff; color: #000; border-color: #fff; }
+
+    @media (max-width: 640px) {
+        .contact-grid { grid-template-columns: 1fr; }
+    }
+</style>

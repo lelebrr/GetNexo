@@ -1,5 +1,5 @@
 import { defineConfig } from 'astro/config';
-import partytown from '@astrojs/partytown';
+
 import react from '@astrojs/react';
 import node from '@astrojs/node';
 import vercel from '@astrojs/vercel/serverless';
@@ -43,25 +43,19 @@ export default defineConfig({
                 }
             }
         }),
-        partytown({
-            config: {
-                forward: ['dataLayer.push', 'gtag'],
-                debug: false,
-                resolveUrl: function (url) {
-                    // Resolve URLs for third-party scripts
-                    if (url.hostname === 'www.googletagmanager.com') {
-                        return url;
-                    }
-                    return url;
-                },
-            },
-        }),
+
     ],
     compressHTML: true,
     build: {
         inlineStylesheets: 'always', // Inlining de CSS crítico para evitar bloqueio de renderização
         // Otimização: gerar chunks CSS menores para melhor paralelização
-        chunkSizeWarningLimit: 200, // Reduzido de 500 para 200 KB
+        chunkSizeWarningLimit: 150, // Reduzido para 150 KB para melhor performance
+        minify: 'esbuild',
+        esbuild: {
+            drop: ['console', 'debugger', 'unused'],
+            minify: true,
+            legalComments: 'none'
+        }
     },
     image: {
         service: {
@@ -90,15 +84,8 @@ export default defineConfig({
     server: {
         host: '0.0.0.0', // Permite conexões de qualquer interface de rede
         port: 4321, // Porta padrão para o container e healthchecks
-        headers: {
-            // CSP avançada com proteção contra XSS
-            // Permite scripts externos necessários para funcionalidade
-            'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-eval' https: http: *.cloudflare.com static.cloudflareinsights.com https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://api.getnexo.com.br https://*.getnexo.com.br https://www.googletagmanager.com https://cdn.skypack.dev https://openrouter.ai https://fonts.googleapis.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https: http: https://fonts.googleapis.com https://unpkg.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src * data: blob:; font-src 'self' https://fonts.gstatic.com; connect-src *; object-src 'none'; base-uri 'none'; frame-ancestors *; script-src-elem 'self' 'unsafe-inline' https: http: https://unpkg.com https://cdn.jsdelivr.net https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' https: http: https://unpkg.com https://cdn.jsdelivr.net https://fonts.googleapis.com;",
-            // Cache otimizado: 1 ano para assets estáticos, 1 dia para APIs
-            'Cache-Control': 'public, max-age=31536000, immutable',
-            // HSTS forte para todos os ambientes (não apenas Vercel)
-            'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'
-        }
+        host: '0.0.0.0', // Permite conexões de qualquer interface de rede
+        port: 4321, // Porta padrão para o container e healthchecks
     },
     vite: {
         logLevel: 'info', // ou 'debug' pra ficar mais verboso ainda
@@ -123,9 +110,8 @@ export default defineConfig({
         }] : [],
         build: {
             target: 'es2017',
-            target: 'es2017',
             // cssCodeSplit: true, // Removed to allow Astro inlineStylesheets: 'always' to work fully
-            chunkSizeWarningLimit: 200,
+            chunkSizeWarningLimit: 150,
             modulePreload: {
                 polyfill: false
             },
@@ -141,10 +127,6 @@ export default defineConfig({
                     // Removed manualChunks for CSS to allow proper inlining by Astro
                 }
             }
-        },
-        esbuild: {
-            drop: isDev ? [] : ['console', 'debugger'],
-            minify: true,
         },
         optimizeDeps: {
             include: ['react', 'react-dom']

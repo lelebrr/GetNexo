@@ -1,0 +1,105 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { FileBarChart, TrendingUp, DollarSign, ShoppingCart, ArrowUpRight, ArrowDownRight, Users } from 'lucide-react';
+
+const storeEarnings = [
+  { name: "Loja Principal", sales: 142, revenue: "R$ 68.400", roi: "+12.4%", trend: "up" },
+  { name: "Outlet Nexo", sales: 85, revenue: "R$ 12.100", roi: "+5.1%", trend: "up" },
+  { name: "Drop Nacional", sales: 32, revenue: "R$ 4.500", roi: "-2.3%", trend: "down" },
+];
+---
+
+<AdminLayout title="Relatórios Multi-Loja" activeTab="multiloja">
+  <div class="max-w-6xl mx-auto space-y-10 animate-fade-in py-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-500 border border-amber-500/20 shadow-xl shadow-amber-500/10">
+          <FileBarChart className="w-7 h-7" />
+        </div>
+        <div>
+          <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Performance Global</h1>
+          <p class="text-sm text-gray-500 font-medium">Consolidação de dados financeiros e operacionais de todas as unidades.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Global Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+       <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] space-y-4 relative overflow-hidden group">
+          <div class="absolute right-0 top-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+             <DollarSign className="w-16 h-16 text-white" />
+          </div>
+          <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Receita Total</p>
+          <div class="flex items-end space-x-3">
+             <h3 class="text-3xl font-black text-white">R$ 85.000</h3>
+             <span class="text-xs font-bold text-emerald-500 mb-1">+14% vs ontem</span>
+          </div>
+       </div>
+
+       <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] space-y-4 relative overflow-hidden group">
+          <div class="absolute right-0 top-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+             <ShoppingCart className="w-16 h-16 text-white" />
+          </div>
+          <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Pedidos Totais</p>
+          <div class="flex items-end space-x-3">
+             <h3 class="text-3xl font-black text-white">259</h3>
+             <span class="text-xs font-bold text-emerald-500 mb-1">+8% vs ontem</span>
+          </div>
+       </div>
+
+       <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] space-y-4 relative overflow-hidden group">
+          <div class="absolute right-0 top-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+             <Users className="w-16 h-16 text-white" />
+          </div>
+          <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Leads Gerados</p>
+          <div class="flex items-end space-x-3">
+             <h3 class="text-3xl font-black text-white">1.4k</h3>
+             <span class="text-xs font-bold text-rose-500 mb-1">-2% vs ontem</span>
+          </div>
+       </div>
+    </div>
+
+    <!-- Comparative Table -->
+    <div class="bg-gray-900/40 border border-gray-800 rounded-[2.5rem] overflow-hidden">
+       <div class="p-8 border-b border-gray-800 bg-black/20 flex items-center justify-between">
+          <h3 class="text-[10px] font-black uppercase text-gray-400 tracking-widest">Ranking de Performance por Loja</h3>
+          <button class="px-4 py-2 bg-gray-800 text-white text-[9px] font-black uppercase rounded-xl hover:bg-gray-700 transition-all">Últimos 30 Dias</button>
+       </div>
+
+       <div class="divide-y divide-gray-800/50">
+          {storeEarnings.map(store => (
+             <div class="p-8 flex items-center justify-between hover:bg-white/[0.02] transition-colors group">
+                <div class="flex items-center space-x-6">
+                   <div class="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center text-gray-600 group-hover:bg-amber-500/10 group-hover:text-amber-500 transition-all">
+                      <TrendingUp className="w-6 h-6" />
+                   </div>
+                   <div>
+                      <h4 class="text-sm font-bold text-white uppercase tracking-tight">{store.name}</h4>
+                      <p class="text-[10px] text-gray-500 font-medium">{store.sales} pedidos finalizados</p>
+                   </div>
+                </div>
+
+                <div class="flex items-center space-x-12">
+                   <div class="text-right">
+                      <p class="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-1">Faturamento</p>
+                      <p class="text-sm font-mono font-bold text-white">{store.revenue}</p>
+                   </div>
+                   <div class="text-right w-24">
+                      <p class="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-1">ROI / Cresc.</p>
+                      <div class:list={["flex items-center justify-end font-bold text-xs font-mono", store.trend === 'up' ? 'text-emerald-500' : 'text-rose-500']}>
+                         {store.trend === 'up' ? <ArrowUpRight className="w-3 h-3 mr-1" /> : <ArrowDownRight className="w-3 h-3 mr-1" />}
+                         <span>{store.roi}</span>
+                      </div>
+                   </div>
+                </div>
+             </div>
+          ))}
+       </div>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

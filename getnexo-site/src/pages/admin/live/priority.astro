@@ -123,7 +123,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       ticketsList.classList.add('hidden');
 
       try {
-        const response = await fetch('http://localhost:3006/api/tickets?priority=1');
+        const response = await fetch('/api/tickets?priority=1');
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

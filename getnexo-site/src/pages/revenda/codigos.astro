@@ -73,12 +73,10 @@ import ResellerLayout from '../../layouts/ResellerLayout.astro';
 </style>
 
 <script nonce={Astro.locals.nonce} is:inline>
-    const API_URL = '';
-
     async function loadCode() {
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`${API_URL}/api/revenda/stats`, { headers: { 'Authorization': token } });
+            const res = await fetch('/api/revenda/stats', { headers: { 'Authorization': token } });
             const data = await res.json();
             
             // Assuming stats endpoint might return code now, or we fetch user profile

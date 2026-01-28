@@ -2,35 +2,35 @@ import fs from 'fs';
 import path from 'path';
 
 export async function POST({ request }) {
-    try {
-        const body = await request.json();
-        const { title, content, lang, slug, category, date, status } = body;
+  try {
+    const body = await request.json();
+    const { title, content, lang, slug, category, date, status } = body;
 
-        // Validar campos obrigatórios
-        if (!title || !content || !lang || !slug) {
-            return new Response(
-                JSON.stringify({ error: 'Título, conteúdo, idioma e slug são obrigatórios' }),
-                { status: 400, headers: { 'Content-Type': 'application/json' } }
-            );
-        }
+    // Validar campos obrigatórios
+    if (!title || !content || !lang || !slug) {
+      return new Response(
+        JSON.stringify({ error: 'Título, conteúdo, idioma e slug são obrigatórios' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
 
-        // Determinar o diretório baseado no idioma
-        let dirPath;
-        if (lang === 'pt') {
-            dirPath = path.join(process.cwd(), 'src', 'pages', 'blog');
-        } else {
-            dirPath = path.join(process.cwd(), 'src', 'pages', lang, 'blog');
-        }
+    // Determinar o diretório baseado no idioma
+    let dirPath;
+    if (lang === 'pt') {
+      dirPath = path.join(process.cwd(), 'src', 'pages', 'blog');
+    } else {
+      dirPath = path.join(process.cwd(), 'src', 'pages', lang, 'blog');
+    }
 
-        // Criar diretório se não existir
-        if (!fs.existsSync(dirPath)) {
-            fs.mkdirSync(dirPath, { recursive: true });
-        }
+    // Criar diretório se não existir
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true });
+    }
 
-        const layoutPath = lang === 'pt' ? '../../layouts/Layout.astro' : '../../../layouts/Layout.astro';
+    const layoutPath = lang === 'pt' ? '../../layouts/Layout.astro' : '../../../layouts/Layout.astro';
 
-        // Gerar conteúdo do arquivo .astro
-        const fileContent = `---
+    // Gerar conteúdo do arquivo .astro
+    const fileContent = `---
 import Layout from '${layoutPath}';
 
 const title = "${title}";
@@ -143,7 +143,7 @@ const articleSection = "${category || 'Geral'}";
     }
   </style>
 
-  <script type="application/ld+json" set:html={JSON.stringify({
+  <script nonce={Astro.locals.nonce} type="application/ld+json" is:inline set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@type": "Article",
     "headline": title,
@@ -171,23 +171,23 @@ const articleSection = "${category || 'Geral'}";
 </Layout>
 `;
 
-        // Salvar o arquivo
-        const filePath = path.join(dirPath, `${slug}.astro`);
-        fs.writeFileSync(filePath, fileContent, 'utf-8');
+    // Salvar o arquivo
+    const filePath = path.join(dirPath, `${slug}.astro`);
+    fs.writeFileSync(filePath, fileContent, 'utf-8');
 
-        return new Response(
-            JSON.stringify({
-                success: true,
-                message: 'Post salvo com sucesso',
-                filePath: filePath
-            }),
-            { status: 200, headers: { 'Content-Type': 'application/json' } }
-        );
-    } catch (error) {
-        console.error('Erro ao salvar post:', error);
-        return new Response(
-            JSON.stringify({ error: 'Erro interno ao salvar post' }),
-            { status: 500, headers: { 'Content-Type': 'application/json' } }
-        );
-    }
+    return new Response(
+      JSON.stringify({
+        success: true,
+        message: 'Post salvo com sucesso',
+        filePath: filePath
+      }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
+    );
+  } catch (error) {
+    console.error('Erro ao salvar post:', error);
+    return new Response(
+      JSON.stringify({ error: 'Erro interno ao salvar post' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
 }

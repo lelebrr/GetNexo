@@ -1,0 +1,76 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { MessageSquare, Plus, Save, Smartphone, Zap, Trash2, Edit3 } from 'lucide-react';
+
+const smsTemplates = [
+  { id: 1, name: "Token 2FA", message: "Seu codigo NEXO e: {{token}}. Nao compartilhe.", chars: 42 },
+  { id: 2, name: "Pix Gerado", message: "Ola {{first_name}}, seu Pix de {{value}} expira em 30min: {{link}}", chars: 85 },
+];
+---
+
+<AdminLayout title="Templates de SMS" activeTab="config">
+  <div class="max-w-6xl mx-auto space-y-10 animate-fade-in py-4">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 bg-gray-500/10 rounded-2xl flex items-center justify-center text-white border border-gray-500/20 shadow-xl shadow-gray-500/10">
+          <Smartphone className="w-7 h-7" />
+        </div>
+        <div>
+          <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Mensageria SMS</h1>
+          <p class="text-sm text-gray-500 font-medium">Configure avisos críticos via SMS para garantir leitura imediata.</p>
+        </div>
+      </div>
+      <button class="px-6 py-3 bg-white text-black font-black rounded-2xl flex items-center space-x-2 transition-all hover:bg-gray-200 uppercase text-xs tracking-widest">
+         <Plus className="w-5 h-5" />
+         <span>Novo SMS</span>
+      </button>
+    </div>
+
+    <!-- Provider Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+       <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] flex items-center justify-between">
+          <div class="space-y-1">
+             <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Créditos Disponíveis</p>
+             <h3 class="text-3xl font-black text-white italic">14.280</h3>
+          </div>
+          <button class="px-5 py-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-black uppercase rounded-xl hover:bg-emerald-500 hover:text-white transition-all">Recarregar</button>
+       </div>
+       <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] flex items-center justify-between">
+          <div class="space-y-1">
+             <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Gateway Ativo</p>
+             <h3 class="text-3xl font-black text-indigo-400 italic">Twilio Global</h3>
+          </div>
+          <button class="p-3 bg-gray-800 rounded-xl text-gray-400 hover:text-white transition-all"><Save className="w-5 h-5" /></button>
+       </div>
+    </div>
+
+    <!-- Templates -->
+    <div class="bg-gray-900/40 border border-gray-800 rounded-[2.5rem] overflow-hidden">
+       <div class="p-8 border-b border-gray-800 bg-black/20 flex items-center space-x-3">
+          <MessageSquare className="w-5 h-5 text-gray-500" />
+          <h3 class="text-xs font-black uppercase text-gray-400 tracking-widest">Mensagens Pré-definidas</h3>
+       </div>
+
+       <div class="divide-y divide-gray-800/50">
+          {smsTemplates.map(tpl => (
+             <div class="p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-white/[0.02] transition-colors group">
+                <div class="space-y-2 flex-1">
+                   <h4 class="text-sm font-bold text-white uppercase tracking-tight">{tpl.name}</h4>
+                   <p class="text-[11px] text-gray-400 font-mono italic leading-relaxed bg-black/40 p-4 rounded-xl border border-gray-800/50">{tpl.message}</p>
+                   <p class="text-[8px] font-black text-gray-600 uppercase tracking-widest italic">{tpl.chars} caracteres (1 SMS)</p>
+                </div>
+                <div class="flex items-center space-x-2 shrink-0">
+                   <button class="p-3 bg-gray-800/50 text-gray-500 hover:text-white rounded-xl transition-all"><Edit3 className="w-4 h-4" /></button>
+                   <button class="p-3 bg-gray-800/50 text-gray-500 hover:text-rose-400 rounded-xl transition-all"><Trash2 className="w-4 h-4" /></button>
+                </div>
+             </div>
+          ))}
+       </div>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

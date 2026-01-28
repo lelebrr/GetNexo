@@ -1,0 +1,98 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { Globe, Plus, Zap, ShieldCheck, Terminal, Save, X, Activity } from 'lucide-react';
+---
+
+<AdminLayout title="Webhooks Globais" activeTab="config">
+  <div class="max-w-6xl mx-auto space-y-10 animate-fade-in py-4">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 bg-gray-500/10 rounded-2xl flex items-center justify-center text-white border border-gray-500/20 shadow-xl shadow-gray-500/10">
+          <Globe className="w-7 h-7" />
+        </div>
+        <div>
+          <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Webhooks de Sistema</h1>
+          <p class="text-sm text-gray-500 font-medium">Sincronize eventos de baixo nível diretamente com sua infraestrutura.</p>
+        </div>
+      </div>
+      <button class="px-6 py-3 bg-white text-black font-black rounded-2xl flex items-center space-x-2 transition-all hover:bg-gray-200 uppercase text-xs tracking-widest">
+         <Plus className="w-5 h-5" />
+         <span>Adicionar Endpoint</span>
+      </button>
+    </div>
+
+    <!-- Active Hooks -->
+    <div class="bg-gray-900/40 border border-gray-800 rounded-[2.5rem] p-10 space-y-8">
+       <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3 text-cyan-500">
+             <Activity className="w-5 h-5" />
+             <h3 class="text-xs font-black uppercase tracking-widest">Monitor de Eventos</h3>
+          </div>
+       </div>
+
+       <div class="space-y-4">
+          <div class="p-6 bg-black/40 border border-gray-800 rounded-[2rem] flex items-center justify-between group">
+             <div class="flex items-center space-x-6">
+                <div class="w-10 h-10 bg-gray-800 rounded-xl flex items-center justify-center text-gray-500">
+                   <ShieldCheck className="w-5 h-5" />
+                </div>
+                <div>
+                   <h4 class="text-sm font-bold text-white uppercase tracking-tight italic">Security Audit Export</h4>
+                   <p class="text-[10px] text-gray-600 font-mono">https://audit.nexo.internal/v1/collect</p>
+                </div>
+             </div>
+             <div class="flex items-center space-x-4">
+                <span class="px-2 py-1 bg-emerald-500/10 text-emerald-500 text-[8px] font-black uppercase rounded">200 OK</span>
+                <button class="text-gray-600 hover:text-white transition-colors underline text-[10px] font-black uppercase tracking-widest">Configurar</button>
+             </div>
+          </div>
+
+          <div class="p-6 bg-black/40 border border-gray-800 rounded-[2rem] flex items-center justify-between group">
+             <div class="flex items-center space-x-6">
+                <div class="w-10 h-10 bg-gray-800 rounded-xl flex items-center justify-center text-gray-500">
+                   <Zap className="w-5 h-5" />
+                </div>
+                <div>
+                   <h4 class="text-sm font-bold text-white uppercase tracking-tight italic">Real-time Lead Sync</h4>
+                   <p class="text-[10px] text-gray-600 font-mono">https://n8n.ext.com/w/leads-capture</p>
+                </div>
+             </div>
+             <div class="flex items-center space-x-4">
+                <span class="px-2 py-1 bg-amber-500/10 text-amber-500 text-[8px] font-black uppercase rounded">Timeout</span>
+                <button class="text-gray-600 hover:text-white transition-colors underline text-[10px] font-black uppercase tracking-widest">Configurar</button>
+             </div>
+          </div>
+       </div>
+    </div>
+
+    <!-- Console Mockup -->
+    <div class="bg-gray-950 border border-gray-800 rounded-[2.5rem] overflow-hidden space-y-0 shadow-2xl">
+       <div class="p-4 bg-gray-900 flex items-center justify-between px-8">
+          <div class="flex items-center space-x-2">
+             <Terminal className="w-4 h-4 text-emerald-500" />
+             <span class="text-[9px] font-black text-white uppercase tracking-widest mt-0.5">Webhook Console v1.0.4</span>
+          </div>
+          <div class="flex space-x-1.5">
+             <div class="w-2.5 h-2.5 rounded-full bg-red-500/20"></div>
+             <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/20"></div>
+             <div class="w-2.5 h-2.5 rounded-full bg-green-500/20"></div>
+          </div>
+       </div>
+       <div class="p-8 font-mono text-[10px] space-y-2 max-h-[200px] overflow-y-auto">
+          <p class="text-gray-600">[INFO] Iniciando listener de eventos globais...</p>
+          <p class="text-gray-600">[INFO] Conexão estabelecida com 12 endpoints ativos.</p>
+          <p class="text-emerald-500/80">>> Disparando event: system.backup_complete (To: audit.nexo.internal)</p>
+          <p class="text-gray-600">{"Response: 200 { \"status\": \"stored\", \"ref\": \"BKP-8821\" }"}</p>
+          <p class="text-rose-500/80">>> Disparando event: security.login_failure (To: alert-notify.io) - FAILED: DNS Resolution Error</p>
+          <div class="flex items-center space-x-1 animate-pulse">
+             <span class="w-1 h-3 bg-white"></span>
+          </div>
+       </div>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

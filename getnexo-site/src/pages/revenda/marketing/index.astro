@@ -1,0 +1,109 @@
+---
+import ResellerLayout from '../../../layouts/ResellerLayout.astro';
+
+const marketingTools = [
+  {
+    title: 'Links de Indicação',
+    description: 'Seus links personalizados para rastreamento de vendas e comissões.',
+    icon: '🔗',
+    link: '/revenda/marketing/links',
+    color: '#00d4ff'
+  },
+  {
+    title: 'Materiais de Apoio',
+    description: 'Templates, banners e vídeos para turbinar sua divulgação.',
+    icon: '🎨',
+    link: '/revenda/marketing/materiais',
+    color: '#00ff9d'
+  },
+  {
+    title: 'Landing Pages',
+    description: 'Páginas de alta conversão prontas para receber seu tráfego.',
+    icon: '📄',
+    link: '/revenda/marketing/landing',
+    color: '#f59e0b'
+  }
+];
+---
+
+<ResellerLayout title="Hub de Marketing - GetNexo">
+    <div style="padding: 2rem; max-width: 1200px; margin: 0 auto;">
+        
+        <!-- Header -->
+        <div style="margin-bottom: 3rem; text-align: center;">
+            <h1 style="font-size: 2.5rem; font-weight: 800; color: #00ff9d; margin-bottom: 1rem;">
+                🚀 Central de Marketing
+            </h1>
+            <p style="color: #94a3b8; font-size: 1.1rem; max-width: 700px; margin: 0 auto;">
+                Tudo o que você precisa para divulgar a GetNexo e escalar seus lucros como revendedor de elite.
+            </p>
+        </div>
+
+        <!-- Tools Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-bottom: 4rem;">
+            {marketingTools.map(tool => (
+                <a 
+                    href={tool.link} 
+                    style="text-decoration: none; color: inherit;"
+                    class="marketing-card"
+                >
+                    <div style={`background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 2.5rem; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; height: 100%;`}>
+                        <div style={`position: absolute; top: -20px; right: -20px; width: 100px; height: 100px; background: ${tool.color}; opacity: 0.1; filter: blur(40px); border-radius: 50%;`}></div>
+                        
+                        <div style="font-size: 3rem; margin-bottom: 1.5rem;">{tool.icon}</div>
+                        <h2 style={`font-size: 1.5rem; font-weight: 700; color: white; margin-bottom: 1rem;`}>{tool.title}</h2>
+                        <p style="color: #94a3b8; line-height: 1.6; font-size: 1rem;">{tool.description}</p>
+                        
+                        <div style="margin-top: 2rem; display: flex; align-items: center; gap: 0.5rem; color: #00ff9d; font-weight: 700;">
+                            Acessar ferramenta <span>➔</span>
+                        </div>
+                    </div>
+                </a>
+            ))}
+        </div>
+
+        <!-- Quick Tips Section -->
+        <div style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 255, 157, 0.1) 100%); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 3rem;">
+            <div style="display: flex; align-items: flex-start; gap: 2rem; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 300px;">
+                    <h3 style="color: white; font-size: 1.8rem; margin-bottom: 1.5rem;">💡 Dicas de Sucesso</h3>
+                    <ul style="color: #cbd5e1; list-style: none; padding: 0; display: flex; flex-direction: column; gap: 1rem;">
+                        <li style="display: flex; gap: 1rem; align-items: center;">
+                            <span style="background: rgba(0, 255, 157, 0.2); color: #00ff9d; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800;">✓</span>
+                            Use os links encurtados para melhor estética em suas redes sociais.
+                        </li>
+                        <li style="display: flex; gap: 1rem; align-items: center;">
+                            <span style="background: rgba(0, 255, 157, 0.2); color: #00ff9d; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800;">✓</span>
+                            Personalize as Landing Pages com seu nome para passar mais autoridade.
+                        </li>
+                        <li style="display: flex; gap: 1rem; align-items: center;">
+                            <span style="background: rgba(0, 255, 157, 0.2); color: #00ff9d; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800;">✓</span>
+                            Acompanhe seu CTR no dashboard de Analytics para ajustar sua estratégia.
+                        </li>
+                    </ul>
+                </div>
+                <div style="background: rgba(15, 23, 42, 0.5); border-radius: 20px; padding: 2rem; border: 1px solid rgba(255, 255, 255, 0.1); min-width: 280px;">
+                    <h4 style="color: #94a3b8; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem;">Progresso de Campanhas</h4>
+                    <div style="font-size: 2.5rem; font-weight: 800; color: white;">84%</div>
+                    <div style="color: #00ff9d; font-size: 0.9rem; margin: 0.5rem 0 1.5rem;">Meta de leads atingida</div>
+                    <div style="height: 8px; background: #1e293b; border-radius: 4px; overflow: hidden;">
+                        <div style="width: 84%; height: 100%; background: linear-gradient(90deg, #00d4ff, #00ff9d);"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ResellerLayout>
+
+<style>
+    .marketing-card:hover > div {
+        transform: translateY(-8px);
+        border-color: #00ff9d !important;
+        box-shadow: 0 20px 40px rgba(0, 255, 157, 0.15);
+        background: rgba(15, 23, 42, 0.8) !important;
+    }
+    
+    @media (max-width: 768px) {
+        h1 { font-size: 2rem !important; }
+    }
+</style>

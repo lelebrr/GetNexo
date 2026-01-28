@@ -1,19 +1,70 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { HelpCircle, Search, ChevronDown, MessageCircle, ExternalLink, Zap } from 'lucide-react';
 ---
 
-<AdminLayout title="FAQ Completo" activeTab="ajuda">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-amber-500 to-yellow-500 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/30 animate-pulse">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
+<AdminLayout title="FAQ - Perguntas Frequentes" activeTab="suporte">
+  <div class="max-w-4xl mx-auto space-y-10 animate-fade-in py-4"
+       x-data="{ 
+         search: '',
+         activeId: null,
+         faqs: [
+           { id: 1, q: 'Como habilitar o redirecionamento automático?', a: 'Vá em Estratégia > Magic Link e ative a chave de Redirecionamento 1-Click. Isso garantirá que o cliente seja enviado direto para o checkout sem fricção.' },
+           { id: 2, q: 'Onde configurar minha chave do WhatsApp?', a: 'Acesse Integrações > API Keys. Lá você encontrará seu token de conexão e as instruções para pareamento do QR Code.' },
+           { id: 3, q: 'Posso usar domínios customizados na Nexo?', a: 'Sim! Em Multiloja > Lojas, você pode adicionar domínios próprios e configurar o SSL automaticamente via Cloudflare.' },
+           { id: 4, q: 'Como funcionam as taxas de antecipação?', a: 'As taxas são configuradas em Pagamentos > Taxas. Você pode definir valores fixos ou percentuais por bandeira de cartão.' }
+         ]
+       }">
+    
+    <div class="flex flex-col items-center text-center space-y-4 mb-12">
+      <div class="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500 border border-blue-500/20 shadow-xl shadow-blue-500/10 mb-2">
+        <HelpCircle className="w-8 h-8" />
+      </div>
+      <h1 class="text-4xl font-black text-white uppercase tracking-tighter italic">Base de Conhecimento</h1>
+      <p class="text-gray-500 text-sm max-w-lg">Encontre respostas rápidas para as dúvidas mais comuns sobre a operação do ecossistema Nexo.</p>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      FAQ Completo
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Perguntas frequentes e respostas sobre o sistema.
-    </p>
+
+    <!-- Search Bar -->
+    <div class="relative max-w-2xl mx-auto">
+       <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" />
+       <input type="text" x-model="search" placeholder="Qual sua dúvida hoje? Digite aqui..." 
+              class="w-full bg-gray-900 border border-gray-800 rounded-[2rem] py-5 pl-16 pr-6 text-sm text-white focus:border-blue-500 outline-none transition-all placeholder:text-gray-700 font-medium shadow-2xl" />
+    </div>
+
+    <!-- Accordion -->
+    <div class="space-y-4">
+       <template x-for="faq in faqs.filter(f => f.q.toLowerCase().includes(search.toLowerCase()))" :key="faq.id">
+          <div class="bg-gray-900/40 border border-gray-800 rounded-[2rem] overflow-hidden transition-all"
+               :class="activeId === faq.id ? 'border-blue-500/30 bg-blue-500/5' : 'hover:border-gray-700'">
+             <button @click="activeId = activeId === faq.id ? null : faq.id" class="w-full p-8 flex items-center justify-between text-left">
+                <span class="text-sm font-bold text-white uppercase tracking-tight italic" x-text="faq.q"></span>
+                <ChevronDown className="w-5 h-5 text-gray-600 transition-transform" :class="activeId === faq.id ? 'rotate-180 text-blue-500' : ''" />
+             </button>
+             <div x-show="activeId === faq.id" x-collapse>
+                <div class="px-8 pb-8 text-xs text-gray-400 leading-relaxed font-medium" x-text="faq.a"></div>
+             </div>
+          </div>
+       </template>
+    </div>
+
+    <!-- Contact CTA -->
+    <div class="p-10 bg-black/40 border border-gray-800 rounded-[3rem] text-center space-y-6">
+       <p class="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">Não encontrou o que procurava?</p>
+       <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <button class="px-8 py-4 bg-white text-black font-black rounded-2xl flex items-center space-x-3 hover:bg-gray-200 transition-all uppercase text-xs tracking-widest shadow-xl">
+             <MessageCircle className="w-5 h-5" />
+             <span>Falar com Humano</span>
+          </button>
+          <button class="px-8 py-4 bg-gray-900 border border-gray-800 text-gray-400 font-black rounded-2xl flex items-center space-x-3 hover:text-white transition-all uppercase text-xs tracking-widest italic">
+             <Zap className="w-5 h-5" />
+             <span>Ver Tutoriais</span>
+          </button>
+       </div>
+    </div>
   </div>
 </AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

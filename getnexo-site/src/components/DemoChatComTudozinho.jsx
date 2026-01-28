@@ -107,7 +107,7 @@ export default function DemoChatComTudozinho() {
         setInput('')
 
         try {
-            const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3006' : 'https://api.getnexo.com.br';
+            const API_URL = '';
 
             const response = await fetch(`${API_URL}/api/chat/stream`, {
                 method: 'POST',

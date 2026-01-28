@@ -99,7 +99,8 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 
   <script nonce={Astro.locals.nonce}>
     // API Configuration
-    const API_BASE_URL = 'http://localhost:3006/api/tickets';
+    // Use relative path to allow Nginx to proxy (resolving CORS and localhost issues)
+    const API_BASE_URL = '/api/tickets';
     
     // DOM Elements
     const ticketsList = document.getElementById('tickets-list');
@@ -255,7 +256,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
             
             <div class="flex items-center space-x-2">
               ${ticket.assigned_agent_name ? `<img src="https://ui-avatars.com/api/?name=${encodeURIComponent(ticket.assigned_agent_name)}&background=random" class="w-8 h-8 rounded-full border border-gray-700" title="Agente: ${ticket.assigned_agent_name}">` : ''}
-              <button onclick="viewTicket(${ticket.id})" class="bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+              <button data-ticket-id="${ticket.id}" class="view-ticket-btn bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                 Ver Conversa
               </button>
             </div>
@@ -309,6 +310,14 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 
       showTickets();
       ticketsList.innerHTML = filteredTickets.map(renderTicketCard).join('');
+      
+      // Re-attach event listeners for dynamically added buttons
+      document.querySelectorAll('.view-ticket-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const ticketId = e.currentTarget.dataset.ticketId;
+            viewTicket(ticketId);
+        });
+      });
     }
 
     // Load tickets

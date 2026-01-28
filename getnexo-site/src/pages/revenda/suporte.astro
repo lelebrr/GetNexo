@@ -1,0 +1,70 @@
+---
+import ResellerLayout from '../../layouts/ResellerLayout.astro';
+---
+
+<ResellerLayout title="Central de Ajuda - Revendedores">
+    <div class="support-header">
+        <h1>Como podemos ajudar, Parceiro?</h1>
+        <div class="search-box">
+            <span>🔍</span>
+            <input type="text" placeholder="Pesquisar nos artigos de suporte...">
+        </div>
+    </div>
+
+    <!-- Frequent Topics -->
+    <div class="topics-grid">
+        <div class="topic-card">
+            <span class="icon">💰</span>
+            <h3>Comissões & Prazos</h3>
+            <p>Tire suas dúvidas sobre datas de fechamento e métodos de pagamento.</p>
+            <a href="#">Ler artigos →</a>
+        </div>
+        <div class="topic-card">
+            <span class="icon">👥</span>
+            <h3>Gestão de Clientes</h3>
+            <p>Aprenda a cadastrar novos clientes e gerenciar assinaturas.</p>
+            <a href="#">Ler artigos →</a>
+        </div>
+        <div class="topic-card">
+            <span class="icon">🚀</span>
+            <h3>Materiais de Vendas</h3>
+            <p>Dicas de como usar nossas landing pages para converter mais.</p>
+            <a href="#">Ler artigos →</a>
+        </div>
+    </div>
+
+    <!-- Ticket Section -->
+    <div class="ticket-card">
+        <div class="ticket-info">
+            <h2>Não encontrou o que precisava?</h2>
+            <p>Nossa equipe técnica para parceiros está pronta para te atender.</p>
+        </div>
+        <button class="btn-ticket">ABRIR CHAMADO DE SUPORTE</button>
+    </div>
+
+</ResellerLayout>
+
+<style>
+    .support-header { text-align: center; padding: 4rem 2rem; background: rgba(0, 0, 0, 0.2); border-radius: 20px; margin-bottom: 3rem; }
+    .support-header h1 { font-size: 2rem; color: #fff; margin-bottom: 2rem; }
+    .search-box { max-width: 600px; margin: 0 auto; position: relative; display: flex; align-items: center; background: #0a0a0a; border: 1px solid #334155; border-radius: 12px; padding: 0.5rem 1.5rem; }
+    .search-box input { background: transparent; border: none; padding: 1rem; color: #fff; width: 100%; outline: none; }
+    
+    .topics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 4rem; }
+    .topic-card { background: #0a0a0a; border: 1px solid #334155; padding: 2rem; border-radius: 16px; transition: all 0.3s; }
+    .topic-card:hover { border-color: #00f3ff; background: rgba(255, 255, 255, 0.02); }
+    .topic-card .icon { font-size: 2.5rem; display: block; margin-bottom: 1.5rem; }
+    .topic-card h3 { color: #fff; font-size: 1.25rem; margin-bottom: 1rem; }
+    .topic-card p { color: #94a3b8; font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.6; }
+    .topic-card a { color: #00f3ff; text-decoration: none; font-weight: bold; font-size: 0.85rem; }
+
+    .ticket-card { background: linear-gradient(90deg, #1e293b, #0f172a); border: 1px solid #334155; padding: 2.5rem; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; gap: 2rem; }
+    .ticket-info h2 { color: #fff; margin-bottom: 0.5rem; }
+    .ticket-info p { color: #94a3b8; }
+    .btn-ticket { background: #00ff9d; color: #000; border: none; padding: 1rem 2rem; border-radius: 8px; font-weight: bold; cursor: pointer; white-space: nowrap; transition: transform 0.2s; }
+    .btn-ticket:hover { transform: scale(1.02); }
+
+    @media (max-width: 768px) {
+        .ticket-card { flex-direction: column; text-align: center; }
+    }
+</style>

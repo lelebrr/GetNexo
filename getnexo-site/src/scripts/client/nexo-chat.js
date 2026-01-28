@@ -8,7 +8,7 @@ class NexoChat extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
-        this.apiBase = window.location.hostname === 'localhost' ? 'http://localhost:3006' : 'https://api.getnexo.com.br';
+        this.apiBase = '';
         this.history = [];
         this.trialMode = true; // Emulating 36h trial logic
         this.debounceTimeout = null;

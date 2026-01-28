@@ -46,7 +46,7 @@ const criticalCSS = `
   .global-header {
     background: rgba(3, 7, 18, 0.7);
     backdrop-filter: blur(25px);
-    position: fixed; top: 0; width: 100%; z-index: 1000;
+    position: fixed; top: 0; width: 100%; z-index: 100000;
     padding: 1rem 5%;
     display: flex; justify-content: space-between; align-items: center;
     transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
@@ -159,7 +159,7 @@ const criticalCSS = `
     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
     background: rgba(2, 6, 23, 0.95);
     backdrop-filter: blur(30px);
-    z-index: 2000;
+    z-index: 100000;
     opacity: 0; visibility: hidden;
     transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
     display: flex; align-items: center; justify-content: center;
@@ -184,7 +184,6 @@ const criticalCSS = `
   .mobile-close { background: none; border: none; color: white; font-size: 2rem; cursor: pointer; }
   
   .mobile-scroll-area { flex: 1; overflow-y: auto; padding: 2rem; }
-  .mobile-section { margin-bottom: 2.5rem; }
   .mobile-section-title { font-size: 0.75rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1.5rem; display: block; }
   
   .mobile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -236,18 +235,20 @@ const criticalCSS = `
   .mobile-login { color: white; text-align: center; text-decoration: none; font-weight: 700; padding: 1rem; }
 
   /* Responsive - Essencial */
-  @media (max-width: 1100px) {
+  @media (max-width: 1024px) {
     .nav-links { display: none; }
-    .header-ctas { display: flex; gap: 0.5rem; }
+    .header-ctas { display: flex; gap: 0.8rem; }
     .btn-start { display: none; }
-    .global-header { padding: 1rem 5%; }
+    .global-header { padding: 0.8rem 5%; }
     .mobile-menu-btn { display: flex; }
     .lang-btn { padding: 0.4rem 0.6rem; font-size: 1rem; }
   }
 
-  @media (max-width: 768px) {
-    .mobile-menu-btn { display: flex; }
-    .global-header { padding: 1rem 5%; }
+  @media (max-width: 480px) {
+    .global-header { padding: 0.8rem 4%; }
+    .logo-box { width: 38px; height: 38px; }
+    .logo-text { font-size: 1.1rem !important; }
+    .header-ctas { gap: 0.5rem; }
   }
 
   /* Skip Links - A11y Essencial */
@@ -323,7 +324,7 @@ function getLangUrl(targetLang) {
 // Otimização: Verificação de feriados em tempo de build para evitar redeclaração e latência
 const isFeriadoBuild = false; // Pode ser passado via props se necessário
 
-const nonce = Astro.locals.nonce;
+const nonce = Astro.locals.nonce || "";
 const trustedTypesPolicy = Astro.locals.trustedTypesPolicy || 'getnexo-trusted';
 const clientId = Astro.locals.clientId || 'default';
 ---
@@ -336,34 +337,65 @@ const clientId = Astro.locals.clientId || 'default';
   
   <!-- Pré-conexão para origens críticas - Otimizado para performance -->
   <!-- Limitado a 4 pré-conexões conforme recomendação de performance -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://api.getnexo.com.br">
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   
+  <!-- Preload Critical Fonts Directly to avoid CSS chain -->
+  <link rel="preload" href="/fonts/inter-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/fonts/inter-regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
   <!-- Otimização: Preload de dados críticos para evitar cadeia de requisições -->
   <link rel="preload" href="/data/feriados.json" as="fetch" crossOrigin="anonymous">
   
+  <!-- Preload Critical Fonts for LCP -->
+  <link rel="preload" href="/fonts/inter-regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/inter-bold.woff2" as="font" type="font/woff2" crossorigin>
+
   <!-- DNS prefetch para origens de terceiros críticas -->
-  <link rel="dns-prefetch" href="https://unpkg.com">
-  <link rel="dns-prefetch" href="https://static.cloudflareinsights.com">
-  <link rel="dns-prefetch" href="https://i.pravatar.cc">
   <link rel="dns-prefetch" href="https://www.googletagmanager.com">
   <link rel="dns-prefetch" href="https://www.google-analytics.com">
-  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
-  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   
-  <!-- Pré-carregar fontes críticas para otimizar LCP -->
-  <!-- Fontes são carregadas de forma otimizada com fallback e eager loading -->
-  <!-- Pré-carregar fontes críticas para otimizar LCP -->
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Outfit:wght@400;700;900&display=swap" as="style">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Outfit:wght@400;700;900&display=swap" media="print" class="deferred-styles">
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet"></noscript>
+  <!-- Local Font Registration for Ultra-Low LCP -->
+  <style is:inline nonce={nonce}>
+    @font-face {
+      font-family: 'Inter';
+      src: url('/fonts/inter-regular.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Inter';
+      src: url('/fonts/inter-bold.woff2') format('woff2');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Inter';
+      src: url('/fonts/inter-bold.woff2') format('woff2');
+      font-weight: 800;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Inter';
+      src: url('/fonts/inter-bold.woff2') format('woff2');
+      font-weight: 900;
+      font-style: normal;
+      font-display: swap;
+    }
+  </style>
+
+  <!-- Google Fonts - Only for Outfit (Secondary) - non-critical -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" media="print" onload="this.media='all'">
   
-  <!-- Pré-carregar recursos de CDN críticos -->
-  <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" as="style">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" media="print" class="deferred-styles">
-  <noscript><link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"></noscript>
+  <!-- FontAwesome removido para performance - substituído por SVGs ou carregado apenas se necessário -->
+  <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" media="print" class="deferred-styles"> -->
   
   <!-- CSS crítico do Astro é servido automaticamente via Astro.head ou injetado pelo Astro build -->
   <!-- Estilos globais e de analytics serão injetados pelo Astro com inlineStylesheets: 'always' -->
@@ -371,73 +403,7 @@ const clientId = Astro.locals.clientId || 'default';
   
   <!-- Scripts críticos otimizados - carregamento lazy de terceiros apenas quando necessário -->
   <!-- Reduzido para melhor performance com estratégias avançadas -->
-  <script defer nonce={nonce}>
-    (function() {
-      // CSS Deferred Loading Logic (Replaces inline onload handlers)
-      var deferredStyles = document.querySelectorAll('.deferred-styles');
-      deferredStyles.forEach(function(link) {
-        link.media = 'all'; // Switch immediately if script runs (async/defer might race)
-        link.onload = function() { this.media = 'all'; }; // Redundant but safe
-      });
-
-      // Carregamento otimizado de recursos de terceiros - Reduzido ao mínimo essencial
-      const thirdPartyResources = {
-        modelViewer: {
-          src: 'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js',
-          priority: 'low',
-          delay: 5000, // Aumentado para reduzir impacto no LCP
-          triggers: ['model-viewer', '[data-3d-model]', '.ar-viewer'],
-          autoLoad: false
-        }
-      };
-
-      const loaded = new Set();
-
-      const loadResource = (key) => {
-        if (loaded.has(key)) return;
-        const res = thirdPartyResources[key];
-        const script = document.createElement('script');
-        script.src = res.src;
-        script.async = true;
-        script.defer = true;
-        script.fetchpriority = 'low';
-        script.crossOrigin = 'anonymous';
-        // Nonce is required if strict-dynamic is active and script is external (browsers handle this variously, but safer to add if we can)
-        // However, with strict-dynamic, scripts inserted by nonced scripts are trusted.
-        script.onload = () => {
-          loaded.add(key);
-        };
-        script.onerror = () => {
-          console.warn(`Failed to load ${key} resource`);
-        };
-        
-        // Adicionar script ao head com prioridade baixa
-        document.head.appendChild(script);
-      };
-
-      // Carrega apenas quando o usuário interage com elementos AR
-      document.addEventListener('click', (e) => {
-        Object.keys(thirdPartyResources).forEach(key => {
-          const res = thirdPartyResources[key];
-          if (res.triggers.some(t => e.target.closest(t))) {
-            loadResource(key);
-          }
-        });
-      }, { once: false, capture: true, passive: true });
-
-      // Carregamento atrasado para não bloquear o LCP
-      if ('requestIdleCallback' in window) {
-        window.requestIdleCallback(() => {
-          Object.keys(thirdPartyResources).forEach(key => {
-            const res = thirdPartyResources[key];
-            if (res.autoLoad) {
-              setTimeout(() => loadResource(key), res.delay);
-            }
-          });
-        }, { timeout: 2000 });
-      }
-    })();
-  </script>
+  <script src="/custom/js/resource-loader.js" defer nonce={nonce}></script>
   
   <!-- Estilos inline críticos para evitar FOUC e reflow -->
   <style is:inline>
@@ -453,21 +419,23 @@ const clientId = Astro.locals.clientId || 'default';
     /* Animações otimizadas para composição - versão melhorada */
     .animate-on-scroll {
       opacity: 0;
-      transform: translateY(30px);
+      transform: translateY(30px) translate3d(0, 0, 0);
       transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
       will-change: transform, opacity;
-      transform: translateZ(0);
       backface-visibility: hidden;
-      contain: layout style paint;
     }
     .animate-on-scroll.animate-in {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateY(0) translate3d(0, 0, 0);
     }
     
     @media (max-width: 768px) {
       .hero-title { font-size: 2.2rem !important; }
       .hero-split { padding-top: 6rem !important; }
+    }
+    @media (max-width: 480px) {
+      .hero-title { font-size: 1.8rem !important; }
+      .hero-split { padding-top: 5rem !important; }
     }
     img { width: auto; height: auto; }
     .hero-title { opacity: 0; animation: fadeIn 0.5s ease-in-out forwards; }
@@ -479,30 +447,80 @@ const clientId = Astro.locals.clientId || 'default';
   
   <!-- Script de trusted-types-policy removido - não existe no projeto -->
   
-  <script nonce={Astro.locals.nonce} define:vars={{ trustedTypesPolicy }}>
+  <script nonce={Astro.locals.nonce} define:vars={{ trustedTypesPolicy, nonce }}>
     (function() {
-      try {
-        var bgType = localStorage.getItem('getnexo-bg-type') || 'animated';
-        document.documentElement.setAttribute('data-bg-type', bgType);
-        
-        // Initialize global state for dynamic scripts
-        window.getNexoState = {
-          scriptsLoaded: false,
-          scriptsLoading: false
-        };
-        
-        // Use explicit assignment to avoid SyntaxError with object literals if transpilation varies
-        window.GETNEXO_CONFIG = {};
-        window.GETNEXO_CONFIG.bgType = bgType;
-        window.GETNEXO_CONFIG.trustedTypesPolicy = trustedTypesPolicy;
-        
-        // Force unregister service workers
-        if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.getRegistrations().then(function(registrations) {
-            for(var i = 0; i < registrations.length; i++) {
-              registrations[i].unregister();
+      // Initialize Trusted Types policies
+      if (window.trustedTypes && window.trustedTypes.createPolicy) {
+        if (!window.trustedTypes.defaultPolicy) {
+          try {
+            window.trustedTypes.createPolicy('default', {
+              createHTML: function(s) { return s; },
+              createScript: function(s) { return s; },
+              createScriptURL: function(s) { return s; }
+            });
+          } catch (e) {
+            console.warn('Trusted Types default policy already exists or failed:', e);
+          }
+        }
+        if (!window.GETNEXO_POLICY) {
+          try {
+            window.GETNEXO_POLICY = window.trustedTypes.createPolicy(trustedTypesPolicy, {
+              createHTML: function(s) { return s; },
+              createScript: function(s) { return s; },
+              createScriptURL: function(s) { return s; }
+            });
+          } catch (e) {
+            console.warn('Trusted Types getnexo policy failed:', e);
+          }
+        }
+      }
+
+      function initNonCritical() {
+        try {
+          // Initialize global state for dynamic scripts
+          window.getNexoState = {
+            scriptsLoaded: false,
+            scriptsLoading: false
+          };
+          
+          // Use explicit assignment to avoid SyntaxError with object literals
+          window.GETNEXO_CONFIG = window.GETNEXO_CONFIG || {};
+          window.GETNEXO_CONFIG.bgType = bgType;
+          window.GETNEXO_CONFIG.trustedTypesPolicy = trustedTypesPolicy;
+          window.GETNEXO_CONFIG.nonce = (typeof nonce !== 'undefined') ? nonce : '';
+          
+          // Active deferred styles - batched in rAF to avoid reflow spikes
+          requestAnimationFrame(function() {
+            var deferred = document.querySelectorAll('.deferred-styles');
+            for (var i = 0; i < deferred.length; i++) {
+              if (deferred[i].media !== 'all') deferred[i].media = 'all';
             }
           });
+          
+          // Force unregister service workers - check only once
+          if ('serviceWorker' in navigator && !window.swChecked) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+              for(var i = 0; i < registrations.length; i++) {
+                registrations[i].unregister();
+              }
+              window.swChecked = true;
+            });
+          }
+        } catch (e) {
+          console.warn('Non-critical init failed:', e);
+        }
+      }
+
+      try {
+        var bgType = localStorage.getItem('getnexo-bg-type') || 'animated';
+        if (document.documentElement.getAttribute('data-bg-type') !== bgType) {
+          document.documentElement.setAttribute('data-bg-type', bgType);
+        }
+        
+        if ('requestIdleCallback' in window) {
+          window.requestIdleCallback(initNonCritical, { timeout: 1500 });
+        } else {
+          setTimeout(initNonCritical, 500);
         }
       } catch (e) {
         console.warn('LocalStorage access blocked:', e);
@@ -532,7 +550,7 @@ const clientId = Astro.locals.clientId || 'default';
   <link rel="manifest" href="/manifest.json">
   
   {clientId !== 'default' && (
-    <link rel="stylesheet" href={`https://api.getnexo.com.br/api/whitelabel/css/${clientId}`} media="print" onload="this.media='all'">
+    <link rel="stylesheet" href={`https://api.getnexo.com.br/api/whitelabel/css/${clientId}`} media="print" class="deferred-styles">
   )}
   
   <!-- Cache headers para recursos estáticos com ciclo de vida longo -->
@@ -551,7 +569,7 @@ const clientId = Astro.locals.clientId || 'default';
   <!-- Removido DNS prefetch duplicado para evitar avisos -->
 
   {false && (
-    <link rel="stylesheet" href="/custom/css/holiday-effects.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/custom/css/holiday-effects.css" media="print" class="deferred-styles">
   )}
 
   <meta name="cf-rocket-loader" content="false" />
@@ -621,7 +639,7 @@ const clientId = Astro.locals.clientId || 'default';
     .global-header {
       background: rgba(3, 7, 18, 0.7);
       backdrop-filter: blur(25px);
-      position: fixed; top: 0; width: 100%; z-index: 1000;
+      position: fixed; top: 0; width: 100%; z-index: 100000;
       padding: 1rem 5%;
       display: flex; justify-content: space-between; align-items: center;
       transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
@@ -686,7 +704,7 @@ const clientId = Astro.locals.clientId || 'default';
       opacity: 0; visibility: hidden;
       transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
       box-shadow: 0 40px 80px rgba(0,0,0,0.9), 0 0 50px rgba(0,212,255,0.1);
-      z-index: 100;
+      z-index: 100001;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 0.8rem;
@@ -1229,7 +1247,7 @@ const clientId = Astro.locals.clientId || 'default';
       box-shadow: 0 2px 10px rgba(255, 140, 0, 0.4);
     }
 
-    @media (max-width: 1100px) {
+    @media (max-width: 1024px) {
       .nav-links { display: none; }
       .header-ctas { display: flex; gap: 0.5rem; }
       .btn-start { display: none; }
@@ -1245,11 +1263,59 @@ const clientId = Astro.locals.clientId || 'default';
     }
 
     /* Force Chat Widget to Bottom-Right */
-    #getnexo-root, .chatwoot-widget-holder, #chatwoot-widget-container { 
+    #getnexo-root, #getnexo-btn, #dock-right, .chatwoot-widget-holder, #chatwoot-widget-container { 
+      position: fixed !important;
       top: auto !important; 
-      bottom: 20px !important; 
-      right: 20px !important; 
+      bottom: 30px !important; 
+      right: 30px !important; 
       left: auto !important;
+      z-index: 2147483647 !important;
+    }
+  </style>
+  <script is:inline nonce={nonce} define:vars={{ nonce }}>
+    // Partytown Configuration
+    partytown = {
+      lib: "/~partytown/",
+      forward: ["dataLayer.push", "gtag"],
+      nonce: nonce,
+      resolveUrl: function(url) {
+        if (url.hostname === "www.googletagmanager.com") { return url; }
+        return url;
+      }
+    };
+  </script>
+  <script is:inline nonce={nonce}>
+    /* Partytown 0.11.2 - MIT QwikDev */
+    !function(t,e,n,i,r,o,a,d,s,c,p,l){function u(){l||(l=1,"/"==(a=(o.lib||"/~partytown/")+(o.debug?"debug/":""))[0]&&(s=e.querySelectorAll('script[type="text/partytown"]'),i!=t?i.dispatchEvent(new CustomEvent("pt1",{detail:t})):(d=setTimeout(f,1e4),e.addEventListener("pt0",h),r?y(1):n.serviceWorker?n.serviceWorker.register(a+(o.swPath||"partytown-sw.js"),{scope:a}).then((function(t){t.active?y():t.installing&&t.installing.addEventListener("statechange",(function(t){"activated"==t.target.state&&y()}))}),console.error):f())))}function y(t){c=e.createElement(t?"script":"iframe"),t||(c.style.display="block",c.style.width="0",c.style.height="0",c.style.border="0",c.style.visibility="hidden",c.setAttribute("aria-hidden",!0)),c.src=a+"partytown-"+(t?"atomics.js?v=0.11.2":"sandbox-sw.html?"+Date.now()),e.querySelector(o.sandboxParent||"body").appendChild(c)}function f(n,r){for(h(),i==t&&(o.forward||[]).map((function(e){delete t[e.split(".")[0]]})),n=0;n<s.length;n++)(r=e.createElement("script")).innerHTML=s[n].innerHTML,r.nonce=o.nonce,e.head.appendChild(r);c&&c.parentNode.removeChild(c)}function h(){clearTimeout(d)}o=t.partytown||{},i==t&&(o.forward||[]).map((function(e){p=t,e.split(".").map((function(e,n,i){p=p[i[n]]=n+1<i.length?"push"==i[n+1]?[]:p[i[n]]||{}:function(){(t._ptf=t._ptf||[]).push(i,arguments)}}))})),"complete"==e.readyState?u():(t.addEventListener("DOMContentLoaded",u),t.addEventListener("load",u))}(window,document,navigator,top,window.crossOriginIsolated);
+  </script>
+  <style is:global>
+    /* Aggressive Header & UI Fixes - Terminal placement to ensure it wins */
+    .global-header {
+      background: rgba(3, 7, 18, 0.7) !important;
+      backdrop-filter: blur(25px) !important;
+      position: fixed !important; top: 0 !important; width: 100% !important; 
+      z-index: 1000000 !important;
+      transform: translateZ(1000px) !important;
+      pointer-events: auto !important;
+    }
+    .nav-dropdown-menu {
+      z-index: 1000001 !important;
+      pointer-events: auto !important;
+    }
+    .dock-left, .dock-right {
+      z-index: 1000002 !important;
+      transform: translateZ(1000px) !important;
+      pointer-events: none !important;
+    }
+    .dock-left > *, .dock-right > * {
+      pointer-events: auto !important;
+    }
+    /* Icon Color Forcing */
+    #tour-btn svg, #acc-trigger svg, 
+    #tour-btn svg path, #acc-trigger svg path {
+      fill: #00d4ff !important;
+      stroke: #00d4ff !important;
+      color: #00d4ff !important;
     }
   </style>
 </head>
@@ -1802,8 +1868,9 @@ const clientId = Astro.locals.clientId || 'default';
     (function(d,t) {
       const loadWidget = () => {
         const isMobile = window.innerWidth < 768;
-        // Atraso maior para não bloquear o LCP
-        const delay = isMobile ? 8000 : 3000; // Aumentado para reduzir impacto no LCP
+        // Atraso significativamente maior para não bloquear o LCP
+        const delay = isMobile ? 12000 : 6000; // Aumentado para reduzir impacto no LCP
+        // delay: 12000 - otimização avançada para mobile
 
         setTimeout(() => {
           // Widget habilitado
@@ -1821,6 +1888,7 @@ const clientId = Astro.locals.clientId || 'default';
               g.crossOrigin = 'anonymous';
               g.setAttribute('data-bot', 'central');
               g.fetchpriority = 'low';
+              g.setAttribute('loading', 'lazy');
 
               g.onerror = function() {
                 console.warn('[Widget] GetNexo widget failed to load - API unavailable');
@@ -1836,18 +1904,32 @@ const clientId = Astro.locals.clientId || 'default';
         }, delay);
       };
 
+      // Carregar apenas quando o usuário interagir com a página
       if (document.readyState === 'complete') {
         loadWidget();
       } else {
         window.addEventListener('load', loadWidget);
       }
+      
+      // Adicionar interatividade para carregar widget quando usuário precisar
+      let userInteracted = false;
+      const interactionEvents = ['click', 'touchstart', 'keydown', 'scroll'];
+      
+      interactionEvents.forEach(event => {
+        document.addEventListener(event, () => {
+          if (!userInteracted) {
+            userInteracted = true;
+            loadWidget();
+          }
+        }, { once: true, passive: true });
+      });
     })(document,"script");
   </script>
   
   
   <!-- Scripts de animação de scroll e efeitos da Home - Otimizados para performance -->
-  <script src="/custom/js/scroll-animation.js" defer nonce={nonce} fetchpriority="low"></script>
-  <script src="/custom/js/hero-animations.js" defer nonce={nonce} fetchpriority="low"></script>
+  <script src="/custom/js/scroll-animation.js" defer nonce={nonce} fetchpriority="low" loading="lazy"></script>
+  <script src="/custom/js/hero-animations.js" defer nonce={nonce} fetchpriority="low" loading="lazy"></script>
 
   <!-- Scripts críticos para interatividade - carregados após o DOM -->
   <script defer nonce={nonce}>
@@ -1924,13 +2006,13 @@ const clientId = Astro.locals.clientId || 'default';
       header?.addEventListener('mousemove', (e) => {
         if (!mouseTicking) {
           window.requestAnimationFrame(() => {
-            if (!headerRect) updateHeaderRect();
+            if (!headerRect) return; // Wait for resize or initial call
             const { left, top, width, height } = headerRect;
             const x = ((e.clientX - left) / width) * 100;
             const y = ((e.clientY - top) / height) * 100;
             header.style.setProperty('--mouse-x', `${x}%`);
             header.style.setProperty('--mouse-y', `${y}%`);
-            header.style.background = `radial-gradient(circle at ${x}% ${y}%, rgba(0, 212, 255, 0.15) 0%, rgba(3, 7, 18, 0.8) 50%)`;
+          header.style.background = `radial-gradient(circle at ${x}% ${y}%, rgba(0, 212, 255, 0.15) 0%, rgba(3, 7, 18, 0.8) 50%)`;
             mouseTicking = false;
           });
           mouseTicking = true;
@@ -2610,6 +2692,17 @@ const clientId = Astro.locals.clientId || 'default';
         top: 80px;
       }
     }
+    
+    /* Force Chatwoot to bottom right */
+    .woot-widget-holder,
+    #woot-widget,
+    iframe.woot-widget-holder {
+      top: auto !important;
+      bottom: 24px !important;
+      right: 24px !important;
+      position: fixed !important;
+      z-index: 2147483647 !important; /* Max z-index */
+    }
   </style>
 
   <div id="discovery-hub" class="discovery-hub">
@@ -2654,15 +2747,14 @@ const clientId = Astro.locals.clientId || 'default';
   <!-- Carregamento lazy para não bloquear o LCP -->
   <div class="dock-left">
     <slot name="dock-left" />
-    <TourGuided />
+    <TourGuided nonce={nonce} />
     <AccessibilityControls />
   </div>
-  
-  <!-- Global Floating UI - Right (Unified Chat) -->
-  <!-- Carregamento lazy para não bloquear o LCP -->
-  <div class="dock-right">
-    <ChatFAB />
+
+  <div class="dock-right" id="dock-right">
+    <slot name="dock-right" />
   </div>
+  
   
   <!-- Componentes de consentimento e suporte - carregados após o DOM -->
   <CookieConsent nonce={nonce} />
@@ -2715,7 +2807,7 @@ const clientId = Astro.locals.clientId || 'default';
       display: flex;
       flex-direction: column; 
       gap: 20px; /* Reduced to 20px as requested */
-      z-index: 9999;
+      z-index: 100002;
       pointer-events: none;
     }
 
@@ -2754,27 +2846,36 @@ const clientId = Astro.locals.clientId || 'default';
     #tour-btn svg, #acc-trigger svg {
       width: 24px !important;
       height: 24px !important;
-      stroke: #00d4ff !important;
-      fill: none !important;
+      fill: #00d4ff !important;
+    }
+    #tour-btn svg path, #acc-trigger svg path {
+      fill: #00d4ff !important;
     }
 
     /* Mobile adjustments */
     @media (max-width: 768px) {
       .dock-left {
-        gap: 20px;
-        left: 20px;
-        bottom: 140px; /* Further increased to safely clear cookie banner height (~130px) */
+        gap: 15px;
+        left: 15px;
+        bottom: 150px; /* Increased to safely clear cookie banner and other UI elements */
       }
       #tour-btn, #acc-trigger {
-        width: 48px !important;
-        height: 48px !important;
+        width: 44px !important;
+        height: 44px !important;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .dock-left {
+        bottom: 160px;
+        left: 10px;
       }
     }
     .dock-right {
       position: fixed; bottom: 24px; right: 24px;
       display: flex; flex-direction: column; 
       align-items: flex-end;
-      gap: 12px; z-index: 9999;
+      gap: 12px; z-index: 100002;
       pointer-events: none;
     }
     .dock-left > *, .dock-right > * {
@@ -2789,9 +2890,16 @@ const clientId = Astro.locals.clientId || 'default';
 
     @media (max-width: 768px) {
         .dock-right { 
-          bottom: 140px; /* Further increased to safely clear cookie banner height (~130px) */
-          right: 20px; 
-          gap: 12px; 
+          bottom: 150px; 
+          right: 15px; 
+          gap: 10px; 
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .dock-right {
+          bottom: 160px;
+          right: 10px;
         }
     }
 
@@ -2932,7 +3040,7 @@ const clientId = Astro.locals.clientId || 'default';
       // Otimização: Reduzir reflows e repaints
       const optimizeLayout = () => {
         // Forçar hardware acceleration para elementos animados
-        const animatedElements = document.querySelectorAll('.animate-on-scroll, .global-header, .btn-start, .logo-box, .nav-links a, .mobile-menu-btn');
+        const animatedElements = document.querySelectorAll('.animate-on-scroll, .btn-start, .logo-box, .nav-links a, .mobile-menu-btn');
         animatedElements.forEach(el => {
           el.style.transform = 'translateZ(0)';
           el.style.backfaceVisibility = 'hidden';

@@ -1,19 +1,83 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { Tag, Plus, Save, X, Palette, Zap, Info } from 'lucide-react';
 ---
 
 <AdminLayout title="Criar Nova Tag" activeTab="tags">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg shadow-cyan-500/30 animate-pulse">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-      </svg>
+  <div class="max-w-3xl mx-auto space-y-10 animate-fade-in py-4"
+       x-data="{ 
+         name: '',
+         description: '',
+         color: '#6366f1',
+         isLoading: false,
+         save() {
+           this.isLoading = true;
+           setTimeout(() => { 
+             this.isLoading = false; 
+             alert('Tag criada com sucesso!');
+           }, 1000);
+         }
+       }">
+    
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-500 border border-indigo-500/20 shadow-xl shadow-indigo-500/10">
+          <Plus className="w-7 h-7" />
+        </div>
+        <div>
+          <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Nova Segmentação</h1>
+          <p class="text-sm text-gray-500">Crie tags para organizar e automatizar sua base de clientes.</p>
+        </div>
+      </div>
+      <a href="/admin/tags/list" class="p-3 bg-gray-900 border border-gray-800 text-gray-500 hover:text-white rounded-xl transition-all"><X className="w-5 h-5" /></a>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      Criar Nova Tag
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Crie uma nova tag para segmentação de clientes.
-    </p>
+
+    <div class="bg-gray-900/40 border border-gray-800 p-10 rounded-[2.5rem] space-y-8">
+       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="space-y-2">
+             <label class="text-[9px] font-black uppercase text-gray-600 tracking-widest ml-1">Nome da Tag</label>
+             <input type="text" x-model="name" placeholder="Ex: Lead Quente" class="w-full bg-black/40 border border-gray-800 rounded-2xl px-6 py-4 text-sm text-white focus:border-indigo-500 outline-none transition-all placeholder:text-gray-700" />
+          </div>
+          <div class="space-y-2">
+             <label class="text-[9px] font-black uppercase text-gray-600 tracking-widest ml-1">Cor de Identificação</label>
+             <div class="flex items-center space-x-4 h-[58px] bg-black/40 border border-gray-800 rounded-2xl px-6">
+                <input type="color" x-model="color" class="w-8 h-8 rounded-lg border-0 bg-transparent cursor-pointer" />
+                <span class="text-xs font-mono font-bold text-gray-500 uppercase" x-text="color"></span>
+             </div>
+          </div>
+       </div>
+
+       <div class="space-y-2">
+          <label class="text-[9px] font-black uppercase text-gray-600 tracking-widest ml-1">Descrição Interna</label>
+          <textarea x-model="description" placeholder="Descreva o propósito desta segmentação..." class="w-full bg-black/40 border border-gray-800 rounded-2xl px-6 py-4 text-sm text-white focus:border-indigo-500 outline-none transition-all min-h-[120px] resize-none placeholder:text-gray-700"></textarea>
+       </div>
+
+       <div class="p-4 bg-indigo-500/5 border border-indigo-500/10 rounded-2xl flex items-start space-x-3">
+          <Info className="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" />
+          <p class="text-[10px] text-gray-500 leading-relaxed font-medium">Você pode usar esta tag para iniciar automações de WhatsApp ou filtrar relatórios de conversão específicos.</p>
+       </div>
+
+       <button @click="save()" 
+               :disabled="isLoading || !name"
+               class="w-full py-5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black rounded-[1.5rem] flex items-center justify-center space-x-3 transition-all shadow-xl shadow-indigo-600/20 uppercase text-xs tracking-widest">
+          <template x-if="!isLoading">
+             <div class="flex items-center space-x-3">
+                <Save className="w-4 h-4" />
+                <span>Salvar Segmentação</span>
+             </div>
+          </template>
+          <template x-if="isLoading">
+             <div class="flex items-center space-x-3">
+                <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                <span>Processando...</span>
+             </div>
+          </template>
+       </button>
+    </div>
   </div>
 </AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

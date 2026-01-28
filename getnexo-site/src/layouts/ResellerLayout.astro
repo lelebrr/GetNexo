@@ -4,6 +4,9 @@ export interface Props {
 }
 
 const { title } = Astro.props;
+const nonce = Astro.locals.nonce;
+const trustedTypesPolicy = Astro.locals.trustedTypesPolicy || 'getnexo-trusted';
+import '../styles/global.css';
 ---
 
 <!doctype html>
@@ -19,6 +22,24 @@ const { title } = Astro.props;
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+
+		<script nonce={nonce} define:vars={{ trustedTypesPolicy }}>
+			(function() {
+				if (window.trustedTypes && window.trustedTypes.createPolicy) {
+					if (!window.trustedTypes.defaultPolicy) {
+						try {
+							window.trustedTypes.createPolicy('default', {
+								createHTML: (s) => s,
+								createScript: (s) => s,
+								createScriptURL: (s) => s
+							});
+						} catch (e) {
+							console.warn('Trusted Types default policy failed:', e);
+						}
+					}
+				}
+			})();
+		</script>
 
 		<!-- Fonts -->
 		<link rel="preconnect" href="https://fonts.googleapis.com">

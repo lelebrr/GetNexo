@@ -8,11 +8,13 @@ const nonce = Astro.locals.nonce;
 
 // Importa o componente de sidebar
 import ClientSidebar from '../components/ClientSidebar.astro';
+import '../styles/global.css';
 
 // Simulação de módulos contratados pelo cliente (em produção viria do DB)
 // Exemplo: ['white-label', 'ia-avancada', 'produtos-3d', 'relatorios-roi', 'fidelidade', 'meta-integration', 'pix-automatico', 'automacao-avancada']
 const clienteModules = ['white-label', 'produtos-3d', 'fidelidade', 'meta-integration', 'pix-automatico'];
 const clientePlano = 'Revenda Pro';
+const trustedTypesPolicy = Astro.locals.trustedTypesPolicy || 'getnexo-trusted';
 ---
 
 <!doctype html>
@@ -29,6 +31,24 @@ const clientePlano = 'Revenda Pro';
     <meta name="robots" content="noindex, nofollow" />
     <meta name="googlebot" content="noindex, nofollow" />
     <title>{title} | Minha Loja - GetNexo</title>
+
+    <script nonce={nonce} define:vars={{ trustedTypesPolicy }}>
+      (function() {
+        if (window.trustedTypes && window.trustedTypes.createPolicy) {
+          if (!window.trustedTypes.defaultPolicy) {
+            try {
+              window.trustedTypes.createPolicy('default', {
+                createHTML: (s) => s,
+                createScript: (s) => s,
+                createScriptURL: (s) => s
+              });
+            } catch (e) {
+              console.warn('Trusted Types default policy failed:', e);
+            }
+          }
+        }
+      })();
+    </script>
   </head>
   <body>
     <div class="flex flex-col min-h-screen bg-gray-50">

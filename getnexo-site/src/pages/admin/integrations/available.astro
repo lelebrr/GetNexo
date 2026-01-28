@@ -1,0 +1,84 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { LayoutGrid, Search, Filter, Plus, ExternalLink, Star } from 'lucide-react';
+
+const categories = ["Todos", "E-commerce", "Pagamentos", "ERP", "Logística", "Mensageria"];
+
+const marketplace = [
+  { name: 'WooCommerce', cat: 'E-commerce', desc: 'Sincronização de pedidos e estoque.', popular: true },
+  { name: 'Mercado Pago', cat: 'Pagamentos', desc: 'Processamento de cartões e PIX.', popular: true },
+  { name: 'RD Station', cat: 'CRM', desc: 'Envio de leads e conversões.', popular: false },
+  { name: 'Trello', cat: 'Produtividade', desc: 'Gestão de tarefas automática.', popular: false },
+  { name: 'Slack', cat: 'Comunicação', desc: 'Notificações de vendas em tempo real.', popular: true },
+  { name: 'Tiny ERP', cat: 'ERP', desc: 'Faturamento de notas e estoque.', popular: true },
+];
+---
+
+<AdminLayout title="Marketplace de Integrações" activeTab="integracoes">
+  <div class="max-w-6xl mx-auto space-y-10 animate-fade-in py-4">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-500 border border-indigo-500/20 shadow-xl shadow-indigo-500/10">
+          <LayoutGrid className="w-7 h-7" />
+        </div>
+        <div>
+          <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Explorar App Store</h1>
+          <p class="text-sm text-gray-500">Milhares de conexões possíveis através da nossa arquitetura API-First.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="flex flex-col lg:flex-row items-center gap-4 bg-gray-900/40 p-4 border border-gray-800 rounded-[2rem]">
+       <div class="relative flex-1 w-full">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
+          <input type="text" placeholder="Buscar aplicativo ou serviço..." class="w-full bg-black/40 border border-gray-800 rounded-2xl py-3 pl-12 pr-4 text-xs text-white focus:border-indigo-500 outline-none" />
+       </div>
+       <div class="flex items-center gap-2 overflow-x-auto w-full lg:w-auto pb-2 lg:pb-0">
+          {categories.map(cat => (
+             <button class:list={["px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all", cat === 'Todos' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'bg-gray-800 text-gray-400 hover:text-white']}>{cat}</button>
+          ))}
+       </div>
+    </div>
+
+    <!-- Marketplace Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+       {marketplace.map(app => (
+          <div class="bg-gray-900/20 border border-gray-800 p-8 rounded-[2.5rem] hover:border-indigo-500/20 transition-all group flex flex-col justify-between">
+             <div class="flex items-center justify-between mb-8">
+                <div class="w-16 h-16 bg-gray-800 rounded-2xl flex items-center justify-center text-gray-400 group-hover:bg-indigo-500 shadow-xl shadow-indigo-600/0 group-hover:shadow-indigo-600/20 transition-all">
+                   <div class="text-xl font-black italic">{app.name.charAt(0)}</div>
+                </div>
+                {app.popular && (
+                   <div class="flex items-center space-x-1 text-yellow-500">
+                      <Star className="w-4 h-4 fill-current" />
+                      <span class="text-[9px] font-black uppercase">Popular</span>
+                   </div>
+                )}
+             </div>
+
+             <div class="space-y-2">
+                <p class="text-[9px] font-black text-gray-600 uppercase tracking-[0.2em]">{app.cat}</p>
+                <h3 class="text-xl font-bold text-white uppercase tracking-tight leading-tight">{app.name}</h3>
+                <p class="text-[10px] text-gray-500 font-medium leading-relaxed">{app.desc}</p>
+             </div>
+
+             <div class="mt-8 pt-8 border-t border-gray-800/50 flex items-center justify-between">
+                <button class="flex items-center space-x-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-[10px] font-black uppercase transition-all shadow-lg shadow-indigo-600/10">
+                   <Plus className="w-3.5 h-3.5" />
+                   <span>Conectar</span>
+                </button>
+                <button class="p-2.5 text-gray-600 hover:text-white transition-colors">
+                   <ExternalLink className="w-4 h-4" />
+                </button>
+             </div>
+          </div>
+       ))}
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

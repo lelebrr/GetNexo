@@ -1,19 +1,55 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { Plus, Globe, Shield, Terminal, Save, X, Activity, Server, Zap } from 'lucide-react';
 ---
 
-<AdminLayout title="Criar Nova Loja" activeTab="multiloja">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/30 animate-pulse">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-      </svg>
+<AdminLayout title="Expandir Rede" activeTab="multiloja">
+  <div class="max-w-4xl mx-auto space-y-10 animate-fade-in py-4">
+    <div class="flex items-center justify-between border-b border-gray-800 pb-8">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-500 border border-amber-500/20 shadow-xl shadow-amber-500/10">
+          <Plus className="w-7 h-7" />
+        </div>
+        <div>
+          <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Nova Unidade</h1>
+          <p class="text-sm text-gray-500 font-medium">Conecte um novo domínio ou plataforma ao seu painel central.</p>
+        </div>
+      </div>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      Criar Nova Loja
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Cadastre uma nova loja no seu multi-ecommerce.
-    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+       <div class="bg-gray-900/40 border border-gray-800 p-10 rounded-[2.5rem] space-y-6 hover:border-amber-500/20 transition-all group cursor-pointer">
+          <div class="w-14 h-14 bg-gray-800 rounded-2xl flex items-center justify-center text-gray-500 group-hover:bg-amber-500 group-hover:text-white transition-all shadow-xl">
+             <Globe className="w-7 h-7" />
+          </div>
+          <div class="space-y-2">
+             <h3 class="text-xl font-bold text-white uppercase tracking-tight">Nova Loja Online</h3>
+             <p class="text-[11px] text-gray-500 font-medium leading-relaxed">Conecte domínios Shopify, WooCommerce, Nuvemshop ou VTEX.</p>
+          </div>
+       </div>
+
+       <div class="bg-gray-900/40 border border-gray-800 p-10 rounded-[2.5rem] space-y-6 hover:border-amber-500/20 transition-all group cursor-pointer">
+          <div class="w-14 h-14 bg-gray-800 rounded-2xl flex items-center justify-center text-gray-500 group-hover:bg-amber-500 group-hover:text-white transition-all shadow-xl">
+             <Server className="w-7 h-7" />
+          </div>
+          <div class="space-y-2">
+             <h3 class="text-xl font-bold text-white uppercase tracking-tight">Unidade Física (POS)</h3>
+             <p class="text-[11px] text-gray-500 font-medium leading-relaxed">Sincronize estoque de inventário local via API ou Bling ERP.</p>
+          </div>
+       </div>
+    </div>
+
+    <div class="bg-black/40 border border-gray-800 p-10 rounded-[2.5rem] space-y-4">
+       <div class="flex items-center space-x-3 text-gray-500 italic">
+          <Shield className="w-4 h-4" />
+          <span class="text-[10px] font-black uppercase tracking-widest">Protocolo de Segurança</span>
+       </div>
+       <p class="text-[10px] text-gray-600 font-medium italic">Todas as novas unidades requerem validação de TXT no DNS para serem ativadas.</p>
+    </div>
   </div>
 </AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

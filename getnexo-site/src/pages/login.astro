@@ -407,7 +407,7 @@ import ClientLayout from '../layouts/ClientLayout.astro';
                 <label for="password">Senha</label>
                 <div class="input-group">
                     <input type="password" id="password" name="password" value="admin123" placeholder="••••••••" required autocomplete="current-password">
-                    <button type="button" class="eye-toggle" onclick="togglePassword()">👁️</button>
+                    <button type="button" class="eye-toggle" id="toggle-password-btn">👁️</button>
                 </div>
             </div>
 
@@ -424,20 +424,20 @@ import ClientLayout from '../layouts/ClientLayout.astro';
             <span>Teste Grátis</span>
         </div>
 
-        <div class="demo-accounts">
+            <div class="demo-accounts">
             <h3>🚀 Clique para testar rapidamente:</h3>
 
-            <div class="demo-account" onclick="fillDemo('admin@getnexo.com.br', 'admin123', this)">
+            <div class="demo-account" data-demo-email="admin@getnexo.com.br" data-demo-pass="admin123">
                 <div class="demo-label">Admin</div>
                 <div class="demo-creds">admin@getnexo.com.br</div>
             </div>
 
-            <div class="demo-account" onclick="fillDemo('revendedor@getnexo.com', 'demo123', this)">
+            <div class="demo-account" data-demo-email="revendedor@getnexo.com" data-demo-pass="demo123">
                 <div class="demo-label">Revendedor</div>
                 <div class="demo-creds">revendedor@getnexo.com</div>
             </div>
 
-            <div class="demo-account" onclick="fillDemo('cliente@getnexo.com', 'demo123', this)">
+            <div class="demo-account" data-demo-email="cliente@getnexo.com" data-demo-pass="demo123">
                 <div class="demo-label">Cliente</div>
                 <div class="demo-creds">cliente@getnexo.com</div>
             </div>
@@ -528,7 +528,8 @@ import ClientLayout from '../layouts/ClientLayout.astro';
     </div>
 
     <!-- Fill Demo Script -->
-    <script nonce={Astro.locals.nonce} is:inline src="/fillDemo.js"></script>
+    <!-- Fill Demo Script -->
+    <!-- Script removed: fillDemo.js logic integrated into main script block -->
 
     <script nonce={Astro.locals.nonce}>
         const API_URL = '/api';
@@ -576,7 +577,7 @@ import ClientLayout from '../layouts/ClientLayout.astro';
                             if (userRole === 'admin') {
                                 window.location.href = '/admin';
                             } else {
-                                window.location.href = '/dashboard';
+                                window.location.href = '/client/dashboard';
                             }
                         }, 1500);
                     }
@@ -626,37 +627,43 @@ import ClientLayout from '../layouts/ClientLayout.astro';
         }
 
         // Toggle password visibility
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const eyeIcon = document.querySelector('.eye-toggle');
+        const toggleBtn = document.getElementById('toggle-password-btn');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                const passwordInput = document.getElementById('password');
+                const eyeIcon = toggleBtn; // Since the button contains the icon
 
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                eyeIcon.textContent = '🙈';
-            } else {
-                passwordInput.type = 'password';
-                eyeIcon.textContent = '👁️';
-            }
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    eyeIcon.textContent = '🙈';
+                } else {
+                    passwordInput.type = 'password';
+                    eyeIcon.textContent = '👁️';
+                }
+            });
         }
 
         // Fill demo credentials
-        window.fillDemo = function(email, password, element) {
-            const emailInput = document.getElementById('email');
-            const passInput = document.getElementById('password');
-            
-            emailInput.value = email;
-            passInput.value = password;
+        const demoAccounts = document.querySelectorAll('.demo-account');
+        demoAccounts.forEach(acc => {
+            acc.addEventListener('click', function() {
+                const email = this.dataset.demoEmail;
+                const password = this.dataset.demoPass;
+                const emailInput = document.getElementById('email');
+                const passInput = document.getElementById('password');
+                
+                emailInput.value = email;
+                passInput.value = password;
 
-            // Dispatch input events just in case
-            emailInput.dispatchEvent(new Event('input'));
-            passInput.dispatchEvent(new Event('input'));
+                // Dispatch input events just in case
+                emailInput.dispatchEvent(new Event('input'));
+                passInput.dispatchEvent(new Event('input'));
 
-            // Add visual feedback
-            const accounts = document.querySelectorAll('.demo-account');
-            accounts.forEach(account => account.classList.remove('selected'));
-
-            element.classList.add('selected');
-        }
+                // Add visual feedback
+                demoAccounts.forEach(a => a.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
 
         // Check if already logged in
         window.addEventListener('DOMContentLoaded', () => {
@@ -684,7 +691,7 @@ import ClientLayout from '../layouts/ClientLayout.astro';
                             if (userRole === 'admin') {
                                 window.location.href = '/admin';
                             } else {
-                                window.location.href = '/dashboard';
+                                window.location.href = '/client/dashboard';
                             }
                         }
                     }
@@ -700,10 +707,10 @@ import ClientLayout from '../layouts/ClientLayout.astro';
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const emailElement = document.getElementById('email') as HTMLInputElement;
-            const email = emailElement?.value;
-            const passwordElement = document.getElementById('password') as HTMLInputElement;
-            const password = passwordElement?.value;
+            const emailElement = document.getElementById('email');
+            const email = emailElement ? emailElement.value : '';
+            const passwordElement = document.getElementById('password');
+            const password = passwordElement ? passwordElement.value : '';
 
             if (!email || !password) {
                 showMessage('error', 'Preencha todos os campos');
@@ -804,7 +811,7 @@ import ClientLayout from '../layouts/ClientLayout.astro';
         });
 
         document.getElementById('select-client-panel').addEventListener('click', () => {
-            window.location.href = '/dashboard';
+            window.location.href = '/client/dashboard';
         });
 
         document.getElementById('logout-btn').addEventListener('click', () => {
@@ -823,7 +830,7 @@ import ClientLayout from '../layouts/ClientLayout.astro';
         });
 
         document.getElementById('select-reseller-as-client').addEventListener('click', () => {
-            window.location.href = '/dashboard';
+            window.location.href = '/client/dashboard';
         });
 
         document.getElementById('reseller-logout-btn').addEventListener('click', () => {

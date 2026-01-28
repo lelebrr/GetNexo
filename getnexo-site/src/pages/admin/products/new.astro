@@ -1,19 +1,148 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { Package, Plus, Save, ArrowLeft, Image as ImageIcon, Tag, DollarSign, Layers } from 'lucide-react';
+
+const title = "Criar Novo Produto";
 ---
 
-<AdminLayout title="Criar Novo Produto" activeTab="produtos">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-orange-500 to-yellow-500 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/30 animate-pulse">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-      </svg>
+<AdminLayout title={title} activeTab="produtos">
+  <div class="max-w-4xl mx-auto space-y-8 animate-fade-in" x-data="productCreator()">
+    
+    <!-- Header -->
+    <header class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div class="flex items-center space-x-4">
+        <a href="/admin/products" class="p-2.5 bg-gray-900 border border-gray-800 text-gray-400 hover:text-white rounded-xl transition-all">
+          <ArrowLeft className="w-5 h-5" />
+        </a>
+        <div>
+          <h1 class="text-3xl font-black text-white uppercase tracking-tighter italic">Novo Produto</h1>
+          <p class="text-sm text-gray-400 font-medium">Preencha os detalhes para cadastrar no catálogo.</p>
+        </div>
+      </div>
+      <button @click="createProduct()" class="flex items-center space-x-2 px-8 py-3 bg-orange-600 hover:bg-orange-500 text-white text-xs font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-orange-900/20">
+        <Save className="w-4 h-4" />
+        <span>Salvar Produto</span>
+      </button>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Left Column: Media & Main Info -->
+      <div class="md:col-span-2 space-y-6">
+        <section class="bg-gray-900/40 border border-gray-800 rounded-3xl p-8 space-y-6">
+          <div class="space-y-4">
+            <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest">Informações Básicas</label>
+            <input type="text" x-model="form.name" placeholder="Nome do Produto" class="w-full bg-black/50 border border-gray-800 rounded-2xl py-4 px-6 text-sm text-white outline-none focus:border-orange-500 transition-all font-bold" />
+            <textarea x-model="form.description" placeholder="Descrição detalhada..." rows="4" class="w-full bg-black/50 border border-gray-800 rounded-2xl py-4 px-6 text-sm text-white outline-none focus:border-orange-500 transition-all"></textarea>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-2">
+              <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest">SKU / Código</label>
+              <input type="text" x-model="form.sku" placeholder="Ex: NX-102" class="w-full bg-black/50 border border-gray-800 rounded-xl py-3 px-4 text-xs text-white outline-none focus:border-orange-500 transition-all" />
+            </div>
+            <div class="space-y-2">
+              <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest">Categoria</label>
+              <select x-model="form.category" class="w-full bg-black/50 border border-gray-800 rounded-xl py-3 px-4 text-xs text-gray-300 outline-none focus:border-orange-500 transition-all appearance-none cursor-pointer">
+                <option value="">Selecione...</option>
+                <option value="eletronicos">Eletrônicos</option>
+                <option value="moda">Moda</option>
+                <option value="casa">Casa & Decor</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <!-- Pricing & Stock -->
+        <section class="bg-gray-900/40 border border-gray-800 rounded-3xl p-8 grid grid-cols-2 gap-8">
+           <div class="space-y-4">
+              <div class="flex items-center space-x-2 text-emerald-400">
+                <DollarSign className="w-4 h-4" />
+                <label class="text-[10px] font-black uppercase tracking-widest">Preço de Venda</label>
+              </div>
+              <input type="number" step="0.01" x-model.number="form.price" class="w-full bg-black/50 border border-gray-800 rounded-xl py-4 px-6 text-xl text-emerald-400 font-black outline-none focus:border-emerald-500 transition-all" />
+           </div>
+           <div class="space-y-4">
+              <div class="flex items-center space-x-2 text-amber-500">
+                <Layers className="w-4 h-4" />
+                <label class="text-[10px] font-black uppercase tracking-widest">Estoque Inicial</label>
+              </div>
+              <input type="number" x-model.number="form.stock" class="w-full bg-black/50 border border-gray-800 rounded-xl py-4 px-6 text-xl text-amber-500 font-black outline-none focus:border-amber-500 transition-all" />
+           </div>
+        </section>
+      </div>
+
+      <!-- Right Column: Images & Meta -->
+      <div class="space-y-6">
+        <section class="bg-gray-900/40 border border-gray-800 rounded-3xl p-8 space-y-6">
+          <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest text-center">Imagem Principal</label>
+          <div class="aspect-square bg-black/50 border-2 border-dashed border-gray-800 rounded-3xl flex flex-col items-center justify-center text-gray-700 hover:border-orange-500/50 hover:text-orange-500 transition-all cursor-pointer group">
+             <ImageIcon className="w-10 h-10 mb-2 group-hover:scale-110 transition-transform" />
+             <span class="text-[9px] font-black uppercase tracking-widest">Upload Image</span>
+          </div>
+          <input type="text" x-model="form.image_url" placeholder="Ou URL da imagem..." class="w-full bg-black/50 border border-gray-800 rounded-xl py-2 px-4 text-[10px] text-gray-400 outline-none focus:border-orange-500 transition-all" />
+        </section>
+
+        <div class="p-6 bg-orange-600/10 border border-orange-500/20 rounded-3xl space-y-4">
+           <div class="flex items-center space-x-2 text-orange-400">
+              <Tag className="w-4 h-4" />
+              <span class="text-[10px] font-black uppercase tracking-widest">Dica da IA</span>
+           </div>
+           <p class="text-[10px] text-orange-200/60 leading-relaxed italic">
+             "Baseado em produtos similares, um preço de <span class="text-white font-bold">R$ 149,90</span> aumentaria sua taxa de conversão em 12%."
+           </p>
+        </div>
+      </div>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      Criar Novo Produto
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Cadastre um novo produto com todas as informações necessárias.
-    </p>
   </div>
 </AdminLayout>
+
+<script is:inline>
+  function productCreator() {
+    return {
+      form: {
+        name: '',
+        description: '',
+        sku: '',
+        category: '',
+        price: 0,
+        stock: 0,
+        image_url: ''
+      },
+      async createProduct() {
+        if (!this.form.name || this.form.price <= 0) {
+          alert('Por favor, preencha o nome e o preço corretamente.');
+          return;
+        }
+
+        try {
+          const res = await fetch('/api/products', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(this.form)
+          });
+          
+          if (res.ok) {
+            alert('Produto criado com sucesso!');
+            window.location.href = '/admin/products';
+          } else {
+            const error = await res.json();
+            alert('Erro: ' + (error.error || 'Falha ao criar produto'));
+          }
+        } catch (e) {
+          alert('Erro de conexão com o servidor.');
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+</style>

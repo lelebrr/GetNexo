@@ -1,0 +1,66 @@
+---
+import ResellerLayout from '../../../layouts/ResellerLayout.astro';
+---
+
+<ResellerLayout title="Links de Indicação">
+    <div class="header">
+        <h2 class="text-neon-blue">🔗 LINKS DE INDICAÇÃO</h2>
+        <p class="text-gray-400 text-sm">Use seus links personalizados para rastrear vendas e garantir suas comissões.</p>
+    </div>
+
+    <div class="links-grid" id="links-container">
+        <p style="text-align: center; color: #666; padding: 3rem;">CARREGANDO LINKS...</p>
+    </div>
+
+</ResellerLayout>
+
+<style>
+    .header { margin-bottom: 2rem; }
+    .links-grid { display: grid; gap: 1.5rem; }
+    
+    .link-card { background: #0a0a0a; border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; }
+    .link-card h3 { font-size: 1rem; color: #fff; margin-bottom: 1rem; }
+    
+    .url-box { display: flex; align-items: center; gap: 0.5rem; background: #000; padding: 0.75rem 1rem; border: 1px solid #1a1a1a; border-radius: 8px; margin-bottom: 1rem; }
+    .url-box code { flex: 1; color: #00ff9d; font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    
+    .btn-copy { background: #334155; color: #fff; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: all 0.2s; }
+    .btn-copy:hover { background: #475569; }
+
+    .link-stats { display: flex; gap: 2rem; font-size: 0.8rem; color: #64748b; }
+    .link-stats strong { color: #fff; margin-right: 0.25rem; }
+</style>
+
+<script is:inline>
+    async function fetchLinks() {
+        try {
+            const res = await fetch('/api/revenda/marketing');
+            const data = await res.json();
+            const container = document.getElementById('links-container');
+            
+            container.innerHTML = data.links.map(l => `
+                <div class="link-card">
+                    <h3>${l.name}</h3>
+                    <div class="url-box">
+                        <code>${l.url}</code>
+                        <button class="btn-copy" onclick="copyToClipboard('${l.url}')">COPIAR</button>
+                    </div>
+                    <div class="link-stats">
+                        <span><strong>${l.clicks}</strong> Cliques</span>
+                        <span><strong>-</strong> Conversões</span>
+                    </div>
+                </div>
+            `).join('');
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    async function copyToClipboard(text) {
+        await navigator.clipboard.writeText(text);
+        alert('Link copiado com sucesso!');
+    }
+
+    window.copyToClipboard = copyToClipboard;
+    fetchLinks();
+</script>

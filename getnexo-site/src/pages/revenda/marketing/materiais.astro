@@ -1,0 +1,59 @@
+---
+import ResellerLayout from '../../../layouts/ResellerLayout.astro';
+---
+
+<ResellerLayout title="Materiais de Divulgação">
+    <div class="header">
+        <h2 class="text-neon-blue">🎨 MATERIAIS DE DIVULGAÇÃO</h2>
+        <p class="text-gray-400 text-sm">Banners, imagens e PDFs prontos para você usar em suas campanhas.</p>
+    </div>
+
+    <div class="assets-grid" id="assets-container">
+        <p style="grid-column: 1/-1; text-align: center; color: #666; padding: 3rem;">CARREGANDO MATERIAIS...</p>
+    </div>
+
+</ResellerLayout>
+
+<style>
+    .header { margin-bottom: 2rem; }
+    .assets-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; }
+    
+    .asset-card { background: #0a0a0a; border: 1px solid #334155; border-radius: 12px; overflow: hidden; transition: all 0.3s; }
+    .asset-card:hover { border-color: #00ff9d; transform: translateY(-3px); }
+    
+    .asset-preview { width: 100%; height: 160px; background: #1a1a1a; display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+    
+    .asset-info { padding: 1.25rem; }
+    .asset-info h3 { font-size: 0.9rem; color: #fff; margin-bottom: 0.5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .asset-info .tag { display: inline-block; background: rgba(0, 255, 157, 0.1); color: #00ff9d; font-size: 0.7rem; font-weight: bold; padding: 0.2rem 0.5rem; border-radius: 4px; margin-bottom: 1rem; }
+    
+    .btn-download { display: block; width: 100%; padding: 0.75rem; background: #1e293b; color: #fff; text-decoration: none; text-align: center; font-size: 0.8rem; font-weight: bold; border-radius: 6px; transition: background 0.2s; }
+    .btn-download:hover { background: #334155; }
+</style>
+
+<script is:inline>
+    async function fetchAssets() {
+        try {
+            const res = await fetch('/api/revenda/marketing');
+            const data = await res.json();
+            const container = document.getElementById('assets-container');
+            
+            container.innerHTML = data.assets.map(a => `
+                <div class="asset-card">
+                    <div class="asset-preview">
+                        ${a.type === 'Image' ? '🖼️' : '📄'}
+                    </div>
+                    <div class="asset-info">
+                        <span class="tag">${a.type.toUpperCase()}</span>
+                        <h3>${a.name}</h3>
+                        <a href="${a.url}" class="btn-download" download>BAIXAR ARQUIVO</a>
+                    </div>
+                </div>
+            `).join('');
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    fetchAssets();
+</script>

@@ -1,19 +1,134 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { MessageSquare, Send, Clock, Ticket, User, ArrowRight, ShieldCheck, LifeBuoy, MessageCircle } from 'lucide-react';
+
+const activeTickets = [
+  { id: "#TK-0882", subject: "Erro na sincronização de estoque (Shopify)", status: "Em Espera", date: "Há 1h" },
+  { id: "#TK-0879", subject: "Aumento de cota de SMS solicitado", status: "Em Analise", date: "Hoje" },
+];
 ---
 
-<AdminLayout title="Suporte Técnico" activeTab="ajuda">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg shadow-yellow-500/30 animate-pulse">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-      </svg>
+<AdminLayout title="Suporte NEXO" activeTab="suporte">
+  <div class="max-w-6xl mx-auto space-y-10 animate-fade-in py-4"
+       x-data="{ 
+         tickets: [], 
+         loading: true,
+         async fetchTickets() {
+           try {
+             const data = await fetch('/api/tickets').then(res => res.json());
+             this.tickets = data.tickets;
+           } catch (e) {
+             console.error('Erro ao carregar tickets:', e);
+           } finally {
+             this.loading = false;
+           }
+         },
+         getStatusLabel(status) {
+           const labels = {
+             'open': 'Aberto',
+             'pending': 'Pendente',
+             'closed': 'Fechado'
+           };
+           return labels[status] || status;
+         },
+         formatDate(dateStr) {
+           try {
+             const d = new Date(dateStr);
+             return d.toLocaleDateString('pt-BR');
+           } catch(e) { return dateStr; }
+         }
+       }" 
+       x-init="fetchTickets()">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-500 border border-indigo-500/20 shadow-xl shadow-indigo-500/10">
+          <LifeBuoy className="w-7 h-7" />
+        </div>
+        <div>
+          <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Central de Chamados</h1>
+          <p class="text-sm text-gray-500 font-medium">Nosso time de especialistas está pronto para destravar sua operação.</p>
+        </div>
+      </div>
+      <button class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-2xl flex items-center space-x-2 transition-all shadow-lg shadow-indigo-600/20 uppercase text-xs tracking-widest">
+         <Ticket className="w-5 h-5" />
+         <span>Novo Ticket</span>
+      </button>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      Suporte Técnico
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Entre em contato com nossa equipe de suporte técnico.
-    </p>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left Side: Active Tickets -->
+        <div class="lg:col-span-2 space-y-6">
+           <div class="bg-gray-900/40 border border-gray-800 rounded-[2.5rem] overflow-hidden">
+              <div class="p-8 border-b border-gray-800 bg-black/20 flex items-center justify-between">
+                 <h3 class="text-[10px] font-black uppercase text-gray-400 tracking-widest">Atendimentos em Aberto</h3>
+                 <span class="px-2 py-1 bg-gray-800 text-gray-500 text-[8px] font-black rounded-md uppercase tracking-tighter" x-text="tickets.length + ' registros'"></span>
+              </div>
+
+              <div x-show="loading" class="p-20 flex flex-col items-center justify-center space-y-4">
+                 <div class="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                 <p class="text-[10px] text-gray-500 uppercase font-black tracking-widest">Carregando Chamados...</p>
+              </div>
+
+              <div x-show="!loading" class="divide-y divide-gray-800/50">
+                 <template x-for="tk in tickets" :key="tk.id">
+                    <div class="p-8 flex items-center justify-between hover:bg-white/[0.02] transition-colors group">
+                       <div class="space-y-1">
+                          <div class="flex items-center space-x-3">
+                             <span class="text-[10px] font-black text-indigo-500 font-mono italic" x-text="'#TK-' + String(tk.id).padStart(4, '0')"></span>
+                             <h4 class="text-sm font-bold text-white uppercase tracking-tight" x-text="tk.subject"></h4>
+                          </div>
+                          <div class="flex items-center space-x-3 text-gray-600">
+                             <div class="flex items-center space-x-1">
+                                <Clock className="w-3 h-3" />
+                                <span class="text-[9px] font-black uppercase" x-text="'Gerado em ' + formatDate(tk.date)"></span>
+                                <span class="text-[9px] text-gray-700 mx-2">|</span>
+                                <User className="w-3 h-3" />
+                                <span class="text-[9px] font-black uppercase" x-text="tk.customer_name || 'Desconhecido'"></span>
+                             </div>
+                          </div>
+                       </div>
+                       <div class="flex items-center space-x-6">
+                          <span :class="{
+                            'bg-amber-500/10 text-amber-500': tk.status === 'open',
+                            'bg-blue-500/10 text-blue-500': tk.status === 'pending',
+                            'bg-emerald-500/10 text-emerald-500': tk.status === 'closed'
+                          }" class="text-[9px] font-black uppercase tracking-widest py-1 px-3 rounded-lg" x-text="getStatusLabel(tk.status)">
+                          </span>
+                          <button class="p-3 bg-gray-800 text-gray-500 hover:text-white rounded-xl transition-all">
+                             <ArrowRight className="w-4 h-4" />
+                          </button>
+                       </div>
+                    </div>
+                 </template>
+              </div>
+           </div>
+        </div>
+
+       <!-- Right Side: Contact Cards -->
+       <div class="space-y-6">
+          <div class="bg-indigo-600/10 border border-indigo-500/20 p-8 rounded-[2.5rem] space-y-4 group cursor-pointer hover:bg-indigo-600/20 transition-all">
+             <div class="w-12 h-12 bg-indigo-500 rounded-xl flex items-center justify-center text-white shadow-lg">
+                <MessageCircle className="w-6 h-6" />
+             </div>
+             <div>
+                <h4 class="text-white font-bold uppercase tracking-tight italic">WhatsApp Direto</h4>
+                <p class="text-[10px] text-gray-400 font-medium leading-relaxed mt-2 uppercase tracking-widest">Atendimento premium para contas Enterprise (L-S 08-20h).</p>
+             </div>
+          </div>
+
+          <div class="bg-gray-900 border border-gray-800 p-8 rounded-[2.5rem] space-y-4">
+             <div class="flex items-center space-x-3 text-emerald-500">
+                <ShieldCheck className="w-5 h-5" />
+                <h4 class="text-[10px] font-black uppercase tracking-widest">SLA de Segurança</h4>
+             </div>
+             <p class="text-[10px] text-gray-500 font-medium leading-relaxed">Resposta em até **2 horas úteis** para incidentes críticos de dados.</p>
+          </div>
+       </div>
+    </div>
   </div>
 </AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

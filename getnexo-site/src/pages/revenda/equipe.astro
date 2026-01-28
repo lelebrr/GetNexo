@@ -81,12 +81,10 @@ import ResellerLayout from '../../layouts/ResellerLayout.astro';
 </style>
 
 <script nonce={Astro.locals.nonce} is:inline>
-    const API_URL = '';
-
     async function loadMembers() {
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`${API_URL}/api/revenda/equipe`, { headers: { 'Authorization': token } });
+            const res = await fetch('/api/revenda/equipe', { headers: { 'Authorization': token } });
             const data = await res.json();
             renderTable(data);
         } catch (e) {
@@ -96,7 +94,7 @@ import ResellerLayout from '../../layouts/ResellerLayout.astro';
 
     function renderTable(data) {
         const tbody = document.getElementById('members-body');
-        if (data.length === 0) {
+        if (!data || data.length === 0) {
             tbody.innerHTML = '<tr><td colspan="4" class="text-center p-4">Nenhum membro encontrado.</td></tr>';
             return;
         }
@@ -122,7 +120,7 @@ import ResellerLayout from '../../layouts/ResellerLayout.astro';
 
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`${API_URL}/api/revenda/equipe`, {
+            const res = await fetch('/api/revenda/equipe', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': token },
                 body: JSON.stringify({ nome, email, permissao })
@@ -141,7 +139,7 @@ import ResellerLayout from '../../layouts/ResellerLayout.astro';
     window.remover = async (id) => {
         if (confirm('Excluir?')) {
             const token = localStorage.getItem('token');
-            await fetch(`${API_URL}/api/revenda/equipe?id=${id}`, { 
+            await fetch(`/api/revenda/equipe?id=${id}`, { 
                 method: 'DELETE',
                 headers: { 'Authorization': token }
             });
@@ -151,7 +149,7 @@ import ResellerLayout from '../../layouts/ResellerLayout.astro';
 
     window.mudarPermissao = async (id, novaPerm) => {
         const token = localStorage.getItem('token');
-        await fetch(`${API_URL}/api/revenda/equipe`, { 
+        await fetch('/api/revenda/equipe', { 
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json', 'Authorization': token },
             body: JSON.stringify({ id, novaPermissao: novaPerm })

@@ -1,0 +1,72 @@
+---
+import ResellerLayout from '../../layouts/ResellerLayout.astro';
+---
+
+<ResellerLayout title="Pagamentos">
+    <div class="header">
+        <h2 class="text-neon-blue">💳 PAGAMENTOS RECEBIDOS</h2>
+    </div>
+
+    <div class="table-card">
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>REFERÊNCIA</th>
+                        <th>VALOR BRUTO</th>
+                        <th>DATA DO RECEBIMENTO</th>
+                        <th>MÉTODO</th>
+                        <th>RECIBO</th>
+                    </tr>
+                </thead>
+                <tbody id="payments-body">
+                    <tr><td colspan="5" style="text-align:center; padding: 2rem;">CARREGANDO HISTÓRICO DE PAGAMENTOS...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</ResellerLayout>
+
+<style>
+    .header { margin-bottom: 2rem; }
+    .table-card { background: #0a0a0a; border: 1px solid #334155; border-radius: 8px; padding: 1.5rem; }
+    .table-container { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; padding: 1rem; color: #94a3b8; border-bottom: 1px solid #334155; font-size: 0.8rem; }
+    td { padding: 1rem; border-bottom: 1px solid #1a1a1a; color: #cbd5e1; font-size: 0.85rem; }
+    
+    .btn-receipt { color: #00f3ff; text-decoration: none; font-size: 0.75rem; font-weight: bold; border: 1px solid rgba(0, 243, 255, 0.2); padding: 0.3rem 0.6rem; border-radius: 4px; transition: all 0.2s; }
+    .btn-receipt:hover { background: rgba(0, 243, 255, 0.1); border-color: #00f3ff; }
+</style>
+
+<script is:inline>
+    async function fetchPayments() {
+        try {
+            const res = await fetch('/api/revenda/financeiro');
+            const data = await res.json();
+            const tbody = document.getElementById('payments-body');
+            
+            const payments = data.history.filter(h => h.status === 'paid');
+            
+            if (payments.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">NENHUM PAGAMENTO REGISTRADO</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = payments.map(p => `
+                <tr>
+                    <td style="font-weight:bold; color:#fff;">${p.description}</td>
+                    <td>${p.amount}</td>
+                    <td>${p.date}</td>
+                    <td>PIX / BANCÁRIO</td>
+                    <td><a href="#" class="btn-receipt">BAIXAR PDF</a></td>
+                </tr>
+            `).join('');
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    fetchPayments();
+</script>

@@ -504,28 +504,26 @@ import ResellerLayout from '../../layouts/ResellerLayout.astro';
             }
         }
     </style>
-
-    <script nonce={Astro.locals.nonce} is:inline>
-        const API_URL = '';
-
+ 
+    <script is:inline>
         // Enhanced data loading
         async function loadDashboardData() {
             try {
-                const token = localStorage.getItem('token');
-                const res = await fetch(`${API_URL}/api/revenda/dashboard`, {
-                    headers: { 'Authorization': token }
-                });
-                const data = await res.json();
+                const res = await fetch('/api/revenda/stats');
+                const stats = await res.json();
+                
+                const resClients = await fetch('/api/revenda/clientes');
+                const clients = await resClients.json();
 
                 // Update stats
-                updateStats(data);
+                updateStats(stats, clients);
 
                 // Load charts
-                loadCommissionChart(data.commissions || []);
-                loadClientsChart(data.clientsGrowth || []);
+                loadCommissionChart([]);
+                loadClientsChart({});
 
                 // Load clients table
-                loadClientsTable(data.recentClients || []);
+                loadClientsTable(clients.slice(0, 5));
 
             } catch (e) {
                 console.error('API Error, using fallback', e);
@@ -533,12 +531,12 @@ import ResellerLayout from '../../layouts/ResellerLayout.astro';
             }
         }
 
-        function updateStats(data) {
-            document.getElementById('total-revenue').textContent = 'R$ ' + (data.totalRevenue || 4820).toLocaleString('pt-BR');
-            document.getElementById('monthly-commission').textContent = 'R$ ' + (data.monthlyCommission || 3240).toLocaleString('pt-BR');
-            document.getElementById('active-clients').textContent = data.activeClients || 18;
-            document.getElementById('pending-commissions').textContent = 'R$ ' + (data.pendingCommissions || 1200).toLocaleString('pt-BR');
-            document.getElementById('commission-progress').style.width = (data.commissionProgress || 68) + '%';
+        function updateStats(stats, clients) {
+            document.getElementById('total-revenue').textContent = stats.monthly_revenue;
+            document.getElementById('monthly-commission').textContent = stats.commissions_pending;
+            document.getElementById('active-clients').textContent = stats.active_subscriptions;
+            document.getElementById('pending-commissions').textContent = stats.commissions_pending;
+            document.getElementById('commission-progress').style.width = '75%';
         }
 
         function loadCommissionChart(commissions) {
@@ -681,44 +679,15 @@ import ResellerLayout from '../../layouts/ResellerLayout.astro';
         }
 
         // Action functions
-        function addNewClient() {
-            alert('Funcionalidade: Adicionar novo cliente\nEm breve será implementada a interface completa para cadastro de clientes.');
-        }
-
-        function generateReferralLink() {
-            const referralLink = `https://getnexo.com.br/?ref=${Math.random().toString(36).substr(2, 9)}`;
-            navigator.clipboard.writeText(referralLink).then(() => {
-                alert('Link de indicação copiado!\n' + referralLink);
-            });
-        }
-
-        function viewCommissions() {
-            alert('Funcionalidade: Visualizar detalhes de comissões\nEm breve será implementada a página completa de extratos.');
-        }
-
-        function supportPanel() {
-            window.open('/contato', '_blank');
-        }
-
-        function viewAllClients() {
-            alert('Funcionalidade: Ver todos os clientes\nEm breve será implementada a página completa de gestão de clientes.');
-        }
-
-        function viewClient(clientId) {
-            alert(`Funcionalidade: Ver detalhes do cliente ${clientId}\nEm breve será implementada a página de detalhes do cliente.`);
-        }
-
-        function createLandingPage() {
-            alert('Funcionalidade: Criar landing page personalizada\nEm breve será implementada a ferramenta de criação de páginas.');
-        }
-
-        function downloadMaterials() {
-            alert('Funcionalidade: Baixar materiais de marketing\nEm breve será implementada a galeria de materiais prontos.');
-        }
-
-        function generateReport() {
-            alert('Funcionalidade: Gerar relatório de performance\nEm breve será implementada a geração automática de relatórios.');
-        }
+        function addNewClient() { window.location.href = '/revenda/gerar'; }
+        function generateReferralLink() { window.location.href = '/revenda/marketing/links'; }
+        function viewCommissions() { window.location.href = '/revenda/comissoes'; }
+        function supportPanel() { window.location.href = '/revenda/suporte'; }
+        function viewAllClients() { window.location.href = '/revenda/clientes'; }
+        function viewClient(clientId) { window.location.href = `/revenda/clientes`; }
+        function createLandingPage() { window.location.href = '/revenda/marketing/landing'; }
+        function downloadMaterials() { window.location.href = '/revenda/marketing/materiais'; }
+        function generateReport() { window.location.href = '/revenda/relatorios'; }
 
         // Initialize
         loadDashboardData();

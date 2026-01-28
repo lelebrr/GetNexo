@@ -127,23 +127,12 @@ const translations = {
     align-items: center;
     opacity: 0;
     transform: translateY(30px);
-    animation: fadeInUp 0.8s ease-out forwards;
+    will-change: transform, opacity;
   }
 
-  .giant-feature-row:nth-child(1) { animation-delay: 0.1s; }
-  .giant-feature-row:nth-child(2) { animation-delay: 0.2s; }
-  .giant-feature-row:nth-child(3) { animation-delay: 0.3s; }
-  .giant-feature-row:nth-child(4) { animation-delay: 0.4s; }
-
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .giant-feature-row.animate-in {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   .giant-feature-row.reverse {
@@ -186,7 +175,6 @@ const translations = {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    min-height: 400px; /* Consistent text block height */
   }
 
   /* ... rest of existing styles ... */
@@ -298,41 +286,34 @@ const translations = {
     .giant-feature-row {
       grid-template-columns: 1fr;
       gap: 2rem;
+      text-align: center;
     }
-
-    .giant-feature-row.reverse {
-      direction: ltr;
+    .giant-feature-info {
+      padding: 1rem;
+      align-items: center;
     }
-
-    .giant-feature-row.reverse > * {
-      direction: ltr;
+    .feature-bullets {
+      display: inline-block;
+      text-align: left;
     }
-
     .giant-feature-visual {
-      order: -1;
+      height: auto;
+      max-width: 400px;
     }
   }
 
   @media (max-width: 768px) {
     .giant-features {
-      gap: 3rem;
-      padding: 2rem 1rem;
+      gap: 4rem;
+      padding: 4rem 1.2rem;
     }
+    .giant-feature-info h2 { font-size: 1.8rem; }
+  }
 
-    .giant-feature-info {
-      padding: 1rem;
-    }
-
-    .giant-feature-info h2 {
-      font-size: 1.5rem;
-    }
-
-    .giant-feature-info p {
-      font-size: 1rem;
-    }
-
-    .feature-bullets li {
-      font-size: 0.95rem;
-    }
+  @media (max-width: 480px) {
+    .giant-features { gap: 3rem; }
+    .giant-feature-info h2 { font-size: 1.5rem; }
+    .giant-feature-info p { font-size: 1rem; }
+    .btn-outline-glow { width: 100%; justify-content: center; }
   }
 </style>

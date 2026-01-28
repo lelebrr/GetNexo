@@ -1,0 +1,82 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { ShieldCheck, Smartphone, Check, HelpCircle, Save, X, Key } from 'lucide-react';
+---
+
+<AdminLayout title="2FA / MFA" activeTab="seguranca">
+  <div class="max-w-3xl mx-auto space-y-10 animate-fade-in py-4"
+       x-data="{ 
+         mfaEnabled: true,
+         showCode: false,
+         toggle() { this.mfaEnabled = !this.mfaEnabled }
+       }">
+    
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-500 border border-emerald-500/20 shadow-xl shadow-emerald-500/10">
+          <ShieldCheck className="w-7 h-7" />
+        </div>
+        <div>
+          <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Segurança da Conta</h1>
+          <p class="text-sm text-gray-500 font-medium">Proteja seu acesso com verificação em duas etapas via aplicativo ou SMS.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MFA Status Toggle -->
+    <div class="p-8 rounded-[2.5rem] flex items-center justify-between border transition-all"
+         :class="mfaEnabled ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-gray-900 border-gray-800'">
+       <div class="flex items-center space-x-6">
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center transition-all"
+               :class="mfaEnabled ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/40' : 'bg-gray-800 text-gray-600'">
+             <Smartphone className="w-7 h-7" />
+          </div>
+          <div>
+             <h3 class="text-lg font-bold text-white uppercase tracking-tight">Autenticação 2FA</h3>
+             <p class="text-[10px] text-gray-500 font-medium uppercase tracking-widest" 
+                x-text="mfaEnabled ? 'Ativo via Google Authenticator' : 'Sua conta está vulnerável no momento'"></p>
+          </div>
+       </div>
+       <button @click="toggle()" class="w-16 h-8 rounded-full bg-gray-800 relative transition-colors" :class="mfaEnabled ? 'bg-emerald-600' : 'bg-gray-700'">
+          <div class="absolute top-1 left-1 w-6 h-6 bg-white rounded-full transition-all shadow-sm" :class="mfaEnabled ? 'translate-x-8' : ''"></div>
+       </button>
+    </div>
+
+    <div x-show="mfaEnabled" class="space-y-6">
+       <!-- Config Section -->
+       <div class="bg-gray-900/40 border border-gray-800 p-10 rounded-[2.5rem] space-y-8">
+          <div class="flex items-center justify-between">
+             <h3 class="text-xs font-black uppercase text-gray-400 tracking-widest italic">Dispositivos Confiáveis</h3>
+             <button class="text-[9px] font-black text-emerald-500 uppercase tracking-widest hover:underline">Adicionar Novo</button>
+          </div>
+
+          <div class="space-y-4">
+             <div class="p-6 bg-black/40 border border-gray-800 rounded-3xl flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                   <div class="p-3 bg-gray-800 rounded-xl text-gray-500"><Key className="w-5 h-5" /></div>
+                   <div>
+                      <h4 class="text-sm font-bold text-white uppercase italic">iPhone 15 Pro Max</h4>
+                      <p class="text-[10px] text-gray-600 font-medium">Ativado em 12 Jan, 2026</p>
+                   </div>
+                </div>
+                <button class="p-2.5 bg-gray-800/50 text-gray-600 hover:text-rose-500 transition-all rounded-lg"><X className="w-4 h-4" /></button>
+             </div>
+          </div>
+       </div>
+
+       <!-- Backup Codes -->
+       <div class="p-8 bg-gray-900 border border-gray-800 rounded-[2.5rem] flex items-center justify-between group">
+          <div class="flex items-center space-x-4">
+             <HelpCircle className="w-5 h-5 text-gray-600" />
+             <p class="text-xs font-medium text-gray-400">Códigos de backup para quando estiver sem o celular.</p>
+          </div>
+          <button @click="showCode = !showCode" class="text-[10px] font-black uppercase bg-gray-800 px-4 py-2 rounded-xl text-white hover:bg-gray-700">Ver Códigos</button>
+       </div>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

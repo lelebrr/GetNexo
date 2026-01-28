@@ -5,10 +5,9 @@ export const POST: APIRoute = async ({ request }) => {
         const body = await request.json();
 
         // Determinar a URL do backend baseado no ambiente
-        const isProduction = import.meta.env.PROD;
-        const backendUrl = isProduction
-            ? 'https://api.getnexo.com.br/api/login'
-            : 'http://localhost:3006/api/login';
+        // Em Docker (produção), usar o nome do serviço interno para evitar problemas de DNS/Tunnel
+        const backendUrl = process.env.INTERNAL_API_URL ||
+            (import.meta.env.PROD ? 'http://backend:3006/api/login' : 'http://localhost:3006/api/login');
 
         const response = await fetch(backendUrl, {
             method: 'POST',

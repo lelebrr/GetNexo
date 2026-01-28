@@ -1,0 +1,121 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { Settings, Save, Globe, Smartphone, Mail, Shield, Bell } from 'lucide-react';
+---
+
+<AdminLayout title="Configurações Gerais" activeTab="config">
+  <div class="space-y-8 animate-fade-in py-4"
+       x-data="{ 
+         config: { store_name: '', base_url: '', seo_description: '', maintenance_mode: 'false', debug_mode: 'true' },
+         loading: true,
+         saving: false,
+         
+         async fetchConfig() {
+           this.loading = true;
+           try {
+             const res = await fetch('/api/settings');
+             this.config = await res.json();
+           } catch (e) {
+             console.error('Erro ao carregar configurações:', e);
+           } finally {
+             this.loading = false;
+           }
+         },
+         
+         async saveConfig() {
+           this.saving = true;
+           try {
+             const res = await fetch('/api/settings', {
+               method: 'POST',
+               headers: { 'Content-Type': 'application/json' },
+               body: JSON.stringify({ settings: this.config })
+             });
+             if (res.ok) {
+               alert('Configurações salvas com sucesso!');
+             }
+           } catch (e) {
+             alert('Erro ao salvar');
+           } finally {
+             this.saving = false;
+           }
+         }
+       }" 
+       x-init="fetchConfig()">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-black text-white uppercase tracking-tighter flex items-center">
+          <Settings className="w-8 h-8 text-gray-500 mr-4" />
+          Configurações Gerais
+        </h1>
+        <p class="text-sm text-gray-500 font-medium mt-1">Gerencie as informações principais da sua instância Nexus.</p>
+      </div>
+      <button @click="saveConfig()" :disabled="saving" class="bg-emerald-600 hover:bg-emerald-500 text-white font-black px-6 py-3 rounded-2xl flex items-center space-x-3 transition-all shadow-xl shadow-emerald-500/10 uppercase text-[10px] tracking-widest disabled:opacity-50">
+        <Save className="w-5 h-5" :class="saving ? 'animate-spin' : ''" />
+        <span x-text="saving ? 'Salvando...' : 'Salvar Alterações'"></span>
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+       <!-- Card Principal -->
+       <div class="lg:col-span-2 space-y-6">
+          <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] space-y-6">
+             <h3 class="text-lg font-bold text-white uppercase tracking-tight flex items-center">
+                <Globe className="w-5 h-5 mr-3 text-emerald-500" />
+                Informações da Loja
+             </h3>
+
+             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                   <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Nome da Loja</label>
+                   <input type="text" x-model="config.store_name" class="w-full bg-black/40 border border-gray-800 rounded-xl py-3 px-4 text-white focus:border-emerald-500 outline-none transition-all" />
+                </div>
+                <div>
+                   <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">URL Base</label>
+                   <input type="text" x-model="config.base_url" class="w-full bg-black/40 border border-gray-800 rounded-xl py-3 px-4 text-white focus:border-emerald-500 outline-none transition-all" />
+                </div>
+             </div>
+
+             <div>
+                <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Descrição (SEO)</label>
+                <textarea x-model="config.seo_description" class="w-full bg-black/40 border border-gray-800 rounded-xl py-3 px-4 text-white focus:border-emerald-500 outline-none transition-all h-24"></textarea>
+             </div>
+          </div>
+       </div>
+
+       <!-- Card Lateral -->
+       <div class="space-y-6">
+          <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] space-y-6">
+             <h3 class="text-lg font-bold text-white uppercase tracking-tight flex items-center">
+                <Shield className="w-5 h-5 mr-3 text-indigo-500" />
+                Sistema
+             </h3>
+             
+             <div class="flex items-center justify-between py-2 border-b border-gray-800/50">
+                <span class="text-sm text-gray-400">Modo Manutenção</span>
+                <div @click="config.maintenance_mode = (config.maintenance_mode === 'true' ? 'false' : 'true')" 
+                     class="w-10 h-6 rounded-full relative cursor-pointer transition-colors duration-300"
+                     :class="config.maintenance_mode === 'true' ? 'bg-indigo-600' : 'bg-gray-800'">
+                  <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform duration-300"
+                       :class="config.maintenance_mode === 'true' ? 'translate-x-4' : 'translate-x-0'"></div>
+                </div>
+             </div>
+             
+             <div class="flex items-center justify-between py-2 border-b border-gray-800/50">
+                <span class="text-sm text-gray-400">Debug Mode</span>
+                <div @click="config.debug_mode = (config.debug_mode === 'true' ? 'false' : 'true')" 
+                     class="w-10 h-6 rounded-full relative cursor-pointer transition-colors duration-300"
+                     :class="config.debug_mode === 'true' ? 'bg-emerald-600' : 'bg-gray-800'">
+                  <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform duration-300"
+                       :class="config.debug_mode === 'true' ? 'translate-x-4' : 'translate-x-0'"></div>
+                </div>
+             </div>
+          </div>
+       </div>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

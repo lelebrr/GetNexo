@@ -1,0 +1,117 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { Tag, Plus, Trash2, Edit3, CircleCheck, CircleDashed, Filter } from 'lucide-react';
+
+const coupons = [
+  { id: 1, code: "LOYALTY50", discount: "R$ 50,00", usage: "142 / 500", status: "Ativo", type: "Fixo" },
+  { id: 2, code: "VIP20", discount: "20%", usage: "12 / 50", status: "Esgotado", type: "Percentual" },
+  { id: 3, code: "WELCOME10", discount: "10%", usage: "1.2k / ∞", status: "Ativo", type: "Percentual" },
+];
+---
+
+<AdminLayout title="Cupons de Desconto" activeTab="fidelidade">
+  <div class="max-w-6xl mx-auto space-y-10 animate-fade-in py-4"
+       x-data="{ 
+         search: '',
+         coupons: [
+           { id: 1, code: 'LOYALTY50', discount: 'R$ 50,00', usage: '142 / 500', status: 'Ativo', type: 'Fixo' },
+           { id: 2, code: 'VIP20', discount: '20%', usage: '12 / 50', status: 'Esgotado', type: 'Percentual' },
+           { id: 3, code: 'WELCOME10', discount: '10%', usage: '1.2k / ∞', status: 'Ativo', type: 'Percentual' }
+         ]
+       }">
+    
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-500 border border-indigo-500/20 shadow-xl shadow-indigo-500/10">
+          <Tag className="w-7 h-7" />
+        </div>
+        <div>
+          <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Gerenciar Cupons</h1>
+          <p class="text-sm text-gray-500 font-medium">Configure as regras de desconto para resgate de pontos.</p>
+        </div>
+      </div>
+      <button class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-2xl flex items-center space-x-2 transition-all shadow-lg shadow-indigo-600/20 uppercase text-xs tracking-widest">
+         <Plus className="w-5 h-5" />
+         <span>Criar Cupom</span>
+      </button>
+    </div>
+
+    <!-- Filtros e Busca -->
+    <div class="flex flex-col md:flex-row gap-4">
+       <div class="relative flex-1">
+          <input type="text" x-model="search" placeholder="Buscar por código..." class="w-full bg-gray-900/40 border border-gray-800 rounded-2xl py-3 px-6 text-sm text-white focus:border-indigo-500 outline-none transition-all" />
+       </div>
+       <button class="px-6 py-3 bg-gray-900 border border-gray-800 text-gray-400 font-black rounded-2xl flex items-center space-x-3 text-[10px] uppercase tracking-widest hover:text-white transition-all">
+          <Filter className="w-4 h-4" />
+          <span>Filtros Avançados</span>
+       </button>
+    </div>
+
+    <!-- Lista -->
+    <div class="bg-gray-900/20 border border-gray-800 rounded-[2.5rem] overflow-hidden">
+       <table class="w-full text-left">
+          <thead>
+             <tr class="bg-black/40 border-b border-gray-800">
+                <th class="px-8 py-5 text-[10px] font-black uppercase text-gray-500 tracking-widest">Código</th>
+                <th class="px-8 py-5 text-[10px] font-black uppercase text-gray-500 tracking-widest">Desconto</th>
+                <th class="px-8 py-5 text-[10px] font-black uppercase text-gray-500 tracking-widest">Uso</th>
+                <th class="px-8 py-5 text-[10px] font-black uppercase text-gray-500 tracking-widest">Tipo</th>
+                <th class="px-8 py-5 text-[10px] font-black uppercase text-gray-500 tracking-widest">Status</th>
+                <th class="px-8 py-5 text-[10px] font-black uppercase text-gray-500 tracking-widest text-right">Ações</th>
+             </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-800/50">
+             <template x-for="coupon in coupons.filter(c => c.code.toLowerCase().includes(search.toLowerCase()))" :key="coupon.id">
+                <tr class="hover:bg-white/[0.02] transition-colors group">
+                   <td class="px-8 py-6">
+                      <span class="text-sm font-mono font-bold text-indigo-400" x-text="coupon.code"></span>
+                   </td>
+                   <td class="px-8 py-6">
+                      <span class="text-sm font-black text-white" x-text="coupon.discount"></span>
+                   </td>
+                   <td class="px-8 py-6">
+                      <div class="space-y-1.5 w-32">
+                         <div class="flex justify-between text-[9px] font-black text-gray-600 uppercase">
+                            <span x-text="coupon.usage"></span>
+                         </div>
+                         <div class="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
+                            <div class="h-full bg-indigo-500 transition-all" 
+                                 :style="'width: ' + (coupon.usage.includes('∞') ? '100%' : (parseInt(coupon.usage.split(' / ')[0].replace('k', '000')) / parseInt(coupon.usage.split(' / ')[1]) * 100) + '%')"></div>
+                         </div>
+                      </div>
+                   </td>
+                   <td class="px-8 py-6">
+                      <span class="text-[10px] font-black uppercase text-gray-400 tracking-widest" x-text="coupon.type"></span>
+                   </td>
+                   <td class="px-8 py-6">
+                      <div class="flex items-center space-x-2">
+                         <template x-if="coupon.status === 'Ativo'">
+                            <div class="flex items-center space-x-1.5 text-emerald-500">
+                               <CircleCheck className="w-3 h-3" />
+                               <span class="text-[9px] font-black uppercase tracking-widest">Ativo</span>
+                            </div>
+                         </template>
+                         <template x-if="coupon.status === 'Esgotado'">
+                            <div class="flex items-center space-x-1.5 text-rose-500">
+                               <CircleDashed className="w-3 h-3" />
+                               <span class="text-[9px] font-black uppercase tracking-widest">Esgotado</span>
+                            </div>
+                         </template>
+                      </div>
+                   </td>
+                   <td class="px-8 py-6 text-right space-x-2">
+                      <button class="p-2.5 bg-gray-800/50 text-gray-500 hover:text-white rounded-xl transition-all"><Edit3 className="w-4 h-4" /></button>
+                      <button class="p-2.5 bg-gray-800/50 text-gray-500 hover:text-rose-400 rounded-xl transition-all"><Trash2 className="w-4 h-4" /></button>
+                   </td>
+                </tr>
+             </template>
+          </tbody>
+       </table>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

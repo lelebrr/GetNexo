@@ -1,0 +1,118 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { Cake, Calendar, Send, User, Search, Gift } from 'lucide-react';
+
+const upcomingBirthdays = [
+  { id: 1, name: "Fabiana Souza", date: "Hoje", status: "Presente Enviado", points: "+100 pts" },
+  { id: 2, name: "Marcos Vinicius", date: "Amanhã", status: "Pendente", points: "+100 pts" },
+  { id: 3, name: "Carla Silveira", date: "30 Jan", status: "Pendente", points: "+200 pts" },
+];
+---
+
+<AdminLayout title="Aniversariantes" activeTab="fidelidade">
+  <div class="max-w-5xl mx-auto space-y-10 animate-fade-in py-4"
+       x-data="{ 
+         search: '',
+         birthdays: [
+           { id: 1, name: 'Fabiana Souza', date: 'Hoje', status: 'Presente Enviado', points: '+100 pts' },
+           { id: 2, name: 'Marcos Vinicius', date: 'Amanhã', status: 'Pendente', points: '+100 pts' },
+           { id: 3, name: 'Carla Silveira', date: '30 Jan', status: 'Pendente', points: '+200 pts' }
+         ],
+         sendGift(id) {
+           this.birthdays = this.birthdays.map(b => b.id === id ? { ...b, status: 'Presente Enviado' } : b);
+         }
+       }">
+    
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 bg-pink-500/10 rounded-2xl flex items-center justify-center text-pink-500 border border-pink-500/20 shadow-xl shadow-pink-500/10">
+          <Cake className="w-7 h-7" />
+        </div>
+        <div>
+          <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Aniversariantes</h1>
+          <p class="text-sm text-gray-500">Engaje seus clientes no dia mais importante do ano.</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2 bg-gray-900 border border-gray-800 p-2 rounded-2xl">
+         <button class="px-4 py-2 bg-pink-500 text-white text-[10px] font-black uppercase rounded-xl">Próximos 7 dias</button>
+         <button class="px-4 py-2 text-gray-500 text-[10px] font-black uppercase rounded-xl hover:text-white transition-all">Mês Atual</button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+       <div class="bg-gray-900/40 border border-gray-800 p-6 rounded-[2rem]">
+          <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Hoje</p>
+          <h3 class="text-2xl font-black text-white">12 Clientes</h3>
+       </div>
+       <div class="bg-gray-900/40 border border-gray-800 p-6 rounded-[2rem]">
+          <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Taxa de Resgate</p>
+          <h3 class="text-2xl font-black text-white">64%</h3>
+       </div>
+       <div class="bg-gray-900/40 border border-gray-800 p-6 rounded-[2rem]">
+          <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Automação</p>
+          <h3 class="text-2xl font-black text-emerald-500 uppercase tracking-tighter italic">Ativa</h3>
+       </div>
+    </div>
+
+    <!-- Lista -->
+    <div class="bg-gray-900/20 border border-gray-800 rounded-[2.5rem] overflow-hidden">
+       <div class="p-8 border-b border-gray-800 bg-black/20 flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+             <Calendar className="w-5 h-5 text-gray-500" />
+             <h3 class="text-xs font-black uppercase text-gray-400 tracking-widest">Agenda de Celebrações</h3>
+          </div>
+          <div class="relative w-64">
+             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
+             <input type="text" x-model="search" placeholder="Buscar cliente..." class="w-full bg-black/40 border border-gray-800 rounded-xl py-2 pl-9 pr-4 text-[10px] text-white focus:border-pink-500 outline-none" />
+          </div>
+       </div>
+
+       <div class="divide-y divide-gray-800/50">
+          <template x-for="item in birthdays.filter(b => b.name.toLowerCase().includes(search.toLowerCase()))" :key="item.id">
+             <div class="p-8 flex items-center justify-between hover:bg-white/[0.02] transition-colors group">
+                <div class="flex items-center space-x-6">
+                   <div class="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center text-gray-600 group-hover:bg-pink-500/10 group-hover:text-pink-500 transition-all">
+                      <User className="w-6 h-6" />
+                   </div>
+                   <div>
+                      <h4 class="text-sm font-bold text-white uppercase tracking-tight" x-text="item.name"></h4>
+                      <p class="text-[10px] text-gray-600 font-medium" x-text="item.date"></p>
+                   </div>
+                </div>
+
+                <div class="flex items-center space-x-12">
+                   <div class="text-center">
+                      <p class="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-1">Bônus</p>
+                      <p class="text-sm font-mono font-bold text-yellow-500" x-text="item.points"></p>
+                   </div>
+                   <div class="text-center">
+                      <p class="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-1">Status</p>
+                      <span class="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full"
+                            :class="item.status === 'Pendente' ? 'bg-amber-500/10 text-amber-500' : 'bg-emerald-500/10 text-emerald-500'"
+                            x-text="item.status"></span>
+                   </div>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                   <button @click="sendGift(item.id)" 
+                           x-show="item.status === 'Pendente'"
+                           class="flex items-center space-x-2 px-4 py-2 bg-pink-600 hover:bg-pink-500 text-white rounded-xl text-[10px] font-black uppercase transition-all shadow-lg shadow-pink-600/20">
+                      <Gift className="w-4 h-4" />
+                      <span>Enviar Bônus</span>
+                   </button>
+                   <button class="p-3 bg-gray-800/50 text-gray-500 hover:text-white rounded-xl transition-all">
+                      <Send className="w-4 h-4" />
+                   </button>
+                </div>
+             </div>
+          </template>
+       </div>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

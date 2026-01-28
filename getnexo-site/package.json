@@ -9,9 +9,9 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "dev": "astro dev --host",
+        "dev": "partytown copylib public/~partytown && astro dev --host",
         "start": "node ./dist/server/entry.mjs",
-        "build": "astro build",
+        "build": "npx partytown copylib public/~partytown && astro build",
         "preview": "node ./dist/server/entry.mjs",
         "test": "jest",
         "test:watch": "jest --watch",

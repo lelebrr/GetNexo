@@ -317,39 +317,103 @@ const { nonce } = Astro.props;
         this.connections = [];
         this.animationId = null;
         this.mouse = { x: 0, y: 0 };
+        
+        // Cache dimensions to avoid layout thrashing
+        this.width = 0;
+        this.height = 0;
 
-        this.init();
-        this.animate();
-        this.bindEvents();
-      }
+        const initOnIdle = () => {
+          if ('requestIdleCallback' in window) {
+            window.requestIdleCallback(() => {
+              this.resize();
+              // Break up node creation to avoid long tasks
+              this.createNodesBatched(() => {
+                this.createConnectionsBatched(() => {
+                  this.animate();
+                  this.bindEvents();
+                });
+              });
+            }, { timeout: 2000 });
+          } else {
+            setTimeout(() => {
+              this.resize();
+              this.createNodes();
+              this.createConnections();
+              this.animate();
+              this.bindEvents();
+            }, 500);
+          }
+        };
 
-      init() {
-        this.resize();
-        this.createNodes();
-        this.createConnections();
+        if (document.readyState === 'complete') {
+          initOnIdle();
+        } else {
+          window.addEventListener('load', initOnIdle);
+        }
       }
 
       resize() {
+        const dpr = window.devicePixelRatio || 1;
         const rect = this.canvas.getBoundingClientRect();
-        this.canvas.width = rect.width * window.devicePixelRatio;
-        this.canvas.height = rect.height * window.devicePixelRatio;
-        this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-        this.canvas.style.width = rect.width + 'px';
-        this.canvas.style.height = rect.height + 'px';
+        this.width = rect.width;
+        this.height = rect.height;
+        
+        this.canvas.width = this.width * dpr;
+        this.canvas.height = this.height * dpr;
+        this.ctx.scale(dpr, dpr);
+        
+        // Reset nodes on major resize
+        if (this.nodes.length > 0) {
+          this.createNodes();
+          this.createConnections();
+        }
       }
 
       createNodes() {
         this.nodes = [];
-        for (let i = 0; i < 15; i++) {
+        const isMobile = window.innerWidth < 768;
+        const nodeCount = isMobile ? 40 : 100;
+
+        for (let i = 0; i < nodeCount; i++) {
           this.nodes.push({
-            x: Math.random() * this.canvas.offsetWidth,
-            y: Math.random() * this.canvas.offsetHeight,
+            x: Math.random() * this.width,
+            y: Math.random() * this.height,
             vx: (Math.random() - 0.5) * 0.5,
             vy: (Math.random() - 0.5) * 0.5,
-            radius: Math.random() * 3 + 1,
-            alpha: Math.random() * 0.5 + 0.2
+            radius: Math.random() * 2 + 1
           });
         }
+      }
+
+      createNodesBatched(callback) {
+        const isMobile = window.innerWidth < 768;
+        const totalNodes = isMobile ? 40 : 100;
+        let created = 0;
+        const batchSize = 20;
+
+        const createBatch = () => {
+          const end = Math.min(created + batchSize, totalNodes);
+          for (let i = created; i < end; i++) {
+            this.nodes.push({
+              x: Math.random() * this.width,
+              y: Math.random() * this.height,
+              vx: (Math.random() - 0.5) * 0.5,
+              vy: (Math.random() - 0.5) * 0.5,
+              radius: Math.random() * 2 + 1
+            });
+          }
+          created = end;
+          if (created < totalNodes) {
+            if (window.requestIdleCallback) {
+              window.requestIdleCallback(createBatch);
+            } else {
+              setTimeout(createBatch, 10);
+            }
+          } else if (callback) {
+            callback();
+          }
+        };
+        createBatch();
       }
 
       createConnections() {
@@ -358,94 +422,113 @@ const { nonce } = Astro.props;
           for (let j = i + 1; j < this.nodes.length; j++) {
             const dx = this.nodes[i].x - this.nodes[j].x;
             const dy = this.nodes[i].y - this.nodes[j].y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+            const dist = Math.sqrt(dx * dx + dy * dy);
 
-            if (distance < 150) {
-              this.connections.push({
-                from: i,
-                to: j,
-                alpha: (150 - distance) / 150 * 0.3
-              });
+            if (dist < 150) {
+              this.connections.push({ i, j, dist });
             }
           }
         }
       }
 
-      animate() {
-        this.ctx.clearRect(0, 0, this.canvas.offsetWidth, this.canvas.offsetHeight);
+      createConnectionsBatched(callback) {
+        this.connections = [];
+        let i = 0;
+        const maxDist = 150;
 
-        // Update nodes
+        const processBatch = () => {
+          const startTime = performance.now();
+          while (i < this.nodes.length && performance.now() - startTime < 16) {
+            for (let j = i + 1; j < this.nodes.length; j++) {
+              const dx = this.nodes[i].x - this.nodes[j].x;
+              const dy = this.nodes[i].y - this.nodes[j].y;
+              const distSq = dx * dx + dy * dy;
+
+              if (distSq < maxDist * maxDist) {
+                this.connections.push({ i, j, dist: Math.sqrt(distSq) });
+              }
+            }
+            i++;
+          }
+
+          if (i < this.nodes.length) {
+            if (window.requestIdleCallback) {
+              window.requestIdleCallback(processBatch);
+            } else {
+              setTimeout(processBatch, 10);
+            }
+          } else if (callback) {
+            callback();
+          }
+        };
+        processBatch();
+      }
+
+      animate() {
+        if (!this.ctx) return;
+        this.ctx.clearRect(0, 0, this.width, this.height);
+
         this.nodes.forEach(node => {
           node.x += node.vx;
           node.y += node.vy;
 
-          // Bounce off edges
-          if (node.x <= 0 || node.x >= this.canvas.offsetWidth) node.vx *= -1;
-          if (node.y <= 0 || node.y >= this.canvas.offsetHeight) node.vy *= -1;
+          if (node.x < 0 || node.x > this.width) node.vx *= -1;
+          if (node.y < 0 || node.y > this.height) node.vy *= -1;
 
-          // Mouse interaction
-          const dx = node.x - this.mouse.x;
-          const dy = node.y - this.mouse.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          if (distance < 100) {
-            node.vx += dx * 0.0001;
-            node.vy += dy * 0.0001;
-          }
-
-          // Draw node
           this.ctx.beginPath();
           this.ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
-          this.ctx.fillStyle = `rgba(0, 212, 255, ${node.alpha})`;
+          this.ctx.fillStyle = 'rgba(0, 212, 255, 0.2)';
           this.ctx.fill();
         });
 
-        // Draw connections
         this.connections.forEach(conn => {
-          const from = this.nodes[conn.from];
-          const to = this.nodes[conn.to];
+          const node1 = this.nodes[conn.i];
+          const node2 = this.nodes[conn.j];
+          const dx = node1.x - node2.x;
+          const dy = node1.y - node2.y;
+          const distSq = dx * dx + dy * dy;
 
-          this.ctx.beginPath();
-          this.ctx.moveTo(from.x, from.y);
-          this.ctx.lineTo(to.x, to.y);
-          this.ctx.strokeStyle = `rgba(0, 255, 157, ${conn.alpha})`;
-          this.ctx.lineWidth = 0.5;
-          this.ctx.stroke();
+          if (distSq < 150 * 150) {
+            const dist = Math.sqrt(distSq);
+            this.ctx.beginPath();
+            this.ctx.moveTo(node1.x, node1.y);
+            this.ctx.lineTo(node2.x, node2.y);
+            this.ctx.strokeStyle = `rgba(0, 212, 255, ${0.1 * (1 - dist / 150)})`;
+            this.ctx.stroke();
+          }
         });
 
         this.animationId = requestAnimationFrame(() => this.animate());
       }
 
       bindEvents() {
-        const handleMouseMove = (e) => {
-          const rect = this.canvas.getBoundingClientRect();
-          this.mouse.x = e.clientX - rect.left;
-          this.mouse.y = e.clientY - rect.top;
-        };
-
-        const handleResize = () => {
-          this.resize();
-          this.createNodes();
-        };
-
-        window.addEventListener('mousemove', handleMouseMove);
-        window.addEventListener('resize', handleResize);
-
-        // Cleanup on page unload
-        window.addEventListener('beforeunload', () => {
-          if (this.animationId) {
-            cancelAnimationFrame(this.animationId);
+        let resizeTicking = false;
+        window.addEventListener('resize', () => {
+          if (!resizeTicking) {
+            window.requestAnimationFrame(() => {
+              this.resize();
+              resizeTicking = false;
+            });
+            resizeTicking = true;
           }
+        }, { passive: true });
+
+        window.addEventListener('mousemove', (e) => {
+          this.mouse.x = e.clientX;
+          this.mouse.y = e.clientY;
+        }, { passive: true });
+        
+        window.addEventListener('beforeunload', () => {
+          if (this.animationId) cancelAnimationFrame(this.animationId);
         });
       }
     }
 
-    // Initialize when DOM is ready
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => {
-         window.NeuralBackground = new NeuralBackground();
-      });
-    } else {
-       window.NeuralBackground = new NeuralBackground();
+    try {
+      window.NeuralBackgroundInstance = new NeuralBackground();
+      window.NeuralBackground = true;
+    } catch (e) {
+      console.warn('NeuralBackground init failed:', e);
     }
   })();
 </script>

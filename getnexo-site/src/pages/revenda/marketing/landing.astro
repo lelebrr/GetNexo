@@ -1,0 +1,66 @@
+---
+import ResellerLayout from '../../../layouts/ResellerLayout.astro';
+---
+
+<ResellerLayout title="Minhas Landing Pages">
+    <div class="header">
+        <h2 class="text-neon-blue">📄 LANDING PAGES PERSONALIZADAS</h2>
+        <button class="btn-new">CRIAR NOVA LANDING</button>
+    </div>
+
+    <div class="landings-list" id="landings-container">
+        <p style="text-align: center; color: #666; padding: 3rem;">CARREGANDO LANDING PAGES...</p>
+    </div>
+
+</ResellerLayout>
+
+<style>
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    .btn-new { background: #00f3ff; color: #000; border: none; padding: 0.8rem 1.5rem; border-radius: 4px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; }
+    
+    .landings-list { display: grid; gap: 1.5rem; }
+    
+    .landing-row { background: #0a0a0a; border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; gap: 2rem; }
+    
+    .lp-info h3 { color: #fff; font-size: 1.1rem; margin-bottom: 0.5rem; }
+    .lp-info .url { color: #00ff9d; font-size: 0.85rem; font-family: monospace; }
+    
+    .lp-status { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; font-weight: bold; color: #00ff9d; }
+    .status-dot { width: 8px; height: 8px; background: #00ff9d; border-radius: 50%; box-shadow: 0 0 10px #00ff9d; }
+    
+    .actions { display: flex; gap: 1rem; }
+    .btn-action { color: #cbd5e1; text-decoration: none; font-size: 0.8rem; font-weight: 600; padding: 0.5rem 1rem; border: 1px solid #334155; border-radius: 4px; transition: all 0.2s; }
+    .btn-action:hover { background: rgba(255, 255, 255, 0.05); color: #fff; border-color: #64748b; }
+    .btn-primary-action { background: rgba(0, 243, 255, 0.1); color: #00f3ff; border-color: #00f3ff; }
+</style>
+
+<script is:inline>
+    async function fetchLandings() {
+        try {
+            const res = await fetch('/api/revenda/marketing');
+            const data = await res.json();
+            const container = document.getElementById('landings-container');
+            
+            container.innerHTML = data.landings.map(l => `
+                <div class="landing-row">
+                    <div class="lp-info">
+                        <h3>${l.name}</h3>
+                        <span class="url">${l.url}</span>
+                    </div>
+                    <div class="lp-status">
+                        <div class="status-dot"></div>
+                        <span>ATIVA</span>
+                    </div>
+                    <div class="actions">
+                        <a href="${l.url}" target="_blank" class="btn-action">VISUALIZAR</a>
+                        <a href="#" class="btn-action btn-primary-action">CONFIGURAR</a>
+                    </div>
+                </div>
+            `).join('');
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    fetchLandings();
+</script>

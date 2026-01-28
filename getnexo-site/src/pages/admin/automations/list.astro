@@ -1,19 +1,127 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { Play, Pause, Settings, Trash2, Zap, Clock, MousePointer2 } from 'lucide-react';
 ---
 
 <AdminLayout title="Meus Fluxos Ativos" activeTab="automations">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/30 animate-pulse">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-      </svg>
+    <div class="max-w-6xl mx-auto space-y-10 animate-fade-in py-4"
+         x-data="{ 
+           flows: [],
+           loading: true,
+           async fetchFlows() {
+             this.loading = true;
+             try {
+               const res = await fetch('/api/automations');
+               this.flows = await res.json();
+             } catch (e) {
+               console.error('Erro ao carregar fluxos:', e);
+             } finally {
+               this.loading = false;
+             }
+           },
+           async toggleFlow(flow) {
+             try {
+               const newStatus = !flow.active;
+               await fetch(`/api/automations/${flow.id}/toggle`, {
+                 method: 'PATCH',
+                 headers: { 'Content-Type': 'application/json' },
+                 body: JSON.stringify({ active: newStatus })
+               });
+               flow.active = newStatus;
+             } catch (e) {
+               alert('Erro ao alternar status');
+             }
+           },
+           async deleteFlow(id) {
+             if (!confirm('Deseja excluir permanentemente este fluxo?')) return;
+             try {
+               await fetch(`/api/automations/${id}`, { method: 'DELETE' });
+               this.fetchFlows();
+             } catch (e) {
+               alert('Erro ao deletar fluxo');
+             }
+           }
+         }"
+         x-init="fetchFlows()">
+    
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div>
+        <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Fluxos de Automação</h1>
+        <p class="text-sm text-gray-500">Gerencie seus gatilhos e sequências inteligentes ativos.</p>
+      </div>
+      <a href="/admin/automations/new" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-2xl flex items-center space-x-2 transition-all shadow-lg shadow-indigo-600/20 uppercase text-xs tracking-widest no-underline">
+         <Zap className="w-4 h-4" />
+         <span>Criar Novo Fluxo</span>
+      </a>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      Meus Fluxos Ativos
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Gerencie todos os fluxos de automação ativos.
-    </p>
+
+    <!-- Grid de Fluxos -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-20">
+       <div x-show="loading" class="col-span-full p-20 flex flex-col items-center justify-center space-y-4">
+          <div class="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+          <p class="text-xs text-gray-500 uppercase font-black tracking-widest">Sincronizando Fluxos...</p>
+       </div>
+
+       <template x-for="flow in flows" :key="flow.id">
+          <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] hover:border-indigo-500/30 transition-all group relative overflow-hidden">
+             <div class="absolute top-0 right-0 p-6">
+                <button @click="toggleFlow(flow)" 
+                        class="w-12 h-6 rounded-full relative transition-colors duration-300"
+                        :class="flow.active ? 'bg-indigo-500' : 'bg-gray-800'">
+                   <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform duration-300"
+                        :class="flow.active ? 'translate-x-6' : 'translate-x-0'"></div>
+                </button>
+             </div>
+
+             <div class="space-y-6">
+                <div class="space-y-2">
+                   <h3 class="text-lg font-bold text-white uppercase tracking-tight" x-text="flow.name"></h3>
+                   <div class="flex items-center space-x-2">
+                      <span class="text-[9px] font-black bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded uppercase tracking-widest" x-text="flow.trigger_id"></span>
+                      <ArrowRight className="w-3 h-3 text-gray-700" />
+                      <span class="text-[9px] font-black bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded uppercase tracking-widest" x-text="flow.action_id"></span>
+                   </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                   <div class="bg-black/40 p-4 rounded-2xl border border-gray-800/50">
+                      <div class="flex items-center space-x-2 text-gray-500 mb-1">
+                         <MousePointer2 className="w-3 h-3" />
+                         <span class="text-[9px] font-black uppercase tracking-widest">Execuções</span>
+                      </div>
+                      <p class="text-sm font-mono font-bold text-white" x-text="flow.executions || 0"></p>
+                   </div>
+                   <div class="bg-black/40 p-4 rounded-2xl border border-gray-800/50">
+                      <div class="flex items-center space-x-2 text-gray-500 mb-1">
+                         <Zap className="w-3 h-3" />
+                         <span class="text-[9px] font-black uppercase tracking-widest">Sucesso</span>
+                      </div>
+                      <p class="text-sm font-mono font-bold text-emerald-500" x-text="flow.success_rate || '0%'"></p>
+                   </div>
+                </div>
+
+                <div class="flex items-center justify-between pt-2">
+                   <div class="flex items-center space-x-3">
+                      <button class="p-3 bg-gray-800 hover:bg-white/10 text-gray-500 hover:text-white rounded-xl transition-all" title="Configurações (Em Breve)"><Settings className="w-4 h-4" /></button>
+                      <button @click="deleteFlow(flow.id)" class="p-3 bg-gray-800 hover:bg-rose-600/20 text-gray-500 hover:text-rose-400 rounded-xl transition-all" title="Excluir Fluxo"><Trash2 className="w-4 h-4" /></button>
+                   </div>
+                   <div class="flex items-center space-x-2 text-[10px] font-bold text-gray-600 uppercase tracking-widest">
+                      <Clock className="w-3 h-3" />
+                      <span x-text="'ID: #' + flow.id"></span>
+                   </div>
+                </div>
+             </div>
+          </div>
+       </template>
+       
+       <div x-show="!loading && flows.length === 0" class="col-span-full p-20 text-center bg-gray-900/20 border border-dashed border-gray-800 rounded-[2.5rem]">
+          <p class="text-gray-500 text-sm">Nenhum fluxo de automação configurado ainda.</p>
+       </div>
+    </div>
   </div>
 </AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

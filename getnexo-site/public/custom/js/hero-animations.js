@@ -163,7 +163,6 @@
 
         let messageIndex = 0;
         let charIndex = 0;
-        let isTyping = false;
 
         function addMessage(text, sender) {
             const bubble = document.createElement('div');
@@ -171,14 +170,12 @@
             bubble.textContent = '';
             chatContainer.appendChild(bubble);
 
-            // Auto scroll to bottom optimized
+            // Auto scroll to bottom optimized - use a fixed destination to avoid reflow
             requestAnimationFrame(() => {
-                if (chatContainer) {
-                    chatContainer.scrollTo({
-                        top: chatContainer.scrollHeight,
-                        behavior: 'smooth'
-                    });
-                }
+                chatContainer.scrollTo({
+                    top: 5000,
+                    behavior: 'smooth'
+                });
             });
 
             return bubble;
@@ -230,23 +227,34 @@
             width: 100%;
             transform-origin: 0 50%;
             transform: scaleX(0);
+            pointer-events: none;
         `;
         document.body.appendChild(progressBar);
 
         let ticking = false;
-        // Cache dimensions to avoid layout thrashing
-        let docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        let docHeight = 0;
+
+        function updateDocHeight() {
+            // Using a safe default if not ready
+            const height = document.documentElement.scrollHeight || 1;
+            const viewHeight = document.documentElement.clientHeight || 1;
+            docHeight = height - viewHeight;
+        }
+
+        // Defer initial calculation to next idle/frame
+        requestAnimationFrame(() => {
+            updateDocHeight();
+        });
 
         window.addEventListener('resize', () => {
-            // Debounce resize events
             if (!ticking) {
                 window.requestAnimationFrame(() => {
-                    docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                    updateDocHeight();
                     ticking = false;
                 });
                 ticking = true;
             }
-        });
+        }, { passive: true });
 
         window.addEventListener('scroll', () => {
             if (!ticking) {
@@ -258,17 +266,20 @@
                 });
                 ticking = true;
             }
-        });
+        }, { passive: true });
     }
 
     // Initialize everything on DOM ready
     document.addEventListener('DOMContentLoaded', () => {
-        type();
-        initParallax();
-        initScrollAnimations();
-        initMagneticButtons();
-        initChatSimulation();
-        initScrollProgress();
+        // Delay non-critical animations slightly to allow LCP to finish
+        setTimeout(() => {
+            type();
+            initParallax();
+            initScrollAnimations();
+            initMagneticButtons();
+            initChatSimulation();
+            initScrollProgress();
+        }, 100);
     });
 
 })();

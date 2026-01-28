@@ -1,19 +1,58 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { Download, FileText, FileSpreadsheet, FileCode, CheckCircle2, ArrowRight, ArrowDownToLine } from 'lucide-react';
+
+const exportFormats = [
+  { name: "Excel (.xlsx)", desc: "Ideal para análise financeira e fórmulas.", icon: FileSpreadsheet, color: "bg-emerald-500" },
+  { name: "CSV / Texto", desc: "Leve e compatível com qualquer ERP.", icon: FileCode, color: "bg-gray-500" },
+  { name: "PDF Auditoria", desc: "Layout pronto para impressão e assinatura.", icon: FileText, color: "bg-rose-500" },
+];
 ---
 
-<AdminLayout title="Exportar Dados" activeTab="relatorios">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center shadow-lg shadow-green-500/30 animate-pulse">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-      </svg>
+<AdminLayout title="Exportação" activeTab="relatorios">
+  <div class="max-w-4xl mx-auto space-y-10 animate-fade-in py-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <div class="w-14 h-14 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500 border border-blue-500/20 shadow-xl shadow-blue-500/10">
+          <Download className="w-7 h-7" />
+        </div>
+        <div>
+          <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Baixar Dados</h1>
+          <p class="text-sm text-gray-500 font-medium">Extraia suas informações em diversos formatos de alta compatibilidade.</p>
+        </div>
+      </div>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      Exportar Dados
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Exporte dados do sistema em vários formatos.
-    </p>
+
+    <!-- Export Options -->
+    <div class="grid grid-cols-1 gap-6">
+       {exportFormats.map(fmt => (
+          <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] flex items-center justify-between hover:border-blue-500/20 transition-all group cursor-pointer">
+             <div class="flex items-center space-x-8">
+                <div class:list={["w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-white/5", fmt.color]}>
+                   <fmt.icon className="w-7 h-7" />
+                </div>
+                <div>
+                   <h3 class="text-lg font-bold text-white uppercase tracking-tight italic">{fmt.name}</h3>
+                   <p class="text-[10px] text-gray-500 font-medium whitespace-nowrap">{fmt.desc}</p>
+                </div>
+             </div>
+             <button class="p-4 bg-gray-800 rounded-2xl text-gray-400 group-hover:text-white group-hover:bg-blue-600 transition-all">
+                <ArrowDownToLine className="w-5 h-5" />
+             </button>
+          </div>
+       ))}
+    </div>
+
+    <div class="bg-blue-600/5 border border-blue-500/20 p-8 rounded-[2.5rem] flex items-center justify-between">
+       <div class="flex items-center space-x-4">
+          <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+          <p class="text-[10px] text-gray-400 font-medium uppercase tracking-widest">A exportação de grandes volumes será enviada para seu email após processamento.</p>
+       </div>
+    </div>
   </div>
 </AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

@@ -52,8 +52,7 @@ import ResellerLayout from '../../layouts/ResellerLayout.astro';
         </div>
     </main>
 
-    <script nonce={Astro.locals.nonce} is:inline>
-        const API_URL = '';
+    <script is:inline>
         
         document.getElementById('btn-criar').addEventListener('click', async () => {
             const btn = document.getElementById('btn-criar');
@@ -70,7 +69,7 @@ import ResellerLayout from '../../layouts/ResellerLayout.astro';
 
             try {
                 // Using existing endpoint /api/revenda/clientes which matches the functionality
-                const response = await fetch(`${API_URL}/api/revenda/clientes`, {
+                const response = await fetch('/api/revenda/clientes', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': localStorage.getItem('token') },
                     body: JSON.stringify({ nome, domain: dominio, platform: plataforma, whatsapp: whats, ia })

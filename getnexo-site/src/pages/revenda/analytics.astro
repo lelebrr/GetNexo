@@ -1,0 +1,141 @@
+---
+import ResellerLayout from '../../layouts/ResellerLayout.astro';
+---
+
+<ResellerLayout title="Analytics & Crescimento">
+    <div class="header">
+        <h2 class="text-neon-blue">📈 ANALYTICS & CRESCIMENTO</h2>
+        <div class="date-range">Últimos 30 Dias</div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid" id="stats-summary">
+        <div class="stat-card loading-pulse">
+            <h3>TOTAL CLIENTES</h3>
+            <div class="value">--</div>
+            <div class="trend up">+0%</div>
+        </div>
+        <div class="stat-card loading-pulse">
+            <h3>RECEITA MENSAL</h3>
+            <div class="value">R$ 0,00</div>
+            <div class="trend up">+0%</div>
+        </div>
+        <div class="stat-card loading-pulse">
+            <h3>COMISSÃO PENDENTE</h3>
+            <div class="value">R$ 0,00</div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-container">
+        <div class="chart-box">
+            <h3>ATIVIDADE RECENTE</h3>
+            <div id="activity-log" class="activity-log">
+                <p style="text-align: center; color: #666; padding: 2rem;">CARREGANDO ATIVIDADES...</p>
+            </div>
+        </div>
+        
+        <div class="chart-box">
+            <h3>METAS DE CRESCIMENTO</h3>
+            <div class="goals-container">
+                <div class="goal-item">
+                    <div class="goal-label">
+                        <span>Clientes Ativos</span>
+                        <span>38/50</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 76%;"></div>
+                    </div>
+                </div>
+                <div class="goal-item">
+                    <div class="goal-label">
+                        <span>Recorrência</span>
+                        <span>92%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 92%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</ResellerLayout>
+
+<style>
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    .date-range { background: rgba(255, 255, 255, 0.05); padding: 0.5rem 1rem; border-radius: 4px; font-size: 0.8rem; color: #94a3b8; border: 1px solid #334155; }
+    
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .stat-card { background: #0a0a0a; border: 1px solid #334155; padding: 1.5rem; border-radius: 8px; position: relative; }
+    .stat-card h3 { font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.5rem; letter-spacing: 1px; }
+    .stat-card .value { font-size: 1.75rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem; }
+    .stat-card .trend { font-size: 0.75rem; font-weight: 600; }
+    .trend.up { color: #00ff9d; }
+
+    .charts-container { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
+    .chart-box { background: #0a0a0a; border: 1px solid #334155; padding: 1.5rem; border-radius: 8px; }
+    .chart-box h3 { font-size: 0.9rem; color: #00f3ff; margin-bottom: 1.5rem; text-transform: uppercase; }
+
+    .activity-log { display: flex; flex-direction: column; gap: 1rem; }
+    .activity-item { display: flex; gap: 1rem; padding: 1rem; background: rgba(255, 255, 255, 0.02); border-radius: 8px; border-left: 3px solid #334155; }
+    .activity-item.new_client { border-left-color: #00ff9d; }
+    .activity-item.payment { border-left-color: #ffd700; }
+    .activity-item.alert { border-left-color: #f43f5e; }
+    .activity-content p { font-size: 0.85rem; color: #fff; }
+    .activity-content span { font-size: 0.75rem; color: #64748b; }
+
+    .goals-container { display: flex; flex-direction: column; gap: 1.5rem; }
+    .goal-item { display: flex; flex-direction: column; gap: 0.5rem; }
+    .goal-label { display: flex; justify-content: space-between; font-size: 0.8rem; color: #cbd5e1; }
+    .progress-bar { width: 100%; height: 8px; background: #1e293b; border-radius: 4px; overflow: hidden; }
+    .progress { height: 100%; background: linear-gradient(90deg, #00d4ff, #00f3ff); border-radius: 4px; }
+
+    @media (max-width: 768px) {
+        .charts-container { grid-template-columns: 1fr; }
+    }
+
+    .loading-pulse .value { animation: pulse 1.5s infinite ease-in-out; }
+    @keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 0.6; } 100% { opacity: 0.3; } }
+</style>
+
+<script is:inline>
+    async function fetchStats() {
+        try {
+            const res = await fetch('/api/revenda/stats');
+            const data = await res.json();
+            updateUI(data);
+        } catch (e) {
+            console.error('Erro ao buscar stats:', e);
+        }
+    }
+
+    function updateUI(data) {
+        const cards = document.querySelectorAll('.stat-card');
+        const summary = [
+            { val: data.total_clients, trend: data.growth_rate },
+            { val: data.monthly_revenue, trend: '+8.2%' },
+            { val: data.commissions_pending }
+        ];
+
+        cards.forEach((card, i) => {
+            card.classList.remove('loading-pulse');
+            card.querySelector('.value').textContent = summary[i].val;
+            if (summary[i].trend) {
+                card.querySelector('.trend').textContent = summary[i].trend;
+            }
+        });
+
+        const log = document.getElementById('activity-log');
+        log.innerHTML = data.recent_activity.map(a => `
+            <div class="activity-item ${a.type}">
+                <div class="activity-content">
+                    <p>${a.message}</p>
+                    <span>${a.time}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    fetchStats();
+</script>

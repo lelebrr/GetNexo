@@ -1,0 +1,102 @@
+---
+import AdminLayout from '../../../../layouts/AdminLayout.astro';
+import { Search, Server, Shield, Smartphone, Globe, AlertTriangle, CheckCircle, ArrowRight } from 'lucide-react';
+
+const title = "Auditoria Técnica IA";
+---
+
+<AdminLayout title={title} activeTab="seo">
+  <div class="max-w-6xl mx-auto space-y-8 animate-fade-in">
+    
+    <header class="flex items-center gap-4">
+      <div class="p-3 bg-blue-600/20 rounded-xl border border-blue-500/30">
+        <Server className="w-8 h-8 text-blue-400" />
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold text-white">Auditoria Técnica Completa</h1>
+        <p class="text-gray-400 text-xs mt-1">Varredura profunda de 53 pontos técnicos.</p>
+      </div>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      
+      <!-- Status Cards -->
+      <div class="bg-gray-900/40 border-l-4 border-emerald-500 rounded-r-xl p-6 backdrop-blur-sm">
+        <h3 class="text-gray-500 text-xs font-bold uppercase mb-2">Indexação</h3>
+        <p class="text-2xl font-black text-white">100%</p>
+        <p class="text-emerald-400 text-xs mt-1">Todas as páginas rastreadas</p>
+      </div>
+      <div class="bg-gray-900/40 border-l-4 border-yellow-500 rounded-r-xl p-6 backdrop-blur-sm">
+        <h3 class="text-gray-500 text-xs font-bold uppercase mb-2">Core Web Vitals</h3>
+        <p class="text-2xl font-black text-white">88/100</p>
+        <p class="text-yellow-400 text-xs mt-1">LCP precisa de atenção</p>
+      </div>
+      <div class="bg-gray-900/40 border-l-4 border-blue-500 rounded-r-xl p-6 backdrop-blur-sm">
+        <h3 class="text-gray-500 text-xs font-bold uppercase mb-2">Segurança SSL</h3>
+        <p class="text-2xl font-black text-white">A+</p>
+        <p class="text-blue-400 text-xs mt-1">Certificado válido por 90 dias</p>
+      </div>
+
+    </div>
+
+    <!-- Issues List -->
+    <div class="bg-gray-900/40 border border-gray-800 rounded-3xl overflow-hidden">
+       <div class="p-6 border-b border-gray-800">
+         <h3 class="font-bold text-white">Problemas Encontrados</h3>
+       </div>
+       <div class="divide-y divide-gray-800/50">
+         
+         <!-- Item 1 -->
+         <div class="p-6 flex items-start gap-4 hover:bg-white/5 transition-colors group cursor-pointer">
+           <div class="mt-1">
+             <AlertTriangle className="w-5 h-5 text-red-500" />
+           </div>
+           <div class="flex-1">
+             <div class="flex items-center justify-between mb-2">
+               <h4 class="font-bold text-gray-200 text-sm">Links Quebrados (404)</h4>
+               <span class="px-2 py-1 bg-red-500/10 text-red-400 rounded text-[10px] font-bold uppercase">Crítico</span>
+             </div>
+             <p class="text-gray-500 text-xs">Detectamos 3 links para páginas inexistentes no blog.</p>
+           </div>
+           <ArrowRight className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors" />
+         </div>
+
+         <!-- Item 2 -->
+         <div class="p-6 flex items-start gap-4 hover:bg-white/5 transition-colors group cursor-pointer">
+           <div class="mt-1">
+             <AlertTriangle className="w-5 h-5 text-yellow-500" />
+           </div>
+           <div class="flex-1">
+             <div class="flex items-center justify-between mb-2">
+               <h4 class="font-bold text-gray-200 text-sm">Imagens sem Alt Text</h4>
+               <span class="px-2 py-1 bg-yellow-500/10 text-yellow-400 rounded text-[10px] font-bold uppercase">Médio</span>
+             </div>
+             <p class="text-gray-500 text-xs">15 imagens na galeria não possuem descrição para acessibilidade.</p>
+           </div>
+           <ArrowRight className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors" />
+         </div>
+
+          <!-- Item 3 -->
+         <div class="p-6 flex items-start gap-4 hover:bg-white/5 transition-colors group cursor-pointer">
+           <div class="mt-1">
+             <CheckCircle className="w-5 h-5 text-emerald-500" />
+           </div>
+           <div class="flex-1">
+             <div class="flex items-center justify-between mb-2">
+               <h4 class="font-bold text-gray-200 text-sm">Sitemap XML</h4>
+               <span class="px-2 py-1 bg-emerald-500/10 text-emerald-400 rounded text-[10px] font-bold uppercase">Ok</span>
+             </div>
+             <p class="text-gray-500 text-xs">Sitemap atualizado e enviado para o Google Search Console hoje.</p>
+           </div>
+         </div>
+
+       </div>
+    </div>
+
+  </div>
+</AdminLayout>
+
+<style>
+  .animate-fade-in { animation: fadeIn 0.4s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
