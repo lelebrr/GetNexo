@@ -65,6 +65,15 @@
   - Preview JSON das configurações
   - Interface intuitiva
 
+### 🤖 **Protocolo A2A & AP2 (Agent-to-Agent)**
+- **Dashboard**: `/dashboard/a2a`
+- **Funcionalidades**:
+  - **Identidade**: Configuração pública do agente (Manifest)
+  - **Peering**: Descoberta e conexão com outros agentes
+  - **Messaging**: Troca de mensagens inter-agentes (Webhook)
+  - **Pagamentos (AP2)**: Transações financeiras autônomas com VDCs
+  - **Banco de Dados**: Tabelas dedicadas (`a2a_config`, `ap2_transactions`)
+
 ### 🗄️ **Estado Persistente Avançado**
 - **Arquivo**: `useDemoState.js`
 - **Funcionalidades**:

@@ -48,6 +48,7 @@ A **GetNexo** é uma plataforma completa de **IA para e-commerce** com mais de *
 - **WebSockets** para comunicação em tempo real
 - **Webhooks Configuráveis** e seguros + rate limiting inteligente
 - **Integrações Preparadas** (Stripe, ERPs, sistemas externos)
+- **Protocolo A2A & Pagamentos AP2** (Agent-to-Agent Communication & Payments)
 
 #### 🎥 **Mídia e Entretenimento**
 - **Player de Vídeo** avançado com streaming otimizado
@@ -294,6 +295,7 @@ npm run dev
 - [Análise de Sentimento](features/SENTIMENT_ANALYSIS_README.md)
 - [Demo de Voz](features/VOICE_DEMO_README.md)
 - [Otimização 3D](features/README_OTIMIZACAO_3D.md)
+- [Protocolo A2A e AP2](features/A2A_AP2_PROTOCOL.md)
 
 ### **📅 Planejamento**
 - [Roadmap Geral](planning/ROADMAP.md)
