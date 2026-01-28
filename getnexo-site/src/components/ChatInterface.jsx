@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import { io } from 'socket.io-client';
 import OrderBuilder from './OrderBuilder';
@@ -8,6 +8,41 @@ import MeetingScheduler from './MeetingScheduler';
 const API_URL = '';
 
 const socket = io(API_URL);
+
+const MessageItem = React.memo(({ message: m }) => (
+    <div className={`flex ${m.from_me ? 'justify-end' : 'justify-start'}`}>
+        <div className={`max-w-[70%] p-4 rounded-2xl shadow-lg backdrop-blur-sm border ${m.type === 'note'
+            ? 'bg-yellow-900/40 border-yellow-600 text-yellow-100' // Internal Note Style
+            : m.from_me
+                ? 'bg-neon-blue/20 border-neon-blue/30 text-white rounded-tr-none'
+                : 'bg-gray-800/80 border-gray-700 text-gray-200 rounded-tl-none'
+            }`}>
+            {m.type === 'note' && <div className="text-[10px] uppercase font-bold text-yellow-500 mb-1 flex items-center gap-1">🔒 Nota Interna</div>}
+            <p className="whitespace-pre-wrap leading-relaxed text-sm">{m.body}</p>
+            <span className="text-[10px] opacity-50 mt-2 block text-right">{new Date().toLocaleTimeString().slice(0, 5)}</span>
+        </div>
+    </div>
+));
+
+const ContactItem = React.memo(({ contact: c, isActive, onClick, onDragStart }) => (
+    <div
+        onClick={() => onClick(c)}
+        draggable
+        onDragStart={(e) => onDragStart(e, c)}
+        className={`p-3 rounded-xl cursor-pointer transition-all border ${isActive ? 'bg-neon-blue/10 border-neon-blue' : 'bg-transparent border-transparent hover:bg-gray-800'} flex items-center gap-3 group`}
+    >
+        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center text-white font-bold border border-gray-600">
+            {c.name ? c.name[0].toUpperCase() : '#'}
+        </div>
+        <div className="flex-1 min-w-0">
+            <div className="flex justify-between items-center">
+                <h4 className="font-bold text-gray-200 truncate group-hover:text-white transition-colors">{c.name || c.phone}</h4>
+                <span className="text-[10px] text-gray-500 bg-gray-900 px-1 rounded uppercase tracking-wider">{c.stage || 'NEW'}</span>
+            </div>
+            <p className="text-xs text-gray-500 truncate">{c.last_message?.body || 'Inicie a conversa...'}</p>
+        </div>
+    </div>
+));
 
 const ChatInterface = () => {
     const [contacts, setContacts] = useState([]);
@@ -78,12 +113,12 @@ const ChatInterface = () => {
         try { const res = await axios.get(`${API_URL}/users`); setAgents(res.data); } catch (e) { }
     };
 
-    const fetchTicket = async (phone) => {
+    const fetchTicket = useCallback(async (phone) => {
         try {
             const res = await axios.get(`${API_URL}/ticket/${phone}`);
             setTicket(res.data);
         } catch (e) { setTicket(null); }
-    };
+    }, []);
 
     const handleAssign = async (agentId) => {
         if (!activeContact) return;
@@ -107,14 +142,14 @@ const ChatInterface = () => {
         fetchContacts();
     };
 
-    const selectContact = async (contact) => {
+    const selectContact = useCallback(async (contact) => {
         setActiveContact(contact);
         fetchTicket(contact.phone);
         try {
             const res = await axios.get(`${API_URL}/messages?phone=${contact.phone}`);
             setMessages(res.data);
         } catch (err) { console.error(err); }
-    };
+    }, [fetchTicket]);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -139,7 +174,7 @@ const ChatInterface = () => {
     };
 
     // Drag and Drop (Kanban Stage Update) Mock
-    const handleDragStart = (e, contact) => { e.dataTransfer.setData("contactPhone", contact.phone); };
+    const handleDragStart = useCallback((e, contact) => { e.dataTransfer.setData("contactPhone", contact.phone); }, []);
 
     const insertMacro = (text) => {
         setInput(text);
@@ -196,24 +231,13 @@ const ChatInterface = () => {
                 </div>
                 <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2">
                     {loading ? <div className="text-center text-gray-500 mt-10">Carregando...</div> : contacts.map(c => (
-                        <div
+                        <ContactItem
                             key={c.id}
-                            onClick={() => selectContact(c)}
-                            draggable
-                            onDragStart={(e) => handleDragStart(e, c)}
-                            className={`p-3 rounded-xl cursor-pointer transition-all border ${activeContact?.id === c.id ? 'bg-neon-blue/10 border-neon-blue' : 'bg-transparent border-transparent hover:bg-gray-800'} flex items-center gap-3 group`}
-                        >
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center text-white font-bold border border-gray-600">
-                                {c.name ? c.name[0].toUpperCase() : '#'}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <div className="flex justify-between items-center">
-                                    <h4 className="font-bold text-gray-200 truncate group-hover:text-white transition-colors">{c.name || c.phone}</h4>
-                                    <span className="text-[10px] text-gray-500 bg-gray-900 px-1 rounded uppercase tracking-wider">{c.stage || 'NEW'}</span>
-                                </div>
-                                <p className="text-xs text-gray-500 truncate">{c.last_message?.body || 'Inicie a conversa...'}</p>
-                            </div>
-                        </div>
+                            contact={c}
+                            isActive={activeContact?.id === c.id}
+                            onClick={selectContact}
+                            onDragStart={handleDragStart}
+                        />
                     ))}
                 </div>
             </div>
@@ -271,18 +295,7 @@ const ChatInterface = () => {
                         {/* Messages */}
                         <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar bg-dots-pattern">
                             {messages.map((m, i) => (
-                                <div key={i} className={`flex ${m.from_me ? 'justify-end' : 'justify-start'}`}>
-                                    <div className={`max-w-[70%] p-4 rounded-2xl shadow-lg backdrop-blur-sm border ${m.type === 'note'
-                                        ? 'bg-yellow-900/40 border-yellow-600 text-yellow-100' // Internal Note Style
-                                        : m.from_me
-                                            ? 'bg-neon-blue/20 border-neon-blue/30 text-white rounded-tr-none'
-                                            : 'bg-gray-800/80 border-gray-700 text-gray-200 rounded-tl-none'
-                                        }`}>
-                                        {m.type === 'note' && <div className="text-[10px] uppercase font-bold text-yellow-500 mb-1 flex items-center gap-1">🔒 Nota Interna</div>}
-                                        <p className="whitespace-pre-wrap leading-relaxed text-sm">{m.body}</p>
-                                        <span className="text-[10px] opacity-50 mt-2 block text-right">{new Date().toLocaleTimeString().slice(0, 5)}</span>
-                                    </div>
-                                </div>
+                                <MessageItem key={i} message={m} />
                             ))}
                             <div ref={messagesEndRef} />
                         </div>
