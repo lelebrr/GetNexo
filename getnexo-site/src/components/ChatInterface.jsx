@@ -11,7 +11,7 @@ const socket = io(API_URL);
 
 const MessageItem = React.memo(({ message: m }) => (
     <div className={`flex ${m.from_me ? 'justify-end' : 'justify-start'}`}>
-        <div className={`max-w-[70%] p-4 rounded-2xl shadow-lg backdrop-blur-sm border ${m.type === 'note'
+        <div className={`max-w-[70%] p-4 rounded-2xl shadow-lg border ${m.type === 'note'
             ? 'bg-yellow-900/40 border-yellow-600 text-yellow-100' // Internal Note Style
             : m.from_me
                 ? 'bg-neon-blue/20 border-neon-blue/30 text-white rounded-tr-none'
@@ -209,7 +209,7 @@ const ChatInterface = () => {
     };
 
     return (
-        <div className="flex h-[80vh] gap-6">
+        <div className="flex h-full gap-6">
 
             {/* Sidebar - Contact List */}
             <div className="w-1/3 flex flex-col glass-panel rounded-2xl border border-gray-800 overflow-hidden">
