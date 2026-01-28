@@ -1,25 +1,7 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const API_URL = 'https://api.getnexo.com.br';
-
-const CatalogItem = React.memo(({ product: p, onAdd }) => (
-    <div className="glass-panel p-4 rounded-xl border border-gray-800 flex flex-col items-center text-center hover:border-gray-600 transition-colors">
-        <img src={p.image_url || 'https://placehold.co/150x150/1e293b/64748b?text=Produto'} className="w-24 h-24 object-cover rounded mb-3 bg-gray-900" />
-        <h4 className="font-bold text-white">{p.name}</h4>
-        <p className="text-neon-green font-bold text-lg">R$ {p.price.toFixed(2)}</p>
-        <button onClick={() => onAdd(p)} className="mt-3 bg-gray-800 hover:bg-neon-blue hover:text-black text-gray-300 px-4 py-2 rounded text-sm font-bold w-full transition-colors">
-            + Adicionar
-        </button>
-    </div>
-));
-
-const CartItem = React.memo(({ item }) => (
-    <div className="flex justify-between items-center text-sm">
-        <span className="text-gray-300">{item.name}</span>
-        <span className="text-white">R$ {item.price.toFixed(2)}</span>
-    </div>
-));
 
 const CatalogManager = () => {
     const [products, setProducts] = useState([]);
@@ -36,9 +18,9 @@ const CatalogManager = () => {
         setProducts(data.products || []);
     };
 
-    const addToCart = useCallback((product) => {
-        setCart(prev => [...prev, product]);
-    }, []);
+    const addToCart = (product) => {
+        setCart([...cart, product]);
+    };
 
     const createOrder = async () => {
         if (!targetPhone || cart.length === 0) return alert('Selecione produtos e informe o telefone do cliente');
@@ -58,7 +40,7 @@ const CatalogManager = () => {
     };
 
     return (
-        <div className="flex gap-6 h-full">
+        <div className="flex gap-6 h-[75vh]">
             {/* Catalog Grid */}
             <div className="flex-1 overflow-y-auto">
                 <h3 className="text-xl font-bold text-neon-blue mb-4">🏪 Catálogo de Produtos</h3>
@@ -66,7 +48,14 @@ const CatalogManager = () => {
                     {products.length === 0 ? (
                         <div className="col-span-3 text-gray-500">Nenhum produto cadastrado. (Use o terminal para inserir: `INSERT INTO products...`)</div>
                     ) : products.map(p => (
-                        <CatalogItem key={p.id} product={p} onAdd={addToCart} />
+                        <div key={p.id} className="glass-panel p-4 rounded-xl border border-gray-800 flex flex-col items-center text-center hover:border-gray-600 transition-colors">
+                            <img src={p.image_url || 'https://placehold.co/150x150/1e293b/64748b?text=Produto'} className="w-24 h-24 object-cover rounded mb-3 bg-gray-900" />
+                            <h4 className="font-bold text-white">{p.name}</h4>
+                            <p className="text-neon-green font-bold text-lg">R$ {p.price.toFixed(2)}</p>
+                            <button onClick={() => addToCart(p)} className="mt-3 bg-gray-800 hover:bg-neon-blue hover:text-black text-gray-300 px-4 py-2 rounded text-sm font-bold w-full transition-colors">
+                                + Adicionar
+                            </button>
+                        </div>
                     ))}
                 </div>
             </div>
@@ -87,7 +76,10 @@ const CatalogManager = () => {
 
                 <div className="flex-1 overflow-y-auto mb-4 space-y-2 border-t border-b border-gray-800 py-2">
                     {cart.map((item, i) => (
-                        <CartItem key={i} item={item} />
+                        <div key={i} className="flex justify-between items-center text-sm">
+                            <span className="text-gray-300">{item.name}</span>
+                            <span className="text-white">R$ {item.price.toFixed(2)}</span>
+                        </div>
                     ))}
                     {cart.length === 0 && <span className="text-gray-600 italic">Carrinho vazio</span>}
                 </div>
