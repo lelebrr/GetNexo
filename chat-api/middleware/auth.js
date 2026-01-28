@@ -1,29 +1,32 @@
-const Database = require('better-sqlite3');
-const path = require('path');
+const jwt = require('jsonwebtoken');
 
-const DB_PATH = process.env.DB_PATH || path.join(__dirname, '../omninchat.db');
-const db = new Database(DB_PATH);
+const JWT_SECRET = process.env.JWT_SECRET;
 
 module.exports = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+    // Skip auth for options requests (CORS preflight)
+    if (req.method === 'OPTIONS') {
+        return next();
+    }
 
-    if (!token) return res.status(401).json({ error: 'Token missing' });
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+
+    if (!token) {
+        return res.status(401).json({ error: 'Acesso negado. Token não fornecido.' });
+    }
 
     try {
-        const session = db.prepare('SELECT * FROM sessions WHERE token = ?').get(token);
-        if (!session) return res.status(401).json({ error: 'Invalid token' });
-
-        // Verificar expiração (24 horas)
-        if (Date.now() - session.created_at > 24 * 60 * 60 * 1000) {
-            db.prepare('DELETE FROM sessions WHERE token = ?').run(token);
-            return res.status(401).json({ error: 'Session expired' });
+        if (!JWT_SECRET) {
+            console.error('FATAL: JWT_SECRET not defined in middleware');
+            return res.status(500).json({ error: 'Erro interno de configuração de segurança.' });
         }
 
-        req.userId = session.user_id;
+        const decoded = jwt.verify(token, JWT_SECRET);
+        req.user = decoded;
+        req.userId = decoded.id;
         next();
-    } catch (e) {
-        console.error('[AUTH MIDDLEWARE ERROR]:', e);
-        res.status(401).json({ error: 'Authentication failed' });
+    } catch (error) {
+        console.error('Auth Middleware Error:', error.message);
+        return res.status(401).json({ error: 'Token inválido ou expirado.' });
     }
 };
