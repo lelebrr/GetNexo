@@ -14,10 +14,25 @@ For full project documentation, architecture details, and setup guides, please r
 
 ## 🛠️ Tech Stack (Site Only)
 
-- **Framework**: [Astro 4.16](https://astro.build)
+- **Framework**: [Astro 5.0](https://astro.build)
 - **Library**: [React 18.2](https://reactjs.org)
 - **Styling**: [TailwindCSS 3.4](https://tailwindcss.com)
 - **Language**: TypeScript
+
+---
+
+## 🚀 Key Features
+
+### Dynamic Integration Pages
+The site automatically generates hundreds of integration landing pages (e.g., `/integracoes/shopify`, `/integracoes/vtex`) at build time.
+- **Source**: `src/data/integrationData.js`
+- **Template**: `src/pages/integracoes/[slug].astro`
+- **Sitemap**: Automatically included via `src/pages/sitemap-pt.xml.ts`
+
+### SEO Engine
+- **Dynamic Sitemaps**: Manually controlled TypeScript endpoints generate XML sitemaps.
+- **Canonical Routing**: Strict canonical URLs to prevent duplicate content.
+- **i18n Strategy**: Currently focused on PT-BR content with Blog support for EN/ES/FR.
 
 ---
 

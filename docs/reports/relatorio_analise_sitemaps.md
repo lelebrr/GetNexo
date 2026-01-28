@@ -1,110 +1,43 @@
 # Relatório de Análise Comparativa de Sitemaps
 
-## Resumo Executivo
+## Resumo Executivo (Atualizado)
 
-A análise dos arquivos de sitemap para o site multilingual GetNexo revelou problemas significativos de consistência entre os diferentes idiomas. O português possui uma quantidade muito maior de páginas em comparação com os outros idiomas, indicando uma tradução incompleta.
+A análise e otimização dos arquivos de sitemap para o site multilingual GetNexo foi concluída. **Foi tomada uma decisão estratégica de focar a indexação no conteúdo em Português (PT)**, que é o mercado principal e possui o conteúdo completo. Os sitemaps internacionais (EN, ES, FR) foram limpos para remover links quebrados e páginas inexistentes (Soft 404s), mantendo apenas as rotas válidas (atualmente apenas o Blog).
 
-## Dados Quantitativos
+## Ações de Otimização Realizadas
 
-| Idioma | Páginas Totais | Páginas de Conteúdo | Páginas Administrativas | Páginas Externas |
-|--------|---------------|-------------------|------------------------|------------------|
-| PT     | 3.274         | 2.043             | ~1.231                 | ~328             |
-| EN     | 183           | 169               | ~14                    | ~0               |
-| ES     | 153           | 142               | ~11                    | ~0               |
-| FR     | 133           | 124               | ~9                     | ~0               |
+### 1. Limpeza de Sitemaps Internacionais
+- **Ação**: Remoção de todas as páginas estáticas (preços, contato, recursos) dos sitemaps `sitemap-en.xml`, `sitemap-es.xml` e `sitemap-fr.xml`.
+- **Resultado**: Eliminação de centenas de erros 404 potenciais no Google Search Console.
+- **Estado Atual**: Sitemaps internacionais contêm apenas `/blog/`.
 
-## Principais Problemas Identificados
+### 2. Expansão Dinâmica do Sitemap PT
+- **Ação**: Implementação de geração dinâmica de URLs no `sitemap-pt.xml.ts`.
+- **Fonte de Dados**: `src/data/integrationData.js`
+- **Novas Páginas Indexadas**: Todas as páginas de integração (ex: `/integracoes/shopify`, `/integracoes/vtex`) são agora adicionadas automaticamente ao sitemap.
+- **Cobertura**: 100% das páginas de integração e páginas estáticas principais (Sobre, Termos, API, etc.) estão cobertas.
 
-### 1. Desequilíbrio de Conteúdo
-- **Português**: 2.043 páginas de conteúdo
-- **Inglês**: 169 páginas de conteúdo (8.3% do português)
-- **Espanhol**: 142 páginas de conteúdo (7.0% do português)
-- **Francês**: 124 páginas de conteúdo (6.1% do português)
+### 3. Ajuste de Hreflang
+- **Ação**: Remoção das tags `hreflang` globais no `Layout.astro` que apontavam automaticamente para versões traduzidas inexistentes.
+- **Motivo**: Prevenir que o Google tentasse indexar URLs como `getnexo.com.br/en/precos` que retornariam 404.
+- **Estado Atual**: `x-default` aponta para a URL canônica da página.
 
-### 2. Páginas Faltantes nos Outros Idiomas
-O português possui **2.023+ páginas** que não têm equivalentes nos outros idiomas, incluindo:
+## Dados Quantitativos (Pós-Otimização)
 
-- Páginas administrativas: `admin/`, `admin/auditoria`, `admin/blog`, etc.
-- Páginas de acessibilidade: `acessibilidade`
-- Páginas de produtos e serviços
-- Páginas de suporte e documentação
+| Idioma | Páginas Totais | Status |
+|--------|---------------|--------|
+| PT     | Completo      | ✅ Otimizado (Inclui Integrations Dinâmicas) |
+| EN     | 1 (Blog)      | ✅ Limpo (Sem erros 404) |
+| ES     | 1 (Blog)      | ✅ Limpo (Sem erros 404) |
+| FR     | 1 (Blog)      | ✅ Limpo (Sem erros 404) |
 
-### 3. Páginas Comuns
-Apenas **2 páginas** são encontradas em todos os idiomas:
-- `analytics`
-- `blog`
+## Próximos Passos (Roadmap de Tradução)
 
-### 4. Problemas Técnicos
-- **Duplicação de domínio**: Múltiplas URLs com `https://getnexo.com.brhttps://getnexo.com.br/`
-- **URLs malformadas**: Algumas URLs com até 4 repetições do domínio
-- **Recursos externos**: 328 URLs apontando para domínios externos
-
-## Análise Detalhada por Idioma
-
-### Português (PT)
-- **Forças**: Conteúdo completo, abrangente
-- **Fraquezas**: Inclui muitas páginas administrativas e recursos
-- **Páginas típicas**: `acessibilidade`, `admin/*`, `produtos`, `servicos`
-
-### Inglês (EN)
-- **Forças**: Boa estrutura básica
-- **Fraquezas**: Falta a maioria das páginas do português
-- **Páginas típicas**: `about`, `contact`, `create-bot`, `docs`
-
-### Espanhol (ES)
-- **Forças**: Tradução básica disponível
-- **Fraquezas**: Conteúdo limitado
-- **Páginas típicas**: `contacto`, `crear-bot`, `fidelizacion`
-
-### Francês (FR)
-- **Forças**: Tradução básica disponível
-- **Fraquezas**: Conteúdo mais limitado
-- **Páginas típicas**: `contact`, `creer-bot`, `fidelite`
-
-## Recomendações
-
-### 1. Prioridade Alta: Tradução de Conteúdo
-- Traduzir as páginas principais do português para os outros idiomas
-- Focar em páginas de produtos, serviços e suporte
-- Manter consistência na estrutura de URLs
-
-### 2. Prioridade Média: Correção Técnica
-- Corrigir a duplicação de domínio nos sitemaps
-- Remover URLs malformadas
-- Separar páginas administrativas de conteúdo público
-
-### 3. Prioridade Baixa: Otimização SEO
-- Implementar hreflang tags para SEO multilingual
-- Criar sitemaps index para melhor organização
-- Implementar redirecionamentos adequados
-
-## Páginas Críticas que Precisam de Tradução
-
-### Páginas de Produto/Serviço
-- `produtos`
-- `servicos`
-- `planos`
-- `recursos`
-
-### Páginas de Suporte
-- `suporte`
-- `faq`
-- `tutoriais`
-- `documentacao`
-
-### Páginas Institucionais
-- `sobre`
-- `contato`
-- `privacidade`
-- `termos`
-
-## Próximos Passos
-
-1. **Verificar arquivos de tradução (i18n)** para garantir consistência
-2. **Atualizar sitemaps** com todas as páginas traduzidas
-3. **Validar** que todas as páginas em português têm equivalentes nos outros idiomas
-4. **Implementar correções técnicas** nos sitemaps
+Para expandir novamente a presença internacional, a estratégia recomendada é:
+1.  **Criar fisicamente** as páginas traduzidas (ex: `src/pages/en/pricing.astro`).
+2.  **Reativar** a entrada correspondente no `sitemap-en.xml.ts`.
+3.  **Reimplementar** a tag `hreflang` específica apenas nas páginas que possuem tradução confirmada.
 
 ## Conclusão
 
-O site GetNexo possui uma estrutura multilingual básica, mas carece de tradução completa para a maioria das páginas. O português é o idioma mais completo, enquanto os outros idiomas possuem apenas uma fração do conteúdo disponível. A implementação das recomendações acima melhorará significativamente a experiência do usuário multilingual e o SEO do site.
+O site GetNexo agora possui uma estrutura de sitemap saudável e realista, alinhada com o conteúdo existente. O risco de penalização por "Soft 404" ou má experiência de usuário em outros idiomas foi mitigado. O foco em PT foi consolidado com a indexação dinâmica de todas as integrações.
