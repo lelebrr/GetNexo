@@ -491,11 +491,11 @@ const clientId = Astro.locals.clientId || 'default';
       opacity: 1 !important;
     }
     
-    /* Otimização: evitar reflow durante animações */
+    /* Animações otimizadas para composição */
     .animate-on-scroll {
       opacity: 0;
       transform: translateY(30px);
-      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
       will-change: transform, opacity;
       transform: translateZ(0);
       backface-visibility: hidden;
