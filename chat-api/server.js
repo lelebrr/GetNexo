@@ -3,18 +3,60 @@ const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 const PORT = process.env.PORT || 3006;
 const JWT_SECRET = process.env.JWT_SECRET;
+const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:4321'; // Default to frontend dev port
 
 if (!JWT_SECRET) {
   console.error('FATAL: JWT_SECRET environment variable is not set.');
   process.exit(1);
 }
 
+// Security Headers
+app.use(helmet());
+
+// CORS Configuration
+app.use(cors({
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+
+        if (CORS_ORIGIN.split(',').includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}));
+
+// Rate Limiting
+const globalLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per windowMs
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: 'Too many requests, please try again later.' }
+});
+
+const authLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 10, // Limit each IP to 10 login attempts per hour
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: 'Too many login attempts, please try again later.' }
+});
+
+// Apply global limiter to all routes
+app.use(globalLimiter);
+
 // Middleware
-app.use(cors());
 app.use(express.json());
 
 const authMiddleware = require('./middleware/auth');
@@ -33,6 +75,7 @@ const automationRoutes = require('./routes/automations');
 const settingsRoutes = require('./routes/settings');
 const aiRoutes = require('./routes/ai');
 const revendaRoutes = require('./routes/revenda');
+const dockerRoutes = require('./routes/docker');
 
 // Montar Rotas
 // Rotas Protegidas (Requerem Autenticação)
@@ -47,6 +90,7 @@ app.use('/api/automations', authMiddleware, automationRoutes);
 app.use('/api/settings', authMiddleware, settingsRoutes);
 app.use('/api/ai', authMiddleware, aiRoutes);
 app.use('/api/revenda', authMiddleware, revendaRoutes);
+app.use('/api/docker', authMiddleware, dockerRoutes);
 
 // Rotas Parcialmente Públicas ou com Auth Própria
 app.use('/api/webhooks', webhookRoutes); // Auth via assinatura/token do provedor
@@ -89,7 +133,7 @@ const users = [
 ];
 
 // Endpoint de login
-app.post('/api/login', async (req, res) => {
+app.post('/api/login', authLimiter, async (req, res) => {
     try {
         const { email, password } = req.body;
 
@@ -181,7 +225,7 @@ app.get('/api/users', (req, res) => {
 });
 
 // Endpoint de redefinição de senha (simulado)
-app.post('/api/auth/forgot-password', async (req, res) => {
+app.post('/api/auth/forgot-password', authLimiter, async (req, res) => {
     try {
         const { email } = req.body;
 
@@ -212,7 +256,7 @@ app.post('/api/auth/forgot-password', async (req, res) => {
 });
 
 // Endpoint para criar conta (simulado)
-app.post('/api/auth/register', async (req, res) => {
+app.post('/api/auth/register', authLimiter, async (req, res) => {
     try {
         const { email, password, name } = req.body;
 
@@ -344,5 +388,3 @@ const tickets = [
         assigned_agent_name: null
     }
 ];
-
-// O endpoint /api/tickets agora é tratado por ticketRoutes montado acima
