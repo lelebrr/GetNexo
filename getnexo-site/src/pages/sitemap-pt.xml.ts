@@ -1,7 +1,10 @@
+import { integrationData } from '../data/integrationData.js';
+
 export const GET = async () => {
     const baseUrl = 'https://getnexo.com.br';
-    const pages = [
-        // Core Pages (PT structure)
+
+    // Core and Extended Pages
+    const staticPages = [
         { url: `${baseUrl}/`, changefreq: 'daily', priority: 1.0 },
         { url: `${baseUrl}/pt/`, changefreq: 'weekly', priority: 0.9 },
         { url: `${baseUrl}/pt/blog/`, changefreq: 'weekly', priority: 0.8 },
@@ -12,7 +15,6 @@ export const GET = async () => {
         { url: `${baseUrl}/pt/privacidade/`, changefreq: 'yearly', priority: 0.3 },
         { url: `${baseUrl}/pt/faq/`, changefreq: 'monthly', priority: 0.5 },
 
-        // Extended Pages (Root structure)
         { url: `${baseUrl}/integracoes/`, changefreq: 'monthly', priority: 0.8 },
         { url: `${baseUrl}/sobre/`, changefreq: 'monthly', priority: 0.6 },
         { url: `${baseUrl}/termos/`, changefreq: 'yearly', priority: 0.3 },
@@ -26,9 +28,18 @@ export const GET = async () => {
         { url: `${baseUrl}/chat-ia-24h/`, changefreq: 'monthly', priority: 0.8 },
     ];
 
+    // Dynamic Integration Pages
+    const integrationPages = integrationData.map(integration => ({
+        url: `${baseUrl}/integracoes/${integration.slug}`,
+        changefreq: 'monthly',
+        priority: 0.7
+    }));
+
+    const allPages = [...staticPages, ...integrationPages];
+
     const body = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  ${pages.map(page => `<url>
+  ${allPages.map(page => `<url>
     <loc>${page.url}</loc>
     <changefreq>${page.changefreq}</changefreq>
     <priority>${page.priority}</priority>
