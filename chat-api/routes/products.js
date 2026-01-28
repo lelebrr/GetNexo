@@ -24,14 +24,15 @@ router.get('/', (req, res) => {
 // Criar produto
 router.post('/', (req, res) => {
     try {
-        const { name, price, stock, image_url, description, category } = req.body;
+        const { name, price, stock, image_url, description, category, sku } = req.body;
         const info = db.prepare(`
-            INSERT INTO products (name, price, stock, image_url, description, category)
-            VALUES (?, ?, ?, ?, ?, ?)
-        `).run(name, price, stock || 0, image_url, description, category);
+            INSERT INTO products (name, price, stock, image_url, description, category, sku)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        `).run(name, price, stock || 0, image_url, description, category, sku);
 
         res.status(201).json({ id: info.lastInsertRowid, success: true });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: 'Erro ao criar produto' });
     }
 });
@@ -40,16 +41,34 @@ router.post('/', (req, res) => {
 router.put('/:id', (req, res) => {
     try {
         const { id } = req.params;
-        const { name, price, stock, image_url, description, category } = req.body;
+        const fields = req.body;
+        const updates = [];
+        const values = [];
 
-        db.prepare(`
-            UPDATE products 
-            SET name = ?, price = ?, stock = ?, image_url = ?, description = ?, category = ?, updated_at = CURRENT_TIMESTAMP
-            WHERE id = ?
-        `).run(name, price, stock, image_url, description, category, id);
+        // Whitelist allowed fields to prevent SQL injection or unwanted updates
+        const allowedFields = ['name', 'price', 'stock', 'image_url', 'description', 'category', 'sku'];
+
+        for (const key of Object.keys(fields)) {
+            if (allowedFields.includes(key)) {
+                updates.push(`${key} = ?`);
+                values.push(fields[key]);
+            }
+        }
+
+        if (updates.length === 0) {
+             return res.status(400).json({ error: 'Nenhum campo para atualizar' });
+        }
+
+        updates.push('updated_at = CURRENT_TIMESTAMP');
+
+        const sql = `UPDATE products SET ${updates.join(', ')} WHERE id = ?`;
+        values.push(id);
+
+        db.prepare(sql).run(...values);
 
         res.json({ success: true });
     } catch (error) {
+        console.error('Update error:', error);
         res.status(500).json({ error: 'Erro ao atualizar produto' });
     }
 });
