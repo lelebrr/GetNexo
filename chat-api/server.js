@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const db = require('./db'); // Import DB for user queries
 
 const app = express();
 const PORT = process.env.PORT || 3006;
@@ -76,6 +77,9 @@ const settingsRoutes = require('./routes/settings');
 const aiRoutes = require('./routes/ai');
 const revendaRoutes = require('./routes/revenda');
 const dockerRoutes = require('./routes/docker');
+const paymentRoutes = require('./routes/paymentRoutes');
+const a2aRoutes = require('./routes/a2a');
+const ap2Routes = require('./routes/ap2');
 
 // Montar Rotas
 // Rotas Protegidas (Requerem Autenticação)
@@ -91,48 +95,15 @@ app.use('/api/settings', authMiddleware, settingsRoutes);
 app.use('/api/ai', authMiddleware, aiRoutes);
 app.use('/api/revenda', authMiddleware, revendaRoutes);
 app.use('/api/docker', authMiddleware, dockerRoutes);
+app.use('/api/payments', authMiddleware, paymentRoutes);
 
 // Rotas Parcialmente Públicas ou com Auth Própria
 app.use('/api/webhooks', webhookRoutes); // Auth via assinatura/token do provedor
 app.use('/api/products', productRoutes); // TODO: Proteger operações de escrita (POST/PUT/DELETE)
+app.use('/api/a2a', a2aRoutes); // Verificar necessidade de auth específica
+app.use('/api/ap2', ap2Routes); // Verificar necessidade de auth específica
 
-// Database simulada (em produção, usar banco de dados real)
-const users = [
-    {
-        id: 1,
-        email: 'admin@getnexo.com.br',
-        password: bcrypt.hashSync('admin123', 10),
-        name: 'Administrador',
-        role: 'superadmin',
-        role_id: 1
-    },
-    {
-        id: 2,
-        email: 'revendedor@getnexo.com',
-        password: bcrypt.hashSync('demo123', 10),
-        name: 'Revendedor',
-        role: 'reseller',
-        role_id: 2
-    },
-    {
-        id: 3,
-        email: 'cliente@getnexo.com',
-        password: bcrypt.hashSync('demo123', 10),
-        name: 'Cliente',
-        role: 'client',
-        role_id: 3
-    },
-    {
-        id: 4,
-        email: 'lelebrr@gmail.com',
-        password: bcrypt.hashSync('master2026', 10),
-        name: 'Lele',
-        role: 'superadmin',
-        role_id: 1
-    }
-];
-
-// Endpoint de login
+// Endpoint de login (Updated to use DB instead of mock array)
 app.post('/api/login', authLimiter, async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -141,8 +112,8 @@ app.post('/api/login', authLimiter, async (req, res) => {
             return res.status(400).json({ error: 'Email e senha são obrigatórios' });
         }
 
-        // Encontrar usuário
-        const user = users.find(u => u.email === email);
+        // Encontrar usuário no DB
+        const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
 
         if (!user) {
             return res.status(401).json({ error: 'Credenciais inválidas' });
@@ -162,7 +133,8 @@ app.post('/api/login', authLimiter, async (req, res) => {
                 email: user.email,
                 name: user.name,
                 role: user.role,
-                role_id: user.role_id
+                role_id: user.role_id,
+                reseller_id: user.reseller_id
             },
             JWT_SECRET,
             { expiresIn: '24h' }
@@ -174,7 +146,8 @@ app.post('/api/login', authLimiter, async (req, res) => {
             email: user.email,
             name: user.name,
             role: user.role,
-            role_id: user.role_id
+            role_id: user.role_id,
+            reseller_id: user.reseller_id
         };
 
         return res.json({
@@ -201,8 +174,8 @@ app.get('/api/users', (req, res) => {
         const token = authHeader.replace('Bearer ', '');
         const decoded = jwt.verify(token, JWT_SECRET);
 
-        // Encontrar usuário
-        const user = users.find(u => u.id === decoded.id);
+        // Encontrar usuário no DB
+        const user = db.prepare('SELECT * FROM users WHERE id = ?').get(decoded.id);
 
         if (!user) {
             return res.status(401).json({ error: 'Usuário não encontrado' });
@@ -214,7 +187,8 @@ app.get('/api/users', (req, res) => {
             email: user.email,
             name: user.name,
             role: user.role,
-            role_id: user.role_id
+            role_id: user.role_id,
+            reseller_id: user.reseller_id
         };
 
         return res.json(userData);
@@ -234,7 +208,7 @@ app.post('/api/auth/forgot-password', authLimiter, async (req, res) => {
         }
 
         // Verificar se usuário existe
-        const user = users.find(u => u.email === email);
+        const user = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
 
         if (!user) {
             // Não revelar se o usuário existe ou não (segurança)
@@ -265,32 +239,27 @@ app.post('/api/auth/register', authLimiter, async (req, res) => {
         }
 
         // Verificar se usuário já existe
-        const existingUser = users.find(u => u.email === email);
+        const existingUser = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
 
         if (existingUser) {
             return res.status(400).json({ error: 'Email já cadastrado' });
         }
 
         // Criar novo usuário
-        const newUser = {
-            id: users.length + 1,
-            email,
-            password: await bcrypt.hash(password, 10),
-            name,
-            role: 'client',
-            role_id: 3
-        };
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const info = db.prepare('INSERT INTO users (email, password, name, role, role_id) VALUES (?, ?, ?, ?, ?)')
+            .run(email, hashedPassword, name, 'client', 3);
 
-        users.push(newUser);
+        const userId = info.lastInsertRowid;
 
         // Gerar token
         const token = jwt.sign(
             {
-                id: newUser.id,
-                email: newUser.email,
-                name: newUser.name,
-                role: newUser.role,
-                role_id: newUser.role_id
+                id: userId,
+                email,
+                name,
+                role: 'client',
+                role_id: 3
             },
             JWT_SECRET,
             { expiresIn: '24h' }
@@ -298,11 +267,11 @@ app.post('/api/auth/register', authLimiter, async (req, res) => {
 
         // Retornar dados do usuário (sem senha)
         const userData = {
-            id: newUser.id,
-            email: newUser.email,
-            name: newUser.name,
-            role: newUser.role,
-            role_id: newUser.role_id
+            id: userId,
+            email,
+            name,
+            role: 'client',
+            role_id: 3
         };
 
         return res.status(201).json({
@@ -322,69 +291,21 @@ app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', message: 'API está funcionando' });
 });
 
-// Iniciar servidor
-app.listen(PORT, () => {
-    console.log(`🚀 Servidor de autenticação rodando na porta ${PORT}`);
-    console.log(`📝 Endpoints disponíveis:`);
-    console.log(`   POST /api/login - Login de usuário`);
-    console.log(`   GET  /api/users - Verificar usuário logado`);
-    console.log(`   POST /api/auth/forgot-password - Redefinir senha`);
-    console.log(`   POST /api/auth/register - Criar conta`);
-    console.log(`   GET  /api/health - Health check`);
-    console.log(`   GET  /api/ai/seo/stats - AI SEO Stats`);
-    console.log(`   GET  /api/ai/security/audit - AI Security Audit`);
-    console.log(`\n🔑 Credenciais de demonstração:`);
-    console.log(`   Cliente: cliente@getnexo.com / demo123`);
-});
+// Iniciar servidor apenas se não estiver em teste
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(PORT, () => {
+        console.log(`🚀 Servidor de autenticação rodando na porta ${PORT}`);
+        console.log(`📝 Endpoints disponíveis:`);
+        console.log(`   POST /api/login - Login de usuário`);
+        console.log(`   GET  /api/users - Verificar usuário logado`);
+        console.log(`   POST /api/auth/forgot-password - Redefinir senha`);
+        console.log(`   POST /api/auth/register - Criar conta`);
+        console.log(`   GET  /api/health - Health check`);
+        console.log(`   GET  /api/ai/seo/stats - AI SEO Stats`);
+        console.log(`   GET  /api/ai/security/audit - AI Security Audit`);
+        console.log(`\n🔑 Credenciais de demonstração:`);
+        console.log(`   Cliente: cliente@getnexo.com / demo123`);
+    });
+}
 
-// Mock Tickets Data
-const tickets = [
-    {
-        id: 1,
-        customer_name: 'João Silva',
-        customer_phone: '5511999999999',
-        last_message: 'Olá, gostaria de saber mais sobre os planos.',
-        status: 'open',
-        channel: 'whatsapp',
-        priority: 1,
-        sentiment: 'neutral',
-        created_at: new Date(Date.now() - 1000 * 60 * 5).toISOString(), // 5 min ago
-        assigned_agent_name: 'Maria Atendente'
-    },
-    {
-        id: 2,
-        customer_name: 'Tech Solutions Ltda',
-        customer_phone: '5511988888888',
-        last_message: 'Estou com problemas na integração da API.',
-        status: 'priority',
-        channel: 'telegram',
-        priority: 2,
-        sentiment: 'negative',
-        created_at: new Date(Date.now() - 1000 * 60 * 60).toISOString(), // 1 hour ago
-        assigned_agent_name: 'Carlos Suporte'
-    },
-    {
-        id: 3,
-        customer_name: 'Ana Pereira',
-        customer_phone: '5521977777777',
-        last_message: 'Obrigada pelo atendimento!',
-        status: 'closed',
-        channel: 'instagram',
-        priority: 0,
-        sentiment: 'positive',
-        created_at: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1 day ago
-        assigned_agent_name: 'Maria Atendente'
-    },
-    {
-        id: 4,
-        customer_name: 'Marcos Oliveira',
-        customer_phone: '5531966666666',
-        last_message: 'Aguardando retorno sobre o orçamento.',
-        status: 'waiting',
-        channel: 'whatsapp',
-        priority: 1,
-        sentiment: 'neutral',
-        created_at: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 min ago
-        assigned_agent_name: null
-    }
-];
+module.exports = app;

@@ -18,3 +18,8 @@
 **Vulnerability:** Application lacked `Helmet` (security headers) and `Rate Limiting`, exposing it to clickjacking, detailed recon, and brute-force/DoS attacks.
 **Learning:** Framework defaults (like Express) are optimized for development, not security. Production deployments must explicitly add hardening layers.
 **Prevention:** Standardize on a security middleware stack (Helmet + RateLimit + CORS Strict Mode) for all new services.
+
+## 2024-05-22 - In-Memory User Store vs Database
+**Vulnerability:** The application was using an in-memory array for user authentication in `server.js` while the database had a `users` table. This led to state inconsistencies and potential security bypasses if the server restarted or if data wasn't persisted.
+**Learning:** Hardcoded user credentials in source code are a major security risk and technical debt.
+**Fix Detail:** Refactored `server.js` to query the SQLite database for user credentials using parameterized queries, merging the logic with the new database schema.
