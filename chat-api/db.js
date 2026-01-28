@@ -66,6 +66,7 @@ const initSchema = () => {
       image_url TEXT,
       description TEXT,
       category TEXT,
+      sku TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`,
@@ -122,6 +123,18 @@ const initSchema = () => {
 
   const insertSetting = db.prepare('INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)');
   defaults.forEach(d => insertSetting.run(d[0], d[1]));
+
+  // Migrations
+  try {
+    const productsInfo = db.pragma('table_info(products)');
+    const hasSku = productsInfo.some(col => col.name === 'sku');
+    if (!hasSku) {
+      console.log('Migrating products table: Adding sku column...');
+      db.prepare('ALTER TABLE products ADD COLUMN sku TEXT').run();
+    }
+  } catch (err) {
+    console.error('Migration error:', err);
+  }
 };
 
 initSchema();

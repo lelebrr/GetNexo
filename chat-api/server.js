@@ -17,6 +17,37 @@ if (!JWT_SECRET) {
 app.use(cors());
 app.use(express.json());
 
+// Middleware de Autenticação (aplicado globalmente para rotas /api/, exceto publicas)
+const authMiddleware = (req, res, next) => {
+    // Rotas públicas que não precisam de token
+    const publicRoutes = [
+        '/api/login',
+        '/api/auth/register',
+        '/api/auth/forgot-password',
+        '/api/health'
+    ];
+
+    if (publicRoutes.includes(req.path)) {
+        return next();
+    }
+
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).json({ error: 'Token não fornecido' });
+    }
+
+    try {
+        const token = authHeader.replace('Bearer ', '');
+        const decoded = jwt.verify(token, JWT_SECRET);
+        req.user = decoded;
+        next();
+    } catch (error) {
+        return res.status(401).json({ error: 'Token inválido' });
+    }
+};
+
+app.use(authMiddleware);
+
 // Importar Rotas
 const crmRoutes = require('./routes/crm');
 const loyaltyRoutes = require('./routes/loyalty');
