@@ -144,19 +144,24 @@ const title = "Segurança IA – Monitoramento Autônomo";
   function securityIA() {
     return {
       audit: {
-        threat_level: '--',
-        system_status: '--',
+        threat_level: 'Calculando...',
+        system_status: 'Scanning...',
         active_protections: [],
         recent_events: [],
-        ai_insights: ''
+        ai_insights: 'Aguardando análise da IA...',
+        failed_transactions_24h: 0,
+        new_contacts_1h: 0
       },
       async fetchAudit() {
         try {
           const res = await fetch('/api/ai/security/audit');
-          const data = await res.json();
-          this.audit = data;
+          if (res.ok) {
+            const data = await res.json();
+            this.audit = data;
+          }
         } catch (e) {
           console.error('Erro ao buscar auditoria de segurança:', e);
+          this.audit.ai_insights = 'Falha na conexão com o sistema de monitoramento.';
         }
       },
       init() {

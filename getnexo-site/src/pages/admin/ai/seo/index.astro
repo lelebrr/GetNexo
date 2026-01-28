@@ -151,15 +151,29 @@ const title = "SEO IA – Otimização Autônoma";
     return {
       stats: {
         score: 0,
-        metrics: {},
+        health_status: '--',
+        metrics: {
+            performance: 0,
+            accessibility: 0,
+            best_practices: 0,
+            seo: 0
+        },
         keywords: [],
-        recommendations: []
+        recommendations: [],
+        summary: ''
       },
       async fetchData() {
         try {
           const res = await fetch('/api/ai/seo/stats');
-          const data = await res.json();
-          this.stats = data;
+          if (res.ok) {
+            const data = await res.json();
+            // Ensure metrics exist to prevent undefined errors if backend returns partial data
+            this.stats = {
+                ...this.stats,
+                ...data,
+                metrics: { ...this.stats.metrics, ...(data.metrics || {}) }
+            };
+          }
         } catch (e) {
           console.error('Erro ao buscar stats SEO:', e);
         }
