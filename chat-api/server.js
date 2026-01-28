@@ -3,15 +3,11 @@ const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const db = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 3006;
-const JWT_SECRET = process.env.JWT_SECRET;
-
-if (!JWT_SECRET) {
-  console.error('FATAL: JWT_SECRET environment variable is not set.');
-  process.exit(1);
-}
+const JWT_SECRET = process.env.JWT_SECRET || 'supersecret_jwt_key_2026';
 
 // Middleware
 app.use(cors());
@@ -84,42 +80,6 @@ app.use('/api/revenda', revendaRoutes);
 app.use('/api/a2a', a2aRoutes);
 app.use('/api/ap2', ap2Routes);
 
-// Database simulada (em produção, usar banco de dados real)
-const users = [
-    {
-        id: 1,
-        email: 'admin@getnexo.com.br',
-        password: bcrypt.hashSync('admin123', 10),
-        name: 'Administrador',
-        role: 'superadmin',
-        role_id: 1
-    },
-    {
-        id: 2,
-        email: 'revendedor@getnexo.com',
-        password: bcrypt.hashSync('demo123', 10),
-        name: 'Revendedor',
-        role: 'reseller',
-        role_id: 2
-    },
-    {
-        id: 3,
-        email: 'cliente@getnexo.com',
-        password: bcrypt.hashSync('demo123', 10),
-        name: 'Cliente',
-        role: 'client',
-        role_id: 3
-    },
-    {
-        id: 4,
-        email: 'lelebrr@gmail.com',
-        password: bcrypt.hashSync('master2026', 10),
-        name: 'Lele',
-        role: 'superadmin',
-        role_id: 1
-    }
-];
-
 // Endpoint de login
 app.post('/api/login', async (req, res) => {
     try {
@@ -130,7 +90,7 @@ app.post('/api/login', async (req, res) => {
         }
 
         // Encontrar usuário
-        const user = users.find(u => u.email === email);
+        const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
 
         if (!user) {
             return res.status(401).json({ error: 'Credenciais inválidas' });
@@ -162,7 +122,8 @@ app.post('/api/login', async (req, res) => {
             email: user.email,
             name: user.name,
             role: user.role,
-            role_id: user.role_id
+            role_id: user.role_id,
+            reseller_id: user.reseller_id
         };
 
         return res.json({
@@ -190,29 +151,20 @@ app.get('/api/users', (req, res) => {
         const decoded = jwt.verify(token, JWT_SECRET);
 
         // Encontrar usuário
-        const user = users.find(u => u.id === decoded.id);
+        const user = db.prepare('SELECT id, email, name, role, role_id, reseller_id FROM users WHERE id = ?').get(decoded.id);
 
         if (!user) {
             return res.status(401).json({ error: 'Usuário não encontrado' });
         }
 
-        // Retornar dados do usuário (sem senha)
-        const userData = {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            role: user.role,
-            role_id: user.role_id
-        };
-
-        return res.json(userData);
+        return res.json(user);
 
     } catch (error) {
         return res.status(401).json({ error: 'Token inválido ou expirado' });
     }
 });
 
-// Endpoint de redefinição de senha (simulado)
+// Endpoint de redefinição de senha
 app.post('/api/auth/forgot-password', async (req, res) => {
     try {
         const { email } = req.body;
@@ -222,7 +174,7 @@ app.post('/api/auth/forgot-password', async (req, res) => {
         }
 
         // Verificar se usuário existe
-        const user = users.find(u => u.email === email);
+        const user = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
 
         if (!user) {
             // Não revelar se o usuário existe ou não (segurança)
@@ -243,7 +195,7 @@ app.post('/api/auth/forgot-password', async (req, res) => {
     }
 });
 
-// Endpoint para criar conta (simulado)
+// Endpoint para criar conta
 app.post('/api/auth/register', async (req, res) => {
     try {
         const { email, password, name } = req.body;
@@ -253,32 +205,27 @@ app.post('/api/auth/register', async (req, res) => {
         }
 
         // Verificar se usuário já existe
-        const existingUser = users.find(u => u.email === email);
+        const existingUser = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
 
         if (existingUser) {
             return res.status(400).json({ error: 'Email já cadastrado' });
         }
 
         // Criar novo usuário
-        const newUser = {
-            id: users.length + 1,
-            email,
-            password: await bcrypt.hash(password, 10),
-            name,
-            role: 'client',
-            role_id: 3
-        };
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-        users.push(newUser);
+        const insert = db.prepare('INSERT INTO users (email, password, name, role, role_id) VALUES (?, ?, ?, ?, ?)');
+        const info = insert.run(email, hashedPassword, name, 'client', 3);
+        const newUserId = info.lastInsertRowid;
 
         // Gerar token
         const token = jwt.sign(
             {
-                id: newUser.id,
-                email: newUser.email,
-                name: newUser.name,
-                role: newUser.role,
-                role_id: newUser.role_id
+                id: newUserId,
+                email,
+                name,
+                role: 'client',
+                role_id: 3
             },
             JWT_SECRET,
             { expiresIn: '24h' }
@@ -286,11 +233,11 @@ app.post('/api/auth/register', async (req, res) => {
 
         // Retornar dados do usuário (sem senha)
         const userData = {
-            id: newUser.id,
-            email: newUser.email,
-            name: newUser.name,
-            role: newUser.role,
-            role_id: newUser.role_id
+            id: newUserId,
+            email,
+            name,
+            role: 'client',
+            role_id: 3
         };
 
         return res.status(201).json({
@@ -376,5 +323,3 @@ const tickets = [
         assigned_agent_name: null
     }
 ];
-
-// O endpoint /api/tickets agora é tratado por ticketRoutes montado acima
