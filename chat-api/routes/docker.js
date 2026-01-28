@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { exec } = require('child_process');
+const { execFile } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -17,9 +17,28 @@ let containersCache = {
     CACHE_DURATION: 30000 // 30 segundos
 };
 
+// Validation Helpers
+const isValidName = (name) => /^[a-zA-Z0-9][a-zA-Z0-9_.-]*$/.test(name);
+const isValidImage = (image) => /^[a-zA-Z0-9][a-zA-Z0-9_.-/:]*$/.test(image);
+const isValidPort = (port) => /^\d+(:\d+)?$/.test(port);
+const isValidEnv = (env) => /^[a-zA-Z_][a-zA-Z0-9_]*=.*$/.test(env);
+
 // Função para executar comandos Docker de forma segura
-function executeDockerCommand(command, callback) {
-    exec(command, { timeout: 10000 }, (error, stdout, stderr) => {
+function executeDockerCommand(args, callback) {
+    // execFile executes the file directly without a shell
+    execFile('/usr/bin/docker', args, { timeout: 10000 }, (error, stdout, stderr) => {
+        if (error && error.code === 'ENOENT') {
+             // Fallback if docker is not in /usr/bin
+             execFile('docker', args, { timeout: 10000 }, (err, out, serr) => {
+                 if (err) {
+                    console.error('Erro ao executar comando Docker:', err);
+                    callback(err, null);
+                    return;
+                 }
+                 callback(null, out || serr);
+             });
+             return;
+        }
         if (error) {
             console.error('Erro ao executar comando Docker:', error);
             callback(error, null);
@@ -39,9 +58,10 @@ function getContainers(callback) {
     }
 
     // Comando para listar containers com detalhes
-    const command = `docker ps -a --format '{"id":"{{.ID}}","name":"{{.Names}}","image":"{{.Image}}","status":"{{.Status}}","ports":"{{.Ports}}"}'`;
+    const format = '{"id":"{{.ID}}","name":"{{.Names}}","image":"{{.Image}}","status":"{{.Status}}","ports":"{{.Ports}}"}';
+    const args = ['ps', '-a', '--format', format];
 
-    executeDockerCommand(command, (error, output) => {
+    executeDockerCommand(args, (error, output) => {
         if (error) {
             return callback(error, null);
         }
@@ -113,35 +133,37 @@ router.post('/:action', (req, res) => {
     const { name } = req.body;
 
     if (!name) {
-        return res.status(400).json({
-            error: 'Nome do container é obrigatório'
-        });
+        return res.status(400).json({ error: 'Nome do container é obrigatório' });
     }
 
-    let command = '';
+    if (!isValidName(name)) {
+        return res.status(400).json({ error: 'Nome do container inválido' });
+    }
+
+    let args = [];
 
     switch (action) {
         case 'start':
-            command = `docker start ${name}`;
+            args = ['start', name];
             break;
         case 'stop':
-            command = `docker stop ${name}`;
+            args = ['stop', name];
             break;
         case 'restart':
-            command = `docker restart ${name}`;
+            args = ['restart', name];
             break;
         case 'delete':
-            command = `docker rm -f ${name}`;
+            args = ['rm', '-f', name];
             break;
         case 'scale-up':
             // Implementar lógica de escala (exemplo simples)
-            command = `docker run -d --name ${name}-scaled-${Date.now()} ${name}`;
+            args = ['run', '-d', '--name', `${name}-scaled-${Date.now()}`, name];
             break;
         case 'scale-update':
             // Atualizar configurações de escala (placeholder)
             return res.json({ message: 'Configurações de escala atualizadas' });
         case 'logs':
-            command = `docker logs --tail 100 ${name}`;
+            args = ['logs', '--tail', '100', name];
             break;
         default:
             return res.status(400).json({
@@ -150,7 +172,7 @@ router.post('/:action', (req, res) => {
             });
     }
 
-    executeDockerCommand(command, (error, output) => {
+    executeDockerCommand(args, (error, output) => {
         if (error) {
             console.error(`Erro ao executar ${action}:`, error);
             return res.status(500).json({
@@ -175,10 +197,15 @@ router.post('/:action', (req, res) => {
 router.get('/stats/:name', (req, res) => {
     const { name } = req.params;
 
-    // Comando para obter estatísticas
-    const command = `docker stats --no-stream --format '{"container":"{{.Container}}","cpu":"{{.CPUPerc}}","memory":"{{.MemUsage}}","memoryPerc":"{{.MemPerc}}","netIO":"{{.NetIO}}","blockIO":"{{.BlockIO}}"}' ${name}`;
+    if (!isValidName(name)) {
+        return res.status(400).json({ error: 'Nome do container inválido' });
+    }
 
-    executeDockerCommand(command, (error, output) => {
+    // Comando para obter estatísticas
+    const format = '{"container":"{{.Container}}","cpu":"{{.CPUPerc}}","memory":"{{.MemUsage}}","memoryPerc":"{{.MemPerc}}","netIO":"{{.NetIO}}","blockIO":"{{.BlockIO}}"}';
+    const args = ['stats', '--no-stream', '--format', format, name];
+
+    executeDockerCommand(args, (error, output) => {
         if (error) {
             console.error('Erro ao obter estatísticas:', error);
             return res.status(500).json({
@@ -207,22 +234,39 @@ router.post('/deploy', (req, res) => {
         });
     }
 
-    // Construir comando de deploy
-    let command = `docker run -d --name ${name} ${image}`;
+    if (!isValidName(name)) {
+        return res.status(400).json({ error: 'Nome do container inválido' });
+    }
+    if (!isValidImage(image)) {
+        return res.status(400).json({ error: 'Nome da imagem inválido' });
+    }
+
+    // Construir argumentos de deploy
+    let args = ['run', '-d', '--name', name];
 
     if (ports && ports.length > 0) {
-        ports.forEach(port => {
-            command += ` -p ${port}`;
-        });
+        for (const port of ports) {
+            if (isValidPort(port)) {
+                args.push('-p', port);
+            } else {
+                 return res.status(400).json({ error: `Porta inválida: ${port}` });
+            }
+        }
     }
 
     if (env && env.length > 0) {
-        env.forEach(envVar => {
-            command += ` -e ${envVar}`;
-        });
+        for (const envVar of env) {
+             if (isValidEnv(envVar)) {
+                args.push('-e', envVar);
+             } else {
+                return res.status(400).json({ error: `Variável de ambiente inválida: ${envVar}` });
+             }
+        }
     }
 
-    executeDockerCommand(command, (error, output) => {
+    args.push(image);
+
+    executeDockerCommand(args, (error, output) => {
         if (error) {
             console.error('Erro ao fazer deploy:', error);
             return res.status(500).json({
@@ -245,9 +289,13 @@ router.get('/logs/:name', (req, res) => {
     const { name } = req.params;
     const { tail = 100 } = req.query;
 
-    const command = `docker logs --tail ${tail} ${name}`;
+    if (!isValidName(name)) {
+        return res.status(400).json({ error: 'Nome do container inválido' });
+    }
 
-    executeDockerCommand(command, (error, output) => {
+    const args = ['logs', '--tail', tail.toString(), name];
+
+    executeDockerCommand(args, (error, output) => {
         if (error) {
             console.error('Erro ao obter logs:', error);
             return res.status(500).json({

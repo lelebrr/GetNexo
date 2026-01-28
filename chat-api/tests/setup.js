@@ -50,7 +50,7 @@ db.prepare('INSERT OR IGNORE INTO roles (name, permissions) VALUES (?, ?)').run(
 db.prepare('INSERT OR IGNORE INTO roles (name, permissions) VALUES (?, ?)').run('User', 'basic');
 
 // Create test admin user (force insert for tests)
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const adminPass = bcrypt.hashSync('test123', 10);
 
 // Delete existing user first to ensure clean state
