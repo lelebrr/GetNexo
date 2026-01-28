@@ -16,24 +16,26 @@ const AdminPanel = () => {
 
     const MenuItem = ({ icon, label, id, subs = [] }) => (
         <div className="mb-2">
-            <div
+            <button
+                aria-expanded={activeSection === id}
+                aria-controls={`submenu-${id}`}
                 onClick={() => { setActiveSection(id); setSubSection(''); }}
-                className={`flex items-center gap-3 p-2 rounded cursor-pointer transition-colors ${activeSection === id ? 'bg-neon-blue/20 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
+                className={`w-full flex items-center gap-3 p-2 rounded cursor-pointer transition-colors text-left ${activeSection === id ? 'bg-neon-blue/20 text-white font-bold' : 'text-gray-400 hover:bg-gray-800'}`}
             >
                 <span className="text-lg">{icon}</span>
                 <span>{label}</span>
                 {subs.length > 0 && <span className="ml-auto text-xs">▼</span>}
-            </div>
+            </button>
             {activeSection === id && subs.length > 0 && (
-                <div className="ml-9 border-l border-gray-700 pl-4 space-y-2 mt-1">
+                <div id={`submenu-${id}`} className="ml-9 border-l border-gray-700 pl-4 space-y-2 mt-1" role="group">
                     {subs.map(s => (
-                        <div
+                        <button
                             key={s.id}
                             onClick={(e) => { e.stopPropagation(); setSubSection(s.id); }}
-                            className={`text-sm cursor-pointer hover:text-white ${subSection === s.id ? 'text-neon-blue' : 'text-gray-500'}`}
+                            className={`block w-full text-left text-sm cursor-pointer hover:text-white transition-colors ${subSection === s.id ? 'text-neon-blue font-medium' : 'text-gray-500'}`}
                         >
                             {s.label}
-                        </div>
+                        </button>
                     ))}
                 </div>
             )}
@@ -41,7 +43,7 @@ const AdminPanel = () => {
     );
 
     return (
-        <div className="flex h-[80vh] bg-black/40 rounded-2xl border border-gray-800 overflow-hidden">
+        <div className="flex h-[80vh] glass-panel overflow-hidden">
 
             {/* Sidebar (Zendesk Style) */}
             <div className="w-64 bg-gray-900/50 p-4 border-r border-gray-800 flex flex-col overflow-y-auto custom-scrollbar">

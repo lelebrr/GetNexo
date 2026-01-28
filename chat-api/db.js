@@ -262,7 +262,7 @@ const initSchema = () => {
       insertCoupon.run('REV50', 'fixed', 50, '2026-06-01', 1);
   }
 
-  // Migrations (from Main)
+  // Migrations
   try {
     const productsInfo = db.pragma('table_info(products)');
     const hasSku = productsInfo.some(col => col.name === 'sku');
