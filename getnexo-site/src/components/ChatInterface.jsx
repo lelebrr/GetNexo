@@ -15,6 +15,7 @@ const ChatInterface = () => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(true);
+    const [isSending, setIsSending] = useState(false);
 
     // New State for "Pro" Features
     const [isNote, setIsNote] = useState(false);
@@ -124,6 +125,7 @@ const ChatInterface = () => {
         e.preventDefault();
         if (!input.trim() || !activeContact) return;
 
+        setIsSending(true);
         try {
             // Support Internal Notes
             const endpoint = `${API_URL}/send`;
@@ -136,6 +138,7 @@ const ChatInterface = () => {
             setIsNote(false); // Reset to normal mode
             setShowMacros(false);
         } catch (err) { alert('Failed to send'); }
+        finally { setIsSending(false); }
     };
 
     // Drag and Drop (Kanban Stage Update) Mock
@@ -192,7 +195,7 @@ const ChatInterface = () => {
                         <button onClick={() => setInboxTab('resolved')} className={`${inboxTab === 'resolved' ? 'text-green-500 font-bold border-b-2 border-green-500' : 'hover:text-white'}`}>Resolvidos</button>
                     </div>
 
-                    <input placeholder="Buscar..." className="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-white outline-none focus:border-neon-blue" />
+                    <input placeholder="Buscar..." aria-label="Buscar contatos" className="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-white outline-none focus:border-neon-blue" />
                 </div>
                 <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2">
                     {loading ? <div className="text-center text-gray-500 mt-10">Carregando...</div> : contacts.map(c => (
@@ -318,20 +321,34 @@ const ChatInterface = () => {
                                     <input
                                         className={`w-full bg-gray-900/50 border p-4 pr-12 rounded-2xl text-white outline-none transition-all ${isNote ? 'border-yellow-600 focus:shadow-[0_0_15px_rgba(234,179,8,0.2)]' : 'border-gray-800 focus:border-neon-blue focus:shadow-[0_0_15px_rgba(0,212,255,0.1)]'}`}
                                         placeholder={isNote ? "Escreva uma nota interna (invisível para o cliente)..." : "Digite sua mensagem..."}
+                                        aria-label="Digite sua mensagem"
                                         value={input}
                                         onChange={e => setInput(e.target.value)}
                                     />
                                     <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-2">
-                                        <button type="button" className="text-gray-500 hover:text-white transition-colors">📎</button>
-                                        <button type="button" className="text-gray-500 hover:text-white transition-colors">😊</button>
+                                        <button type="button" aria-label="Anexar arquivo" className="text-gray-500 hover:text-white transition-colors">📎</button>
+                                        <button type="button" aria-label="Inserir emoji" className="text-gray-500 hover:text-white transition-colors">😊</button>
                                     </div>
                                 </div>
                                 <button
                                     type="submit"
-                                    className={`px-8 rounded-2xl font-bold transition-all transform active:scale-95 flex items-center gap-2 ${isNote ? 'bg-yellow-600 text-black hover:bg-yellow-500 shadow-[0_4px_15px_rgba(234,179,8,0.3)]' : 'bg-neon-blue text-black hover:bg-white shadow-[0_4px_15px_rgba(0,212,255,0.3)]'}`}
+                                    disabled={isSending}
+                                    className={`px-8 rounded-2xl font-bold transition-all transform active:scale-95 flex items-center gap-2 ${isNote ? 'bg-yellow-600 text-black hover:bg-yellow-500 shadow-[0_4px_15px_rgba(234,179,8,0.3)]' : 'bg-neon-blue text-black hover:bg-white shadow-[0_4px_15px_rgba(0,212,255,0.3)]'} ${isSending ? 'opacity-75 cursor-not-allowed' : ''}`}
                                 >
-                                    {isNote ? 'SALVAR' : 'ENVIAR'}
-                                    <span className="text-lg">🚀</span>
+                                    {isSending ? (
+                                        <div className="flex items-center gap-2">
+                                            <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            ENVIANDO
+                                        </div>
+                                    ) : (
+                                        <>
+                                            {isNote ? 'SALVAR' : 'ENVIAR'}
+                                            <span className="text-lg">🚀</span>
+                                        </>
+                                    )}
                                 </button>
                             </form>
                         </div>
@@ -353,7 +370,7 @@ const ChatInterface = () => {
                 <div className="w-1/4 flex flex-col glass-panel rounded-2xl border border-gray-800 animate-slide-in-right">
                     <div className="p-4 border-b border-gray-800 flex justify-between items-center">
                         <h4 className="font-bold text-gray-300">Detalhes do Lead</h4>
-                        <button onClick={() => setShowRightSidebar(false)} className="text-gray-500 hover:text-white">✕</button>
+                        <button onClick={() => setShowRightSidebar(false)} aria-label="Fechar detalhes do contato" className="text-gray-500 hover:text-white">✕</button>
                     </div>
                     <div className="p-6 flex flex-col items-center border-b border-gray-800">
                         <div className="w-20 h-20 rounded-full bg-gradient-to-br from-neon-blue to-purple-600 flex items-center justify-center text-white text-3xl font-black mb-4 shadow-[0_0_20px_rgba(0,212,255,0.4)]">
