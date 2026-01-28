@@ -114,6 +114,14 @@ Baseado na análise dos documentos `USER_FEATURES.md` e `PRE_SUPPORT_MODAL.md`, 
 - ✅ **Backup e recovery** automático
 - ✅ **Monitoramento de SLA** e uptime
 
+### 🤝 13. Sistema de Revenda (Real & DB)
+- ✅ **Dashboard de Revenda** com métricas reais (SQLite)
+- ✅ **Gestão de Clientes** com cálculo de comissão dinâmico
+- ✅ **Sistema Financeiro** com histórico e solicitação de saque
+- ✅ **Materiais de Marketing** gerenciados via banco de dados
+- ✅ **API Restful** completa (`/api/revenda`) protegida via JWT
+- ✅ **Autenticação** real com hash de senha e tokens
+
 ## 🎤 PreSupportModal v2.0 - Destaque Especial
 
 ### ✅ Funcionalidades Implementadas
