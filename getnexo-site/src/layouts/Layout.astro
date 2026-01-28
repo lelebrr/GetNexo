@@ -523,18 +523,19 @@ const clientId = Astro.locals.clientId || 'default';
   <script nonce={Astro.locals.nonce} define:vars={{ trustedTypesPolicy }}>
     (function() {
       try {
-        const bgType = localStorage.getItem('getnexo-bg-type') || 'animated';
+        var bgType = localStorage.getItem('getnexo-bg-type') || 'animated';
         document.documentElement.setAttribute('data-bg-type', bgType);
-        window.GETNEXO_CONFIG = {
-          bgType,
-          trustedTypesPolicy: trustedTypesPolicy
-        };
+        
+        // Use explicit assignment to avoid SyntaxError with object literals if transpilation varies
+        window.GETNEXO_CONFIG = {};
+        window.GETNEXO_CONFIG.bgType = bgType;
+        window.GETNEXO_CONFIG.trustedTypesPolicy = trustedTypesPolicy;
         
         // Force unregister service workers
         if ('serviceWorker' in navigator) {
           navigator.serviceWorker.getRegistrations().then(function(registrations) {
-            for(let registration of registrations) {
-              registration.unregister();
+            for(var i = 0; i < registrations.length; i++) {
+              registrations[i].unregister();
             }
           });
         }
