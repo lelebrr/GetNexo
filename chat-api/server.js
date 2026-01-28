@@ -31,6 +31,8 @@ const automationRoutes = require('./routes/automations');
 const settingsRoutes = require('./routes/settings');
 const aiRoutes = require('./routes/ai');
 const revendaRoutes = require('./routes/revenda');
+const a2aRoutes = require('./routes/a2a');
+const ap2Routes = require('./routes/ap2');
 
 // Montar Rotas
 app.use('/api/crm', crmRoutes);
@@ -46,6 +48,8 @@ app.use('/api/automations', automationRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/revenda', revendaRoutes);
+app.use('/api/a2a', a2aRoutes);
+app.use('/api/ap2', ap2Routes);
 
 // Database simulada (em produção, usar banco de dados real)
 const users = [
