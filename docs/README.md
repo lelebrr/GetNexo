@@ -5,7 +5,7 @@
 ![Documentation](https://img.shields.io/badge/Documentation-Up%20to%20Date-brightgreen?style=for-the-badge&logo=read-the-docs&logoColor=white)
 ![Coverage](https://img.shields.io/badge/Coverage-98%25-success?style=for-the-badge)
 ![Language](https://img.shields.io/badge/Language-Portuguese%20%7C%20English-blue?style=for-the-badge)
-![Last Updated](https://img.shields.io/badge/Last%20Updated-Oct%202023%20(v1.4.1)-orange?style=for-the-badge)
+![Last Updated](https://img.shields.io/badge/Last%20Updated-Jan%202026%20(v1.4.1)-orange?style=for-the-badge)
 ![Version](https://img.shields.io/badge/Version-1.4.1%20Enterprise-blue?style=for-the-badge)
 
 </div>
@@ -379,4 +379,4 @@ A **GetNexo Enterprise v1.4.1** representa o estado da arte em plataformas de IA
 
 ---
 
-*Última atualização: Outubro 2023 - v1.4.1 Enterprise*
+*Última atualização: Janeiro 2026 - v1.4.1 Enterprise*
