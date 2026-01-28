@@ -3,20 +3,13 @@ const Database = require('better-sqlite3');
 const fs = require('fs');
 const path = require('path');
 
-// Create test database
-const testDbPath = path.join(__dirname, '..', 'test.db');
-
-// Remove existing test database
-if (fs.existsSync(testDbPath)) {
-    fs.unlinkSync(testDbPath);
-}
-
-// Create test database with same schema
-const db = new Database(testDbPath);
-global.testDb = db;
-
-// Set NODE_ENV to test to prevent database initialization
+// Set NODE_ENV to test
 process.env.NODE_ENV = 'test';
+// Use in-memory DB for tests to avoid I/O conflicts and ensure isolation
+process.env.DB_PATH = ':memory:';
+
+const db = new Database(':memory:');
+global.testDb = db;
 
 // Initialize schema with basic tables
 const tables = [
@@ -50,7 +43,7 @@ db.prepare('INSERT OR IGNORE INTO roles (name, permissions) VALUES (?, ?)').run(
 db.prepare('INSERT OR IGNORE INTO roles (name, permissions) VALUES (?, ?)').run('User', 'basic');
 
 // Create test admin user (force insert for tests)
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const adminPass = bcrypt.hashSync('test123', 10);
 
 // Delete existing user first to ensure clean state
@@ -69,8 +62,5 @@ afterEach(() => {
 afterAll(() => {
     if (db) {
         db.close();
-    }
-    if (fs.existsSync(testDbPath)) {
-        fs.unlinkSync(testDbPath);
     }
 });

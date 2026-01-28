@@ -2,10 +2,9 @@ const SentimentAnalysisService = require('../services/SentimentAnalysisService')
 const SentimentAnalysis = require('../models/SentimentAnalysis');
 
 describe('SentimentAnalysisService', () => {
-    let sentimentService;
+    let sentimentService = SentimentAnalysisService;
 
     beforeEach(() => {
-        sentimentService = new SentimentAnalysisService();
         // Mock console methods to avoid test noise
         jest.spyOn(console, 'error').mockImplementation(() => { });
         jest.spyOn(console, 'log').mockImplementation(() => { });

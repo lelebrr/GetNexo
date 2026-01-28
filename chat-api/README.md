@@ -17,8 +17,15 @@ npm install
 ```
 
 2. **Configurar variáveis de ambiente:**
-   - O arquivo `.env` já está configurado com valores padrão
-   - Para produção, edite o arquivo `.env` com suas credenciais
+   - Copie o `.env.example` para `.env` se necessário.
+   - **IMPORTANTE:** A API **não iniciará** se `JWT_SECRET` não estiver definido.
+
+   Exemplo de `.env`:
+   ```env
+   PORT=3006
+   JWT_SECRET=sua_chave_secreta_super_segura_aqui
+   CORS_ORIGIN=http://localhost:4321,https://seu-dominio.com.br
+   ```
 
 3. **Iniciar o servidor:**
 ```bash
@@ -30,6 +37,28 @@ npm start
 ```
 
 O servidor rodará em `http://localhost:3006`
+
+## 🛡️ Segurança Implementada
+
+Esta API implementa diversas camadas de proteção ("Defense in Depth"):
+
+1.  **Autenticação JWT Estrita:**
+    -   Todas as rotas sensíveis (`/api/crm`, `/api/tickets`, etc.) exigem um token JWT válido no header `Authorization: Bearer <token>`.
+    -   Middleware verifica a assinatura do token usando `jsonwebtoken`.
+
+2.  **Hardening de HTTP:**
+    -   **Helmet:** Adiciona headers de segurança (HSTS, X-Frame-Options, X-Content-Type-Options, etc.).
+    -   **CORS Estrito:** Permite apenas origens definidas em `CORS_ORIGIN`.
+
+3.  **Rate Limiting:**
+    -   **Login:** Limite estrito de 10 tentativas por hora por IP para prevenir Brute Force.
+    -   **API Geral:** Limite de 100 requisições a cada 15 minutos por IP para prevenir DoS.
+
+4.  **Proteção contra RCE (Docker):**
+    -   Endpoints de gerenciamento Docker utilizam `execFile` (sem shell) e validação estrita (Regex allowlists) para prevenir injeção de comandos.
+
+5.  **Gerenciamento de Segredos:**
+    -   Aplicação falha imediatamente (Fail Fast) se `JWT_SECRET` não estiver configurado.
 
 ## 📡 Endpoints Disponíveis
 
@@ -61,74 +90,12 @@ Realiza login de usuário.
 }
 ```
 
-**Response (Erro):**
-```json
-{
-  "error": "Credenciais inválidas"
-}
-```
-
 #### GET /api/users
 Verifica se o usuário está autenticado (requer token).
 
 **Headers:**
 ```
 Authorization: Bearer <token>
-```
-
-**Response (Sucesso):**
-```json
-{
-  "id": 1,
-  "email": "admin@getnexo.com.br",
-  "name": "Administrador",
-  "role": "superadmin",
-  "role_id": 1
-}
-```
-
-#### POST /api/auth/forgot-password
-Solicita redefinição de senha.
-
-**Request:**
-```json
-{
-  "email": "admin@getnexo.com.br"
-}
-```
-
-**Response (Sucesso):**
-```json
-{
-  "message": "Link de redefinição enviado! Verifique seu email."
-}
-```
-
-#### POST /api/auth/register
-Cria nova conta de usuário.
-
-**Request:**
-```json
-{
-  "email": "novo@getnexo.com.br",
-  "password": "senha123",
-  "name": "Novo Usuário"
-}
-```
-
-**Response (Sucesso):**
-```json
-{
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "user": {
-    "id": 5,
-    "email": "novo@getnexo.com.br",
-    "name": "Novo Usuário",
-    "role": "client",
-    "role_id": 3
-  },
-  "message": "Conta criada com sucesso"
-}
 ```
 
 ### Utilitários
@@ -144,6 +111,15 @@ Verifica se a API está funcionando.
 }
 ```
 
+## 🧪 Testes
+
+Para rodar a suíte de testes (incluindo verificações de segurança):
+
+```bash
+cd chat-api
+npm test
+```
+
 ## 🔐 Credenciais de Demonstração
 
 | Tipo | Email | Senha | Role |
@@ -151,42 +127,18 @@ Verifica se a API está funcionando.
 | Admin | `admin@getnexo.com.br` | `admin123` | superadmin |
 | Revendedor | `revendedor@getnexo.com` | `demo123` | reseller |
 | Cliente | `cliente@getnexo.com` | `demo123` | client |
-| Super Admin | `lelebrr@gmail.com` | `master2026` | superadmin |
-
-## 🛡️ Segurança
-
-- **JWT Tokens**: Tokens expiram em 24 horas
-- **Senhas**: Armazenadas com bcrypt (hash seguro)
-- **CORS**: Configurado para permitir apenas origens específicas
-- **HTTPS**: Recomendado para produção
 
 ## 📁 Estrutura do Projeto
 
 ```
 chat-api/
-├── server.js          # Servidor principal
+├── server.js          # Servidor principal (Configuração de Segurança)
+├── middleware/
+│   └── auth.js        # Middleware de Autenticação JWT
+├── routes/
+│   ├── docker.js      # Gerenciamento Seguro de Containers
+│   └── ...
+├── tests/             # Testes de Unidade e Segurança
 ├── package.json       # Dependências
-├── .env              # Variáveis de ambiente
-└── README.md         # Documentação
+└── README.md          # Documentação
 ```
-
-## 🚨 Em Produção
-
-1. **Use banco de dados real** (PostgreSQL, MongoDB, etc.)
-2. **Configure CORS** para permitir apenas seu domínio
-3. **Use variáveis de ambiente seguras**
-4. **Configure HTTPS**
-5. **Implemente rate limiting**
-6. **Adicione validação de entrada**
-7. **Configure logs de segurança**
-
-## 🐛 Debug
-
-Para ver logs detalhados:
-```bash
-DEBUG=* npm run dev
-```
-
-## 📞 Suporte
-
-Para dúvidas ou problemas, entre em contato com o suporte do GetNexo.
