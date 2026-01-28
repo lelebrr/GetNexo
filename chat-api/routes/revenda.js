@@ -1,62 +1,131 @@
 const express = require('express');
 const router = express.Router();
+const db = require('../db');
+const jwtAuth = require('../middleware/jwtAuth');
 
-// Mock Statistics per Reseller
+router.use(jwtAuth);
+
+const formatCurrency = (value) => {
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value || 0);
+};
+
+// Statistics per Reseller
 router.get('/stats', (req, res) => {
-    res.json({
-        total_clients: 42,
-        active_subscriptions: 38,
-        monthly_revenue: 'R$ 12.450,00',
-        commissions_pending: 'R$ 2.490,00',
-        growth_rate: '+12.5%',
-        code: 'NEXO-REV-2026',
-        clientsCount: 42,
-        recent_activity: [
-            { id: 1, type: 'new_client', message: 'Novo cliente "Loja Fashion" cadastrado.', time: 'há 2 horas' },
-            { id: 2, type: 'payment', message: 'Comissão de R$ 450,00 aprovada.', time: 'há 5 horas' },
-            { id: 3, type: 'alert', message: 'Assinatura de "Auto Parts" expirando em 3 dias.', time: 'há 1 dia' }
-        ]
-    });
-});
+    const userId = req.userId;
 
-// Mock Clients List
-router.get('/clientes', (req, res) => {
-    const clients = [
-        { id: 1, nome: 'João Silva', dominio: 'joaosilva.com', plataforma: 'woocommerce', status: 'active', receita: 'R$ 299,00', comissao: 'R$ 59,80', data: '20/01/2026' },
-        { id: 2, nome: 'Tech Solutions Ltda', dominio: 'techsolutions.com.br', plataforma: 'shopify', status: 'active', receita: 'R$ 599,00', comissao: 'R$ 119,80', data: '15/01/2026' },
-        { id: 3, nome: 'Mercado Local', dominio: 'mercadolocal.net', plataforma: 'cartpanda', status: 'trial', receita: 'R$ 0,00', comissao: 'R$ 0,00', data: '25/01/2026' },
-        { id: 4, nome: 'Ana Doces', dominio: 'anadoces.com', plataforma: 'nuvemshop', status: 'inactive', receita: 'R$ 299,00', comissao: 'R$ 0,00', data: '05/01/2026' },
-        { id: 5, nome: 'Barbearia VIP', dominio: 'barbeariavip.com.br', plataforma: 'yampi', status: 'active', receita: 'R$ 199,00', comissao: 'R$ 39,80', data: '18/01/2026' }
-    ];
+    // Get Reseller Profile
+    const profile = db.prepare('SELECT * FROM reseller_profiles WHERE user_id = ?').get(userId);
 
-    const { status } = req.query;
-    if (status === 'active') {
-        return res.json(clients.filter(c => c.status === 'active'));
-    } else if (status === 'inactive') {
-        return res.json(clients.filter(c => c.status === 'inactive' || c.status === 'trial'));
+    if (!profile) {
+        // If no profile, try to create one or return defaults
+        return res.json({
+            total_clients: 0,
+            active_subscriptions: 0,
+            monthly_revenue: formatCurrency(0),
+            commissions_pending: formatCurrency(0),
+            growth_rate: '+0%',
+            code: 'N/A',
+            clientsCount: 0,
+            recent_activity: []
+        });
     }
 
-    res.json(clients);
-});
+    // Get Clients Count
+    const clientsCount = db.prepare('SELECT count(*) as count FROM users WHERE reseller_id = ?').get(userId).count;
 
-// Mock Financial Data
-router.get('/financeiro', (req, res) => {
+    // Get Commissions
+    const pendingCommissions = db.prepare("SELECT sum(amount) as total FROM commissions WHERE reseller_id = ? AND status = 'pending'").get(userId).total || 0;
+
+    // Monthly Revenue (Assuming it's based on commissions / rate)
+    const currentMonthStart = new Date();
+    currentMonthStart.setDate(1);
+    currentMonthStart.setHours(0,0,0,0);
+    const monthStartStr = currentMonthStart.toISOString();
+
+    const monthlyCommissions = db.prepare("SELECT sum(amount) as total FROM commissions WHERE reseller_id = ? AND created_at >= ?").get(userId, monthStartStr).total || 0;
+
+    const revenue = profile.commission_rate > 0 ? (monthlyCommissions / profile.commission_rate) : 0;
+
+    // Recent Activity
+    const recentActivity = db.prepare(`
+        SELECT 'commission' as type, description as message, created_at as time
+        FROM commissions
+        WHERE reseller_id = ?
+        ORDER BY created_at DESC
+        LIMIT 5
+    `).all(userId);
+
     res.json({
-        balance: 'R$ 3.840,00',
-        next_payout: '05/02/2026',
-        history: [
-            { id: 1, type: 'commission', description: 'Comissão Mensal - Janeiro', amount: 'R$ 1.250,00', status: 'paid', date: '05/01/2026' },
-            { id: 2, type: 'referral', description: 'Indicação - Tech Solutions', amount: 'R$ 100,00', status: 'paid', date: '15/01/2026' },
-            { id: 3, type: 'commission', description: 'Comissão Mensal - Dezembro', amount: 'R$ 1.100,00', status: 'paid', date: '05/12/2025' }
-        ],
-        statements: [
-            { month: 'Janeiro 2026', total: 'R$ 1.350,00', clients: 42, url: '#' },
-            { month: 'Dezembro 2025', total: 'R$ 1.100,00', clients: 38, url: '#' }
-        ]
+        total_clients: clientsCount,
+        active_subscriptions: clientsCount, // Assuming all active for now
+        monthly_revenue: formatCurrency(revenue), // Sales volume
+        commissions_pending: formatCurrency(pendingCommissions),
+        growth_rate: '+0%', // Dynamic calculation requires history
+        code: profile.referral_code,
+        clientsCount: clientsCount,
+        recent_activity: recentActivity.map(a => ({
+            ...a,
+            time: new Date(a.time).toLocaleString('pt-BR')
+        }))
     });
 });
 
-// Mock Marketing Assets
+// Clients List
+router.get('/clientes', (req, res) => {
+    const userId = req.userId;
+
+    const clients = db.prepare(`
+        SELECT u.id, u.name as nome, u.email, u.created_at as data
+        FROM users u
+        WHERE u.reseller_id = ?
+    `).all(userId);
+
+    const enrichedClients = clients.map(c => {
+        const totalCommission = db.prepare('SELECT sum(amount) as total FROM commissions WHERE source_user_id = ?').get(c.id).total || 0;
+        return {
+            id: c.id,
+            nome: c.nome,
+            email: c.email,
+            dominio: 'N/A', // Not stored yet
+            plano: 'Standard',
+            status: 'active',
+            receita: formatCurrency(totalCommission * 10), // Mock revenue
+            comissao: formatCurrency(totalCommission),
+            data: new Date(c.data).toLocaleDateString('pt-BR')
+        };
+    });
+
+    res.json(enrichedClients);
+});
+
+// Financial Data
+router.get('/financeiro', (req, res) => {
+    const userId = req.userId;
+    const profile = db.prepare('SELECT balance FROM reseller_profiles WHERE user_id = ?').get(userId);
+
+    const history = db.prepare(`
+        SELECT description, created_at as date, amount, status
+        FROM commissions
+        WHERE reseller_id = ?
+        ORDER BY created_at DESC
+    `).all(userId);
+
+    const formattedHistory = history.map(h => ({
+        description: h.description,
+        date: new Date(h.date).toLocaleDateString('pt-BR'),
+        amount: formatCurrency(h.amount),
+        status: h.status
+    }));
+
+    res.json({
+        balance: formatCurrency(profile ? profile.balance : 0),
+        next_payout: '15/02/2026', // Static for now
+        history: formattedHistory,
+        statements: []
+    });
+});
+
+// Marketing (Static)
 router.get('/marketing', (req, res) => {
     res.json({
         links: [
@@ -76,41 +145,53 @@ router.get('/marketing', (req, res) => {
     });
 });
 
-// Mock Client Creation
-router.post('/clientes', (req, res) => {
-    const { nome, domain } = req.body;
-    if (!nome || !domain) {
-        return res.status(400).json({ error: 'Nome e domínio são obrigatórios' });
+// Client Creation (Reseller creates client)
+router.post('/clientes', async (req, res) => {
+    const { nome, email, password } = req.body;
+    const userId = req.userId;
+
+    if (!nome || !email) {
+        return res.status(400).json({ error: 'Nome e email são obrigatórios' });
     }
-    res.json({ ok: true, message: 'Cliente criado com sucesso e plugin enviado.' });
+
+    try {
+        const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
+        if (existing) {
+            return res.status(400).json({ error: 'Email já cadastrado' });
+        }
+
+        // Default password if not provided
+        const pass = password || 'mudar123';
+        const bcrypt = require('bcryptjs');
+        const hash = await bcrypt.hash(pass, 10);
+
+        const insert = db.prepare('INSERT INTO users (email, password, name, role, role_id, reseller_id) VALUES (?, ?, ?, ?, ?, ?)');
+        const result = insert.run(email, hash, nome, 'client', 3, userId);
+
+        res.json({ ok: true, message: 'Cliente criado com sucesso.', clientId: result.lastInsertRowid });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: 'Erro ao criar cliente' });
+    }
 });
 
-// Mock Team Management
-router.get('/equipe', (req, res) => {
-    res.json([
-        { id: 1, nome: 'Ana Silva', email: 'ana@getnexo.com', permissao: 'EDITOR' },
-        { id: 2, nome: 'Carlos Souza', email: 'carlos@getnexo.com', permissao: 'VISUAL' }
-    ]);
-});
-
-router.post('/equipe', (req, res) => {
-    res.json({ ok: true });
-});
-
-router.delete('/equipe', (req, res) => {
-    res.json({ ok: true });
-});
-
-router.patch('/equipe', (req, res) => {
-    res.json({ ok: true });
-});
-
-// Mock Codes
+// Codes
 router.get('/codigos', (req, res) => {
-    res.json([
-        { id: 1, codigo: 'NEXO20', desconto: '20%', validade: '31/12/2026', status: 'ATIVO' },
-        { id: 2, codigo: 'REV50', desconto: '50% Off 1º Mês', validade: '01/06/2026', status: 'ATIVO' }
-    ]);
+    // Check if coupons table exists and use it, otherwise return mock/empty
+    try {
+        const codes = db.prepare('SELECT * FROM coupons').all();
+        // format for frontend
+        const formatted = codes.map(c => ({
+            id: c.id,
+            codigo: c.code,
+            desconto: c.discount_type === 'percentage' ? `${c.discount_value}%` : `R$ ${c.discount_value}`,
+            validade: c.expires_at ? new Date(c.expires_at).toLocaleDateString('pt-BR') : 'Indeterminado',
+            status: c.active ? 'ATIVO' : 'INATIVO'
+        }));
+        res.json(formatted);
+    } catch (e) {
+        res.json([]);
+    }
 });
 
 module.exports = router;
