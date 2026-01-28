@@ -9,3 +9,7 @@
 ## 2025-02-27 - ChatInterface Layout
 **Learning:** Hardcoded height (`h-[80vh]`) in `ChatInterface` causes layout overflow when embedded in a flex/grid container with calculated height (`calc(100vh - 280px)`).
 **Action:** Use `h-full` to respect the parent container's constraints.
+
+## 2025-02-27 - Dual Implementation of Store
+**Learning:** The "Store" feature has two implementations: `CatalogManager.jsx` (used inside `OmniChatApp` tabs) and `loja.astro` (used for the sidebar route). Optimizing one does not affect the other.
+**Action:** Verify which component is being targeted by checking the navigation context (Tab vs Sidebar).
