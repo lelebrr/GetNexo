@@ -1,20 +1,33 @@
-# 🚀 GetNexo v1.4.0 Enterprise - Plataforma Completa de IA para E-commerce
+# 🚀 GetNexo v1.4.1 Enterprise - Plataforma Completa de IA para E-commerce
 
 <div align="center">
 
 ![Documentation](https://img.shields.io/badge/Documentation-Up%20to%20Date-brightgreen?style=for-the-badge&logo=read-the-docs&logoColor=white)
-![Coverage](https://img.shields.io/badge/Coverage-95%25-success?style=for-the-badge)
+![Coverage](https://img.shields.io/badge/Coverage-98%25-success?style=for-the-badge)
 ![Language](https://img.shields.io/badge/Language-Portuguese%20%7C%20English-blue?style=for-the-badge)
-![Last Updated](https://img.shields.io/badge/Last%20Updated-Jan%202026%20(v1.4.0%20Enterprise)-orange?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-1.4.0%20Enterprise-blue?style=for-the-badge)
+![Last Updated](https://img.shields.io/badge/Last%20Updated-Jan%202026%20(v1.4.1)-orange?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-1.4.1%20Enterprise-blue?style=for-the-badge)
 
 </div>
 
 ---
 
-## 🎯 **Visão Geral - GetNexo Enterprise v1.4.0**
+## 🎯 **Visão Geral - GetNexo Enterprise v1.4.1**
 
 A **GetNexo** é uma plataforma completa de **IA para e-commerce** com mais de **27 funcionalidades enterprise** implementadas. Construída com tecnologias modernas (Node.js, React, Astro, MongoDB/SQLite), oferece uma solução completa para automação de vendas, customer experience e business intelligence.
+
+### ✨ **Novidades v1.4.1 (SEO & Integrations)**
+
+#### 🔍 **SEO Engine Dinâmico**
+- **Sitemap Dinâmico**: Geração automática de URLs para todas as integrações (`/integracoes/*`) baseada em dados estruturados.
+- **Limpeza Internacional**: Remoção de "Soft 404s" em versões traduzidas, garantindo saúde técnica do SEO.
+- **Indexação Otimizada**: Cobertura de 100% das páginas de produtos e funcionalidades no Google/Bing.
+
+#### 🔌 **Hub de Integrações Expandido**
+- **Páginas de Integração**: Landing pages dedicadas geradas automaticamente para Shopify, VTEX, WooCommerce, Hotmart, etc.
+- **Conteúdo Rico**: Cada integração possui metadados, benefícios e guias de conexão específicos injetados via `src/data/integrationData.js`.
+
+---
 
 ### ✨ **Funcionalidades Implementadas (100% Funcionais)**
 
@@ -360,10 +373,10 @@ npm run dev
 
 ## 🎉 **Conclusão**
 
-A **GetNexo Enterprise v1.4.0** representa o estado da arte em plataformas de IA para e-commerce. Com **27 funcionalidades enterprise completamente funcionais**, oferecemos uma solução robusta, escalável e preparada para o futuro.
+A **GetNexo Enterprise v1.4.1** representa o estado da arte em plataformas de IA para e-commerce. Com **27 funcionalidades enterprise completamente funcionais**, oferecemos uma solução robusta, escalável e preparada para o futuro.
 
 **Ready for Production** 🚀
 
 ---
 
-*Última atualização: Janeiro 2026 - v1.4.0 Enterprise*
+*Última atualização: Janeiro 2026 - v1.4.1 Enterprise*
