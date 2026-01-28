@@ -393,11 +393,8 @@ const clientId = Astro.locals.clientId || 'default';
   <!-- Estilos globais e de analytics serão injetados pelo Astro com inlineStylesheets: 'always' -->
 
   
-  <!-- Pré-carregar scripts críticos para otimizar LCP -->
-  <!-- Scripts carregados com defer para não bloquear o DOM -->
-  <script nonce={Astro.locals.nonce} defer src="/custom/js/scroll-animation.js"></script>
-  <script defer src="/custom/js/click-fireworks.js" nonce={nonce}></script>
-  <script nonce={Astro.locals.nonce} defer src="/scripts/layout-effects.js"></script>
+  <!-- Scripts críticos otimizados - removidos scripts que não existem -->
+  <!-- Carregamento otimizado com lazy loading para melhor performance -->
   
   <!-- Script de otimização de carregamento de recursos de terceiros -->
   <script defer nonce={nonce}>
@@ -517,8 +514,7 @@ const clientId = Astro.locals.clientId || 'default';
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   </style>
   
-  <!-- Carregar trusted-types-policy de forma assíncrona -->
-  <script nonce={Astro.locals.nonce} defer src="/custom/js/trusted-types-policy.js"></script>
+  <!-- Script de trusted-types-policy removido - não existe no projeto -->
   
   <script nonce={Astro.locals.nonce} define:vars={{ trustedTypesPolicy }}>
     (function() {
@@ -1927,10 +1923,42 @@ const clientId = Astro.locals.clientId || 'default';
     });
   </script>
 
-  <!-- Carregamento assíncrono de feriados - não bloqueia o LCP -->
+  <!-- Carregamento otimizado de feriados - movido para idle callback -->
   <script nonce={Astro.locals.nonce} defer>
-    // Otimização: o código foi movido para o Layout.astro para carregar após o DOM estar pronto
-    // Este script agora apenas mantém a compatibilidade
+    // Verificação de feriados otimizada - executada apenas quando o sistema está ocioso
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(() => {
+        // Verificação leve de feriados
+        fetch('/data/feriados.json', { cache: 'force-cache' })
+          .then(response => response.json())
+          .then(data => {
+            const hoje = new Date().toISOString().slice(0,10);
+            const feriadoHoje = data.feriados.find(f => f.data === hoje);
+            if (feriadoHoje) {
+              document.body.classList.add('feriado-ativo');
+            }
+          })
+          .catch(() => {
+            // Silenciosamente falha se não conseguir carregar os feriados
+          });
+      });
+    } else {
+      // Fallback para browsers sem idle callback
+      setTimeout(() => {
+        fetch('/data/feriados.json', { cache: 'force-cache' })
+          .then(response => response.json())
+          .then(data => {
+            const hoje = new Date().toISOString().slice(0,10);
+            const feriadoHoje = data.feriados.find(f => f.data === hoje);
+            if (feriadoHoje) {
+              document.body.classList.add('feriado-ativo');
+            }
+          })
+          .catch(() => {
+            // Silenciosamente falha se não conseguir carregar os feriados
+          });
+      }, 5000);
+    }
   </script>
 
   <script nonce={Astro.locals.nonce} defer>
