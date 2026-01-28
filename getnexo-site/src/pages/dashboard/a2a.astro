@@ -1,0 +1,285 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+---
+
+<DashboardLayout title="Protocolo A2A e AP2 | GetNexo">
+    <div class="flex flex-col gap-8">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-green-400">
+                    Protocolo A2A & Pagamentos AP2
+                </h1>
+                <p class="text-gray-400 mt-2">Gerencie a identidade do seu agente e transações inter-agentes.</p>
+            </div>
+            <div class="flex gap-4">
+                <button class="px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 transition" onclick="refreshData()">
+                    Atualizar Dados
+                </button>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex gap-4 border-b border-gray-700">
+            <button class="tab-btn active px-4 py-2 border-b-2 border-blue-500 text-blue-400" data-tab="identity">Identidade</button>
+            <button class="tab-btn px-4 py-2 border-b-2 border-transparent text-gray-400 hover:text-white" data-tab="peers">Peers (Agentes)</button>
+            <button class="tab-btn px-4 py-2 border-b-2 border-transparent text-gray-400 hover:text-white" data-tab="payments">Pagamentos (AP2)</button>
+            <button class="tab-btn px-4 py-2 border-b-2 border-transparent text-gray-400 hover:text-white" data-tab="docs">Documentação</button>
+        </div>
+
+        <!-- Content: Identity -->
+        <div id="tab-identity" class="tab-content block">
+            <div class="bg-gray-800/50 p-6 rounded-xl border border-gray-700/50">
+                <h2 class="text-xl font-semibold mb-4 text-white">Configuração do Agente</h2>
+                <form id="identity-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">Nome do Agente</label>
+                        <input type="text" name="agent_name" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-white" placeholder="Ex: Meu Agente de Vendas">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">Descrição</label>
+                        <textarea name="agent_description" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-white" rows="3" placeholder="Descrição pública do agente..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">Capabilidades (JSON)</label>
+                        <input type="text" name="agent_capabilities" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-white font-mono" value='["chat", "commerce", "payment"]'>
+                    </div>
+                    <div class="pt-4">
+                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition">Salvar Configurações</button>
+                    </div>
+                </form>
+
+                <div class="mt-8 p-4 bg-gray-900 rounded-lg border border-gray-700">
+                    <h3 class="text-lg font-semibold mb-2 text-white">Sua Manifest URL</h3>
+                    <div class="flex items-center gap-2">
+                        <code class="bg-black p-2 rounded text-green-400 flex-1 overflow-x-auto">
+                            {import.meta.env.PUBLIC_API_URL || "http://localhost:3006"}/api/a2a/manifest
+                        </code>
+                        <button class="text-sm bg-gray-700 px-3 py-2 rounded hover:bg-gray-600" onclick="navigator.clipboard.writeText(`${import.meta.env.PUBLIC_API_URL || 'http://localhost:3006'}/api/a2a/manifest`)">Copiar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content: Peers -->
+        <div id="tab-peers" class="tab-content hidden">
+            <div class="bg-gray-800/50 p-6 rounded-xl border border-gray-700/50">
+                <div class="flex justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-white">Agentes Conhecidos</h2>
+                    <button onclick="document.getElementById('add-peer-modal').showModal()" class="bg-blue-600 px-4 py-2 rounded-lg text-sm hover:bg-blue-700">Adicionar Agente</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-gray-300">
+                        <thead class="bg-gray-900/50 text-xs uppercase font-semibold text-gray-500">
+                            <tr>
+                                <th class="p-3">Nome</th>
+                                <th class="p-3">Endpoint</th>
+                                <th class="p-3">Capabilidades</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="peers-list">
+                            <tr><td colspan="5" class="p-4 text-center text-gray-500">Carregando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content: Payments -->
+        <div id="tab-payments" class="tab-content hidden">
+             <div class="bg-gray-800/50 p-6 rounded-xl border border-gray-700/50">
+                <div class="flex justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-white">Transações AP2</h2>
+                    <div class="text-sm text-green-400 font-mono bg-green-900/30 px-3 py-1 rounded">Status: AP2 Ativo</div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-gray-300">
+                        <thead class="bg-gray-900/50 text-xs uppercase font-semibold text-gray-500">
+                            <tr>
+                                <th class="p-3">ID Transação</th>
+                                <th class="p-3">Agente Remoto</th>
+                                <th class="p-3">Valor</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3">Data</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactions-list">
+                            <tr><td colspan="5" class="p-4 text-center text-gray-500">Carregando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content: Docs -->
+        <div id="tab-docs" class="tab-content hidden">
+            <div class="prose prose-invert max-w-none text-gray-300">
+                <h3 class="text-white text-lg font-bold">O que é o Protocolo A2A?</h3>
+                <p>O Protocolo Agent-to-Agent (A2A) permite que seus agentes de IA descubram e se comuniquem com outros agentes de forma autônoma. Isso habilita cenários complexos de colaboração e delegação de tarefas.</p>
+
+                <h3 class="text-white text-lg font-bold mt-4">O que é AP2?</h3>
+                <p>O Agent Payments Protocol (AP2) é uma extensão segura para pagamentos entre agentes. Ele utiliza Credenciais Digitais Verificáveis (VDCs) para garantir que uma transação foi autorizada pelo usuário humano ou pelo agente dentro de limites pré-estabelecidos.</p>
+
+                <h3 class="text-white text-lg font-bold mt-4">Como usar?</h3>
+                <ul class="list-disc pl-5 space-y-2">
+                    <li>Configure a identidade do seu agente na aba "Identidade".</li>
+                    <li>Compartilhe sua URL de Manifesto com parceiros.</li>
+                    <li>Adicione agentes parceiros na aba "Peers".</li>
+                    <li>Monitore transações automáticas na aba "Pagamentos".</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Peer Modal -->
+    <dialog id="add-peer-modal" class="bg-gray-900 p-6 rounded-xl border border-gray-700 text-white backdrop:bg-black/80">
+        <h3 class="text-lg font-bold mb-4">Adicionar Novo Agente</h3>
+        <form id="add-peer-form" class="space-y-4">
+            <div>
+                <label class="block text-sm mb-1">Nome</label>
+                <input name="name" type="text" class="w-full bg-gray-800 border border-gray-600 rounded p-2" required>
+            </div>
+            <div>
+                <label class="block text-sm mb-1">Endpoint (URL)</label>
+                <input name="endpoint" type="url" class="w-full bg-gray-800 border border-gray-600 rounded p-2" required>
+            </div>
+            <div class="flex justify-end gap-2 mt-4">
+                <button type="button" onclick="document.getElementById('add-peer-modal').close()" class="px-4 py-2 hover:bg-gray-800 rounded">Cancelar</button>
+                <button type="submit" class="bg-blue-600 px-4 py-2 rounded hover:bg-blue-700">Adicionar</button>
+            </div>
+        </form>
+    </dialog>
+</DashboardLayout>
+
+<script is:inline>
+    // Tab Logic
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('active', 'border-blue-500', 'text-blue-400');
+                b.classList.add('border-transparent', 'text-gray-400');
+            });
+            btn.classList.add('active', 'border-blue-500', 'text-blue-400');
+            btn.classList.remove('border-transparent', 'text-gray-400');
+
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            document.getElementById(`tab-${btn.dataset.tab}`).classList.remove('hidden');
+        });
+    });
+
+    const API_URL = '/api-proxy/api';
+
+    // Fetch Config
+    async function loadConfig() {
+        try {
+            const res = await fetch(`${API_URL}/a2a/config`);
+            const data = await res.json();
+            const form = document.getElementById('identity-form');
+            if (data.agent_name) form.agent_name.value = data.agent_name;
+            if (data.agent_description) form.agent_description.value = data.agent_description;
+            if (data.agent_capabilities) form.agent_capabilities.value = data.agent_capabilities;
+        } catch (e) {
+            console.error('Failed to load config', e);
+        }
+    }
+
+    // Save Config
+    document.getElementById('identity-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const updates = [
+            { key: 'agent_name', value: fd.get('agent_name') },
+            { key: 'agent_description', value: fd.get('agent_description') },
+            { key: 'agent_capabilities', value: fd.get('agent_capabilities') }
+        ];
+
+        for(const u of updates) {
+            await fetch(`${API_URL}/a2a/config`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(u)
+            });
+        }
+        alert('Configurações salvas!');
+    });
+
+    // Load Peers
+    async function loadPeers() {
+        const list = document.getElementById('peers-list');
+        try {
+            const res = await fetch(`${API_URL}/a2a/peers`);
+            const peers = await res.json();
+            list.innerHTML = peers.map(p => `
+                <tr class="border-b border-gray-800 hover:bg-gray-800/30">
+                    <td class="p-3 font-medium text-white">${p.name}</td>
+                    <td class="p-3 font-mono text-xs text-blue-400">${p.endpoint}</td>
+                    <td class="p-3 text-xs">${JSON.parse(p.capabilities).join(', ')}</td>
+                    <td class="p-3"><span class="bg-green-900 text-green-300 text-xs px-2 py-1 rounded">Trusted</span></td>
+                    <td class="p-3">
+                        <button class="text-red-400 hover:text-red-300 text-sm" onclick="deletePeer('${p.id}')">Remover</button>
+                    </td>
+                </tr>
+            `).join('');
+            if(peers.length === 0) list.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-500">Nenhum agente adicionado.</td></tr>';
+        } catch(e) {
+            console.error(e);
+            list.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-red-500">Erro ao carregar peers.</td></tr>';
+        }
+    }
+
+    // Add Peer
+    document.getElementById('add-peer-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        await fetch(`${API_URL}/a2a/peers`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                name: fd.get('name'),
+                endpoint: fd.get('endpoint'),
+                capabilities: ['chat'] // default
+            })
+        });
+        document.getElementById('add-peer-modal').close();
+        loadPeers();
+    });
+
+    // Delete Peer
+    window.deletePeer = async (id) => {
+        if(!confirm('Remover este agente?')) return;
+        await fetch(`${API_URL}/a2a/peers/${id}`, { method: 'DELETE' });
+        loadPeers();
+    };
+
+    // Load Transactions
+    async function loadTransactions() {
+        const list = document.getElementById('transactions-list');
+        try {
+            const res = await fetch(`${API_URL}/ap2/transactions`);
+            const txs = await res.json();
+            list.innerHTML = txs.map(t => `
+                <tr class="border-b border-gray-800">
+                    <td class="p-3 font-mono text-xs">${t.transaction_id}</td>
+                    <td class="p-3 text-sm">${t.agent_id}</td>
+                    <td class="p-3 font-bold text-white">${t.amount} ${t.currency}</td>
+                    <td class="p-3"><span class="bg-blue-900 text-blue-300 text-xs px-2 py-1 rounded">${t.status}</span></td>
+                    <td class="p-3 text-xs text-gray-500">${new Date(t.created_at).toLocaleString()}</td>
+                </tr>
+            `).join('');
+            if(txs.length === 0) list.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-500">Nenhuma transação encontrada.</td></tr>';
+        } catch(e) {
+            console.error(e);
+            list.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-red-500">Erro ao carregar transações.</td></tr>';
+        }
+    }
+
+    // Init
+    window.refreshData = () => {
+        loadConfig();
+        loadPeers();
+        loadTransactions();
+    };
+
+    refreshData();
+</script>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const FileUpload = () => {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -9,6 +9,8 @@ const FileUpload = () => {
     const [filter, setFilter] = useState('all'); // all, image, video, document
     const [searchTerm, setSearchTerm] = useState('');
     const [viewMode, setViewMode] = useState('grid'); // grid, list
+    const [isDragging, setIsDragging] = useState(false);
+    const fileInputRef = useRef(null);
 
     // Carregar arquivos existentes
     useEffect(() => {
@@ -41,8 +43,8 @@ const FileUpload = () => {
     }, [uploadedFiles, filter, searchTerm]);
 
     const fetchFiles = async () => {
-        const token = localStorage.getItem('token');
-        if (!token) return;
+        const token = localStorage.getItem('omnichat_token');
+        if (!token) return; // Silent fail if not logged in
 
         try {
             const response = await fetch('/api/upload', {
@@ -61,6 +63,10 @@ const FileUpload = () => {
 
     const handleFileSelect = (event) => {
         const file = event.target.files[0];
+        processFile(file);
+    };
+
+    const processFile = (file) => {
         if (file) {
             // Verificar tamanho (máx 10MB)
             if (file.size > 10 * 1024 * 1024) {
@@ -70,6 +76,23 @@ const FileUpload = () => {
             setSelectedFile(file);
             setMessage('');
         }
+    }
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        setIsDragging(true);
+    };
+
+    const handleDragLeave = (e) => {
+        e.preventDefault();
+        setIsDragging(false);
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+        setIsDragging(false);
+        const file = e.dataTransfer.files[0];
+        processFile(file);
     };
 
     const handleUpload = async () => {
@@ -78,7 +101,7 @@ const FileUpload = () => {
         setUploading(true);
         setMessage('');
 
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('omnichat_token');
         if (!token) {
             setMessage('Usuário não autenticado.');
             setUploading(false);
@@ -120,166 +143,189 @@ const FileUpload = () => {
     };
 
     return (
-        <div className="file-upload-container p-6 bg-white rounded-lg shadow-md">
-            <h3 className="text-xl font-bold mb-4">Upload de Arquivos</h3>
+        <div className="glass-panel p-6">
+            <h3 className="text-xl font-bold mb-4 text-white flex items-center gap-2">
+                <span className="text-neon-blue">☁️</span> Upload de Arquivos
+            </h3>
 
-            <div className="mb-4">
+            {/* Drag and Drop Zone */}
+            <div
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onClick={() => fileInputRef.current.click()}
+                onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && fileInputRef.current.click()}
+                tabIndex={0}
+                role="button"
+                aria-label="Área de upload de arquivos. Clique ou arraste arquivos aqui."
+                className={`border-2 border-dashed rounded-xl p-8 mb-6 text-center cursor-pointer transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-neon-blue ${isDragging
+                        ? 'border-neon-blue bg-neon-blue/10 scale-[1.02]'
+                        : 'border-gray-700 bg-black/20 hover:border-gray-500 hover:bg-black/40'
+                    }`}
+            >
                 <input
                     type="file"
+                    ref={fileInputRef}
                     onChange={handleFileSelect}
                     accept="image/*,video/*,.pdf"
-                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                    className="hidden"
                 />
+                <div className="flex flex-col items-center gap-3">
+                    <span className="text-4xl">{selectedFile ? '📄' : '📤'}</span>
+                    {selectedFile ? (
+                        <div className="text-left">
+                            <p className="font-bold text-white text-lg">{selectedFile.name}</p>
+                            <p className="text-sm text-gray-400">{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                        </div>
+                    ) : (
+                        <div>
+                            <p className="font-bold text-white text-lg">Arraste e solte ou clique para selecionar</p>
+                            <p className="text-sm text-gray-500 mt-1">Imagens, Vídeos ou PDF (Máx 10MB)</p>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {selectedFile && (
-                <div className="mb-4">
-                    <p className="text-sm text-gray-600">Arquivo selecionado: {selectedFile.name}</p>
-                    <p className="text-sm text-gray-600">Tamanho: {(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                <div className="mb-6 flex justify-center">
+                    <button
+                        onClick={(e) => { e.stopPropagation(); handleUpload(); }}
+                        disabled={uploading}
+                        className={`btn-primary-glow px-8 py-3 rounded-xl font-bold flex items-center gap-2 transition-all ${uploading ? 'opacity-70 cursor-wait' : 'hover:scale-105'}`}
+                    >
+                        {uploading ? (
+                            <>
+                                <span className="animate-spin h-5 w-5 border-2 border-black border-t-transparent rounded-full"></span>
+                                Enviando...
+                            </>
+                        ) : (
+                            <>
+                                🚀 Iniciar Upload
+                            </>
+                        )}
+                    </button>
                 </div>
             )}
 
-            <button
-                onClick={handleUpload}
-                disabled={!selectedFile || uploading}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-                {uploading ? 'Enviando...' : 'Enviar Arquivo'}
-            </button>
-
             {message && (
-                <p className={`mt-4 text-sm ${message.includes('sucesso') ? 'text-green-600' : 'text-red-600'}`}>
+                <div className={`p-4 rounded-xl mb-6 text-center font-bold ${message.includes('sucesso') ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'}`}>
                     {message}
-                </p>
+                </div>
             )}
 
-            <div className="mt-8">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
-                    <h4 className="text-lg font-semibold">Galeria de Mídia</h4>
-                    <div className="flex flex-wrap gap-2">
+            <div className="mt-8 pt-8 border-t border-gray-800">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <h4 className="text-lg font-bold text-gray-200">Galeria de Mídia</h4>
+                    <div className="flex flex-wrap gap-2 w-full md:w-auto">
                         <input
                             type="text"
                             placeholder="Buscar arquivos..."
+                            aria-label="Buscar arquivos"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="px-3 py-1 border rounded text-sm"
+                            className="bg-black/30 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:border-neon-blue outline-none flex-1 md:flex-none"
                         />
                         <select
                             value={filter}
+                            aria-label="Filtrar por tipo"
                             onChange={(e) => setFilter(e.target.value)}
-                            className="px-3 py-1 border rounded text-sm"
+                            className="bg-black/30 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-300 focus:border-neon-blue outline-none"
                         >
                             <option value="all">Todos</option>
                             <option value="image">Imagens</option>
                             <option value="video">Vídeos</option>
                             <option value="document">Documentos</option>
                         </select>
-                        <div className="flex border rounded">
+                        <div className="flex bg-black/30 border border-gray-700 rounded-lg p-1">
                             <button
+                                aria-label="Visualização em Grade"
                                 onClick={() => setViewMode('grid')}
-                                className={`px-3 py-1 text-sm ${viewMode === 'grid' ? 'bg-blue-500 text-white' : 'bg-white'}`}
+                                className={`px-3 py-1 text-sm rounded transition-colors ${viewMode === 'grid' ? 'bg-gray-700 text-white shadow' : 'text-gray-500 hover:text-white'}`}
                             >
-                                Grid
+                                ▦
                             </button>
                             <button
+                                aria-label="Visualização em Lista"
                                 onClick={() => setViewMode('list')}
-                                className={`px-3 py-1 text-sm ${viewMode === 'list' ? 'bg-blue-500 text-white' : 'bg-white'}`}
+                                className={`px-3 py-1 text-sm rounded transition-colors ${viewMode === 'list' ? 'bg-gray-700 text-white shadow' : 'text-gray-500 hover:text-white'}`}
                             >
-                                Lista
+                                ☰
                             </button>
                         </div>
                     </div>
                 </div>
+
                 {uploadedFiles.length === 0 ? (
-                    <p className="text-gray-500">Nenhum arquivo enviado ainda.</p>
+                    <div className="flex flex-col items-center justify-center py-12 text-gray-600">
+                        <span className="text-4xl mb-3 opacity-30">📭</span>
+                        <p>Nenhum arquivo enviado ainda.</p>
+                    </div>
                 ) : filteredFiles.length === 0 ? (
-                    <p className="text-gray-500">Nenhum arquivo encontrado com os filtros aplicados.</p>
+                    <div className="flex flex-col items-center justify-center py-12 text-gray-600">
+                        <span className="text-4xl mb-3 opacity-30">🔍</span>
+                        <p>Nenhum arquivo encontrado com os filtros aplicados.</p>
+                    </div>
                 ) : (
                     <div className={viewMode === 'grid'
-                        ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+                        ? "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
                         : "space-y-2"
                     }>
                         {filteredFiles.map((file, index) => (
                             viewMode === 'grid' ? (
-                                <div key={index} className="border rounded-lg p-4">
-                                    <div className="mb-2">
+                                <div key={index} className="group bg-black/40 border border-gray-800 rounded-xl overflow-hidden hover:border-gray-600 transition-all">
+                                    <div className="aspect-square bg-gray-900 relative">
                                         {file.url.match(/\.(jpeg|jpg|png|gif|webp)$/i) ? (
                                             <img
                                                 src={file.url}
                                                 alt={file.name}
-                                                className="w-full h-32 object-cover rounded"
+                                                loading="lazy"
+                                                className="w-full h-full object-cover transition-transform group-hover:scale-105"
                                             />
                                         ) : file.url.match(/\.(mp4|avi|mov)$/i) ? (
-                                            <video
-                                                src={file.url}
-                                                className="w-full h-32 object-cover rounded"
-                                                controls
-                                            />
+                                            <div className="w-full h-full flex items-center justify-center text-gray-600">
+                                                🎬
+                                            </div>
                                         ) : (
-                                            <div className="w-full h-32 bg-gray-200 rounded flex items-center justify-center">
-                                                <span className="text-gray-500">📄</span>
+                                            <div className="w-full h-full flex items-center justify-center text-gray-600 text-3xl">
+                                                📄
                                             </div>
                                         )}
+                                        {/* Overlay Actions */}
+                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                            <a href={file.url} target="_blank" className="p-2 bg-neon-blue text-black rounded-full hover:scale-110 transition-transform">👁️</a>
+                                            <button onClick={() => handleDelete(file.name)} className="p-2 bg-red-500 text-white rounded-full hover:scale-110 transition-transform">🗑️</button>
+                                        </div>
                                     </div>
-                                    <p className="text-sm font-medium truncate">{file.name}</p>
-                                    <p className="text-xs text-gray-500">
-                                        {(file.size / 1024 / 1024).toFixed(2)} MB
-                                    </p>
-                                    <div className="mt-2 flex space-x-2">
-                                        <a
-                                            href={file.url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-blue-500 hover:text-blue-700 text-sm"
-                                        >
-                                            Ver
-                                        </a>
-                                        <button
-                                            onClick={() => handleDelete(file.name)}
-                                            className="text-red-500 hover:text-red-700 text-sm"
-                                        >
-                                            Deletar
-                                        </button>
+                                    <div className="p-3">
+                                        <p className="text-xs font-bold text-gray-300 truncate mb-1" title={file.name}>{file.name}</p>
+                                        <p className="text-[10px] text-gray-500">
+                                            {(file.size / 1024 / 1024).toFixed(2)} MB
+                                        </p>
                                     </div>
                                 </div>
                             ) : (
-                                <div key={index} className="border rounded-lg p-4 flex items-center space-x-4">
-                                    <div className="w-16 h-16 flex-shrink-0">
-                                        {file.url.match(/\.(jpeg|jpg|png|gif|webp)$/i) ? (
-                                            <img
-                                                src={file.url}
-                                                alt={file.name}
-                                                className="w-full h-full object-cover rounded"
-                                            />
-                                        ) : file.url.match(/\.(mp4|avi|mov)$/i) ? (
-                                            <video
-                                                src={file.url}
-                                                className="w-full h-full object-cover rounded"
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full bg-gray-200 rounded flex items-center justify-center">
-                                                <span className="text-gray-500">📄</span>
-                                            </div>
-                                        )}
+                                <div key={index} className="flex items-center gap-4 p-3 bg-black/20 border border-gray-800 rounded-xl hover:bg-black/40 transition-colors">
+                                    <div className="w-10 h-10 rounded bg-gray-900 flex items-center justify-center flex-shrink-0 text-lg border border-gray-700">
+                                        {file.url.match(/\.(jpeg|jpg|png|gif|webp)$/i) ? '🖼️' : '📄'}
                                     </div>
-                                    <div className="flex-1">
-                                        <p className="font-medium">{file.name}</p>
-                                        <p className="text-sm text-gray-500">
-                                            {(file.size / 1024 / 1024).toFixed(2)} MB • {new Date(file.createdAt).toLocaleDateString()}
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-sm font-bold text-gray-300 truncate">{file.name}</p>
+                                        <p className="text-xs text-gray-500">
+                                            {(file.size / 1024 / 1024).toFixed(2)} MB • {new Date(file.createdAt || Date.now()).toLocaleDateString()}
                                         </p>
                                     </div>
-                                    <div className="flex space-x-2">
+                                    <div className="flex gap-2">
                                         <a
                                             href={file.url}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="text-blue-500 hover:text-blue-700 text-sm px-3 py-1 border rounded"
+                                            className="text-xs text-neon-blue hover:underline px-2 py-1"
                                         >
                                             Ver
                                         </a>
                                         <button
                                             onClick={() => handleDelete(file.name)}
-                                            className="text-red-500 hover:text-red-700 text-sm px-3 py-1 border rounded"
+                                            className="text-xs text-red-500 hover:text-red-400 px-2 py-1"
                                         >
                                             Deletar
                                         </button>

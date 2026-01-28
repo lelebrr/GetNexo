@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 
@@ -7,10 +6,10 @@ const API_URL = typeof window !== 'undefined' && (window.location.hostname === '
     : 'https://api.getnexo.com.br';
 
 const STAGES = {
-    'lead': { label: 'Novo Lead', color: 'text-cyan-400', bg: 'bg-cyan-500/10', gradient: 'from-cyan-500 to-blue-600', icon: '✨' },
+    'lead': { label: 'Novo Lead', color: 'text-neon-blue', bg: 'bg-neon-blue/10', gradient: 'from-neon-blue to-blue-600', icon: '✨' },
     'qualified': { label: 'Qualificado', color: 'text-purple-400', bg: 'bg-purple-500/10', gradient: 'from-purple-500 to-pink-500', icon: '🎯' },
     'proposal': { label: 'Em Negociação', color: 'text-orange-400', bg: 'bg-orange-500/10', gradient: 'from-orange-500 to-red-500', icon: '🔥' },
-    'closed': { label: 'Venda Fechada', color: 'text-green-400', bg: 'bg-green-500/10', gradient: 'from-green-500 to-emerald-600', icon: '🏆' }
+    'closed': { label: 'Venda Fechada', color: 'text-matrix-green', bg: 'bg-matrix-green/10', gradient: 'from-matrix-green to-emerald-600', icon: '🏆' }
 };
 
 // Lead Temperature Scoring (Random mock for demo, in prod would use last_interaction)

@@ -66,6 +66,7 @@ const initSchema = () => {
       image_url TEXT,
       description TEXT,
       category TEXT,
+      sku TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`,
@@ -106,6 +107,38 @@ const initSchema = () => {
       key TEXT PRIMARY KEY,
       value TEXT NOT NULL,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`,
+    `CREATE TABLE IF NOT EXISTS a2a_config (
+      key TEXT PRIMARY KEY,
+      value TEXT,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`,
+    `CREATE TABLE IF NOT EXISTS a2a_peers (
+      id TEXT PRIMARY KEY,
+      name TEXT,
+      endpoint TEXT,
+      capabilities TEXT,
+      trusted BOOLEAN DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`,
+    `CREATE TABLE IF NOT EXISTS ap2_transactions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      transaction_id TEXT UNIQUE,
+      agent_id TEXT,
+      amount REAL,
+      currency TEXT,
+      status TEXT,
+      vdc_token TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`,
+    `CREATE TABLE IF NOT EXISTS ap2_mandates (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      mandate_id TEXT UNIQUE,
+      type TEXT,
+      scope TEXT,
+      constraints TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`
   ];
 
@@ -122,6 +155,18 @@ const initSchema = () => {
 
   const insertSetting = db.prepare('INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)');
   defaults.forEach(d => insertSetting.run(d[0], d[1]));
+
+  // Migrations
+  try {
+    const productsInfo = db.pragma('table_info(products)');
+    const hasSku = productsInfo.some(col => col.name === 'sku');
+    if (!hasSku) {
+      console.log('Migrating products table: Adding sku column...');
+      db.prepare('ALTER TABLE products ADD COLUMN sku TEXT').run();
+    }
+  } catch (err) {
+    console.error('Migration error:', err);
+  }
 };
 
 initSchema();
