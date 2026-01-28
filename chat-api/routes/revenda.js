@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 const jwtAuth = require('../middleware/jwtAuth');
+const bcrypt = require('bcryptjs');
 
 router.use(jwtAuth);
 
@@ -36,7 +37,7 @@ router.get('/stats', (req, res) => {
     // Get Commissions
     const pendingCommissions = db.prepare("SELECT sum(amount) as total FROM commissions WHERE reseller_id = ? AND status = 'pending'").get(userId).total || 0;
 
-    // Monthly Revenue (Assuming it's based on commissions / rate)
+    // Monthly Revenue (Based on commissions and rate)
     const currentMonthStart = new Date();
     currentMonthStart.setDate(1);
     currentMonthStart.setHours(0,0,0,0);
@@ -60,7 +61,7 @@ router.get('/stats', (req, res) => {
         active_subscriptions: clientsCount, // Assuming all active for now
         monthly_revenue: formatCurrency(revenue), // Sales volume
         commissions_pending: formatCurrency(pendingCommissions),
-        growth_rate: '+0%', // Dynamic calculation requires history
+        growth_rate: '+0%', // Real value implies 0 if no history
         code: profile.referral_code,
         clientsCount: clientsCount,
         recent_activity: recentActivity.map(a => ({
@@ -74,14 +75,26 @@ router.get('/stats', (req, res) => {
 router.get('/clientes', (req, res) => {
     const userId = req.userId;
 
+    // Get Reseller Rate for revenue calc
+    const profile = db.prepare('SELECT commission_rate FROM reseller_profiles WHERE user_id = ?').get(userId);
+    const rate = profile ? profile.commission_rate : 0.10; // Default 10% if missing
+
+    // Optimized query with LEFT JOIN and aggregation to avoid N+1 problem
     const clients = db.prepare(`
-        SELECT u.id, u.name as nome, u.email, u.created_at as data
+        SELECT
+            u.id,
+            u.name as nome,
+            u.email,
+            u.created_at as data,
+            COALESCE(SUM(c.amount), 0) as total_commission
         FROM users u
+        LEFT JOIN commissions c ON u.id = c.source_user_id
         WHERE u.reseller_id = ?
+        GROUP BY u.id
     `).all(userId);
 
-    const enrichedClients = clients.map(c => {
-        const totalCommission = db.prepare('SELECT sum(amount) as total FROM commissions WHERE source_user_id = ?').get(c.id).total || 0;
+    const formattedClients = clients.map(c => {
+        const estimatedRevenue = rate > 0 ? (c.total_commission / rate) : 0;
         return {
             id: c.id,
             nome: c.nome,
@@ -89,13 +102,13 @@ router.get('/clientes', (req, res) => {
             dominio: 'N/A', // Not stored yet
             plano: 'Standard',
             status: 'active',
-            receita: formatCurrency(totalCommission * 10), // Mock revenue
-            comissao: formatCurrency(totalCommission),
+            receita: formatCurrency(estimatedRevenue),
+            comissao: formatCurrency(c.total_commission),
             data: new Date(c.data).toLocaleDateString('pt-BR')
         };
     });
 
-    res.json(enrichedClients);
+    res.json(formattedClients);
 });
 
 // Financial Data
@@ -110,6 +123,13 @@ router.get('/financeiro', (req, res) => {
         ORDER BY created_at DESC
     `).all(userId);
 
+    const requests = db.prepare(`
+        SELECT amount, status, requested_at as date
+        FROM payout_requests
+        WHERE reseller_id = ?
+        ORDER BY requested_at DESC
+    `).all(userId);
+
     const formattedHistory = history.map(h => ({
         description: h.description,
         date: new Date(h.date).toLocaleDateString('pt-BR'),
@@ -117,32 +137,99 @@ router.get('/financeiro', (req, res) => {
         status: h.status
     }));
 
+    // Add Payout Requests to history for visibility
+    const formattedRequests = requests.map(r => ({
+        description: 'Solicitação de Saque',
+        date: new Date(r.date).toLocaleDateString('pt-BR'),
+        amount: `-${formatCurrency(r.amount)}`,
+        status: r.status
+    }));
+
+    // Calculate next payout date (15th of next month)
+    const now = new Date();
+    let nextPayoutDate = new Date(now.getFullYear(), now.getMonth() + 1, 15);
+
     res.json({
         balance: formatCurrency(profile ? profile.balance : 0),
-        next_payout: '15/02/2026', // Static for now
-        history: formattedHistory,
+        next_payout: nextPayoutDate.toLocaleDateString('pt-BR'),
+        history: [...formattedRequests, ...formattedHistory],
         statements: []
     });
 });
 
-// Marketing (Static)
+// Payout Request
+router.post('/saque', (req, res) => {
+    const userId = req.userId;
+    const { amount } = req.body;
+
+    if (!amount || amount <= 0) {
+        return res.status(400).json({ error: 'Valor inválido' });
+    }
+
+    try {
+        const profile = db.prepare('SELECT balance FROM reseller_profiles WHERE user_id = ?').get(userId);
+
+        if (!profile || profile.balance < amount) {
+            return res.status(400).json({ error: 'Saldo insuficiente' });
+        }
+
+        const insert = db.prepare('INSERT INTO payout_requests (reseller_id, amount, status) VALUES (?, ?, ?)');
+
+        // Transaction to deduct balance safely
+        const deduct = db.transaction(() => {
+            insert.run(userId, amount, 'pending');
+            db.prepare('UPDATE reseller_profiles SET balance = balance - ? WHERE user_id = ?').run(amount, userId);
+        });
+
+        deduct();
+
+        res.json({ ok: true, message: 'Solicitação realizada com sucesso' });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: 'Erro ao processar saque' });
+    }
+});
+
+// Profile Update
+router.put('/perfil', (req, res) => {
+    const userId = req.userId;
+    const { bank_info } = req.body; // Expecting JSON string or object
+
+    if (!bank_info) {
+        return res.status(400).json({ error: 'Dados bancários obrigatórios' });
+    }
+
+    try {
+        const infoStr = typeof bank_info === 'object' ? JSON.stringify(bank_info) : bank_info;
+
+        db.prepare('UPDATE reseller_profiles SET bank_info = ? WHERE user_id = ?').run(infoStr, userId);
+        res.json({ ok: true, message: 'Perfil atualizado com sucesso' });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: 'Erro ao atualizar perfil' });
+    }
+});
+
+// Marketing
 router.get('/marketing', (req, res) => {
-    res.json({
-        links: [
-            { name: 'Página Inicial (GetNexo)', url: 'https://getnexo.com.br/?ref=REV123', clicks: 1240 },
-            { name: 'Planos & Preços', url: 'https://getnexo.com.br/precos/?ref=REV123', clicks: 850 },
-            { name: 'Demo Grátis', url: 'https://getnexo.com.br/trial/?ref=REV123', clicks: 420 }
-        ],
-        assets: [
-            { name: 'Banner 728x90 (Horizontal)', type: 'Image', url: '/assets/marketing/banner-h.png' },
-            { name: 'Criativo Instagram (1080x1080)', type: 'Image', url: '/assets/marketing/insta-post.png' },
-            { name: 'Apresentação PDF (2026)', type: 'PDF', url: '/assets/marketing/apresentacao.pdf' }
-        ],
-        landings: [
-            { id: 1, name: 'Landing Page Black Friday', status: 'active', url: 'https://seunome.getnexo.com.br/blackfriday' },
-            { id: 2, name: 'Página de Vendas Direta', status: 'active', url: 'https://seunome.getnexo.com.br/vendas' }
-        ]
-    });
+    try {
+        const assets = db.prepare('SELECT type, name, url, clicks FROM marketing_assets WHERE active = 1').all();
+
+        const links = assets.filter(a => a.type === 'Link');
+        const media = assets.filter(a => a.type !== 'Link');
+
+        res.json({
+            links: links.map(l => ({ name: l.name, url: l.url, clicks: l.clicks })),
+            assets: media.map(m => ({ name: m.name, type: m.type, url: m.url })),
+            landings: [
+                // Still keeping these as separate concept if needed, or could be in DB too
+                { id: 1, name: 'Landing Page Black Friday', status: 'active', url: 'https://seunome.getnexo.com.br/blackfriday' }
+            ]
+        });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: 'Erro ao carregar marketing' });
+    }
 });
 
 // Client Creation (Reseller creates client)
@@ -162,7 +249,6 @@ router.post('/clientes', async (req, res) => {
 
         // Default password if not provided
         const pass = password || 'mudar123';
-        const bcrypt = require('bcryptjs');
         const hash = await bcrypt.hash(pass, 10);
 
         const insert = db.prepare('INSERT INTO users (email, password, name, role, role_id, reseller_id) VALUES (?, ?, ?, ?, ?, ?)');
@@ -172,6 +258,39 @@ router.post('/clientes', async (req, res) => {
     } catch (e) {
         console.error(e);
         res.status(500).json({ error: 'Erro ao criar cliente' });
+    }
+});
+
+// Support Ticket
+router.post('/suporte', (req, res) => {
+    const userId = req.userId;
+    const user = req.user;
+    const { subject, message } = req.body;
+
+    if (!subject || !message) return res.status(400).json({ error: 'Assunto e mensagem obrigatórios' });
+
+    try {
+        // 1. Find or Create Contact
+        let contact = db.prepare('SELECT id FROM contacts WHERE id = ?').get(user.email); // Using email as ID for simplicity or check if using numeric
+
+        // Check schema of contacts. id is TEXT.
+        // Let's use user.id as contact.id or user.email?
+        // Existing contacts schema: id TEXT PRIMARY KEY.
+
+        if (!contact) {
+            const insertContact = db.prepare('INSERT INTO contacts (id, name, profile_pic_url, tags) VALUES (?, ?, ?, ?)');
+            insertContact.run(user.email, user.name, '', 'reseller');
+            contact = { id: user.email };
+        }
+
+        // 2. Create Ticket
+        const insertTicket = db.prepare('INSERT INTO tickets (contact_id, subject, status, priority) VALUES (?, ?, ?, ?)');
+        insertTicket.run(contact.id, `[REVENDA] ${subject} - ${message.substring(0, 50)}...`, 'open', 'high');
+
+        res.json({ ok: true, message: 'Ticket de suporte criado' });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: 'Erro ao criar ticket' });
     }
 });
 

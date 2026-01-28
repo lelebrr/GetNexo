@@ -142,6 +142,24 @@ const initSchema = () => {
       paid_at DATETIME,
       FOREIGN KEY(reseller_id) REFERENCES users(id),
       FOREIGN KEY(source_user_id) REFERENCES users(id)
+    )`,
+    `CREATE TABLE IF NOT EXISTS marketing_assets (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      type TEXT NOT NULL,
+      name TEXT NOT NULL,
+      url TEXT NOT NULL,
+      clicks INTEGER DEFAULT 0,
+      active BOOLEAN DEFAULT 1,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`,
+    `CREATE TABLE IF NOT EXISTS payout_requests (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      reseller_id INTEGER NOT NULL,
+      amount REAL NOT NULL,
+      status TEXT DEFAULT 'pending',
+      requested_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      processed_at DATETIME,
+      FOREIGN KEY(reseller_id) REFERENCES users(id)
     )`
   ];
 
@@ -186,6 +204,28 @@ const initSchema = () => {
       insertCommission.run(2, 3, 450.00, 'Comissão Assinatura Cliente', 'paid', new Date(Date.now() - 5 * 3600 * 1000).toISOString());
 
       console.log('Users seeded successfully.');
+  }
+
+  // Seed Marketing Assets if empty
+  const assetsCount = db.prepare('SELECT count(*) as count FROM marketing_assets').get().count;
+  if (assetsCount === 0) {
+      console.log('Seeding marketing assets...');
+      const insertAsset = db.prepare('INSERT INTO marketing_assets (type, name, url, active) VALUES (?, ?, ?, ?)');
+      insertAsset.run('Image', 'Banner 728x90 (Horizontal)', '/assets/marketing/banner-h.png', 1);
+      insertAsset.run('Image', 'Criativo Instagram (1080x1080)', '/assets/marketing/insta-post.png', 1);
+      insertAsset.run('PDF', 'Apresentação PDF (2026)', '/assets/marketing/apresentacao.pdf', 1);
+      insertAsset.run('Link', 'Página Inicial (GetNexo)', 'https://getnexo.com.br/?ref=REV123', 1);
+      insertAsset.run('Link', 'Planos & Preços', 'https://getnexo.com.br/precos/?ref=REV123', 1);
+      insertAsset.run('Link', 'Demo Grátis', 'https://getnexo.com.br/trial/?ref=REV123', 1);
+  }
+
+  // Seed Coupons if empty
+  const couponsCount = db.prepare('SELECT count(*) as count FROM coupons').get().count;
+  if (couponsCount === 0) {
+      console.log('Seeding coupons...');
+      const insertCoupon = db.prepare('INSERT INTO coupons (code, discount_type, discount_value, expires_at, active) VALUES (?, ?, ?, ?, ?)');
+      insertCoupon.run('NEXO20', 'percentage', 20, '2026-12-31', 1);
+      insertCoupon.run('REV50', 'fixed', 50, '2026-06-01', 1);
   }
 };
 
