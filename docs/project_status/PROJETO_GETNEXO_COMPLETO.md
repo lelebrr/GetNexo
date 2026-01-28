@@ -54,6 +54,15 @@ Sistema completo de automação para e-commerce com IA, voz, AR e tour guiado.
   - Configurações simuladas do admin
   - Reset completo do estado
 
+### 🤝 **Painel de Revenda Real**
+- **Backend**: Node.js + SQLite (Better-SQLite3)
+- **Funcionalidades**:
+  - **Autenticação**: Login/Registro real com JWT e Bcrypt
+  - **Dashboard**: Métricas calculadas em tempo real via SQL
+  - **Financeiro**: Solicitação de saque e histórico de comissões
+  - **Gestão**: Criação de clientes vinculados e atualização de perfil
+  - **Marketing**: Assets dinâmicos via banco de dados
+
 ## 🛠️ **Tecnologias Utilizadas**
 
 ### **Frontend**
