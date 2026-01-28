@@ -249,7 +249,7 @@ npm run dev
 
 ---
 
-## 📚 **Documentação Técnica**
+## 📚 **Documentação Técnica & Arquivos do Projeto**
 
 ### **🚀 Desenvolvimento**
 - [Getting Started](development/GETTING_STARTED.md)
@@ -265,6 +265,39 @@ npm run dev
 - [Master Inventory](business/MASTER_INVENTORY.md)
 - [Feature Roadmap](planning/FEATURE_ROADMAP.md)
 - [Competitive Analysis](planning/COMPETITIVE_ANALYSIS.md)
+
+### **📂 Status e Histórico do Projeto**
+- [Visão Completa do Projeto](project_status/PROJETO_GETNEXO_COMPLETO.md)
+- [README Completo (Legado)](project_status/README-GETNEXO-COMPLETO.md)
+- [Status Final Implementado](project_status/README_FINAL_GETNEXO.md)
+- [Tarefas Restantes](project_status/TASKS_RESTANTES_GETNEXO.md)
+- [Melhorias Finais](project_status/MELHORIAS_FINAIS_GETNEXO.md)
+- [Resumo Geral](project_status/SUMMARY.md)
+
+### **🛠️ Operações e Manutenção**
+- [Guia de Backup](operations/AGENDAR_BACKUP.md)
+
+### **📊 Relatórios e Análises**
+- [Relatório de Gastos](reports/gastos.md)
+- [Análise de Sitemaps](reports/relatorio_analise_sitemaps.md)
+- [Validação Multilinguagem](reports/relatorio_final_analise_multilang.md)
+
+### **🔌 Guias de Integração**
+- [Configuração Grok API](integrations/GUIA_CONFIG_GROK_API.md)
+- [Mercado Pago](integrations/GUIA_CONFIG_MERCADO_PAGO.md)
+- [Omnichat](integrations/OMNICHAT.md)
+
+### **✨ Detalhes de Features**
+- [Implementação AR 3D](features/AR_3D_IMPLEMENTATION.md)
+- [Behavioral Tagging](features/BEHAVIORAL_TAGGING_README.md)
+- [Magic Map](features/MAGIC_MAP_README.md)
+- [Análise de Sentimento](features/SENTIMENT_ANALYSIS_README.md)
+- [Demo de Voz](features/VOICE_DEMO_README.md)
+- [Otimização 3D](features/README_OTIMIZACAO_3D.md)
+
+### **📅 Planejamento**
+- [Roadmap Geral](planning/ROADMAP.md)
+- [Roadmap Ubuntu](planning/ROADMAP_UBUNTU.md)
 
 ---
 

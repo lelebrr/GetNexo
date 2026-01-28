@@ -39,9 +39,20 @@ Acesse: http://localhost:3000
 
 
 
-## � Documentação Centralizada
+## 📚 Documentação Centralizada
 
-Toda a documentação do projeto foi centralizada na pasta **[`docs/`](docs/)**. Utilize os links abaixo para acessar as seções principais:
+Toda a documentação do projeto foi centralizada e organizada na pasta **[`docs/`](docs/)**.
+
+👉 **[Acesse o Índice Completo da Documentação](docs/README.md)** para ver:
+
+- **Status do Projeto & Roadmap**
+- **Guias de Instalação e Configuração**
+- **Manual de Operações e Backup**
+- **Relatórios Técnicos e Financeiros**
+- **Detalhes de Features (AR, IA, Voz)**
+- **Arquitetura e Integrações**
+
+### Atalhos Rápidos:
 
 ### 🚀 [Guia de Início Rápido](docs/development/GETTING_STARTED.md)
 Aprenda a configurar o ambiente local, instalar dependências e rodar o sistema pela primeira vez.
