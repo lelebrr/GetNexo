@@ -17,6 +17,8 @@ if (!JWT_SECRET) {
 app.use(cors());
 app.use(express.json());
 
+const authMiddleware = require('./middleware/auth');
+
 // Importar Rotas
 const crmRoutes = require('./routes/crm');
 const loyaltyRoutes = require('./routes/loyalty');
@@ -33,19 +35,22 @@ const aiRoutes = require('./routes/ai');
 const revendaRoutes = require('./routes/revenda');
 
 // Montar Rotas
-app.use('/api/crm', crmRoutes);
-app.use('/api/loyalty', loyaltyRoutes);
-app.use('/api/magic', magicRoutes);
-app.use('/api/webhooks', webhookRoutes);
-app.use('/api/series', seriesRoutes);
-app.use('/api/tickets', ticketRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/analytics', analyticsRoutes);
-app.use('/api/coupons', couponRoutes);
-app.use('/api/automations', automationRoutes);
-app.use('/api/settings', settingsRoutes);
-app.use('/api/ai', aiRoutes);
-app.use('/api/revenda', revendaRoutes);
+// Rotas Protegidas (Requerem Autenticação)
+app.use('/api/crm', authMiddleware, crmRoutes);
+app.use('/api/loyalty', authMiddleware, loyaltyRoutes);
+app.use('/api/magic', authMiddleware, magicRoutes);
+app.use('/api/series', authMiddleware, seriesRoutes);
+app.use('/api/tickets', authMiddleware, ticketRoutes);
+app.use('/api/analytics', authMiddleware, analyticsRoutes);
+app.use('/api/coupons', authMiddleware, couponRoutes);
+app.use('/api/automations', authMiddleware, automationRoutes);
+app.use('/api/settings', authMiddleware, settingsRoutes);
+app.use('/api/ai', authMiddleware, aiRoutes);
+app.use('/api/revenda', authMiddleware, revendaRoutes);
+
+// Rotas Parcialmente Públicas ou com Auth Própria
+app.use('/api/webhooks', webhookRoutes); // Auth via assinatura/token do provedor
+app.use('/api/products', productRoutes); // TODO: Proteger operações de escrita (POST/PUT/DELETE)
 
 // Database simulada (em produção, usar banco de dados real)
 const users = [
