@@ -231,7 +231,9 @@ const initSchema = () => {
       requested_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       processed_at DATETIME,
       FOREIGN KEY(reseller_id) REFERENCES users(id)
-    )`
+    )`,
+    `CREATE INDEX IF NOT EXISTS idx_transactions_created_at ON transactions(created_at)`,
+    `CREATE INDEX IF NOT EXISTS idx_transactions_contact_id ON transactions(contact_id)`
   ];
 
   tables.forEach(sql => db.prepare(sql).run());
