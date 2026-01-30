@@ -1,5 +1,5 @@
 const request = require('supertest');
-const { app, server } = require('../server'); // We'll need to export app from server.js
+const app = require('../server');
 
 describe('White-Label API Tests', () => {
     let authToken;
@@ -18,14 +18,6 @@ describe('White-Label API Tests', () => {
 
         expect(loginResponse.status).toBe(200);
         authToken = loginResponse.body.token;
-    });
-
-    afterAll((done) => {
-        if (server) {
-            server.close(done);
-        } else {
-            done();
-        }
     });
 
     describe('White-Label Configuration Setup', () => {

@@ -324,18 +324,20 @@ const tickets = [
 ];
 
 // Iniciar servidor
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor de autenticação rodando na porta ${PORT}`);
-  console.log(`📝 Endpoints disponíveis:`);
-  console.log(` POST /api/login - Login de usuário`);
-  console.log(` GET /api/users - Verificar usuário logado`);
-  console.log(` POST /api/auth/forgot-password - Redefinir senha`);
-  console.log(` POST /api/auth/register - Criar conta`);
-  console.log(` GET /api/health - Health check`);
-  console.log(` GET /api/ai/seo/stats - AI SEO Stats`);
-  console.log(` GET /api/ai/security/audit - AI Security Audit`);
-  console.log(`\n🔑 Credenciais de demonstração:`);
-  console.log(` Cliente: cliente@getnexo.com / demo123`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`🚀 Servidor de autenticação rodando na porta ${PORT}`);
+    console.log(`📝 Endpoints disponíveis:`);
+    console.log(` POST /api/login - Login de usuário`);
+    console.log(` GET /api/users - Verificar usuário logado`);
+    console.log(` POST /api/auth/forgot-password - Redefinir senha`);
+    console.log(` POST /api/auth/register - Criar conta`);
+    console.log(` GET /api/health - Health check`);
+    console.log(` GET /api/ai/seo/stats - AI SEO Stats`);
+    console.log(` GET /api/ai/security/audit - AI Security Audit`);
+    console.log(`\n🔑 Credenciais de demonstração:`);
+    console.log(` Cliente: cliente@getnexo.com / demo123`);
+  });
+}
 
 module.exports = app;
