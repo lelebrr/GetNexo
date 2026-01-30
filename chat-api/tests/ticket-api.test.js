@@ -1,5 +1,5 @@
 const request = require('supertest');
-const { app, server } = require('../server'); // We'll need to export app from server.js
+const app = require('../server');
 
 describe('Ticket API Tests', () => {
     let authToken;
@@ -20,11 +20,7 @@ describe('Ticket API Tests', () => {
     });
 
     afterAll((done) => {
-        if (server) {
-            server.close(done);
-        } else {
-            done();
-        }
+        done();
     });
 
     describe('POST /api/support/tickets - Create Ticket', () => {
