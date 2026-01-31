@@ -4,7 +4,7 @@ export default {
     testMatch: ['**/__tests__/**/*.test.(js|jsx|ts|tsx)', '**/?(*.)+(spec|test).(js|jsx|ts|tsx)'],
     moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'astro'],
     transform: {
-        '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['@babel/preset-env', '@babel/preset-react'] }]
+        '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['@babel/preset-env', ['@babel/preset-react', { runtime: 'automatic' }]] }]
     },
     moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/src/$1',
