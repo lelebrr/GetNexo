@@ -3,17 +3,22 @@ const path = require('path');
 const fs = require('fs');
 const bcrypt = require('bcryptjs');
 
-const dbPath = process.env.DB_PATH || path.join(__dirname, 'data', 'omnichat.db');
-const dbDir = path.dirname(dbPath);
+let db;
 
-if (!fs.existsSync(dbDir)) {
-  fs.mkdirSync(dbDir, { recursive: true });
-}
+if (process.env.NODE_ENV === 'test' && global.testDb) {
+  db = global.testDb;
+} else {
+  const dbPath = process.env.DB_PATH || path.join(__dirname, 'data', 'omnichat.db');
+  const dbDir = path.dirname(dbPath);
 
-const db = new Database(dbPath);
-db.pragma('journal_mode = WAL');
+  if (!fs.existsSync(dbDir)) {
+    fs.mkdirSync(dbDir, { recursive: true });
+  }
 
-const initSchema = () => {
+  db = new Database(dbPath);
+  db.pragma('journal_mode = WAL');
+
+  const initSchema = () => {
   const tables = [
     `CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY,
@@ -313,6 +318,7 @@ const initSchema = () => {
   }
 };
 
-initSchema();
+  initSchema();
+}
 
 module.exports = db;
