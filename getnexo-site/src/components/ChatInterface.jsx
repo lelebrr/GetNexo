@@ -26,7 +26,17 @@ const MessageItem = React.memo(({ message: m }) => (
 
 const ContactItem = React.memo(({ contact: c, isActive, onClick, onDragStart }) => (
     <div
+        role="button"
+        tabIndex={0}
         onClick={() => onClick(c)}
+        onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                if (e.key === ' ') e.preventDefault();
+                onClick(c);
+            }
+        }}
+        aria-selected={isActive}
+        aria-label={`Conversa com ${c.name || c.phone}. Status: ${c.stage || 'Novo'}. ${c.last_message?.body ? 'Última mensagem: ' + c.last_message.body : ''}`}
         draggable
         onDragStart={(e) => onDragStart(e, c)}
         className={`p-3 rounded-xl cursor-pointer transition-all border ${isActive ? 'bg-neon-blue/10 border-neon-blue' : 'bg-transparent border-transparent hover:bg-gray-800'} flex items-center gap-3 group`}
@@ -225,9 +235,9 @@ const ChatInterface = () => {
                     </div>
                     {/* Inbox Filters */}
                     <div className="flex justify-between text-xs text-gray-400 border-b border-gray-800 pb-2">
-                        <button onClick={() => setInboxTab('mine')} className={`${inboxTab === 'mine' ? 'text-neon-blue font-bold border-b-2 border-neon-blue' : 'hover:text-white'}`}>Meus</button>
-                        <button onClick={() => setInboxTab('all')} className={`${inboxTab === 'all' ? 'text-white font-bold border-b-2 border-white' : 'hover:text-white'}`}>Todos</button>
-                        <button onClick={() => setInboxTab('resolved')} className={`${inboxTab === 'resolved' ? 'text-green-500 font-bold border-b-2 border-green-500' : 'hover:text-white'}`}>Resolvidos</button>
+                        <button aria-pressed={inboxTab === 'mine'} onClick={() => setInboxTab('mine')} className={`${inboxTab === 'mine' ? 'text-neon-blue font-bold border-b-2 border-neon-blue' : 'hover:text-white'}`}>Meus</button>
+                        <button aria-pressed={inboxTab === 'all'} onClick={() => setInboxTab('all')} className={`${inboxTab === 'all' ? 'text-white font-bold border-b-2 border-white' : 'hover:text-white'}`}>Todos</button>
+                        <button aria-pressed={inboxTab === 'resolved'} onClick={() => setInboxTab('resolved')} className={`${inboxTab === 'resolved' ? 'text-green-500 font-bold border-b-2 border-green-500' : 'hover:text-white'}`}>Resolvidos</button>
                     </div>
 
                     <input placeholder="Buscar..." aria-label="Buscar contatos" className="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-white outline-none focus:border-neon-blue" />
@@ -286,7 +296,7 @@ const ChatInterface = () => {
                                             <p className="text-gray-300 mb-3 text-sm font-bold text-center">Nota de 1 a 5:</p>
                                             <div className="flex gap-2 justify-center">
                                                 {[1, 2, 3, 4, 5].map(n => (
-                                                    <button key={n} onClick={() => handleRate(n)} className="w-8 h-8 rounded-full bg-gray-800 hover:bg-neon-blue hover:text-black text-white font-bold transition-colors border border-gray-600 hover:border-neon-blue">{n}</button>
+                                                    <button key={n} aria-label={`Avaliar com ${n} estrela${n > 1 ? 's' : ''}`} onClick={() => handleRate(n)} className="w-8 h-8 rounded-full bg-gray-800 hover:bg-neon-blue hover:text-black text-white font-bold transition-colors border border-gray-600 hover:border-neon-blue">{n}</button>
                                                 ))}
                                             </div>
                                         </div>
@@ -398,7 +408,7 @@ const ChatInterface = () => {
                             <div className="flex flex-wrap gap-2">
                                 <span className="bg-neon-blue/10 text-neon-blue text-[10px] px-2 py-1 rounded border border-neon-blue/20">🔥 Lead Quente</span>
                                 <span className="bg-purple-900/20 text-purple-400 text-[10px] px-2 py-1 rounded border border-purple-800">🤖 IA Ativa</span>
-                                <button className="text-[10px] text-gray-500 border border-dashed border-gray-700 px-2 py-1 rounded hover:border-gray-500">+ Add</button>
+                                <button aria-label="Adicionar nova tag" className="text-[10px] text-gray-500 border border-dashed border-gray-700 px-2 py-1 rounded hover:border-gray-500">+ Add</button>
                             </div>
                         </div>
                         <div>
