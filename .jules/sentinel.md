@@ -23,3 +23,8 @@
 **Vulnerability:** The application was using an in-memory array for user authentication in `server.js` while the database had a `users` table. This led to state inconsistencies and potential security bypasses if the server restarted or if data wasn't persisted.
 **Learning:** Hardcoded user credentials in source code are a major security risk and technical debt.
 **Fix Detail:** Refactored `server.js` to query the SQLite database for user credentials using parameterized queries, merging the logic with the new database schema.
+
+## 2025-05-23 - Insecure Default Public Routes
+**Vulnerability:** Sensitive endpoints (e.g., `/api/crm/customers`) were explicitly whitelisted in `authMiddleware`'s `publicRoutes` array, ostensibly for demo purposes, exposing PII.
+**Learning:** Convenience features ("demo mode") often become security holes in production. Explicit whitelists for public routes must be audited regularly.
+**Prevention:** Remove "demo" exemptions for sensitive data. Use separate environment configurations or specific mock data endpoints for demos, rather than exposing production endpoints. Frontend clients must be robust enough to handle auth requirements (sending tokens) even in development.

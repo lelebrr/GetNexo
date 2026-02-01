@@ -134,8 +134,8 @@ const authMiddleware = (req, res, next) => {
     '/api/analytics/top-products',
     '/api/analytics/clustering',
     '/api/analytics/trends',
-    '/api/crm/customers',
-    '/api/crm/stats',
+    // '/api/crm/customers', // PROTECTED
+    // '/api/crm/stats',     // PROTECTED
     '/api/products',
     '/api/loyalty/points',
     '/api/loyalty/rewards',
