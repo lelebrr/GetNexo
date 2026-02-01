@@ -556,16 +556,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
             const leaderboardList = document.getElementById('leaderboard-list');
 
             if (leaderboard.length === 0) {
-                leaderboard = [
-                    { rank: 1, name: 'João Silva', points: 15420, avatar: 'J', level: 25 },
-                    { rank: 2, name: 'Maria Santos', points: 14850, avatar: 'M', level: 24 },
-                    { rank: 3, name: 'Pedro Costa', points: 13990, avatar: 'P', level: 23 },
-                    { rank: 4, name: 'Ana Oliveira', points: 12800, avatar: 'A', level: 22 },
-                    { rank: 5, name: 'Carlos Lima', points: 11950, avatar: 'C', level: 21 },
-                    { rank: 6, name: 'Julia Ferreira', points: 11200, avatar: 'J', level: 20 },
-                    { rank: 7, name: 'Lucas Rocha', points: 10800, avatar: 'L', level: 19 },
-                    { rank: 8, name: 'Beatriz Alves', points: 10200, avatar: 'B', level: 18 }
-                ];
+              leaderboard = [];
             }
 
             leaderboardList.innerHTML = leaderboard.map(user => `
@@ -588,16 +579,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
             const achievementsGrid = document.getElementById('achievements-grid');
 
             if (achievements.length === 0) {
-                achievements = [
-                    { name: 'Primeiro Login', desc: 'Fez login pela primeira vez', icon: '🚪', unlocked: true },
-                    { name: 'Explorador', desc: 'Visitou todas as seções', icon: '🗺️', unlocked: true },
-                    { name: 'Primeiro Projeto', desc: 'Criou seu primeiro projeto', icon: '📁', unlocked: true },
-                    { name: 'Mestre dos Pontos', desc: 'Ganhou 10.000 pontos', icon: '💰', unlocked: true },
-                    { name: 'Social', desc: 'Convidou 5 amigos', icon: '👥', unlocked: false },
-                    { name: 'Veterano', desc: 'Usa a plataforma há 1 ano', icon: '🎖️', unlocked: false },
-                    { name: 'Especialista', desc: 'Completou todos os tutoriais', icon: '🎓', unlocked: true },
-                    { name: 'Influenciador', desc: 'Conteúdo compartilhado 100x', icon: '📢', unlocked: false }
-                ];
+              achievements = [];
             }
 
             achievementsGrid.innerHTML = achievements.map(achievement => `
@@ -613,12 +595,7 @@ import ClientLayout from '../../layouts/ClientLayout.astro';
             const challengesList = document.getElementById('challenges-list');
 
             if (challenges.length === 0) {
-                challenges = [
-                    { title: 'Primeiro Projeto', desc: 'Crie seu primeiro projeto', reward: '100 pts', active: true },
-                    { title: 'Explorador Diário', desc: 'Visite 5 seções diferentes', reward: '50 pts', active: true },
-                    { title: 'Social Butterfly', desc: 'Convide 3 amigos', reward: '200 pts', active: true },
-                    { title: 'Mestre do Conhecimento', desc: 'Complete 10 tutoriais', reward: '500 pts', active: false }
-                ];
+              challenges = [];
             }
 
             challengesList.innerHTML = challenges.map(challenge => `

@@ -32,14 +32,9 @@ router.get('/customers', (req, res) => {
 
         const customers = db.prepare(query).all(...params);
 
-        // Se não houver clientes, retorna mock para teste inicial
+        // Se não houver clientes, retorna array vazio (Real Data Mode)
         if (customers.length === 0) {
-            return res.json({
-                customers: [
-                    { id: '5511999999999', name: 'João Silva (Demo)', status: 'lead', created_at: new Date().toISOString() },
-                    { id: '5511888888888', name: 'Maria Souza (Demo)', status: 'qualified', created_at: new Date().toISOString() }
-                ]
-            });
+            return res.json({ customers: [] });
         }
 
         res.json({ customers });

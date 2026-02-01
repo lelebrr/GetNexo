@@ -1,0 +1,282 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="A2A & AP2 - Protocolos de Agente" activeTab="a2a">
+  <div class="p-6" x-data="a2aAdmin()">
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-4 text-white">
+        <div class="text-sm opacity-80">Mensagens</div>
+        <div class="text-2xl font-bold" x-text="stats.messages?.total || 0"></div>
+        <div class="text-xs opacity-60">Hoje: <span x-text="stats.messages?.today || 0"></span></div>
+      </div>
+      <div class="bg-gradient-to-br from-purple-600 to-purple-800 rounded-xl p-4 text-white">
+        <div class="text-sm opacity-80">Peers Ativos</div>
+        <div class="text-2xl font-bold" x-text="stats.peers?.total || 0"></div>
+        <div class="text-xs opacity-60">Confiáveis: <span x-text="stats.peers?.trusted || 0"></span></div>
+      </div>
+      <div class="bg-gradient-to-br from-green-600 to-green-800 rounded-xl p-4 text-white">
+        <div class="text-sm opacity-80">Volume AP2</div>
+        <div class="text-2xl font-bold">R$ <span x-text="ap2Stats.transactions?.volume?.total?.toFixed(2) || '0.00'"></span></div>
+        <div class="text-xs opacity-60">Hoje: R$ <span x-text="ap2Stats.transactions?.volume?.today?.toFixed(2) || '0.00'"></span></div>
+      </div>
+      <div class="bg-gradient-to-br from-amber-600 to-amber-800 rounded-xl p-4 text-white">
+        <div class="text-sm opacity-80">Mandates Ativos</div>
+        <div class="text-2xl font-bold" x-text="ap2Stats.mandates?.active || 0"></div>
+        <div class="text-xs opacity-60">Total: <span x-text="ap2Stats.mandates?.total || 0"></span></div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex gap-2 mb-6 border-b border-gray-700 pb-2">
+      <button @click="activeTab = 'identity'" :class="activeTab === 'identity' ? 'bg-blue-600' : 'bg-gray-700'" class="px-4 py-2 rounded-lg text-white text-sm">Identidade</button>
+      <button @click="activeTab = 'peers'" :class="activeTab === 'peers' ? 'bg-blue-600' : 'bg-gray-700'" class="px-4 py-2 rounded-lg text-white text-sm">Peers</button>
+      <button @click="activeTab = 'messages'" :class="activeTab === 'messages' ? 'bg-blue-600' : 'bg-gray-700'" class="px-4 py-2 rounded-lg text-white text-sm">Mensagens</button>
+      <button @click="activeTab = 'payments'" :class="activeTab === 'payments' ? 'bg-blue-600' : 'bg-gray-700'" class="px-4 py-2 rounded-lg text-white text-sm">Pagamentos</button>
+      <button @click="activeTab = 'mandates'" :class="activeTab === 'mandates' ? 'bg-blue-600' : 'bg-gray-700'" class="px-4 py-2 rounded-lg text-white text-sm">Mandates</button>
+    </div>
+
+    <!-- Identity Tab -->
+    <div x-show="activeTab === 'identity'" class="bg-gray-800 rounded-xl p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-white">Identidades do Agente</h2>
+        <button @click="createIdentity()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm">+ Nova Identidade RSA</button>
+      </div>
+      <div class="space-y-3">
+        <template x-for="id in identities" :key="id.id">
+          <div class="bg-gray-700 rounded-lg p-4 flex justify-between items-center">
+            <div>
+              <div class="font-medium text-white" x-text="id.name"></div>
+              <div class="text-xs text-gray-400 font-mono" x-text="id.id"></div>
+              <div class="text-xs text-green-400" x-show="id.is_default">● Padrão</div>
+            </div>
+            <div class="flex gap-2">
+              <button @click="exportKey(id.id)" class="bg-gray-600 hover:bg-gray-500 text-white px-3 py-1 rounded text-sm">Exportar</button>
+              <button x-show="!id.is_default" @click="setDefault(id.id)" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">Usar</button>
+              <button @click="deleteIdentity(id.id)" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">×</button>
+            </div>
+          </div>
+        </template>
+      </div>
+      <div class="mt-6 bg-gray-700 rounded-lg p-4">
+        <h3 class="text-white font-medium mb-2">Agent Card URL</h3>
+        <div class="flex gap-2">
+          <input type="text" readonly :value="agentCardUrl" class="flex-1 bg-gray-600 text-white px-3 py-2 rounded text-sm font-mono">
+          <button @click="copyUrl()" class="bg-blue-600 text-white px-4 py-2 rounded text-sm">Copiar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Peers Tab -->
+    <div x-show="activeTab === 'peers'" class="bg-gray-800 rounded-xl p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-white">Peers Conectados</h2>
+        <button @click="showDiscoverModal = true" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm">+ Descobrir Agente</button>
+      </div>
+      <div class="space-y-3">
+        <template x-for="peer in peers" :key="peer.id">
+          <div class="bg-gray-700 rounded-lg p-4">
+            <div class="flex justify-between items-center">
+              <div>
+                <div class="font-medium text-white" x-text="peer.name"></div>
+                <div class="text-xs text-gray-400 font-mono" x-text="peer.endpoint"></div>
+                <div class="flex gap-2 mt-1">
+                  <span :class="peer.trusted ? 'bg-green-600' : 'bg-yellow-600'" class="text-xs px-2 py-0.5 rounded text-white" x-text="peer.trusted ? 'Verificado' : 'Pendente'"></span>
+                </div>
+              </div>
+              <div class="flex gap-2">
+                <button @click="verifyPeer(peer.id)" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">Verificar</button>
+                <button @click="deletePeer(peer.id)" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">×</button>
+              </div>
+            </div>
+          </div>
+        </template>
+        <div x-show="peers.length === 0" class="text-gray-400 text-center py-8">Nenhum peer conectado</div>
+      </div>
+    </div>
+
+    <!-- Messages Tab -->
+    <div x-show="activeTab === 'messages'" class="bg-gray-800 rounded-xl p-6">
+      <h2 class="text-xl font-bold text-white mb-4">Histórico de Mensagens</h2>
+      <div class="space-y-2 max-h-96 overflow-y-auto">
+        <template x-for="msg in messages" :key="msg.id">
+          <div class="bg-gray-700 rounded-lg p-3">
+            <div class="flex justify-between text-xs text-gray-400 mb-1">
+              <span x-text="msg.sender_id"></span>
+              <span x-text="new Date(msg.created_at).toLocaleString()"></span>
+            </div>
+            <div class="text-white text-sm" x-text="msg.content"></div>
+            <div x-show="msg.intent" class="text-xs text-blue-400 mt-1" x-text="'Intent: ' + msg.intent"></div>
+          </div>
+        </template>
+        <div x-show="messages.length === 0" class="text-gray-400 text-center py-8">Nenhuma mensagem</div>
+      </div>
+    </div>
+
+    <!-- Payments Tab -->
+    <div x-show="activeTab === 'payments'" class="bg-gray-800 rounded-xl p-6">
+      <h2 class="text-xl font-bold text-white mb-4">Transações AP2</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left">
+          <thead class="text-xs text-gray-400 uppercase bg-gray-700">
+            <tr><th class="px-4 py-2">ID</th><th class="px-4 py-2">Valor</th><th class="px-4 py-2">Status</th><th class="px-4 py-2">Data</th><th class="px-4 py-2">Ações</th></tr>
+          </thead>
+          <tbody>
+            <template x-for="tx in transactions" :key="tx.transaction_id">
+              <tr class="border-b border-gray-700">
+                <td class="px-4 py-2 text-white font-mono text-xs" x-text="tx.transaction_id?.substring(0,16) + '...'"></td>
+                <td class="px-4 py-2 text-white">R$ <span x-text="tx.amount?.toFixed(2)"></span></td>
+                <td class="px-4 py-2"><span :class="getStatusClass(tx.status)" class="px-2 py-0.5 rounded text-xs" x-text="tx.status"></span></td>
+                <td class="px-4 py-2 text-gray-400 text-xs" x-text="new Date(tx.created_at).toLocaleString()"></td>
+                <td class="px-4 py-2">
+                  <button x-show="tx.status === 'pending'" @click="capturePayment(tx.transaction_id)" class="text-green-400 text-xs">Capturar</button>
+                  <button x-show="tx.status === 'captured'" @click="refundPayment(tx.transaction_id)" class="text-red-400 text-xs">Estornar</button>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Mandates Tab -->
+    <div x-show="activeTab === 'mandates'" class="bg-gray-800 rounded-xl p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-white">Mandates AP2</h2>
+        <button @click="showMandateModal = true" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm">+ Criar Mandate</button>
+      </div>
+      <div class="space-y-3">
+        <template x-for="m in mandates" :key="m.mandate_id">
+          <div class="bg-gray-700 rounded-lg p-4">
+            <div class="flex justify-between items-center">
+              <div>
+                <div class="font-mono text-xs text-gray-400" x-text="m.mandate_id"></div>
+                <div class="text-white" x-text="m.type + ' - ' + m.scope"></div>
+                <div class="text-xs text-gray-400" x-text="'Max: R$ ' + (m.constraints?.max_amount || 'ilimitado')"></div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span :class="m.status === 'active' ? 'bg-green-600' : 'bg-gray-600'" class="px-2 py-0.5 rounded text-xs text-white" x-text="m.status"></span>
+                <button x-show="m.status === 'active'" @click="revokeMandate(m.mandate_id)" class="text-red-400 text-xs">Revogar</button>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <!-- Discover Modal -->
+    <div x-show="showDiscoverModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" @click.self="showDiscoverModal = false">
+      <div class="bg-gray-800 rounded-xl p-6 w-full max-w-md">
+        <h3 class="text-lg font-bold text-white mb-4">Descobrir Agente</h3>
+        <input type="text" x-model="discoverUrl" placeholder="https://exemplo.com" class="w-full bg-gray-700 text-white px-3 py-2 rounded mb-4">
+        <div class="flex gap-2 justify-end">
+          <button @click="showDiscoverModal = false" class="bg-gray-600 text-white px-4 py-2 rounded">Cancelar</button>
+          <button @click="discoverPeer()" class="bg-blue-600 text-white px-4 py-2 rounded">Descobrir</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mandate Modal -->
+    <div x-show="showMandateModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" @click.self="showMandateModal = false">
+      <div class="bg-gray-800 rounded-xl p-6 w-full max-w-md">
+        <h3 class="text-lg font-bold text-white mb-4">Criar Mandate</h3>
+        <select x-model="newMandate.type" class="w-full bg-gray-700 text-white px-3 py-2 rounded mb-3">
+          <option value="cart">Cart (Compra única)</option>
+          <option value="intent">Intent (Recorrente)</option>
+          <option value="subscription">Subscription</option>
+        </select>
+        <input type="text" x-model="newMandate.scope" placeholder="Escopo (ex: purchase)" class="w-full bg-gray-700 text-white px-3 py-2 rounded mb-3">
+        <input type="number" x-model="newMandate.max_amount" placeholder="Valor máximo (R$)" class="w-full bg-gray-700 text-white px-3 py-2 rounded mb-4">
+        <div class="flex gap-2 justify-end">
+          <button @click="showMandateModal = false" class="bg-gray-600 text-white px-4 py-2 rounded">Cancelar</button>
+          <button @click="createMandate()" class="bg-green-600 text-white px-4 py-2 rounded">Criar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script nonce={Astro.locals.nonce}>
+    function a2aAdmin() {
+      return {
+        activeTab: 'identity',
+        stats: {},
+        ap2Stats: {},
+        identities: [],
+        peers: [],
+        messages: [],
+        transactions: [],
+        mandates: [],
+        showDiscoverModal: false,
+        showMandateModal: false,
+        discoverUrl: '',
+        newMandate: { type: 'cart', scope: 'purchase', max_amount: 100 },
+        agentCardUrl: window.location.origin + '/.well-known/agent-card.json',
+
+        async init() {
+          await Promise.all([this.loadStats(), this.loadAp2Stats(), this.loadIdentities(), this.loadPeers(), this.loadMessages(), this.loadTransactions(), this.loadMandates()]);
+        },
+
+        async loadStats() { try { this.stats = await (await fetch('/api/a2a/stats')).json(); } catch {} },
+        async loadAp2Stats() { try { this.ap2Stats = await (await fetch('/api/ap2/stats')).json(); } catch {} },
+        async loadIdentities() { try { this.identities = await (await fetch('/api/a2a/identities')).json(); } catch {} },
+        async loadPeers() { try { this.peers = await (await fetch('/api/a2a/peers')).json(); } catch {} },
+        async loadMessages() { try { this.messages = await (await fetch('/api/a2a/messages?limit=50')).json(); } catch {} },
+        async loadTransactions() { try { this.transactions = await (await fetch('/api/ap2/transactions?limit=50')).json(); } catch {} },
+        async loadMandates() { try { this.mandates = await (await fetch('/api/ap2/mandates?limit=50')).json(); } catch {} },
+
+        async createIdentity() {
+          const name = prompt('Nome da identidade:');
+          if (!name) return;
+          await fetch('/api/a2a/identities', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, setDefault: this.identities.length === 0 }) });
+          this.loadIdentities();
+        },
+
+        async setDefault(id) {
+          await fetch(`/api/a2a/identities/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ setDefault: true }) });
+          this.loadIdentities();
+        },
+
+        async deleteIdentity(id) {
+          if (!confirm('Excluir identidade?')) return;
+          await fetch(`/api/a2a/identities/${id}`, { method: 'DELETE' });
+          this.loadIdentities();
+        },
+
+        async exportKey(id) {
+          const data = await (await fetch(`/api/a2a/identities/${id}/export`)).json();
+          const blob = new Blob([data.publicKey], { type: 'text/plain' });
+          const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${id}_public.pem`; a.click();
+        },
+
+        async discoverPeer() {
+          const res = await fetch('/api/a2a/discover', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: this.discoverUrl }) });
+          const data = await res.json();
+          if (data.success) { this.showDiscoverModal = false; this.discoverUrl = ''; this.loadPeers(); alert('Agente descoberto: ' + data.agentCard?.name); }
+          else alert('Erro: ' + data.error);
+        },
+
+        async verifyPeer(id) {
+          const data = await (await fetch(`/api/a2a/peers/${id}/verify`)).json();
+          alert(data.verified ? 'Peer verificado com sucesso!' : 'Falha na verificação: ' + (data.error || 'offline'));
+          this.loadPeers();
+        },
+
+        async deletePeer(id) { if (confirm('Remover peer?')) { await fetch(`/api/a2a/peers/${id}`, { method: 'DELETE' }); this.loadPeers(); } },
+
+        async createMandate() {
+          await fetch('/api/ap2/mandates', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: this.newMandate.type, scope: this.newMandate.scope, constraints: { max_amount: parseFloat(this.newMandate.max_amount) || 100 } }) });
+          this.showMandateModal = false;
+          this.loadMandates();
+        },
+
+        async revokeMandate(id) { if (confirm('Revogar mandate?')) { await fetch(`/api/ap2/mandates/${id}`, { method: 'DELETE' }); this.loadMandates(); } },
+        async capturePayment(id) { await fetch(`/api/ap2/transactions/${id}/capture`, { method: 'POST' }); this.loadTransactions(); },
+        async refundPayment(id) { if (confirm('Estornar pagamento?')) { await fetch(`/api/ap2/transactions/${id}/refund`, { method: 'POST' }); this.loadTransactions(); } },
+
+        copyUrl() { navigator.clipboard.writeText(this.agentCardUrl); alert('URL copiada!'); },
+        getStatusClass(s) { return { captured: 'bg-green-600', authorized: 'bg-blue-600', pending: 'bg-yellow-600', refunded: 'bg-red-600', voided: 'bg-gray-600' }[s] || 'bg-gray-600'; }
+      };
+    }
+  </script>
+</AdminLayout>

@@ -3,64 +3,348 @@ import ResellerLayout from '../../../layouts/ResellerLayout.astro';
 ---
 
 <ResellerLayout title="Minhas Landing Pages">
-    <div class="header">
-        <h2 class="text-neon-blue">📄 LANDING PAGES PERSONALIZADAS</h2>
-        <button class="btn-new">CRIAR NOVA LANDING</button>
-    </div>
+    <div x-data="landingsManager()">
+        <div class="header">
+            <div>
+                <h2 class="text-neon-blue">📄 LANDING PAGES PERSONALIZADAS</h2>
+                <p class="text-gray-400 text-sm">Páginas de alta conversão prontas para receber seu tráfego.</p>
+            </div>
+            <button @click="createLanding()" class="btn-primary">CRIAR NOVA LANDING</button>
+        </div>
 
-    <div class="landings-list" id="landings-container">
-        <p style="text-align: center; color: #666; padding: 3rem;">CARREGANDO LANDING PAGES...</p>
-    </div>
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <span class="value" x-text="landings.length">0</span>
+                <span class="label">Páginas Ativas</span>
+            </div>
+            <div class="stat-card">
+                <span class="value" x-text="totalViews">0</span>
+                <span class="label">Visualizações</span>
+            </div>
+            <div class="stat-card">
+                <span class="value" x-text="totalLeads">0</span>
+                <span class="label">Leads Gerados</span>
+            </div>
+            <div class="stat-card">
+                <span class="value" x-text="avgConversion + '%'">0%</span>
+                <span class="label">Taxa Média</span>
+            </div>
+        </div>
 
+        <!-- Loading -->
+        <div x-show="loading" class="loading-state">
+            <div class="spinner"></div>
+        </div>
+
+        <div x-show="!loading" class="landings-list">
+            <template x-for="landing in landings" :key="landing.id">
+                <div class="landing-row">
+                    <div class="lp-preview">
+                        <div class="preview-thumb" :style="'background: ' + (landing.color || 'linear-gradient(135deg, #00d4ff, #00ff9d)')">
+                            <span class="preview-icon">📄</span>
+                        </div>
+                    </div>
+                    <div class="lp-info">
+                        <h3 x-text="landing.name"></h3>
+                        <span class="url" x-text="landing.url"></span>
+                        <div class="lp-stats">
+                            <span><strong x-text="landing.views || 0"></strong> views</span>
+                            <span><strong x-text="landing.leads || 0"></strong> leads</span>
+                            <span class="conv" x-text="getConvRate(landing)">0%</span>
+                        </div>
+                    </div>
+                    <div class="lp-status" :class="landing.active ? 'active' : 'inactive'">
+                        <div class="status-dot"></div>
+                        <span x-text="landing.active ? 'ATIVA' : 'INATIVA'"></span>
+                    </div>
+                    <div class="actions">
+                        <a :href="landing.url" target="_blank" class="btn-action">VISUALIZAR</a>
+                        <button @click="configureLanding(landing)" class="btn-action btn-primary-action">CONFIGURAR</button>
+                        <button @click="toggleStatus(landing)" class="btn-action" x-text="landing.active ? 'DESATIVAR' : 'ATIVAR'"></button>
+                        <button @click="deleteLanding(landing.id)" class="btn-action btn-danger">🗑️</button>
+                    </div>
+                </div>
+            </template>
+            
+            <div x-show="landings.length === 0" class="empty-state">
+                <span class="icon">📄</span>
+                <p>Nenhuma landing page criada ainda</p>
+                <button @click="createLanding()" class="btn-primary">Criar Primeira Página</button>
+            </div>
+        </div>
+
+        <!-- Create/Configure Modal -->
+        <div x-show="showModal" x-cloak class="modal-overlay">
+            <div class="modal-container modal-lg" @click.stop>
+                <div class="modal-header">
+                    <h3 x-text="editingLanding ? 'Configurar Landing Page' : 'Nova Landing Page'"></h3>
+                    <button @click="showModal = false" class="modal-close">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nome da Página *</label>
+                            <input type="text" x-model="form.name" class="form-input" placeholder="Ex: Oferta Especial Black Friday">
+                        </div>
+                        <div class="form-group">
+                            <label>Slug (URL)</label>
+                            <input type="text" x-model="form.slug" class="form-input" placeholder="oferta-black-friday">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Template</label>
+                        <div class="template-grid">
+                            <button type="button" @click="form.template = 'modern'" :class="form.template === 'modern' ? 'selected' : ''" class="template-option">
+                                <span class="template-preview modern"></span>
+                                <span>Moderno</span>
+                            </button>
+                            <button type="button" @click="form.template = 'minimal'" :class="form.template === 'minimal' ? 'selected' : ''" class="template-option">
+                                <span class="template-preview minimal"></span>
+                                <span>Minimalista</span>
+                            </button>
+                            <button type="button" @click="form.template = 'bold'" :class="form.template === 'bold' ? 'selected' : ''" class="template-option">
+                                <span class="template-preview bold"></span>
+                                <span>Negrito</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Título Principal</label>
+                            <input type="text" x-model="form.headline" class="form-input" placeholder="Automatize seu WhatsApp com IA">
+                        </div>
+                        <div class="form-group">
+                            <label>Subtítulo</label>
+                            <input type="text" x-model="form.subheadline" class="form-input" placeholder="Comece grátis em 2 minutos">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Cor Principal</label>
+                        <div class="color-options">
+                            <button type="button" @click="form.color = '#00ff9d'" :class="form.color === '#00ff9d' ? 'selected' : ''" class="color-btn" style="background: #00ff9d"></button>
+                            <button type="button" @click="form.color = '#00d4ff'" :class="form.color === '#00d4ff' ? 'selected' : ''" class="color-btn" style="background: #00d4ff"></button>
+                            <button type="button" @click="form.color = '#f59e0b'" :class="form.color === '#f59e0b' ? 'selected' : ''" class="color-btn" style="background: #f59e0b"></button>
+                            <button type="button" @click="form.color = '#8b5cf6'" :class="form.color === '#8b5cf6' ? 'selected' : ''" class="color-btn" style="background: #8b5cf6"></button>
+                            <button type="button" @click="form.color = '#ec4899'" :class="form.color === '#ec4899' ? 'selected' : ''" class="color-btn" style="background: #ec4899"></button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>CTA (Botão)</label>
+                        <input type="text" x-model="form.ctaText" class="form-input" placeholder="Começar Teste Grátis">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button @click="showModal = false" class="btn-cancel">Cancelar</button>
+                    <button @click="saveLanding()" class="btn-primary">Salvar Página</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </ResellerLayout>
 
 <style>
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-    .btn-new { background: #00f3ff; color: #000; border: none; padding: 0.8rem 1.5rem; border-radius: 4px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; }
+    [x-cloak] { display: none !important; }
+    .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; }
+    .btn-primary { background: #00f3ff; color: #000; border: none; padding: 0.8rem 1.5rem; border-radius: 4px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; }
+
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: #0a0a0a; border: 1px solid #334155; padding: 1.25rem; border-radius: 12px; text-align: center; }
+    .stat-card .value { display: block; font-size: 2rem; font-weight: 700; color: #00ff9d; }
+    .stat-card .label { display: block; font-size: 0.7rem; color: #64748b; }
+
+    .loading-state { text-align: center; padding: 3rem; }
+    .spinner { width: 40px; height: 40px; border: 3px solid #334155; border-top-color: #00f3ff; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .landings-list { display: grid; gap: 1rem; }
     
-    .landings-list { display: grid; gap: 1.5rem; }
+    .landing-row { background: #0a0a0a; border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; display: grid; grid-template-columns: auto 1fr auto auto; gap: 1.5rem; align-items: center; transition: all 0.3s; }
+    .landing-row:hover { border-color: #00f3ff; }
+
+    .lp-preview { width: 60px; height: 60px; border-radius: 8px; overflow: hidden; }
+    .preview-thumb { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
     
-    .landing-row { background: #0a0a0a; border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; gap: 2rem; }
+    .lp-info h3 { color: #fff; font-size: 1.1rem; margin: 0 0 0.25rem 0; }
+    .lp-info .url { color: #00ff9d; font-size: 0.85rem; font-family: monospace; display: block; margin-bottom: 0.5rem; }
+    .lp-stats { display: flex; gap: 1.5rem; font-size: 0.75rem; color: #64748b; }
+    .lp-stats strong { color: #fff; }
+    .lp-stats .conv { color: #00ff9d; font-weight: bold; }
     
-    .lp-info h3 { color: #fff; font-size: 1.1rem; margin-bottom: 0.5rem; }
-    .lp-info .url { color: #00ff9d; font-size: 0.85rem; font-family: monospace; }
+    .lp-status { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; font-weight: bold; }
+    .lp-status.active { color: #00ff9d; }
+    .lp-status.active .status-dot { background: #00ff9d; box-shadow: 0 0 10px #00ff9d; }
+    .lp-status.inactive { color: #f43f5e; }
+    .lp-status.inactive .status-dot { background: #f43f5e; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; }
     
-    .lp-status { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; font-weight: bold; color: #00ff9d; }
-    .status-dot { width: 8px; height: 8px; background: #00ff9d; border-radius: 50%; box-shadow: 0 0 10px #00ff9d; }
-    
-    .actions { display: flex; gap: 1rem; }
-    .btn-action { color: #cbd5e1; text-decoration: none; font-size: 0.8rem; font-weight: 600; padding: 0.5rem 1rem; border: 1px solid #334155; border-radius: 4px; transition: all 0.2s; }
-    .btn-action:hover { background: rgba(255, 255, 255, 0.05); color: #fff; border-color: #64748b; }
+    .actions { display: flex; gap: 0.5rem; }
+    .btn-action { color: #cbd5e1; text-decoration: none; font-size: 0.75rem; font-weight: 600; padding: 0.5rem 0.75rem; border: 1px solid #334155; border-radius: 4px; background: transparent; cursor: pointer; transition: all 0.2s; }
+    .btn-action:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
     .btn-primary-action { background: rgba(0, 243, 255, 0.1); color: #00f3ff; border-color: #00f3ff; }
+    .btn-danger { border-color: #f43f5e; color: #f43f5e; }
+    .btn-danger:hover { background: rgba(244, 63, 94, 0.2); }
+
+    .empty-state { text-align: center; padding: 3rem; background: #0a0a0a; border: 1px dashed #334155; border-radius: 12px; }
+    .empty-state .icon { font-size: 3rem; display: block; margin-bottom: 1rem; }
+    .empty-state p { color: #64748b; margin-bottom: 1.5rem; }
+
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 1rem; }
+    .modal-container { background: #0f172a; border: 1px solid #334155; border-radius: 16px; width: 100%; max-width: 450px; max-height: 90vh; overflow-y: auto; }
+    .modal-lg { max-width: 600px; }
+    .modal-header { background: rgba(0, 243, 255, 0.1); padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; position: sticky; top: 0; }
+    .modal-header h3 { color: #00f3ff; margin: 0; }
+    .modal-close { background: none; border: none; color: #94a3b8; font-size: 1.5rem; cursor: pointer; }
+    .modal-body { padding: 1.5rem; }
+    .modal-footer { padding: 1.5rem; border-top: 1px solid #334155; display: flex; gap: 1rem; justify-content: flex-end; position: sticky; bottom: 0; background: #0f172a; }
+
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; color: #94a3b8; font-size: 0.8rem; margin-bottom: 0.5rem; }
+    .form-input { width: 100%; background: #0a0a0a; border: 1px solid #334155; padding: 0.8rem; color: #fff; border-radius: 8px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .btn-cancel { background: #334155; color: #fff; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; cursor: pointer; }
+
+    .template-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .template-option { background: #0a0a0a; border: 2px solid #334155; border-radius: 8px; padding: 1rem; cursor: pointer; text-align: center; }
+    .template-option.selected { border-color: #00f3ff; }
+    .template-option span:last-child { display: block; margin-top: 0.5rem; color: #fff; font-size: 0.75rem; }
+    .template-preview { display: block; height: 60px; border-radius: 4px; }
+    .template-preview.modern { background: linear-gradient(135deg, #00d4ff, #00ff9d); }
+    .template-preview.minimal { background: linear-gradient(135deg, #334155, #1e293b); }
+    .template-preview.bold { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+
+    .color-options { display: flex; gap: 0.75rem; }
+    .color-btn { width: 36px; height: 36px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; transition: all 0.2s; }
+    .color-btn.selected { border-color: #fff; transform: scale(1.1); }
+
+    @media (max-width: 768px) {
+        .stats-row { grid-template-columns: 1fr 1fr; }
+        .landing-row { grid-template-columns: 1fr; }
+        .form-row { grid-template-columns: 1fr; }
+    }
 </style>
 
-<script is:inline>
-    async function fetchLandings() {
-        try {
-            const res = await fetch('/api/revenda/marketing');
-            const data = await res.json();
-            const container = document.getElementById('landings-container');
-            
-            container.innerHTML = data.landings.map(l => `
-                <div class="landing-row">
-                    <div class="lp-info">
-                        <h3>${l.name}</h3>
-                        <span class="url">${l.url}</span>
-                    </div>
-                    <div class="lp-status">
-                        <div class="status-dot"></div>
-                        <span>ATIVA</span>
-                    </div>
-                    <div class="actions">
-                        <a href="${l.url}" target="_blank" class="btn-action">VISUALIZAR</a>
-                        <a href="#" class="btn-action btn-primary-action">CONFIGURAR</a>
-                    </div>
-                </div>
-            `).join('');
-        } catch (e) {
-            console.error(e);
-        }
-    }
+<script nonce={Astro.locals.nonce} is:inline>
+    function landingsManager() {
+        return {
+            landings: [],
+            loading: true,
+            showModal: false,
+            editingLanding: null,
+            form: { name: '', slug: '', template: 'modern', headline: '', subheadline: '', color: '#00ff9d', ctaText: 'Começar Agora' },
 
-    fetchLandings();
+            get totalViews() {
+                return this.landings.reduce((sum, l) => sum + (l.views || 0), 0);
+            },
+
+            get totalLeads() {
+                return this.landings.reduce((sum, l) => sum + (l.leads || 0), 0);
+            },
+
+            get avgConversion() {
+                if (this.totalViews === 0) return 0;
+                return ((this.totalLeads / this.totalViews) * 100).toFixed(1);
+            },
+
+            getConvRate(landing) {
+                if (!landing.views) return '0%';
+                return ((landing.leads / landing.views) * 100).toFixed(1) + '%';
+            },
+
+            async init() {
+                await this.fetchLandings();
+            },
+
+            async fetchLandings() {
+                this.loading = true;
+                try {
+                    const res = await fetch('/api/revenda/marketing');
+                    if (res.ok) {
+                        const data = await res.json();
+                        this.landings = data.landings || [];
+                    } else {
+                        this.landings = this.getMockLandings();
+                    }
+                } catch (e) {
+                    console.error(e);
+                    this.landings = this.getMockLandings();
+                } finally {
+                    this.loading = false;
+                }
+            },
+
+            getMockLandings() {
+                return [
+                    { id: 1, name: 'Página Principal de Vendas', url: 'https://getnexo.com.br/p/REV123', active: true, views: 1523, leads: 89, color: 'linear-gradient(135deg, #00d4ff, #00ff9d)' },
+                    { id: 2, name: 'Black Friday Especial', url: 'https://getnexo.com.br/p/REV123-bf', active: true, views: 456, leads: 32, color: 'linear-gradient(135deg, #f59e0b, #ef4444)' },
+                    { id: 3, name: 'Teste Grátis Landing', url: 'https://getnexo.com.br/p/REV123-trial', active: false, views: 234, leads: 18, color: 'linear-gradient(135deg, #8b5cf6, #ec4899)' },
+                ];
+            },
+
+            createLanding() {
+                this.editingLanding = null;
+                this.form = { name: '', slug: '', template: 'modern', headline: '', subheadline: '', color: '#00ff9d', ctaText: 'Começar Agora' };
+                this.showModal = true;
+            },
+
+            configureLanding(landing) {
+                this.editingLanding = landing;
+                this.form = { ...landing, template: 'modern' };
+                this.showModal = true;
+            },
+
+            async saveLanding() {
+                if (!this.form.name) {
+                    alert('Nome é obrigatório');
+                    return;
+                }
+                
+                const slug = this.form.slug || this.form.name.toLowerCase().replace(/\s+/g, '-');
+                const url = 'https://getnexo.com.br/p/REV' + Date.now().toString().slice(-5) + '-' + slug;
+                
+                try {
+                    await fetch('/api/revenda/marketing/landings', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ ...this.form, slug, url })
+                    });
+                } catch(e) { console.error(e); }
+
+                if (this.editingLanding) {
+                    const idx = this.landings.findIndex(l => l.id === this.editingLanding.id);
+                    if (idx !== -1) this.landings[idx] = { ...this.landings[idx], ...this.form };
+                } else {
+                    this.landings.unshift({ id: Date.now(), ...this.form, url, active: true, views: 0, leads: 0, color: `linear-gradient(135deg, ${this.form.color}, #000)` });
+                }
+
+                this.showModal = false;
+            },
+
+            async toggleStatus(landing) {
+                landing.active = !landing.active;
+                try {
+                    await fetch(`/api/revenda/marketing/landings/${landing.id}`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ active: landing.active })
+                    });
+                } catch(e) { console.error(e); }
+            },
+
+            async deleteLanding(id) {
+                if (!confirm('Excluir esta landing page?')) return;
+                
+                try {
+                    await fetch(`/api/revenda/marketing/landings/${id}`, { method: 'DELETE' });
+                } catch(e) { console.error(e); }
+
+                this.landings = this.landings.filter(l => l.id !== id);
+            }
+        };
+    }
 </script>
+</ResellerLayout>

@@ -30,7 +30,7 @@ import ResellerLayout from '../../layouts/ResellerLayout.astro';
     .btn-download:hover { background: #00f3ff; color: #000; }
 </style>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
     async function fetchStatements() {
         try {
             const res = await fetch('/api/revenda/financeiro');

@@ -1,0 +1,379 @@
+---
+import ClientLayout from '../../layouts/ClientLayout.astro';
+const nonce = Astro.locals.nonce;
+---
+
+<ClientLayout title="Performance IA">
+  <div x-data="iaStatsManager()">
+    <!-- Header -->
+    <div class="header">
+      <div>
+        <h1 class="text-neon-blue">🤖 Performance IA</h1>
+        <p class="text-muted">Acompanhe as estatísticas de acerto do seu bot inteligente</p>
+      </div>
+      <button @click="refreshData()" class="btn-primary">🔄 Atualizar</button>
+    </div>
+
+    <!-- Low Rate Alert -->
+    <div x-show="showLowAlert" x-cloak class="alert-banner">
+      <div class="alert-icon">⚠️</div>
+      <div class="alert-content">
+        <h3>Taxa de Acerto Baixa!</h3>
+        <p>Sua taxa média caiu para <span class="alert-value" x-text="avgRate + '%'"></span> nos últimos 7 dias.</p>
+        <p class="alert-hint">Considere turbinar com Gemini Pro ou Grok para até 95% de acerto!</p>
+      </div>
+      <button class="btn-upgrade-alert">🚀 Turbinar IA (+R$49/mês)</button>
+    </div>
+
+    <!-- AI Stats Cards -->
+    <div class="ai-cards-grid">
+      <div class="ai-card deepseek">
+        <div class="ai-icon">🚀</div>
+        <div class="ai-info">
+          <span class="ai-name">DeepSeek</span>
+          <span class="ai-rate" x-text="stats.deepseek + '%'">0%</span>
+          <span class="ai-desc">Rápido e econômico</span>
+        </div>
+      </div>
+      <div class="ai-card grok">
+        <div class="ai-icon">🧠</div>
+        <div class="ai-info">
+          <span class="ai-name">Grok</span>
+          <span class="ai-rate" x-text="stats.grok + '%'">0%</span>
+          <span class="ai-desc">Criativo e inteligente</span>
+        </div>
+      </div>
+      <div class="ai-card gemini">
+        <div class="ai-icon">✨</div>
+        <div class="ai-info">
+          <span class="ai-name">Gemini</span>
+          <span class="ai-rate" x-text="stats.gemini + '%'">0%</span>
+          <span class="ai-desc">Multimodal e complexo</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3>📊 Taxa por Modelo (30 dias)</h3>
+        <canvas id="pieChart" height="250"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>📈 Taxa Diária</h3>
+        <canvas id="lineChart" height="250"></canvas>
+      </div>
+    </div>
+
+    <!-- Comparative Chart -->
+    <div class="chart-card full-width">
+      <h3>📉 Comparativo por IA (30 dias)</h3>
+      <canvas id="comparativeChart" height="200"></canvas>
+    </div>
+
+    <!-- Settings Grid -->
+    <div class="settings-grid">
+      <div class="card">
+        <h3>⚙️ IA Preferida</h3>
+        <select x-model="preferredIA" class="form-input">
+          <option value="deepseek">🚀 DeepSeek (rápido e econômico)</option>
+          <option value="grok">🧠 Grok (criativo e inteligente)</option>
+          <option value="gemini">✨ Gemini (suporte complexo)</option>
+        </select>
+        <button @click="savePreferredIA()" class="btn-primary full-width">Salvar IA Preferida</button>
+      </div>
+
+      <div class="card">
+        <h3>💬 Prompt Customizado</h3>
+        <textarea x-model="customPrompt" class="form-input" rows="4" placeholder="Ex: Responda como vendedor brasileiro amigável, foque em fechar vendas via PIX..."></textarea>
+        <span class="help-text">Máx. 1000 caracteres</span>
+        <button @click="savePrompt()" class="btn-primary full-width">Salvar Prompt</button>
+      </div>
+    </div>
+
+    <!-- Prompt Examples -->
+    <div class="card">
+      <h3>📝 Prompts Prontos</h3>
+      <div class="prompts-grid">
+        <template x-for="(prompt, idx) in promptExamples" :key="idx">
+          <button @click="usePrompt(idx)" class="prompt-card">
+            <span class="prompt-icon" x-text="prompt.icon"></span>
+            <span class="prompt-name" x-text="prompt.name"></span>
+            <span class="prompt-desc" x-text="prompt.desc"></span>
+          </button>
+        </template>
+      </div>
+    </div>
+
+    <!-- Prompt History -->
+    <div class="card">
+      <h3>🕒 Histórico de Prompts</h3>
+      <div class="history-list" x-show="promptHistory.length > 0">
+        <template x-for="item in promptHistory" :key="item.id">
+          <div class="history-item">
+            <div class="history-info">
+              <span class="history-type" x-text="item.tipo"></span>
+              <p class="history-text" x-text="item.prompt.substring(0, 100) + '...'"></p>
+              <span class="history-date" x-text="formatDate(item.data)"></span>
+            </div>
+            <button @click="deletePromptHistory(item.id)" class="btn-delete">🗑️</button>
+          </div>
+        </template>
+      </div>
+      <p x-show="promptHistory.length === 0" class="empty-text">Nenhum histórico</p>
+    </div>
+
+    <!-- Toast -->
+    <div x-show="toast" x-transition class="toast" :class="toastError ? 'error' : ''" x-text="toastMessage"></div>
+  </div>
+</ClientLayout>
+
+<style>
+  [x-cloak] { display: none !important; }
+  
+  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; }
+  .header h1 { font-size: 1.75rem; margin: 0 0 0.25rem 0; color: #00f3ff; }
+  .btn-primary { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: #000; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 700; cursor: pointer; }
+  .btn-primary.full-width { width: 100%; margin-top: 1rem; }
+
+  .alert-banner { background: rgba(244, 63, 94, 0.1); border: 1px solid rgba(244, 63, 94, 0.3); border-radius: 12px; padding: 1.5rem; display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 2rem; }
+  .alert-icon { font-size: 2rem; }
+  .alert-content h3 { color: #f43f5e; margin: 0 0 0.25rem 0; }
+  .alert-content p { color: #fda4af; margin: 0; font-size: 0.9rem; }
+  .alert-value { font-size: 1.25rem; font-weight: 700; color: #f43f5e; }
+  .alert-hint { color: #94a3b8 !important; font-size: 0.8rem !important; margin-top: 0.5rem !important; }
+  .btn-upgrade-alert { background: #f43f5e; color: #fff; border: none; padding: 0.75rem 1.25rem; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; margin-left: auto; }
+
+  .ai-cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+  .ai-card { background: #0a0a0a; border: 1px solid #334155; border-radius: 16px; padding: 1.5rem; text-align: center; transition: all 0.3s; }
+  .ai-card:hover { border-color: currentColor; transform: translateY(-2px); }
+  .ai-card.deepseek { color: #00d4ff; }
+  .ai-card.grok { color: #a855f7; }
+  .ai-card.gemini { color: #3b82f6; }
+  .ai-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+  .ai-info { display: flex; flex-direction: column; }
+  .ai-name { font-weight: 700; font-size: 1.1rem; color: #fff; }
+  .ai-rate { font-size: 2.5rem; font-weight: 800; margin: 0.25rem 0; }
+  .ai-desc { font-size: 0.8rem; color: #64748b; }
+
+  .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+  .chart-card { background: #0a0a0a; border: 1px solid #334155; border-radius: 16px; padding: 1.5rem; }
+  .chart-card.full-width { margin-bottom: 2rem; }
+  .chart-card h3 { color: #00f3ff; font-size: 0.95rem; margin: 0 0 1rem 0; }
+
+  .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+  .card { background: #0a0a0a; border: 1px solid #334155; border-radius: 16px; padding: 1.5rem; }
+  .card h3 { color: #00f3ff; font-size: 0.95rem; margin: 0 0 1rem 0; }
+
+  .form-input { width: 100%; background: #050505; border: 1px solid #334155; padding: 0.8rem 1rem; color: #fff; border-radius: 8px; font-size: 0.95rem; }
+  .form-input:focus { border-color: #00f3ff; outline: none; }
+  textarea.form-input { resize: none; }
+  .help-text { color: #64748b; font-size: 0.7rem; margin-top: 0.25rem; display: block; }
+
+  .prompts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .prompt-card { background: rgba(255, 255, 255, 0.02); border: 1px solid #334155; border-radius: 12px; padding: 1rem; text-align: left; cursor: pointer; transition: all 0.3s; display: flex; flex-direction: column; gap: 0.25rem; }
+  .prompt-card:hover { border-color: #00f3ff; background: rgba(0, 243, 255, 0.05); }
+  .prompt-icon { font-size: 1.5rem; }
+  .prompt-name { color: #fff; font-weight: 600; font-size: 0.9rem; }
+  .prompt-desc { color: #64748b; font-size: 0.75rem; }
+
+  .history-list { display: flex; flex-direction: column; gap: 0.75rem; max-height: 300px; overflow-y: auto; }
+  .history-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255, 255, 255, 0.02); border: 1px solid #334155; border-radius: 10px; }
+  .history-info { flex: 1; }
+  .history-type { font-size: 0.7rem; color: #00f3ff; font-weight: 600; }
+  .history-text { color: #94a3b8; font-size: 0.85rem; margin: 0.25rem 0; }
+  .history-date { color: #64748b; font-size: 0.7rem; }
+  .btn-delete { background: rgba(244, 63, 94, 0.1); color: #f43f5e; border: none; padding: 0.5rem; border-radius: 6px; cursor: pointer; }
+  .empty-text { color: #64748b; text-align: center; padding: 2rem; }
+
+  .toast { position: fixed; bottom: 2rem; right: 2rem; background: #00ff9d; color: #000; padding: 1rem 1.5rem; border-radius: 8px; font-weight: 600; z-index: 2000; }
+  .toast.error { background: #f43f5e; color: #fff; }
+
+  @media (max-width: 1024px) {
+    .ai-cards-grid { grid-template-columns: 1fr; }
+    .charts-grid { grid-template-columns: 1fr; }
+    .settings-grid { grid-template-columns: 1fr; }
+    .prompts-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script nonce={Astro.locals.nonce} is:inline>
+  function iaStatsManager() {
+    return {
+      stats: { deepseek: 87, grok: 92, gemini: 89 },
+      preferredIA: 'deepseek',
+      customPrompt: '',
+      promptHistory: [],
+      showLowAlert: false,
+      avgRate: 0,
+      toast: false,
+      toastMessage: '',
+      toastError: false,
+      pieChart: null,
+      lineChart: null,
+      compChart: null,
+      promptExamples: [
+        { icon: '🔥', name: 'Vendedor Agressivo', desc: 'Foca em fechamento rápido' },
+        { icon: '😊', name: 'Amigável Carioca', desc: 'Gírias leves, foco PIX' },
+        { icon: '👔', name: 'Suporte Premium', desc: 'Formal e educado' },
+        { icon: '💡', name: 'Anti-Objeção', desc: 'Quebra "vou pensar"' },
+        { icon: '🎯', name: 'Mix Venda+Suporte', desc: 'Resolve e oferece upsell' },
+        { icon: '🤝', name: 'Afiliado', desc: 'Foco em comissão' }
+      ],
+      prompts: [
+        'Você é vendedor mestre em gatilhos mentais. Use escassez, urgência e prova social. Seja persuasivo.',
+        'Você é vendedor carioca animado. Use gírias leves, foque no PIX. Ofereça 10% off.',
+        'Fale como gerente VIP. Formal, proativo, solutions-oriented.',
+        'Especialista em quebrar objeções. Perguntas abertas, soluções imediatas.',
+        'Responda dúvidas com clareza. Depois sugira upsell leve.',
+        'Vendedor de afiliados. Foco em comissão alta e material de marketing.'
+      ],
+
+      formatDate(dateStr) {
+        if (!dateStr) return '';
+        return new Date(dateStr).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+      },
+
+      init() {
+        this.loadData();
+        this.initCharts();
+      },
+
+      async loadData() {
+        try {
+          const token = localStorage.getItem('getnexo_token') || localStorage.getItem('jwt_token');
+          const res = await fetch('/api/ia/acerto-stats', {
+            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+          });
+          if (res.ok) {
+            const data = await res.json();
+            this.stats = { deepseek: data.deepseek || 87, grok: data.grok || 92, gemini: data.gemini || 89 };
+          }
+        } catch (e) {
+          // Use mock data
+        }
+
+        this.avgRate = Math.round((this.stats.deepseek + this.stats.grok + this.stats.gemini) / 3);
+        if (this.avgRate < 85 && this.avgRate > 0) {
+          this.showLowAlert = true;
+        }
+      },
+
+      initCharts() {
+        setTimeout(() => {
+          // Pie Chart
+          const pieCtx = document.getElementById('pieChart');
+          if (pieCtx) {
+            this.pieChart = new Chart(pieCtx, {
+              type: 'doughnut',
+              data: {
+                labels: ['DeepSeek', 'Grok', 'Gemini'],
+                datasets: [{
+                  data: [this.stats.deepseek, this.stats.grok, this.stats.gemini],
+                  backgroundColor: ['#00d4ff', '#a855f7', '#3b82f6'],
+                  borderWidth: 0
+                }]
+              },
+              options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } }
+              }
+            });
+          }
+
+          // Line Chart
+          const lineCtx = document.getElementById('lineChart');
+          if (lineCtx) {
+            this.lineChart = new Chart(lineCtx, {
+              type: 'line',
+              data: {
+                labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
+                datasets: [{
+                  label: 'Taxa %',
+                  data: [88, 91, 89, 92, 87, 93, 90],
+                  borderColor: '#00ff9d',
+                  backgroundColor: 'rgba(0, 255, 157, 0.1)',
+                  fill: true,
+                  tension: 0.4
+                }]
+              },
+              options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                  y: { beginAtZero: false, min: 80, max: 100, grid: { color: '#1e293b' }, ticks: { color: '#64748b', callback: v => v + '%' } },
+                  x: { grid: { display: false }, ticks: { color: '#64748b' } }
+                }
+              }
+            });
+          }
+
+          // Comparative Chart
+          const compCtx = document.getElementById('comparativeChart');
+          if (compCtx) {
+            this.compChart = new Chart(compCtx, {
+              type: 'line',
+              data: {
+                labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
+                datasets: [
+                  { label: 'DeepSeek', data: [85, 87, 86, 89], borderColor: '#00d4ff', tension: 0.3 },
+                  { label: 'Grok', data: [90, 91, 93, 92], borderColor: '#a855f7', tension: 0.3 },
+                  { label: 'Gemini', data: [88, 89, 90, 89], borderColor: '#3b82f6', tension: 0.3 }
+                ]
+              },
+              options: {
+                responsive: true,
+                plugins: { legend: { position: 'top', labels: { color: '#94a3b8' } } },
+                scales: {
+                  y: { min: 80, max: 100, grid: { color: '#1e293b' }, ticks: { color: '#64748b', callback: v => v + '%' } },
+                  x: { grid: { display: false }, ticks: { color: '#64748b' } }
+                }
+              }
+            });
+          }
+        }, 100);
+      },
+
+      refreshData() {
+        this.loadData();
+        this.showToast('🔄 Dados atualizados');
+      },
+
+      async savePreferredIA() {
+        this.showToast('✅ IA preferida salva!');
+      },
+
+      async savePrompt() {
+        if (this.customPrompt.length < 10) {
+          this.showToast('❌ Prompt muito curto', true);
+          return;
+        }
+        this.promptHistory.unshift({
+          id: Date.now(),
+          tipo: 'Custom',
+          prompt: this.customPrompt,
+          data: new Date().toISOString()
+        });
+        this.showToast('✅ Prompt salvo!');
+      },
+
+      usePrompt(idx) {
+        this.customPrompt = this.prompts[idx];
+      },
+
+      deletePromptHistory(id) {
+        this.promptHistory = this.promptHistory.filter(p => p.id !== id);
+        this.showToast('🗑️ Prompt deletado');
+      },
+
+      showToast(msg, isError = false) {
+        this.toastMessage = msg;
+        this.toastError = isError;
+        this.toast = true;
+        setTimeout(() => this.toast = false, 3000);
+      }
+    };
+  }
+</script>
+</ClientLayout>

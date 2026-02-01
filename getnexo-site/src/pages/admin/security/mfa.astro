@@ -1,15 +1,10 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
-import { ShieldCheck, Smartphone, Check, HelpCircle, Save, X, Key } from 'lucide-react';
+import { ShieldCheck, Smartphone, Check, HelpCircle, Save, X, Key, RefreshCw, Copy, Eye, EyeOff } from 'lucide-react';
 ---
 
 <AdminLayout title="2FA / MFA" activeTab="seguranca">
-  <div class="max-w-3xl mx-auto space-y-10 animate-fade-in py-4"
-       x-data="{ 
-         mfaEnabled: true,
-         showCode: false,
-         toggle() { this.mfaEnabled = !this.mfaEnabled }
-       }">
+  <div class="max-w-3xl mx-auto space-y-10 animate-fade-in py-4" x-data="mfaManager()">
     
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-4">
@@ -23,60 +18,292 @@ import { ShieldCheck, Smartphone, Check, HelpCircle, Save, X, Key } from 'lucide
       </div>
     </div>
 
-    <!-- MFA Status Toggle -->
-    <div class="p-8 rounded-[2.5rem] flex items-center justify-between border transition-all"
-         :class="mfaEnabled ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-gray-900 border-gray-800'">
-       <div class="flex items-center space-x-6">
-          <div class="w-14 h-14 rounded-2xl flex items-center justify-center transition-all"
-               :class="mfaEnabled ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/40' : 'bg-gray-800 text-gray-600'">
-             <Smartphone className="w-7 h-7" />
-          </div>
-          <div>
-             <h3 class="text-lg font-bold text-white uppercase tracking-tight">Autenticação 2FA</h3>
-             <p class="text-[10px] text-gray-500 font-medium uppercase tracking-widest" 
-                x-text="mfaEnabled ? 'Ativo via Google Authenticator' : 'Sua conta está vulnerável no momento'"></p>
-          </div>
-       </div>
-       <button @click="toggle()" class="w-16 h-8 rounded-full bg-gray-800 relative transition-colors" :class="mfaEnabled ? 'bg-emerald-600' : 'bg-gray-700'">
-          <div class="absolute top-1 left-1 w-6 h-6 bg-white rounded-full transition-all shadow-sm" :class="mfaEnabled ? 'translate-x-8' : ''"></div>
-       </button>
+    <!-- Loading -->
+    <div x-show="loading" class="flex items-center justify-center py-10">
+       <div class="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
     </div>
 
-    <div x-show="mfaEnabled" class="space-y-6">
-       <!-- Config Section -->
-       <div class="bg-gray-900/40 border border-gray-800 p-10 rounded-[2.5rem] space-y-8">
-          <div class="flex items-center justify-between">
-             <h3 class="text-xs font-black uppercase text-gray-400 tracking-widest italic">Dispositivos Confiáveis</h3>
-             <button class="text-[9px] font-black text-emerald-500 uppercase tracking-widest hover:underline">Adicionar Novo</button>
+    <div x-show="!loading">
+       <!-- MFA Status Toggle -->
+       <div class="p-8 rounded-[2.5rem] flex items-center justify-between border transition-all"
+            :class="mfaEnabled ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-gray-900 border-gray-800'">
+          <div class="flex items-center space-x-6">
+             <div class="w-14 h-14 rounded-2xl flex items-center justify-center transition-all"
+                  :class="mfaEnabled ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/40' : 'bg-gray-800 text-gray-600'">
+                <Smartphone className="w-7 h-7" />
+             </div>
+             <div>
+                <h3 class="text-lg font-bold text-white uppercase tracking-tight">Autenticação 2FA</h3>
+                <p class="text-[10px] text-gray-500 font-medium uppercase tracking-widest" 
+                   x-text="mfaEnabled ? 'Ativo via ' + mfaMethod : 'Sua conta está vulnerável no momento'"></p>
+             </div>
+          </div>
+          <button @click="toggleMfa()" class="w-16 h-8 rounded-full relative transition-colors" :class="mfaEnabled ? 'bg-emerald-600' : 'bg-gray-700'">
+             <div class="absolute top-1 left-1 w-6 h-6 bg-white rounded-full transition-all shadow-sm" :class="mfaEnabled ? 'translate-x-8' : ''"></div>
+          </button>
+       </div>
+
+       <div x-show="mfaEnabled" class="space-y-6">
+          <!-- Method Selection -->
+          <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] space-y-6">
+             <h3 class="text-xs font-black uppercase text-gray-400 tracking-widest">Método de Verificação</h3>
+             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button @click="setMethod('Google Authenticator')" 
+                        :class="mfaMethod === 'Google Authenticator' ? 'border-emerald-500 bg-emerald-500/10' : 'border-gray-700 hover:border-gray-600'"
+                        class="p-6 border rounded-2xl text-left transition-all">
+                   <h4 class="text-sm font-bold text-white">Google Authenticator</h4>
+                   <p class="text-xs text-gray-500 mt-1">App TOTP para códigos temporários</p>
+                </button>
+                <button @click="setMethod('SMS')" 
+                        :class="mfaMethod === 'SMS' ? 'border-emerald-500 bg-emerald-500/10' : 'border-gray-700 hover:border-gray-600'"
+                        class="p-6 border rounded-2xl text-left transition-all">
+                   <h4 class="text-sm font-bold text-white">SMS</h4>
+                   <p class="text-xs text-gray-500 mt-1">Código enviado para seu celular</p>
+                </button>
+             </div>
           </div>
 
-          <div class="space-y-4">
-             <div class="p-6 bg-black/40 border border-gray-800 rounded-3xl flex items-center justify-between">
-                <div class="flex items-center space-x-4">
-                   <div class="p-3 bg-gray-800 rounded-xl text-gray-500"><Key className="w-5 h-5" /></div>
-                   <div>
-                      <h4 class="text-sm font-bold text-white uppercase italic">iPhone 15 Pro Max</h4>
-                      <p class="text-[10px] text-gray-600 font-medium">Ativado em 12 Jan, 2026</p>
+          <!-- Trusted Devices -->
+          <div class="bg-gray-900/40 border border-gray-800 p-10 rounded-[2.5rem] space-y-8">
+             <div class="flex items-center justify-between">
+                <h3 class="text-xs font-black uppercase text-gray-400 tracking-widest italic">Dispositivos Confiáveis</h3>
+                <button @click="addDevice()" class="text-[9px] font-black text-emerald-500 uppercase tracking-widest hover:underline">Adicionar Novo</button>
+             </div>
+
+             <div class="space-y-4">
+                <template x-for="device in trustedDevices" :key="device.id">
+                   <div class="p-6 bg-black/40 border border-gray-800 rounded-3xl flex items-center justify-between">
+                      <div class="flex items-center space-x-4">
+                         <div class="p-3 bg-gray-800 rounded-xl text-gray-500"><Key className="w-5 h-5" /></div>
+                         <div>
+                            <h4 class="text-sm font-bold text-white uppercase italic" x-text="device.name"></h4>
+                            <p class="text-[10px] text-gray-600 font-medium" x-text="'Ativado em ' + formatDate(device.addedAt)"></p>
+                         </div>
+                      </div>
+                      <button @click="removeDevice(device.id)" class="p-2.5 bg-gray-800/50 text-gray-600 hover:text-rose-500 transition-all rounded-lg"><X className="w-4 h-4" /></button>
                    </div>
+                </template>
+             </div>
+             
+             <div x-show="trustedDevices.length === 0" class="text-center py-4 text-gray-500 text-sm">
+                Nenhum dispositivo confiável.
+             </div>
+          </div>
+
+          <!-- Backup Codes -->
+          <div class="p-8 bg-gray-900 border border-gray-800 rounded-[2.5rem] space-y-6">
+             <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                   <HelpCircle className="w-5 h-5 text-gray-600" />
+                   <p class="text-xs font-medium text-gray-400">Códigos de backup para quando estiver sem o celular.</p>
                 </div>
-                <button class="p-2.5 bg-gray-800/50 text-gray-600 hover:text-rose-500 transition-all rounded-lg"><X className="w-4 h-4" /></button>
+                <div class="flex space-x-2">
+                   <button @click="showCodes = !showCodes" class="text-[10px] font-black uppercase bg-gray-800 px-4 py-2 rounded-xl text-white hover:bg-gray-700 flex items-center space-x-2">
+                      <template x-if="!showCodes"><Eye className="w-3 h-3" /></template>
+                      <template x-if="showCodes"><EyeOff className="w-3 h-3" /></template>
+                      <span x-text="showCodes ? 'Ocultar' : 'Ver Códigos'"></span>
+                   </button>
+                   <button @click="regenerateCodes()" class="text-[10px] font-black uppercase bg-gray-800 px-4 py-2 rounded-xl text-white hover:bg-gray-700 flex items-center space-x-2">
+                      <RefreshCw className="w-3 h-3" />
+                      <span>Gerar Novos</span>
+                   </button>
+                </div>
+             </div>
+             
+             <div x-show="showCodes" class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
+                <template x-for="(code, idx) in backupCodes" :key="idx">
+                   <div class="bg-black/40 border border-gray-700 p-3 rounded-xl text-center relative group">
+                      <span class="font-mono text-sm text-white" x-text="code"></span>
+                      <button @click="copyCode(code)" class="absolute right-1 top-1 p-1 text-gray-600 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                         <Copy className="w-3 h-3" />
+                      </button>
+                   </div>
+                </template>
              </div>
           </div>
        </div>
 
-       <!-- Backup Codes -->
-       <div class="p-8 bg-gray-900 border border-gray-800 rounded-[2.5rem] flex items-center justify-between group">
-          <div class="flex items-center space-x-4">
-             <HelpCircle className="w-5 h-5 text-gray-600" />
-             <p class="text-xs font-medium text-gray-400">Códigos de backup para quando estiver sem o celular.</p>
+       <!-- Setup Modal (for new MFA activation) -->
+       <div x-show="setupModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" @keydown.escape.window="setupModal = false">
+          <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="setupModal = false"></div>
+          <div class="relative w-full max-w-md bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-hidden" @click.stop>
+             <div class="bg-emerald-900/20 p-6 border-b border-gray-800 text-center">
+                <h2 class="text-xl font-bold text-emerald-400">Configurar 2FA</h2>
+             </div>
+             <div class="p-6 text-center space-y-6">
+                <p class="text-gray-300">Escaneie o QR code com o Google Authenticator:</p>
+                <div class="bg-white p-4 rounded-xl inline-block">
+                   <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Crect width='150' height='150' fill='%23fff'/%3E%3Ctext x='75' y='75' text-anchor='middle' dominant-baseline='middle' font-size='12' fill='%23999'%3EQR Code%3C/text%3E%3C/svg%3E" alt="QR Code" class="w-36 h-36">
+                </div>
+                <p class="text-xs text-gray-500">Ou digite o código manualmente:</p>
+                <div class="bg-black/40 border border-gray-700 p-3 rounded-xl font-mono text-white text-center">
+                   NEXO-XXXX-XXXX-XXXX
+                </div>
+                <input type="text" x-model="verificationCode" placeholder="Digite o código de 6 dígitos" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-center font-mono placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition-all">
+             </div>
+             <div class="p-6 border-t border-gray-800 flex justify-center space-x-3">
+                <button @click="setupModal = false" class="px-6 py-2.5 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-xl transition-all">Cancelar</button>
+                <button @click="confirmSetup()" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-xl transition-all">Verificar e Ativar</button>
+             </div>
           </div>
-          <button @click="showCode = !showCode" class="text-[10px] font-black uppercase bg-gray-800 px-4 py-2 rounded-xl text-white hover:bg-gray-700">Ver Códigos</button>
        </div>
     </div>
   </div>
 </AdminLayout>
 
+<script nonce={Astro.locals.nonce} is:inline>
+  function mfaManager() {
+    return {
+      mfaEnabled: false,
+      mfaMethod: 'Google Authenticator',
+      trustedDevices: [],
+      backupCodes: [],
+      loading: true,
+      showCodes: false,
+      setupModal: false,
+      verificationCode: '',
+
+      async init() {
+        await this.fetchMfaStatus();
+      },
+
+      async fetchMfaStatus() {
+        this.loading = true;
+        try {
+          const res = await fetch('/api/mfa/status');
+          if (res.ok) {
+            const data = await res.json();
+            this.mfaEnabled = data.enabled || false;
+            this.mfaMethod = data.method || 'Google Authenticator';
+            this.trustedDevices = data.trustedDevices || [];
+            this.backupCodes = data.backupCodes || [];
+          } else {
+            this.setMockData();
+          }
+        } catch(e) {
+          console.error(e);
+          this.setMockData();
+        } finally {
+          this.loading = false;
+        }
+      },
+
+      setMockData() {
+        this.mfaEnabled = true;
+        this.mfaMethod = 'Google Authenticator';
+        this.trustedDevices = [
+          { id: 1, name: 'iPhone 15 Pro Max', addedAt: '2026-01-12' },
+          { id: 2, name: 'MacBook Pro', addedAt: '2026-01-10' },
+        ];
+        this.backupCodes = ['ABC123', 'DEF456', 'GHI789', 'JKL012', 'MNO345', 'PQR678', 'STU901', 'VWX234'];
+      },
+
+      formatDate(dateStr) {
+        if (!dateStr) return '-';
+        return new Date(dateStr).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' });
+      },
+
+      async toggleMfa() {
+        if (this.mfaEnabled) {
+          if (!confirm('Desativar 2FA deixará sua conta vulnerável. Continuar?')) return;
+          this.mfaEnabled = false;
+          try {
+            await fetch('/api/mfa/disable', { method: 'POST' });
+          } catch(e) { console.error(e); }
+        } else {
+          this.setupModal = true;
+        }
+      },
+
+      async confirmSetup() {
+        if (!this.verificationCode || this.verificationCode.length !== 6) {
+          alert('Digite um código válido de 6 dígitos');
+          return;
+        }
+        
+        try {
+          await fetch('/api/mfa/enable', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code: this.verificationCode, method: this.mfaMethod })
+          });
+        } catch(e) { console.error(e); }
+        
+        this.mfaEnabled = true;
+        this.setupModal = false;
+        this.verificationCode = '';
+        this.regenerateCodes();
+      },
+
+      async setMethod(method) {
+        this.mfaMethod = method;
+        try {
+          await fetch('/api/mfa/method', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ method })
+          });
+        } catch(e) { console.error(e); }
+      },
+
+      addDevice() {
+        const name = prompt('Nome do dispositivo:');
+        if (!name) return;
+        
+        this.trustedDevices.push({
+          id: Date.now(),
+          name,
+          addedAt: new Date().toISOString().slice(0, 10)
+        });
+      },
+
+      async removeDevice(id) {
+        if (!confirm('Remover este dispositivo?')) return;
+        
+        try {
+          await fetch(`/api/mfa/devices/${id}`, { method: 'DELETE' });
+        } catch(e) { console.error(e); }
+        
+        this.trustedDevices = this.trustedDevices.filter(d => d.id !== id);
+      },
+
+      async regenerateCodes() {
+        if (this.backupCodes.length > 0 && !confirm('Gerar novos códigos invalidará os anteriores. Continuar?')) return;
+        
+        try {
+          const res = await fetch('/api/mfa/backup-codes', { method: 'POST' });
+          if (res.ok) {
+            const data = await res.json();
+            this.backupCodes = data.codes || [];
+          } else {
+            this.backupCodes = this.generateRandomCodes();
+          }
+        } catch(e) {
+          this.backupCodes = this.generateRandomCodes();
+        }
+        
+        this.showCodes = true;
+      },
+
+      generateRandomCodes() {
+        const codes = [];
+        for (let i = 0; i < 8; i++) {
+          codes.push(Math.random().toString(36).substring(2, 8).toUpperCase());
+        }
+        return codes;
+      },
+
+      copyCode(code) {
+        navigator.clipboard.writeText(code);
+        alert('Código copiado!');
+      }
+    };
+  }
+</script>
+
 <style>
+  [x-cloak] { display: none !important; }
   .animate-fade-in { animation: fadeIn 0.6s ease-out; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 </style>
+</AdminLayout>

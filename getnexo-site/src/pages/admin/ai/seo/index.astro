@@ -1,6 +1,6 @@
 ---
 import AdminLayout from '../../../../layouts/AdminLayout.astro';
-import { Search, TrendingUp, AlertCircle, CheckCircle, BarChart3, Globe, Zap, Cpu, Sparkles, Minus } from 'lucide-react';
+import { Search, TrendingUp, AlertCircle, CheckCircle, BarChart3, Globe, Zap, Cpu, Sparkles, Minus, Settings, Key } from 'lucide-react';
 
 const title = "SEO IA – Otimização Autônoma";
 ---
@@ -146,18 +146,95 @@ const title = "SEO IA – Otimização Autônoma";
                <p class="text-xs text-gray-300 leading-relaxed italic" x-text="stats.summary">
                  --
                </p>
-               <button class="mt-4 w-full py-3 bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-black rounded-xl transition-all transform hover:scale-[1.02]">
-                 Otimizar Agora
-               </button>
-            </div>
-        </section>
+               <button class="mt-4 w-full py-3 bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-black rounded-xl transition-all transform hover:scale-[1.02]" @click="runOptimization()">
+                  Otimizar Agora
+                </button>
+             </div>
+             
+             <!-- AI Configuration Section -->
+             <div class="mt-6 p-6 rounded-2xl bg-gray-900/80 border border-gray-700">
+                <div class="flex items-center space-x-3 mb-4">
+                   <Settings className="w-4 h-4 text-cyan-400" />
+                   <h4 class="text-xs font-bold text-white uppercase tracking-widest">Configuração da IA de SEO</h4>
+                </div>
+                
+                <!-- Provider Select -->
+                <div class="mb-4">
+                   <label class="block text-[10px] text-gray-400 mb-1 font-medium">Provider de IA</label>
+                   <select x-model="config.provider" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-xs focus:border-cyan-500 focus:outline-none">
+                      <option value="deepseek">DeepSeek</option>
+                      <option value="gemini">Google Gemini</option>
+                      <option value="grok">Grok (X.AI)</option>
+                      <option value="claude">Anthropic Claude</option>
+                      <option value="gpt">OpenAI GPT</option>
+                      <option value="groq">Groq</option>
+                   </select>
+                </div>
+                
+                <!-- API Key Input -->
+                <div class="mb-4">
+                   <label class="block text-[10px] text-gray-400 mb-1 font-medium">API Key</label>
+                   <div class="relative">
+                      <Key className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-500" />
+                      <input 
+                         type="password" 
+                         x-model="config.apiKey" 
+                         placeholder="sk-xxxx..." 
+                         class="w-full bg-gray-800 border border-gray-700 rounded-lg pl-8 pr-3 py-2 text-white text-xs focus:border-cyan-500 focus:outline-none placeholder:text-gray-600"
+                      />
+                   </div>
+                   <p class="text-[8px] text-gray-500 mt-1" x-show="config.hasKey">✓ API Key configurada</p>
+                </div>
+                
+                <!-- Toggle Auto Optimize -->
+                <div class="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg mb-4">
+                   <div>
+                      <p class="text-xs text-white font-medium">Otimização Automática</p>
+                      <p class="text-[8px] text-gray-500">IA otimiza SEO automaticamente</p>
+                   </div>
+                   <button 
+                      @click="config.autoOptimize = !config.autoOptimize" 
+                      :class="config.autoOptimize ? 'bg-cyan-500' : 'bg-gray-700'"
+                      class="relative w-10 h-5 rounded-full transition-colors"
+                   >
+                      <div 
+                         :class="config.autoOptimize ? 'translate-x-5' : 'translate-x-1'"
+                         class="absolute top-0.5 w-4 h-4 bg-white rounded-full transition-transform shadow"
+                      ></div>
+                   </button>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="flex gap-2">
+                   <button 
+                      @click="testConnection()" 
+                      :disabled="testing"
+                      class="flex-1 py-2 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 text-white text-[10px] font-bold rounded-lg transition-all"
+                   >
+                      <span x-text="testing ? '⏳' : '🔌 Testar'"></span>
+                   </button>
+                   <button 
+                      @click="saveConfig()" 
+                      :disabled="saving"
+                      class="flex-1 py-2 bg-cyan-600 hover:bg-cyan-500 disabled:opacity-50 text-white text-[10px] font-bold rounded-lg transition-all"
+                   >
+                      <span x-text="saving ? '⏳' : '💾 Salvar'"></span>
+                   </button>
+                </div>
+                
+                <!-- Status Message -->
+                <div x-show="statusMessage" x-transition class="mt-3 p-2 rounded-lg text-[10px] font-medium" :class="statusSuccess ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'">
+                   <span x-text="statusMessage"></span>
+                </div>
+             </div>
+         </section>
       </aside>
 
     </div>
   </div>
 </AdminLayout>
 
-<script is:inline>
+<script is:inline nonce={Astro.locals.nonce}>
   function seoIA() {
     return {
       stats: {
@@ -171,9 +248,23 @@ const title = "SEO IA – Otimização Autônoma";
         summary: 'Iniciando análise...',
         niche: ''
       },
+      config: {
+        provider: 'deepseek',
+        apiKey: '',
+        autoOptimize: false,
+        hasKey: false
+      },
+      testing: false,
+      saving: false,
+      statusMessage: '',
+      statusSuccess: false,
+      
       async fetchData() {
         try {
-          const res = await fetch('/api/ai/seo/stats');
+          const token = localStorage.getItem('token');
+          const res = await fetch('/api/ai/seo/stats', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
           if (res.ok) {
             const data = await res.json();
             this.stats = data;
@@ -182,7 +273,96 @@ const title = "SEO IA – Otimização Autônoma";
           console.error('Erro ao buscar stats SEO:', e);
         }
       },
+      
+      async loadConfig() {
+        try {
+          const token = localStorage.getItem('token');
+          const res = await fetch('/api/ai/config', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            this.config.provider = data.seo?.provider || 'deepseek';
+            this.config.autoOptimize = data.seo?.autoOptimize ?? false;
+            this.config.hasKey = data.seo?.hasKey ?? false;
+          }
+        } catch (e) {
+          console.error('Erro ao carregar configurações:', e);
+        }
+      },
+      
+      async testConnection() {
+        this.testing = true;
+        this.statusMessage = '';
+        try {
+          const token = localStorage.getItem('token');
+          const res = await fetch('/api/ai/config/test', {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              provider: this.config.provider,
+              apiKey: this.config.apiKey || undefined
+            })
+          });
+          const data = await res.json();
+          this.statusMessage = data.message || data.error;
+          this.statusSuccess = data.success;
+        } catch (e) {
+          this.statusMessage = 'Erro ao testar conexão';
+          this.statusSuccess = false;
+        } finally {
+          this.testing = false;
+        }
+      },
+      
+      async saveConfig() {
+        this.saving = true;
+        this.statusMessage = '';
+        try {
+          const token = localStorage.getItem('token');
+          const res = await fetch('/api/ai/config/seo', {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              provider: this.config.provider,
+              autoOptimize: this.config.autoOptimize,
+              apiKey: this.config.apiKey || undefined,
+              enabled: true
+            })
+          });
+          const data = await res.json();
+          if (data.success) {
+            this.statusMessage = '✅ Configurações salvas!';
+            this.statusSuccess = true;
+            this.config.hasKey = true;
+            this.config.apiKey = '';
+          } else {
+            this.statusMessage = data.error || 'Erro ao salvar';
+            this.statusSuccess = false;
+          }
+        } catch (e) {
+          this.statusMessage = 'Erro ao salvar';
+          this.statusSuccess = false;
+        } finally {
+          this.saving = false;
+        }
+      },
+      
+      async runOptimization() {
+        this.statusMessage = '🚀 Otimização iniciada...';
+        this.statusSuccess = true;
+        await this.fetchData();
+        this.statusMessage = '✅ Análise concluída!';
+      },
+      
       init() {
+        this.loadConfig();
         this.fetchData();
       }
     }

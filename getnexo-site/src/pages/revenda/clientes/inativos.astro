@@ -53,7 +53,7 @@ import ResellerLayout from '../../../layouts/ResellerLayout.astro';
     .btn-reactivate:hover { background: #f43f5e; color: white; }
 </style>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
     let allClients = [];
 
     async function fetchInactiveClients() {

@@ -505,7 +505,7 @@ import ResellerLayout from '../../layouts/ResellerLayout.astro';
         }
     </style>
  
-    <script is:inline>
+    <script nonce={Astro.locals.nonce} is:inline>
         // Enhanced data loading
         async function loadDashboardData() {
             try {
@@ -542,7 +542,7 @@ import ResellerLayout from '../../layouts/ResellerLayout.astro';
         function loadCommissionChart(commissions) {
             const ctx = document.getElementById('commissionChart').getContext('2d');
             const labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-            const data = commissions.length > 0 ? commissions : [1200, 1900, 1500, 2500, 2200, 3100, 2800, 3500, 2900, 3800, 3200, 4100];
+            const data = commissions.length > 0 ? commissions : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
             new Chart(ctx, {
                 type: 'line',
@@ -579,8 +579,8 @@ import ResellerLayout from '../../layouts/ResellerLayout.astro';
         function loadClientsChart(clientsGrowth) {
             const ctx = document.getElementById('clientsChart').getContext('2d');
             const labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'];
-            const activeData = clientsGrowth.active || [5, 8, 12, 15, 18, 22];
-            const inactiveData = clientsGrowth.inactive || [2, 3, 4, 3, 5, 4];
+            const activeData = clientsGrowth.active || [0, 0, 0, 0, 0, 0];
+            const inactiveData = clientsGrowth.inactive || [0, 0, 0, 0, 0, 0];
 
             new Chart(ctx, {
                 type: 'line',
@@ -659,23 +659,19 @@ import ResellerLayout from '../../layouts/ResellerLayout.astro';
         }
 
         function loadMockData() {
-            // Mock data for demo
+            // Fallback for demo but using zeros -> REALITY mode
             updateStats({
-                totalRevenue: 15420,
-                monthlyCommission: 3240,
-                activeClients: 18,
-                pendingCommissions: 1200,
-                commissionProgress: 68
-            });
+                totalRevenue: 0,
+                monthlyCommission: 0,
+                activeClients: 0,
+                pendingCommissions: 0,
+                commissionProgress: 0
+            }, []); // Empty clients list
 
             loadCommissionChart([]);
             loadClientsChart({});
 
-            loadClientsTable([
-                { id: 1, name: 'João Silva', email: 'joao@email.com', plan: 'Professional', commission: 297, date: '15 Jan' },
-                { id: 2, name: 'Maria Santos', email: 'maria@email.com', plan: 'Starter', commission: 97, date: '12 Jan' },
-                { id: 3, name: 'Pedro Costa', email: 'pedro@email.com', plan: 'Professional', commission: 297, date: '10 Jan' }
-            ]);
+            loadClientsTable([]);
         }
 
         // Action functions

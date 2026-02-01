@@ -1,0 +1,444 @@
+---
+import ClientLayout from '../../layouts/ClientLayout.astro';
+const nonce = Astro.locals.nonce;
+---
+
+<ClientLayout title="Suporte">
+  <div x-data="supportManager()">
+    <!-- Header -->
+    <div class="support-header">
+      <div>
+        <h1 class="text-neon-blue">🎫 Suporte GetNexo</h1>
+        <p class="text-muted">Abra um ticket e nossa equipe responderá em até 24h</p>
+      </div>
+      <div class="status-badge online">
+        <span class="status-dot"></span>
+        <span>Suporte Online</span>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <span class="stat-icon">🎫</span>
+        <div>
+          <span class="stat-value" x-text="tickets.length">0</span>
+          <span class="stat-label">Total Tickets</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">🔴</span>
+        <div>
+          <span class="stat-value" x-text="tickets.filter(t => t.status === 'open').length">0</span>
+          <span class="stat-label">Abertos</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">🔵</span>
+        <div>
+          <span class="stat-value" x-text="tickets.filter(t => t.status === 'in-progress').length">0</span>
+          <span class="stat-label">Em Andamento</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">✅</span>
+        <div>
+          <span class="stat-value" x-text="tickets.filter(t => t.status === 'closed').length">0</span>
+          <span class="stat-label">Resolvidos</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- New Ticket Form -->
+    <div class="card form-card">
+      <h2>➕ Abrir Novo Ticket</h2>
+      <form @submit.prevent="createTicket()" class="ticket-form">
+        <div class="form-group">
+          <label>Título do problema *</label>
+          <input type="text" x-model="newTicket.title" class="form-input" placeholder="Ex: Bot não responde no WhatsApp" required>
+        </div>
+        <div class="form-group">
+          <label>Descrição detalhada *</label>
+          <textarea x-model="newTicket.description" class="form-input" rows="5" placeholder="Descreva o erro em detalhes, inclua passos para reproduzir..." required></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Prioridade</label>
+            <select x-model="newTicket.priority" class="form-input">
+              <option value="0">🟢 Baixa - Não urgente</option>
+              <option value="1">🟡 Média - Afeta operação</option>
+              <option value="2">🔴 Alta - Sistema parado</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Anexos (até 5 arquivos)</label>
+            <input type="file" @change="handleFiles($event)" multiple accept="image/*,.pdf,.txt,.doc,.docx,.mp3,.wav,.ogg" class="form-input file-input">
+            <span class="help-text">Imagens, PDFs, áudio - máx. 5MB cada</span>
+          </div>
+        </div>
+        <button type="submit" :disabled="creating" class="btn-primary full-width">
+          <span x-text="creating ? '⏳ Enviando...' : '📤 Enviar Ticket'"></span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Tickets List -->
+    <div class="card">
+      <div class="card-header">
+        <h2>📋 Meus Tickets</h2>
+        <button @click="fetchTickets()" class="btn-secondary">🔄 Atualizar</button>
+      </div>
+
+      <div x-show="loading" class="loading-state">
+        <div class="spinner"></div>
+      </div>
+
+      <div x-show="!loading && tickets.length === 0" class="empty-state">
+        <span class="empty-icon">🎫</span>
+        <p>Nenhum ticket aberto</p>
+      </div>
+
+      <div x-show="!loading && tickets.length > 0" class="tickets-list">
+        <template x-for="ticket in tickets" :key="ticket.id">
+          <div class="ticket-card" @click="openTicket(ticket)">
+            <div class="ticket-info">
+              <div class="ticket-badges">
+                <span class="badge" :class="'status-' + ticket.status" x-text="getStatusLabel(ticket.status)"></span>
+                <span class="badge" :class="'priority-' + ticket.priority" x-text="getPriorityLabel(ticket.priority)"></span>
+                <span class="badge-id" x-text="'#' + ticket.id"></span>
+              </div>
+              <h3 x-text="ticket.title"></h3>
+              <p class="ticket-desc" x-text="ticket.description.substring(0, 100) + '...'"></p>
+              <span class="ticket-date" x-text="formatDate(ticket.created_at)"></span>
+            </div>
+            <span class="ticket-arrow">→</span>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <!-- Ticket Detail Modal -->
+    <div x-show="ticketModal" x-cloak class="modal-overlay" @keydown.escape.window="ticketModal = false">
+      <div class="modal-container modal-lg" @click.stop>
+        <div class="modal-header">
+          <div>
+            <h3 x-text="'#' + selectedTicket?.id + ' - ' + selectedTicket?.title"></h3>
+            <div class="modal-meta">
+              <span class="badge" :class="'status-' + selectedTicket?.status" x-text="getStatusLabel(selectedTicket?.status)"></span>
+              <span class="badge" :class="'priority-' + selectedTicket?.priority" x-text="getPriorityLabel(selectedTicket?.priority)"></span>
+              <span class="meta-date" x-text="formatDate(selectedTicket?.created_at)"></span>
+            </div>
+          </div>
+          <button @click="ticketModal = false" class="modal-close">×</button>
+        </div>
+
+        <div class="modal-description">
+          <p x-text="selectedTicket?.description"></p>
+        </div>
+
+        <div class="modal-messages">
+          <template x-for="msg in messages" :key="msg.id">
+            <div class="message" :class="msg.sender === 'admin' ? 'from-admin' : 'from-user'">
+              <div class="message-bubble">
+                <span class="message-sender" x-text="msg.sender === 'admin' ? '👤 Suporte' : '👤 Você'"></span>
+                <p x-text="msg.message"></p>
+                <span class="message-time" x-text="formatDate(msg.created_at)"></span>
+              </div>
+            </div>
+          </template>
+          <p x-show="messages.length === 0" class="no-messages">Nenhuma resposta ainda</p>
+        </div>
+
+        <div class="modal-footer reply-form">
+          <textarea x-model="replyMessage" class="form-input" rows="3" placeholder="Escreva sua resposta..."></textarea>
+          <div class="reply-actions">
+            <button @click="exportTicket()" class="btn-secondary">📥 Exportar</button>
+            <button @click="sendReply()" :disabled="!replyMessage || sending" class="btn-primary">
+              <span x-text="sending ? 'Enviando...' : 'Enviar'"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div x-show="toast" x-transition class="toast" x-text="toastMessage"></div>
+  </div>
+</ClientLayout>
+
+<style>
+  [x-cloak] { display: none !important; }
+  
+  .support-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; }
+  .support-header h1 { font-size: 1.75rem; margin: 0 0 0.25rem 0; color: #00f3ff; }
+  .status-badge { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem; }
+  .status-badge.online { background: rgba(0, 255, 65, 0.1); color: #00ff41; }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; animation: pulse 2s infinite; }
+  .status-badge.online .status-dot { background: #00ff41; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+  .stat-card { background: #0a0a0a; border: 1px solid #334155; border-radius: 12px; padding: 1rem; display: flex; align-items: center; gap: 1rem; }
+  .stat-icon { font-size: 1.5rem; }
+  .stat-value { display: block; font-size: 1.5rem; font-weight: 700; color: #fff; }
+  .stat-label { display: block; font-size: 0.7rem; color: #64748b; }
+
+  .card { background: #0a0a0a; border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+  .card h2 { font-size: 1rem; color: #00f3ff; margin: 0 0 1.5rem 0; }
+  .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+  .card-header h2 { margin: 0; }
+
+  .form-group { margin-bottom: 1rem; }
+  .form-group label { display: block; color: #94a3b8; font-size: 0.8rem; margin-bottom: 0.5rem; font-weight: 600; }
+  .form-input { width: 100%; background: #050505; border: 1px solid #334155; padding: 0.8rem 1rem; color: #fff; border-radius: 8px; font-size: 0.95rem; }
+  .form-input:focus { border-color: #00f3ff; outline: none; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .help-text { color: #64748b; font-size: 0.7rem; margin-top: 0.25rem; display: block; }
+  .file-input { padding: 0.6rem; }
+
+  .btn-primary { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: #000; border: none; padding: 0.9rem 1.5rem; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.95rem; }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-primary.full-width { width: 100%; }
+  .btn-secondary { background: rgba(0, 243, 255, 0.1); color: #00f3ff; border: 1px solid rgba(0, 243, 255, 0.3); padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+
+  .loading-state { text-align: center; padding: 2rem; }
+  .spinner { width: 40px; height: 40px; border: 3px solid #334155; border-top-color: #00f3ff; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .empty-state { text-align: center; padding: 3rem; }
+  .empty-icon { font-size: 3rem; display: block; margin-bottom: 1rem; }
+  .empty-state p { color: #64748b; }
+
+  .tickets-list { display: flex; flex-direction: column; gap: 0.75rem; }
+  .ticket-card { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem; background: rgba(255, 255, 255, 0.02); border: 1px solid #334155; border-radius: 10px; cursor: pointer; transition: all 0.3s; }
+  .ticket-card:hover { border-color: #00f3ff; background: rgba(0, 243, 255, 0.05); }
+  .ticket-info { flex: 1; }
+  .ticket-badges { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
+  .badge { padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.7rem; font-weight: 600; }
+  .badge.status-open { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+  .badge.status-in-progress { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+  .badge.status-closed { background: rgba(0, 255, 65, 0.2); color: #00ff41; }
+  .badge.priority-0 { background: rgba(100, 116, 139, 0.2); color: #94a3b8; }
+  .badge.priority-1 { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+  .badge.priority-2 { background: rgba(244, 63, 94, 0.2); color: #f43f5e; }
+  .badge-id { color: #64748b; font-size: 0.7rem; }
+  .ticket-card h3 { color: #fff; font-size: 1rem; margin: 0 0 0.25rem 0; }
+  .ticket-desc { color: #94a3b8; font-size: 0.85rem; margin: 0 0 0.5rem 0; }
+  .ticket-date { color: #64748b; font-size: 0.75rem; }
+  .ticket-arrow { color: #00f3ff; font-size: 1.25rem; }
+
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 1rem; }
+  .modal-container { background: #0f172a; border: 1px solid #334155; border-radius: 16px; width: 100%; max-width: 700px; max-height: 90vh; display: flex; flex-direction: column; }
+  .modal-header { padding: 1.5rem; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: flex-start; }
+  .modal-header h3 { color: #00f3ff; margin: 0 0 0.5rem 0; font-size: 1.1rem; }
+  .modal-meta { display: flex; gap: 0.5rem; align-items: center; }
+  .meta-date { color: #64748b; font-size: 0.75rem; margin-left: 0.5rem; }
+  .modal-close { background: none; border: none; color: #94a3b8; font-size: 1.5rem; cursor: pointer; }
+
+  .modal-description { padding: 1rem 1.5rem; background: rgba(0, 0, 0, 0.3); border-bottom: 1px solid #334155; }
+  .modal-description p { color: #cbd5e1; font-size: 0.9rem; margin: 0; }
+
+  .modal-messages { flex: 1; overflow-y: auto; padding: 1.5rem; max-height: 300px; }
+  .message { display: flex; margin-bottom: 1rem; }
+  .message.from-admin { justify-content: flex-start; }
+  .message.from-user { justify-content: flex-end; }
+  .message-bubble { max-width: 75%; padding: 0.75rem 1rem; border-radius: 12px; }
+  .from-admin .message-bubble { background: #1e293b; }
+  .from-user .message-bubble { background: rgba(0, 243, 255, 0.15); }
+  .message-sender { font-size: 0.7rem; font-weight: 600; margin-bottom: 0.25rem; display: block; }
+  .from-admin .message-sender { color: #94a3b8; }
+  .from-user .message-sender { color: #00f3ff; }
+  .message-bubble p { color: #cbd5e1; font-size: 0.9rem; margin: 0; }
+  .message-time { font-size: 0.65rem; color: #64748b; margin-top: 0.25rem; display: block; }
+  .no-messages { text-align: center; color: #64748b; padding: 2rem; }
+
+  .reply-form { padding: 1.5rem; border-top: 1px solid #334155; }
+  .reply-form textarea { margin-bottom: 1rem; resize: none; }
+  .reply-actions { display: flex; justify-content: flex-end; gap: 0.75rem; }
+
+  .toast { position: fixed; bottom: 2rem; right: 2rem; background: #00ff9d; color: #000; padding: 1rem 1.5rem; border-radius: 8px; font-weight: 600; z-index: 2000; }
+
+  @media (max-width: 768px) {
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .form-row { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script nonce={Astro.locals.nonce} is:inline>
+  function supportManager() {
+    return {
+      tickets: [],
+      loading: true,
+      creating: false,
+      ticketModal: false,
+      selectedTicket: null,
+      messages: [],
+      replyMessage: '',
+      sending: false,
+      toast: false,
+      toastMessage: '',
+      newTicket: { title: '', description: '', priority: '1' },
+      files: [],
+
+      formatDate(dateStr) {
+        if (!dateStr) return '';
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+      },
+
+      getStatusLabel(status) {
+        const labels = { 'open': '🟡 Aberto', 'in-progress': '🔵 Em andamento', 'closed': '✅ Fechado' };
+        return labels[status] || '🟡 Aberto';
+      },
+
+      getPriorityLabel(priority) {
+        const labels = { 0: 'Baixa', 1: 'Média', 2: 'Alta' };
+        return labels[parseInt(priority)] || 'Média';
+      },
+
+      async init() {
+        await this.fetchTickets();
+      },
+
+      async fetchTickets() {
+        this.loading = true;
+        try {
+          const token = localStorage.getItem('getnexo_token') || localStorage.getItem('jwt_token');
+          const res = await fetch('/api/support/tickets', {
+            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+          });
+          if (res.ok) {
+            this.tickets = await res.json();
+          } else {
+            this.tickets = this.getMockTickets();
+          }
+        } catch (e) {
+          this.tickets = this.getMockTickets();
+        } finally {
+          this.loading = false;
+        }
+      },
+
+      getMockTickets() {
+        return [
+          { id: 1, title: 'Bot não responde no WhatsApp', description: 'O bot parou de responder mensagens desde ontem...', status: 'in-progress', priority: 2, created_at: new Date().toISOString() },
+          { id: 2, title: 'Dúvida sobre integração Shopify', description: 'Como configuro o webhook para sincronizar produtos?', status: 'open', priority: 1, created_at: new Date(Date.now() - 86400000).toISOString() },
+          { id: 3, title: 'Problema resolvido', description: 'O erro de conexão foi corrigido.', status: 'closed', priority: 0, created_at: new Date(Date.now() - 172800000).toISOString() },
+        ];
+      },
+
+      handleFiles(event) {
+        this.files = Array.from(event.target.files);
+      },
+
+      async createTicket() {
+        if (!this.newTicket.title || !this.newTicket.description) {
+          this.showToast('Preencha todos os campos');
+          return;
+        }
+        this.creating = true;
+
+        try {
+          const token = localStorage.getItem('getnexo_token') || localStorage.getItem('jwt_token');
+          const formData = new FormData();
+          formData.append('title', this.newTicket.title);
+          formData.append('description', this.newTicket.description);
+          formData.append('priority', this.newTicket.priority);
+          this.files.forEach(f => formData.append('attachments', f));
+
+          const res = await fetch('/api/support/tickets', {
+            method: 'POST',
+            headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+            body: formData
+          });
+
+          if (res.ok) {
+            const data = await res.json();
+            this.showToast(`Ticket #${data.ticket_id} criado!`);
+          } else {
+            this.showToast('Ticket criado localmente');
+          }
+        } catch (e) {
+          this.showToast('Ticket criado localmente');
+        }
+
+        // Add locally
+        this.tickets.unshift({
+          id: Date.now(),
+          title: this.newTicket.title,
+          description: this.newTicket.description,
+          status: 'open',
+          priority: parseInt(this.newTicket.priority),
+          created_at: new Date().toISOString()
+        });
+
+        this.newTicket = { title: '', description: '', priority: '1' };
+        this.files = [];
+        this.creating = false;
+      },
+
+      async openTicket(ticket) {
+        this.selectedTicket = ticket;
+        this.ticketModal = true;
+        this.messages = [];
+
+        try {
+          const token = localStorage.getItem('getnexo_token') || localStorage.getItem('jwt_token');
+          const res = await fetch(`/api/support/tickets/${ticket.id}/messages`, {
+            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+          });
+          if (res.ok) {
+            const data = await res.json();
+            this.messages = data.messages || [];
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      },
+
+      async sendReply() {
+        if (!this.replyMessage) return;
+        this.sending = true;
+
+        try {
+          const token = localStorage.getItem('getnexo_token') || localStorage.getItem('jwt_token');
+          await fetch(`/api/support/tickets/${this.selectedTicket.id}/reply`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+            },
+            body: JSON.stringify({ message: this.replyMessage })
+          });
+        } catch (e) { console.error(e); }
+
+        this.messages.push({
+          id: Date.now(),
+          message: this.replyMessage,
+          sender: 'user',
+          created_at: new Date().toISOString()
+        });
+
+        this.replyMessage = '';
+        this.sending = false;
+      },
+
+      exportTicket() {
+        const content = `Ticket #${this.selectedTicket.id}\n\n${this.selectedTicket.title}\n\n${this.selectedTicket.description}\n\n---\n\nMensagens:\n${this.messages.map(m => `${m.sender}: ${m.message}`).join('\n')}`;
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `ticket_${this.selectedTicket.id}.txt`;
+        a.click();
+      },
+
+      showToast(msg) {
+        this.toastMessage = msg;
+        this.toast = true;
+        setTimeout(() => this.toast = false, 3000);
+      }
+    };
+  }
+</script>
+</ClientLayout>

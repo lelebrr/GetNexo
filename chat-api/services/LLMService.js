@@ -4,7 +4,7 @@ class LLMService {
     constructor() {
         this.deepSeekKey = process.env.DEEPSEEK_API_KEY;
         this.deepSeekUrl = process.env.DEEPSEEK_API_URL || 'https://api.deepseek.com/v1/chat/completions';
-        this.googleKey = process.env.GOOGLE_API_KEY;
+        this.googleKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
         this.googleUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
     }
 

@@ -3,55 +3,263 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 
 <AdminLayout title="Histórico Completo" activeTab="broadcasts">
-  <div class="space-y-6">
+  <div class="space-y-6" x-data="campaignHistory()">
     <div class="flex justify-between items-center">
       <div>
         <h1 class="text-3xl font-bold text-white">Histórico de Campanhas</h1>
         <p class="text-gray-400">Todos os envios realizados</p>
       </div>
-      <button class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm">Exportar Relatório</button>
+      <div class="flex space-x-3">
+         <button @click="exportReport()" :disabled="campaigns.length === 0" class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm flex items-center space-x-2 disabled:opacity-50">
+            <span>📥</span>
+            <span>Exportar Relatório</span>
+         </button>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-4 flex flex-wrap gap-4 items-center">
+       <div class="flex-1 min-w-[200px]">
+          <input type="text" x-model="search" @input.debounce.300ms="filterCampaigns()" placeholder="Buscar campanhas..." 
+                 class="w-full bg-gray-950 border border-gray-700 rounded-lg p-3 text-white focus:border-purple-500 outline-none">
+       </div>
+       <select x-model="channelFilter" @change="filterCampaigns()" class="bg-gray-950 border border-gray-700 rounded-lg p-3 text-white focus:border-purple-500 outline-none">
+          <option value="">Todos os Canais</option>
+          <option value="whatsapp">WhatsApp</option>
+          <option value="email">Email</option>
+          <option value="instagram">Instagram</option>
+       </select>
+       <select x-model="statusFilter" @change="filterCampaigns()" class="bg-gray-950 border border-gray-700 rounded-lg p-3 text-white focus:border-purple-500 outline-none">
+          <option value="">Todos os Status</option>
+          <option value="completed">Concluído</option>
+          <option value="cancelled">Cancelado</option>
+       </select>
+    </div>
+
+    <!-- Loading -->
+    <div x-show="loading" class="flex items-center justify-center py-10">
+       <div class="w-10 h-10 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
     </div>
 
     <!-- Tabela -->
-    <div class="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden">
+    <div x-show="!loading" class="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden">
       <table class="w-full text-left">
         <thead>
           <tr class="bg-gray-900 text-gray-400 text-xs uppercase border-b border-gray-800">
-            <th class="p-4">Campanha</th>
+            <th class="p-4 cursor-pointer hover:text-white" @click="sortBy('name')">
+               Campanha
+               <span x-show="sortField === 'name'" x-text="sortDir === 'asc' ? '↑' : '↓'"></span>
+            </th>
             <th class="p-4">Canal</th>
-            <th class="p-4">Data</th>
-            <th class="p-4 text-center">Enviados</th>
-            <th class="p-4 text-center">Taxa Abertura</th>
+            <th class="p-4 cursor-pointer hover:text-white" @click="sortBy('date')">
+               Data
+               <span x-show="sortField === 'date'" x-text="sortDir === 'asc' ? '↑' : '↓'"></span>
+            </th>
+            <th class="p-4 text-center cursor-pointer hover:text-white" @click="sortBy('sent')">
+               Enviados
+               <span x-show="sortField === 'sent'" x-text="sortDir === 'asc' ? '↑' : '↓'"></span>
+            </th>
+            <th class="p-4 text-center cursor-pointer hover:text-white" @click="sortBy('openRate')">
+               Taxa Abertura
+               <span x-show="sortField === 'openRate'" x-text="sortDir === 'asc' ? '↑' : '↓'"></span>
+            </th>
             <th class="p-4 text-center">Status</th>
+            <th class="p-4 text-center">Ações</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-800 text-sm">
-          <tr class="hover:bg-gray-800/30 transition-colors">
-            <td class="p-4 font-medium text-white">Promoção Black Friday</td>
-            <td class="p-4"><span class="bg-green-500/10 text-green-400 px-2 py-1 rounded text-xs border border-green-500/20">WhatsApp</span></td>
-            <td class="p-4 text-gray-400">24/11/2025</td>
-            <td class="p-4 text-center text-white">15.420</td>
-            <td class="p-4 text-center text-emerald-400 font-bold">98%</td>
-            <td class="p-4 text-center"><span class="text-gray-400 text-xs">Concluído</span></td>
-          </tr>
-           <tr class="hover:bg-gray-800/30 transition-colors">
-            <td class="p-4 font-medium text-white">Natal Antecipado</td>
-            <td class="p-4"><span class="bg-pink-500/10 text-pink-400 px-2 py-1 rounded text-xs border border-pink-500/20">Instagram DM</span></td>
-            <td class="p-4 text-gray-400">10/12/2025</td>
-            <td class="p-4 text-center text-white">5.800</td>
-            <td class="p-4 text-center text-emerald-400 font-bold">45%</td>
-            <td class="p-4 text-center"><span class="text-gray-400 text-xs">Concluído</span></td>
-          </tr>
-           <tr class="hover:bg-gray-800/30 transition-colors">
-            <td class="p-4 font-medium text-white">Lançamento Coleção X</td>
-            <td class="p-4"><span class="bg-blue-500/10 text-blue-400 px-2 py-1 rounded text-xs border border-blue-500/20">Email</span></td>
-            <td class="p-4 text-gray-400">05/01/2026</td>
-            <td class="p-4 text-center text-white">42.000</td>
-            <td class="p-4 text-center text-yellow-400 font-bold">22%</td>
-            <td class="p-4 text-center"><span class="text-gray-400 text-xs">Concluído</span></td>
-          </tr>
+          <template x-for="campaign in filteredCampaigns" :key="campaign.id">
+            <tr class="hover:bg-gray-800/30 transition-colors">
+              <td class="p-4 font-medium text-white" x-text="campaign.name"></td>
+              <td class="p-4">
+                 <span :class="{
+                    'bg-green-500/10 text-green-400 border-green-500/20': campaign.channel === 'whatsapp',
+                    'bg-blue-500/10 text-blue-400 border-blue-500/20': campaign.channel === 'email',
+                    'bg-pink-500/10 text-pink-400 border-pink-500/20': campaign.channel === 'instagram'
+                 }" class="px-2 py-1 rounded text-xs border capitalize" x-text="campaign.channel"></span>
+              </td>
+              <td class="p-4 text-gray-400" x-text="formatDate(campaign.date)"></td>
+              <td class="p-4 text-center text-white" x-text="campaign.sent.toLocaleString()"></td>
+              <td class="p-4 text-center font-bold" 
+                  :class="campaign.openRate >= 50 ? 'text-emerald-400' : campaign.openRate >= 30 ? 'text-yellow-400' : 'text-red-400'"
+                  x-text="campaign.openRate + '%'"></td>
+              <td class="p-4 text-center">
+                 <span :class="campaign.status === 'completed' ? 'text-gray-400' : 'text-red-400'" class="text-xs" 
+                       x-text="campaign.status === 'completed' ? 'Concluído' : 'Cancelado'"></span>
+              </td>
+              <td class="p-4 text-center">
+                 <button @click="viewDetails(campaign)" class="text-purple-400 hover:text-purple-300 text-sm">Ver Detalhes</button>
+              </td>
+            </tr>
+          </template>
         </tbody>
       </table>
+      
+      <div x-show="filteredCampaigns.length === 0" class="text-center py-10 text-gray-500">
+         Nenhuma campanha encontrada.
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div x-show="totalPages > 1" class="flex justify-center space-x-2">
+       <button @click="page = Math.max(1, page - 1)" :disabled="page === 1" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg disabled:opacity-50">
+          ←
+       </button>
+       <span class="px-4 py-2 text-gray-400" x-text="`Página ${page} de ${totalPages}`"></span>
+       <button @click="page = Math.min(totalPages, page + 1)" :disabled="page === totalPages" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg disabled:opacity-50">
+          →
+       </button>
+    </div>
+
+    <!-- Details Modal -->
+    <div x-show="detailsModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" @keydown.escape.window="detailsModal = false">
+       <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="detailsModal = false"></div>
+       <div class="relative w-full max-w-2xl bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-hidden" @click.stop>
+          <div class="bg-gradient-to-r from-purple-600/20 to-cyan-600/20 p-6 border-b border-gray-800">
+             <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold text-white" x-text="selectedCampaign?.name"></h2>
+                <button @click="detailsModal = false" class="p-2 text-gray-500 hover:text-white hover:bg-gray-800 rounded-lg transition-all">✕</button>
+             </div>
+          </div>
+          <div class="p-6 space-y-6 max-h-[60vh] overflow-y-auto">
+             <div class="grid grid-cols-3 gap-4">
+                <div class="bg-gray-800/50 p-4 rounded-lg text-center">
+                   <p class="text-xs text-gray-500 uppercase mb-1">Enviados</p>
+                   <p class="text-2xl font-bold text-white" x-text="selectedCampaign?.sent.toLocaleString()"></p>
+                </div>
+                <div class="bg-gray-800/50 p-4 rounded-lg text-center">
+                   <p class="text-xs text-gray-500 uppercase mb-1">Entregues</p>
+                   <p class="text-2xl font-bold text-emerald-400" x-text="selectedCampaign?.delivered.toLocaleString()"></p>
+                </div>
+                <div class="bg-gray-800/50 p-4 rounded-lg text-center">
+                   <p class="text-xs text-gray-500 uppercase mb-1">Taxa Abertura</p>
+                   <p class="text-2xl font-bold text-purple-400" x-text="selectedCampaign?.openRate + '%'"></p>
+                </div>
+             </div>
+             <div class="bg-gray-800/50 p-4 rounded-lg">
+                <p class="text-xs text-gray-500 uppercase mb-2">Mensagem Enviada</p>
+                <p class="text-white whitespace-pre-wrap" x-text="selectedCampaign?.message || 'Mensagem não disponível'"></p>
+             </div>
+          </div>
+          <div class="p-6 border-t border-gray-800 flex justify-end">
+             <button @click="detailsModal = false" class="px-6 py-2.5 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-xl transition-all">Fechar</button>
+          </div>
+       </div>
     </div>
   </div>
 </AdminLayout>
+
+<script nonce={Astro.locals.nonce} is:inline>
+  function campaignHistory() {
+    return {
+      campaigns: [],
+      filteredCampaigns: [],
+      loading: true,
+      search: '',
+      channelFilter: '',
+      statusFilter: '',
+      sortField: 'date',
+      sortDir: 'desc',
+      page: 1,
+      perPage: 10,
+      detailsModal: false,
+      selectedCampaign: null,
+
+      get totalPages() {
+        return Math.ceil(this.filteredCampaigns.length / this.perPage);
+      },
+
+      async init() {
+        await this.fetchCampaigns();
+      },
+
+      async fetchCampaigns() {
+        this.loading = true;
+        try {
+          const res = await fetch('/api/campaigns?status=completed,cancelled');
+          if (res.ok) {
+            const data = await res.json();
+            this.campaigns = data.campaigns || [];
+          } else {
+            this.campaigns = this.getMockCampaigns();
+          }
+        } catch(e) {
+          console.error(e);
+          this.campaigns = this.getMockCampaigns();
+        } finally {
+          this.filterCampaigns();
+          this.loading = false;
+        }
+      },
+
+      getMockCampaigns() {
+        return [
+          { id: 1, name: 'Promoção Black Friday', channel: 'whatsapp', date: '2025-11-24', sent: 15420, delivered: 15200, openRate: 98, status: 'completed', message: '🛍️ BLACK FRIDAY INCRÍVEL!\n\nAté 70% OFF em toda a loja!' },
+          { id: 2, name: 'Natal Antecipado', channel: 'instagram', date: '2025-12-10', sent: 5800, delivered: 5600, openRate: 45, status: 'completed', message: '🎄 Prepare-se para o Natal!' },
+          { id: 3, name: 'Lançamento Coleção X', channel: 'email', date: '2026-01-05', sent: 42000, delivered: 41500, openRate: 22, status: 'completed', message: 'Conheça nossa nova coleção!' },
+          { id: 4, name: 'Flash Sale Cancelada', channel: 'whatsapp', date: '2026-01-15', sent: 0, delivered: 0, openRate: 0, status: 'cancelled', message: 'Promoção relâmpago!' },
+          { id: 5, name: 'Cyber Monday', channel: 'whatsapp', date: '2025-11-25', sent: 18500, delivered: 18200, openRate: 87, status: 'completed', message: '💻 CYBER MONDAY!' },
+        ];
+      },
+
+      filterCampaigns() {
+        let result = this.campaigns.filter(c => {
+          const matchesSearch = !this.search || c.name.toLowerCase().includes(this.search.toLowerCase());
+          const matchesChannel = !this.channelFilter || c.channel === this.channelFilter;
+          const matchesStatus = !this.statusFilter || c.status === this.statusFilter;
+          return matchesSearch && matchesChannel && matchesStatus;
+        });
+
+        // Sort
+        result.sort((a, b) => {
+          let aVal = a[this.sortField];
+          let bVal = b[this.sortField];
+          if (this.sortField === 'date') {
+            aVal = new Date(aVal);
+            bVal = new Date(bVal);
+          }
+          return this.sortDir === 'asc' ? (aVal > bVal ? 1 : -1) : (aVal < bVal ? 1 : -1);
+        });
+
+        this.filteredCampaigns = result;
+      },
+
+      sortBy(field) {
+        if (this.sortField === field) {
+          this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+          this.sortField = field;
+          this.sortDir = 'desc';
+        }
+        this.filterCampaigns();
+      },
+
+      formatDate(dateStr) {
+        if (!dateStr) return '-';
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('pt-BR');
+      },
+
+      viewDetails(campaign) {
+        this.selectedCampaign = campaign;
+        this.detailsModal = true;
+      },
+
+      exportReport() {
+        const csv = ['Nome,Canal,Data,Enviados,Taxa Abertura,Status'].concat(
+          this.filteredCampaigns.map(c => `"${c.name}",${c.channel},${c.date},${c.sent},${c.openRate}%,${c.status}`)
+        ).join('\n');
+        
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `campaign-history-${new Date().toISOString().slice(0,10)}.csv`;
+        link.click();
+      }
+    };
+  }
+</script>
+
+<style>
+  [x-cloak] { display: none !important; }
+</style>

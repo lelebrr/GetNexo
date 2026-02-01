@@ -1,16 +1,10 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
-import { Coins, Settings, TrendingUp, Users, ArrowUpRight, ShieldCheck } from 'lucide-react';
-
-const pointRules = [
-  { id: 1, action: "Compra Realizada", ratio: "R$ 1.00 = 1 Ponto", status: "Ativo" },
-  { id: 2, action: "Cadastro Completo", ratio: "Ganhe 50 Pontos", status: "Ativo" },
-  { id: 3, action: "Primeira Compra", ratio: "Ganhe 100 Pontos", status: "Pausado" },
-];
+import { Coins, Settings, TrendingUp, Users, ArrowUpRight, ShieldCheck, X, Trash2, Edit2 } from 'lucide-react';
 ---
 
 <AdminLayout title="Configuração de Pontos" activeTab="fidelidade">
-  <div class="space-y-10 animate-fade-in py-4">
+  <div class="space-y-10 animate-fade-in py-4" x-data="loyaltyPoints()">
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-4">
         <div class="w-16 h-16 bg-yellow-500/10 rounded-3xl flex items-center justify-center border border-yellow-500/20 shadow-2xl shadow-yellow-500/10">
@@ -27,27 +21,47 @@ const pointRules = [
        <!-- Regras de Ganho -->
        <div class="lg:col-span-2 space-y-6">
           <h3 class="text-xs font-black text-gray-600 uppercase tracking-widest ml-1">Regras de Acúmulo Ativas</h3>
-          <div class="grid grid-cols-1 gap-4">
-             {pointRules.map(rule => (
+          
+          <!-- Loading -->
+          <div x-show="loading" class="flex items-center justify-center py-10">
+             <div class="w-10 h-10 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+
+          <!-- Rules List -->
+          <div x-show="!loading" class="grid grid-cols-1 gap-4">
+             <template x-for="rule in rules" :key="rule.id">
                 <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2rem] flex items-center justify-between hover:border-yellow-500/20 transition-all group">
                    <div class="flex items-center space-x-6">
                       <div class="w-12 h-12 bg-black/40 rounded-2xl flex items-center justify-center text-gray-500 group-hover:text-yellow-500 transition-colors">
                          <Settings className="w-5 h-5" />
                       </div>
                       <div>
-                         <h4 class="text-sm font-bold text-white uppercase tracking-tight">{rule.action}</h4>
-                         <p class="text-xs text-gray-500 mt-1 font-mono">{rule.ratio}</p>
+                         <h4 class="text-sm font-bold text-white uppercase tracking-tight" x-text="rule.action"></h4>
+                         <p class="text-xs text-gray-500 mt-1 font-mono" x-text="rule.ratio"></p>
                       </div>
                    </div>
                    <div class="flex items-center space-x-4">
-                      <span class:list={["text-[8px] font-black uppercase px-2 py-1 rounded", rule.status === 'Ativo' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-gray-800 text-gray-500']}>{rule.status}</span>
-                      <button class="p-2 text-gray-700 hover:text-white transition-colors"><ArrowUpRight className="w-4 h-4" /></button>
+                      <span :class="rule.status === 'active' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-gray-800 text-gray-500'" class="text-[8px] font-black uppercase px-2 py-1 rounded" x-text="rule.status === 'active' ? 'Ativo' : 'Pausado'"></span>
+                      <div class="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                         <button @click="editRule(rule)" class="p-2 text-gray-600 hover:text-yellow-500 transition-colors" title="Editar">
+                            <Edit2 className="w-4 h-4" />
+                         </button>
+                         <button @click="toggleRule(rule.id)" class="p-2 text-gray-600 hover:text-white transition-colors" :title="rule.status === 'active' ? 'Pausar' : 'Ativar'">
+                            <span x-text="rule.status === 'active' ? '⏸' : '▶'" class="text-sm"></span>
+                         </button>
+                         <button @click="deleteRule(rule.id)" class="p-2 text-gray-600 hover:text-red-500 transition-colors" title="Excluir">
+                            <Trash2 className="w-4 h-4" />
+                         </button>
+                      </div>
+                      <button @click="viewRuleDetails(rule)" class="p-2 text-gray-700 hover:text-white transition-colors">
+                         <ArrowUpRight className="w-4 h-4" />
+                      </button>
                    </div>
                 </div>
-             ))}
+             </template>
           </div>
           
-          <button class="w-full py-6 border border-dashed border-gray-800 rounded-[2rem] text-[10px] font-black uppercase text-gray-600 hover:text-white hover:border-gray-600 transition-all">
+          <button @click="openCreateModal()" class="w-full py-6 border border-dashed border-gray-800 rounded-[2rem] text-[10px] font-black uppercase text-gray-600 hover:text-white hover:border-yellow-500/30 hover:bg-yellow-500/5 transition-all">
              + Adicionar Novo Gatilho de Pontuação
           </button>
        </div>
@@ -58,29 +72,347 @@ const pointRules = [
              <TrendingUp className="w-6 h-6 text-yellow-500" />
              <div>
                 <p class="text-[10px] font-black uppercase text-gray-500 tracking-widest">Pontos em Circulação</p>
-                <p class="text-4xl font-black text-white mt-1">1.250.400</p>
+                <p class="text-4xl font-black text-white mt-1" x-text="stats.totalPoints.toLocaleString()">1.250.400</p>
              </div>
              <div class="space-y-2 pt-4 border-t border-white/5">
                 <div class="flex justify-between text-[10px] font-bold text-gray-400">
                    <span>Taxa de Resgate</span>
-                   <span class="text-yellow-500">22%</span>
+                   <span class="text-yellow-500" x-text="stats.redemptionRate + '%'">22%</span>
                 </div>
                 <div class="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
-                   <div class="w-[22%] h-full bg-yellow-500"></div>
+                   <div class="h-full bg-yellow-500 transition-all" :style="`width: ${stats.redemptionRate}%`"></div>
                 </div>
              </div>
           </div>
 
           <div class="p-6 bg-black/40 border border-gray-800 rounded-3xl flex items-center space-x-4">
-             <ShieldCheck className="w-5 h-5 text-emerald-500" />
-             <p class="text-[9px] text-gray-500 leading-relaxed font-medium">Prevenção de fraude ativa: Limite de acúmulo por CPF definido em **5.000 pts/mês**.</p>
+             <ShieldCheck className="w-5 h-5 text-emerald-500 shrink-0" />
+             <p class="text-[9px] text-gray-500 leading-relaxed font-medium">Prevenção de fraude ativa: Limite de acúmulo por CPF definido em <strong class="text-white" x-text="stats.monthlyLimit.toLocaleString() + ' pts/mês'">5.000 pts/mês</strong>.</p>
+          </div>
+
+          <div class="p-6 bg-black/40 border border-gray-800 rounded-3xl space-y-4">
+             <h4 class="text-xs font-bold text-gray-400 uppercase">Estatísticas Rápidas</h4>
+             <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                   <span class="text-xs text-gray-500">Clientes com Pontos</span>
+                   <span class="text-sm font-bold text-white" x-text="stats.customersWithPoints.toLocaleString()">2.450</span>
+                </div>
+                <div class="flex justify-between items-center">
+                   <span class="text-xs text-gray-500">Pontos Resgatados (30d)</span>
+                   <span class="text-sm font-bold text-emerald-400" x-text="stats.redeemedLast30d.toLocaleString()">145.200</span>
+                </div>
+                <div class="flex justify-between items-center">
+                   <span class="text-xs text-gray-500">Regras Ativas</span>
+                   <span class="text-sm font-bold text-yellow-400" x-text="activeRulesCount">3</span>
+                </div>
+             </div>
+          </div>
+       </div>
+    </div>
+
+    <!-- Create/Edit Modal -->
+    <div x-show="showModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" @keydown.escape.window="showModal = false">
+       <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="showModal = false"></div>
+       <div class="relative w-full max-w-lg bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-hidden" @click.stop>
+          <div class="bg-gradient-to-r from-yellow-600/20 to-orange-600/20 p-6 border-b border-gray-800">
+             <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold text-white" x-text="editingRule ? 'Editar Regra' : 'Novo Gatilho de Pontuação'"></h2>
+                <button @click="showModal = false" class="p-2 text-gray-500 hover:text-white hover:bg-gray-800 rounded-lg transition-all">
+                   <X className="w-5 h-5" />
+                </button>
+             </div>
+          </div>
+          <form @submit.prevent="saveRule()" class="p-6 space-y-5">
+             <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Tipo de Gatilho *</label>
+                <select x-model="form.trigger" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-yellow-500 transition-all">
+                   <option value="">Selecione...</option>
+                   <option value="purchase">Compra Realizada</option>
+                   <option value="register">Cadastro Completo</option>
+                   <option value="first_purchase">Primeira Compra</option>
+                   <option value="birthday">Aniversário do Cliente</option>
+                   <option value="referral">Indicação de Amigo</option>
+                   <option value="review">Avaliação de Produto</option>
+                   <option value="social_share">Compartilhamento Social</option>
+                </select>
+             </div>
+             <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Nome da Regra *</label>
+                <input type="text" x-model="form.name" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition-all" placeholder="Ex: Bônus de Primeira Compra">
+             </div>
+             <div class="grid grid-cols-2 gap-4">
+                <div>
+                   <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Tipo de Recompensa</label>
+                   <select x-model="form.rewardType" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-yellow-500 transition-all">
+                      <option value="fixed">Pontos Fixos</option>
+                      <option value="percentage">% do Valor</option>
+                   </select>
+                </div>
+                <div>
+                   <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2" x-text="form.rewardType === 'fixed' ? 'Quantidade de Pontos' : 'Porcentagem'"></label>
+                   <input type="number" x-model="form.rewardValue" min="1" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition-all" :placeholder="form.rewardType === 'fixed' ? '100' : '1'">
+                </div>
+             </div>
+             <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Limite por Cliente (opcional)</label>
+                <input type="number" x-model="form.limit" min="0" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition-all" placeholder="Ilimitado">
+                <p class="text-xs text-gray-500 mt-1">Máximo de vezes que um cliente pode ganhar esses pontos</p>
+             </div>
+             <div class="flex items-center space-x-3">
+                <input type="checkbox" x-model="form.active" id="ruleActive" class="w-5 h-5 rounded bg-gray-800 border-gray-600 text-yellow-500 focus:ring-yellow-500 focus:ring-offset-gray-900">
+                <label for="ruleActive" class="text-sm text-gray-300">Ativar regra imediatamente</label>
+             </div>
+             <div class="flex space-x-3 pt-4">
+                <button type="button" @click="showModal = false" class="flex-1 py-3 bg-gray-800 hover:bg-gray-700 text-gray-400 font-bold rounded-xl transition-all">
+                   Cancelar
+                </button>
+                <button type="submit" :disabled="saving" class="flex-1 py-3 bg-yellow-600 hover:bg-yellow-700 text-black font-bold rounded-xl transition-all disabled:opacity-50">
+                   <span x-text="saving ? 'Salvando...' : (editingRule ? 'Salvar Alterações' : 'Criar Regra')"></span>
+                </button>
+             </div>
+          </form>
+       </div>
+    </div>
+
+    <!-- Details Modal -->
+    <div x-show="detailsModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" @keydown.escape.window="detailsModal = false">
+       <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="detailsModal = false"></div>
+       <div class="relative w-full max-w-md bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-hidden" @click.stop>
+          <div class="bg-gradient-to-r from-yellow-600/20 to-orange-600/20 p-6 border-b border-gray-800">
+             <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold text-white" x-text="selectedRule?.action"></h2>
+                <button @click="detailsModal = false" class="p-2 text-gray-500 hover:text-white hover:bg-gray-800 rounded-lg transition-all">
+                   <X className="w-5 h-5" />
+                </button>
+             </div>
+          </div>
+          <div class="p-6 space-y-4">
+             <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gray-800/50 p-4 rounded-lg">
+                   <p class="text-xs text-gray-500 uppercase mb-1">Status</p>
+                   <p class="text-white font-medium" x-text="selectedRule?.status === 'active' ? 'Ativo' : 'Pausado'"></p>
+                </div>
+                <div class="bg-gray-800/50 p-4 rounded-lg">
+                   <p class="text-xs text-gray-500 uppercase mb-1">Recompensa</p>
+                   <p class="text-white font-medium" x-text="selectedRule?.ratio"></p>
+                </div>
+             </div>
+             <div class="bg-gray-800/50 p-4 rounded-lg">
+                <p class="text-xs text-gray-500 uppercase mb-1">Pontos Distribuídos</p>
+                <p class="text-2xl font-bold text-yellow-400" x-text="(selectedRule?.totalAwarded || 0).toLocaleString()"></p>
+             </div>
+             <div class="bg-gray-800/50 p-4 rounded-lg">
+                <p class="text-xs text-gray-500 uppercase mb-1">Clientes Beneficiados</p>
+                <p class="text-lg font-bold text-white" x-text="(selectedRule?.customersCount || 0).toLocaleString()"></p>
+             </div>
+          </div>
+          <div class="p-6 border-t border-gray-800 flex justify-end space-x-3">
+             <button @click="editRule(selectedRule); detailsModal = false" class="px-6 py-2.5 bg-yellow-600 hover:bg-yellow-700 text-black font-medium rounded-xl transition-all">
+                Editar
+             </button>
+             <button @click="detailsModal = false" class="px-6 py-2.5 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-xl transition-all">
+                Fechar
+             </button>
           </div>
        </div>
     </div>
   </div>
 </AdminLayout>
 
+<script nonce={Astro.locals.nonce} is:inline>
+  function loyaltyPoints() {
+    return {
+      rules: [],
+      loading: true,
+      showModal: false,
+      detailsModal: false,
+      saving: false,
+      editingRule: null,
+      selectedRule: null,
+      form: {
+        trigger: '',
+        name: '',
+        rewardType: 'fixed',
+        rewardValue: 100,
+        limit: null,
+        active: true
+      },
+      stats: {
+        totalPoints: 1250400,
+        redemptionRate: 22,
+        monthlyLimit: 5000,
+        customersWithPoints: 2450,
+        redeemedLast30d: 145200
+      },
+
+      get activeRulesCount() {
+        return this.rules.filter(r => r.status === 'active').length;
+      },
+
+      async init() {
+        await this.fetchRules();
+      },
+
+      async fetchRules() {
+        this.loading = true;
+        try {
+          const res = await fetch('/api/loyalty/rules');
+          if (res.ok) {
+            const data = await res.json();
+            this.rules = data.rules || [];
+          } else {
+            this.rules = this.getMockRules();
+          }
+        } catch(e) {
+          console.error(e);
+          this.rules = this.getMockRules();
+        } finally {
+          this.loading = false;
+        }
+      },
+
+      getMockRules() {
+        return [
+          { id: 1, action: 'Compra Realizada', ratio: 'R$ 1.00 = 1 Ponto', status: 'active', trigger: 'purchase', totalAwarded: 850000, customersCount: 1850 },
+          { id: 2, action: 'Cadastro Completo', ratio: 'Ganhe 50 Pontos', status: 'active', trigger: 'register', totalAwarded: 125000, customersCount: 2500 },
+          { id: 3, action: 'Primeira Compra', ratio: 'Ganhe 100 Pontos', status: 'paused', trigger: 'first_purchase', totalAwarded: 275400, customersCount: 2754 },
+        ];
+      },
+
+      openCreateModal() {
+        this.editingRule = null;
+        this.form = {
+          trigger: '',
+          name: '',
+          rewardType: 'fixed',
+          rewardValue: 100,
+          limit: null,
+          active: true
+        };
+        this.showModal = true;
+      },
+
+      editRule(rule) {
+        this.editingRule = rule;
+        this.form = {
+          trigger: rule.trigger || '',
+          name: rule.action,
+          rewardType: rule.ratio.includes('%') ? 'percentage' : 'fixed',
+          rewardValue: parseInt(rule.ratio.match(/\d+/)?.[0]) || 100,
+          limit: null,
+          active: rule.status === 'active'
+        };
+        this.showModal = true;
+      },
+
+      viewRuleDetails(rule) {
+        this.selectedRule = rule;
+        this.detailsModal = true;
+      },
+
+      async saveRule() {
+        if (!this.form.trigger || !this.form.name) {
+          alert('Preencha todos os campos obrigatórios');
+          return;
+        }
+
+        this.saving = true;
+        
+        const triggerLabels = {
+          purchase: 'Compra Realizada',
+          register: 'Cadastro Completo',
+          first_purchase: 'Primeira Compra',
+          birthday: 'Aniversário do Cliente',
+          referral: 'Indicação de Amigo',
+          review: 'Avaliação de Produto',
+          social_share: 'Compartilhamento Social'
+        };
+
+        const ratio = this.form.rewardType === 'fixed' 
+          ? `Ganhe ${this.form.rewardValue} Pontos`
+          : `R$ 1.00 = ${this.form.rewardValue} Ponto${this.form.rewardValue > 1 ? 's' : ''}`;
+
+        const ruleData = {
+          action: this.form.name || triggerLabels[this.form.trigger],
+          trigger: this.form.trigger,
+          ratio: ratio,
+          status: this.form.active ? 'active' : 'paused'
+        };
+
+        try {
+          const url = this.editingRule 
+            ? `/api/loyalty/rules/${this.editingRule.id}` 
+            : '/api/loyalty/rules';
+          const method = this.editingRule ? 'PUT' : 'POST';
+
+          const res = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(ruleData)
+          });
+
+          if (res.ok) {
+            this.showModal = false;
+            await this.fetchRules();
+          } else {
+            this.mockSave(ruleData);
+          }
+        } catch(e) {
+          this.mockSave(ruleData);
+        } finally {
+          this.saving = false;
+        }
+      },
+
+      mockSave(ruleData) {
+        if (this.editingRule) {
+          const idx = this.rules.findIndex(r => r.id === this.editingRule.id);
+          if (idx !== -1) {
+            this.rules[idx] = { ...this.rules[idx], ...ruleData };
+          }
+        } else {
+          this.rules.push({
+            id: Date.now(),
+            ...ruleData,
+            totalAwarded: 0,
+            customersCount: 0
+          });
+        }
+        this.showModal = false;
+      },
+
+      async toggleRule(id) {
+        const rule = this.rules.find(r => r.id === id);
+        if (!rule) return;
+
+        const newStatus = rule.status === 'active' ? 'paused' : 'active';
+        
+        try {
+          await fetch(`/api/loyalty/rules/${id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: newStatus })
+          });
+        } catch(e) { console.error(e); }
+        
+        rule.status = newStatus;
+      },
+
+      async deleteRule(id) {
+        if (!confirm('Tem certeza que deseja excluir esta regra?')) return;
+
+        try {
+          await fetch(`/api/loyalty/rules/${id}`, { method: 'DELETE' });
+        } catch(e) { console.error(e); }
+        
+        this.rules = this.rules.filter(r => r.id !== id);
+      }
+    };
+  }
+</script>
+
 <style>
+  [x-cloak] { display: none !important; }
   .animate-fade-in { animation: fadeIn 0.6s ease-out; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 </style>

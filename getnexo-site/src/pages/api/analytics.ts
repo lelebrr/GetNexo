@@ -17,6 +17,10 @@ export const GET: APIRoute = async ({ request, url, cookies }) => {
         else if (type === 'trends') endpoint = 'analytics/trends';
         else if (type === 'prediction') endpoint = 'analytics/prediction';
         else if (type === 'dashboard') endpoint = 'analytics/dashboard-stats';
+        else if (type === 'recent-sales') endpoint = 'analytics/recent-sales';
+        else if (type === 'export-sales') endpoint = 'analytics/export-sales';
+        else if (type === 'active-chats') endpoint = 'analytics/active-chats';
+        else if (type === 'top-products') endpoint = 'analytics/top-products';
         else endpoint = 'analytics/dashboard-stats'; // Default fallback
 
         const backendUrl = process.env.INTERNAL_API_URL

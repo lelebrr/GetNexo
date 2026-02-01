@@ -1,6 +1,9 @@
 # Dockerfile para o backend Node.js
-# FROM node:20-alpine
-FROM getnexo/backend:latest
+# Use nginx:alpine to bypass network issues with node:20-alpine
+FROM nginx:alpine
+
+# Install Node.js, npm and build tools manually
+RUN apk add --no-cache nodejs npm python3 make g++ gcc
 
 WORKDIR /app
 

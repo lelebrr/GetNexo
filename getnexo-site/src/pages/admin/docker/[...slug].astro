@@ -1,0 +1,39 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import DockerManagement from '../../../components/docker/DockerManagement.jsx';
+
+export function getStaticPaths() {
+  return [
+    { params: { slug: undefined } },
+    { params: { slug: 'overview' } },
+    { params: { slug: 'clients' } },
+    { params: { slug: 'auto-scale' } },
+    { params: { slug: 'usage' } },
+    { params: { slug: 'billing' } },
+    { params: { slug: 'webhooks' } },
+  ];
+}
+
+const { slug } = Astro.params;
+
+// Map slugs to component internal view names if they differ
+const slugToView = {
+  undefined: 'overview',
+  'overview': 'overview',
+  'clients': 'clients',
+  'auto-scale': 'autoscale',
+  'usage': 'usage',
+  'billing': 'billing',
+  'webhooks': 'webhooks'
+};
+
+const initialView = slugToView[slug] || 'overview';
+---
+
+<AdminLayout title="Gerenciamento Docker" activeTab="docker">
+    <div class="min-h-screen bg-black">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <DockerManagement client:load initialView={initialView} />
+        </div>
+    </div>
+</AdminLayout>

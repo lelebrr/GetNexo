@@ -104,7 +104,7 @@ const title = "Pesquisa de Keywords IA";
   </div>
 </AdminLayout>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
   function keywordsIA() {
     return {
       search: '',

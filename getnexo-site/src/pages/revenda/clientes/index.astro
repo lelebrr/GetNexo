@@ -3,51 +3,222 @@ import ResellerLayout from '../../../layouts/ResellerLayout.astro';
 ---
 
 <ResellerLayout title="Meus Clientes">
-    <div class="panel-header">
-        <h2 class="text-neon-blue">Meus Clientes</h2>
-        <a href="/revenda/gerar" class="btn-gold">+ NOVO CLIENTE</a>
-    </div>
+    <div x-data="clientsManager()">
+        <div class="panel-header">
+            <h2 class="text-neon-blue">Meus Clientes</h2>
+            <button @click="openAddModal()" class="btn-gold">+ NOVO CLIENTE</button>
+        </div>
 
-    <div class="flex gap-4 mb-6">
-        <a href="/revenda/clientes" class="tab-link active">Todos</a>
-        <a href="/revenda/clientes/ativos" class="tab-link">Ativos</a>
-        <a href="/revenda/clientes/inativos" class="tab-link">Inativos / Teste</a>
-    </div>
+        <div class="flex gap-4 mb-6">
+            <a href="/revenda/clientes" class="tab-link active">Todos</a>
+            <a href="/revenda/clientes/ativos" class="tab-link">Ativos</a>
+            <a href="/revenda/clientes/inativos" class="tab-link">Inativos / Teste</a>
+        </div>
 
-    <div class="filter-bar">
-        <input type="text" id="search-input" placeholder="BUSCAR POR NOME OU DOMÍNIO..." class="search-input">
-    </div>
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <span class="label">Total Clientes</span>
+                <span class="value" x-text="clients.length">0</span>
+            </div>
+            <div class="stat-card">
+                <span class="label">Ativos</span>
+                <span class="value text-green" x-text="clients.filter(c => c.status === 'active').length">0</span>
+            </div>
+            <div class="stat-card">
+                <span class="label">Em Teste</span>
+                <span class="value text-yellow" x-text="clients.filter(c => c.status === 'trial').length">0</span>
+            </div>
+            <div class="stat-card">
+                <span class="label">Receita Total</span>
+                <span class="value text-gold" x-text="formatCurrency(totalRevenue)">R$ 0</span>
+            </div>
+        </div>
 
-    <div class="table-container">
-        <table id="clients-table">
-            <thead>
-                <tr>
-                    <th>NOME</th>
-                    <th>DOMÍNIO</th>
-                    <th>PLATAFORMA</th>
-                    <th>STATUS</th>
-                    <th>RECEITA</th>
-                    <th>COMISSÃO</th>
-                    <th>DATA</th>
-                </tr>
-            </thead>
-            <tbody id="clients-body">
-                <tr><td colspan="7" style="text-align:center; padding: 2rem;">CARREGANDO DADOS...</td></tr>
-            </tbody>
-        </table>
-    </div>
+        <div class="filter-bar">
+            <input type="text" x-model="search" placeholder="BUSCAR POR NOME OU DOMÍNIO..." class="search-input">
+            <select x-model="filterStatus" class="select-status">
+                <option value="">Todos os Status</option>
+                <option value="active">Ativos</option>
+                <option value="trial">Em Teste</option>
+                <option value="inactive">Inativos</option>
+            </select>
+        </div>
 
+        <!-- Loading -->
+        <div x-show="loading" class="loading-state">
+            <div class="spinner"></div>
+            <span>Carregando clientes...</span>
+        </div>
+
+        <div x-show="!loading" class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>NOME</th>
+                        <th>DOMÍNIO</th>
+                        <th>PLATAFORMA</th>
+                        <th>STATUS</th>
+                        <th>RECEITA</th>
+                        <th>COMISSÃO</th>
+                        <th>DATA</th>
+                        <th>AÇÕES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for="client in filteredClients" :key="client.id">
+                        <tr>
+                            <td style="font-weight:bold; color:#fff;" x-text="client.nome"></td>
+                            <td x-text="client.dominio"></td>
+                            <td x-text="client.plataforma?.toUpperCase()"></td>
+                            <td>
+                                <span :class="'status-' + client.status" x-text="getStatusLabel(client.status)"></span>
+                            </td>
+                            <td x-text="client.receita"></td>
+                            <td style="color:#ffd700; font-weight:bold;" x-text="client.comissao"></td>
+                            <td x-text="client.data"></td>
+                            <td>
+                                <div class="action-btns">
+                                    <button @click="viewClient(client)" class="btn-action" title="Ver Detalhes">👁️</button>
+                                    <button @click="editClient(client)" class="btn-action" title="Editar">✏️</button>
+                                    <button @click="sendMessage(client)" class="btn-action" title="Enviar Mensagem">💬</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </template>
+                    <tr x-show="filteredClients.length === 0">
+                        <td colspan="8" style="text-align:center; padding: 2rem;">NENHUM CLIENTE ENCONTRADO</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div x-show="!loading && clients.length > pageSize" class="pagination">
+            <button @click="page = Math.max(1, page - 1)" :disabled="page === 1" class="btn-page">← Anterior</button>
+            <span class="page-info" x-text="'Página ' + page + ' de ' + totalPages"></span>
+            <button @click="page = Math.min(totalPages, page + 1)" :disabled="page === totalPages" class="btn-page">Próximo →</button>
+        </div>
+
+        <!-- Add/Edit Modal -->
+        <div x-show="showModal" x-cloak class="modal-overlay" @keydown.escape.window="showModal = false">
+            <div class="modal-container" @click.stop>
+                <div class="modal-header">
+                    <h3 x-text="editingClient ? 'Editar Cliente' : 'Novo Cliente'"></h3>
+                    <button @click="showModal = false" class="modal-close">×</button>
+                </div>
+                <form @submit.prevent="saveClient()" class="modal-body">
+                    <div class="form-group">
+                        <label>Nome da Empresa *</label>
+                        <input type="text" x-model="form.nome" required class="form-input" placeholder="Ex: Loja do João">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Domínio</label>
+                            <input type="text" x-model="form.dominio" class="form-input" placeholder="lojadojoao.com.br">
+                        </div>
+                        <div class="form-group">
+                            <label>Plataforma</label>
+                            <select x-model="form.plataforma" class="form-input">
+                                <option value="shopify">Shopify</option>
+                                <option value="woocommerce">WooCommerce</option>
+                                <option value="nuvemshop">NuvemShop</option>
+                                <option value="tray">Tray</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" x-model="form.email" class="form-input" placeholder="contato@empresa.com">
+                        </div>
+                        <div class="form-group">
+                            <label>WhatsApp</label>
+                            <input type="text" x-model="form.whatsapp" class="form-input" placeholder="11999999999">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Observações</label>
+                        <textarea x-model="form.notas" class="form-input" rows="3" placeholder="Notas sobre o cliente..."></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" @click="showModal = false" class="btn-cancel">Cancelar</button>
+                        <button type="submit" class="btn-save" :disabled="saving">
+                            <span x-text="saving ? 'Salvando...' : (editingClient ? 'Salvar' : 'Criar Cliente')"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- View Details Modal -->
+        <div x-show="detailsModal" x-cloak class="modal-overlay">
+            <div class="modal-container" @click.stop>
+                <div class="modal-header">
+                    <h3 x-text="selectedClient?.nome"></h3>
+                    <button @click="detailsModal = false" class="modal-close">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Domínio</span>
+                            <span class="detail-value" x-text="selectedClient?.dominio || '-'"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Plataforma</span>
+                            <span class="detail-value" x-text="selectedClient?.plataforma?.toUpperCase() || '-'"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Status</span>
+                            <span class="detail-value" :class="'status-' + selectedClient?.status" x-text="getStatusLabel(selectedClient?.status)"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Receita Gerada</span>
+                            <span class="detail-value" x-text="selectedClient?.receita"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Sua Comissão</span>
+                            <span class="detail-value text-gold" x-text="selectedClient?.comissao"></span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Data Cadastro</span>
+                            <span class="detail-value" x-text="selectedClient?.data"></span>
+                        </div>
+                    </div>
+                    <div class="detail-actions">
+                        <button @click="editClient(selectedClient); detailsModal = false" class="btn-primary">✏️ Editar</button>
+                        <button @click="sendMessage(selectedClient)" class="btn-secondary">💬 Enviar Mensagem</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </ResellerLayout>
 
 <style>
+    [x-cloak] { display: none !important; }
     .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-    .btn-gold { background: #ffd700; color: #000; padding: 0.8rem 1.5rem; text-decoration: none; font-weight: bold; border-radius: 4px; box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); text-transform: uppercase; }
+    .btn-gold { background: #ffd700; color: #000; padding: 0.8rem 1.5rem; text-decoration: none; font-weight: bold; border-radius: 4px; box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); text-transform: uppercase; border: none; cursor: pointer; }
     
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+    .stat-card { background: #0a0a0a; border: 1px solid #334155; padding: 1rem; border-radius: 8px; text-align: center; }
+    .stat-card .label { display: block; font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.5rem; }
+    .stat-card .value { font-size: 1.5rem; font-weight: 700; color: #fff; }
+    .text-green { color: #00ff41 !important; }
+    .text-yellow { color: #ffd700 !important; }
+    .text-gold { color: #ffd700 !important; }
+
     .tab-link { color: #94a3b8; text-decoration: none; font-size: 0.8rem; font-weight: bold; padding: 0.5rem 1rem; border-radius: 4px; transition: all 0.3s; }
     .tab-link.active { background: rgba(0, 243, 255, 0.1); color: #00f3ff; }
 
-    .filter-bar { margin-bottom: 1.5rem; }
-    .search-input { width: 100%; background: #0a0a0a; border: 1px solid #334155; padding: 1rem; color: #fff; font-family: 'JetBrains Mono', monospace; outline: none; border-radius: 8px; }
+    .filter-bar { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+    .search-input { flex: 1; background: #0a0a0a; border: 1px solid #334155; padding: 1rem; color: #fff; font-family: 'JetBrains Mono', monospace; outline: none; border-radius: 8px; }
+    .select-status { background: #0a0a0a; border: 1px solid #334155; padding: 1rem; color: #fff; border-radius: 8px; min-width: 150px; }
+
+    .loading-state { text-align: center; padding: 3rem; color: #94a3b8; }
+    .spinner { width: 40px; height: 40px; border: 3px solid #334155; border-top-color: #00f3ff; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     .table-container { background: #0a0a0a; border: 1px solid #334155; border-radius: 8px; overflow: hidden; }
     table { width: 100%; border-collapse: collapse; }
@@ -55,53 +226,181 @@ import ResellerLayout from '../../../layouts/ResellerLayout.astro';
     td { padding: 1rem; border-bottom: 1px solid #1a1a1a; color: #cbd5e1; }
     tr:hover { background: rgba(0, 243, 255, 0.05); }
 
-    .status-active { color: #00ff41; }
-    .status-trial { color: #ffd700; }
-    .status-inactive { color: #f43f5e; }
+    .status-active { color: #00ff41; font-weight: bold; }
+    .status-trial { color: #ffd700; font-weight: bold; }
+    .status-inactive { color: #f43f5e; font-weight: bold; }
+
+    .action-btns { display: flex; gap: 0.5rem; }
+    .btn-action { background: rgba(0, 243, 255, 0.1); border: 1px solid rgba(0, 243, 255, 0.3); padding: 0.5rem; border-radius: 4px; cursor: pointer; }
+
+    .pagination { display: flex; justify-content: center; align-items: center; gap: 1rem; padding: 1.5rem; }
+    .btn-page { background: #0a0a0a; border: 1px solid #334155; color: #fff; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; }
+    .btn-page:disabled { opacity: 0.5; cursor: not-allowed; }
+    .page-info { color: #94a3b8; font-size: 0.85rem; }
+
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .modal-container { background: #0f172a; border: 1px solid #334155; border-radius: 16px; width: 100%; max-width: 500px; overflow: hidden; }
+    .modal-header { background: rgba(0, 243, 255, 0.1); padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
+    .modal-header h3 { color: #00f3ff; margin: 0; font-size: 1.2rem; }
+    .modal-close { background: none; border: none; color: #94a3b8; font-size: 1.5rem; cursor: pointer; }
+    .modal-body { padding: 1.5rem; }
+    .modal-footer { display: flex; gap: 1rem; justify-content: flex-end; padding-top: 1rem; }
+
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; color: #94a3b8; font-size: 0.8rem; margin-bottom: 0.5rem; }
+    .form-input { width: 100%; background: #0a0a0a; border: 1px solid #334155; padding: 0.8rem; color: #fff; border-radius: 8px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .btn-cancel { background: #334155; color: #fff; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; cursor: pointer; }
+    .btn-save { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: #000; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    .btn-primary { background: #00f3ff; color: #000; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    .btn-secondary { background: rgba(0, 243, 255, 0.1); color: #00f3ff; border: 1px solid rgba(0, 243, 255, 0.3); padding: 0.8rem 1.5rem; border-radius: 8px; cursor: pointer; }
+
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+    .detail-item { background: #0a0a0a; padding: 1rem; border-radius: 8px; }
+    .detail-label { display: block; color: #94a3b8; font-size: 0.75rem; margin-bottom: 0.3rem; }
+    .detail-value { color: #fff; font-weight: bold; }
+    .detail-actions { display: flex; gap: 1rem; justify-content: center; }
 </style>
 
-<script is:inline>
-    let allClients = [];
+<script nonce={Astro.locals.nonce} is:inline>
+    function clientsManager() {
+        return {
+            clients: [],
+            loading: true,
+            search: '',
+            filterStatus: '',
+            page: 1,
+            pageSize: 10,
+            showModal: false,
+            detailsModal: false,
+            editingClient: null,
+            selectedClient: null,
+            saving: false,
+            form: { nome: '', dominio: '', plataforma: 'shopify', email: '', whatsapp: '', notas: '' },
 
-    async function fetchClients() {
-        try {
-            const res = await fetch('/api/revenda/clientes');
-            allClients = await res.json();
-            renderTable(allClients);
-        } catch (e) {
-            console.error(e);
-            document.getElementById('clients-body').innerHTML = '<tr><td colspan="7">ERRO AO CARREGAR</td></tr>';
-        }
+            get totalRevenue() {
+                return this.clients.reduce((sum, c) => {
+                    const val = parseFloat((c.receita || '0').replace(/[^\d,]/g, '').replace(',', '.'));
+                    return sum + (isNaN(val) ? 0 : val);
+                }, 0);
+            },
+
+            get filteredClients() {
+                let result = this.clients;
+                if (this.search) {
+                    const term = this.search.toLowerCase();
+                    result = result.filter(c => 
+                        c.nome?.toLowerCase().includes(term) || 
+                        c.dominio?.toLowerCase().includes(term)
+                    );
+                }
+                if (this.filterStatus) {
+                    result = result.filter(c => c.status === this.filterStatus);
+                }
+                const start = (this.page - 1) * this.pageSize;
+                return result.slice(start, start + this.pageSize);
+            },
+
+            get totalPages() {
+                let result = this.clients;
+                if (this.search) {
+                    const term = this.search.toLowerCase();
+                    result = result.filter(c => c.nome?.toLowerCase().includes(term) || c.dominio?.toLowerCase().includes(term));
+                }
+                if (this.filterStatus) result = result.filter(c => c.status === this.filterStatus);
+                return Math.ceil(result.length / this.pageSize) || 1;
+            },
+
+            formatCurrency(val) {
+                return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+            },
+
+            getStatusLabel(status) {
+                const labels = { active: 'ATIVO', trial: 'TESTE', inactive: 'INATIVO' };
+                return labels[status] || status?.toUpperCase() || '-';
+            },
+
+            async init() {
+                await this.fetchClients();
+            },
+
+            async fetchClients() {
+                this.loading = true;
+                try {
+                    const res = await fetch('/api/revenda/clientes');
+                    if (res.ok) {
+                        this.clients = await res.json();
+                    } else {
+                        this.clients = this.getMockClients();
+                    }
+                } catch (e) {
+                    console.error(e);
+                    this.clients = this.getMockClients();
+                } finally {
+                    this.loading = false;
+                }
+            },
+
+            getMockClients() {
+                return [
+                    { id: 1, nome: 'Loja Elegance', dominio: 'lojaelegance.com.br', plataforma: 'shopify', status: 'active', receita: 'R$ 4.500,00', comissao: 'R$ 675,00', data: '15/01/2026' },
+                    { id: 2, nome: 'Tech Store Pro', dominio: 'techstorepro.com', plataforma: 'woocommerce', status: 'active', receita: 'R$ 8.200,00', comissao: 'R$ 1.230,00', data: '10/01/2026' },
+                    { id: 3, nome: 'Fashion Hub', dominio: 'fashionhub.com.br', plataforma: 'nuvemshop', status: 'trial', receita: 'R$ 0,00', comissao: 'R$ 0,00', data: '28/01/2026' },
+                    { id: 4, nome: 'Petshop Online', dominio: 'petshoponline.com.br', plataforma: 'tray', status: 'inactive', receita: 'R$ 1.200,00', comissao: 'R$ 180,00', data: '05/12/2025' },
+                ];
+            },
+
+            openAddModal() {
+                this.editingClient = null;
+                this.form = { nome: '', dominio: '', plataforma: 'shopify', email: '', whatsapp: '', notas: '' };
+                this.showModal = true;
+            },
+
+            editClient(client) {
+                this.editingClient = client;
+                this.form = { ...client };
+                this.showModal = true;
+            },
+
+            viewClient(client) {
+                this.selectedClient = client;
+                this.detailsModal = true;
+            },
+
+            async saveClient() {
+                if (!this.form.nome) {
+                    alert('Nome é obrigatório');
+                    return;
+                }
+                this.saving = true;
+                
+                try {
+                    const url = this.editingClient ? `/api/revenda/clientes/${this.editingClient.id}` : '/api/revenda/clientes';
+                    const method = this.editingClient ? 'PUT' : 'POST';
+                    await fetch(url, {
+                        method,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(this.form)
+                    });
+                } catch(e) { console.error(e); }
+
+                if (this.editingClient) {
+                    const idx = this.clients.findIndex(c => c.id === this.editingClient.id);
+                    if (idx !== -1) this.clients[idx] = { ...this.clients[idx], ...this.form };
+                } else {
+                    this.clients.unshift({ id: Date.now(), ...this.form, status: 'trial', receita: 'R$ 0,00', comissao: 'R$ 0,00', data: new Date().toLocaleDateString('pt-BR') });
+                }
+
+                this.showModal = false;
+                this.saving = false;
+            },
+
+            sendMessage(client) {
+                const phone = client.whatsapp || '5511999999999';
+                window.open(`https://wa.me/${phone.replace(/\D/g, '')}?text=Olá ${client.nome}!`, '_blank');
+            }
+        };
     }
-
-    function renderTable(data) {
-        const tbody = document.getElementById('clients-body');
-        if (!data || data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">NENHUM CLIENTE ENCONTRADO</td></tr>';
-            return;
-        }
-
-        tbody.innerHTML = data.map(c => `
-            <tr>
-                <td style="font-weight:bold; color:#fff;">${c.nome}</td>
-                <td>${c.dominio}</td>
-                <td>${c.plataforma.toUpperCase()}</td>
-                <td class="status-${c.status === 'active' ? 'active' : 'trial'}">${c.status === 'active' ? 'ATIVO' : 'TESTE'}</td>
-                <td>${c.receita}</td>
-                <td style="color:#ffd700; font-weight:bold;">${c.comissao}</td>
-                <td>${c.data}</td>
-            </tr>
-        `).join('');
-    }
-
-    document.getElementById('search-input').addEventListener('input', (e) => {
-        const term = e.target.value.toLowerCase();
-        const filtered = allClients.filter(c => 
-            c.nome.toLowerCase().includes(term) || 
-            c.dominio.toLowerCase().includes(term)
-        );
-        renderTable(filtered);
-    });
-
-    fetchClients();
 </script>
+</ResellerLayout>

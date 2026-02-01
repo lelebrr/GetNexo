@@ -15,6 +15,9 @@ ingress:
   # 3. Evolution API / OmniNexo Backend
   - hostname: api.getnexo.com.br
     service: http://backend:3006
+    originRequest:
+      httpHostHeader: api.getnexo.com.br
+      noTLSVerify: true
 
   # 4. Admin Panel (Frontend Route) - PRODUCTION MODE
   - hostname: admin.getnexo.com.br

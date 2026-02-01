@@ -96,7 +96,7 @@ const title = "Criar Novo Produto";
   </div>
 </AdminLayout>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
   function productCreator() {
     return {
       form: {

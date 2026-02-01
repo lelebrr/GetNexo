@@ -1,45 +1,48 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
-import { Timer, Check, X, Eye, User, ShoppingBag, AlertCircle } from 'lucide-react';
-
-const pendingRedemptions = [
-  { id: 'RES-99', user: 'Roberto Silva', reward: 'Brinde: Chaveiro Fusion', points: '250', time: 'Há 12 min', email: 'roberto@email.com' },
-  { id: 'RES-98', user: 'Maria Oliveira', reward: 'Frete Grátis Vitalício', points: '5.000', time: 'Há 45 min', email: 'maria.o@email.com' },
-];
+import { Timer, Check, X, Eye, User, ShoppingBag, AlertCircle, RefreshCw, Search } from 'lucide-react';
 ---
 
 <AdminLayout title="Resgates Pendentes" activeTab="fidelidade">
-  <div class="max-w-6xl mx-auto space-y-8 animate-fade-in py-4"
-       x-data="{ 
-         pending: [
-           { id: 'RES-99', user: 'Roberto Silva', reward: 'Brinde: Chaveiro Fusion', points: '250', time: 'Há 12 min', email: 'roberto@email.com' },
-           { id: 'RES-98', user: 'Maria Oliveira', reward: 'Frete Grátis Vitalício', points: '5.000', time: 'Há 45 min', email: 'maria.o@email.com' }
-         ],
-         action(id) {
-           this.pending = this.pending.filter(p => p.id !== id);
-         }
-       }">
+  <div class="max-w-6xl mx-auto space-y-8 animate-fade-in py-4" x-data="pendingRedemptions()">
     
     <div class="flex items-center justify-between">
       <div>
         <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Aprovações de Resgate</h1>
         <p class="text-sm text-gray-500 font-medium">Verifique e valide os pedidos de resgate de prêmios físicos ou status.</p>
       </div>
-      <div class="px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-xl">
-         <span class="text-[10px] font-black text-amber-500 uppercase tracking-widest" x-text="pending.length + ' Pendentes'"></span>
+      <div class="flex items-center space-x-3">
+         <button @click="fetchPending()" :disabled="loading" class="p-3 bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white rounded-xl transition-all">
+            <RefreshCw className="w-5 h-5" :class="loading ? 'animate-spin' : ''" />
+         </button>
+         <div class="px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-xl">
+            <span class="text-[10px] font-black text-amber-500 uppercase tracking-widest" x-text="pending.length + ' Pendentes'"></span>
+         </div>
       </div>
     </div>
 
-    <div class="bg-gray-900/40 border border-gray-800 rounded-[2.5rem] overflow-hidden">
+    <!-- Search -->
+    <div class="relative">
+       <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
+       <input type="text" x-model="search" placeholder="Buscar por usuário ou prêmio..." class="w-full bg-gray-900 border border-gray-800 rounded-xl py-3 pl-11 pr-4 text-white text-sm focus:border-amber-500 outline-none transition-all">
+    </div>
+
+    <!-- Loading -->
+    <div x-show="loading" class="flex items-center justify-center py-10">
+       <div class="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
+    <div x-show="!loading" class="bg-gray-900/40 border border-gray-800 rounded-[2.5rem] overflow-hidden">
        <div class="p-8 border-b border-gray-800 bg-black/20 flex items-center justify-between">
           <div class="flex items-center space-x-3">
              <Timer className="w-5 h-5 text-gray-500" />
              <h3 class="text-xs font-black uppercase text-gray-400 tracking-widest">Fila de Resgate</h3>
           </div>
+          <button @click="approveAll()" x-show="pending.length > 0" class="text-xs text-emerald-400 hover:text-emerald-300 font-bold">Aprovar Todos</button>
        </div>
 
-       <div class="divide-y divide-gray-800/50" x-show="pending.length > 0">
-          <template x-for="item in pending" :key="item.id">
+       <div class="divide-y divide-gray-800/50" x-show="filteredPending.length > 0">
+          <template x-for="item in filteredPending" :key="item.id">
              <div class="p-8 flex items-center justify-between hover:bg-white/[0.02] transition-colors group">
                 <div class="flex items-center space-x-8">
                    <div class="w-14 h-14 bg-gray-800 rounded-2xl flex items-center justify-center text-gray-600 group-hover:bg-amber-500/10 group-hover:text-amber-500 transition-all">
@@ -48,32 +51,39 @@ const pendingRedemptions = [
                    <div>
                       <h4 class="text-sm font-bold text-white uppercase tracking-tight" x-text="item.reward"></h4>
                       <p class="text-[10px] text-gray-600 font-medium" x-text="item.user + ' (' + item.email + ')'"></p>
+                      <p class="text-[9px] text-gray-700 font-mono mt-1" x-text="'ID: ' + item.id"></p>
                    </div>
                 </div>
 
                 <div class="flex items-center space-x-12">
                    <div class="text-center">
                       <p class="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-1">Custo</p>
-                      <p class="text-sm font-mono font-bold text-yellow-500" x-text="item.points + ' pts'"></p>
+                      <p class="text-sm font-mono font-bold text-yellow-500" x-text="item.points.toLocaleString() + ' pts'"></p>
                    </div>
                    <div class="text-center">
                       <p class="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-1">Solicitado</p>
-                      <p class="text-[10px] font-bold text-gray-400" x-text="item.time"></p>
+                      <p class="text-[10px] font-bold text-gray-400" x-text="formatTime(item.createdAt)"></p>
                    </div>
                 </div>
 
                 <div class="flex items-center space-x-3">
-                   <button class="p-3 bg-gray-800 hover:bg-white/10 text-gray-500 hover:text-white rounded-xl transition-all"><Eye className="w-4 h-4" /></button>
+                   <button @click="viewDetails(item)" class="p-3 bg-gray-800 hover:bg-white/10 text-gray-500 hover:text-white rounded-xl transition-all" title="Detalhes">
+                      <Eye className="w-4 h-4" />
+                   </button>
                    <div class="flex items-center space-x-1">
-                      <button @click="action(item.id)" class="p-3 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white rounded-xl transition-all"><Check className="w-5 h-5" /></button>
-                      <button @click="action(item.id)" class="p-3 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white rounded-xl transition-all"><X className="w-5 h-5" /></button>
+                      <button @click="approve(item.id)" class="p-3 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white rounded-xl transition-all" title="Aprovar">
+                         <Check className="w-5 h-5" />
+                      </button>
+                      <button @click="reject(item.id)" class="p-3 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white rounded-xl transition-all" title="Rejeitar">
+                         <X className="w-5 h-5" />
+                      </button>
                    </div>
                 </div>
              </div>
           </template>
        </div>
 
-       <div x-show="pending.length === 0" class="p-20 text-center space-y-4">
+       <div x-show="!loading && filteredPending.length === 0" class="p-20 text-center space-y-4">
           <div class="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
              <Check className="w-8 h-8 text-emerald-500" />
           </div>
@@ -87,13 +97,148 @@ const pendingRedemptions = [
        <AlertCircle className="w-5 h-5 text-indigo-500 shrink-0" />
        <div class="space-y-1">
           <p class="text-xs font-bold text-indigo-500 uppercase tracking-tight">Processamento Logístico</p>
-          <p class="text-[10px] text-gray-500 leading-relaxed font-medium font-medium">Ao aprovar um brinde físico, o pedido será enviado automaticamente para sua integração de logística (Melhor Envio/Bling).</p>
+          <p class="text-[10px] text-gray-500 leading-relaxed font-medium">Ao aprovar um brinde físico, o pedido será enviado automaticamente para sua integração de logística (Melhor Envio/Bling).</p>
+       </div>
+    </div>
+
+    <!-- Details Modal -->
+    <div x-show="detailsModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" @keydown.escape.window="detailsModal = false">
+       <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="detailsModal = false"></div>
+       <div class="relative w-full max-w-md bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-hidden" @click.stop>
+          <div class="bg-amber-900/20 p-6 border-b border-gray-800">
+             <h2 class="text-xl font-bold text-amber-400" x-text="selectedItem?.reward"></h2>
+          </div>
+          <div class="p-6 space-y-4">
+             <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gray-800/50 p-4 rounded-lg">
+                   <p class="text-xs text-gray-500 uppercase mb-1">Cliente</p>
+                   <p class="text-white font-medium" x-text="selectedItem?.user"></p>
+                </div>
+                <div class="bg-gray-800/50 p-4 rounded-lg">
+                   <p class="text-xs text-gray-500 uppercase mb-1">Email</p>
+                   <p class="text-white" x-text="selectedItem?.email"></p>
+                </div>
+             </div>
+             <div class="bg-gray-800/50 p-4 rounded-lg">
+                <p class="text-xs text-gray-500 uppercase mb-1">Pontos Utilizados</p>
+                <p class="text-2xl font-bold text-yellow-400" x-text="selectedItem?.points?.toLocaleString() + ' pts'"></p>
+             </div>
+             <div class="bg-gray-800/50 p-4 rounded-lg">
+                <p class="text-xs text-gray-500 uppercase mb-1">Endereço de Entrega</p>
+                <p class="text-white" x-text="selectedItem?.address || 'Não informado (brinde digital)'"></p>
+             </div>
+          </div>
+          <div class="p-6 border-t border-gray-800 flex justify-end space-x-3">
+             <button @click="reject(selectedItem?.id); detailsModal = false" class="px-4 py-2.5 bg-rose-600/20 text-rose-400 font-medium rounded-xl transition-all hover:bg-rose-600 hover:text-white">Rejeitar</button>
+             <button @click="approve(selectedItem?.id); detailsModal = false" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-xl transition-all">Aprovar</button>
+          </div>
        </div>
     </div>
   </div>
 </AdminLayout>
 
+<script nonce={Astro.locals.nonce} is:inline>
+  function pendingRedemptions() {
+    return {
+      pending: [],
+      loading: true,
+      search: '',
+      detailsModal: false,
+      selectedItem: null,
+
+      get filteredPending() {
+        if (!this.search) return this.pending;
+        return this.pending.filter(p => 
+          p.user.toLowerCase().includes(this.search.toLowerCase()) ||
+          p.reward.toLowerCase().includes(this.search.toLowerCase())
+        );
+      },
+
+      async init() {
+        await this.fetchPending();
+      },
+
+      async fetchPending() {
+        this.loading = true;
+        try {
+          const res = await fetch('/api/loyalty/redemptions?status=pending');
+          if (res.ok) {
+            const data = await res.json();
+            this.pending = data.redemptions || [];
+          } else {
+            this.pending = this.getMockPending();
+          }
+        } catch(e) {
+          console.error(e);
+          this.pending = this.getMockPending();
+        } finally {
+          this.loading = false;
+        }
+      },
+
+      getMockPending() {
+        return [
+          { id: 'RES-99', user: 'Roberto Silva', reward: 'Brinde: Chaveiro Fusion', points: 250, createdAt: new Date(Date.now() - 720000).toISOString(), email: 'roberto@email.com', address: 'Rua das Flores, 123 - São Paulo/SP' },
+          { id: 'RES-98', user: 'Maria Oliveira', reward: 'Frete Grátis Vitalício', points: 5000, createdAt: new Date(Date.now() - 2700000).toISOString(), email: 'maria.o@email.com' },
+          { id: 'RES-97', user: 'João Santos', reward: 'Cupom R$ 100', points: 1000, createdAt: new Date(Date.now() - 86400000).toISOString(), email: 'joao@email.com' },
+        ];
+      },
+
+      formatTime(dateStr) {
+        if (!dateStr) return '-';
+        const date = new Date(dateStr);
+        const now = new Date();
+        const diff = now - date;
+        
+        if (diff < 60000) return 'Agora';
+        if (diff < 3600000) return `Há ${Math.floor(diff / 60000)} min`;
+        if (diff < 86400000) return `Há ${Math.floor(diff / 3600000)}h`;
+        return date.toLocaleDateString('pt-BR');
+      },
+
+      viewDetails(item) {
+        this.selectedItem = item;
+        this.detailsModal = true;
+      },
+
+      async approve(id) {
+        try {
+          await fetch(`/api/loyalty/redemptions/${id}/approve`, { method: 'POST' });
+        } catch(e) { console.error(e); }
+        
+        this.pending = this.pending.filter(p => p.id !== id);
+      },
+
+      async reject(id) {
+        const reason = prompt('Motivo da rejeição (opcional):');
+        
+        try {
+          await fetch(`/api/loyalty/redemptions/${id}/reject`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reason })
+          });
+        } catch(e) { console.error(e); }
+        
+        this.pending = this.pending.filter(p => p.id !== id);
+      },
+
+      async approveAll() {
+        if (!confirm(`Aprovar todos os ${this.pending.length} resgates pendentes?`)) return;
+        
+        try {
+          await fetch('/api/loyalty/redemptions/approve-all', { method: 'POST' });
+        } catch(e) { console.error(e); }
+        
+        this.pending = [];
+      }
+    };
+  }
+</script>
+
 <style>
+  [x-cloak] { display: none !important; }
   .animate-fade-in { animation: fadeIn 0.6s ease-out; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 </style>
+</AdminLayout>

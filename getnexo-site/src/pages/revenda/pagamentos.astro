@@ -40,7 +40,7 @@ import ResellerLayout from '../../layouts/ResellerLayout.astro';
     .btn-receipt:hover { background: rgba(0, 243, 255, 0.1); border-color: #00f3ff; }
 </style>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
     async function fetchPayments() {
         try {
             const res = await fetch('/api/revenda/financeiro');

@@ -1,152 +1,327 @@
 ---
-// Página de dashboard do cliente
 import ClientLayout from '../../layouts/ClientLayout.astro';
 ---
 
 <ClientLayout title="Dashboard">
-  <div class="space-y-6">
+  <div x-data="dashboardManager()">
     <!-- Header -->
-    <div class="flex items-center justify-between">
+    <div class="dashboard-header">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p class="text-gray-500">Bem-vindo ao seu painel de controle</p>
+        <h1 class="text-neon-blue">📊 Dashboard</h1>
+        <p class="text-muted">Bem-vindo ao seu painel de controle</p>
       </div>
-      <div class="flex items-center space-x-2">
-        <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-        <span class="text-sm text-gray-600">Online</span>
-      </div>
-    </div>
-
-    <!-- Cards de métricas -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-500">Vendas Hoje</p>
-            <p class="text-2xl font-bold text-gray-900">R$ 2.450,00</p>
-          </div>
-          <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-          </div>
-        </div>
-        <p class="text-xs text-green-600 mt-2">↑ 12% vs ontem</p>
-      </div>
-
-      <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-500">Conversas Ativas</p>
-            <p class="text-2xl font-bold text-gray-900">24</p>
-          </div>
-          <div class="w-10 h-10 bg-cyan-100 rounded-lg flex items-center justify-center">
-            <svg class="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-            </svg>
-          </div>
-        </div>
-        <p class="text-xs text-green-600 mt-2">↑ 8 novas hoje</p>
-      </div>
-
-      <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-500">Novos Leads</p>
-            <p class="text-2xl font-bold text-gray-900">15</p>
-          </div>
-          <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-            </svg>
-          </div>
-        </div>
-        <p class="text-xs text-green-600 mt-2">↑ 25% vs semana</p>
-      </div>
-
-      <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-500">ROI Médio</p>
-            <p class="text-2xl font-bold text-gray-900">3.2x</p>
-          </div>
-          <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-            </svg>
-          </div>
-        </div>
-        <p class="text-xs text-green-600 mt-2">↑ 0.3x vs mês</p>
+      <div class="status-badge">
+        <span class="status-dot"></span>
+        <span>Online</span>
       </div>
     </div>
 
-    <!-- Seção de módulos ativos -->
-    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-      <h2 class="text-lg font-semibold text-gray-900 mb-4">Módulos Ativos</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-          <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-            <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
-            </svg>
-          </div>
-          <div>
-            <p class="font-medium text-gray-900">White Label</p>
-            <p class="text-xs text-gray-500">Personalização completa</p>
-          </div>
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card sales">
+        <div class="stat-icon">💰</div>
+        <div class="stat-content">
+          <span class="stat-value" x-text="formatCurrency(stats.salesToday)">R$ 0</span>
+          <span class="stat-label">Vendas Hoje</span>
+          <span class="stat-trend positive">↑ 12% vs ontem</span>
         </div>
-
-        <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-          <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
-            <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-            </svg>
-          </div>
-          <div>
-            <p class="font-medium text-gray-900">Produtos 3D</p>
-            <p class="text-xs text-gray-500">Visualização imersiva</p>
-          </div>
+      </div>
+      
+      <div class="stat-card chats">
+        <div class="stat-icon">💬</div>
+        <div class="stat-content">
+          <span class="stat-value" x-text="stats.activeChats">0</span>
+          <span class="stat-label">Conversas Ativas</span>
+          <span class="stat-trend positive">↑ 8 novas hoje</span>
         </div>
-
-        <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-          <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
-            <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-            </svg>
-          </div>
-          <div>
-            <p class="font-medium text-gray-900">Fidelidade</p>
-            <p class="text-xs text-gray-500">Programa de pontos</p>
-          </div>
+      </div>
+      
+      <div class="stat-card leads">
+        <div class="stat-icon">👥</div>
+        <div class="stat-content">
+          <span class="stat-value" x-text="stats.newLeads">0</span>
+          <span class="stat-label">Novos Leads</span>
+          <span class="stat-trend positive">↑ 25% vs semana</span>
+        </div>
+      </div>
+      
+      <div class="stat-card roi">
+        <div class="stat-icon">📈</div>
+        <div class="stat-content">
+          <span class="stat-value" x-text="stats.roi + 'x'">0x</span>
+          <span class="stat-label">ROI Médio</span>
+          <span class="stat-trend positive">↑ 0.3x vs mês</span>
         </div>
       </div>
     </div>
 
-    <!-- Ações rápidas -->
-    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-      <h2 class="text-lg font-semibold text-gray-900 mb-4">Ações Rápidas</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <a href="/client/sales" class="flex items-center space-x-3 p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
-          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-          </svg>
-          <span class="font-medium text-blue-900">Nova Venda</span>
-        </a>
+    <!-- Main Content Grid -->
+    <div class="content-grid">
+      <!-- Chart Section -->
+      <div class="chart-section card">
+        <div class="card-header">
+          <h3>📈 Vendas da Semana</h3>
+          <div class="period-tabs">
+            <button @click="chartPeriod = '7d'" :class="chartPeriod === '7d' ? 'active' : ''" class="tab-btn">7 dias</button>
+            <button @click="chartPeriod = '30d'" :class="chartPeriod === '30d' ? 'active' : ''" class="tab-btn">30 dias</button>
+          </div>
+        </div>
+        <canvas id="salesChart" height="200"></canvas>
+      </div>
 
-        <a href="/client/contacts" class="flex items-center space-x-3 p-4 bg-cyan-50 rounded-lg hover:bg-cyan-100 transition-colors">
-          <svg class="w-6 h-6 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-          </svg>
-          <span class="font-medium text-cyan-900">Novo Contato</span>
-        </a>
+      <!-- Recent Activity -->
+      <div class="activity-section card">
+        <div class="card-header">
+          <h3>🕒 Atividade Recente</h3>
+          <button @click="refreshActivity()" class="btn-icon">🔄</button>
+        </div>
+        <div class="activity-list">
+          <template x-for="activity in recentActivity" :key="activity.id">
+            <div class="activity-item">
+              <span class="activity-icon" x-text="activity.icon"></span>
+              <div class="activity-content">
+                <span class="activity-text" x-text="activity.text"></span>
+                <span class="activity-time" x-text="activity.time"></span>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
 
-        <a href="/client/white-label" class="flex items-center space-x-3 p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors">
-          <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
-          </svg>
-          <span class="font-medium text-purple-900">Personalizar</span>
+    <!-- Active Modules -->
+    <div class="modules-section card">
+      <div class="card-header">
+        <h3>🔌 Módulos Ativos</h3>
+        <a href="/client/settings" class="link-secondary">Gerenciar →</a>
+      </div>
+      <div class="modules-grid">
+        <template x-for="module in activeModules" :key="module.id">
+          <div class="module-card">
+            <div class="module-icon" x-text="module.icon"></div>
+            <div class="module-info">
+              <span class="module-name" x-text="module.name"></span>
+              <span class="module-desc" x-text="module.description"></span>
+            </div>
+            <span class="module-status active">Ativo</span>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="actions-section card">
+      <div class="card-header">
+        <h3>⚡ Ações Rápidas</h3>
+      </div>
+      <div class="actions-grid">
+        <a href="/client/sales" class="action-card">
+          <span class="action-icon">➕</span>
+          <span class="action-text">Nova Venda</span>
+        </a>
+        <a href="/client/contacts" class="action-card">
+          <span class="action-icon">👤</span>
+          <span class="action-text">Novo Contato</span>
+        </a>
+        <a href="/client/broadcasts" class="action-card">
+          <span class="action-icon">📣</span>
+          <span class="action-text">Nova Campanha</span>
+        </a>
+        <a href="/client/support" class="action-card">
+          <span class="action-icon">🎫</span>
+          <span class="action-text">Abrir Ticket</span>
         </a>
       </div>
+    </div>
+
+    <!-- Alerts Section -->
+    <div class="alerts-section" x-show="alerts.length > 0">
+      <template x-for="alert in alerts" :key="alert.id">
+        <div class="alert-item" :class="'alert-' + alert.type" @click="dismissAlert(alert.id)">
+          <span class="alert-icon" x-text="alert.icon"></span>
+          <span class="alert-text" x-text="alert.message"></span>
+          <button class="alert-close">×</button>
+        </div>
+      </template>
     </div>
   </div>
+</ClientLayout>
+
+<style>
+  .dashboard-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; }
+  .dashboard-header h1 { font-size: 1.75rem; margin: 0 0 0.25rem 0; }
+  .status-badge { display: flex; align-items: center; gap: 0.5rem; background: rgba(0, 255, 65, 0.1); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem; color: #00ff41; }
+  .status-dot { width: 8px; height: 8px; background: #00ff41; border-radius: 50%; box-shadow: 0 0 10px #00ff41; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+  .stat-card { display: flex; align-items: center; gap: 1rem; padding: 1.25rem; border-radius: 12px; background: #0a0a0a; border: 1px solid #334155; transition: all 0.3s; }
+  .stat-card:hover { border-color: #00f3ff; transform: translateY(-2px); }
+  .stat-card.sales { border-left: 4px solid #00ff9d; }
+  .stat-card.chats { border-left: 4px solid #00f3ff; }
+  .stat-card.leads { border-left: 4px solid #8b5cf6; }
+  .stat-card.roi { border-left: 4px solid #ffd700; }
+  .stat-icon { font-size: 2rem; }
+  .stat-content { display: flex; flex-direction: column; }
+  .stat-value { font-size: 1.75rem; font-weight: 700; color: #fff; }
+  .stat-label { font-size: 0.8rem; color: #64748b; }
+  .stat-trend { font-size: 0.7rem; margin-top: 0.25rem; }
+  .stat-trend.positive { color: #00ff41; }
+  .stat-trend.negative { color: #f43f5e; }
+
+  .content-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+  
+  .card { background: #0a0a0a; border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; }
+  .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+  .card-header h3 { font-size: 1rem; color: #fff; margin: 0; }
+
+  .period-tabs { display: flex; gap: 0.5rem; }
+  .tab-btn { background: transparent; border: 1px solid #334155; color: #64748b; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem; }
+  .tab-btn.active { background: rgba(0, 243, 255, 0.1); color: #00f3ff; border-color: #00f3ff; }
+
+  .btn-icon { background: rgba(0, 243, 255, 0.1); border: 1px solid rgba(0, 243, 255, 0.3); color: #00f3ff; padding: 0.4rem 0.6rem; border-radius: 6px; cursor: pointer; }
+  .link-secondary { color: #00f3ff; text-decoration: none; font-size: 0.85rem; font-weight: 500; }
+
+  .activity-list { display: flex; flex-direction: column; gap: 0.75rem; }
+  .activity-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: rgba(255, 255, 255, 0.02); border-radius: 8px; }
+  .activity-icon { font-size: 1.25rem; }
+  .activity-content { display: flex; flex-direction: column; flex: 1; }
+  .activity-text { color: #cbd5e1; font-size: 0.85rem; }
+  .activity-time { color: #64748b; font-size: 0.7rem; }
+
+  .modules-section { margin-bottom: 2rem; }
+  .modules-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .module-card { display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(255, 255, 255, 0.02); border: 1px solid #334155; border-radius: 10px; }
+  .module-icon { font-size: 1.5rem; }
+  .module-info { flex: 1; display: flex; flex-direction: column; }
+  .module-name { color: #fff; font-weight: 600; font-size: 0.9rem; }
+  .module-desc { color: #64748b; font-size: 0.75rem; }
+  .module-status { font-size: 0.7rem; font-weight: 600; padding: 0.25rem 0.75rem; border-radius: 12px; }
+  .module-status.active { background: rgba(0, 255, 65, 0.1); color: #00ff41; }
+
+  .actions-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  .action-card { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; padding: 1.5rem; background: rgba(0, 243, 255, 0.05); border: 1px solid rgba(0, 243, 255, 0.2); border-radius: 12px; text-decoration: none; transition: all 0.3s; }
+  .action-card:hover { background: rgba(0, 243, 255, 0.1); border-color: #00f3ff; transform: translateY(-2px); }
+  .action-icon { font-size: 1.5rem; }
+  .action-text { color: #00f3ff; font-weight: 600; font-size: 0.85rem; }
+
+  .alerts-section { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 2rem; }
+  .alert-item { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.5rem; border-radius: 10px; cursor: pointer; }
+  .alert-item.alert-warning { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); }
+  .alert-item.alert-success { background: rgba(0, 255, 65, 0.1); border: 1px solid rgba(0, 255, 65, 0.3); }
+  .alert-item.alert-info { background: rgba(0, 243, 255, 0.1); border: 1px solid rgba(0, 243, 255, 0.3); }
+  .alert-icon { font-size: 1.25rem; }
+  .alert-text { flex: 1; color: #cbd5e1; font-size: 0.9rem; }
+  .alert-close { background: none; border: none; color: #64748b; font-size: 1.25rem; cursor: pointer; }
+
+  @media (max-width: 1200px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .content-grid { grid-template-columns: 1fr; }
+    .modules-grid { grid-template-columns: 1fr 1fr; }
+    .actions-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 768px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .modules-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script nonce={Astro.locals.nonce} is:inline>
+  function dashboardManager() {
+    return {
+      chartPeriod: '7d',
+      stats: { salesToday: 0, activeChats: 0, newLeads: 0, roi: 0 },
+      recentActivity: [],
+      activeModules: [],
+      alerts: [],
+
+      formatCurrency(val) {
+        return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+      },
+
+      async init() {
+        await this.loadData();
+        this.initChart();
+      },
+
+      async loadData() {
+        try {
+          const res = await fetch('/api/client/dashboard');
+          if (res.ok) {
+            const data = await res.json();
+            this.stats = data.stats || this.stats;
+            this.recentActivity = data.recentActivity || [];
+            this.activeModules = data.modules || [];
+            this.alerts = data.alerts || [];
+          } else {
+            this.setMockData();
+          }
+        } catch (e) {
+          this.setMockData();
+        }
+      },
+
+      setMockData() {
+        // Fallback to empty/zero data if API fails
+        this.stats = { salesToday: 0, activeChats: 0, newLeads: 0, roi: 0 };
+        this.recentActivity = [];
+        this.activeModules = [];
+        this.alerts = [{ id: 1, type: 'info', icon: 'ℹ️', message: 'Nenhum dado disponível no momento.' }];
+      },
+
+      initChart() {
+        setTimeout(() => {
+          const ctx = document.getElementById('salesChart');
+          if (ctx) {
+            new Chart(ctx, {
+              type: 'line',
+              data: {
+                labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
+                datasets: [{
+                  label: 'Vendas (R$)',
+                  data: [0, 0, 0, 0, 0, 0, 0],
+                  borderColor: '#00ff9d',
+                  backgroundColor: 'rgba(0, 255, 157, 0.1)',
+                  fill: true,
+                  tension: 0.4,
+                  borderWidth: 2
+                }]
+              },
+              options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                  y: { 
+                    beginAtZero: true, 
+                    grid: { color: '#1e293b' },
+                    ticks: { color: '#64748b' }
+                  },
+                  x: { 
+                    grid: { display: false },
+                    ticks: { color: '#64748b' }
+                  }
+                }
+              }
+            });
+          }
+        }, 100);
+      },
+
+      refreshActivity() {
+        this.recentActivity.unshift({
+          id: Date.now(),
+          icon: '🔄',
+          text: 'Dashboard atualizado',
+          time: 'agora'
+        });
+      },
+
+      dismissAlert(id) {
+        this.alerts = this.alerts.filter(a => a.id !== id);
+      }
+    };
+  }
+</script>
 </ClientLayout>

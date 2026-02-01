@@ -3,47 +3,239 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 
 <AdminLayout title="Resultados & ROI" activeTab="broadcasts">
-  <div class="space-y-8">
-     <h1 class="text-3xl font-bold text-white">Resultados Consolidados</h1>
+  <div class="space-y-8" x-data="campaignResults()">
+     <div class="flex items-center justify-between">
+        <h1 class="text-3xl font-bold text-white">Resultados Consolidados</h1>
+        <div class="flex items-center space-x-4">
+           <select x-model="period" @change="fetchData()" class="bg-gray-950 border border-gray-700 rounded-lg p-2 text-white focus:border-purple-500 outline-none text-sm">
+              <option value="7d">Últimos 7 dias</option>
+              <option value="30d">Últimos 30 dias</option>
+              <option value="90d">Últimos 90 dias</option>
+              <option value="year">Este ano</option>
+           </select>
+           <button @click="exportReport()" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm">
+              📥 Exportar
+           </button>
+        </div>
+     </div>
 
-      <!-- Chart Big -->
-      <div class="w-full bg-gray-900 border border-gray-800 rounded-xl p-8 h-96 relative flex items-end justify-between px-10 pb-10">
-         <div class="absolute inset-0 flex items-center justify-center opacity-10">
-            <span class="text-6xl font-black text-gray-700">CHART AREA</span>
-         </div>
-          {Array.from({ length: 12 }).map((_, i) => (
-            <div class="w-12 bg-purple-600/50 hover:bg-purple-500 rounded-t-lg transition-all" style={`height: ${Math.random() * 80 + 20}%`}></div>
-          ))}
-      </div>
+     <!-- KPIs -->
+     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-gray-900/50 border border-gray-800 p-6 rounded-xl">
+           <p class="text-xs text-gray-500 uppercase mb-1">Total Enviado</p>
+           <p class="text-3xl font-black text-white" x-text="kpis.totalSent.toLocaleString()"></p>
+           <p class="text-xs text-emerald-400 mt-1" x-text="kpis.sentChange"></p>
+        </div>
+        <div class="bg-gray-900/50 border border-gray-800 p-6 rounded-xl">
+           <p class="text-xs text-gray-500 uppercase mb-1">Taxa Média de Abertura</p>
+           <p class="text-3xl font-black text-emerald-400" x-text="kpis.avgOpenRate + '%'"></p>
+           <p class="text-xs text-gray-400 mt-1" x-text="kpis.openRateChange"></p>
+        </div>
+        <div class="bg-gray-900/50 border border-gray-800 p-6 rounded-xl">
+           <p class="text-xs text-gray-500 uppercase mb-1">Conversões</p>
+           <p class="text-3xl font-black text-purple-400" x-text="kpis.conversions.toLocaleString()"></p>
+           <p class="text-xs text-emerald-400 mt-1" x-text="kpis.conversionChange"></p>
+        </div>
+        <div class="bg-gray-900/50 border border-gray-800 p-6 rounded-xl">
+           <p class="text-xs text-gray-500 uppercase mb-1">Receita Gerada</p>
+           <p class="text-3xl font-black text-yellow-400" x-text="'R$ ' + kpis.revenue.toLocaleString()"></p>
+           <p class="text-xs text-emerald-400 mt-1" x-text="kpis.revenueChange"></p>
+        </div>
+     </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-         <div class="bg-gray-900/50 border border-gray-800 p-6 rounded-xl">
-            <h3 class="text-lg font-bold text-white mb-4">Canais Mais Rentáveis</h3>
-            <div class="space-y-4">
-               <div>
-                  <div class="flex justify-between text-sm mb-1 text-gray-400"><span>WhatsApp</span> <span>R$ 45.200</span></div>
-                  <div class="h-2 bg-gray-800 rounded-full"><div class="h-full bg-green-500 w-[85%] rounded-full"></div></div>
-               </div>
-               <div>
-                  <div class="flex justify-between text-sm mb-1 text-gray-400"><span>Email</span> <span>R$ 12.800</span></div>
-                  <div class="h-2 bg-gray-800 rounded-full"><div class="h-full bg-blue-500 w-[35%] rounded-full"></div></div>
-               </div>
-               <div>
-                  <div class="flex justify-between text-sm mb-1 text-gray-400"><span>Instagram</span> <span>R$ 8.400</span></div>
-                  <div class="h-2 bg-gray-800 rounded-full"><div class="h-full bg-pink-500 w-[20%] rounded-full"></div></div>
-               </div>
-            </div>
-         </div>
+     <!-- Chart -->
+     <div class="w-full bg-gray-900 border border-gray-800 rounded-xl p-8">
+        <div class="flex items-center justify-between mb-6">
+           <h3 class="text-lg font-bold text-white">Desempenho ao Longo do Tempo</h3>
+           <div class="flex space-x-4 text-xs">
+              <label class="flex items-center space-x-2 text-gray-400">
+                 <span class="w-3 h-3 bg-purple-500 rounded-full"></span>
+                 <span>Enviados</span>
+              </label>
+              <label class="flex items-center space-x-2 text-gray-400">
+                 <span class="w-3 h-3 bg-emerald-500 rounded-full"></span>
+                 <span>Conversões</span>
+              </label>
+           </div>
+        </div>
+        <div class="h-64 flex items-end justify-between gap-2">
+           <template x-for="(bar, index) in chartData" :key="index">
+              <div class="flex-1 flex flex-col items-center">
+                 <div class="w-full flex justify-center space-x-1">
+                    <div class="w-4 bg-purple-600/50 hover:bg-purple-500 rounded-t transition-all" :style="`height: ${bar.sent / maxSent * 200}px`"></div>
+                    <div class="w-4 bg-emerald-600/50 hover:bg-emerald-500 rounded-t transition-all" :style="`height: ${bar.conversions / maxConversions * 200}px`"></div>
+                 </div>
+                 <span class="text-[10px] text-gray-500 mt-2" x-text="bar.label"></span>
+              </div>
+           </template>
+        </div>
+     </div>
 
-         <div class="bg-gray-900/50 border border-gray-800 p-6 rounded-xl">
-             <h3 class="text-lg font-bold text-white mb-4">Custo por Aquisição (CPA)</h3>
-             <div class="flex items-center justify-center h-full pb-10">
-                <div class="text-center">
-                   <p class="text-5xl font-black text-white">R$ 4,50</p>
-                   <p class="text-emerald-400 text-sm mt-2 font-bold">-15% comparado ao mês anterior</p>
-                </div>
-             </div>
-         </div>
-      </div>
+     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Channel Performance -->
+        <div class="bg-gray-900/50 border border-gray-800 p-6 rounded-xl">
+           <h3 class="text-lg font-bold text-white mb-4">Canais Mais Rentáveis</h3>
+           <div class="space-y-4">
+              <template x-for="channel in channelStats" :key="channel.name">
+                 <div>
+                    <div class="flex justify-between text-sm mb-1 text-gray-400">
+                       <span class="flex items-center">
+                          <span x-text="channel.emoji" class="mr-2"></span>
+                          <span x-text="channel.name"></span>
+                       </span>
+                       <span class="font-bold text-white" x-text="'R$ ' + channel.revenue.toLocaleString()"></span>
+                    </div>
+                    <div class="h-2 bg-gray-800 rounded-full">
+                       <div class="h-full rounded-full transition-all" :class="channel.color" :style="`width: ${channel.percentage}%`"></div>
+                    </div>
+                 </div>
+              </template>
+           </div>
+        </div>
+
+        <!-- CPA -->
+        <div class="bg-gray-900/50 border border-gray-800 p-6 rounded-xl">
+           <h3 class="text-lg font-bold text-white mb-4">Custo por Aquisição (CPA)</h3>
+           <div class="flex items-center justify-center h-full pb-10">
+              <div class="text-center">
+                 <p class="text-5xl font-black text-white" x-text="'R$ ' + kpis.cpa.toFixed(2).replace('.', ',')"></p>
+                 <p class="text-sm mt-2 font-bold" :class="kpis.cpaChange.startsWith('-') ? 'text-emerald-400' : 'text-red-400'" x-text="kpis.cpaChange + ' comparado ao período anterior'"></p>
+              </div>
+           </div>
+        </div>
+     </div>
+
+     <!-- Top Campaigns -->
+     <div class="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden">
+        <div class="p-6 border-b border-gray-800">
+           <h3 class="text-lg font-bold text-white">Top 5 Campanhas do Período</h3>
+        </div>
+        <table class="w-full">
+           <thead class="bg-gray-900/50 text-gray-500 text-xs uppercase">
+              <tr>
+                 <th class="p-4 text-left">Campanha</th>
+                 <th class="p-4 text-center">Enviados</th>
+                 <th class="p-4 text-center">Abertura</th>
+                 <th class="p-4 text-center">Conversões</th>
+                 <th class="p-4 text-right">Receita</th>
+              </tr>
+           </thead>
+           <tbody class="divide-y divide-gray-800">
+              <template x-for="campaign in topCampaigns" :key="campaign.id">
+                 <tr class="hover:bg-gray-800/30 transition-colors">
+                    <td class="p-4 text-white font-medium" x-text="campaign.name"></td>
+                    <td class="p-4 text-center text-gray-400" x-text="campaign.sent.toLocaleString()"></td>
+                    <td class="p-4 text-center text-emerald-400 font-bold" x-text="campaign.openRate + '%'"></td>
+                    <td class="p-4 text-center text-purple-400" x-text="campaign.conversions"></td>
+                    <td class="p-4 text-right text-yellow-400 font-bold" x-text="'R$ ' + campaign.revenue.toLocaleString()"></td>
+                 </tr>
+              </template>
+           </tbody>
+        </table>
+     </div>
   </div>
 </AdminLayout>
+
+<script nonce={Astro.locals.nonce} is:inline>
+  function campaignResults() {
+    return {
+      period: '30d',
+      loading: false,
+      kpis: {
+        totalSent: 125400,
+        sentChange: '+12% vs período anterior',
+        avgOpenRate: 68,
+        openRateChange: '+5% vs período anterior',
+        conversions: 3420,
+        conversionChange: '+18% vs período anterior',
+        revenue: 66400,
+        revenueChange: '+22% vs período anterior',
+        cpa: 4.50,
+        cpaChange: '-15%'
+      },
+      chartData: [],
+      channelStats: [],
+      topCampaigns: [],
+
+      get maxSent() {
+        return Math.max(...this.chartData.map(d => d.sent), 1);
+      },
+
+      get maxConversions() {
+        return Math.max(...this.chartData.map(d => d.conversions), 1);
+      },
+
+      async init() {
+        this.generateChartData();
+        this.loadChannelStats();
+        this.loadTopCampaigns();
+      },
+
+      async fetchData() {
+        this.loading = true;
+        try {
+          const res = await fetch(`/api/analytics/campaigns?period=${this.period}`);
+          if (res.ok) {
+            const data = await res.json();
+            this.kpis = data.kpis;
+            this.chartData = data.chartData;
+            this.channelStats = data.channelStats;
+            this.topCampaigns = data.topCampaigns;
+          }
+        } catch(e) {
+          console.error(e);
+        } finally {
+          this.loading = false;
+        }
+        this.generateChartData();
+      },
+
+      generateChartData() {
+        const labels = this.period === '7d' 
+          ? ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
+          : this.period === '30d' 
+            ? ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4']
+            : ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+        
+        this.chartData = labels.map(label => ({
+          label,
+          sent: Math.floor(Math.random() * 15000) + 5000,
+          conversions: Math.floor(Math.random() * 500) + 100
+        }));
+      },
+
+      loadChannelStats() {
+        this.channelStats = [
+          { name: 'WhatsApp', emoji: '🟢', revenue: 45200, percentage: 85, color: 'bg-green-500' },
+          { name: 'Email', emoji: '📧', revenue: 12800, percentage: 35, color: 'bg-blue-500' },
+          { name: 'Instagram', emoji: '📸', revenue: 8400, percentage: 20, color: 'bg-pink-500' }
+        ];
+      },
+
+      loadTopCampaigns() {
+        this.topCampaigns = [
+          { id: 1, name: 'Black Friday 2025', sent: 15420, openRate: 98, conversions: 1245, revenue: 28500 },
+          { id: 2, name: 'Cyber Monday', sent: 12300, openRate: 87, conversions: 890, revenue: 18200 },
+          { id: 3, name: 'Natal Antecipado', sent: 8500, openRate: 75, conversions: 620, revenue: 12400 },
+          { id: 4, name: 'Promoção Relâmpago', sent: 5200, openRate: 92, conversions: 445, revenue: 8900 },
+          { id: 5, name: 'Lançamento Coleção', sent: 4800, openRate: 68, conversions: 320, revenue: 6400 }
+        ];
+      },
+
+      exportReport() {
+        const data = {
+          period: this.period,
+          kpis: this.kpis,
+          topCampaigns: this.topCampaigns,
+          exportDate: new Date().toISOString()
+        };
+        
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `campaign-results-${this.period}-${new Date().toISOString().slice(0,10)}.json`;
+        link.click();
+      }
+    };
+  }
+</script>

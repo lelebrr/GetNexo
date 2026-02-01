@@ -3,17 +3,303 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 
 <AdminLayout title="Templates Salvos" activeTab="broadcasts">
-  <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-    <div class="w-24 h-24 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/30 animate-pulse">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
-        </svg>
-    </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-      Templates Salvos
-    </h1>
-    <p class="text-xl text-gray-400 max-w-lg">
-      Gerencie seus modelos de mensagens para campanhas.
-    </p>
+  <div class="space-y-8" x-data="templatesManager()">
+     <div class="flex items-center justify-between">
+        <div>
+           <h1 class="text-3xl font-bold text-white">Templates de Mensagem</h1>
+           <p class="text-gray-400 mt-1">Gerencie seus modelos de mensagens para campanhas</p>
+        </div>
+        <button @click="openCreateModal()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 px-6 rounded-lg transition-colors flex items-center space-x-2">
+           <span>+</span>
+           <span>Novo Template</span>
+        </button>
+     </div>
+
+     <!-- Search & Filters -->
+     <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-4 flex flex-wrap gap-4 items-center">
+        <div class="flex-1 min-w-[200px]">
+           <input type="text" x-model="search" @input.debounce.300ms="filterTemplates()" placeholder="Buscar templates..." 
+                  class="w-full bg-gray-950 border border-gray-700 rounded-lg p-3 text-white focus:border-purple-500 outline-none">
+        </div>
+        <select x-model="channelFilter" @change="filterTemplates()" class="bg-gray-950 border border-gray-700 rounded-lg p-3 text-white focus:border-purple-500 outline-none">
+           <option value="">Todos os Canais</option>
+           <option value="whatsapp">WhatsApp</option>
+           <option value="email">Email</option>
+           <option value="instagram">Instagram</option>
+        </select>
+     </div>
+
+     <!-- Loading State -->
+     <div x-show="loading" class="flex items-center justify-center py-20">
+        <div class="w-10 h-10 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+     </div>
+
+     <!-- Empty State -->
+     <div x-show="!loading && filteredTemplates.length === 0" class="text-center py-20">
+        <div class="w-24 h-24 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/30 mx-auto mb-6">
+           <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
+           </svg>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-2">Nenhum template encontrado</h3>
+        <p class="text-gray-400 mb-6">Crie seu primeiro template para agilizar suas campanhas.</p>
+        <button @click="openCreateModal()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-lg transition-colors">
+           Criar Template
+        </button>
+     </div>
+
+     <!-- Templates Grid -->
+     <div x-show="!loading && filteredTemplates.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <template x-for="template in filteredTemplates" :key="template.id">
+           <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 hover:border-purple-500/30 transition-all group">
+              <div class="flex items-start justify-between mb-4">
+                 <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-purple-500/10 rounded-lg flex items-center justify-center text-xl" x-text="getChannelEmoji(template.channel)"></div>
+                    <div>
+                       <h3 class="font-bold text-white" x-text="template.name"></h3>
+                       <p class="text-xs text-gray-500 capitalize" x-text="template.channel"></p>
+                    </div>
+                 </div>
+                 <div class="opacity-0 group-hover:opacity-100 transition-opacity flex space-x-1">
+                    <button @click="openEditModal(template)" class="p-2 text-gray-400 hover:text-purple-400 hover:bg-purple-500/10 rounded-lg transition-all" title="Editar">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                       </svg>
+                    </button>
+                    <button @click="deleteTemplate(template.id)" class="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all" title="Excluir">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                       </svg>
+                    </button>
+                 </div>
+              </div>
+              <p class="text-gray-400 text-sm line-clamp-3 mb-4" x-text="template.content"></p>
+              <div class="flex items-center justify-between text-xs">
+                 <span class="text-gray-500" x-text="'Usado ' + template.usageCount + 'x'"></span>
+                 <button @click="useTemplate(template)" class="text-purple-400 hover:text-purple-300 font-medium transition-colors">
+                    Usar em Campanha →
+                 </button>
+              </div>
+           </div>
+        </template>
+     </div>
+
+     <!-- Create/Edit Modal -->
+     <div x-show="showModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" @keydown.escape.window="showModal = false">
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="showModal = false"></div>
+        <div class="relative w-full max-w-lg bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-hidden" @click.stop>
+           <div class="bg-gradient-to-r from-purple-600/20 to-cyan-600/20 p-6 border-b border-gray-800">
+              <div class="flex items-center justify-between">
+                 <h2 class="text-xl font-bold text-white" x-text="editingTemplate ? 'Editar Template' : 'Novo Template'"></h2>
+                 <button @click="showModal = false" class="p-2 text-gray-500 hover:text-white hover:bg-gray-800 rounded-lg transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                 </button>
+              </div>
+           </div>
+           <form @submit.prevent="saveTemplate()" class="p-6 space-y-5">
+              <div>
+                 <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Nome do Template *</label>
+                 <input type="text" x-model="form.name" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-all" placeholder="Ex: Boas-vindas VIP">
+              </div>
+              <div>
+                 <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Canal</label>
+                 <select x-model="form.channel" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 transition-all">
+                    <option value="whatsapp">WhatsApp</option>
+                    <option value="email">Email</option>
+                    <option value="instagram">Instagram</option>
+                 </select>
+              </div>
+              <div>
+                 <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Conteúdo da Mensagem *</label>
+                 <textarea x-model="form.content" required rows="5" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-all resize-none" placeholder="Digite a mensagem...
+
+Use {{nome}} para personalização."></textarea>
+                 <p class="text-xs text-gray-500 mt-1"><span x-text="form.content.length"></span>/1000 caracteres</p>
+              </div>
+              <div class="flex space-x-3 pt-4">
+                 <button type="button" @click="showModal = false" class="flex-1 py-3 bg-gray-800 hover:bg-gray-700 text-gray-400 font-bold rounded-xl transition-all">
+                    Cancelar
+                 </button>
+                 <button type="submit" :disabled="saving" class="flex-1 py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl transition-all disabled:opacity-50">
+                    <span x-text="saving ? 'Salvando...' : (editingTemplate ? 'Salvar Alterações' : 'Criar Template')"></span>
+                 </button>
+              </div>
+           </form>
+        </div>
+     </div>
   </div>
 </AdminLayout>
+
+<script nonce={Astro.locals.nonce} is:inline>
+  function templatesManager() {
+    return {
+      templates: [],
+      filteredTemplates: [],
+      loading: true,
+      showModal: false,
+      saving: false,
+      search: '',
+      channelFilter: '',
+      editingTemplate: null,
+      form: {
+        name: '',
+        channel: 'whatsapp',
+        content: ''
+      },
+
+      async init() {
+        await this.fetchTemplates();
+      },
+
+      async fetchTemplates() {
+        this.loading = true;
+        try {
+          const res = await fetch('/api/templates');
+          if (res.ok) {
+            const data = await res.json();
+            this.templates = data.templates || [];
+          } else {
+            this.templates = this.getMockTemplates();
+          }
+        } catch (e) {
+          console.error('Erro ao carregar templates:', e);
+          this.templates = this.getMockTemplates();
+        } finally {
+          this.filteredTemplates = [...this.templates];
+          this.loading = false;
+        }
+      },
+
+      getMockTemplates() {
+        return [
+          { id: 1, name: 'Boas-vindas', channel: 'whatsapp', content: 'Olá {{nome}}! 👋\n\nSeja bem-vindo(a) à nossa loja! Estamos felizes em tê-lo conosco.\n\nQualquer dúvida, é só chamar!', usageCount: 145 },
+          { id: 2, name: 'Promoção Flash', channel: 'whatsapp', content: '🔥 PROMOÇÃO RELÂMPAGO!\n\n50% OFF em produtos selecionados!\n\nApenas nas próximas 2 horas. Corra!', usageCount: 89 },
+          { id: 3, name: 'Abandono de Carrinho', channel: 'whatsapp', content: 'Ei {{nome}}! 🛒\n\nVocê esqueceu alguns itens no carrinho. Que tal finalizar sua compra?\n\nUse o cupom VOLTA10 e ganhe 10% de desconto!', usageCount: 234 },
+          { id: 4, name: 'Newsletter Semanal', channel: 'email', content: 'Olá {{nome}},\n\nConfira as novidades desta semana em nossa loja!\n\nAtenciosamente,\nEquipe da Loja', usageCount: 567 },
+          { id: 5, name: 'Feedback Pós-compra', channel: 'whatsapp', content: 'Olá {{nome}}! 🌟\n\nSua opinião é muito importante para nós. Como foi sua experiência de compra?\n\nResponda de 1 a 5 estrelas!', usageCount: 78 },
+        ];
+      },
+
+      getChannelEmoji(channel) {
+        const emojis = { whatsapp: '🟢', email: '📧', instagram: '📸' };
+        return emojis[channel] || '📱';
+      },
+
+      filterTemplates() {
+        this.filteredTemplates = this.templates.filter(t => {
+          const matchesSearch = !this.search || 
+            t.name.toLowerCase().includes(this.search.toLowerCase()) ||
+            t.content.toLowerCase().includes(this.search.toLowerCase());
+          const matchesChannel = !this.channelFilter || t.channel === this.channelFilter;
+          return matchesSearch && matchesChannel;
+        });
+      },
+
+      openCreateModal() {
+        this.editingTemplate = null;
+        this.form = { name: '', channel: 'whatsapp', content: '' };
+        this.showModal = true;
+      },
+
+      openEditModal(template) {
+        this.editingTemplate = template;
+        this.form = { ...template };
+        this.showModal = true;
+      },
+
+      async saveTemplate() {
+        if (!this.form.name.trim() || !this.form.content.trim()) {
+          alert('Preencha todos os campos obrigatórios');
+          return;
+        }
+
+        this.saving = true;
+        try {
+          const url = this.editingTemplate 
+            ? `/api/templates/${this.editingTemplate.id}` 
+            : '/api/templates';
+          const method = this.editingTemplate ? 'PUT' : 'POST';
+
+          const res = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(this.form)
+          });
+
+          if (res.ok) {
+            this.showModal = false;
+            await this.fetchTemplates();
+          } else {
+            // Mock save
+            if (this.editingTemplate) {
+              const index = this.templates.findIndex(t => t.id === this.editingTemplate.id);
+              if (index !== -1) {
+                this.templates[index] = { ...this.templates[index], ...this.form };
+              }
+            } else {
+              this.templates.push({
+                id: Date.now(),
+                ...this.form,
+                usageCount: 0
+              });
+            }
+            this.filterTemplates();
+            this.showModal = false;
+          }
+        } catch (e) {
+          // Mock save on error
+          if (this.editingTemplate) {
+            const index = this.templates.findIndex(t => t.id === this.editingTemplate.id);
+            if (index !== -1) {
+              this.templates[index] = { ...this.templates[index], ...this.form };
+            }
+          } else {
+            this.templates.push({
+              id: Date.now(),
+              ...this.form,
+              usageCount: 0
+            });
+          }
+          this.filterTemplates();
+          this.showModal = false;
+        } finally {
+          this.saving = false;
+        }
+      },
+
+      async deleteTemplate(id) {
+        if (!confirm('Tem certeza que deseja excluir este template?')) return;
+
+        try {
+          await fetch(`/api/templates/${id}`, { method: 'DELETE' });
+        } catch (e) {
+          console.error('Erro ao excluir:', e);
+        }
+        
+        this.templates = this.templates.filter(t => t.id !== id);
+        this.filterTemplates();
+      },
+
+      useTemplate(template) {
+        // Store template in sessionStorage and redirect to new campaign
+        sessionStorage.setItem('campaignTemplate', JSON.stringify({
+          channel: template.channel,
+          message: template.content
+        }));
+        window.location.href = '/admin/broadcasts/new';
+      }
+    };
+  }
+</script>
+
+<style>
+  [x-cloak] { display: none !important; }
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

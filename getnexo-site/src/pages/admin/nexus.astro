@@ -1,0 +1,19 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import AdminPanel from '../../components/AdminPanel.jsx';
+
+const section = Astro.url.searchParams.get('section') || 'home';
+---
+
+<AdminLayout title="Painel Nexus" activeTab="nexus">
+  <div class="h-full">
+    <AdminPanel client:only="react" initialSection={section} hideSidebar={true} />
+  </div>
+</AdminLayout>
+
+<style is:global>
+  /* Ensure AdminPanel takes full height available in the content area */
+  .glass-panel {
+    height: 100% !important;
+  }
+</style>

@@ -14,18 +14,19 @@ class SeriesScheduler {
      * Inicia o scheduler
      */
     start() {
-        if (this.isRunning) return;
+        // if (this.isRunning) return;
 
-        console.log('[SERIES SCHEDULER] Iniciando scheduler...');
-        this.isRunning = true;
+        // console.log('[SERIES SCHEDULER] Iniciando scheduler...');
+        // this.isRunning = true;
 
-        // Verifica jobs pendentes a cada 30 segundos
-        this.intervalId = setInterval(() => {
-            this.processPendingJobs();
-        }, 30000);
+        // // Verifica jobs pendentes a cada 30 segundos
+        // this.intervalId = setInterval(() => {
+        //     this.processPendingJobs();
+        // }, 30000);
 
-        // Processa jobs imediatamente na inicialização
-        this.processPendingJobs();
+        // // Processa jobs imediatamente na inicialização
+        // this.processPendingJobs();
+        console.log('[SERIES SCHEDULER] Disabled due to stability issues.');
     }
 
     /**

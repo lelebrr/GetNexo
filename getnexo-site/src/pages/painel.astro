@@ -8,7 +8,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GetNexo Painel | Dashboard Completo</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="/fonts/fonts.css" />
   <style>
     /* CSS inline para evitar carregamento de Tailwind CSS */
     :root {
@@ -62,13 +62,13 @@
       left: 0;
       top: 0;
       width: 16rem;
-      background-color: var(--bg-gray-900);
+      background-color: #0c0e14; /* Darker more solid background */
       height: 100%;
       padding: 1rem;
       border-right: 1px solid var(--border-gray-800);
       transition: all 0.3s ease;
       z-index: 50;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      box-shadow: 10px 0 25px rgba(0, 0, 0, 0.5);
     }
 
     @media (min-width: 768px) {
@@ -639,28 +639,28 @@
     </div>
 
     <nav class="space-y-2">
-      <a href="#dashboard" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition active" onclick="showScreen('Dashboard')">
+      <a href="#dashboard" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition active" onclick="showScreen('Dashboard', event)">
         <span class="text-cyan-400">🏠</span> Dashboard
       </a>
-      <a href="#lojas" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition" onclick="showScreen('Lojas')">
+      <a href="#lojas" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition" onclick="showScreen('Lojas', event)">
         <span class="text-green-400">🏪</span> Lojas
       </a>
-      <a href="#adicionais" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition" onclick="showScreen('Adicionais')">
+      <a href="#adicionais" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition" onclick="showScreen('Adicionais', event)">
         <span class="text-purple-400">🔌</span> Adicionais
       </a>
-      <a href="#suporte" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition" onclick="showScreen('Suporte')">
+      <a href="#suporte" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition" onclick="showScreen('Suporte', event)">
         <span class="text-orange-400">💬</span> Suporte
       </a>
-      <a href="#financeiro" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition" onclick="showScreen('Financeiro')">
+      <a href="#financeiro" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition" onclick="showScreen('Financeiro', event)">
         <span class="text-yellow-400">💰</span> Financeiro
       </a>
-      <a href="#personalizar" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition" onclick="showScreen('Personalizar')">
+      <a href="#personalizar" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition" onclick="showScreen('Personalizar', event)">
         <span class="text-pink-400">🎨</span> Personalizar
       </a>
-      <a href="#notificacoes" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition" onclick="showScreen('Notificacoes')">
+      <a href="#notificacoes" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition" onclick="showScreen('Notificacoes', event)">
         <span class="text-blue-400">🔔</span> Notificações
       </a>
-      <a href="#leads" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition" onclick="showScreen('Leads')">
+      <a href="#leads" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition" onclick="showScreen('Leads', event)">
         <span class="text-orange-400">🎯</span> Leads Perdidos
       </a>
     </nav>
@@ -678,7 +678,7 @@
   <!-- Main Content -->
   <div class="flex-1 overflow-y-auto">
     <!-- Header -->
-    <header class="p-4 md:p-6 bg-gray-900 border-b border-gray-800 flex items-center justify-between sticky top-0 z-40">
+    <header class="p-4 md:p-6 bg-gray-950/90 backdrop-blur-xl border-b border-gray-800 flex items-center justify-between sticky top-0 z-40">
       <div class="flex items-center gap-4">
         <button onclick="toggleSidebar()" class="md:hidden text-2xl text-white hover:text-cyan-400 transition">
           ☰
@@ -856,25 +856,33 @@
       sidebar.classList.toggle('-translate-x-full');
     };
 
-    window.showScreen = (screenName) => {
+    window.showScreen = (screenName, event) => {
+      // Use passed event or global window.event
+      const e = event || window.event;
       state.currentScreen = screenName;
 
       // Atualizar navegação ativa
       document.querySelectorAll('.nav-link').forEach(link => {
         link.classList.remove('active', 'bg-gray-800');
       });
-      event.target.closest('.nav-link').classList.add('active', 'bg-gray-800');
+      
+      if (e && e.currentTarget) {
+        e.currentTarget.classList.add('active', 'bg-gray-800');
+      }
 
       // Atualizar título da página
       document.getElementById('page-title').textContent = screenName;
       document.getElementById('page-subtitle').textContent = getScreenSubtitle(screenName);
 
-      // Esconder dashboard e mostrar conteúdo dinâmico
-      document.getElementById('dashboard-content').classList.add('hidden');
-      document.getElementById('dynamic-content').classList.remove('hidden');
-
-      // Renderizar tela específica
-      renderScreen(screenName);
+      // Lógica para Dashboard vs Outras Telas
+      if (screenName === 'Dashboard') {
+        document.getElementById('dashboard-content').classList.remove('hidden');
+        document.getElementById('dynamic-content').classList.add('hidden');
+      } else {
+        document.getElementById('dashboard-content').classList.add('hidden');
+        document.getElementById('dynamic-content').classList.remove('hidden');
+        renderScreen(screenName);
+      }
     };
 
     function getScreenSubtitle(screenName) {
@@ -915,11 +923,8 @@
         case 'Leads':
           content.innerHTML = renderLeads();
           break;
-        case 'Leads':
-          content.innerHTML = renderLeads();
-          break;
         default:
-          content.innerHTML = '<p>Tela não encontrada</p>';
+          content.innerHTML = '<p class="p-8 text-gray-500">Funcionalidade em desenvolvimento...</p>';
       }
     }
 

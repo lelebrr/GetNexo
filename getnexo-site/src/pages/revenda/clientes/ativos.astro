@@ -47,7 +47,7 @@ import ResellerLayout from '../../../layouts/ResellerLayout.astro';
     tr:hover { background: rgba(0, 243, 255, 0.05); }
 </style>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
     let allClients = [];
 
     async function fetchActiveClients() {

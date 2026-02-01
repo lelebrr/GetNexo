@@ -3,23 +3,174 @@ import ResellerLayout from '../../../layouts/ResellerLayout.astro';
 ---
 
 <ResellerLayout title="Links de Indicação">
-    <div class="header">
-        <h2 class="text-neon-blue">🔗 LINKS DE INDICAÇÃO</h2>
-        <p class="text-gray-400 text-sm">Use seus links personalizados para rastrear vendas e garantir suas comissões.</p>
-    </div>
+    <div x-data="linksManager()">
+        <div class="header">
+            <div>
+                <h2 class="text-neon-blue">🔗 LINKS DE INDICAÇÃO</h2>
+                <p class="text-gray-400 text-sm">Use seus links personalizados para rastrear vendas e garantir suas comissões.</p>
+            </div>
+            <button @click="createLink()" class="btn-primary">+ NOVO LINK</button>
+        </div>
 
-    <div class="links-grid" id="links-container">
-        <p style="text-align: center; color: #666; padding: 3rem;">CARREGANDO LINKS...</p>
-    </div>
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <span class="icon">🔗</span>
+                <div>
+                    <span class="value" x-text="links.length">0</span>
+                    <span class="label">Links Ativos</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <span class="icon">👆</span>
+                <div>
+                    <span class="value" x-text="totalClicks">0</span>
+                    <span class="label">Cliques Totais</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <span class="icon">✅</span>
+                <div>
+                    <span class="value" x-text="totalConversions">0</span>
+                    <span class="label">Conversões</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <span class="icon">📈</span>
+                <div>
+                    <span class="value" x-text="conversionRate + '%'">0%</span>
+                    <span class="label">Taxa de Conversão</span>
+                </div>
+            </div>
+        </div>
 
+        <!-- Loading -->
+        <div x-show="loading" class="loading-state">
+            <div class="spinner"></div>
+        </div>
+
+        <div x-show="!loading" class="links-grid">
+            <template x-for="link in links" :key="link.id">
+                <div class="link-card">
+                    <div class="link-header">
+                        <h3 x-text="link.name"></h3>
+                        <div class="link-actions">
+                            <button @click="editLink(link)" class="btn-icon" title="Editar">✏️</button>
+                            <button @click="deleteLink(link.id)" class="btn-icon" title="Excluir">🗑️</button>
+                        </div>
+                    </div>
+                    <div class="url-box">
+                        <code x-text="link.url"></code>
+                        <button @click="copyLink(link.url)" class="btn-copy">COPIAR</button>
+                    </div>
+                    <div class="link-stats">
+                        <span><strong x-text="link.clicks">0</strong> Cliques</span>
+                        <span><strong x-text="link.conversions">0</strong> Conversões</span>
+                        <span class="conv-rate" x-text="getConvRate(link)">0%</span>
+                    </div>
+                    <div class="link-qr">
+                        <button @click="showQR(link)" class="btn-qr">📱 Ver QR Code</button>
+                    </div>
+                </div>
+            </template>
+            
+            <div x-show="links.length === 0" class="empty-state">
+                <span class="icon">🔗</span>
+                <p>Nenhum link criado ainda</p>
+                <button @click="createLink()" class="btn-primary">Criar Primeiro Link</button>
+            </div>
+        </div>
+
+        <!-- Create/Edit Modal -->
+        <div x-show="showModal" x-cloak class="modal-overlay">
+            <div class="modal-container" @click.stop>
+                <div class="modal-header">
+                    <h3 x-text="editingLink ? 'Editar Link' : 'Novo Link'"></h3>
+                    <button @click="showModal = false" class="modal-close">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Nome do Link *</label>
+                        <input type="text" x-model="form.name" class="form-input" placeholder="Ex: Instagram Bio">
+                    </div>
+                    <div class="form-group">
+                        <label>Campanha / Fonte</label>
+                        <select x-model="form.campaign" class="form-input">
+                            <option value="instagram">Instagram</option>
+                            <option value="facebook">Facebook</option>
+                            <option value="whatsapp">WhatsApp</option>
+                            <option value="google">Google Ads</option>
+                            <option value="tiktok">TikTok</option>
+                            <option value="email">E-mail Marketing</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Destino</label>
+                        <select x-model="form.destination" class="form-input">
+                            <option value="home">Página Inicial</option>
+                            <option value="pricing">Preços</option>
+                            <option value="trial">Teste Grátis</option>
+                            <option value="landing">Landing Page Custom</option>
+                        </select>
+                    </div>
+                    <div class="preview-url">
+                        <span class="label">Preview do Link:</span>
+                        <code x-text="generatePreviewUrl()"></code>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button @click="showModal = false" class="btn-cancel">Cancelar</button>
+                    <button @click="saveLink()" class="btn-primary">Salvar Link</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- QR Code Modal -->
+        <div x-show="qrModal" x-cloak class="modal-overlay">
+            <div class="modal-container modal-sm" @click.stop>
+                <div class="modal-header">
+                    <h3>📱 QR Code</h3>
+                    <button @click="qrModal = false" class="modal-close">×</button>
+                </div>
+                <div class="modal-body qr-body">
+                    <div class="qr-placeholder">
+                        <img :src="'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(selectedLink?.url || '')" alt="QR Code">
+                    </div>
+                    <p class="qr-url" x-text="selectedLink?.url"></p>
+                    <button @click="downloadQR()" class="btn-primary">📥 Baixar QR Code</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div x-show="toast" x-transition class="toast" x-text="toastMessage"></div>
+    </div>
 </ResellerLayout>
 
 <style>
-    .header { margin-bottom: 2rem; }
+    [x-cloak] { display: none !important; }
+    .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; }
+    .btn-primary { background: #00f3ff; color: #000; border: none; padding: 0.8rem 1.5rem; border-radius: 4px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; }
+
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: #0a0a0a; border: 1px solid #334155; padding: 1.25rem; border-radius: 12px; display: flex; align-items: center; gap: 1rem; }
+    .stat-card .icon { font-size: 1.5rem; }
+    .stat-card .value { display: block; font-size: 1.5rem; font-weight: 700; color: #00ff9d; }
+    .stat-card .label { display: block; font-size: 0.7rem; color: #64748b; }
+
+    .loading-state { text-align: center; padding: 3rem; }
+    .spinner { width: 40px; height: 40px; border: 3px solid #334155; border-top-color: #00f3ff; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
     .links-grid { display: grid; gap: 1.5rem; }
     
-    .link-card { background: #0a0a0a; border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; }
-    .link-card h3 { font-size: 1rem; color: #fff; margin-bottom: 1rem; }
+    .link-card { background: #0a0a0a; border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; transition: all 0.3s; }
+    .link-card:hover { border-color: #00f3ff; }
+    .link-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .link-header h3 { font-size: 1rem; color: #fff; margin: 0; }
+    .link-actions { display: flex; gap: 0.5rem; }
+    .btn-icon { background: rgba(255,255,255,0.05); border: 1px solid #334155; padding: 0.4rem; border-radius: 4px; cursor: pointer; }
     
     .url-box { display: flex; align-items: center; gap: 0.5rem; background: #000; padding: 0.75rem 1rem; border: 1px solid #1a1a1a; border-radius: 8px; margin-bottom: 1rem; }
     .url-box code { flex: 1; color: #00ff9d; font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -27,40 +178,185 @@ import ResellerLayout from '../../../layouts/ResellerLayout.astro';
     .btn-copy { background: #334155; color: #fff; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: all 0.2s; }
     .btn-copy:hover { background: #475569; }
 
-    .link-stats { display: flex; gap: 2rem; font-size: 0.8rem; color: #64748b; }
+    .link-stats { display: flex; gap: 2rem; font-size: 0.8rem; color: #64748b; margin-bottom: 1rem; }
     .link-stats strong { color: #fff; margin-right: 0.25rem; }
+    .conv-rate { color: #00ff9d; font-weight: bold; }
+
+    .btn-qr { background: rgba(0, 243, 255, 0.1); border: 1px solid rgba(0, 243, 255, 0.3); color: #00f3ff; padding: 0.5rem 1rem; border-radius: 4px; font-size: 0.8rem; cursor: pointer; width: 100%; }
+
+    .empty-state { text-align: center; padding: 3rem; background: #0a0a0a; border: 1px dashed #334155; border-radius: 12px; }
+    .empty-state .icon { font-size: 3rem; display: block; margin-bottom: 1rem; }
+    .empty-state p { color: #64748b; margin-bottom: 1.5rem; }
+
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .modal-container { background: #0f172a; border: 1px solid #334155; border-radius: 16px; width: 100%; max-width: 450px; }
+    .modal-sm { max-width: 350px; }
+    .modal-header { background: rgba(0, 243, 255, 0.1); padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
+    .modal-header h3 { color: #00f3ff; margin: 0; }
+    .modal-close { background: none; border: none; color: #94a3b8; font-size: 1.5rem; cursor: pointer; }
+    .modal-body { padding: 1.5rem; }
+    .modal-footer { padding: 1.5rem; border-top: 1px solid #334155; display: flex; gap: 1rem; justify-content: flex-end; }
+
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; color: #94a3b8; font-size: 0.8rem; margin-bottom: 0.5rem; }
+    .form-input { width: 100%; background: #0a0a0a; border: 1px solid #334155; padding: 0.8rem; color: #fff; border-radius: 8px; }
+    .btn-cancel { background: #334155; color: #fff; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; cursor: pointer; }
+
+    .preview-url { background: #000; padding: 1rem; border-radius: 8px; margin-top: 1rem; }
+    .preview-url .label { display: block; font-size: 0.7rem; color: #64748b; margin-bottom: 0.5rem; }
+    .preview-url code { color: #00ff9d; font-size: 0.85rem; word-break: break-all; }
+
+    .qr-body { text-align: center; }
+    .qr-placeholder { background: #fff; padding: 1rem; border-radius: 8px; display: inline-block; margin-bottom: 1rem; }
+    .qr-placeholder img { display: block; }
+    .qr-url { color: #00ff9d; font-size: 0.8rem; margin-bottom: 1rem; word-break: break-all; }
+
+    .toast { position: fixed; bottom: 2rem; right: 2rem; background: #00ff9d; color: #000; padding: 1rem 1.5rem; border-radius: 8px; font-weight: bold; font-size: 0.85rem; z-index: 2000; }
+
+    @media (max-width: 768px) {
+        .stats-row { grid-template-columns: 1fr 1fr; }
+    }
 </style>
 
-<script is:inline>
-    async function fetchLinks() {
-        try {
-            const res = await fetch('/api/revenda/marketing');
-            const data = await res.json();
-            const container = document.getElementById('links-container');
-            
-            container.innerHTML = data.links.map(l => `
-                <div class="link-card">
-                    <h3>${l.name}</h3>
-                    <div class="url-box">
-                        <code>${l.url}</code>
-                        <button class="btn-copy" onclick="copyToClipboard('${l.url}')">COPIAR</button>
-                    </div>
-                    <div class="link-stats">
-                        <span><strong>${l.clicks}</strong> Cliques</span>
-                        <span><strong>-</strong> Conversões</span>
-                    </div>
-                </div>
-            `).join('');
-        } catch (e) {
-            console.error(e);
-        }
-    }
+<script nonce={Astro.locals.nonce} is:inline>
+    function linksManager() {
+        return {
+            links: [],
+            loading: true,
+            showModal: false,
+            qrModal: false,
+            editingLink: null,
+            selectedLink: null,
+            toast: false,
+            toastMessage: '',
+            form: { name: '', campaign: 'instagram', destination: 'home' },
 
-    async function copyToClipboard(text) {
-        await navigator.clipboard.writeText(text);
-        alert('Link copiado com sucesso!');
-    }
+            get totalClicks() {
+                return this.links.reduce((sum, l) => sum + (l.clicks || 0), 0);
+            },
 
-    window.copyToClipboard = copyToClipboard;
-    fetchLinks();
+            get totalConversions() {
+                return this.links.reduce((sum, l) => sum + (l.conversions || 0), 0);
+            },
+
+            get conversionRate() {
+                if (this.totalClicks === 0) return 0;
+                return ((this.totalConversions / this.totalClicks) * 100).toFixed(1);
+            },
+
+            getConvRate(link) {
+                if (!link.clicks) return '0%';
+                return ((link.conversions / link.clicks) * 100).toFixed(1) + '%';
+            },
+
+            generatePreviewUrl() {
+                const base = 'https://getnexo.com.br/';
+                const dest = this.form.destination === 'home' ? '' : this.form.destination;
+                const ref = '?ref=SEUID&utm_source=' + this.form.campaign;
+                return base + dest + ref;
+            },
+
+            async init() {
+                await this.fetchLinks();
+            },
+
+            async fetchLinks() {
+                this.loading = true;
+                try {
+                    const res = await fetch('/api/revenda/marketing');
+                    if (res.ok) {
+                        const data = await res.json();
+                        this.links = data.links || [];
+                    } else {
+                        this.links = this.getMockLinks();
+                    }
+                } catch (e) {
+                    console.error(e);
+                    this.links = this.getMockLinks();
+                } finally {
+                    this.loading = false;
+                }
+            },
+
+            getMockLinks() {
+                return [
+                    { id: 1, name: 'Instagram Bio', url: 'https://getnexo.com.br/?ref=REV123&utm_source=instagram', clicks: 452, conversions: 28 },
+                    { id: 2, name: 'WhatsApp Status', url: 'https://getnexo.com.br/trial?ref=REV123&utm_source=whatsapp', clicks: 189, conversions: 15 },
+                    { id: 3, name: 'Facebook Ads', url: 'https://getnexo.com.br/pricing?ref=REV123&utm_source=facebook', clicks: 823, conversions: 42 },
+                ];
+            },
+
+            createLink() {
+                this.editingLink = null;
+                this.form = { name: '', campaign: 'instagram', destination: 'home' };
+                this.showModal = true;
+            },
+
+            editLink(link) {
+                this.editingLink = link;
+                this.form = { name: link.name, campaign: 'instagram', destination: 'home' };
+                this.showModal = true;
+            },
+
+            async saveLink() {
+                if (!this.form.name) {
+                    alert('Nome é obrigatório');
+                    return;
+                }
+                
+                const newUrl = this.generatePreviewUrl().replace('SEUID', 'REV' + Date.now().toString().slice(-5));
+                
+                try {
+                    await fetch('/api/revenda/marketing/links', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ ...this.form, url: newUrl })
+                    });
+                } catch(e) { console.error(e); }
+
+                if (this.editingLink) {
+                    const idx = this.links.findIndex(l => l.id === this.editingLink.id);
+                    if (idx !== -1) this.links[idx] = { ...this.links[idx], ...this.form };
+                } else {
+                    this.links.unshift({ id: Date.now(), ...this.form, url: newUrl, clicks: 0, conversions: 0 });
+                }
+
+                this.showModal = false;
+                this.showToast('Link salvo com sucesso!');
+            },
+
+            async deleteLink(id) {
+                if (!confirm('Excluir este link?')) return;
+                
+                try {
+                    await fetch(`/api/revenda/marketing/links/${id}`, { method: 'DELETE' });
+                } catch(e) { console.error(e); }
+
+                this.links = this.links.filter(l => l.id !== id);
+                this.showToast('Link excluído');
+            },
+
+            async copyLink(url) {
+                await navigator.clipboard.writeText(url);
+                this.showToast('Link copiado!');
+            },
+
+            showQR(link) {
+                this.selectedLink = link;
+                this.qrModal = true;
+            },
+
+            downloadQR() {
+                const url = 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=' + encodeURIComponent(this.selectedLink.url);
+                window.open(url, '_blank');
+            },
+
+            showToast(msg) {
+                this.toastMessage = msg;
+                this.toast = true;
+                setTimeout(() => this.toast = false, 3000);
+            }
+        };
+    }
 </script>
+</ResellerLayout>

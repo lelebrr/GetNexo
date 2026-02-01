@@ -1,6 +1,6 @@
 ---
 import AdminLayout from '../../../../layouts/AdminLayout.astro';
-import { ShieldAlert, ShieldCheck, Activity, Lock, Eye, Terminal, Zap, Shield, Fingerprint } from 'lucide-react';
+import { ShieldAlert, ShieldCheck, Activity, Lock, Eye, Terminal, Zap, Shield, Fingerprint, Settings, Key, Check, X, Loader } from 'lucide-react';
 
 const title = "Segurança IA – Monitoramento Autônomo";
 ---
@@ -159,6 +159,85 @@ const title = "Segurança IA – Monitoramento Autônomo";
            <div class="absolute -bottom-8 -right-8 w-32 h-32 bg-rose-500/10 blur-3xl group-hover:bg-rose-500/20 transition-all"></div>
         </section>
 
+        <!-- AI Configuration Section -->
+        <section class="bg-gray-900/60 border border-gray-700 rounded-3xl p-6 shadow-xl">
+           <div class="flex items-center space-x-3 mb-6">
+              <Settings className="w-5 h-5 text-rose-400" />
+              <h4 class="text-sm font-bold text-white uppercase tracking-widest">Configuração da IA de Segurança</h4>
+           </div>
+           
+           <!-- Provider Select -->
+           <div class="mb-4">
+              <label class="block text-xs text-gray-400 mb-2 font-medium">Provider de IA</label>
+              <select x-model="config.provider" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:border-rose-500 focus:outline-none">
+                 <option value="deepseek">DeepSeek (Recomendado)</option>
+                 <option value="gemini">Google Gemini</option>
+                 <option value="grok">Grok (X.AI)</option>
+                 <option value="claude">Anthropic Claude</option>
+                 <option value="gpt">OpenAI GPT</option>
+                 <option value="groq">Groq</option>
+              </select>
+           </div>
+           
+           <!-- API Key Input -->
+           <div class="mb-4">
+              <label class="block text-xs text-gray-400 mb-2 font-medium">API Key</label>
+              <div class="relative">
+                 <Key className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                 <input 
+                    type="password" 
+                    x-model="config.apiKey" 
+                    placeholder="sk-xxxx..." 
+                    class="w-full bg-gray-800 border border-gray-700 rounded-xl pl-10 pr-4 py-3 text-white text-sm focus:border-rose-500 focus:outline-none placeholder:text-gray-600"
+                 />
+              </div>
+              <p class="text-[10px] text-gray-500 mt-1" x-show="config.hasKey">✓ API Key já configurada</p>
+           </div>
+           
+           <!-- Toggle Auto Monitor -->
+           <div class="flex items-center justify-between p-4 bg-gray-800/50 rounded-xl mb-6">
+              <div>
+                 <p class="text-sm text-white font-medium">Monitoramento Autônomo</p>
+                 <p class="text-[10px] text-gray-500">A IA monitora e bloqueia ameaças automaticamente</p>
+              </div>
+              <button 
+                 @click="config.autoMonitor = !config.autoMonitor" 
+                 :class="config.autoMonitor ? 'bg-rose-500' : 'bg-gray-700'"
+                 class="relative w-12 h-6 rounded-full transition-colors"
+              >
+                 <div 
+                    :class="config.autoMonitor ? 'translate-x-6' : 'translate-x-1'"
+                    class="absolute top-1 w-4 h-4 bg-white rounded-full transition-transform shadow"
+                 ></div>
+              </button>
+           </div>
+           
+           <!-- Action Buttons -->
+           <div class="flex gap-3">
+              <button 
+                 @click="testConnection()" 
+                 :disabled="testing"
+                 class="flex-1 py-3 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2"
+              >
+                 <template x-if="testing"><span class="animate-spin">⏳</span></template>
+                 <template x-if="!testing"><span>🔌 Testar Conexão</span></template>
+              </button>
+              <button 
+                 @click="saveConfig()" 
+                 :disabled="saving"
+                 class="flex-1 py-3 bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2"
+              >
+                 <template x-if="saving"><span class="animate-spin">⏳</span></template>
+                 <template x-if="!saving"><span>💾 Salvar Configurações</span></template>
+              </button>
+           </div>
+           
+           <!-- Status Message -->
+           <div x-show="statusMessage" x-transition class="mt-4 p-3 rounded-xl text-xs font-medium" :class="statusSuccess ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'">
+              <span x-text="statusMessage"></span>
+           </div>
+        </section>
+
         <!-- Quick Access -->
         <div class="bg-gray-900/40 rounded-3xl border border-gray-800 p-6 shadow-xl">
            <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Perímetro de Defesa Ativo</h4>
@@ -185,7 +264,7 @@ const title = "Segurança IA – Monitoramento Autônomo";
   </div>
 </AdminLayout>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
   function securityIA() {
     return {
       audit: {
@@ -202,9 +281,23 @@ const title = "Segurança IA – Monitoramento Autônomo";
         suspicious_ips_found: 0,
         blocked_ips_total: 0
       },
+      config: {
+        provider: 'deepseek',
+        apiKey: '',
+        autoMonitor: false,
+        hasKey: false
+      },
+      testing: false,
+      saving: false,
+      statusMessage: '',
+      statusSuccess: false,
+      
       async fetchAudit() {
         try {
-          const res = await fetch('/api/ai/security/audit');
+          const token = localStorage.getItem('token');
+          const res = await fetch('/api/ai/security/audit', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
           if (res.ok) {
             const data = await res.json();
             this.audit = data;
@@ -214,7 +307,89 @@ const title = "Segurança IA – Monitoramento Autônomo";
           this.audit.summary = 'Falha na conexão com o sistema de monitoramento.';
         }
       },
+      
+      async loadConfig() {
+        try {
+          const token = localStorage.getItem('token');
+          const res = await fetch('/api/ai/config', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            this.config.provider = data.security?.provider || 'deepseek';
+            this.config.autoMonitor = data.security?.autoMonitor ?? false;
+            this.config.hasKey = data.security?.hasKey ?? false;
+          }
+        } catch (e) {
+          console.error('Erro ao carregar configurações:', e);
+        }
+      },
+      
+      async testConnection() {
+        this.testing = true;
+        this.statusMessage = '';
+        try {
+          const token = localStorage.getItem('token');
+          const res = await fetch('/api/ai/config/test', {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              provider: this.config.provider,
+              apiKey: this.config.apiKey || undefined
+            })
+          });
+          const data = await res.json();
+          this.statusMessage = data.message || data.error;
+          this.statusSuccess = data.success;
+        } catch (e) {
+          this.statusMessage = 'Erro ao testar conexão';
+          this.statusSuccess = false;
+        } finally {
+          this.testing = false;
+        }
+      },
+      
+      async saveConfig() {
+        this.saving = true;
+        this.statusMessage = '';
+        try {
+          const token = localStorage.getItem('token');
+          const res = await fetch('/api/ai/config/security', {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              provider: this.config.provider,
+              autoMonitor: this.config.autoMonitor,
+              apiKey: this.config.apiKey || undefined,
+              enabled: true
+            })
+          });
+          const data = await res.json();
+          if (data.success) {
+            this.statusMessage = '✅ Configurações salvas com sucesso!';
+            this.statusSuccess = true;
+            this.config.hasKey = true;
+            this.config.apiKey = ''; // Limpa o campo após salvar
+          } else {
+            this.statusMessage = data.error || 'Erro ao salvar';
+            this.statusSuccess = false;
+          }
+        } catch (e) {
+          this.statusMessage = 'Erro ao salvar configurações';
+          this.statusSuccess = false;
+        } finally {
+          this.saving = false;
+        }
+      },
+      
       init() {
+        this.loadConfig();
         this.fetchAudit();
       }
     }

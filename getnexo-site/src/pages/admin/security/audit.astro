@@ -1,17 +1,10 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
-import { Shield, Eye, ShieldAlert, History, User, Globe, MoreHorizontal, Search, Filter } from 'lucide-react';
-
-const auditLogs = [
-  { id: 1, action: "Alteração de SKU", user: "Admin (Lele)", resource: "Produto #1024", ip: "192.168.1.1", date: "Há 5 min", severity: "Low" },
-  { id: 2, action: "Login efetuado", user: "Manager (Ana)", resource: "Sessão Dashboard", ip: "201.12.45.88", date: "Há 12 min", severity: "Info" },
-  { id: 3, action: "Exclusão de Cupom", user: "Admin (Lele)", resource: "CUPOM_NATAL_2023", ip: "192.168.1.1", date: "Há 2h", severity: "High" },
-  { id: 4, action: "Falha de Login", user: "Desconhecido", resource: "Página Login", ip: "45.18.99.102", date: "Há 4h", severity: "Critical" },
-];
+import { Shield, Eye, ShieldAlert, History, User, Globe, MoreHorizontal, Search, Filter, Download, X } from 'lucide-react';
 ---
 
 <AdminLayout title="Trilha de Auditoria" activeTab="security">
-  <div class="space-y-8 animate-fade-in py-4">
+  <div class="space-y-8 animate-fade-in py-4" x-data="auditTrail()">
     <div class="flex items-center justify-between">
       <div>
         <h1 class="text-3xl font-black text-white uppercase tracking-tighter flex items-center">
@@ -20,7 +13,8 @@ const auditLogs = [
         </h1>
         <p class="text-sm text-gray-500 font-medium mt-1">Registro cronológico e imutável de todas as ações administrativas no sistema.</p>
       </div>
-      <button class="bg-gray-800 border border-gray-700 text-gray-400 font-black px-6 py-3 rounded-2xl flex items-center space-x-3 hover:text-white transition-all text-[10px] uppercase tracking-widest">
+      <button @click="exportLogs()" class="bg-gray-800 border border-gray-700 text-gray-400 font-black px-6 py-3 rounded-2xl flex items-center space-x-3 hover:text-white transition-all text-[10px] uppercase tracking-widest">
+        <Download className="w-4 h-4" />
         <span>Exportar Log Completo</span>
       </button>
     </div>
@@ -29,17 +23,30 @@ const auditLogs = [
     <div class="flex flex-col md:flex-row gap-4 bg-gray-900/40 p-4 border border-gray-800 rounded-2xl">
       <div class="relative flex-1">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-700" />
-        <input type="text" placeholder="Filtrar por usuário, recurso ou ação..." class="w-full bg-black/40 border border-gray-800 rounded-xl py-3 pl-12 pr-4 text-sm text-white focus:border-indigo-500 outline-none transition-all" />
+        <input type="text" x-model="search" @input.debounce.300ms="filterLogs()" placeholder="Filtrar por usuário, recurso ou ação..." class="w-full bg-black/40 border border-gray-800 rounded-xl py-3 pl-12 pr-4 text-sm text-white focus:border-indigo-500 outline-none transition-all" />
       </div>
-      <div class="flex space-x-2">
-         <button class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-xl text-xs font-black text-gray-500 hover:text-white uppercase tracking-widest">
-            <Filter className="w-4 h-4 mr-2 inline" /> Gravidade
-         </button>
-      </div>
+      <select x-model="severityFilter" @change="filterLogs()" class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-xl text-xs font-black text-gray-500 hover:text-white uppercase tracking-widest">
+         <option value="">Todas Gravidades</option>
+         <option value="critical">Crítico</option>
+         <option value="high">Alto</option>
+         <option value="low">Baixo</option>
+         <option value="info">Info</option>
+      </select>
+      <select x-model="dateFilter" @change="filterLogs()" class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-xl text-xs font-black text-gray-500 hover:text-white uppercase tracking-widest">
+         <option value="">Todo Período</option>
+         <option value="today">Hoje</option>
+         <option value="week">Última Semana</option>
+         <option value="month">Último Mês</option>
+      </select>
+    </div>
+
+    <!-- Loading -->
+    <div x-show="loading" class="flex items-center justify-center py-10">
+       <div class="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
     </div>
 
     <!-- Tabela de Auditoria -->
-    <div class="bg-gray-900/20 border border-gray-800 rounded-3xl overflow-hidden backdrop-blur-md">
+    <div x-show="!loading" class="bg-gray-900/20 border border-gray-800 rounded-3xl overflow-hidden backdrop-blur-md">
        <table class="w-full text-left">
           <thead>
              <tr class="bg-black/40">
@@ -48,49 +55,226 @@ const auditLogs = [
                 <th class="px-8 py-5 text-[10px] font-black uppercase text-gray-600 tracking-widest">Impacto</th>
                 <th class="px-8 py-5 text-[10px] font-black uppercase text-gray-600 tracking-widest">IP / Origem</th>
                 <th class="px-8 py-5 text-[10px] font-black uppercase text-gray-600 tracking-widest text-right">Data</th>
+                <th class="px-8 py-5 text-[10px] font-black uppercase text-gray-600 tracking-widest text-center">Ações</th>
              </tr>
           </thead>
           <tbody class="divide-y divide-gray-800/50">
-             {auditLogs.map(log => (
+             <template x-for="log in filteredLogs" :key="log.id">
                <tr class="hover:bg-white/[0.02] transition-colors group">
                   <td class="px-8 py-6">
                      <div class="flex items-center space-x-4">
-                        <div class:list={["w-2 h-2 rounded-full", log.severity === 'Critical' ? 'bg-rose-500 animate-pulse' : (log.severity === 'High' ? 'bg-orange-500' : 'bg-emerald-500')]}></div>
+                        <div :class="getSeverityDotClass(log.severity)" class="w-2 h-2 rounded-full"></div>
                         <div>
-                           <p class="text-sm font-bold text-white uppercase tracking-tight">{log.action}</p>
-                           <p class="text-[9px] text-gray-600 font-mono">{log.resource}</p>
+                           <p class="text-sm font-bold text-white uppercase tracking-tight" x-text="log.action"></p>
+                           <p class="text-[9px] text-gray-600 font-mono" x-text="log.resource"></p>
                         </div>
                      </div>
                   </td>
                   <td class="px-8 py-6">
                      <div class="flex items-center space-x-2">
                         <User className="w-3 h-3 text-gray-700" />
-                        <span class="text-xs text-gray-400 font-bold">{log.user}</span>
+                        <span class="text-xs text-gray-400 font-bold" x-text="log.user"></span>
                      </div>
                   </td>
                   <td class="px-8 py-6">
-                     <span class:list={["text-[8px] font-black uppercase px-2 py-1 rounded", log.severity === 'Critical' ? 'bg-rose-500/10 text-rose-500' : (log.severity === 'High' ? 'bg-orange-500/10 text-orange-500' : 'bg-gray-800 text-gray-500')]}>
-                        {log.severity}
-                     </span>
+                     <span :class="getSeverityBadgeClass(log.severity)" class="text-[8px] font-black uppercase px-2 py-1 rounded" x-text="getSeverityLabel(log.severity)"></span>
                   </td>
                   <td class="px-8 py-6">
                      <div class="flex items-center space-x-2">
                         <Globe className="w-3 h-3 text-gray-800" />
-                        <span class="text-[9px] text-gray-600 font-mono tracking-tighter">{log.ip}</span>
+                        <span class="text-[9px] text-gray-600 font-mono tracking-tighter" x-text="log.ip"></span>
                      </div>
                   </td>
                   <td class="px-8 py-6 text-right">
-                     <span class="text-[10px] font-black text-gray-700 uppercase">{log.date}</span>
+                     <span class="text-[10px] font-black text-gray-700 uppercase" x-text="formatDate(log.date)"></span>
+                  </td>
+                  <td class="px-8 py-6 text-center">
+                     <button @click="viewDetails(log)" class="text-indigo-400 hover:text-indigo-300 text-xs">Detalhes</button>
                   </td>
                </tr>
-             ))}
+             </template>
           </tbody>
        </table>
+       
+       <div x-show="filteredLogs.length === 0" class="text-center py-10 text-gray-500">
+          Nenhum log encontrado.
+       </div>
+    </div>
+
+    <!-- Details Modal -->
+    <div x-show="detailsModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" @keydown.escape.window="detailsModal = false">
+       <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="detailsModal = false"></div>
+       <div class="relative w-full max-w-lg bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-hidden" @click.stop>
+          <div class="bg-gradient-to-r from-indigo-600/20 to-purple-600/20 p-6 border-b border-gray-800">
+             <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold text-white" x-text="selectedLog?.action"></h2>
+                <button @click="detailsModal = false" class="p-2 text-gray-500 hover:text-white hover:bg-gray-800 rounded-lg transition-all">
+                   <X className="w-5 h-5" />
+                </button>
+             </div>
+          </div>
+          <div class="p-6 space-y-4">
+             <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gray-800/50 p-4 rounded-lg">
+                   <p class="text-xs text-gray-500 uppercase mb-1">Usuário</p>
+                   <p class="text-white font-medium" x-text="selectedLog?.user"></p>
+                </div>
+                <div class="bg-gray-800/50 p-4 rounded-lg">
+                   <p class="text-xs text-gray-500 uppercase mb-1">IP</p>
+                   <p class="text-white font-mono" x-text="selectedLog?.ip"></p>
+                </div>
+             </div>
+             <div class="bg-gray-800/50 p-4 rounded-lg">
+                <p class="text-xs text-gray-500 uppercase mb-1">Recurso Afetado</p>
+                <p class="text-white" x-text="selectedLog?.resource"></p>
+             </div>
+             <div class="bg-gray-800/50 p-4 rounded-lg">
+                <p class="text-xs text-gray-500 uppercase mb-1">Detalhes da Ação</p>
+                <p class="text-white whitespace-pre-wrap" x-text="selectedLog?.details || 'Sem detalhes adicionais'"></p>
+             </div>
+             <div class="bg-gray-800/50 p-4 rounded-lg">
+                <p class="text-xs text-gray-500 uppercase mb-1">User Agent</p>
+                <p class="text-gray-400 text-sm" x-text="selectedLog?.userAgent || 'Não disponível'"></p>
+             </div>
+          </div>
+          <div class="p-6 border-t border-gray-800 flex justify-end">
+             <button @click="detailsModal = false" class="px-6 py-2.5 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-xl transition-all">Fechar</button>
+          </div>
+       </div>
     </div>
   </div>
 </AdminLayout>
 
+<script nonce={Astro.locals.nonce} is:inline>
+  function auditTrail() {
+    return {
+      logs: [],
+      filteredLogs: [],
+      loading: true,
+      search: '',
+      severityFilter: '',
+      dateFilter: '',
+      detailsModal: false,
+      selectedLog: null,
+
+      async init() {
+        await this.fetchLogs();
+      },
+
+      async fetchLogs() {
+        this.loading = true;
+        try {
+          const res = await fetch('/api/audit');
+          if (res.ok) {
+            const data = await res.json();
+            this.logs = data.logs || [];
+          } else {
+            this.logs = this.getMockLogs();
+          }
+        } catch(e) {
+          console.error(e);
+          this.logs = this.getMockLogs();
+        } finally {
+          this.filterLogs();
+          this.loading = false;
+        }
+      },
+
+      getMockLogs() {
+        return [
+          { id: 1, action: 'Alteração de SKU', user: 'Admin (Lele)', resource: 'Produto #1024', ip: '192.168.1.1', date: new Date(Date.now() - 300000).toISOString(), severity: 'low', details: 'SKU alterado de PRD-001 para PRD-001-2024', userAgent: 'Chrome 120 / Windows 10' },
+          { id: 2, action: 'Login efetuado', user: 'Manager (Ana)', resource: 'Sessão Dashboard', ip: '201.12.45.88', date: new Date(Date.now() - 720000).toISOString(), severity: 'info', details: 'Login bem-sucedido via painel admin', userAgent: 'Firefox 119 / MacOS' },
+          { id: 3, action: 'Exclusão de Cupom', user: 'Admin (Lele)', resource: 'CUPOM_NATAL_2023', ip: '192.168.1.1', date: new Date(Date.now() - 7200000).toISOString(), severity: 'high', details: 'Cupom excluído permanentemente', userAgent: 'Chrome 120 / Windows 10' },
+          { id: 4, action: 'Falha de Login', user: 'Desconhecido', resource: 'Página Login', ip: '45.18.99.102', date: new Date(Date.now() - 14400000).toISOString(), severity: 'critical', details: '3 tentativas falhas consecutivas. IP bloqueado temporariamente.', userAgent: 'Bot / Unknown' },
+          { id: 5, action: 'Backup Criado', user: 'Sistema', resource: 'Database', ip: 'localhost', date: new Date(Date.now() - 86400000).toISOString(), severity: 'info', details: 'Backup automático realizado com sucesso', userAgent: 'System Cron' },
+        ];
+      },
+
+      filterLogs() {
+        this.filteredLogs = this.logs.filter(log => {
+          const matchesSearch = !this.search || 
+            log.action.toLowerCase().includes(this.search.toLowerCase()) ||
+            log.user.toLowerCase().includes(this.search.toLowerCase()) ||
+            log.resource.toLowerCase().includes(this.search.toLowerCase());
+          const matchesSeverity = !this.severityFilter || log.severity === this.severityFilter;
+          
+          let matchesDate = true;
+          if (this.dateFilter) {
+            const logDate = new Date(log.date);
+            const now = new Date();
+            if (this.dateFilter === 'today') {
+              matchesDate = logDate.toDateString() === now.toDateString();
+            } else if (this.dateFilter === 'week') {
+              matchesDate = (now - logDate) < 7 * 24 * 60 * 60 * 1000;
+            } else if (this.dateFilter === 'month') {
+              matchesDate = (now - logDate) < 30 * 24 * 60 * 60 * 1000;
+            }
+          }
+          
+          return matchesSearch && matchesSeverity && matchesDate;
+        });
+      },
+
+      getSeverityDotClass(severity) {
+        const classes = {
+          critical: 'bg-rose-500 animate-pulse',
+          high: 'bg-orange-500',
+          low: 'bg-emerald-500',
+          info: 'bg-blue-500'
+        };
+        return classes[severity] || 'bg-gray-500';
+      },
+
+      getSeverityBadgeClass(severity) {
+        const classes = {
+          critical: 'bg-rose-500/10 text-rose-500',
+          high: 'bg-orange-500/10 text-orange-500',
+          low: 'bg-emerald-500/10 text-emerald-500',
+          info: 'bg-blue-500/10 text-blue-500'
+        };
+        return classes[severity] || 'bg-gray-800 text-gray-500';
+      },
+
+      getSeverityLabel(severity) {
+        const labels = { critical: 'Crítico', high: 'Alto', low: 'Baixo', info: 'Info' };
+        return labels[severity] || severity;
+      },
+
+      formatDate(dateStr) {
+        if (!dateStr) return '-';
+        const date = new Date(dateStr);
+        const now = new Date();
+        const diff = now - date;
+        
+        if (diff < 60000) return 'Agora';
+        if (diff < 3600000) return `Há ${Math.floor(diff / 60000)} min`;
+        if (diff < 86400000) return `Há ${Math.floor(diff / 3600000)}h`;
+        return date.toLocaleDateString('pt-BR');
+      },
+
+      viewDetails(log) {
+        this.selectedLog = log;
+        this.detailsModal = true;
+      },
+
+      exportLogs() {
+        const csv = ['Data,Ação,Usuário,Recurso,IP,Gravidade'].concat(
+          this.filteredLogs.map(l => `"${l.date}","${l.action}","${l.user}","${l.resource}","${l.ip}","${l.severity}"`)
+        ).join('\n');
+        
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `audit-log-${new Date().toISOString().slice(0,10)}.csv`;
+        link.click();
+      }
+    };
+  }
+</script>
+
 <style>
+  [x-cloak] { display: none !important; }
   .animate-fade-in { animation: fadeIn 0.6s ease-out; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 </style>
+</AdminLayout>

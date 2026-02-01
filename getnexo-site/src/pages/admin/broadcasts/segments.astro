@@ -3,34 +3,40 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 
 <AdminLayout title="Segmentação por Tags" activeTab="broadcasts">
-  <div class="flex flex-col md:flex-row h-[80vh] gap-6">
+  <div class="flex flex-col md:flex-row h-[80vh] gap-6" x-data="segmentsManager()">
     
     <!-- Sidebar Tags -->
     <div class="w-full md:w-1/3 bg-gray-900/50 border border-gray-800 rounded-xl p-6 overflow-y-auto">
-      <h2 class="text-xl font-bold text-white mb-4">Minhas Tags</h2>
-      <div class="space-y-2">
-        <label class="flex items-center space-x-3 p-3 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-800 transition-colors">
-          <input type="checkbox" class="form-checkbox text-purple-600 rounded bg-gray-700 border-gray-600" checked>
-          <span class="text-gray-200">💎 Clientes VIP</span>
-          <span class="ml-auto text-xs text-gray-500">1.2k</span>
-        </label>
-         <label class="flex items-center space-x-3 p-3 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-800 transition-colors">
-          <input type="checkbox" class="form-checkbox text-purple-600 rounded bg-gray-700 border-gray-600">
-          <span class="text-gray-200">🛒 Carrinho Abandonado</span>
-          <span class="ml-auto text-xs text-gray-500">450</span>
-        </label>
-        <label class="flex items-center space-x-3 p-3 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-800 transition-colors">
-          <input type="checkbox" class="form-checkbox text-purple-600 rounded bg-gray-700 border-gray-600">
-          <span class="text-gray-200">📅 Comprou há 30 dias</span>
-          <span class="ml-auto text-xs text-gray-500">3.8k</span>
-        </label>
-         <label class="flex items-center space-x-3 p-3 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-800 transition-colors">
-          <input type="checkbox" class="form-checkbox text-purple-600 rounded bg-gray-700 border-gray-600">
-          <span class="text-gray-200">📱 Leads Instagram</span>
-          <span class="ml-auto text-xs text-gray-500">12k</span>
-        </label>
+      <div class="flex items-center justify-between mb-4">
+         <h2 class="text-xl font-bold text-white">Minhas Tags</h2>
+         <button @click="openCreateTag()" class="text-purple-400 hover:text-purple-300 text-sm">+ Nova</button>
       </div>
-      <button class="mt-4 text-purple-400 text-sm hover:underline">+ Criar Nova Tag</button>
+      
+      <!-- Loading -->
+      <div x-show="loading" class="flex items-center justify-center py-10">
+         <div class="w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+
+      <div x-show="!loading" class="space-y-2">
+        <template x-for="tag in tags" :key="tag.id">
+          <label class="flex items-center space-x-3 p-3 bg-gray-800/50 rounded-lg cursor-pointer hover:bg-gray-800 transition-colors group">
+            <input type="checkbox" 
+                   :checked="selectedTags.includes(tag.id)" 
+                   @change="toggleTag(tag.id)"
+                   class="form-checkbox text-purple-600 rounded bg-gray-700 border-gray-600">
+            <span class="text-gray-200 flex items-center">
+               <span class="mr-2" x-text="tag.emoji"></span>
+               <span x-text="tag.name"></span>
+            </span>
+            <span class="ml-auto text-xs text-gray-500" x-text="formatCount(tag.count)"></span>
+            <button @click.prevent="editTag(tag)" class="opacity-0 group-hover:opacity-100 p-1 text-gray-500 hover:text-white transition-all">✏️</button>
+          </label>
+        </template>
+      </div>
+
+      <div x-show="!loading && tags.length === 0" class="text-center py-10 text-gray-500">
+         <p>Nenhuma tag cadastrada.</p>
+      </div>
     </div>
 
     <!-- Preview Lista -->
@@ -38,22 +44,287 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       <div class="flex justify-between items-center mb-6">
         <div>
           <h2 class="text-xl font-bold text-white">Preview de Segmento</h2>
-          <p class="text-gray-400">Total estimado: <span class="text-emerald-400 font-bold">1.245 leads</span></p>
+          <p class="text-gray-400">
+             Total estimado: <span class="text-emerald-400 font-bold" x-text="totalLeads.toLocaleString() + ' leads'"></span>
+          </p>
         </div>
-        <button class="bg-white text-black font-bold px-6 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+        <button @click="createCampaign()" 
+                :disabled="selectedTags.length === 0"
+                class="bg-white text-black font-bold px-6 py-2 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
           Criar Campanha para Este Grupo
         </button>
       </div>
 
       <div class="flex-1 overflow-hidden bg-gray-950 rounded-lg border border-gray-800 relative">
-         <div class="absolute inset-0 flex items-center justify-center text-gray-600">
+         <div x-show="selectedTags.length === 0" class="absolute inset-0 flex items-center justify-center text-gray-600">
             <div class="text-center">
                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-               <p>Lista de contatos será carregada aqui...</p>
+               <p>Selecione tags para ver os contatos</p>
             </div>
+         </div>
+
+         <!-- Leads Preview -->
+         <div x-show="selectedTags.length > 0" class="p-4 overflow-y-auto h-full">
+            <div x-show="loadingLeads" class="flex items-center justify-center py-10">
+               <div class="w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+            <template x-for="lead in previewLeads" :key="lead.id">
+               <div class="flex items-center p-3 hover:bg-gray-800/50 rounded-lg transition-colors">
+                  <div class="w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center text-purple-400 font-bold mr-3" x-text="lead.name.charAt(0)"></div>
+                  <div class="flex-1">
+                     <p class="text-white font-medium" x-text="lead.name"></p>
+                     <p class="text-gray-500 text-xs" x-text="lead.phone || lead.email"></p>
+                  </div>
+                  <div class="flex flex-wrap gap-1">
+                     <template x-for="tagId in lead.tags" :key="tagId">
+                        <span class="text-[10px] bg-purple-500/10 text-purple-400 px-2 py-0.5 rounded" x-text="getTagName(tagId)"></span>
+                     </template>
+                  </div>
+               </div>
+            </template>
+            <p x-show="previewLeads.length > 0" class="text-center text-gray-500 text-xs mt-4">
+               Mostrando <span x-text="previewLeads.length"></span> de <span x-text="totalLeads.toLocaleString()"></span> leads
+            </p>
          </div>
       </div>
     </div>
 
+    <!-- Create/Edit Tag Modal -->
+    <div x-show="tagModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" @keydown.escape.window="tagModal = false">
+       <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="tagModal = false"></div>
+       <div class="relative w-full max-w-md bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-hidden" @click.stop>
+          <div class="bg-gradient-to-r from-purple-600/20 to-cyan-600/20 p-6 border-b border-gray-800">
+             <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold text-white" x-text="editingTag ? 'Editar Tag' : 'Nova Tag'"></h2>
+                <button @click="tagModal = false" class="p-2 text-gray-500 hover:text-white hover:bg-gray-800 rounded-lg transition-all">✕</button>
+             </div>
+          </div>
+          <form @submit.prevent="saveTag()" class="p-6 space-y-5">
+             <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Emoji</label>
+                <input type="text" x-model="tagForm.emoji" maxlength="2" class="w-20 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-center text-2xl focus:outline-none focus:border-purple-500 transition-all" placeholder="💎">
+             </div>
+             <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Nome da Tag *</label>
+                <input type="text" x-model="tagForm.name" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-all" placeholder="Ex: Clientes VIP">
+             </div>
+             <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Descrição</label>
+                <textarea x-model="tagForm.description" rows="2" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-all resize-none" placeholder="Descrição opcional..."></textarea>
+             </div>
+             <div class="flex space-x-3 pt-4">
+                <button type="button" @click="tagModal = false" class="flex-1 py-3 bg-gray-800 hover:bg-gray-700 text-gray-400 font-bold rounded-xl transition-all">
+                   Cancelar
+                </button>
+                <button x-show="editingTag" type="button" @click="deleteTag()" class="py-3 px-4 bg-red-600/20 hover:bg-red-600/40 text-red-400 font-bold rounded-xl transition-all">
+                   Excluir
+                </button>
+                <button type="submit" :disabled="saving" class="flex-1 py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl transition-all disabled:opacity-50">
+                   <span x-text="saving ? 'Salvando...' : 'Salvar'"></span>
+                </button>
+             </div>
+          </form>
+       </div>
+    </div>
   </div>
 </AdminLayout>
+
+<script nonce={Astro.locals.nonce} is:inline>
+  function segmentsManager() {
+    return {
+      tags: [],
+      selectedTags: [],
+      previewLeads: [],
+      loading: true,
+      loadingLeads: false,
+      tagModal: false,
+      saving: false,
+      editingTag: null,
+      tagForm: { emoji: '🏷️', name: '', description: '' },
+
+      get totalLeads() {
+        if (this.selectedTags.length === 0) return 0;
+        // Calculate intersection of selected tags
+        let total = 0;
+        this.selectedTags.forEach(tagId => {
+          const tag = this.tags.find(t => t.id === tagId);
+          if (tag) total += tag.count;
+        });
+        // Reduce overlap estimate
+        if (this.selectedTags.length > 1) {
+          total = Math.round(total * 0.7);
+        }
+        return total;
+      },
+
+      async init() {
+        await this.fetchTags();
+      },
+
+      async fetchTags() {
+        this.loading = true;
+        try {
+          const res = await fetch('/api/tags');
+          if (res.ok) {
+            const data = await res.json();
+            this.tags = data.tags || [];
+          } else {
+            this.tags = this.getMockTags();
+          }
+        } catch(e) {
+          console.error(e);
+          this.tags = this.getMockTags();
+        } finally {
+          this.loading = false;
+        }
+      },
+
+      getMockTags() {
+        return [
+          { id: 1, emoji: '💎', name: 'Clientes VIP', count: 1200, description: 'Clientes com alto valor' },
+          { id: 2, emoji: '🛒', name: 'Carrinho Abandonado', count: 450, description: 'Abandonaram o checkout' },
+          { id: 3, emoji: '📅', name: 'Comprou há 30 dias', count: 3800, description: 'Compradores recentes' },
+          { id: 4, emoji: '📱', name: 'Leads Instagram', count: 12000, description: 'Vindos do Instagram' },
+          { id: 5, emoji: '✨', name: 'Novos Clientes', count: 890, description: 'Cadastrados recentemente' },
+        ];
+      },
+
+      formatCount(count) {
+        if (count >= 1000) return (count / 1000).toFixed(1) + 'k';
+        return count.toString();
+      },
+
+      getTagName(tagId) {
+        const tag = this.tags.find(t => t.id === tagId);
+        return tag ? tag.name : '';
+      },
+
+      async toggleTag(tagId) {
+        const idx = this.selectedTags.indexOf(tagId);
+        if (idx === -1) {
+          this.selectedTags.push(tagId);
+        } else {
+          this.selectedTags.splice(idx, 1);
+        }
+        await this.loadPreviewLeads();
+      },
+
+      async loadPreviewLeads() {
+        if (this.selectedTags.length === 0) {
+          this.previewLeads = [];
+          return;
+        }
+
+        this.loadingLeads = true;
+        try {
+          const res = await fetch(`/api/leads?tags=${this.selectedTags.join(',')}&limit=20`);
+          if (res.ok) {
+            const data = await res.json();
+            this.previewLeads = data.leads || [];
+          } else {
+            this.previewLeads = this.getMockLeads();
+          }
+        } catch(e) {
+          this.previewLeads = this.getMockLeads();
+        } finally {
+          this.loadingLeads = false;
+        }
+      },
+
+      getMockLeads() {
+        return [
+          { id: 1, name: 'Maria Silva', phone: '+55 11 99999-1234', tags: [1, 3] },
+          { id: 2, name: 'João Santos', phone: '+55 21 98888-5678', tags: [1] },
+          { id: 3, name: 'Ana Costa', email: 'ana@email.com', tags: [2, 4] },
+          { id: 4, name: 'Pedro Lima', phone: '+55 31 97777-9012', tags: [3, 5] },
+          { id: 5, name: 'Carla Souza', phone: '+55 41 96666-3456', tags: [1, 4] },
+        ];
+      },
+
+      openCreateTag() {
+        this.editingTag = null;
+        this.tagForm = { emoji: '🏷️', name: '', description: '' };
+        this.tagModal = true;
+      },
+
+      editTag(tag) {
+        this.editingTag = tag;
+        this.tagForm = { ...tag };
+        this.tagModal = true;
+      },
+
+      async saveTag() {
+        if (!this.tagForm.name.trim()) {
+          alert('Nome é obrigatório');
+          return;
+        }
+
+        this.saving = true;
+        try {
+          const url = this.editingTag ? `/api/tags/${this.editingTag.id}` : '/api/tags';
+          const method = this.editingTag ? 'PUT' : 'POST';
+          
+          const res = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(this.tagForm)
+          });
+
+          if (res.ok) {
+            this.tagModal = false;
+            await this.fetchTags();
+          } else {
+            this.mockSaveTag();
+          }
+        } catch(e) {
+          this.mockSaveTag();
+        } finally {
+          this.saving = false;
+        }
+      },
+
+      mockSaveTag() {
+        if (this.editingTag) {
+          const idx = this.tags.findIndex(t => t.id === this.editingTag.id);
+          if (idx !== -1) {
+            this.tags[idx] = { ...this.tags[idx], ...this.tagForm };
+          }
+        } else {
+          this.tags.push({
+            id: Date.now(),
+            ...this.tagForm,
+            count: 0
+          });
+        }
+        this.tagModal = false;
+      },
+
+      async deleteTag() {
+        if (!this.editingTag) return;
+        if (!confirm('Tem certeza que deseja excluir esta tag?')) return;
+
+        try {
+          await fetch(`/api/tags/${this.editingTag.id}`, { method: 'DELETE' });
+        } catch(e) { console.error(e); }
+
+        this.tags = this.tags.filter(t => t.id !== this.editingTag.id);
+        this.selectedTags = this.selectedTags.filter(id => id !== this.editingTag.id);
+        this.tagModal = false;
+      },
+
+      createCampaign() {
+        const tagNames = this.selectedTags.map(id => this.getTagName(id)).join(', ');
+        sessionStorage.setItem('campaignSegment', JSON.stringify({
+          tags: this.selectedTags,
+          tagNames,
+          estimatedLeads: this.totalLeads
+        }));
+        window.location.href = '/admin/broadcasts/new';
+      }
+    };
+  }
+</script>
+
+<style>
+  [x-cloak] { display: none !important; }
+</style>

@@ -5,9 +5,10 @@ set -e
 
 # Configuration
 DRY_RUN=${DRY_RUN:-false}
-BACKUP_BEFORE_CLEAN=${BACKUP_BEFORE_CLEAN:-true}
+BACKUP_BEFORE_CLEAN=${BACKUP_BEFORE_CLEAN:-false} # Default to false for aggressive clean
 WAIT_TIME=${WAIT_TIME:-10}
 LOG_FILE="clean_rebuild_$(date +%Y%m%d_%H%M%S).log"
+SUDO_PASS="kali" # Hardcoded as per user instruction
 
 # Function to print step
 print_step() {
@@ -35,13 +36,6 @@ run_cmd() {
     fi
 }
 
-# Get sudo password from environment or prompt securely
-if [ -z "$SUDO_PASS" ]; then
-    echo "Enter sudo password: "
-    read -s SUDO_PASS
-    echo ""  # Add newline after password input
-fi
-
 print_step "Checking for conflicting system services..."
 # Stop services that might conflict with Docker ports (80, 443, 5432, 6379, 3000, 8080)
 SERVICES="apache2 nginx postgresql redis-server mysql"
@@ -49,16 +43,11 @@ for service in $SERVICES; do
     if systemctl is-active --quiet $service 2>/dev/null; then
         echo "Found running system service: $service"
         if [ "$DRY_RUN" != "true" ]; then
-            read -p "Stop and disable $service? (y/N): " -n 1 -r
-            echo
-            if [[ $REPLY =~ ^[Yy]$ ]]; then
-                run_cmd echo "$SUDO_PASS" | sudo -S systemctl stop $service
-                run_cmd echo "$SUDO_PASS" | sudo -S systemctl disable $service
-            else
-                echo "Skipping $service..."
-            fi
+            echo "Stopping and disabling $service..."
+            run_cmd echo "$SUDO_PASS" | sudo -S systemctl stop $service
+            run_cmd echo "$SUDO_PASS" | sudo -S systemctl disable $service
         else
-            echo "[DRY RUN] Would prompt to stop $service"
+            echo "[DRY RUN] Would stop $service"
         fi
     else
         echo "Service $service is not running."
@@ -68,10 +57,22 @@ done
 # 1. Stop Docker Services
 if [ -f "docker-compose.yml" ]; then
     print_step "Cleaning ALL docker data (volumes, orphans)..."
+    # echo "$SUDO_PASS" | sudo -S docker compose down -v --remove-orphans || echo "Docker down failed or nothing running"
     docker compose down -v --remove-orphans || echo "Docker down failed or nothing running"
 else 
     echo "No docker-compose.yml found!"
 fi
+
+# 1.1 Aggressive Docker System Prune
+print_step "Performing AGGRESSIVE Docker System Prune..."
+if [ "$DRY_RUN" != "true" ]; then
+    echo "Removing all unused containers, networks, images (both dangling and unreferenced), and optionally, volumes."
+    # echo "$SUDO_PASS" | sudo -S docker system prune -a --volumes -f
+    docker system prune -a --volumes -f
+else
+    echo "[DRY RUN] Would run: docker system prune -a --volumes -f"
+fi
+
 
 # 2. Backup (Optional)
 if [ "$BACKUP_BEFORE_CLEAN" = "true" ]; then
@@ -87,53 +88,29 @@ fi
 # 2. Clean Artifacts
 print_step "Cleaning old artifacts (node_modules, dist, builds)..."
 # Root
-if check_dir "node_modules"; then
+if [ -d "node_modules" ]; then
     run_cmd rm -rf node_modules
-    if [ $? -ne 0 ]; then
-        echo "Warning: Failed to remove root node_modules" | tee -a "$LOG_FILE"
-    fi
 fi
 # Frontend
-if check_dir "getnexo-site"; then
-    if check_dir "getnexo-site/node_modules"; then
-        run_cmd rm -rf getnexo-site/node_modules
-        if [ $? -ne 0 ]; then
-            echo "Warning: Failed to remove frontend node_modules" | tee -a "$LOG_FILE"
-        fi
-    fi
-    if [ -d "getnexo-site/dist" ]; then
-        run_cmd rm -rf getnexo-site/dist
-        if [ $? -ne 0 ]; then
-            echo "Warning: Failed to remove frontend dist" | tee -a "$LOG_FILE"
-        fi
-    fi
-    if [ -d "getnexo-site/.astro" ]; then
-        run_cmd rm -rf getnexo-site/.astro
-        if [ $? -ne 0 ]; then
-            echo "Warning: Failed to remove frontend .astro cache" | tee -a "$LOG_FILE"
-        fi
-    fi
-    if [ -f "getnexo-site/package-lock.json" ]; then
-        run_cmd rm -f getnexo-site/package-lock.json
-        if [ $? -ne 0 ]; then
-            echo "Warning: Failed to remove frontend package-lock.json" | tee -a "$LOG_FILE"
-        fi
-    fi
+if [ -d "getnexo-site/node_modules" ]; then
+    run_cmd rm -rf getnexo-site/node_modules
 fi
+if [ -d "getnexo-site/dist" ]; then
+    run_cmd rm -rf getnexo-site/dist
+fi
+if [ -d "getnexo-site/.astro" ]; then
+    run_cmd rm -rf getnexo-site/.astro
+fi
+if [ -f "getnexo-site/package-lock.json" ]; then
+    run_cmd rm -f getnexo-site/package-lock.json
+fi
+
 # Backend
-if check_dir "chat-api"; then
-    if check_dir "chat-api/node_modules"; then
-        run_cmd rm -rf chat-api/node_modules
-        if [ $? -ne 0 ]; then
-            echo "Warning: Failed to remove backend node_modules" | tee -a "$LOG_FILE"
-        fi
-    fi
-    if [ -f "chat-api/package-lock.json" ]; then
-        run_cmd rm -f chat-api/package-lock.json
-        if [ $? -ne 0 ]; then
-            echo "Warning: Failed to remove backend package-lock.json" | tee -a "$LOG_FILE"
-        fi
-    fi
+if [ -d "chat-api/node_modules" ]; then
+    run_cmd rm -rf chat-api/node_modules
+fi
+if [ -f "chat-api/package-lock.json" ]; then
+    run_cmd rm -f chat-api/package-lock.json
 fi
 
 # 3. Reinstall Dependencies (Local)
@@ -149,12 +126,12 @@ if check_dir "getnexo-site"; then
         exit 1
     fi
 
-    print_step "Building Frontend (getnexo-site)..."
-    run_cmd npm run build
-    if [ $? -ne 0 ]; then
-        echo "Frontend build failed! Stopping." | tee -a "$LOG_FILE"
-        exit 1
-    fi
+    # print_step "Building Frontend (getnexo-site)..."
+    # run_cmd npm run build
+    # if [ $? -ne 0 ]; then
+    #     echo "Frontend build failed! Stopping." | tee -a "$LOG_FILE"
+    #     exit 1
+    # fi
     run_cmd cd ..
 else
     echo "Frontend directory getnexo-site not found. Skipping..." | tee -a "$LOG_FILE"
@@ -215,7 +192,6 @@ fi
 print_step "Rebuilding and Starting Docker Containers..."
 # We use --build to force rebuild of images
 # We use --force-recreate to ensure fresh containers
-# We use sudo for docker if needed (usually fine if user in group but let's be safe if it fails)
 if docker info > /dev/null 2>&1; then
     run_cmd docker compose up -d --build --force-recreate
     if [ $? -ne 0 ]; then

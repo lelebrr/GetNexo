@@ -1,17 +1,10 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
-import { Trophy, Medal, Star, User, ArrowUpRight, Crown } from 'lucide-react';
-
-const topCustomers = [
-  { rank: 1, name: "Fabio Henrique", points: "12,450", orders: 28, level: "Diamante" },
-  { rank: 2, name: "Juliana Mendes", points: "8,920", orders: 15, level: "Platina" },
-  { rank: 3, name: "Marcos Paulo", points: "7,100", orders: 22, level: "Platina" },
-  { rank: 4, name: "Gisele B.", points: "5,400", orders: 10, level: "Ouro" },
-];
+import { Trophy, Medal, Star, User, ArrowUpRight, Crown, Download, Filter } from 'lucide-react';
 ---
 
 <AdminLayout title="Ranking de Fidelidade" activeTab="fidelidade">
-  <div class="space-y-10 animate-fade-in py-4">
+  <div class="space-y-10 animate-fade-in py-4" x-data="loyaltyRanking()">
     <div class="flex items-center justify-between">
       <div>
         <h1 class="text-3xl font-black text-white uppercase tracking-tighter flex items-center">
@@ -20,38 +13,60 @@ const topCustomers = [
         </h1>
         <p class="text-sm text-gray-500 font-medium mt-1">Os clientes mais engajados e valiosos da sua operação.</p>
       </div>
+      <div class="flex items-center space-x-3">
+         <select x-model="period" @change="fetchRanking()" class="bg-gray-900 border border-gray-700 rounded-xl p-2 text-white text-sm focus:border-yellow-500 outline-none">
+            <option value="all">Todos os Tempos</option>
+            <option value="month">Este Mês</option>
+            <option value="week">Esta Semana</option>
+         </select>
+         <button @click="exportRanking()" class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-xl text-sm flex items-center space-x-2">
+            <Download className="w-4 h-4" />
+            <span>Exportar</span>
+         </button>
+      </div>
     </div>
 
-    <!-- Top 3 Podium Mockup -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-end pb-10">
+    <!-- Loading -->
+    <div x-show="loading" class="flex items-center justify-center py-10">
+       <div class="w-10 h-10 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
+    <!-- Top 3 Podium -->
+    <div x-show="!loading && customers.length >= 3" class="grid grid-cols-1 md:grid-cols-3 gap-8 items-end pb-10">
+       <!-- 2nd Place -->
        <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] text-center space-y-4 h-[250px] flex flex-col justify-center order-2 md:order-1 border-b-4 border-b-slate-400">
           <Medal className="w-10 h-10 text-slate-400 mx-auto" />
           <div>
-             <p class="text-lg font-bold text-white uppercase tracking-tight">{topCustomers[1].name}</p>
-             <p class="text-xs text-gray-500 font-black uppercase tracking-widest">{topCustomers[1].points} PTS</p>
+             <p class="text-lg font-bold text-white uppercase tracking-tight" x-text="customers[1]?.name"></p>
+             <p class="text-xs text-gray-500 font-black uppercase tracking-widest" x-text="customers[1]?.points.toLocaleString() + ' PTS'"></p>
           </div>
+          <button @click="viewCustomer(customers[1])" class="text-xs text-gray-500 hover:text-white underline">Ver Perfil</button>
        </div>
 
+       <!-- 1st Place -->
        <div class="bg-gradient-to-t from-yellow-600/10 to-indigo-600/10 border border-yellow-500/20 p-10 rounded-[3rem] text-center space-y-6 h-[320px] flex flex-col justify-center order-1 md:order-2 relative border-b-4 border-b-yellow-500">
           <Crown className="w-16 h-16 text-yellow-500 mx-auto animate-bounce" />
           <div>
-             <p class="text-2xl font-black text-white uppercase tracking-tighter">{topCustomers[0].name}</p>
-             <p class="text-sm text-yellow-500 font-black uppercase tracking-[0.3em]">{topCustomers[0].points} PTS</p>
+             <p class="text-2xl font-black text-white uppercase tracking-tighter" x-text="customers[0]?.name"></p>
+             <p class="text-sm text-yellow-500 font-black uppercase tracking-[0.3em]" x-text="customers[0]?.points.toLocaleString() + ' PTS'"></p>
           </div>
+          <button @click="viewCustomer(customers[0])" class="text-xs text-yellow-500 hover:text-white underline">Ver Perfil</button>
           <div class="absolute -top-4 -right-4 bg-yellow-500 text-black text-[10px] font-black px-4 py-1 rounded-full uppercase">#1 Global</div>
        </div>
 
+       <!-- 3rd Place -->
        <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] text-center space-y-4 h-[220px] flex flex-col justify-center order-3 border-b-4 border-b-orange-700">
           <Medal className="w-10 h-10 text-orange-700 mx-auto" />
           <div>
-             <p class="text-lg font-bold text-white uppercase tracking-tight">{topCustomers[2].name}</p>
-             <p class="text-xs text-gray-500 font-black uppercase tracking-widest">{topCustomers[2].points} PTS</p>
+             <p class="text-lg font-bold text-white uppercase tracking-tight" x-text="customers[2]?.name"></p>
+             <p class="text-xs text-gray-500 font-black uppercase tracking-widest" x-text="customers[2]?.points.toLocaleString() + ' PTS'"></p>
           </div>
+          <button @click="viewCustomer(customers[2])" class="text-xs text-gray-500 hover:text-white underline">Ver Perfil</button>
        </div>
     </div>
 
     <!-- Leaderboard Table -->
-    <div class="bg-gray-900/20 border border-gray-800 rounded-3xl overflow-hidden backdrop-blur-md">
+    <div x-show="!loading" class="bg-gray-900/20 border border-gray-800 rounded-3xl overflow-hidden backdrop-blur-md">
       <table class="w-full text-left">
         <thead>
           <tr class="bg-black/40">
@@ -60,38 +75,151 @@ const topCustomers = [
             <th class="px-8 py-5 text-[10px] font-black uppercase text-gray-600 tracking-widest">Nível</th>
             <th class="px-8 py-5 text-[10px] font-black uppercase text-gray-600 tracking-widest">Pedidos</th>
             <th class="px-8 py-5 text-[10px] font-black uppercase text-gray-600 tracking-widest text-right">Acúmulo</th>
+            <th class="px-8 py-5 text-[10px] font-black uppercase text-gray-600 tracking-widest text-center">Ações</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-800/50">
-          {topCustomers.map(c => (
+          <template x-for="(c, idx) in customers" :key="c.id">
              <tr class="hover:bg-white/[0.02] transition-colors group">
                <td class="px-8 py-6 text-center">
-                  <span class="text-sm font-black text-gray-500 font-mono">#{c.rank}</span>
+                  <span class="text-sm font-black text-gray-500 font-mono" x-text="'#' + (idx + 1)"></span>
                </td>
                <td class="px-8 py-6">
                   <div class="flex items-center space-x-4">
-                     <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-gray-500 group-hover:bg-indigo-500 group-hover:text-white transition-all">
-                        <User className="w-5 h-5" />
-                     </div>
-                     <span class="text-sm font-bold text-white uppercase tracking-tight">{c.name}</span>
+                     <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-gray-500 group-hover:bg-indigo-500 group-hover:text-white transition-all" x-text="c.name.charAt(0)"></div>
+                     <span class="text-sm font-bold text-white uppercase tracking-tight" x-text="c.name"></span>
                   </div>
                </td>
                <td class="px-8 py-6">
-                  <span class:list={["text-[8px] font-black uppercase px-2 py-1 rounded", c.level === 'Diamante' ? 'bg-cyan-500/10 text-cyan-400' : 'bg-indigo-500/10 text-indigo-400']}>{c.level}</span>
+                  <span :class="getLevelClass(c.level)" class="text-[8px] font-black uppercase px-2 py-1 rounded" x-text="c.level"></span>
                </td>
-               <td class="px-8 py-6 text-xs text-gray-500 font-bold font-mono">{c.orders}</td>
+               <td class="px-8 py-6 text-xs text-gray-500 font-bold font-mono" x-text="c.orders"></td>
                <td class="px-8 py-6 text-right">
-                  <span class="text-sm font-black text-white font-mono">{c.points}</span>
+                  <span class="text-sm font-black text-white font-mono" x-text="c.points.toLocaleString()"></span>
+               </td>
+               <td class="px-8 py-6 text-center">
+                  <button @click="viewCustomer(c)" class="text-indigo-400 hover:text-indigo-300 text-xs">Ver Perfil</button>
                </td>
              </tr>
-          ))}
+          </template>
         </tbody>
       </table>
+    </div>
+
+    <!-- Customer Modal -->
+    <div x-show="customerModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" @keydown.escape.window="customerModal = false">
+       <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="customerModal = false"></div>
+       <div class="relative w-full max-w-md bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-hidden" @click.stop>
+          <div class="bg-gradient-to-r from-yellow-600/20 to-orange-600/20 p-6 border-b border-gray-800 text-center">
+             <div class="w-16 h-16 bg-yellow-500/10 rounded-full flex items-center justify-center text-yellow-500 text-2xl font-bold mx-auto mb-4" x-text="selectedCustomer?.name?.charAt(0)"></div>
+             <h2 class="text-xl font-bold text-white" x-text="selectedCustomer?.name"></h2>
+             <span :class="getLevelClass(selectedCustomer?.level)" class="text-xs font-bold px-3 py-1 rounded-full" x-text="selectedCustomer?.level"></span>
+          </div>
+          <div class="p-6 space-y-4">
+             <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gray-800/50 p-4 rounded-lg text-center">
+                   <p class="text-xs text-gray-500 uppercase mb-1">Pontos</p>
+                   <p class="text-2xl font-bold text-yellow-400" x-text="selectedCustomer?.points?.toLocaleString()"></p>
+                </div>
+                <div class="bg-gray-800/50 p-4 rounded-lg text-center">
+                   <p class="text-xs text-gray-500 uppercase mb-1">Pedidos</p>
+                   <p class="text-2xl font-bold text-white" x-text="selectedCustomer?.orders"></p>
+                </div>
+             </div>
+             <div class="bg-gray-800/50 p-4 rounded-lg">
+                <p class="text-xs text-gray-500 uppercase mb-1">Contato</p>
+                <p class="text-white" x-text="selectedCustomer?.email || selectedCustomer?.phone || 'Não informado'"></p>
+             </div>
+          </div>
+          <div class="p-6 border-t border-gray-800 flex justify-end space-x-3">
+             <button @click="sendReward(selectedCustomer)" class="px-4 py-2 bg-yellow-600 hover:bg-yellow-500 text-black font-medium rounded-xl transition-all">Enviar Bônus</button>
+             <button @click="customerModal = false" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-xl transition-all">Fechar</button>
+          </div>
+       </div>
     </div>
   </div>
 </AdminLayout>
 
+<script nonce={Astro.locals.nonce} is:inline>
+  function loyaltyRanking() {
+    return {
+      customers: [],
+      loading: true,
+      period: 'all',
+      customerModal: false,
+      selectedCustomer: null,
+
+      async init() {
+        await this.fetchRanking();
+      },
+
+      async fetchRanking() {
+        this.loading = true;
+        try {
+          const res = await fetch(`/api/loyalty/ranking?period=${this.period}`);
+          if (res.ok) {
+            const data = await res.json();
+            this.customers = data.customers || [];
+          } else {
+            this.customers = this.getMockCustomers();
+          }
+        } catch(e) {
+          console.error(e);
+          this.customers = this.getMockCustomers();
+        } finally {
+          this.loading = false;
+        }
+      },
+
+      getMockCustomers() {
+        return [
+          { id: 1, name: 'Fabio Henrique', points: 12450, orders: 28, level: 'Diamante', email: 'fabio@email.com' },
+          { id: 2, name: 'Juliana Mendes', points: 8920, orders: 15, level: 'Platina', phone: '+55 11 99999-1234' },
+          { id: 3, name: 'Marcos Paulo', points: 7100, orders: 22, level: 'Platina', email: 'marcos@email.com' },
+          { id: 4, name: 'Gisele B.', points: 5400, orders: 10, level: 'Ouro', phone: '+55 21 88888-5678' },
+          { id: 5, name: 'Ricardo Silva', points: 4200, orders: 8, level: 'Ouro', email: 'ricardo@email.com' },
+          { id: 6, name: 'Ana Carolina', points: 3800, orders: 12, level: 'Prata', email: 'ana@email.com' },
+        ];
+      },
+
+      getLevelClass(level) {
+        const classes = {
+          'Diamante': 'bg-cyan-500/10 text-cyan-400',
+          'Platina': 'bg-indigo-500/10 text-indigo-400',
+          'Ouro': 'bg-yellow-500/10 text-yellow-400',
+          'Prata': 'bg-gray-500/10 text-gray-400'
+        };
+        return classes[level] || 'bg-gray-500/10 text-gray-400';
+      },
+
+      viewCustomer(customer) {
+        this.selectedCustomer = customer;
+        this.customerModal = true;
+      },
+
+      sendReward(customer) {
+        alert(`Bônus enviado para ${customer.name}!`);
+        this.customerModal = false;
+      },
+
+      exportRanking() {
+        const csv = ['Rank,Nome,Nível,Pedidos,Pontos'].concat(
+          this.customers.map((c, i) => `${i+1},"${c.name}",${c.level},${c.orders},${c.points}`)
+        ).join('\n');
+        
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `ranking-fidelidade-${new Date().toISOString().slice(0,10)}.csv`;
+        link.click();
+      }
+    };
+  }
+</script>
+
 <style>
+  [x-cloak] { display: none !important; }
   .animate-fade-in { animation: fadeIn 0.6s ease-out; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 </style>
+</AdminLayout>

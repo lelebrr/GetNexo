@@ -24,20 +24,94 @@ router.get('/dashboard-stats', (req, res) => {
             SELECT COUNT(*) as count FROM contacts WHERE updated_at >= datetime('now', '-7 days')
         `).get();
 
-        // Taxa de Conversão: (Vendas / Total Sessões ou Interações) * 100
-        // Como não temos sessões, usaremos Total Vendas / Total Clientes Ativos como proxy
+        // Conversas Ativas (Últimas 24h)
+        // Usando timestamp (se for unix seconds) ou created_at se houver
+        // Assumindo timestamp em seconds como padrão do WA. Se for ms, ajustar.
+        const oneDayAgo = Math.floor(Date.now() / 1000) - 86400;
+        const activeChats = db.prepare(`
+            SELECT COUNT(DISTINCT contact_id) as count 
+            FROM messages 
+            WHERE timestamp >= ?
+        `).get(oneDayAgo);
+
+        // Taxa de Conversão
         const conversionRate = activeCustomers.count > 0
             ? ((salesCount24h.count / activeCustomers.count) * 100).toFixed(2)
             : 0;
+
+        // Chart Data (Hourly for last 24h)
+        // 0-23h based on current time is complex in SQL alone for filling gaps.
+        // We will fetch grouped data and fill gaps in JS.
+        const trafficQuery = `
+            SELECT strftime('%H', created_at) as hour, COUNT(*) as count
+            FROM analytics_logs
+            WHERE created_at >= datetime('now', '-1 day')
+            GROUP BY hour
+        `;
+        const salesQuery = `
+            SELECT strftime('%H', created_at) as hour, SUM(amount) as total
+            FROM transactions
+            WHERE created_at >= datetime('now', '-1 day') AND status = 'paid'
+            GROUP BY hour
+        `;
+
+        const trafficData = db.prepare(trafficQuery).all();
+        const salesData = db.prepare(salesQuery).all();
+
+        // Merge and fill 24h
+        const chartData = [];
+        const currentHour = new Date().getHours();
+        for (let i = 23; i >= 0; i--) {
+            // Calculate hour label (e.g., if now is 14:00, i=0 -> 14:00, i=1 -> 13:00...)
+            // Actually, let's just do 00-23 fixed or rolling 24h?
+            // "24h Overview" usually implies rolling.
+            // But simplified: 00 to 23 of "today" might be easier if matching UI expectations.
+            // The UI shows 00:00 - 23:59. So it's a daily view.
+
+            // Let's stick to 0-23h of the day logic for simplicity matching UI labels
+            const hourStr = i.toString().padStart(2, '0');
+            const tf = trafficData.find(d => d.hour === hourStr);
+            const sl = salesData.find(d => d.hour === hourStr);
+
+            chartData.unshift({
+                hour: hourStr,
+                visits: tf ? tf.count : 0,
+                sales: sl ? sl.total : 0,
+                height: tf ? Math.min(tf.count * 10, 100) : 0 // Simulated height relative to max? Handled in frontend usually
+            });
+        }
+
+        // Recent Activity (Union of Sales and Leads)
+        const recentActivity = db.prepare(`
+            SELECT 'sale' as type, amount as value, created_at, 'Venda Aprovada' as title
+            FROM transactions 
+            WHERE status='paid' 
+            ORDER BY created_at DESC LIMIT 5
+        `).all();
+
+        // Add some leads if needed or mix them
+        const recentLeads = db.prepare(`
+             SELECT 'lead' as type, 0 as value, created_at, 'Novo Lead' as title
+             FROM contacts
+             ORDER BY created_at DESC LIMIT 5
+        `).all();
+
+        // Combine and sort
+        const activity = [...recentActivity, ...recentLeads]
+            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+            .slice(0, 5);
 
         res.json({
             revenue24h: revenue24h.total || 0,
             salesCount24h: salesCount24h.count || 0,
             activeCustomers: activeCustomers.count || 0,
+            activeChats: activeChats ? activeChats.count : 0,
             conversionRate: parseFloat(conversionRate),
-            growth: 15.2 // TODO: Calcular comparando com dia anterior real
+            chartData,
+            recentActivity: activity
         });
     } catch (error) {
+        console.error('Stats error:', error);
         res.status(500).json({ error: 'Erro ao carregar estatísticas' });
     }
 });
@@ -218,6 +292,102 @@ router.get('/prediction', (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Erro na predição' });
+    }
+});
+
+// Listar Conversas Ativas
+router.get('/active-chats', (req, res) => {
+    try {
+        // Obter conversas com mensagens nas últimas 24h
+        // Assumindo timestamp em seconds
+        const oneDayAgo = Math.floor(Date.now() / 1000) - 86400;
+
+        const query = `
+            SELECT 
+                c.id, c.name, c.profile_pic_url, c.funnel_stage, c.source,
+                m.body as last_message, 
+                m.timestamp as last_message_time,
+                m.from_me
+            FROM contacts c
+            JOIN messages m ON c.id = m.contact_id
+            WHERE m.timestamp = (
+                SELECT MAX(timestamp) 
+                FROM messages m2 
+                WHERE m2.contact_id = c.id
+            )
+            AND m.timestamp >= ?
+            ORDER BY m.timestamp DESC
+        `;
+
+        const chats = db.prepare(query).all(oneDayAgo);
+
+        // Formatar dados para o frontend
+        const formattedChats = chats.map(chat => {
+            const now = Math.floor(Date.now() / 1000);
+            const diff = now - chat.last_message_time;
+
+            // Format wait time MM:SS
+            const hours = Math.floor(diff / 3600);
+            const minutes = Math.floor((diff % 3600) / 60);
+            const waitTime = `${hours > 0 ? hours + 'h ' : ''}${minutes}m`;
+
+            return {
+                id: chat.id,
+                name: chat.name || 'Desconhecido',
+                avatar: chat.profile_pic_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(chat.name || 'U')}&background=random`,
+                last_message: chat.last_message,
+                source: chat.source || (chat.id.length > 15 ? 'WhatsApp' : 'Web'), // Heuristic
+                wait_time: waitTime,
+                status: chat.from_me ? 'waiting_client' : 'waiting_agent', // Se última msg foi minha, espero cliente. Se foi dele, espera agente.
+                agent: null // TODO: Implementar assignment
+            };
+        });
+
+        res.json({ chats: formattedChats });
+    } catch (error) {
+        console.error('Active chats error:', error);
+        res.status(500).json({ error: 'Erro ao carregar conversas ativas' });
+    }
+});
+
+// Top Produtos
+router.get('/top-products', (req, res) => {
+    try {
+        const { period = 'week' } = req.query; // Default to week to show more data potentially
+        let dateFilter;
+
+        if (period === 'month') dateFilter = '-30 days';
+        else if (period === 'week') dateFilter = '-7 days';
+        else dateFilter = '-1 day'; // today
+
+        const query = `
+            SELECT 
+                p.id, p.name, p.category, p.image_url, p.stock,
+                COUNT(t.id) as sales_count,
+                SUM(t.amount) as revenue
+            FROM transactions t
+            JOIN products p ON t.product_id = p.id
+            WHERE t.created_at >= datetime('now', ?)
+            AND t.status = 'paid'
+            GROUP BY p.id
+            ORDER BY sales_count DESC
+            LIMIT 10
+        `;
+
+        try {
+            // Validate if products table and transactions have correct relation
+            // (Might fail if migration didn't run effectively in same process cycle, but usually ok)
+            const products = db.prepare(query).all(dateFilter);
+            res.json({ products });
+        } catch (dbErr) {
+            console.error('DB Query Error:', dbErr);
+            // Fallback if transaction product_id not populated (legacy data)
+            // We can return empty list
+            res.json({ products: [] });
+        }
+    } catch (error) {
+        console.error('Top products error:', error);
+        res.status(500).json({ error: 'Erro ao carregar top produtos' });
     }
 });
 

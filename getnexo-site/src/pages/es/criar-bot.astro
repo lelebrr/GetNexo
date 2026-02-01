@@ -1,0 +1,636 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout title="Crear Plugin GetNexo – Instale en cualquier sitio">
+  <!-- intl-tel-input CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+
+  <div class="page-wrapper">
+    <!-- AUTH GATE SECTION -->
+    <div id="auth-gate" class="auth-gate hidden">
+      <div class="auth-card glass-panel reveal">
+        <div class="auth-header">
+           <div class="auth-logo">N</div>
+           <h1>Comienza tu Viaje</h1>
+           <p>Necesitas estar conectado para configurar tu plugin y acceder al soporte prioritario.</p>
+        </div>
+
+        <div id="auth-choice" class="auth-choice">
+          <button class="btn-auth-primary" onclick="showAuthMode('register')">Crear Cuenta Gratis</button>
+          <button class="btn-auth-secondary" onclick="showAuthMode('login')">Ya tengo cuenta (Iniciar Sesión)</button>
+          <div class="auth-divider"><span>o continúa con</span></div>
+          <div class="social-auth">
+            <button class="social-btn" onclick="loginWithGoogle()">Google</button>
+            <button class="social-btn" onclick="loginWithGitHub()">GitHub</button>
+          </div>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <form id="login-form" class="auth-form hidden">
+          <div class="field">
+            <label>Correo Electrónico</label>
+            <input type="email" name="email" required placeholder="tu@email.com" />
+          </div>
+          <div class="field">
+            <label>Contraseña</label>
+            <input type="password" name="password" required placeholder="••••••••" />
+          </div>
+          <button type="submit" class="btn-next">Iniciar Sesión →</button>
+          <p class="auth-switch">¿Aún no tienes cuenta? <a href="#" onclick="showAuthMode('register')">Regístrate</a></p>
+        </form>
+
+        <!-- REGISTER FORM -->
+        <form id="register-form" class="auth-form hidden">
+          <div class="form-grid">
+            <div class="field">
+              <label>Nombre Completo *</label>
+              <input type="text" name="name" id="reg-name" required placeholder="Juan Pérez" />
+            </div>
+            <div class="field">
+              <label>Correo Electrónico Empresarial/Real *</label>
+              <input type="email" name="email" id="reg-email" required placeholder="juan@empresa.com" />
+            </div>
+            <div class="field">
+              <label>Crea una Contraseña *</label>
+              <input type="password" name="password" id="reg-password" required placeholder="Mínimo 8 caracteres" minlength="8" />
+            </div>
+            <div class="field">
+               <label>Tipo de Persona *</label>
+               <select name="person_type" id="reg-person-type" required onchange="togglePersonFields()">
+                 <option value="">Selecciona...</option>
+                 <option value="pf">Persona Física</option>
+                 <option value="pj">Persona Jurídica</option>
+               </select>
+            </div>
+            <div class="field" id="cpf-field" style="display: none;">
+               <label>CPF *</label>
+               <input type="text" name="cpf" id="reg-cpf" placeholder="000.000.000-00" />
+            </div>
+            <div class="field" id="cnpj-field" style="display: none;">
+               <label>CNPJ *</label>
+               <input type="text" name="cnpj" id="reg-cnpj" placeholder="00.000.000/0000-00" />
+            </div>
+            <div class="field">
+              <label>Nombre de la Empresa (Opcional)</label>
+              <input type="text" name="company" placeholder="Mi Empresa Ltda" />
+            </div>
+            <div class="field">
+              <label>Tu Sitio Principal *</label>
+              <input type="url" name="website" id="reg-site" required placeholder="https://tusitio.com" />
+            </div>
+            <div class="field">
+              <label>WhatsApp Empresarial *</label>
+              <input type="tel" name="whatsapp" id="reg-whatsapp" required />
+            </div>
+            <div class="field">
+              <label>Segmento de Actuación *</label>
+              <select name="segment" required>
+                <option value="">Selecciona...</option>
+                <option value="ecommerce">E-commerce / Retail</option>
+                <option value="servicos">Servicios / Consultoría</option>
+                <option value="saude">Salud / Bienestar</option>
+                <option value="infoproducts">Infoproductos / Educación</option>
+                <option value="outros">Otros</option>
+              </select>
+            </div>
+          </div>
+          <div class="auth-checks">
+            <label class="checkbox-container">
+              <input type="checkbox" required checked />
+              <span class="checkmark"></span>
+              Acepto los <a href="/terminos">Términos de Uso</a> y <a href="/privacidad">Privacidad</a>
+            </label>
+          </div>
+          <div id="reg-error" class="error-msg"></div>
+          <button type="submit" class="btn-next" id="btn-submit-register">Crear Mi Cuenta →</button>
+          <p class="auth-switch">¿Ya tienes cuenta? <a href="#" onclick="showAuthMode('login')">Iniciar Sesión</a></p>
+        </form>
+
+        <!-- OTP VERIFICATION -->
+        <div id="otp-section" class="auth-form hidden">
+           <h2>Validar WhatsApp</h2>
+           <p>Enviamos un código de 6 dígitos a tu WhatsApp. Ingresa abajo para activar tu cuenta.</p>
+           <div class="otp-input-container">
+             <input type="text" id="otp-code" maxlength="6" placeholder="000000" />
+           </div>
+           <div id="otp-error" class="error-msg"></div>
+           <button class="btn-next" onclick="verifyOTP()">Validar Código ✅</button>
+           <p class="resend-text">¿No recibiste? <a href="#" onclick="resendOTP()">Reenviar en <span id="otp-timer">30</span>s</a></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- WIZARD SECTION (Only visible if logged in) -->
+    <div id="wizard-section" class="wizard-container hidden">
+      <header class="wizard-header">
+        <h1>Crear Plugin</h1>
+        <p>Panel de Control: <span id="user-display-name">Cargando...</span></p>
+        <div class="all-required-notice">Configuración Finalizada con Éxito</div>
+      </header>
+
+      <!-- Step Indicators -->
+      <div class="step-indicators">
+        <div class="step-item active" data-step="1">
+          <span class="step-number">1</span>
+          <span class="step-label">Personalización</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-item" data-step="2">
+          <span class="step-number">2</span>
+          <span class="step-label">Visual</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-item" data-step="3">
+          <span class="step-number">3</span>
+          <span class="step-label">Código</span>
+        </div>
+      </div>
+
+      <!-- Wizard Step 1: Config (Simplified since we have user data) -->
+      <div class="step-content" id="step1">
+        <h2>🎨 Configura tu Bot</h2>
+        <form id="wizard-form" class="wizard-form">
+           <div class="form-grid">
+             <div class="field">
+               <label>Nombre del Asistente *</label>
+               <input type="text" id="bot-name" placeholder="Ej: Nexus Ventas" required />
+             </div>
+             <div class="field">
+               <label>Sitio para el Widget *</label>
+               <input type="url" id="bot-site" placeholder="https://tusitio.com" required />
+             </div>
+             <div class="field">
+                <label>Tono de Voz</label>
+                <select id="bot-tone">
+                  <option value="formal">Formal y Profesional</option>
+                  <option value="casual" selected>Casual y Amistoso</option>
+                  <option value="urgencia">Enfocado en Urgencia/Ventas</option>
+                </select>
+             </div>
+             <div class="field">
+                <label>Emoji Destacado</label>
+                <input type="text" id="bot-emoji" value="🤖" placeholder="Elige un emoji" />
+             </div>
+           </div>
+           <button type="submit" class="btn-next">Generar Vista Previa →</button>
+        </form>
+      </div>
+
+      <!-- Wizard Step 2: Preview -->
+      <div class="step-content hidden" id="step2">
+         <h2>✨ Vista Previa del Estilo</h2>
+         <div class="preview-area glass-panel">
+            <div class="mock-widget">
+               <div class="mock-header">
+                 <span id="preview-emoji">🤖</span>
+                 <strong id="preview-name">Nexus Bot</strong>
+               </div>
+               <div class="mock-body">
+                 <div class="mock-msg">¡Hola! ¿Cómo puedo ayudarte hoy?</div>
+               </div>
+            </div>
+            <div class="theme-choices">
+               <label>Tema de Color:</label>
+               <div class="theme-dots">
+                 <div class="dot active" style="background:#00d4ff;" onclick="setTheme('neon')"></div>
+                 <div class="dot" style="background:#00ff9d;" onclick="setTheme('matrix')"></div>
+                 <div class="dot" style="background:#f43f5e;" onclick="setTheme('sunset')"></div>
+               </div>
+            </div>
+         </div>
+         <div class="step-actions">
+           <button class="btn-back" onclick="goToStep(1)">← Editar</button>
+           <button class="btn-next" onclick="generateFinalCode()" id="btn-final-step">Obtener Código del Plugin →</button>
+         </div>
+      </div>
+
+      <!-- Wizard Step 3: Result -->
+      <div class="step-content hidden" id="step3">
+        <h2>🚀 ¡Todo Listo!</h2>
+        <p>Instale o código abaixo na tag <code>&lt;head&gt;</code> ou antes do fechamento de <code>&lt;/body&gt;</code> do seu site.</p>
+        <div class="code-box">
+          <code id="widget-code">Cargando código...</code>
+          <button onclick="copiarCodigo()" class="btn-copy">Copiar</button>
+        </div>
+        <div class="wizard-footer">
+          <a href="/dashboard" class="btn-next">Acceder a Mi Panel →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Removido intl-tel-input que estava causando problemas -->
+  <script nonce={Astro.locals.nonce} is:inline>
+    // State Management
+    let currentUser = null;
+    let registrationData = {};
+    let selectedTheme = 'neon';
+
+    const API_URL = '';
+
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/auth/me');
+        const data = await res.json();
+        if (data.authenticated) {
+          currentUser = data.user;
+          showWizard();
+        } else {
+          showAuthGate();
+        }
+      } catch (e) {
+        showAuthGate();
+      }
+    }
+
+    function showAuthGate() {
+      document.getElementById('auth-gate').classList.remove('hidden');
+      document.getElementById('wizard-section').classList.add('hidden');
+      // initTelInput(); // Eliminado - causando errores
+      initMasks();
+    }
+
+    function showWizard() {
+      document.getElementById('auth-gate').classList.add('hidden');
+      document.getElementById('wizard-section').classList.remove('hidden');
+      document.getElementById('user-display-name').textContent = currentUser.name || currentUser.email;
+      
+      // Auto-pre-fill bot site if available from registration
+      if (registrationData.website) {
+        document.getElementById('bot-site').value = registrationData.website;
+      }
+    }
+
+    function showAuthMode(mode) {
+      document.getElementById('auth-choice').classList.add('hidden');
+      document.querySelectorAll('.auth-form').forEach(f => f.classList.add('hidden'));
+      
+      if (mode === 'login') {
+        document.getElementById('login-form').classList.remove('hidden');
+      } else if (mode === 'register') {
+        document.getElementById('register-form').classList.remove('hidden');
+      }
+    }
+
+    // Auth Actions
+    function loginWithGoogle() { window.location.href = '/api/auth/google'; }
+    function loginWithGitHub() { window.location.href = '/api/auth/github'; }
+
+    // Forms
+    document.getElementById('login-form').onsubmit = async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const data = Object.fromEntries(fd.entries());
+      
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(data)
+        });
+        const resData = await res.json();
+        if (resData.user) {
+          currentUser = resData.user;
+          // Store token in cookie (handled by API mostly, but just in case)
+          showWizard();
+        } else {
+          alert('Error de inicio de sesión: ' + (resData.error || 'Credenciales inválidas'));
+        }
+      } catch (e) { alert('Error al conectar al servidor'); }
+    }
+
+    document.getElementById('register-form').onsubmit = async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('btn-submit-register');
+      btn.disabled = true;
+      btn.textContent = 'Enviando...';
+
+      const fd = new FormData(e.target);
+      const data = Object.fromEntries(fd.entries());
+      
+      // Validate WhatsApp (simplificada)
+      const whatsapp = data.whatsapp.replace(/\D/g, '');
+      if (whatsapp.length < 11 || whatsapp.length > 12) {
+        document.getElementById('reg-error').textContent = '❌ WhatsApp inválido. Digite ddd + número.';
+        btn.disabled = false;
+        btn.textContent = 'Criar Minha Conta →';
+        return;
+      }
+      data.whatsapp = whatsapp;
+
+      registrationData = data;
+
+      try {
+        const res = await fetch(`${API_URL}/api/trial/register`, { // Reusing trial logic for OTP
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(data)
+        });
+        const resData = await res.json();
+        if (resData.ok) {
+          showOTP();
+        } else {
+          document.getElementById('reg-error').textContent = '❌ ' + (resData.error || 'Error en el registro');
+        }
+      } catch (e) { alert('Error al registrar'); }
+      finally {
+        btn.disabled = false;
+        btn.textContent = 'Criar Minha Conta →';
+      }
+    }
+
+    function showOTP() {
+      document.getElementById('register-form').classList.add('hidden');
+      document.getElementById('otp-section').classList.remove('hidden');
+      startOTPTimer();
+    }
+
+    async function verifyOTP() {
+      const code = document.getElementById('otp-code').value;
+      const errorEl = document.getElementById('otp-error');
+      errorEl.textContent = '';
+
+      try {
+        const res = await fetch(`${API_URL}/api/trial/verify`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ whatsapp: registrationData.whatsapp, code })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          // Success! Now create the real account in our system
+          completeFullRegistration();
+        } else {
+          errorEl.textContent = '❌ Código incorrecto o expirado.';
+        }
+      } catch (e) { errorEl.textContent = 'Error de red'; }
+    }
+
+    async function completeFullRegistration() {
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(registrationData)
+        });
+        const data = await res.json();
+        if (data.success) {
+          currentUser = data.user;
+          showWizard();
+        } else {
+          alert('Error al finalizar cuenta: ' + data.error);
+        }
+      } catch (e) { alert('Fallo crítico en el sistema de registro.'); }
+    }
+
+    // Wizard Logic
+    function goToStep(step) {
+      document.querySelectorAll('.step-item').forEach((el, i) => {
+        if (i + 1 <= step) el.classList.add('active');
+        else el.classList.remove('active');
+      });
+      document.querySelectorAll('.step-content').forEach((el, i) => {
+        if (i + 1 === step) el.classList.remove('hidden');
+        else el.classList.add('hidden');
+      });
+    }
+
+    document.getElementById('wizard-form').onsubmit = (e) => {
+      e.preventDefault();
+      const name = document.getElementById('bot-name').value;
+      const emoji = document.getElementById('bot-emoji').value;
+      
+      document.getElementById('preview-name').textContent = name;
+      document.getElementById('preview-emoji').textContent = emoji;
+      
+      goToStep(2);
+    }
+
+    function generateFinalCode() {
+      const botId = 'bot_' + Math.random().toString(36).substr(2, 9); // In production this comes from user record/project
+      const scriptUrl = window.location.hostname === 'localhost'
+        ? 'http://localhost:8080/widget.js'
+        : '/widget.js';
+      
+      const code = `<script nonce={Astro.locals.nonce} src="${scriptUrl}" data-bot="${botId}" data-theme="${selectedTheme}"><\/script>`;
+      document.getElementById('widget-code').textContent = code;
+      goToStep(3);
+    }
+
+    // Helpers
+    function updateCountryCode() {
+      const countrySelect = document.getElementById('reg-country');
+      const display = document.getElementById('country-code-display');
+      if (countrySelect && display) {
+        display.textContent = countrySelect.value;
+      }
+    }
+
+    function togglePersonFields() {
+      const personType = document.getElementById('reg-person-type').value;
+      const cpfField = document.getElementById('cpf-field');
+      const cnpjField = document.getElementById('cnpj-field');
+      const cpfInput = document.getElementById('reg-cpf');
+      const cnpjInput = document.getElementById('reg-cnpj');
+
+      if (personType === 'pf') {
+        cpfField.style.display = 'block';
+        cnpjField.style.display = 'none';
+        cpfInput.required = true;
+        cnpjInput.required = false;
+      } else if (personType === 'pj') {
+        cpfField.style.display = 'none';
+        cnpjField.style.display = 'block';
+        cpfInput.required = false;
+        cnpjInput.required = true;
+      } else {
+        cpfField.style.display = 'none';
+        cnpjField.style.display = 'none';
+        cpfInput.required = false;
+        cnpjInput.required = false;
+      }
+    }
+
+    function initMasks() {
+      // CPF mask
+      const cpfInput = document.getElementById('reg-cpf');
+      if (cpfInput) {
+        cpfInput.addEventListener('input', (e) => {
+           let v = e.target.value.replace(/\D/g, "");
+           if (v.length > 11) v = v.slice(0, 11);
+           v = v.replace(/(\d{3})(\d)/, "$1.$2");
+           v = v.replace(/(\d{3})(\d)/, "$1.$2");
+           v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+           e.target.value = v;
+        });
+      }
+
+      // CNPJ mask
+      const cnpjInput = document.getElementById('reg-cnpj');
+      if (cnpjInput) {
+        cnpjInput.addEventListener('input', (e) => {
+           let v = e.target.value.replace(/\D/g, "");
+           if (v.length > 14) v = v.slice(0, 14);
+           v = v.replace(/^(\d{2})(\d)/, "$1.$2");
+           v = v.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+           v = v.replace(/\.(\d{3})(\d)/, ".$1/$2");
+           v = v.replace(/(\d{4})(\d)/, "$1-$2");
+           e.target.value = v;
+        });
+      }
+    }
+
+    function startOTPTimer() {
+      let timeLeft = 30;
+      const timerEl = document.getElementById('otp-timer');
+      const interval = setInterval(() => {
+        timeLeft--;
+        timerEl.textContent = timeLeft;
+        if (timeLeft <= 0) clearInterval(interval);
+      }, 1000);
+    }
+
+    function setTheme(theme) {
+      selectedTheme = theme;
+      document.querySelectorAll('.dot').forEach(d => d.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    window.copiarCodigo = function() {
+      const code = document.getElementById('widget-code').textContent;
+      navigator.clipboard.writeText(code).then(() => alert('✅ Código copiado!'));
+    }
+
+    // Start
+    checkAuth();
+  </script>
+</Layout>
+
+<style>
+  .page-wrapper {
+    min-height: 90vh;
+    padding: 100px 5% 50px;
+  }
+
+  /* Auth Gate Styles */
+  .auth-gate {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .auth-card {
+    max-width: 900px;
+    width: 100%;
+    padding: 3rem;
+    border-radius: 30px;
+  }
+  .auth-header { text-align: center; margin-bottom: 3rem; }
+  .auth-logo { 
+    width: 60px; height: 60px; 
+    background: linear-gradient(135deg, #00d4ff, #00ff9d); 
+    color: black; display: flex; align-items: center; justify-content: center; 
+    font-weight: 900; font-size: 2rem; border-radius: 15px; margin: 0 auto 1.5rem;
+    box-shadow: 0 0 30px rgba(0, 212, 255, 0.4);
+  }
+  .auth-header h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+  .auth-header p { color: #94a3b8; font-size: 1.1rem; }
+
+  .auth-choice { display: flex; flex-direction: column; gap: 1rem; max-width: 400px; margin: 0 auto; }
+  .btn-auth-primary { background: white; color: black; padding: 1.2rem; border-radius: 15px; font-weight: 800; border: none; cursor: pointer; transition: 0.3s; font-size: 1.1rem; }
+  .btn-auth-secondary { background: rgba(255,255,255,0.05); color: white; padding: 1.2rem; border-radius: 15px; font-weight: 700; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.3s; }
+  .btn-auth-primary:hover { background: #00ff9d; transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0, 255, 157, 0.3); }
+  .btn-auth-secondary:hover { background: rgba(255,255,255,0.1); border-color: #00d4ff; }
+
+  .auth-divider { position: relative; text-align: center; margin: 2rem 0; }
+  .auth-divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(255,255,255,0.1); }
+  .auth-divider span { background: #030712; padding: 0 1rem; color: #475569; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; position: relative; }
+
+  .social-auth { display: flex; gap: 1rem; }
+  .social-btn { flex: 1; background: #0f172a; border: 1px solid #334155; color: white; padding: 0.8rem; border-radius: 10px; cursor: pointer; transition: 0.2s; }
+  .social-btn:hover { border-color: #00d4ff; background: #1e293b; }
+
+  .auth-form { animation: fadeIn 0.4s ease-out; }
+  .auth-switch { text-align: center; margin-top: 2rem; color: #94a3b8; font-size: 0.9rem; }
+  .auth-switch a { color: #00ff9d; font-weight: 700; text-decoration: none; }
+
+  .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; text-align: left; }
+  @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } }
+
+  .field { display: flex; flex-direction: column; gap: 0.5rem; }
+  .field label { font-size: 0.85rem; font-weight: 600; color: #e2e8f0; }
+  .field input, .field select { 
+    background: #020617; border: 1px solid #1e293b; color: white; 
+    padding: 0.8rem 1rem; border-radius: 10px; font-size: 0.95rem; outline: none; transition: 0.3s;
+  }
+  .field input:focus, .field select:focus { border-color: #00d4ff; box-shadow: 0 0 15px rgba(0, 212, 255, 0.15); }
+
+  .checkbox-container { display: flex; align-items: center; gap: 0.8rem; cursor: pointer; user-select: none; margin: 1.5rem 0; font-size: 0.85rem; color: #94a3b8; }
+  .checkbox-container input { display: none; }
+  .checkmark { width: 22px; height: 22px; background: #020617; border: 2px solid #1e293b; border-radius: 6px; position: relative; }
+  .checkbox-container input:checked ~ .checkmark { background: #00ff9d; border-color: #00ff9d; }
+  .checkmark:after { content: "✓"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: black; display: none; font-weight: 900; }
+  .checkbox-container input:checked ~ .checkmark:after { display: block; }
+
+  .error-msg { color: #f43f5e; font-size: 0.85rem; margin: 1rem 0; font-weight: 600; }
+
+  /* Wizard Styles */
+  .wizard-container { max-width: 1000px; margin: 0 auto; animation: fadeInUp 0.5s ease-out; }
+  .wizard-header { text-align: center; margin-bottom: 3rem; }
+  .wizard-header h1 { font-size: 3rem; font-weight: 800; color: #00ff9d; margin: 0; }
+  .wizard-header p { color: #94a3b8; margin-top: 0.5rem; }
+
+  .step-indicators { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 3rem; }
+  .step-item { opacity: 0.3; transition: 0.3s; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+  .step-item.active { opacity: 1; }
+  .step-number { width: 40px; height: 40px; border-radius: 50%; background: #1e293b; display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; }
+  .step-item.active .step-number { background: #00d4ff; color: black; box-shadow: 0 0 20px rgba(0, 212, 255, 0.4); }
+  .step-label { font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; }
+  .step-line { height: 2px; width: 60px; background: #1e293b; margin-top: -25px; }
+
+  .step-content { background: rgba(15, 23, 42, 0.6); padding: 4rem; border-radius: 30px; border: 1px solid rgba(255,255,255,0.05); }
+  .step-content.hidden { display: none; }
+  .step-content h2 { margin-bottom: 2.5rem; font-size: 2rem; font-weight: 800; }
+
+  .btn-next { 
+    width: 100%; border: none; padding: 1.2rem; border-radius: 15px; font-weight: 800; font-size: 1.1rem;
+    background: linear-gradient(90deg, #00d4ff, #00ff9d); color: black; cursor: pointer; transition: 0.3s;
+    margin-top: 1.5rem;
+  }
+  .btn-next:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0, 255, 157, 0.3); }
+
+  .preview-area { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+  @media (max-width: 768px) { .preview-area { grid-template-columns: 1fr; } }
+  
+  .mock-widget { 
+    background: #0f172a; border-radius: 15px; border: 1px solid #1e293b; overflow: hidden;
+    height: 300px; display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  }
+  .mock-header { background: #1e293b; padding: 1rem; display: flex; align-items: center; gap: 0.8rem; }
+  .mock-body { flex: 1; padding: 1.5rem; display: flex; flex-direction: column; justify-content: flex-end; }
+  .mock-msg { background: #334155; color: white; padding: 0.8rem; border-radius: 12px 12px 12px 0; align-self: flex-start; font-size: 0.85rem; }
+
+  .theme-dots { display: flex; gap: 0.8rem; margin-top: 0.5rem; }
+  .dot { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
+  .dot.active { border-color: white; transform: scale(1.1); }
+
+  .code-box { 
+    background: #020617; padding: 1.5rem; border-radius: 12px; margin: 2rem 0; 
+    border: 1px solid #00ff9d44; position: relative;
+  }
+  .code-box code { color: #00ff9d; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; word-break: break-all; }
+  .btn-copy { position: absolute; right: 10px; top: 10px; background: #334155; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.7rem; font-weight: 700; }
+
+  .otp-input-container { margin: 2rem 0; }
+  #otp-code { 
+    background: transparent; border: none; border-bottom: 3px solid #00d4ff; 
+    color: #00ff9d; font-size: 3.5rem; text-align: center; letter-spacing: 1.5rem; 
+    width: 300px; outline: none; font-family: 'Inter', sans-serif; font-weight: 800;
+  }
+  .resend-text { margin-top: 1.5rem; color: #475569; font-size: 0.9rem; }
+  .resend-text a { color: #94a3b8; font-weight: 700; text-decoration: none; }
+
+  .hidden { display: none !important; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+</style>

@@ -25,11 +25,16 @@
     --void-black: #0a0a0a;
     --glass-bg: rgba(255, 255, 255, 0.05);
     --glass-border: rgba(255, 255, 255, 0.15);
+    
+    --shadow-primary: rgba(0, 212, 255, 0.2);
+    --shadow-secondary: rgba(0, 255, 157, 0.1);
 
     --gradient-primary: linear-gradient(135deg, var(--neon-blue), var(--neon-green));
     --gradient-dark: linear-gradient(135deg, var(--void-black), var(--dark));
     --shadow-glow: 0 0 30px rgba(0, 212, 255, 0.3);
+    
     --transition-smooth: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    --transition-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
     /* Dynamic Category Fallbacks (W3C Safety) */
     --indigo-500-rgb: 99, 102, 241;
@@ -174,11 +179,19 @@ button {
 .glass-panel {
     background: var(--glass-bg);
     backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
     border-radius: 24px;
     position: relative;
     overflow: hidden;
     transition: var(--transition-smooth);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.glass-panel:hover {
+    border-color: var(--neon-blue);
+    box-shadow: 0 10px 40px rgba(0, 212, 255, 0.15);
+    transform: translateY(-5px);
 }
 
 .btn-primary-glow {

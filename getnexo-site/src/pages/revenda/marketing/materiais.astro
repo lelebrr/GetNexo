@@ -31,7 +31,7 @@ import ResellerLayout from '../../../layouts/ResellerLayout.astro';
     .btn-download:hover { background: #334155; }
 </style>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
     async function fetchAssets() {
         try {
             const res = await fetch('/api/revenda/marketing');

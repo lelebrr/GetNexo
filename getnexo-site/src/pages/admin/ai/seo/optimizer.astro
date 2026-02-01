@@ -75,7 +75,7 @@ const title = "Otimizador de Conteúdo IA";
   </div>
 </AdminLayout>
 
-<script is:inline>
+<script nonce={Astro.locals.nonce} is:inline>
   function optimizer() {
     return {
       content: 'A automação de WhatsApp transformou a maneira como empresas interagem com clientes. Utilizando IA, é possível responder instantaneamente.',

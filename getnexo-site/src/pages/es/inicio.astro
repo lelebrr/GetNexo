@@ -1,0 +1,7 @@
+---
+// Redirect /es to / to avoid 404 and maintain SEO consistency
+---
+<meta http-equiv="refresh" content="0;url=/" />
+<script nonce={Astro.locals.nonce} is:inline>
+  window.location.href = '/';
+</script>

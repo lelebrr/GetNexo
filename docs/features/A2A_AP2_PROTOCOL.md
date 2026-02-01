@@ -4,25 +4,55 @@ O **GetNexo Enterprise** agora suporta nativamente os protocolos A2A e AP2, perm
 
 ---
 
-## 🤖 O que é A2A (Agent-to-Agent)?
+# Protocolo A2A e AP2 (Agent-to-Agent & Agent Payments)
 
-O **Protocolo A2A** é um padrão aberto que permite a interoperabilidade entre agentes de IA. Ele resolve o problema de comunicação isolada, permitindo que agentes de diferentes plataformas e fornecedores troquem mensagens e colaborem em tarefas complexas.
+O GetNexo agora suporta nativamente os protocolos de interoperabilidade entre agentes de IA, permitindo colaboração autônoma e pagamentos seguros.
 
-### Funcionalidades Implementadas
-- **Discovery (Manifesto)**: Cada agente GetNexo expõe um manifesto público em `/api/a2a/manifest` descrevendo sua identidade, capacidades (skills) e endpoints de comunicação.
-- **Peering (Conexão)**: Mecanismo para adicionar e gerenciar "Agentes Parceiros" (Peers) confiáveis.
-- **Messaging (Webhook)**: Endpoint dedicado `/api/a2a/webhook` para receber mensagens assíncronas de outros agentes.
+## A2A (Agent-to-Agent Protocol) v1.0
+
+### Discovery & Descoberta
+O agente via expondo um **Agent Card** seguindo o padrão IANA em:
+`/.well-known/agent-card.json`
+
+Este arquivo contém:
+- **Identidade Única**: UUID do agente.
+- **Interfaces Suportadas**: REST e REST_STREAM (para chat em tempo real).
+- **Capabilidades**: Lista de habilidades do agente (vendas, suporte, logística).
+- **Extensões**: Links para outros protocolos como AP2.
+
+### Mensageria
+Os agentes podem trocar mensagens através de endpoints padronizados:
+- `POST /api/a2a/message:send`: Envio de comando/mensagem síncrona.
+- `POST /api/a2a/message:stream`: Stream de resposta em tempo real via SSE.
 
 ---
 
-## 💳 O que é AP2 (Agent Payments Protocol)?
+## AP2 (Agent Payments Protocol)
 
-O **Protocolo AP2** é uma extensão do A2A focada em pagamentos. Ele utiliza **Credenciais Digitais Verificáveis (VDCs)** para garantir que transações iniciadas por agentes sejam seguras, auditáveis e autorizadas dentro de limites pré-estabelecidos.
+O AP2 estende o A2A com a capacidade de transacionar valores de forma segura usando **VDCs (Verifiable Digital Credentials)**.
 
-### Funcionalidades Implementadas
-- **Transações (Pay Intent)**: Endpoint `/api/ap2/pay` para iniciar pagamentos simulados ou reais.
-- **Mandatos (Mandates)**: Armazenamento de permissões de pagamento (VDCs) que definem quanto e onde um agente pode gastar.
-- **Histórico Auditável**: Log completo de todas as transações realizadas via protocolo AP2 na tabela `ap2_transactions`.
+### Mandatos (Mandates)
+O sistema gerencia três tipos de mandatos:
+1. **Cart Mandate**: Autorização para uma transação específica com o humano presente.
+2. **Intent Mandate**: Autorização prévia para o agente gastar até um limite definido sem intervenção humana imediata.
+3. **Payment Mandate**: Credencial final enviada à rede processadora.
+
+### Segurança
+- **Assinaturas Cryptográficas**: Todas as identidades usam pares de chaves RSA/Ed25519 (simulados).
+- **Verificação de Regras**: O sistema valida limites de transação e validade temporal dos mandatos.
+
+---
+
+## Endpoints de Integração
+
+| Endpoint | Método | Descrição | Pública |
+|----------|---------|-----------|---------|
+| `/.well-known/agent-card.json` | GET | Descoberta do Agente | Sim |
+| `/api/a2a/message:send` | POST | Enviar mensagem ao agente | Sim* |
+| `/api/ap2/pay` | POST | Iniciar pagamento AP2 | Sim* |
+| `/api/a2a/config` | GET/POST | Configurações administrativas | Não |
+
+*\* Requer validação de assinatura JWS/VDC em produção.*
 
 ---
 

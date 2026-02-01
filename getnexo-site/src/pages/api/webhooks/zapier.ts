@@ -63,23 +63,53 @@ export const POST: APIRoute = async (context: APIContext) => {
 };
 
 async function processNewUserWebhook(data: any) {
-    console.log('Processing new user from Zapier:', data);
-    // TODO: Create user in system, send welcome email, etc.
+    console.log('[Zapier] New user webhook received:', JSON.stringify(data, null, 2));
+    // Forward to backend API for user creation
+    try {
+        const backendUrl = import.meta.env.BACKEND_URL || 'http://backend:3006';
+        await fetch(`${backendUrl}/api/webhooks/user`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ source: 'zapier', ...data })
+        });
+    } catch (e) {
+        console.error('[Zapier] Failed to forward new user webhook:', e);
+    }
 }
 
 async function processNewOrderWebhook(data: any) {
-    console.log('Processing new order from Zapier:', data);
-    // TODO: Create order, update inventory, send notifications
+    console.log('[Zapier] New order webhook received:', JSON.stringify(data, null, 2));
+    // Forward to backend API for order processing
+    try {
+        const backendUrl = import.meta.env.BACKEND_URL || 'http://backend:3006';
+        await fetch(`${backendUrl}/api/webhooks/order`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ source: 'zapier', ...data })
+        });
+    } catch (e) {
+        console.error('[Zapier] Failed to forward order webhook:', e);
+    }
 }
 
 async function processPaymentWebhook(data: any) {
-    console.log('Processing payment from Zapier:', data);
-    // TODO: Update payment status, trigger fulfillment
+    console.log('[Zapier] Payment webhook received:', JSON.stringify(data, null, 2));
+    // Forward to backend API for payment processing
+    try {
+        const backendUrl = import.meta.env.BACKEND_URL || 'http://backend:3006';
+        await fetch(`${backendUrl}/api/webhooks/payment`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ source: 'zapier', ...data })
+        });
+    } catch (e) {
+        console.error('[Zapier] Failed to forward payment webhook:', e);
+    }
 }
 
 async function processGenericWebhook(data: any) {
-    console.log('Processing generic webhook from Zapier:', data);
-    // TODO: Log or process generic data
+    console.log('[Zapier] Generic webhook data logged:', JSON.stringify(data, null, 2));
+    // Store in analytics or forward as needed
 }
 
 // Zapier also supports GET for testing

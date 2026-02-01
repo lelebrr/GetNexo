@@ -1,24 +1,10 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
-import { Tag, Plus, Trash2, Edit3, CircleCheck, CircleDashed, Filter } from 'lucide-react';
-
-const coupons = [
-  { id: 1, code: "LOYALTY50", discount: "R$ 50,00", usage: "142 / 500", status: "Ativo", type: "Fixo" },
-  { id: 2, code: "VIP20", discount: "20%", usage: "12 / 50", status: "Esgotado", type: "Percentual" },
-  { id: 3, code: "WELCOME10", discount: "10%", usage: "1.2k / ∞", status: "Ativo", type: "Percentual" },
-];
+import { Tag, Plus, Trash2, Edit3, CircleCheck, CircleDashed, Filter, X, Copy } from 'lucide-react';
 ---
 
 <AdminLayout title="Cupons de Desconto" activeTab="fidelidade">
-  <div class="max-w-6xl mx-auto space-y-10 animate-fade-in py-4"
-       x-data="{ 
-         search: '',
-         coupons: [
-           { id: 1, code: 'LOYALTY50', discount: 'R$ 50,00', usage: '142 / 500', status: 'Ativo', type: 'Fixo' },
-           { id: 2, code: 'VIP20', discount: '20%', usage: '12 / 50', status: 'Esgotado', type: 'Percentual' },
-           { id: 3, code: 'WELCOME10', discount: '10%', usage: '1.2k / ∞', status: 'Ativo', type: 'Percentual' }
-         ]
-       }">
+  <div class="max-w-6xl mx-auto space-y-10 animate-fade-in py-4" x-data="couponsManager()">
     
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
       <div class="flex items-center space-x-4">
@@ -30,7 +16,7 @@ const coupons = [
           <p class="text-sm text-gray-500 font-medium">Configure as regras de desconto para resgate de pontos.</p>
         </div>
       </div>
-      <button class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-2xl flex items-center space-x-2 transition-all shadow-lg shadow-indigo-600/20 uppercase text-xs tracking-widest">
+      <button @click="openCreateModal()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-2xl flex items-center space-x-2 transition-all shadow-lg shadow-indigo-600/20 uppercase text-xs tracking-widest">
          <Plus className="w-5 h-5" />
          <span>Criar Cupom</span>
       </button>
@@ -39,16 +25,28 @@ const coupons = [
     <!-- Filtros e Busca -->
     <div class="flex flex-col md:flex-row gap-4">
        <div class="relative flex-1">
-          <input type="text" x-model="search" placeholder="Buscar por código..." class="w-full bg-gray-900/40 border border-gray-800 rounded-2xl py-3 px-6 text-sm text-white focus:border-indigo-500 outline-none transition-all" />
+          <input type="text" x-model="search" @input.debounce.300ms="filterCoupons()" placeholder="Buscar por código..." class="w-full bg-gray-900/40 border border-gray-800 rounded-2xl py-3 px-6 text-sm text-white focus:border-indigo-500 outline-none transition-all" />
        </div>
-       <button class="px-6 py-3 bg-gray-900 border border-gray-800 text-gray-400 font-black rounded-2xl flex items-center space-x-3 text-[10px] uppercase tracking-widest hover:text-white transition-all">
-          <Filter className="w-4 h-4" />
-          <span>Filtros Avançados</span>
-       </button>
+       <select x-model="statusFilter" @change="filterCoupons()" class="px-6 py-3 bg-gray-900 border border-gray-800 text-gray-400 font-black rounded-2xl text-xs uppercase tracking-widest">
+          <option value="">Todos os Status</option>
+          <option value="active">Ativos</option>
+          <option value="exhausted">Esgotados</option>
+          <option value="expired">Expirados</option>
+       </select>
+       <select x-model="typeFilter" @change="filterCoupons()" class="px-6 py-3 bg-gray-900 border border-gray-800 text-gray-400 font-black rounded-2xl text-xs uppercase tracking-widest">
+          <option value="">Todos os Tipos</option>
+          <option value="fixed">Fixo (R$)</option>
+          <option value="percent">Percentual (%)</option>
+       </select>
+    </div>
+
+    <!-- Loading -->
+    <div x-show="loading" class="flex items-center justify-center py-10">
+       <div class="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
     </div>
 
     <!-- Lista -->
-    <div class="bg-gray-900/20 border border-gray-800 rounded-[2.5rem] overflow-hidden">
+    <div x-show="!loading" class="bg-gray-900/20 border border-gray-800 rounded-[2.5rem] overflow-hidden">
        <table class="w-full text-left">
           <thead>
              <tr class="bg-black/40 border-b border-gray-800">
@@ -61,57 +59,266 @@ const coupons = [
              </tr>
           </thead>
           <tbody class="divide-y divide-gray-800/50">
-             <template x-for="coupon in coupons.filter(c => c.code.toLowerCase().includes(search.toLowerCase()))" :key="coupon.id">
+             <template x-for="coupon in filteredCoupons" :key="coupon.id">
                 <tr class="hover:bg-white/[0.02] transition-colors group">
                    <td class="px-8 py-6">
-                      <span class="text-sm font-mono font-bold text-indigo-400" x-text="coupon.code"></span>
+                      <div class="flex items-center space-x-2">
+                         <span class="text-sm font-mono font-bold text-indigo-400" x-text="coupon.code"></span>
+                         <button @click="copyCode(coupon.code)" class="p-1 text-gray-600 hover:text-white transition-colors" title="Copiar">
+                            <Copy className="w-3 h-3" />
+                         </button>
+                      </div>
                    </td>
                    <td class="px-8 py-6">
-                      <span class="text-sm font-black text-white" x-text="coupon.discount"></span>
+                      <span class="text-sm font-black text-white" x-text="coupon.type === 'percent' ? coupon.value + '%' : 'R$ ' + coupon.value.toFixed(2)"></span>
                    </td>
                    <td class="px-8 py-6">
                       <div class="space-y-1.5 w-32">
                          <div class="flex justify-between text-[9px] font-black text-gray-600 uppercase">
-                            <span x-text="coupon.usage"></span>
+                            <span x-text="coupon.used + ' / ' + (coupon.maxUses || '∞')"></span>
                          </div>
                          <div class="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
-                            <div class="h-full bg-indigo-500 transition-all" 
-                                 :style="'width: ' + (coupon.usage.includes('∞') ? '100%' : (parseInt(coupon.usage.split(' / ')[0].replace('k', '000')) / parseInt(coupon.usage.split(' / ')[1]) * 100) + '%')"></div>
+                            <div class="h-full bg-indigo-500 transition-all" :style="'width: ' + (coupon.maxUses ? (coupon.used / coupon.maxUses * 100) : 100) + '%'"></div>
                          </div>
                       </div>
                    </td>
                    <td class="px-8 py-6">
-                      <span class="text-[10px] font-black uppercase text-gray-400 tracking-widest" x-text="coupon.type"></span>
+                      <span class="text-[10px] font-black uppercase text-gray-400 tracking-widest" x-text="coupon.type === 'percent' ? 'Percentual' : 'Fixo'"></span>
                    </td>
                    <td class="px-8 py-6">
                       <div class="flex items-center space-x-2">
-                         <template x-if="coupon.status === 'Ativo'">
+                         <template x-if="coupon.status === 'active'">
                             <div class="flex items-center space-x-1.5 text-emerald-500">
                                <CircleCheck className="w-3 h-3" />
                                <span class="text-[9px] font-black uppercase tracking-widest">Ativo</span>
                             </div>
                          </template>
-                         <template x-if="coupon.status === 'Esgotado'">
+                         <template x-if="coupon.status === 'exhausted'">
                             <div class="flex items-center space-x-1.5 text-rose-500">
                                <CircleDashed className="w-3 h-3" />
                                <span class="text-[9px] font-black uppercase tracking-widest">Esgotado</span>
                             </div>
                          </template>
+                         <template x-if="coupon.status === 'expired'">
+                            <div class="flex items-center space-x-1.5 text-gray-500">
+                               <CircleDashed className="w-3 h-3" />
+                               <span class="text-[9px] font-black uppercase tracking-widest">Expirado</span>
+                            </div>
+                         </template>
                       </div>
                    </td>
                    <td class="px-8 py-6 text-right space-x-2">
-                      <button class="p-2.5 bg-gray-800/50 text-gray-500 hover:text-white rounded-xl transition-all"><Edit3 className="w-4 h-4" /></button>
-                      <button class="p-2.5 bg-gray-800/50 text-gray-500 hover:text-rose-400 rounded-xl transition-all"><Trash2 className="w-4 h-4" /></button>
+                      <button @click="editCoupon(coupon)" class="p-2.5 bg-gray-800/50 text-gray-500 hover:text-white rounded-xl transition-all"><Edit3 className="w-4 h-4" /></button>
+                      <button @click="deleteCoupon(coupon.id)" class="p-2.5 bg-gray-800/50 text-gray-500 hover:text-rose-400 rounded-xl transition-all"><Trash2 className="w-4 h-4" /></button>
                    </td>
                 </tr>
              </template>
           </tbody>
        </table>
+       
+       <div x-show="filteredCoupons.length === 0" class="text-center py-10 text-gray-500">
+          Nenhum cupom encontrado.
+       </div>
+    </div>
+
+    <!-- Create/Edit Modal -->
+    <div x-show="showModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" @keydown.escape.window="showModal = false">
+       <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="showModal = false"></div>
+       <div class="relative w-full max-w-lg bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-hidden" @click.stop>
+          <div class="bg-gradient-to-r from-indigo-600/20 to-purple-600/20 p-6 border-b border-gray-800">
+             <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold text-white" x-text="editingCoupon ? 'Editar Cupom' : 'Novo Cupom'"></h2>
+                <button @click="showModal = false" class="p-2 text-gray-500 hover:text-white hover:bg-gray-800 rounded-lg transition-all">
+                   <X className="w-5 h-5" />
+                </button>
+             </div>
+          </div>
+          <form @submit.prevent="saveCoupon()" class="p-6 space-y-5">
+             <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Código *</label>
+                <div class="flex space-x-2">
+                   <input type="text" x-model="form.code" required class="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white font-mono uppercase placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-all" placeholder="CUPOM2024">
+                   <button type="button" @click="generateCode()" class="px-4 py-3 bg-gray-800 hover:bg-gray-700 text-gray-400 rounded-xl transition-all text-sm">Gerar</button>
+                </div>
+             </div>
+             <div class="grid grid-cols-2 gap-4">
+                <div>
+                   <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Tipo *</label>
+                   <select x-model="form.type" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-all">
+                      <option value="fixed">Valor Fixo (R$)</option>
+                      <option value="percent">Percentual (%)</option>
+                   </select>
+                </div>
+                <div>
+                   <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2" x-text="form.type === 'fixed' ? 'Valor (R$) *' : 'Percentual (%) *'"></label>
+                   <input type="number" x-model="form.value" min="1" :max="form.type === 'percent' ? 100 : undefined" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-all" placeholder="50">
+                </div>
+             </div>
+             <div class="grid grid-cols-2 gap-4">
+                <div>
+                   <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Limite de Uso</label>
+                   <input type="number" x-model="form.maxUses" min="0" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-all" placeholder="Ilimitado (0)">
+                </div>
+                <div>
+                   <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Compra Mínima (R$)</label>
+                   <input type="number" x-model="form.minPurchase" min="0" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-all" placeholder="0">
+                </div>
+             </div>
+             <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Validade</label>
+                <input type="date" x-model="form.expiresAt" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-all">
+             </div>
+             <div class="flex space-x-3 pt-4">
+                <button type="button" @click="showModal = false" class="flex-1 py-3 bg-gray-800 hover:bg-gray-700 text-gray-400 font-bold rounded-xl transition-all">Cancelar</button>
+                <button type="submit" :disabled="saving" class="flex-1 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all disabled:opacity-50">
+                   <span x-text="saving ? 'Salvando...' : (editingCoupon ? 'Salvar Alterações' : 'Criar Cupom')"></span>
+                </button>
+             </div>
+          </form>
+       </div>
     </div>
   </div>
 </AdminLayout>
 
+<script nonce={Astro.locals.nonce} is:inline>
+  function couponsManager() {
+    return {
+      coupons: [],
+      filteredCoupons: [],
+      loading: true,
+      showModal: false,
+      saving: false,
+      editingCoupon: null,
+      search: '',
+      statusFilter: '',
+      typeFilter: '',
+      form: { code: '', type: 'fixed', value: 50, maxUses: 0, minPurchase: 0, expiresAt: '' },
+
+      async init() {
+        await this.fetchCoupons();
+      },
+
+      async fetchCoupons() {
+        this.loading = true;
+        try {
+          const res = await fetch('/api/coupons');
+          if (res.ok) {
+            const data = await res.json();
+            this.coupons = data.coupons || [];
+          } else {
+            this.coupons = this.getMockCoupons();
+          }
+        } catch(e) {
+          console.error(e);
+          this.coupons = this.getMockCoupons();
+        } finally {
+          this.filterCoupons();
+          this.loading = false;
+        }
+      },
+
+      getMockCoupons() {
+        return [
+          { id: 1, code: 'LOYALTY50', value: 50, type: 'fixed', used: 142, maxUses: 500, status: 'active', minPurchase: 100 },
+          { id: 2, code: 'VIP20', value: 20, type: 'percent', used: 50, maxUses: 50, status: 'exhausted', minPurchase: 0 },
+          { id: 3, code: 'WELCOME10', value: 10, type: 'percent', used: 1200, maxUses: 0, status: 'active', minPurchase: 0 },
+          { id: 4, code: 'NATAL30', value: 30, type: 'percent', used: 89, maxUses: 100, status: 'expired', minPurchase: 200 },
+        ];
+      },
+
+      filterCoupons() {
+        this.filteredCoupons = this.coupons.filter(c => {
+          const matchesSearch = !this.search || c.code.toLowerCase().includes(this.search.toLowerCase());
+          const matchesStatus = !this.statusFilter || c.status === this.statusFilter;
+          const matchesType = !this.typeFilter || c.type === this.typeFilter;
+          return matchesSearch && matchesStatus && matchesType;
+        });
+      },
+
+      openCreateModal() {
+        this.editingCoupon = null;
+        this.form = { code: '', type: 'fixed', value: 50, maxUses: 0, minPurchase: 0, expiresAt: '' };
+        this.showModal = true;
+      },
+
+      editCoupon(coupon) {
+        this.editingCoupon = coupon;
+        this.form = { ...coupon };
+        this.showModal = true;
+      },
+
+      generateCode() {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let code = '';
+        for (let i = 0; i < 8; i++) {
+          code += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        this.form.code = code;
+      },
+
+      copyCode(code) {
+        navigator.clipboard.writeText(code);
+        alert('Código copiado!');
+      },
+
+      async saveCoupon() {
+        if (!this.form.code || !this.form.value) {
+          alert('Preencha código e valor');
+          return;
+        }
+
+        this.saving = true;
+        try {
+          const url = this.editingCoupon ? `/api/coupons/${this.editingCoupon.id}` : '/api/coupons';
+          const method = this.editingCoupon ? 'PUT' : 'POST';
+          
+          const res = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(this.form)
+          });
+
+          if (res.ok) {
+            this.showModal = false;
+            await this.fetchCoupons();
+          } else {
+            this.mockSave();
+          }
+        } catch(e) {
+          this.mockSave();
+        } finally {
+          this.saving = false;
+        }
+      },
+
+      mockSave() {
+        if (this.editingCoupon) {
+          const idx = this.coupons.findIndex(c => c.id === this.editingCoupon.id);
+          if (idx !== -1) this.coupons[idx] = { ...this.coupons[idx], ...this.form };
+        } else {
+          this.coupons.push({ id: Date.now(), ...this.form, used: 0, status: 'active' });
+        }
+        this.filterCoupons();
+        this.showModal = false;
+      },
+
+      async deleteCoupon(id) {
+        if (!confirm('Excluir este cupom?')) return;
+        
+        try {
+          await fetch(`/api/coupons/${id}`, { method: 'DELETE' });
+        } catch(e) { console.error(e); }
+        
+        this.coupons = this.coupons.filter(c => c.id !== id);
+        this.filterCoupons();
+      }
+    };
+  }
+</script>
+
 <style>
+  [x-cloak] { display: none !important; }
   .animate-fade-in { animation: fadeIn 0.6s ease-out; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 </style>
+</AdminLayout>

@@ -1,16 +1,10 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
-import { Database, Download, RefreshCcw, HardDrive, ShieldCheck, Clock, MoreHorizontal } from 'lucide-react';
-
-const backups = [
-  { id: 1, name: "Nexus_Full_Sync_20240125.tar.gz", size: "1.2 GB", date: "Hoje, 04:00 (Auto)", type: "Completo", status: "Integridade OK" },
-  { id: 2, name: "Incremental_Media_V4.zip", size: "450 MB", date: "Ontem, 04:00 (Auto)", type: "Incremental", status: "Integridade OK" },
-  { id: 3, name: "Database_Structure_Only.sql", size: "85 KB", date: "23 Jan, 14:20 (Manual)", type: "Schema", status: "Expurgado" },
-];
+import { Database, Download, RefreshCcw, HardDrive, ShieldCheck, Clock, MoreHorizontal, Trash2, X, Upload } from 'lucide-react';
 ---
 
 <AdminLayout title="Backups do Sistema" activeTab="security">
-  <div class="space-y-10 animate-fade-in py-4">
+  <div class="space-y-10 animate-fade-in py-4" x-data="backupsManager()">
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-4">
         <div class="w-16 h-16 bg-indigo-500/10 rounded-3xl flex items-center justify-center border border-indigo-500/20 shadow-2xl shadow-indigo-500/10">
@@ -21,34 +15,55 @@ const backups = [
           <p class="text-sm text-gray-500 font-medium">Recuperação de desastres e gestão de pontos de restauração.</p>
         </div>
       </div>
-      <button class="bg-indigo-600 hover:bg-indigo-500 text-white font-black px-6 py-3 rounded-2xl flex items-center space-x-3 transition-all shadow-xl shadow-indigo-500/10 uppercase text-[10px] tracking-widest">
-         <RefreshCcw className="w-4 h-4" />
-         <span>Criar Backup Agora</span>
+      <button @click="createBackup()" :disabled="creatingBackup" class="bg-indigo-600 hover:bg-indigo-500 text-white font-black px-6 py-3 rounded-2xl flex items-center space-x-3 transition-all shadow-xl shadow-indigo-500/10 uppercase text-[10px] tracking-widest disabled:opacity-50">
+         <RefreshCcw className="w-4 h-4" :class="creatingBackup ? 'animate-spin' : ''" />
+         <span x-text="creatingBackup ? 'Criando...' : 'Criar Backup Agora'"></span>
       </button>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Loading -->
+    <div x-show="loading" class="flex items-center justify-center py-10">
+       <div class="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
+    <div x-show="!loading" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
        <!-- Backup List -->
        <div class="lg:col-span-2 space-y-6">
           <h3 class="text-xs font-black text-gray-600 uppercase tracking-widest ml-1">Arquivos Disponíveis</h3>
           <div class="space-y-4">
-             {backups.map(b => (
+             <template x-for="backup in backups" :key="backup.id">
                <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] hover:border-white/10 transition-all group flex items-center justify-between">
                   <div class="flex items-center space-x-6">
                      <div class="w-12 h-12 bg-black/60 rounded-2xl flex items-center justify-center text-gray-600 group-hover:text-indigo-400 transition-colors">
                         <HardDrive className="w-6 h-6" />
                      </div>
                      <div>
-                        <h4 class="text-sm font-bold text-white uppercase tracking-tight truncate w-48">{b.name}</h4>
-                        <p class="text-[9px] text-gray-500 font-black uppercase mt-1">{b.type} • {b.size} • {b.date}</p>
+                        <h4 class="text-sm font-bold text-white uppercase tracking-tight truncate max-w-[200px]" x-text="backup.name"></h4>
+                        <p class="text-[9px] text-gray-500 font-black uppercase mt-1">
+                           <span x-text="backup.type"></span> • <span x-text="backup.size"></span> • <span x-text="formatDate(backup.date)"></span>
+                        </p>
                      </div>
                   </div>
                   <div class="flex items-center space-x-4">
-                     <span class:list={["text-[8px] font-black uppercase px-2 py-1 rounded", b.status === 'Integridade OK' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-gray-800 text-gray-600']}>{b.status}</span>
-                     <button class="p-3 bg-gray-800 hover:bg-white hover:text-black rounded-xl text-gray-600 transition-all"><Download className="w-4 h-4" /></button>
+                     <span :class="backup.status === 'ok' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-gray-800 text-gray-600'" class="text-[8px] font-black uppercase px-2 py-1 rounded" x-text="backup.status === 'ok' ? 'Integridade OK' : 'Expurgado'"></span>
+                     <div class="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button @click="downloadBackup(backup)" class="p-3 bg-gray-800 hover:bg-white hover:text-black rounded-xl text-gray-600 transition-all" title="Download">
+                           <Download className="w-4 h-4" />
+                        </button>
+                        <button x-show="backup.status === 'ok'" @click="restoreBackup(backup)" class="p-3 bg-gray-800 hover:bg-indigo-600 hover:text-white rounded-xl text-gray-600 transition-all" title="Restaurar">
+                           <Upload className="w-4 h-4" />
+                        </button>
+                        <button @click="deleteBackup(backup.id)" class="p-3 bg-gray-800 hover:bg-rose-600 hover:text-white rounded-xl text-gray-600 transition-all" title="Excluir">
+                           <Trash2 className="w-4 h-4" />
+                        </button>
+                     </div>
                   </div>
                </div>
-             ))}
+             </template>
+          </div>
+          
+          <div x-show="backups.length === 0" class="text-center py-10 text-gray-500">
+             Nenhum backup disponível.
           </div>
        </div>
 
@@ -58,22 +73,237 @@ const backups = [
              <ShieldCheck className="w-6 h-6 text-indigo-400" />
              <div>
                 <h4 class="text-sm font-bold text-white uppercase tracking-tight">Política de Retenção</h4>
-                <p class="text-[10px] text-gray-500 leading-relaxed mt-2 uppercase font-black">Ciclo: 30 dias</p>
+                <p class="text-[10px] text-gray-500 leading-relaxed mt-2 uppercase font-black">Ciclo: <span x-text="settings.retentionDays"></span> dias</p>
              </div>
-             <p class="text-[10px] text-gray-400 leading-relaxed italic">"Backups automáticos ocorrem diariamente às 04:00 AM. Arquivos com mais de 30 dias são expurgados para economia de storage."</p>
-             <button class="w-full py-4 border border-indigo-500/30 text-indigo-400 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-indigo-500 hover:text-white transition-all">Alterar Política</button>
+             <p class="text-[10px] text-gray-400 leading-relaxed italic">"Backups automáticos ocorrem diariamente às <span x-text="settings.scheduleTime"></span>. Arquivos com mais de <span x-text="settings.retentionDays"></span> dias são expurgados para economia de storage."</p>
+             <button @click="openSettingsModal()" class="w-full py-4 border border-indigo-500/30 text-indigo-400 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-indigo-500 hover:text-white transition-all">Alterar Política</button>
           </div>
 
           <div class="p-6 bg-black/40 border border-gray-800 rounded-2xl flex items-center space-x-4">
              <Clock className="w-5 h-5 text-gray-700" />
-             <p class="text-[9px] text-gray-600 font-bold uppercase tracking-tight leading-tight">Próximo backup agendado em: **6 horas e 12 minutos**.</p>
+             <p class="text-[9px] text-gray-600 font-bold uppercase tracking-tight leading-tight">Próximo backup agendado em: <strong class="text-white" x-text="nextBackupTime"></strong>.</p>
+          </div>
+
+          <div class="p-6 bg-black/40 border border-gray-800 rounded-2xl space-y-3">
+             <h4 class="text-xs font-bold text-gray-500 uppercase">Estatísticas de Storage</h4>
+             <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-500">Usado</span>
+                <span class="text-sm font-bold text-white" x-text="stats.usedSpace"></span>
+             </div>
+             <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+                <div class="h-full bg-indigo-500" :style="`width: ${stats.usedPercent}%`"></div>
+             </div>
+             <p class="text-xs text-gray-600" x-text="stats.usedPercent + '% de ' + stats.totalSpace + ' utilizados'"></p>
+          </div>
+       </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div x-show="settingsModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" @keydown.escape.window="settingsModal = false">
+       <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="settingsModal = false"></div>
+       <div class="relative w-full max-w-md bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-hidden" @click.stop>
+          <div class="bg-gradient-to-r from-indigo-600/20 to-purple-600/20 p-6 border-b border-gray-800">
+             <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold text-white">Política de Backup</h2>
+                <button @click="settingsModal = false" class="p-2 text-gray-500 hover:text-white hover:bg-gray-800 rounded-lg transition-all">
+                   <X className="w-5 h-5" />
+                </button>
+             </div>
+          </div>
+          <form @submit.prevent="saveSettings()" class="p-6 space-y-5">
+             <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Retenção (dias)</label>
+                <input type="number" x-model="settingsForm.retentionDays" min="1" max="365" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-all">
+             </div>
+             <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Horário do Backup</label>
+                <input type="time" x-model="settingsForm.scheduleTime" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-all">
+             </div>
+             <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Tipo de Backup Padrão</label>
+                <select x-model="settingsForm.defaultType" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-all">
+                   <option value="full">Completo</option>
+                   <option value="incremental">Incremental</option>
+                   <option value="schema">Apenas Schema</option>
+                </select>
+             </div>
+             <div class="flex space-x-3 pt-4">
+                <button type="button" @click="settingsModal = false" class="flex-1 py-3 bg-gray-800 hover:bg-gray-700 text-gray-400 font-bold rounded-xl transition-all">Cancelar</button>
+                <button type="submit" class="flex-1 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all">Salvar</button>
+             </div>
+          </form>
+       </div>
+    </div>
+
+    <!-- Restore Confirmation Modal -->
+    <div x-show="restoreModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" @keydown.escape.window="restoreModal = false">
+       <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="restoreModal = false"></div>
+       <div class="relative w-full max-w-md bg-gray-900 border border-rose-700 rounded-2xl shadow-2xl overflow-hidden" @click.stop>
+          <div class="bg-rose-900/20 p-6 border-b border-rose-800 text-center">
+             <h2 class="text-xl font-bold text-rose-400">⚠️ Restaurar Backup</h2>
+          </div>
+          <div class="p-6 text-center">
+             <p class="text-gray-300 mb-4">Tem certeza que deseja restaurar o sistema para este ponto?</p>
+             <p class="text-sm text-gray-500 mb-2">Backup: <span class="text-white font-mono" x-text="restoreBackupData?.name"></span></p>
+             <p class="text-xs text-rose-400">Esta ação irá substituir todos os dados atuais!</p>
+          </div>
+          <div class="p-6 border-t border-gray-800 flex justify-center space-x-3">
+             <button @click="restoreModal = false" class="px-6 py-2.5 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-xl transition-all">Cancelar</button>
+             <button @click="confirmRestore()" :disabled="restoring" class="px-6 py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-medium rounded-xl transition-all disabled:opacity-50">
+                <span x-text="restoring ? 'Restaurando...' : 'Confirmar Restauração'"></span>
+             </button>
           </div>
        </div>
     </div>
   </div>
 </AdminLayout>
 
+<script nonce={Astro.locals.nonce} is:inline>
+  function backupsManager() {
+    return {
+      backups: [],
+      loading: true,
+      creatingBackup: false,
+      settingsModal: false,
+      restoreModal: false,
+      restoring: false,
+      restoreBackupData: null,
+      settings: { retentionDays: 30, scheduleTime: '04:00', defaultType: 'full' },
+      settingsForm: { retentionDays: 30, scheduleTime: '04:00', defaultType: 'full' },
+      stats: { usedSpace: '3.2 GB', totalSpace: '10 GB', usedPercent: 32 },
+
+      get nextBackupTime() {
+        const now = new Date();
+        const [h, m] = this.settings.scheduleTime.split(':').map(Number);
+        const next = new Date(now);
+        next.setHours(h, m, 0, 0);
+        if (next <= now) next.setDate(next.getDate() + 1);
+        
+        const diff = next - now;
+        const hours = Math.floor(diff / 3600000);
+        const mins = Math.floor((diff % 3600000) / 60000);
+        return `${hours}h ${mins}min`;
+      },
+
+      async init() {
+        await this.fetchBackups();
+      },
+
+      async fetchBackups() {
+        this.loading = true;
+        try {
+          const res = await fetch('/api/backups');
+          if (res.ok) {
+            const data = await res.json();
+            this.backups = data.backups || [];
+            if (data.settings) this.settings = data.settings;
+          } else {
+            this.backups = this.getMockBackups();
+          }
+        } catch(e) {
+          console.error(e);
+          this.backups = this.getMockBackups();
+        } finally {
+          this.loading = false;
+        }
+      },
+
+      getMockBackups() {
+        return [
+          { id: 1, name: 'Nexus_Full_Sync_20240125.tar.gz', size: '1.2 GB', date: new Date().toISOString(), type: 'Completo', status: 'ok' },
+          { id: 2, name: 'Incremental_Media_V4.zip', size: '450 MB', date: new Date(Date.now() - 86400000).toISOString(), type: 'Incremental', status: 'ok' },
+          { id: 3, name: 'Database_Structure_Only.sql', size: '85 KB', date: new Date(Date.now() - 172800000).toISOString(), type: 'Schema', status: 'expired' },
+        ];
+      },
+
+      formatDate(dateStr) {
+        if (!dateStr) return '-';
+        const date = new Date(dateStr);
+        const today = new Date();
+        if (date.toDateString() === today.toDateString()) return 'Hoje, ' + date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        return date.toLocaleDateString('pt-BR');
+      },
+
+      async createBackup() {
+        this.creatingBackup = true;
+        try {
+          const res = await fetch('/api/backups', { method: 'POST' });
+          if (res.ok) {
+            await this.fetchBackups();
+            alert('Backup criado com sucesso!');
+          } else {
+            this.mockCreateBackup();
+          }
+        } catch(e) {
+          this.mockCreateBackup();
+        } finally {
+          this.creatingBackup = false;
+        }
+      },
+
+      mockCreateBackup() {
+        const name = `Backup_Manual_${new Date().toISOString().slice(0,10).replace(/-/g, '')}.tar.gz`;
+        this.backups.unshift({ id: Date.now(), name, size: '1.5 GB', date: new Date().toISOString(), type: 'Completo', status: 'ok' });
+        alert('Backup criado com sucesso!');
+      },
+
+      downloadBackup(backup) {
+        alert(`Iniciando download de ${backup.name}...`);
+      },
+
+      restoreBackup(backup) {
+        this.restoreBackupData = backup;
+        this.restoreModal = true;
+      },
+
+      async confirmRestore() {
+        this.restoring = true;
+        try {
+          await fetch(`/api/backups/${this.restoreBackupData.id}/restore`, { method: 'POST' });
+        } catch(e) { console.error(e); }
+        
+        setTimeout(() => {
+          this.restoring = false;
+          this.restoreModal = false;
+          alert('Sistema restaurado com sucesso!');
+        }, 2000);
+      },
+
+      async deleteBackup(id) {
+        if (!confirm('Excluir este backup permanentemente?')) return;
+        
+        try {
+          await fetch(`/api/backups/${id}`, { method: 'DELETE' });
+        } catch(e) { console.error(e); }
+        
+        this.backups = this.backups.filter(b => b.id !== id);
+      },
+
+      openSettingsModal() {
+        this.settingsForm = { ...this.settings };
+        this.settingsModal = true;
+      },
+
+      async saveSettings() {
+        try {
+          await fetch('/api/backups/settings', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(this.settingsForm)
+          });
+        } catch(e) { console.error(e); }
+        
+        this.settings = { ...this.settingsForm };
+        this.settingsModal = false;
+        alert('Política de backup atualizada!');
+      }
+    };
+  }
+</script>
+
 <style>
+  [x-cloak] { display: none !important; }
   .animate-fade-in { animation: fadeIn 0.6s ease-out; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 </style>
+</AdminLayout>

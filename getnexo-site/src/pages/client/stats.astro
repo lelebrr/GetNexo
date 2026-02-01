@@ -1,187 +1,308 @@
 ---
-// Página de Estatísticas do Cliente
 import ClientLayout from '../../layouts/ClientLayout.astro';
 ---
 
 <ClientLayout title="Estatísticas">
-  <div class="space-y-6">
+  <div x-data="statsManager()">
     <!-- Header -->
-    <div class="flex items-center justify-between">
+    <div class="stats-header">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900">Estatísticas</h1>
-        <p class="text-gray-500">Visão completa do seu desempenho</p>
+        <h1 class="text-neon-blue">📊 Estatísticas</h1>
+        <p class="text-muted">Visão completa do seu desempenho</p>
       </div>
-      <div class="flex items-center space-x-2">
-        <span class="w-2 h-2 bg-green-500 rounded-full" aria-hidden="true"></span>
-        <span class="text-sm text-gray-600">Atualizado agora</span>
-      </div>
-    </div>
-
-    <!-- Cards de Métricas Principais -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      <!-- Vendas Hoje -->
-      <div class="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl shadow-lg p-6 text-white">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-700">Vendas Hoje</p>
-            <p class="text-3xl font-bold mt-1">R$ 12.450</p>
-          </div>
-          <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-          </div>
+      <div class="header-actions">
+        <div class="status-badge">
+          <span class="status-dot"></span>
+          <span>Atualizado agora</span>
         </div>
-        <p class="text-xs mt-3 text-gray-600">↑ 23% vs ontem</p>
-      </div>
-
-      <!-- Clientes Novos -->
-      <div class="bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl shadow-lg p-6 text-white">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-700">Clientes Novos</p>
-            <p class="text-3xl font-bold mt-1">47</p>
-          </div>
-          <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-            </svg>
-          </div>
-        </div>
-        <p class="text-xs mt-3 text-gray-600">↑ 15% vs semana</p>
-      </div>
-
-      <!-- Taxa de Retenção -->
-      <div class="bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl shadow-lg p-6 text-white">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-700">Taxa de Retenção</p>
-            <p class="text-3xl font-bold mt-1">68%</p>
-          </div>
-          <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-            </svg>
-          </div>
-        </div>
-        <p class="text-xs mt-3 text-gray-600">↑ 5% vs mês</p>
-      </div>
-
-      <!-- PIX Recebido -->
-      <div class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl shadow-lg p-6 text-white">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-700">PIX Recebido</p>
-            <p class="text-3xl font-bold mt-1">92%</p>
-          </div>
-          <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-          </div>
-        </div>
-        <p class="text-xs mt-3 text-gray-600">↑ 8% vs semana</p>
+        <button @click="exportStats()" class="btn-secondary">📥 Exportar</button>
       </div>
     </div>
 
-    <!-- Teaser Premium -->
-    <div class="bg-gradient-to-r from-purple-900 via-indigo-900 to-blue-900 rounded-xl shadow-lg p-6 text-white relative overflow-hidden">
-      <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/20 rounded-full blur-2xl"></div>
-      <div class="relative z-10">
-        <div class="flex items-center gap-3 mb-3">
-          <span class="px-3 py-1 bg-purple-600 rounded-full text-xs font-semibold text-white">PREMIUM</span>
-          <span class="text-purple-100 text-sm">Desbloqueie Gráficos Avançados</span>
+    <!-- Period Filter -->
+    <div class="period-filter">
+      <button @click="period = 'today'" :class="period === 'today' ? 'active' : ''" class="period-btn">Hoje</button>
+      <button @click="period = '7d'" :class="period === '7d' ? 'active' : ''" class="period-btn">7 dias</button>
+      <button @click="period = '30d'" :class="period === '30d' ? 'active' : ''" class="period-btn">30 dias</button>
+      <button @click="period = '90d'" :class="period === '90d' ? 'active' : ''" class="period-btn">90 dias</button>
+    </div>
+
+    <!-- Main Metrics Cards -->
+    <div class="metrics-grid">
+      <div class="metric-card gradient-green">
+        <div class="metric-content">
+          <span class="metric-label">Vendas</span>
+          <span class="metric-value" x-text="formatCurrency(metrics.sales)">R$ 0</span>
         </div>
-        <h3 class="text-xl font-bold mb-2">ROI Completo + Previsão de Vendas</h3>
-        <p class="text-purple-100 text-sm mb-4">Análise preditiva, tendências e insights inteligentes para escalar seu negócio.</p>
-        <a href="/client/upgrade" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg font-medium hover:from-green-600 hover:to-emerald-700 transition-all" aria-label="Upgrade para plano premium - R$ 99/mês">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-          </svg>
-          Desbloquear por R$ 99/mês
-        </a>
+        <div class="metric-icon">💰</div>
+        <span class="metric-trend positive">↑ 23% vs período anterior</span>
+      </div>
+
+      <div class="metric-card gradient-cyan">
+        <div class="metric-content">
+          <span class="metric-label">Clientes Novos</span>
+          <span class="metric-value" x-text="metrics.newCustomers">0</span>
+        </div>
+        <div class="metric-icon">👥</div>
+        <span class="metric-trend positive">↑ 15% vs período anterior</span>
+      </div>
+
+      <div class="metric-card gradient-orange">
+        <div class="metric-content">
+          <span class="metric-label">Taxa de Retenção</span>
+          <span class="metric-value" x-text="metrics.retention + '%'">0%</span>
+        </div>
+        <div class="metric-icon">📈</div>
+        <span class="metric-trend positive">↑ 5% vs mês</span>
+      </div>
+
+      <div class="metric-card gradient-teal">
+        <div class="metric-content">
+          <span class="metric-label">PIX Recebido</span>
+          <span class="metric-value" x-text="metrics.pixRate + '%'">0%</span>
+        </div>
+        <div class="metric-icon">💳</div>
+        <span class="metric-trend positive">↑ 8% vs semana</span>
       </div>
     </div>
 
-    <!-- Gráficos -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <!-- Gráfico de Linha: Vendas da Semana -->
-      <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="font-semibold text-gray-900">Vendas da Semana</h3>
-          <span class="text-xs text-gray-600">Últimos 7 dias</span>
+    <!-- Charts Section -->
+    <div class="charts-grid">
+      <!-- Sales Chart -->
+      <div class="chart-card">
+        <div class="card-header">
+          <h3>💹 Vendas da Semana</h3>
+          <span class="badge">Últimos 7 dias</span>
         </div>
-        <div class="h-64 flex items-center justify-center bg-gray-50 rounded-lg" role="img" aria-label="Gráfico de linha das vendas da semana - disponível na versão Premium">
-          <div class="text-center text-gray-400">
-            <svg class="w-12 h-12 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-            </svg>
-            <p class="text-sm text-gray-600">Gráfico disponível na versão Premium</p>
-            <p class="text-xs mt-1 text-gray-500">Inclui tendências e previsões</p>
-          </div>
-        </div>
+        <canvas id="salesChart" height="250"></canvas>
       </div>
 
-      <!-- Gráfico Donut: Fontes de Tráfego -->
-      <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="font-semibold text-gray-900">Fontes de Tráfego</h3>
-          <span class="text-xs text-gray-600">Últimos 30 dias</span>
+      <!-- Traffic Sources Chart -->
+      <div class="chart-card">
+        <div class="card-header">
+          <h3>📊 Fontes de Tráfego</h3>
+          <span class="badge">Últimos 30 dias</span>
         </div>
-        <div class="h-64 flex items-center justify-center bg-gray-50 rounded-lg" role="img" aria-label="Gráfico donut das fontes de tráfego - disponível na versão Premium">
-          <div class="text-center text-gray-400">
-            <svg class="w-12 h-12 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
-            </svg>
-            <p class="text-sm text-gray-600">Gráfico disponível na versão Premium</p>
-            <p class="text-xs mt-1 text-gray-500">WhatsApp, Instagram, Facebook</p>
+        <canvas id="trafficChart" height="250"></canvas>
+      </div>
+    </div>
+
+    <!-- Top Products Chart -->
+    <div class="chart-card full-width">
+      <div class="card-header">
+        <h3>🏆 Top Produtos Vendidos</h3>
+        <span class="badge">Últimos 30 dias</span>
+      </div>
+      <canvas id="productsChart" height="200"></canvas>
+    </div>
+
+    <!-- Insights Section -->
+    <div class="insights-section card">
+      <div class="card-header">
+        <h3>💡 Insights Inteligentes</h3>
+      </div>
+      <div class="insights-grid">
+        <div class="insight-card tip">
+          <span class="insight-icon">💡</span>
+          <div class="insight-content">
+            <span class="insight-title">Dica do Dia</span>
+            <span class="insight-text">Use produtos 3D no WhatsApp e aumente conversão em 30%!</span>
           </div>
         </div>
-      </div>
-
-      <!-- Gráfico de Barras: Top Produtos -->
-      <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 lg:col-span-2">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="font-semibold text-gray-900">Top Produtos Vendidos</h3>
-          <span class="text-xs text-gray-600">Últimos 30 dias</span>
+        <div class="insight-card opportunity">
+          <span class="insight-icon">📈</span>
+          <div class="insight-content">
+            <span class="insight-title">Oportunidade</span>
+            <span class="insight-text">Seus clientes preferem PIX (<span x-text="metrics.pixRate + '%'"></span>). Ofereça mais opções.</span>
+          </div>
         </div>
-        <div class="h-64 flex items-center justify-center bg-gray-50 rounded-lg" role="img" aria-label="Gráfico de barras dos top produtos vendidos - disponível na versão Premium">
-          <div class="text-center text-gray-400">
-            <svg class="w-12 h-12 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-            <p class="text-sm text-gray-600">Gráfico disponível na versão Premium</p>
-            <p class="text-xs mt-1 text-gray-500">Análise de performance por produto</p>
+        <div class="insight-card action">
+          <span class="insight-icon">🎯</span>
+          <div class="insight-content">
+            <span class="insight-title">Ação Recomendada</span>
+            <span class="insight-text">Crie campanha de fidelidade para reter clientes.</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Seção de Insights Premium -->
-    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-      <div class="flex items-center gap-3 mb-4">
-        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-          <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-          </svg>
-        </div>
-        <h3 class="font-semibold text-gray-900">Insights Inteligentes</h3>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="p-4 bg-gray-50 rounded-lg">
-          <p class="text-sm text-gray-700 mb-2">💡 Dica do Dia</p>
-          <p class="text-gray-900 font-medium">Use produtos 3D no WhatsApp e aumente conversão em 30%!</p>
-        </div>
-        <div class="p-4 bg-gray-50 rounded-lg">
-          <p class="text-sm text-gray-700 mb-2">📈 Oportunidade</p>
-          <p class="text-gray-900 font-medium">Seus clientes preferem PIX (92%). Ofereça mais opções.</p>
-        </div>
-        <div class="p-4 bg-gray-50 rounded-lg">
-          <p class="text-sm text-gray-700 mb-2">🎯 Ação Recomendada</p>
-          <p class="text-gray-900 font-medium">Crie campanha de fidelidade para reter clientes.</p>
+    <!-- Premium Upsell -->
+    <div class="premium-banner">
+      <div class="premium-content">
+        <span class="premium-badge">PREMIUM</span>
+        <div class="premium-text">
+          <h4>🚀 Desbloqueie Analytics Avançado</h4>
+          <p>ROI completo, previsão de vendas, análise preditiva e insights inteligentes para escalar seu negócio.</p>
         </div>
       </div>
+      <a href="/client/upgrade" class="btn-upgrade">Desbloquear por R$ 99/mês</a>
     </div>
   </div>
+</ClientLayout>
+
+<style>
+  .stats-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; }
+  .stats-header h1 { font-size: 1.75rem; margin: 0 0 0.25rem 0; }
+  .header-actions { display: flex; align-items: center; gap: 1rem; }
+  .status-badge { display: flex; align-items: center; gap: 0.5rem; background: rgba(0, 255, 65, 0.1); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem; color: #00ff41; }
+  .status-dot { width: 8px; height: 8px; background: #00ff41; border-radius: 50%; }
+  .btn-secondary { background: rgba(0, 243, 255, 0.1); color: #00f3ff; border: 1px solid rgba(0, 243, 255, 0.3); padding: 0.6rem 1.2rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+
+  .period-filter { display: flex; gap: 0.5rem; margin-bottom: 2rem; }
+  .period-btn { background: #0a0a0a; border: 1px solid #334155; color: #64748b; padding: 0.6rem 1.2rem; border-radius: 8px; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
+  .period-btn.active { background: rgba(0, 243, 255, 0.1); color: #00f3ff; border-color: #00f3ff; }
+
+  .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+  .metric-card { position: relative; padding: 1.5rem; border-radius: 16px; overflow: hidden; color: #fff; }
+  .metric-card::before { content: ''; position: absolute; inset: 0; opacity: 0.15; }
+  .gradient-green { background: linear-gradient(135deg, #059669, #10b981); }
+  .gradient-cyan { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+  .gradient-orange { background: linear-gradient(135deg, #ea580c, #f97316); }
+  .gradient-teal { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+  .metric-content { position: relative; z-index: 1; }
+  .metric-label { display: block; font-size: 0.85rem; opacity: 0.9; margin-bottom: 0.5rem; }
+  .metric-value { display: block; font-size: 2rem; font-weight: 700; }
+  .metric-icon { position: absolute; top: 1rem; right: 1rem; font-size: 2.5rem; opacity: 0.3; }
+  .metric-trend { display: block; font-size: 0.75rem; margin-top: 0.5rem; opacity: 0.9; }
+  .metric-trend.positive { color: #ecfdf5; }
+
+  .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+  .chart-card { background: #0a0a0a; border: 1px solid #334155; border-radius: 16px; padding: 1.5rem; }
+  .chart-card.full-width { margin-bottom: 2rem; }
+  .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+  .card-header h3 { font-size: 1rem; color: #fff; margin: 0; }
+  .badge { background: rgba(0, 243, 255, 0.1); color: #00f3ff; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.7rem; font-weight: 600; }
+
+  .card { background: #0a0a0a; border: 1px solid #334155; border-radius: 16px; padding: 1.5rem; }
+  .insights-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .insight-card { display: flex; align-items: flex-start; gap: 1rem; padding: 1.25rem; background: rgba(255, 255, 255, 0.02); border-radius: 12px; }
+  .insight-card.tip { border-left: 3px solid #ffd700; }
+  .insight-card.opportunity { border-left: 3px solid #00ff9d; }
+  .insight-card.action { border-left: 3px solid #00f3ff; }
+  .insight-icon { font-size: 1.5rem; }
+  .insight-content { display: flex; flex-direction: column; }
+  .insight-title { color: #94a3b8; font-size: 0.75rem; margin-bottom: 0.25rem; }
+  .insight-text { color: #fff; font-size: 0.9rem; font-weight: 500; }
+
+  .premium-banner { background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(59, 130, 246, 0.2)); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 16px; padding: 2rem; display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; }
+  .premium-content { display: flex; align-items: center; gap: 1.5rem; }
+  .premium-badge { background: #8b5cf6; color: #fff; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.7rem; font-weight: 700; }
+  .premium-text h4 { color: #fff; margin: 0 0 0.25rem 0; font-size: 1.1rem; }
+  .premium-text p { color: #94a3b8; font-size: 0.85rem; margin: 0; max-width: 500px; }
+  .btn-upgrade { background: linear-gradient(135deg, #00ff9d, #00d4ff); color: #000; padding: 0.8rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 0.9rem; }
+
+  @media (max-width: 1200px) {
+    .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+    .charts-grid { grid-template-columns: 1fr; }
+    .insights-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 768px) {
+    .metrics-grid { grid-template-columns: 1fr; }
+    .premium-banner { flex-direction: column; gap: 1.5rem; text-align: center; }
+    .premium-content { flex-direction: column; }
+  }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script nonce={Astro.locals.nonce} is:inline>
+  function statsManager() {
+    return {
+      period: '30d',
+      metrics: { sales: 12450, newCustomers: 47, retention: 68, pixRate: 92 },
+
+      formatCurrency(val) {
+        return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+      },
+
+      init() {
+        this.initCharts();
+      },
+
+      initCharts() {
+        setTimeout(() => {
+          // Sales Chart
+          const salesCtx = document.getElementById('salesChart');
+          if (salesCtx) {
+            new Chart(salesCtx, {
+              type: 'line',
+              data: {
+                labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
+                datasets: [{
+                  label: 'Vendas (R$)',
+                  data: [1850, 2100, 1950, 2450, 2800, 3100, 2450],
+                  borderColor: '#00ff9d',
+                  backgroundColor: 'rgba(0, 255, 157, 0.1)',
+                  fill: true,
+                  tension: 0.4,
+                  borderWidth: 2
+                }]
+              },
+              options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                  y: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#64748b' } },
+                  x: { grid: { display: false }, ticks: { color: '#64748b' } }
+                }
+              }
+            });
+          }
+
+          // Traffic Chart
+          const trafficCtx = document.getElementById('trafficChart');
+          if (trafficCtx) {
+            new Chart(trafficCtx, {
+              type: 'doughnut',
+              data: {
+                labels: ['WhatsApp', 'Instagram', 'Facebook', 'Google', 'Outros'],
+                datasets: [{
+                  data: [45, 25, 15, 10, 5],
+                  backgroundColor: ['#00ff9d', '#8b5cf6', '#3b82f6', '#f59e0b', '#64748b'],
+                  borderWidth: 0
+                }]
+              },
+              options: {
+                responsive: true,
+                plugins: {
+                  legend: { position: 'right', labels: { color: '#94a3b8', padding: 15 } }
+                }
+              }
+            });
+          }
+
+          // Products Chart
+          const productsCtx = document.getElementById('productsChart');
+          if (productsCtx) {
+            new Chart(productsCtx, {
+              type: 'bar',
+              data: {
+                labels: ['Camiseta Premium', 'Tênis Sport', 'Jaqueta Couro', 'Calça Jeans', 'Boné Style'],
+                datasets: [{
+                  label: 'Unidades',
+                  data: [156, 124, 98, 87, 65],
+                  backgroundColor: '#00f3ff',
+                  borderRadius: 4
+                }]
+              },
+              options: {
+                responsive: true,
+                indexAxis: 'y',
+                plugins: { legend: { display: false } },
+                scales: {
+                  x: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#64748b' } },
+                  y: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                }
+              }
+            });
+          }
+        }, 100);
+      },
+
+      exportStats() {
+        alert('Exportando estatísticas em CSV...');
+      }
+    };
+  }
+</script>
 </ClientLayout>

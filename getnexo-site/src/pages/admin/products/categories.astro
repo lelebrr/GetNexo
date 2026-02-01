@@ -1,31 +1,29 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
-import { Tag, Folder, Plus, ChevronRight, MoreVertical, Edit2 } from 'lucide-react';
-
-const categories = [
-  { id: 1, name: "Calçados", count: 124, status: "Visível", sub: ["Sneakers", "Social", "Esportivo"] },
-  { id: 2, name: "Acessórios", count: 85, status: "Visível", sub: ["Relógios", "Óculos", "Bonés"] },
-  { id: 3, name: "Eletrônicos", count: 210, status: "Oculto", sub: ["Smartphones", "Audio", "Smart Home"] },
-  { id: 4, name: "Roupas", count: 450, status: "Visível", sub: ["Camisetas", "Calças", "Casacos"] },
-];
+import { Tag, Folder, Plus, ChevronRight, MoreVertical, Edit2, Trash2, X, Eye, EyeOff } from 'lucide-react';
 ---
 
 <AdminLayout title="Categorias do Catálogo" activeTab="products">
-  <div class="space-y-8 animate-fade-in">
+  <div class="space-y-8 animate-fade-in" x-data="categoriesManager()">
     <div class="flex items-center justify-between">
       <div>
         <h1 class="text-3xl font-bold text-white uppercase tracking-tight">Taxonomia do Catálogo</h1>
         <p class="text-sm text-gray-400 mt-1">Organize seus produtos em categorias e subcategorias para melhor navegação.</p>
       </div>
-      <button class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl flex items-center space-x-2 transition-all shadow-lg shadow-indigo-500/10">
+      <button @click="openCreateModal()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl flex items-center space-x-2 transition-all shadow-lg shadow-indigo-500/10">
          <Plus className="w-5 h-5" />
          <span>Nova Categoria</span>
       </button>
     </div>
 
+    <!-- Loading -->
+    <div x-show="loading" class="flex items-center justify-center py-10">
+       <div class="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
     <!-- Grid de Categorias -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-       {categories.map(cat => (
+    <div x-show="!loading" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+       <template x-for="cat in categories" :key="cat.id">
          <div class="bg-gray-900/40 border border-gray-800 rounded-3xl p-8 hover:border-indigo-500/30 transition-all group">
             <div class="flex items-start justify-between mb-8">
                <div class="flex items-center space-x-4">
@@ -33,24 +31,27 @@ const categories = [
                      <Folder className="w-6 h-6" />
                   </div>
                   <div>
-                     <h3 class="text-lg font-bold text-white uppercase tracking-tight">{cat.name}</h3>
-                     <p class="text-[10px] text-gray-500 font-black uppercase tracking-widest">{cat.count} Produtos vinculados</p>
+                     <h3 class="text-lg font-bold text-white uppercase tracking-tight" x-text="cat.name"></h3>
+                     <p class="text-[10px] text-gray-500 font-black uppercase tracking-widest" x-text="cat.count + ' Produtos vinculados'"></p>
                   </div>
                </div>
-               <div class:list={["text-[8px] font-black uppercase px-2 py-1 rounded", cat.status === 'Visível' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500']}>
-                  {cat.status}
-               </div>
+               <button @click="toggleVisibility(cat.id)" 
+                       :class="cat.visible ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'"
+                       class="text-[8px] font-black uppercase px-2 py-1 rounded hover:opacity-80 transition-opacity"
+                       x-text="cat.visible ? 'Visível' : 'Oculto'">
+               </button>
             </div>
             
             <div class="space-y-3 mb-8">
                <p class="text-[10px] text-gray-600 font-bold uppercase tracking-widest">Subcategorias</p>
                <div class="flex flex-wrap gap-2">
-                  {cat.sub.map(s => (
-                    <span class="text-[10px] bg-black/40 border border-gray-800 text-gray-400 px-3 py-1.5 rounded-xl hover:text-white hover:border-gray-700 transition-colors">
-                       {s}
+                  <template x-for="(sub, idx) in cat.subcategories" :key="idx">
+                    <span class="text-[10px] bg-black/40 border border-gray-800 text-gray-400 px-3 py-1.5 rounded-xl hover:text-white hover:border-gray-700 transition-colors flex items-center space-x-1">
+                       <span x-text="sub"></span>
+                       <button @click="removeSubcategory(cat.id, idx)" class="text-gray-600 hover:text-rose-400 ml-1">×</button>
                     </span>
-                  ))}
-                  <button class="text-[10px] text-indigo-400 font-bold hover:underline">+ Adicionar</button>
+                  </template>
+                  <button @click="addSubcategory(cat.id)" class="text-[10px] text-indigo-400 font-bold hover:underline">+ Adicionar</button>
                </div>
             </div>
 
@@ -59,18 +60,205 @@ const categories = [
                   Ver Coleção <ChevronRight className="w-4 h-4 ml-1" />
                </button>
                <div class="flex items-center space-x-2 opacity-50 group-hover:opacity-100 transition-opacity">
-                  <button class="p-2 hover:bg-gray-800 rounded-lg text-gray-400"><Edit2 className="w-3.5 h-3.5" /></button>
-                  <button class="p-2 hover:bg-gray-800 rounded-lg text-gray-400"><MoreVertical className="w-3.5 h-3.5" /></button>
+                  <button @click="editCategory(cat)" class="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition-colors" title="Editar">
+                     <Edit2 className="w-3.5 h-3.5" />
+                  </button>
+                  <button @click="deleteCategory(cat.id)" class="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-rose-400 transition-colors" title="Excluir">
+                     <Trash2 className="w-3.5 h-3.5" />
+                  </button>
                </div>
             </div>
          </div>
-       ))}
+       </template>
+    </div>
+
+    <!-- Empty State -->
+    <div x-show="!loading && categories.length === 0" class="text-center py-16 bg-gray-900/40 border border-gray-800 rounded-3xl">
+       <Folder className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+       <h3 class="text-xl font-bold text-white mb-2">Nenhuma categoria</h3>
+       <p class="text-gray-500 mb-6">Crie categorias para organizar seus produtos.</p>
+       <button @click="openCreateModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl font-medium">Criar Primeira Categoria</button>
+    </div>
+
+    <!-- Create/Edit Modal -->
+    <div x-show="showModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" @keydown.escape.window="showModal = false">
+       <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="showModal = false"></div>
+       <div class="relative w-full max-w-md bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-hidden" @click.stop>
+          <div class="bg-gradient-to-r from-indigo-600/20 to-purple-600/20 p-6 border-b border-gray-800">
+             <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold text-white" x-text="editingCategory ? 'Editar Categoria' : 'Nova Categoria'"></h2>
+                <button @click="showModal = false" class="p-2 text-gray-500 hover:text-white hover:bg-gray-800 rounded-lg transition-all">
+                   <X className="w-5 h-5" />
+                </button>
+             </div>
+          </div>
+          <form @submit.prevent="saveCategory()" class="p-6 space-y-5">
+             <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Nome da Categoria *</label>
+                <input type="text" x-model="form.name" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-all" placeholder="Ex: Calçados">
+             </div>
+             <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Descrição</label>
+                <textarea x-model="form.description" rows="2" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-all resize-none" placeholder="Descrição breve..."></textarea>
+             </div>
+             <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Subcategorias (separadas por vírgula)</label>
+                <input type="text" x-model="form.subcategoriesInput" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-all" placeholder="Sneakers, Social, Esportivo">
+             </div>
+             <div class="flex items-center space-x-3">
+                <input type="checkbox" x-model="form.visible" id="catVisible" class="w-5 h-5 rounded bg-gray-800 border-gray-600 text-indigo-500 focus:ring-indigo-500 focus:ring-offset-gray-900">
+                <label for="catVisible" class="text-sm text-gray-300">Categoria visível no site</label>
+             </div>
+             <div class="flex space-x-3 pt-4">
+                <button type="button" @click="showModal = false" class="flex-1 py-3 bg-gray-800 hover:bg-gray-700 text-gray-400 font-bold rounded-xl transition-all">Cancelar</button>
+                <button type="submit" :disabled="saving" class="flex-1 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all disabled:opacity-50">
+                   <span x-text="saving ? 'Salvando...' : (editingCategory ? 'Salvar' : 'Criar')"></span>
+                </button>
+             </div>
+          </form>
+       </div>
     </div>
   </div>
 </AdminLayout>
 
+<script nonce={Astro.locals.nonce} is:inline>
+  function categoriesManager() {
+    return {
+      categories: [],
+      loading: true,
+      showModal: false,
+      saving: false,
+      editingCategory: null,
+      form: { name: '', description: '', subcategoriesInput: '', visible: true },
+
+      async init() {
+        await this.fetchCategories();
+      },
+
+      async fetchCategories() {
+        this.loading = true;
+        try {
+          const res = await fetch('/api/products/categories');
+          if (res.ok) {
+            const data = await res.json();
+            this.categories = data.categories || [];
+          } else {
+            this.categories = this.getMockCategories();
+          }
+        } catch(e) {
+          console.error(e);
+          this.categories = this.getMockCategories();
+        } finally {
+          this.loading = false;
+        }
+      },
+
+      getMockCategories() {
+        return [
+          { id: 1, name: 'Calçados', count: 124, visible: true, subcategories: ['Sneakers', 'Social', 'Esportivo'] },
+          { id: 2, name: 'Acessórios', count: 85, visible: true, subcategories: ['Relógios', 'Óculos', 'Bonés'] },
+          { id: 3, name: 'Eletrônicos', count: 210, visible: false, subcategories: ['Smartphones', 'Audio', 'Smart Home'] },
+          { id: 4, name: 'Roupas', count: 450, visible: true, subcategories: ['Camisetas', 'Calças', 'Casacos'] },
+        ];
+      },
+
+      openCreateModal() {
+        this.editingCategory = null;
+        this.form = { name: '', description: '', subcategoriesInput: '', visible: true };
+        this.showModal = true;
+      },
+
+      editCategory(cat) {
+        this.editingCategory = cat;
+        this.form = {
+          name: cat.name,
+          description: cat.description || '',
+          subcategoriesInput: cat.subcategories.join(', '),
+          visible: cat.visible
+        };
+        this.showModal = true;
+      },
+
+      async saveCategory() {
+        if (!this.form.name) {
+          alert('Digite o nome da categoria');
+          return;
+        }
+
+        this.saving = true;
+        const subcategories = this.form.subcategoriesInput.split(',').map(s => s.trim()).filter(s => s);
+
+        try {
+          const url = this.editingCategory ? `/api/products/categories/${this.editingCategory.id}` : '/api/products/categories';
+          const method = this.editingCategory ? 'PUT' : 'POST';
+          
+          await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...this.form, subcategories })
+          });
+        } catch(e) { console.error(e); }
+
+        if (this.editingCategory) {
+          const idx = this.categories.findIndex(c => c.id === this.editingCategory.id);
+          if (idx !== -1) {
+            this.categories[idx] = { ...this.categories[idx], ...this.form, subcategories };
+          }
+        } else {
+          this.categories.push({ id: Date.now(), count: 0, ...this.form, subcategories });
+        }
+
+        this.showModal = false;
+        this.saving = false;
+      },
+
+      async toggleVisibility(id) {
+        const cat = this.categories.find(c => c.id === id);
+        if (!cat) return;
+        
+        cat.visible = !cat.visible;
+        try {
+          await fetch(`/api/products/categories/${id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ visible: cat.visible })
+          });
+        } catch(e) { console.error(e); }
+      },
+
+      async deleteCategory(id) {
+        if (!confirm('Excluir esta categoria? Os produtos serão movidos para "Sem categoria".')) return;
+        
+        try {
+          await fetch(`/api/products/categories/${id}`, { method: 'DELETE' });
+        } catch(e) { console.error(e); }
+        
+        this.categories = this.categories.filter(c => c.id !== id);
+      },
+
+      addSubcategory(categoryId) {
+        const name = prompt('Nome da subcategoria:');
+        if (!name) return;
+        
+        const cat = this.categories.find(c => c.id === categoryId);
+        if (cat) {
+          cat.subcategories.push(name.trim());
+        }
+      },
+
+      removeSubcategory(categoryId, index) {
+        const cat = this.categories.find(c => c.id === categoryId);
+        if (cat) {
+          cat.subcategories.splice(index, 1);
+        }
+      }
+    };
+  }
+</script>
+
 <style>
+  [x-cloak] { display: none !important; }
   .animate-fade-in { animation: fadeIn 0.6s ease-out; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 </style>
-
+</AdminLayout>

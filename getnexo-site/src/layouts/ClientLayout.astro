@@ -11,7 +11,6 @@ import ClientSidebar from '../components/ClientSidebar.astro';
 import '../styles/global.css';
 
 // Simulação de módulos contratados pelo cliente (em produção viria do DB)
-// Exemplo: ['white-label', 'ia-avancada', 'produtos-3d', 'relatorios-roi', 'fidelidade', 'meta-integration', 'pix-automatico', 'automacao-avancada']
 const clienteModules = ['white-label', 'produtos-3d', 'fidelidade', 'meta-integration', 'pix-automatico'];
 const clientePlano = 'Revenda Pro';
 const trustedTypesPolicy = Astro.locals.trustedTypesPolicy || 'getnexo-trusted';
@@ -25,7 +24,7 @@ const trustedTypesPolicy = Astro.locals.trustedTypesPolicy || 'getnexo-trusted';
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script nonce={Astro.locals.nonce} defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <meta name="generator" content={Astro.generator} />
     <meta name="robots" content="noindex, nofollow" />
@@ -50,15 +49,14 @@ const trustedTypesPolicy = Astro.locals.trustedTypesPolicy || 'getnexo-trusted';
       })();
     </script>
   </head>
-  <body>
-    <div class="flex flex-col min-h-screen bg-gray-50">
+  <body class="dark-theme" x-data="{ sidebarOpen: window.innerWidth >= 1024 }">
+    <div class="app-container">
       <!-- Sidebar -->
       <ClientSidebar modules={clienteModules} plano={clientePlano} />
 
       <!-- Main Content -->
-      <main class="flex-1 lg:ml-0">
-        <!-- Área de conteúdo -->
-        <div class="p-6 lg:p-8">
+      <main class="main-content">
+        <div class="content-area">
           <slot />
         </div>
       </main>
@@ -67,41 +65,233 @@ const trustedTypesPolicy = Astro.locals.trustedTypesPolicy || 'getnexo-trusted';
 </html>
 
 <style is:global>
-  /* Estilos globais para o layout do cliente */
-  body {
-    font-family: 'Inter', sans-serif;
-    background-color: #f9fafb;
+  /* Dark Theme - Matching Admin Panel */
+  :root {
+    --bg-primary: #050505;
+    --bg-secondary: #0a0a0a;
+    --bg-card: #0f172a;
+    --border-color: #334155;
+    --text-primary: #ffffff;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent-cyan: #00f3ff;
+    --accent-green: #00ff9d;
+    --accent-gold: #ffd700;
+    --accent-purple: #8b5cf6;
+    --danger-color: #f43f5e;
   }
 
-  /* Scrollbar customizada */
-  ::-webkit-scrollbar {
-    width: 6px;
-  }
-  ::-webkit-scrollbar-track {
-    background: #f1f5f9;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 3px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
   }
 
-  /* Animações suaves */
-  .transition-all {
-    transition-property: all;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  body.dark-theme {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
   }
 
-  /* Hover effects */
-  .hover\:bg-gray-50:hover {
-    background-color: #f9fafb;
+  .app-container {
+    display: flex;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  .main-content {
+    flex: 1;
+    margin-left: 0;
+    min-height: 100vh;
+    background: var(--bg-primary);
+    padding-top: 4rem; /* Space for mobile menu button */
+  }
+
+  @media (min-width: 1024px) {
+    .main-content {
+      margin-left: 280px;
+      padding-top: 0;
+    }
+  }
+
+  .content-area {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* Typography */
+  h1, h2, h3, h4 { color: var(--text-primary); font-weight: 700; }
+  .text-neon-blue { color: var(--accent-cyan); }
+  .text-neon-green { color: var(--accent-green); }
+  .text-gold { color: var(--accent-gold); }
+  .text-muted { color: var(--text-muted); }
+
+  /* Cards */
+  .card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-green));
+    color: #000;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  .btn-secondary {
+    background: rgba(0, 243, 255, 0.1);
+    color: var(--accent-cyan);
+    border: 1px solid rgba(0, 243, 255, 0.3);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .btn-secondary:hover { background: rgba(0, 243, 255, 0.2); }
+
+  /* Inputs */
+  .form-input {
+    width: 100%;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    padding: 0.75rem 1rem;
+    color: var(--text-primary);
+    border-radius: 8px;
+    font-size: 0.95rem;
+  }
+  .form-input:focus {
+    border-color: var(--accent-cyan);
+    outline: none;
+  }
+
+  /* Tables */
+  .table-container {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th { 
+    text-align: left; 
+    padding: 1rem; 
+    color: var(--accent-cyan); 
+    border-bottom: 1px solid var(--border-color); 
+    font-size: 0.8rem;
+    text-transform: uppercase;
+  }
+  td { 
+    padding: 1rem; 
+    border-bottom: 1px solid rgba(51, 65, 85, 0.5); 
+    color: var(--text-secondary);
+  }
+  tr:hover { background: rgba(0, 243, 255, 0.05); }
+
+  /* Status Colors */
+  .status-active { color: var(--accent-green); font-weight: 600; }
+  .status-pending { color: var(--accent-gold); font-weight: 600; }
+  .status-inactive { color: var(--danger-color); font-weight: 600; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg-primary); }
+  ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+  /* Alpine cloak */
+  [x-cloak] { display: none !important; }
+
+  /* Stats Grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .stat-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.25rem;
+    transition: all 0.3s;
+  }
+  .stat-card:hover { border-color: var(--accent-cyan); }
+
+  /* Loading spinner */
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border-color);
+    border-top-color: var(--accent-cyan);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  .modal-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-header {
+    background: rgba(0, 243, 255, 0.1);
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .modal-header h3 { color: var(--accent-cyan); margin: 0; }
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+  .modal-body { padding: 1.5rem; }
+  .modal-footer {
+    padding: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .main-content { margin-left: 0; }
   }
 
   /* Focus styles */
   :focus-visible {
-    outline: 2px solid #3b82f6;
+    outline: 2px solid var(--accent-cyan);
     outline-offset: 2px;
   }
 </style>

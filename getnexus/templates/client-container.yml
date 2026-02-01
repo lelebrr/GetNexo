@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  getnexus-bot:
+    image: getnexo/client-bot:latest
+    container_name: ${CLIENT_ID}-bot
+    restart: always
+    environment:
+      - CLIENT_SITE=https://${CLIENT_DOMAIN}
+      - PIX_KEY=sk_live_${CLIENT_ID}
+      - IA_MODEL=deepseek-lite
+      - DB_URL=sqlite:///${CLIENT_ID}.db
+    volumes:
+      - ./${CLIENT_ID}-data:/app/data
+    ports:
+      - "3000"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 128M
+        reservations:
+          cpus: "0.1"
+          memory: 64M
+    networks:
+      - client-net
+
+networks:
+  client-net:
+    driver: bridge

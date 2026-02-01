@@ -3,124 +3,184 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 
 <AdminLayout title="Top Produtos Hoje" activeTab="dashboard">
-  <div class="space-y-6">
+  <div x-data="topProducts" class="space-y-6 animate-fade-in">
     <div class="flex justify-between items-end">
       <div>
         <h1 class="text-3xl font-bold text-white">Top Produtos</h1>
-        <p class="text-gray-400">Desempenho de vendas por item (24h)</p>
+        <p class="text-gray-400" x-text="`Desempenho de vendas por item (${periodLabel})`"></p>
       </div>
       <div class="flex space-x-2">
-         <select class="bg-gray-900 border border-gray-800 text-gray-300 rounded-lg text-sm p-2 focus:border-orange-500 outline-none">
-            <option>Hoje</option>
-            <option>Semana</option>
-            <option>Mês</option>
+         <select x-model="period" @change="fetchProducts()" class="bg-gray-900 border border-gray-800 text-gray-300 rounded-lg text-sm p-2 focus:border-orange-500 outline-none">
+            <option value="today">Hoje</option>
+            <option value="week">Semana</option>
+            <option value="month">Mês</option>
          </select>
       </div>
     </div>
 
+    <!-- Loading State -->
+    <div x-show="loading" class="text-center py-12 text-gray-500">
+        Carregando dados...
+    </div>
+
+    <!-- Empty State -->
+    <div x-show="!loading && products.length === 0" class="text-center py-12 text-gray-500 bg-gray-900/50 rounded-xl border border-gray-800">
+        Nenhum produto vendido neste período.
+    </div>
+
     <!-- Product Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div x-show="!loading && products.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       
       <!-- Rank 1 -->
+      <template x-if="products[0]">
       <div class="bg-gradient-to-b from-orange-500/20 to-gray-900/50 border border-orange-500/50 p-6 rounded-xl relative overflow-hidden group hover:scale-[1.02] transition-transform">
         <div class="absolute -right-6 -top-6 bg-orange-500 text-white w-20 h-20 flex items-center justify-center rotate-45 font-bold shadow-lg shadow-orange-500/30">#1</div>
         
         <div class="flex flex-col items-center text-center mt-4">
-          <div class="w-32 h-32 bg-gray-800 rounded-xl mb-4 flex items-center justify-center text-4xl shadow-2xl">⌚</div>
-          <h3 class="text-xl font-bold text-white mb-1">Smartwatch Series 8</h3>
-          <p class="text-gray-400 text-sm mb-4">Eletrônicos</p>
+          <div class="w-32 h-32 bg-gray-800 rounded-xl mb-4 flex items-center justify-center text-4xl shadow-2xl relative overflow-hidden">
+             <img x-show="products[0].image_url" :src="products[0].image_url" class="w-full h-full object-cover">
+             <span x-show="!products[0].image_url">🏆</span>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-1" x-text="products[0].name"></h3>
+          <p class="text-gray-400 text-sm mb-4" x-text="products[0].category || 'Geral'"></p>
           
           <div class="w-full flex justify-between items-center bg-gray-900/50 p-3 rounded-lg border border-gray-800">
              <div class="text-left">
                 <p class="text-xs text-gray-500">Vendas</p>
-                <p class="text-lg font-bold text-white">142 un</p>
+                <p class="text-lg font-bold text-white" x-text="products[0].sales_count + ' un'"></p>
              </div>
              <div class="text-right">
                 <p class="text-xs text-gray-500">Receita</p>
-                <p class="text-lg font-bold text-orange-400">R$ 28k</p>
+                <p class="text-lg font-bold text-orange-400" x-text="formatCurrency(products[0].revenue)"></p>
              </div>
           </div>
         </div>
       </div>
+      </template>
 
       <!-- Rank 2 -->
+      <template x-if="products[1]">
       <div class="bg-gray-900/50 border border-gray-800 p-6 rounded-xl relative overflow-hidden group hover:border-gray-600 transition-colors">
         <div class="absolute top-4 right-4 text-gray-700 font-black text-6xl opacity-20">#2</div>
         
         <div class="flex items-center space-x-4 mb-6">
-           <div class="w-20 h-20 bg-gray-800 rounded-lg flex items-center justify-center text-3xl shrink-0">🎧</div>
+           <div class="w-20 h-20 bg-gray-800 rounded-lg flex items-center justify-center text-3xl shrink-0 overflow-hidden">
+              <img x-show="products[1].image_url" :src="products[1].image_url" class="w-full h-full object-cover">
+              <span x-show="!products[1].image_url">🥈</span>
+           </div>
            <div>
-              <h3 class="text-lg font-bold text-white">Fone Bluetooth XT</h3>
-              <p class="text-gray-400 text-sm">Acessórios</p>
+              <h3 class="text-lg font-bold text-white" x-text="products[1].name"></h3>
+              <p class="text-gray-400 text-sm" x-text="products[1].category || 'Geral'"></p>
            </div>
         </div>
 
         <div class="space-y-3">
           <div class="flex justify-between text-sm">
              <span class="text-gray-500">Vendas</span>
-             <span class="text-white font-bold">98 un</span>
+             <span class="text-white font-bold" x-text="products[1].sales_count + ' un'"></span>
           </div>
           <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
-             <div class="h-full bg-orange-400 w-[70%]"></div>
+             <!-- Simulated bar relative to #1 -->
+             <div class="h-full bg-orange-400" :style="`width: ${(products[1].sales_count / products[0].sales_count) * 100}%`"></div>
           </div>
           <div class="flex justify-between text-sm pt-2">
              <span class="text-gray-500">Estoque</span>
-             <span class="text-red-400 font-bold">Baixo (15)</span>
+             <span class="font-bold" 
+                   :class="products[1].stock < 5 ? 'text-red-400' : 'text-emerald-400'"
+                   x-text="products[1].stock < 5 ? `Baixo (${products[1].stock})` : products[1].stock"></span>
           </div>
         </div>
       </div>
+      </template>
 
        <!-- Rank 3 -->
+       <template x-if="products[2]">
       <div class="bg-gray-900/50 border border-gray-800 p-6 rounded-xl relative overflow-hidden group hover:border-gray-600 transition-colors">
         <div class="absolute top-4 right-4 text-gray-700 font-black text-6xl opacity-20">#3</div>
         
         <div class="flex items-center space-x-4 mb-6">
-           <div class="w-20 h-20 bg-gray-800 rounded-lg flex items-center justify-center text-3xl shrink-0">👟</div>
+           <div class="w-20 h-20 bg-gray-800 rounded-lg flex items-center justify-center text-3xl shrink-0 overflow-hidden">
+               <img x-show="products[2].image_url" :src="products[2].image_url" class="w-full h-full object-cover">
+               <span x-show="!products[2].image_url">🥉</span>
+           </div>
            <div>
-              <h3 class="text-lg font-bold text-white">Tênis Runner Pro</h3>
-              <p class="text-gray-400 text-sm">Calçados</p>
+              <h3 class="text-lg font-bold text-white" x-text="products[2].name"></h3>
+              <p class="text-gray-400 text-sm" x-text="products[2].category || 'Geral'"></p>
            </div>
         </div>
 
         <div class="space-y-3">
           <div class="flex justify-between text-sm">
              <span class="text-gray-500">Vendas</span>
-             <span class="text-white font-bold">64 un</span>
+             <span class="text-white font-bold" x-text="products[2].sales_count + ' un'"></span>
           </div>
           <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
-             <div class="h-full bg-orange-400 w-[50%]"></div>
+             <div class="h-full bg-orange-400" :style="`width: ${(products[2].sales_count / products[0].sales_count) * 100}%`"></div>
           </div>
            <div class="flex justify-between text-sm pt-2">
              <span class="text-gray-500">Tendência</span>
-             <span class="text-emerald-400 font-bold">Subindo 🔥</span>
+             <span class="text-emerald-400 font-bold">Estável</span>
           </div>
         </div>
       </div>
+      </template>
 
     </div>
 
      <!-- Extended List -->
-    <div class="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden mt-6">
+    <div x-show="products.length > 3" class="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden mt-6">
        <div class="p-4 border-b border-gray-800">
           <h3 class="font-semibold text-white">Outros Destaques</h3>
        </div>
        <table class="w-full text-left text-sm text-gray-400">
           <tbody class="divide-y divide-gray-800">
+             <template x-for="(product, index) in products.slice(3)" :key="product.id">
              <tr class="hover:bg-gray-800/30 transition-colors">
-                <td class="p-4 font-mono text-gray-600">#4</td>
-                <td class="p-4 text-white">Kit Ferramentas 50pcs</td>
-                <td class="p-4 text-right">45 vendas</td>
-                <td class="p-4 text-right text-emerald-400">+12%</td>
+                <td class="p-4 font-mono text-gray-600" x-text="'#' + (index + 4)"></td>
+                <td class="p-4 text-white" x-text="product.name"></td>
+                <td class="p-4 text-right" x-text="product.sales_count + ' vendas'"></td>
+                <td class="p-4 text-right text-emerald-400" x-text="formatCurrency(product.revenue)"></td>
              </tr>
-             <tr class="hover:bg-gray-800/30 transition-colors">
-                <td class="p-4 font-mono text-gray-600">#5</td>
-                <td class="p-4 text-white">Câmera de Segurança WiFi</td>
-                <td class="p-4 text-right">38 vendas</td>
-                <td class="p-4 text-right text-red-400">-5%</td>
-             </tr>
+             </template>
           </tbody>
        </table>
     </div>
 
   </div>
+
+<script nonce={Astro.locals.nonce}>
+  document.addEventListener('alpine:init', () => {
+    Alpine.data('topProducts', () => ({
+      products: [],
+      loading: true,
+      period: 'today',
+
+      get periodLabel() {
+          const map = { 'today': '24h', 'week': '7 dias', 'month': '30 dias' };
+          return map[this.period];
+      },
+
+      init() {
+        this.fetchProducts();
+      },
+      
+      formatCurrency(value) {
+        return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+      },
+
+      async fetchProducts() {
+        this.loading = true;
+        try {
+          const res = await fetch(`/api/analytics/top-products?period=${this.period}`);
+          const data = await res.json();
+          this.products = data.products || [];
+        } catch (e) {
+          console.error('Erro ao buscar produtos:', e);
+        } finally {
+            this.loading = false;
+        }
+      }
+    }));
+  });
+</script>
 </AdminLayout>

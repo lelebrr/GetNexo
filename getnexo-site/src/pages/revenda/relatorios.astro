@@ -3,81 +3,198 @@ import ResellerLayout from '../../layouts/ResellerLayout.astro';
 ---
 
 <ResellerLayout title="Relatórios e Analytics">
-    <div class="header">
-        <h2 class="text-neon-blue">📋 RELATÓRIOS DETALHADOS</h2>
-    </div>
-
-    <!-- Quick Insights -->
-    <div class="insights-grid">
-        <div class="insight-card">
-            <h3>TAXA DE RENOVAÇÃO</h3>
-            <div class="v">94.2%</div>
-            <p>Retenção da sua base atual</p>
-        </div>
-        <div class="insight-card">
-            <h3>CONVERSÃO DE TRIAL</h3>
-            <div class="v">32.8%</div>
-            <p>Leads que viraram clientes</p>
-        </div>
-        <div class="insight-card">
-            <h3>LTV MÉDIO</h3>
-            <div class="v">R$ 1.240</div>
-            <p>Valor por cliente (estimado)</p>
-        </div>
-    </div>
-
-    <!-- Available Reports -->
-    <div class="reports-section">
-        <h3>RELATÓRIOS DISPONÍVEIS PARA DOWNLOAD</h3>
-        <div class="reports-list">
-            <div class="report-row">
-                <div class="rep-info">
-                    <span class="icon">📄</span>
-                    <div>
-                        <span class="name">Desempenho de Vendas - Janeiro 2026</span>
-                        <span class="meta">PDF • Gerado em 28/01 • 1.2 MB</span>
-                    </div>
-                </div>
-                <button class="btn-down">DOWNLOAD</button>
+    <div x-data="reportsManager()">
+        <div class="header">
+            <div>
+                <h2 class="text-neon-blue">📋 RELATÓRIOS DETALHADOS</h2>
+                <p class="subtitle">Acompanhe seu desempenho e otimize sua estratégia de vendas.</p>
             </div>
-            <div class="report-row">
-                <div class="rep-info">
-                    <span class="icon">📊</span>
-                    <div>
-                        <span class="name">Previsão de Receita (Q1 2026)</span>
-                        <span class="meta">XLSX • Gerado em 25/01 • 450 KB</span>
-                    </div>
+            <button @click="generateReport()" class="btn-primary">📊 GERAR RELATÓRIO</button>
+        </div>
+
+        <!-- Period Filter -->
+        <div class="period-filter">
+            <button @click="period = '7d'" :class="period === '7d' ? 'active' : ''" class="period-btn">7 dias</button>
+            <button @click="period = '30d'" :class="period === '30d' ? 'active' : ''" class="period-btn">30 dias</button>
+            <button @click="period = '90d'" :class="period === '90d' ? 'active' : ''" class="period-btn">90 dias</button>
+            <button @click="period = 'year'" :class="period === 'year' ? 'active' : ''" class="period-btn">Este ano</button>
+        </div>
+
+        <!-- Quick Insights -->
+        <div class="insights-grid">
+            <div class="insight-card">
+                <div class="insight-icon green">📈</div>
+                <div class="insight-content">
+                    <h3>TAXA DE RENOVAÇÃO</h3>
+                    <div class="value" x-text="insights.renewal + '%'">0%</div>
+                    <p class="trend positive">↑ 2.3% vs mês anterior</p>
                 </div>
-                <button class="btn-down">DOWNLOAD</button>
             </div>
-            <div class="report-row">
-                <div class="rep-info">
-                    <span class="icon">👥</span>
-                    <div>
-                        <span class="name">Churn Analysis & Feedback</span>
-                        <span class="meta">PDF • Gerado em 20/01 • 2.5 MB</span>
-                    </div>
+            <div class="insight-card">
+                <div class="insight-icon blue">🔄</div>
+                <div class="insight-content">
+                    <h3>CONVERSÃO DE TRIAL</h3>
+                    <div class="value" x-text="insights.conversion + '%'">0%</div>
+                    <p class="trend positive">↑ 5.1% vs mês anterior</p>
                 </div>
-                <button class="btn-down">DOWNLOAD</button>
+            </div>
+            <div class="insight-card">
+                <div class="insight-icon gold">💰</div>
+                <div class="insight-content">
+                    <h3>LTV MÉDIO</h3>
+                    <div class="value" x-text="'R$ ' + insights.ltv">R$ 0</div>
+                    <p class="trend neutral">→ Estável</p>
+                </div>
+            </div>
+            <div class="insight-card">
+                <div class="insight-icon red">📉</div>
+                <div class="insight-content">
+                    <h3>CHURN RATE</h3>
+                    <div class="value" x-text="insights.churn + '%'">0%</div>
+                    <p class="trend negative">↓ 1.2% (bom!)</p>
+                </div>
             </div>
         </div>
-    </div>
 
+        <!-- Charts Section -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h4>Evolução de Clientes</h4>
+                <canvas id="clientsChart" height="200"></canvas>
+            </div>
+            <div class="chart-card">
+                <h4>Receita por Mês</h4>
+                <canvas id="revenueChart" height="200"></canvas>
+            </div>
+        </div>
+
+        <!-- Available Reports -->
+        <div class="reports-section">
+            <div class="section-header">
+                <h3>RELATÓRIOS DISPONÍVEIS PARA DOWNLOAD</h3>
+                <select x-model="reportType" class="report-filter">
+                    <option value="all">Todos</option>
+                    <option value="sales">Vendas</option>
+                    <option value="clients">Clientes</option>
+                    <option value="financial">Financeiro</option>
+                </select>
+            </div>
+            
+            <div x-show="loading" class="loading-state">
+                <div class="spinner"></div>
+            </div>
+
+            <div x-show="!loading" class="reports-list">
+                <template x-for="report in filteredReports" :key="report.id">
+                    <div class="report-row" @click="previewReport(report)">
+                        <div class="rep-info">
+                            <span class="icon" x-text="getReportIcon(report.type)">📄</span>
+                            <div>
+                                <span class="name" x-text="report.name"></span>
+                                <span class="meta" x-text="report.format + ' • Gerado em ' + report.date + ' • ' + report.size"></span>
+                            </div>
+                        </div>
+                        <div class="report-actions">
+                            <button @click.stop="downloadReport(report)" class="btn-down">📥 DOWNLOAD</button>
+                            <button @click.stop="deleteReport(report.id)" class="btn-delete">🗑️</button>
+                        </div>
+                    </div>
+                </template>
+                
+                <div x-show="filteredReports.length === 0" class="empty-reports">
+                    <p>Nenhum relatório encontrado</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Generate Report Modal -->
+        <div x-show="generateModal" x-cloak class="modal-overlay">
+            <div class="modal-container" @click.stop>
+                <div class="modal-header">
+                    <h3>📊 Gerar Novo Relatório</h3>
+                    <button @click="generateModal = false" class="modal-close">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Tipo de Relatório</label>
+                        <select x-model="newReport.type" class="form-input">
+                            <option value="sales">Desempenho de Vendas</option>
+                            <option value="clients">Análise de Clientes</option>
+                            <option value="financial">Extrato Financeiro</option>
+                            <option value="churn">Análise de Churn</option>
+                            <option value="forecast">Previsão de Receita</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Data Início</label>
+                            <input type="date" x-model="newReport.startDate" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Data Fim</label>
+                            <input type="date" x-model="newReport.endDate" class="form-input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Formato</label>
+                        <div class="format-options">
+                            <button type="button" @click="newReport.format = 'PDF'" :class="newReport.format === 'PDF' ? 'selected' : ''" class="format-btn">📄 PDF</button>
+                            <button type="button" @click="newReport.format = 'XLSX'" :class="newReport.format === 'XLSX' ? 'selected' : ''" class="format-btn">📊 Excel</button>
+                            <button type="button" @click="newReport.format = 'CSV'" :class="newReport.format === 'CSV' ? 'selected' : ''" class="format-btn">📃 CSV</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button @click="generateModal = false" class="btn-cancel">Cancelar</button>
+                    <button @click="confirmGenerate()" class="btn-primary" :disabled="generating">
+                        <span x-text="generating ? 'Gerando...' : 'Gerar Relatório'"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </ResellerLayout>
 
 <style>
-    .header { margin-bottom: 2rem; }
-    .insights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
-    .insight-card { background: #0a0a0a; border: 1px solid #334155; padding: 1.5rem; border-radius: 8px; }
-    .insight-card h3 { font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.5rem; }
-    .insight-card .v { font-size: 1.5rem; font-weight: 700; color: #00ff9d; margin-bottom: 0.25rem; }
-    .insight-card p { font-size: 0.75rem; color: #64748b; }
+    [x-cloak] { display: none !important; }
+    .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; }
+    .header h2 { color: #00f3ff; margin: 0 0 0.25rem 0; }
+    .subtitle { color: #64748b; font-size: 0.85rem; margin: 0; }
+    .btn-primary { background: linear-gradient(135deg, #00d4ff, #00ff9d); color: #000; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.85rem; }
 
-    .reports-section { background: #0a0a0a; border: 1px solid #334155; border-radius: 8px; padding: 2rem; }
-    .reports-section h3 { font-size: 0.9rem; color: #00f3ff; margin-bottom: 2rem; }
+    .period-filter { display: flex; gap: 0.5rem; margin-bottom: 2rem; }
+    .period-btn { background: #0a0a0a; border: 1px solid #334155; color: #94a3b8; padding: 0.6rem 1.2rem; border-radius: 8px; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
+    .period-btn.active { background: rgba(0, 243, 255, 0.1); color: #00f3ff; border-color: #00f3ff; }
+
+    .insights-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+    .insight-card { background: #0a0a0a; border: 1px solid #334155; padding: 1.25rem; border-radius: 12px; display: flex; align-items: flex-start; gap: 1rem; }
+    .insight-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
+    .insight-icon.green { background: rgba(0, 255, 65, 0.1); }
+    .insight-icon.blue { background: rgba(0, 212, 255, 0.1); }
+    .insight-icon.gold { background: rgba(255, 215, 0, 0.1); }
+    .insight-icon.red { background: rgba(244, 63, 94, 0.1); }
+    .insight-content h3 { font-size: 0.65rem; color: #64748b; margin: 0 0 0.25rem 0; letter-spacing: 0.5px; }
+    .insight-content .value { font-size: 1.5rem; font-weight: 700; color: #fff; }
+    .trend { font-size: 0.7rem; margin-top: 0.25rem; }
+    .trend.positive { color: #00ff41; }
+    .trend.neutral { color: #94a3b8; }
+    .trend.negative { color: #00ff41; }
+
+    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+    .chart-card { background: #0a0a0a; border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; }
+    .chart-card h4 { color: #00f3ff; font-size: 0.9rem; margin: 0 0 1rem 0; }
+
+    .reports-section { background: #0a0a0a; border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .section-header h3 { font-size: 0.9rem; color: #00f3ff; margin: 0; }
+    .report-filter { background: #050505; border: 1px solid #334155; color: #fff; padding: 0.5rem 1rem; border-radius: 8px; }
+
+    .loading-state { text-align: center; padding: 2rem; }
+    .spinner { width: 30px; height: 30px; border: 3px solid #334155; border-top-color: #00f3ff; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
+    @keyframes spin { to { transform: rotate(360deg); } }
     
-    .reports-list { display: flex; flex-direction: column; gap: 1rem; }
-    .report-row { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem; background: rgba(255, 255, 255, 0.02); border-radius: 8px; border: 1px solid transparent; transition: all 0.2s; }
+    .reports-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .report-row { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; background: rgba(255, 255, 255, 0.02); border-radius: 8px; border: 1px solid transparent; transition: all 0.2s; cursor: pointer; }
     .report-row:hover { background: rgba(255, 255, 255, 0.05); border-color: #334155; }
     
     .rep-info { display: flex; align-items: center; gap: 1rem; }
@@ -86,6 +203,184 @@ import ResellerLayout from '../../layouts/ResellerLayout.astro';
     .rep-info .name { color: #fff; font-weight: 600; font-size: 0.9rem; }
     .rep-info .meta { color: #64748b; font-size: 0.7rem; }
 
-    .btn-down { background: none; border: 1px solid rgba(0, 255, 157, 0.2); color: #00ff9d; padding: 0.5rem 1rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: all 0.2s; }
+    .report-actions { display: flex; gap: 0.5rem; }
+    .btn-down { background: none; border: 1px solid rgba(0, 255, 157, 0.2); color: #00ff9d; padding: 0.5rem 1rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer; }
     .btn-down:hover { background: #00ff9d; color: #000; }
+    .btn-delete { background: none; border: 1px solid rgba(244, 63, 94, 0.2); color: #f43f5e; padding: 0.5rem; border-radius: 4px; cursor: pointer; }
+    .btn-delete:hover { background: rgba(244, 63, 94, 0.2); }
+    
+    .empty-reports { text-align: center; padding: 2rem; color: #64748b; }
+
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .modal-container { background: #0f172a; border: 1px solid #334155; border-radius: 16px; width: 100%; max-width: 450px; }
+    .modal-header { background: rgba(0, 243, 255, 0.1); padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
+    .modal-header h3 { color: #00f3ff; margin: 0; }
+    .modal-close { background: none; border: none; color: #94a3b8; font-size: 1.5rem; cursor: pointer; }
+    .modal-body { padding: 1.5rem; }
+    .modal-footer { padding: 1.5rem; border-top: 1px solid #334155; display: flex; gap: 1rem; justify-content: flex-end; }
+
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; color: #94a3b8; font-size: 0.8rem; margin-bottom: 0.5rem; }
+    .form-input { width: 100%; background: #0a0a0a; border: 1px solid #334155; padding: 0.8rem; color: #fff; border-radius: 8px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .btn-cancel { background: #334155; color: #fff; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; cursor: pointer; }
+
+    .format-options { display: flex; gap: 0.75rem; }
+    .format-btn { background: #0a0a0a; border: 2px solid #334155; color: #94a3b8; padding: 0.75rem 1.25rem; border-radius: 8px; cursor: pointer; flex: 1; }
+    .format-btn.selected { border-color: #00f3ff; color: #00f3ff; }
+
+    @media (max-width: 1024px) {
+        .insights-grid { grid-template-columns: 1fr 1fr; }
+        .charts-grid { grid-template-columns: 1fr; }
+    }
 </style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script nonce={Astro.locals.nonce} is:inline>
+    function reportsManager() {
+        return {
+            period: '30d',
+            reportType: 'all',
+            loading: false,
+            generateModal: false,
+            generating: false,
+            reports: [],
+            insights: { renewal: 94.2, conversion: 32.8, ltv: 1240, churn: 4.2 },
+            newReport: { type: 'sales', startDate: '', endDate: '', format: 'PDF' },
+
+            get filteredReports() {
+                if (this.reportType === 'all') return this.reports;
+                return this.reports.filter(r => r.type === this.reportType);
+            },
+
+            getReportIcon(type) {
+                const icons = { sales: '📊', clients: '👥', financial: '💰', churn: '📉', forecast: '🔮' };
+                return icons[type] || '📄';
+            },
+
+            async init() {
+                await this.fetchReports();
+                this.initCharts();
+            },
+
+            async fetchReports() {
+                this.loading = true;
+                try {
+                    const res = await fetch('/api/revenda/relatorios');
+                    if (res.ok) this.reports = await res.json();
+                    else this.reports = this.getMockReports();
+                } catch (e) {
+                    this.reports = this.getMockReports();
+                } finally {
+                    this.loading = false;
+                }
+            },
+
+            getMockReports() {
+                return [
+                    { id: 1, name: 'Desempenho de Vendas - Janeiro 2026', type: 'sales', format: 'PDF', date: '28/01/2026', size: '1.2 MB' },
+                    { id: 2, name: 'Previsão de Receita (Q1 2026)', type: 'forecast', format: 'XLSX', date: '25/01/2026', size: '450 KB' },
+                    { id: 3, name: 'Churn Analysis & Feedback', type: 'churn', format: 'PDF', date: '20/01/2026', size: '2.5 MB' },
+                    { id: 4, name: 'Base de Clientes Ativos', type: 'clients', format: 'CSV', date: '15/01/2026', size: '320 KB' },
+                    { id: 5, name: 'Extrato Financeiro Dezembro', type: 'financial', format: 'PDF', date: '02/01/2026', size: '890 KB' },
+                ];
+            },
+
+            initCharts() {
+                setTimeout(() => {
+                    // Clients Chart
+                    const clientsCtx = document.getElementById('clientsChart');
+                    if (clientsCtx) {
+                        new Chart(clientsCtx, {
+                            type: 'line',
+                            data: {
+                                labels: ['Ago', 'Set', 'Out', 'Nov', 'Dez', 'Jan'],
+                                datasets: [{
+                                    label: 'Clientes Ativos',
+                                    data: [12, 18, 22, 28, 35, 42],
+                                    borderColor: '#00ff9d',
+                                    backgroundColor: 'rgba(0, 255, 157, 0.1)',
+                                    fill: true,
+                                    tension: 0.4
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: { legend: { display: false } },
+                                scales: { y: { beginAtZero: true, grid: { color: '#1e293b' } }, x: { grid: { display: false } } }
+                            }
+                        });
+                    }
+
+                    // Revenue Chart
+                    const revenueCtx = document.getElementById('revenueChart');
+                    if (revenueCtx) {
+                        new Chart(revenueCtx, {
+                            type: 'bar',
+                            data: {
+                                labels: ['Ago', 'Set', 'Out', 'Nov', 'Dez', 'Jan'],
+                                datasets: [{
+                                    label: 'Receita (R$)',
+                                    data: [1200, 1800, 2400, 3200, 4100, 4800],
+                                    backgroundColor: '#00d4ff',
+                                    borderRadius: 4
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: { legend: { display: false } },
+                                scales: { y: { beginAtZero: true, grid: { color: '#1e293b' } }, x: { grid: { display: false } } }
+                            }
+                        });
+                    }
+                }, 100);
+            },
+
+            generateReport() {
+                const today = new Date();
+                const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+                this.newReport.startDate = lastMonth.toISOString().split('T')[0];
+                this.newReport.endDate = today.toISOString().split('T')[0];
+                this.generateModal = true;
+            },
+
+            async confirmGenerate() {
+                this.generating = true;
+                try {
+                    await fetch('/api/revenda/relatorios', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(this.newReport)
+                    });
+                } catch(e) { console.error(e); }
+
+                const typeNames = { sales: 'Desempenho de Vendas', clients: 'Análise de Clientes', financial: 'Extrato Financeiro', churn: 'Análise de Churn', forecast: 'Previsão de Receita' };
+                this.reports.unshift({
+                    id: Date.now(),
+                    name: typeNames[this.newReport.type] + ' - ' + new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }),
+                    type: this.newReport.type,
+                    format: this.newReport.format,
+                    date: new Date().toLocaleDateString('pt-BR'),
+                    size: '850 KB'
+                });
+
+                this.generating = false;
+                this.generateModal = false;
+            },
+
+            downloadReport(report) {
+                alert('Baixando relatório: ' + report.name);
+            },
+
+            deleteReport(id) {
+                if (!confirm('Excluir este relatório?')) return;
+                this.reports = this.reports.filter(r => r.id !== id);
+            },
+
+            previewReport(report) {
+                alert('Preview: ' + report.name);
+            }
+        };
+    }
+</script>
+</ResellerLayout>

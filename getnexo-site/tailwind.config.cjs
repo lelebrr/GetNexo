@@ -24,4 +24,19 @@ module.exports = {
         },
     },
     plugins: [],
+    safelist: [
+        {
+            pattern: /(bg|text|ring|border)-(indigo|cyan|purple|emerald|orange|rose|pink|green|yellow|blue|red|teal|violet|amber|gray|lime)-(400|500|600)/,
+            variants: ['hover', 'group-hover'],
+        },
+        {
+            pattern: /(bg|border)-(indigo|cyan|purple|emerald|orange|rose|pink|green|yellow|blue|red|teal|violet|amber|gray|lime)-(400|500|600)\/20/,
+        },
+        {
+            pattern: /(bg|border)-(indigo|cyan|purple|emerald|orange|rose|pink|green|yellow|blue|red|teal|violet|amber|gray|lime)-(500|600)\/10/,
+        },
+        'bg-indigo-600/20',
+        'text-indigo-400',
+        'ring-indigo-500/50'
+    ]
 };

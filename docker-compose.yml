@@ -15,9 +15,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:4321" # Mantém acesso externo para desenvolvimento
-    volumes:
-      - ./getnexo-site:/app
-      - /app/node_modules
+    # volumes:
+    #   - ./getnexo-site:/app
+    #   - /app/node_modules
     environment:
       - NODE_ENV=production
     command: node ./dist/server/entry.mjs
@@ -51,7 +51,7 @@ services:
       - ./logs:/logs
       - ./data/chat-api:/data
     healthcheck:
-      test: [ "CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3006/health || exit 1" ]
+      test: [ "CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3006/api/health || exit 1" ]
       interval: 30s
       timeout: 10s
       retries: 3

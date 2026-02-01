@@ -1,0 +1,1074 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+// SEO Meta Tags
+const title = "GetNexo Analytics - Increase Sales with Real-Time Data | GetNexo";
+const description = "Complete analytics dashboard to monitor sales, conversion and performance of your WhatsApp chatbot. Increase sales with intelligent insights and automatic reports!";
+const keywords = "getnexo analytics, sales dashboard, chatbot metrics, automatic reports, sales increase, WhatsApp performance";
+const canonical = "https://getnexo.com.br/en/analytics";
+
+// Structured Data - Organization
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GetNexo",
+  "url": "https://getnexo.com.br",
+  "logo": "https://getnexo.com.br/logo.png",
+  "sameAs": [
+    "https://www.linkedin.com/company/getnexo",
+    "https://twitter.com/getnexo",
+    "https://github.com/getnexo"
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+5511999999999",
+    "contactType": "customer service",
+    "areaServed": "BR",
+    "availableLanguage": "pt-BR"
+  }
+};
+
+// WebSite Schema
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "GetNexo",
+  "url": "https://getnexo.com.br",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://getnexo.com.br/buscar?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+};
+
+// Breadcrumb Schema
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://getnexo.com.br"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Analytics",
+      "item": "https://getnexo.com.br/en/analytics"
+    }
+  ]
+};
+
+// SoftwareApplication Schema
+const softwareSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+    "image": "https://getnexo.com.br/assets/og-poster.jpg",
+  "name": "GetNexo - Analytics Avançado",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "97",
+    "priceCurrency": "BRL",
+    "availability": "https://schema.org/InStock"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "ratingCount": "5000"
+  }
+};
+
+// FAQ Schema
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How does analytics increase sales?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "With real-time data, you identify opportunities, optimize sales funnels, and make data-driven decisions, increasing conversions by up to 40%."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What metrics are monitored?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Conversion, response rate, response time, customer satisfaction, ROI, user behavior and much more."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are reports automatic?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Receive daily, weekly and monthly automatic reports by email or WhatsApp."
+      }
+    }
+  ]
+};
+
+// Metrics data
+const metrics = [
+  {
+    icon: "📈",
+    title: "Conversion",
+    value: "42%",
+    change: "+15%",
+    desc: "Lead to sales conversion rate",
+    trend: "up"
+  },
+  {
+    icon: "⚡",
+    title: "Response Time",
+    value: "2.3s",
+    change: "-40%",
+    desc: "Chatbot average response time",
+    trend: "down"
+  },
+  {
+    icon: "😊",
+    title: "Satisfaction",
+    value: "4.9/5",
+    change: "+0.3",
+    desc: "Customer rating",
+    trend: "up"
+  },
+  {
+    icon: "💰",
+    title: "ROI",
+    value: "320%",
+    change: "+80%",
+    desc: "Return on investment",
+    trend: "up"
+  }
+];
+
+// Features data
+const features = [
+  {
+    icon: "📊",
+    title: "Real-Time Dashboard",
+    desc: "Monitor all metrics in a single panel",
+    benefits: [
+      "Update every second",
+      "Interactive charts",
+      "Advanced filters",
+      "Data export"
+    ],
+    stats: ["+40% speed", "99.9% uptime", "Real-time data"]
+  },
+  {
+    icon: "🎯",
+    title: "Smart Sales Funnel",
+    desc: "Visualize each step of the sales process",
+    benefits: [
+      "Bottleneck identification",
+      "Automatic optimization",
+      "Conversion prediction",
+      "Integrated A/B testing"
+    ],
+    stats: ["+35% conversion", "Identification in 2min", "Measurable ROI"]
+  },
+  {
+    icon: "🔔",
+    title: "Smart Alerts",
+    desc: "Receive notifications when metrics change",
+    benefits: [
+      "Email/WhatsApp alerts",
+      "Custom configuration",
+      "Automatic actions",
+      "Slack integration"
+    ],
+    stats: ["+50% agility", "Response in 5min", "No losses"]
+  },
+  {
+    icon: "🤖",
+    title: "AI Insights",
+    desc: "Automatic recommendations to improve performance",
+    benefits: [
+      "Predictive analysis",
+      "Optimization suggestions",
+      "Market benchmarking",
+      "Automatic reports"
+    ],
+    stats: ["+25% optimization", "Data-driven decisions", "Proven ROI"]
+  },
+  {
+    icon: "📱",
+    title: "Automatic Reports",
+    desc: "Receive daily, weekly and monthly reports",
+    benefits: [
+      "Automatic sending",
+      "Complete customization",
+      "Historical comparison",
+      "PDF/Excel export"
+    ],
+    stats: ["-90% time", "No errors", "Always updated"]
+  },
+  {
+    icon: "🔗",
+    title: "Integrations",
+    desc: "Connect with your favorite tools",
+    benefits: [
+      "Google Analytics",
+      "CRM (HubSpot, Salesforce)",
+      "E-commerce (Shopify, WooCommerce)",
+      "Complete API"
+    ],
+    stats: ["+50% efficiency", "Unified data", "No duplication"]
+  }
+];
+
+// Use cases data
+const useCases = [
+  {
+    title: "E-commerce",
+    desc: "Monitor sales, abandoned carts and conversion",
+    results: ["+45% conversion", "-30% abandonment", "ROI 300%"]
+  },
+  {
+    title: "Services",
+    desc: "Track appointments and customer satisfaction",
+    results: ["+40% retention", "Satisfaction 4.9/5", "Growth 50%"]
+  },
+  {
+    title: "Consulting",
+    desc: "Monitor qualified leads and contract closing",
+    results: ["+35% closing", "Qualification 24/7", "ROI 280%"]
+  },
+  {
+    title: "Education",
+    desc: "Track enrollments and student engagement",
+    results: ["+50% enrollments", "Engagement 85%", "Retention 90%"]
+  }
+];
+
+// Testimonials data
+const testimonials = [
+  {
+    name: "Carlos Mendes",
+    role: "CEO",
+    company: "TechStore",
+    quote: "With analytics, we identified opportunities that generated $120k extra in 3 months.",
+    results: [
+      { value: "+40%", label: "conversion" },
+      { value: "$120k", label: "extra revenue" },
+      { value: "3 months", label: "result" }
+    ]
+  },
+  {
+    name: "Ana Paula",
+    role: "Manager",
+    company: "Life Clinic",
+    quote: "Automatic reports helped us reduce costs and increase satisfaction.",
+    results: [
+      { value: "-25%", label: "costs" },
+      { value: "+35%", label: "satisfaction" },
+      { value: "4.9/5", label: "rating" }
+    ]
+  }
+];
+
+// Stats data
+const stats = [
+  { value: "50+", label: "metrics", desc: "monitored" },
+  { value: "99.9%", label: "uptime", desc: "guaranteed" },
+  { value: "24/7", label: "monitoring", desc: "real-time" },
+  { value: "Free", label: "setup", desc: "no card" }
+];
+
+// Trust badges
+const trustBadges = [
+  { icon: "📊", title: "Dashboard", desc: "Real-time" },
+  { icon: "🔔", title: "Alerts", desc: "Smart" },
+  { icon: "🤖", title: "Insights", desc: "With AI" },
+  { icon: "📈", title: "ROI", desc: "Proven" }
+];
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+
+  <!-- SEO Schemas -->
+  <script nonce={Astro.locals.nonce} type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+  <script nonce={Astro.locals.nonce} type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+  <script nonce={Astro.locals.nonce} type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script nonce={Astro.locals.nonce} type="application/ld+json" set:html={JSON.stringify(softwareSchema)} />
+  <script nonce={Astro.locals.nonce} type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <!-- Hero Section -->
+  <section class="analytics-hero" aria-label="GetNexo Analytics">
+    <div class="hero-badge">📊 Advanced Analytics</div>
+    <h1>Analytics that <span class="text-gradient">Increase Sales</span></h1>
+    <p class="hero-desc">
+      Complete dashboard with <strong>real-time data</strong>, AI insights and automatic reports. <strong>Increase sales by 40%+</strong> with data-driven decisions!
+    </p>
+
+    <!-- Trust Badges -->
+    <div class="trust-badges">
+      {trustBadges.map(badge => (
+        <div class="trust-badge">
+          <span class="trust-icon">{badge.icon}</span>
+          <div>
+            <strong>{badge.title}</strong>
+            <span>{badge.desc}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="hero-ctas">
+      <a href="/en/criar-bot" class="btn-primary-glow" aria-label="Start analytics">
+        Start Analytics
+      </a>
+      <a href="/contato" class="btn-outline" aria-label="View dashboard">
+        View Dashboard
+      </a>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats-section">
+    <div class="max-w-6xl mx-auto px-5">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        {stats.map(stat => (
+          <div class="stat-card glass-panel p-6 text-center">
+            <span class="stat-value">{stat.value}</span>
+            <span class="stat-label">{stat.label}</span>
+            <span class="stat-desc">{stat.desc}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Metrics Section -->
+  <section class="metrics-section">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-white mb-4">Metrics in <span class="text-gradient">Real-Time</span></h2>
+        <p class="text-slate-400 max-w-2xl mx-auto">Monitor all important metrics in a single dashboard</p>
+      </div>
+
+      <div class="metrics-grid">
+        {metrics.map(metric => (
+          <div class="metric-card glass-panel p-8 rounded-3xl">
+            <div class="metric-header">
+              <span class="metric-icon">{metric.icon}</span>
+              <div class="metric-change">
+                <span class={`change-value ${metric.trend === 'up' ? 'up' : 'down'}`}>
+                  {metric.change}
+                </span>
+              </div>
+            </div>
+            <div class="metric-value">{metric.value}</div>
+            <div class="metric-title">{metric.title}</div>
+            <div class="metric-desc">{metric.desc}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-white mb-4">Dashboard <span class="text-gradient">Features</span></h2>
+        <p class="text-slate-400 max-w-2xl mx-auto">Everything you need to monitor and optimize sales</p>
+      </div>
+
+      <div class="features-grid">
+        {features.map(feature => (
+          <div class="feature-card glass-panel p-8 rounded-3xl">
+            <div class="feature-icon">{feature.icon}</div>
+            <h3 class="feature-title">{feature.title}</h3>
+            <p class="feature-desc">{feature.desc}</p>
+            <ul class="feature-benefits">
+              {feature.benefits.map(benefit => (
+                <li class="benefit-item">
+                  <span class="benefit-check">✓</span>
+                  <span>{benefit}</span>
+                </li>
+              ))}
+            </ul>
+            <div class="feature-stats">
+              {feature.stats.map(stat => (
+                <span class="stat-tag">{stat}</span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Use Cases Section -->
+  <section class="use-cases-section">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-white mb-4">Use <span class="text-gradient">Cases</span></h2>
+        <p class="text-slate-400 max-w-2xl mx-auto">See how different segments use analytics to grow</p>
+      </div>
+
+      <div class="use-cases-grid">
+        {useCases.map(useCase => (
+          <div class="use-case-card glass-panel p-8 rounded-3xl">
+            <h3 class="use-case-title">{useCase.title}</h3>
+            <p class="use-case-desc">{useCase.desc}</p>
+            <div class="use-case-results">
+              {useCase.results.map(result => (
+                <span class="result-tag">{result}</span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="testimonials-section">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-white mb-4">Customer <span class="text-gradient">Testimonials</span></h2>
+        <p class="text-slate-400 max-w-2xl mx-auto">What our customers say about the results</p>
+      </div>
+
+      <div class="testimonials-grid">
+        {testimonials.map(testimonial => (
+          <div class="testimonial-card glass-panel p-8 rounded-3xl">
+            <div class="testimonial-header">
+              <div class="testimonial-avatar">
+                <span class="avatar-placeholder">{testimonial.name.charAt(0)}</span>
+              </div>
+              <div>
+                <h3 class="testimonial-name">{testimonial.name}</h3>
+                <p class="testimonial-role">{testimonial.role}</p>
+                <p class="testimonial-company">{testimonial.company}</p>
+              </div>
+            </div>
+            <blockquote class="testimonial-quote">"{testimonial.quote}"</blockquote>
+            <div class="testimonial-results">
+              {testimonial.results.map(result => (
+                <div class="result-item">
+                  <span class="result-value">{result.value}</span>
+                  <span class="result-label">{result.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <div class="max-w-4xl mx-auto px-5">
+      <h2 class="text-center text-3xl font-bold text-white mb-4">Frequently <span class="text-gradient">Asked Questions</span></h2>
+      <p class="text-center text-slate-400 mb-12">Get your questions about analytics answered</p>
+      
+      <div class="space-y-4">
+        <details class="glass-panel p-4 rounded-xl group cursor-pointer open:bg-white/10 transition-colors">
+          <summary class="flex justify-between items-center font-bold text-white list-none">
+            How does analytics increase sales?
+            <span class="text-blue-400 text-xl group-open:rotate-45 transition-transform">+</span>
+          </summary>
+          <p class="mt-4 text-slate-400 leading-relaxed border-t border-white/5 pt-4 animate-fade-in">
+            With real-time data, you identify opportunities, optimize sales funnels, and make data-driven decisions, increasing conversions by up to 40%.
+          </p>
+        </details>
+
+        <details class="glass-panel p-4 rounded-xl group cursor-pointer open:bg-white/10 transition-colors">
+          <summary class="flex justify-between items-center font-bold text-white list-none">
+            What metrics are monitored?
+            <span class="text-blue-400 text-xl group-open:rotate-45 transition-transform">+</span>
+          </summary>
+          <p class="mt-4 text-slate-400 leading-relaxed border-t border-white/5 pt-4 animate-fade-in">
+            Conversion, response rate, response time, customer satisfaction, ROI, user behavior and much more.
+          </p>
+        </details>
+
+        <details class="glass-panel p-4 rounded-xl group cursor-pointer open:bg-white/10 transition-colors">
+          <summary class="flex justify-between items-center font-bold text-white list-none">
+            Are reports automatic?
+            <span class="text-blue-400 text-xl group-open:rotate-45 transition-transform">+</span>
+          </summary>
+          <p class="mt-4 text-slate-400 leading-relaxed border-t border-white/5 pt-4 animate-fade-in">
+            Yes! Receive daily, weekly and monthly automatic reports by email or WhatsApp.
+          </p>
+        </details>
+
+        <details class="glass-panel p-4 rounded-xl group cursor-pointer open:bg-white/10 transition-colors">
+          <summary class="flex justify-between items-center font-bold text-white list-none">
+            Can I export the data?
+            <span class="text-blue-400 text-xl group-open:rotate-45 transition-transform">+</span>
+          </summary>
+          <p class="mt-4 text-slate-400 leading-relaxed border-t border-white/5 pt-4 animate-fade-in">
+            Yes! Export data in PDF, Excel or CSV. We also offer API for custom integrations.
+          </p>
+        </details>
+
+        <details class="glass-panel p-4 rounded-xl group cursor-pointer open:bg-white/10 transition-colors">
+          <summary class="flex justify-between items-center font-bold text-white list-none">
+            How does the dashboard work?
+            <span class="text-blue-400 text-xl group-open:rotate-45 transition-transform">+</span>
+          </summary>
+          <p class="mt-4 text-slate-400 leading-relaxed border-t border-white/5 pt-4 animate-fade-in">
+            Intuitive dashboard with interactive charts, advanced filters and real-time updates. Access via web or mobile.
+          </p>
+        </details>
+
+        <details class="glass-panel p-4 rounded-xl group cursor-pointer open:bg-white/10 transition-colors">
+          <summary class="flex justify-between items-center font-bold text-white list-none">
+            Does it integrate with other tools?
+            <span class="text-blue-400 text-xl group-open:rotate-45 transition-transform">+</span>
+          </summary>
+          <p class="mt-4 text-slate-400 leading-relaxed border-t border-white/5 pt-4 animate-fade-in">
+            Yes! Integrates with Google Analytics, HubSpot, Salesforce, Shopify, WooCommerce and many others via API.
+          </p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Implementation Guide -->
+  <section class="implementation-section py-20 px-5 max-w-6xl mx-auto">
+    <div class="glass-panel p-12 rounded-3xl">
+      <h2 class="text-3xl font-bold text-white mb-6 text-center">Implementation <span class="text-gradient">Guide</span></h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="text-center">
+          <div class="step-number">1</div>
+          <h3 class="text-xl font-bold text-white mb-2">Connect</h3>
+          <p class="text-slate-400">Integrate with your chatbot and existing tools</p>
+        </div>
+        <div class="text-center">
+          <div class="step-number">2</div>
+          <h3 class="text-xl font-bold text-white mb-2">Configure</h3>
+          <p class="text-slate-400">Set metrics and alerts that matter to you</p>
+        </div>
+        <div class="text-center">
+          <div class="step-number">3</div>
+          <h3 class="text-xl font-bold text-white mb-2">Monitor</h3>
+          <p class="text-slate-400">Track results and make smart decisions</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta py-20 text-center px-4">
+    <div class="max-w-4xl mx-auto glass-panel p-12 rounded-3xl">
+      <h2 class="text-3xl md:text-4xl font-black text-white mb-6">Ready to <span class="text-blue-400">master</span> your data?</h2>
+      <p class="text-xl text-slate-300 mb-10 max-w-2xl mx-auto">
+        Start with GetNexo and transform data into real sales.
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <a href="/en/criar-bot" class="btn-primary-glow bg-blue-600 hover:bg-blue-500" aria-label="Start analytics">
+          Start Analytics
+        </a>
+        <a href="/contato" class="px-10 py-5 bg-transparent border border-blue-500 text-blue-400 font-bold rounded-2xl hover:bg-blue-500 hover:text-white transition-colors text-lg" aria-label="View dashboard">
+          View Dashboard
+        </a>
+      </div>
+      <p class="mt-8 text-sm text-slate-500">
+        ✅ No credit card • ✅ Easy cancellation • ✅ English support
+      </p>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  /* Hero */
+  .analytics-hero { 
+    padding: 8rem 5% 4rem; 
+    text-align: center; 
+    max-width: 1300px; 
+    margin: 0 auto; 
+  }
+  
+  .hero-badge { 
+    background: rgba(34, 197, 94, 0.1); 
+    color: #22c55e; 
+    padding: 0.5rem 1.2rem; 
+    border-radius: 50px; 
+    font-size: 0.85rem; 
+    font-weight: 700; 
+    border: 1px solid rgba(34, 197, 94, 0.2); 
+    display: inline-block; 
+    margin-bottom: 2rem; 
+  }
+  
+  .analytics-hero h1 { 
+    font-size: 3.5rem; 
+    margin-bottom: 1.5rem; 
+    color: white;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+  
+  .hero-desc { 
+    font-size: 1.35rem; 
+    color: #94a3b8; 
+    max-width: 900px; 
+    margin: 0 auto 3rem; 
+    line-height: 1.6;
+  }
+
+  /* Trust badges */
+  .trust-badges {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+  .trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 0.75rem 1.25rem;
+    border-radius: 12px;
+  }
+  .trust-icon {
+    font-size: 1.5rem;
+  }
+  .trust-badge strong {
+    display: block;
+    color: white;
+    font-size: 0.9rem;
+    margin-bottom: 0.1rem;
+  }
+  .trust-badge span {
+    display: block;
+    color: #94a3b8;
+    font-size: 0.75rem;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary-glow { 
+    background: linear-gradient(135deg, #3b82f6, #06b6d4); 
+    color: white; 
+    padding: 1.2rem 2.8rem; 
+    border-radius: 14px; 
+    font-weight: 800; 
+    text-decoration: none; 
+    transition: 0.3s; 
+    box-shadow: 0 10px 40px rgba(59, 130, 246, 0.25); 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 0.5rem; 
+  }
+  
+  .btn-primary-glow:hover { transform: translateY(-4px); box-shadow: 0 20px 50px rgba(59, 130, 246, 0.4); }
+
+  .btn-outline { 
+    border: 1px solid rgba(255,255,255,0.15); 
+    color: white; 
+    padding: 1.2rem 2.8rem; 
+    border-radius: 14px; 
+    font-weight: 700; 
+    text-decoration: none; 
+    background: rgba(255,255,255,0.03); 
+    transition: 0.3s; 
+  }
+  
+  .btn-outline:hover { background: rgba(255,255,255,0.1); border-color: #3b82f6; }
+
+  /* Stats Section */
+  .stats-section {
+    padding: 4rem 5%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .stat-card {
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .stat-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: 900;
+    color: #22c55e;
+    line-height: 1;
+  }
+
+  .stat-label {
+    display: block;
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-top: 0.3rem;
+  }
+
+  .stat-desc {
+    display: block;
+    color: #64748b;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+  }
+
+  /* Metrics Section */
+  .metrics-section {
+    padding: 6rem 5%;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+  }
+
+  .metric-card {
+    padding: 2.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .metric-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .metric-icon {
+    font-size: 2.5rem;
+  }
+
+  .metric-change {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .change-value {
+    font-weight: 800;
+    font-size: 1.1rem;
+  }
+
+  .change-value.up {
+    color: #22c55e;
+  }
+
+  .change-value.down {
+    color: #ef4444;
+  }
+
+  .metric-value {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: white;
+    margin-bottom: 0.5rem;
+  }
+
+  .metric-title {
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .metric-desc {
+    color: #94a3b8;
+    font-size: 0.9rem;
+  }
+
+  /* Features Section */
+  .features-section {
+    padding: 6rem 5%;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .feature-card {
+    padding: 2.5rem;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .feature-title {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .feature-desc {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .feature-benefits {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1.5rem;
+  }
+
+  .benefit-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.4rem 0;
+    color: #94a3b8;
+    font-size: 0.85rem;
+  }
+
+  .benefit-check {
+    color: #22c55e;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .feature-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .stat-tag {
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  /* Use Cases Section */
+  .use-cases-section {
+    padding: 6rem 5%;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .use-cases-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .use-case-card {
+    padding: 2.5rem;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .use-case-title {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .use-case-desc {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .use-case-results {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .result-tag {
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  /* Testimonials Section */
+  .testimonials-section {
+    padding: 6rem 5%;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .testimonial-card {
+    padding: 2.5rem;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .testimonial-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .testimonial-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #22c55e, #06b6d4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: white;
+  }
+
+  .testimonial-name {
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+  }
+
+  .testimonial-role {
+    color: #94a3b8;
+    font-size: 0.85rem;
+  }
+
+  .testimonial-company {
+    color: #22c55e;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .testimonial-quote {
+    color: #94a3b8;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+  }
+
+  .testimonial-results {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .result-item {
+    text-align: center;
+    padding: 0.75rem;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+  }
+
+  .result-value {
+    display: block;
+    color: #22c55e;
+    font-size: 1.2rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .result-label {
+    display: block;
+    color: #94a3b8;
+    font-size: 0.7rem;
+    margin-top: 0.2rem;
+  }
+
+  /* FAQ Section */
+  .faq-section {
+    padding: 6rem 5%;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  /* Implementation Section */
+  .implementation-section {
+    padding: 6rem 5%;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .step-number {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #22c55e, #06b6d4);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 900;
+    margin: 0 auto 1rem;
+  }
+
+  /* Final CTA */
+  .final-cta {
+    padding: 4rem 5% 8rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* Utility */
+  .text-gradient {
+    background: linear-gradient(to right, #22c55e, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .analytics-hero h1 { font-size: 2.5rem; }
+    .hero-desc { font-size: 1.1rem; }
+    .trust-badges { flex-direction: column; gap: 0.75rem; }
+    .trust-badge { width: 100%; justify-content: flex-start; }
+    .hero-ctas { flex-direction: column; }
+    .metrics-grid { grid-template-columns: 1fr; }
+    .features-grid { grid-template-columns: 1fr; }
+    .use-cases-grid { grid-template-columns: 1fr; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .testimonial-results { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 1024px) {
+    .analytics-hero h1 { font-size: 3rem; }
+  }
+</style>

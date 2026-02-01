@@ -1,0 +1,286 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="AP2 - Pagamentos de Agentes" activeTab="ap2">
+  <div class="p-6" x-data="ap2Admin()">
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div class="bg-gradient-to-br from-green-600 to-green-800 rounded-xl p-4 text-white">
+        <div class="text-sm opacity-80">Volume Total</div>
+        <div class="text-2xl font-bold">R$ <span x-text="stats.transactions?.volume?.total?.toFixed(2) || '0.00'"></span></div>
+        <div class="text-xs opacity-60">Moeda: <span x-text="stats.transactions?.volume?.currency || 'BRL'"></span></div>
+      </div>
+      <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-4 text-white">
+        <div class="text-sm opacity-80">Transações</div>
+        <div class="text-2xl font-bold" x-text="stats.transactions?.total || 0"></div>
+        <div class="text-xs opacity-60">Hoje: R$ <span x-text="stats.transactions?.volume?.today?.toFixed(2) || '0.00'"></span></div>
+      </div>
+      <div class="bg-gradient-to-br from-purple-600 to-purple-800 rounded-xl p-4 text-white">
+        <div class="text-sm opacity-80">Mandates Ativos</div>
+        <div class="text-2xl font-bold" x-text="stats.mandates?.active || 0"></div>
+        <div class="text-xs opacity-60">Total: <span x-text="stats.mandates?.total || 0"></span></div>
+      </div>
+      <div class="bg-gradient-to-br from-amber-600 to-amber-800 rounded-xl p-4 text-white">
+        <div class="text-sm opacity-80">VDC Status</div>
+        <div class="text-2xl font-bold" x-text="stats.vdc_available ? '✅ Ativo' : '⚠️ Off'"></div>
+        <div class="text-xs opacity-60">Verificação de Assinatura</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex gap-2 mb-6 border-b border-gray-700 pb-2">
+      <button @click="activeTab = 'mandates'" :class="activeTab === 'mandates' ? 'bg-green-600' : 'bg-gray-700'" class="px-4 py-2 rounded-lg text-white text-sm">Mandates</button>
+      <button @click="activeTab = 'transactions'" :class="activeTab === 'transactions' ? 'bg-green-600' : 'bg-gray-700'" class="px-4 py-2 rounded-lg text-white text-sm">Transações</button>
+      <button @click="activeTab = 'vdc'" :class="activeTab === 'vdc' ? 'bg-green-600' : 'bg-gray-700'" class="px-4 py-2 rounded-lg text-white text-sm">VDC</button>
+      <button @click="activeTab = 'constraints'" :class="activeTab === 'constraints' ? 'bg-green-600' : 'bg-gray-700'" class="px-4 py-2 rounded-lg text-white text-sm">Constraints</button>
+    </div>
+
+    <!-- Mandates Tab -->
+    <div x-show="activeTab === 'mandates'" class="bg-gray-800 rounded-xl p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-white">Mandates AP2</h2>
+        <button @click="showMandateModal = true" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm">+ Criar Mandate</button>
+      </div>
+      
+      <div class="grid grid-cols-4 gap-4 mb-6">
+        <template x-for="type in ['cart', 'intent', 'subscription', 'transfer']" :key="type">
+          <div class="bg-gray-700 rounded-lg p-3 text-center">
+            <div class="text-2xl font-bold text-white" x-text="mandates.filter(m => m.type === type).length"></div>
+            <div class="text-xs text-gray-400 capitalize" x-text="type"></div>
+          </div>
+        </template>
+      </div>
+
+      <div class="space-y-3 max-h-96 overflow-y-auto">
+        <template x-for="m in mandates" :key="m.mandate_id">
+          <div class="bg-gray-700 rounded-lg p-4">
+            <div class="flex justify-between items-center">
+              <div>
+                <div class="font-mono text-xs text-gray-400" x-text="m.mandate_id"></div>
+                <div class="flex items-center gap-2 mt-1">
+                  <span class="bg-blue-600 px-2 py-0.5 rounded text-xs text-white capitalize" x-text="m.type"></span>
+                  <span class="text-white text-sm" x-text="m.scope"></span>
+                </div>
+                <div class="text-xs text-gray-400 mt-1">
+                  Max: R$ <span x-text="m.constraints?.max_amount || '∞'"></span> | 
+                  Moeda: <span x-text="m.constraints?.currency || 'BRL'"></span>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span :class="m.status === 'active' ? 'bg-green-600' : m.status === 'used' ? 'bg-gray-600' : 'bg-red-600'" class="px-2 py-0.5 rounded text-xs text-white" x-text="m.status"></span>
+                <button x-show="m.status === 'active'" @click="revokeMandate(m.mandate_id)" class="text-red-400 text-xs hover:text-red-300">Revogar</button>
+              </div>
+            </div>
+          </div>
+        </template>
+        <div x-show="mandates.length === 0" class="text-gray-400 text-center py-8">Nenhum mandate criado</div>
+      </div>
+    </div>
+
+    <!-- Transactions Tab -->
+    <div x-show="activeTab === 'transactions'" class="bg-gray-800 rounded-xl p-6">
+      <h2 class="text-xl font-bold text-white mb-4">Transações AP2</h2>
+      
+      <div class="grid grid-cols-5 gap-3 mb-6">
+        <template x-for="[status, color] in [['pending', 'yellow'], ['authorized', 'blue'], ['captured', 'green'], ['refunded', 'red'], ['voided', 'gray']]" :key="status">
+          <div :class="'bg-' + color + '-600/20 border border-' + color + '-600'" class="rounded-lg p-3 text-center">
+            <div class="text-xl font-bold text-white" x-text="transactions.filter(t => t.status === status).length"></div>
+            <div class="text-xs text-gray-400 capitalize" x-text="status"></div>
+          </div>
+        </template>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left">
+          <thead class="text-xs text-gray-400 uppercase bg-gray-700">
+            <tr><th class="px-4 py-2">ID</th><th class="px-4 py-2">Mandate</th><th class="px-4 py-2">Valor</th><th class="px-4 py-2">Status</th><th class="px-4 py-2">VDC</th><th class="px-4 py-2">Data</th><th class="px-4 py-2">Ações</th></tr>
+          </thead>
+          <tbody>
+            <template x-for="tx in transactions" :key="tx.transaction_id">
+              <tr class="border-b border-gray-700 hover:bg-gray-700/50">
+                <td class="px-4 py-2 text-white font-mono text-xs" x-text="tx.transaction_id?.substring(0,12) + '...'"></td>
+                <td class="px-4 py-2 text-gray-400 font-mono text-xs" x-text="tx.mandate_id?.substring(0,10) + '...'"></td>
+                <td class="px-4 py-2 text-white font-medium">R$ <span x-text="tx.amount?.toFixed(2)"></span></td>
+                <td class="px-4 py-2"><span :class="getStatusClass(tx.status)" class="px-2 py-0.5 rounded text-xs" x-text="tx.status"></span></td>
+                <td class="px-4 py-2"><span :class="tx.vdc_token ? 'text-green-400' : 'text-gray-500'" x-text="tx.vdc_token ? '✓' : '—'"></span></td>
+                <td class="px-4 py-2 text-gray-400 text-xs" x-text="new Date(tx.created_at).toLocaleString()"></td>
+                <td class="px-4 py-2 flex gap-2">
+                  <button x-show="tx.status === 'pending' || tx.status === 'authorized'" @click="capturePayment(tx.transaction_id)" class="text-green-400 hover:text-green-300 text-xs">Capturar</button>
+                  <button x-show="tx.status === 'captured'" @click="refundPayment(tx.transaction_id)" class="text-red-400 hover:text-red-300 text-xs">Estornar</button>
+                  <button x-show="tx.status === 'pending'" @click="voidPayment(tx.transaction_id)" class="text-gray-400 hover:text-gray-300 text-xs">Cancelar</button>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- VDC Tab -->
+    <div x-show="activeTab === 'vdc'" class="bg-gray-800 rounded-xl p-6">
+      <h2 class="text-xl font-bold text-white mb-4">VDC - Verifiable Digital Credential</h2>
+      
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="bg-gray-700 rounded-lg p-4">
+          <h3 class="text-white font-medium mb-3">Verificar VDC</h3>
+          <textarea x-model="vdcToVerify" placeholder='{"signature": "...", "payload": {...}}' class="w-full bg-gray-600 text-white px-3 py-2 rounded h-32 font-mono text-xs mb-3"></textarea>
+          <textarea x-model="publicKeyForVdc" placeholder="-----BEGIN PUBLIC KEY-----..." class="w-full bg-gray-600 text-white px-3 py-2 rounded h-24 font-mono text-xs mb-3"></textarea>
+          <button @click="verifyVdc()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm w-full">Verificar Assinatura</button>
+          <div x-show="vdcResult" class="mt-3 p-3 rounded" :class="vdcResult?.valid ? 'bg-green-600/20 text-green-400' : 'bg-red-600/20 text-red-400'">
+            <span x-text="vdcResult?.valid ? '✓ VDC Válido' : '✗ ' + (vdcResult?.error || 'Inválido')"></span>
+          </div>
+        </div>
+
+        <div class="bg-gray-700 rounded-lg p-4">
+          <h3 class="text-white font-medium mb-3">Sobre VDC</h3>
+          <div class="text-gray-400 text-sm space-y-2">
+            <p>O <strong class="text-white">VDC (Verifiable Digital Credential)</strong> é o mecanismo de autorização do AP2.</p>
+            <p>Cada mandate pode ser assinado digitalmente pelo usuário, garantindo:</p>
+            <ul class="list-disc list-inside pl-2 space-y-1">
+              <li>Autenticidade do consentimento</li>
+              <li>Não-repúdio da autorização</li>
+              <li>Verificação criptográfica</li>
+            </ul>
+            <p class="mt-4">Mandates assinados contêm:</p>
+            <ul class="list-disc list-inside pl-2 space-y-1">
+              <li>Payload do mandate (constraints)</li>
+              <li>Assinatura RSA-SHA256</li>
+              <li>Timestamp de criação</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Constraints Tab -->
+    <div x-show="activeTab === 'constraints'" class="bg-gray-800 rounded-xl p-6">
+      <h2 class="text-xl font-bold text-white mb-4">Constraints AP2</h2>
+      
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="bg-gray-700 rounded-lg p-4">
+          <div class="text-blue-400 text-2xl mb-2">💰</div>
+          <h3 class="text-white font-medium">max_amount / min_amount</h3>
+          <p class="text-gray-400 text-sm mt-2">Limita o valor máximo e mínimo por transação.</p>
+        </div>
+        <div class="bg-gray-700 rounded-lg p-4">
+          <div class="text-green-400 text-2xl mb-2">💱</div>
+          <h3 class="text-white font-medium">currency</h3>
+          <p class="text-gray-400 text-sm mt-2">Restringe moedas aceitas (BRL, USD, EUR).</p>
+        </div>
+        <div class="bg-gray-700 rounded-lg p-4">
+          <div class="text-yellow-400 text-2xl mb-2">⏰</div>
+          <h3 class="text-white font-medium">expires_at</h3>
+          <p class="text-gray-400 text-sm mt-2">Define expiração do mandate (ISO 8601).</p>
+        </div>
+        <div class="bg-gray-700 rounded-lg p-4">
+          <div class="text-purple-400 text-2xl mb-2">🔢</div>
+          <h3 class="text-white font-medium">max_transactions</h3>
+          <p class="text-gray-400 text-sm mt-2">Limita número de transações permitidas.</p>
+        </div>
+        <div class="bg-gray-700 rounded-lg p-4">
+          <div class="text-orange-400 text-2xl mb-2">🏪</div>
+          <h3 class="text-white font-medium">merchants</h3>
+          <p class="text-gray-400 text-sm mt-2">Lista de merchants autorizados (whitelist).</p>
+        </div>
+        <div class="bg-gray-700 rounded-lg p-4">
+          <div class="text-pink-400 text-2xl mb-2">📁</div>
+          <h3 class="text-white font-medium">categories</h3>
+          <p class="text-gray-400 text-sm mt-2">Categorias de produtos permitidas.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create Mandate Modal -->
+    <div x-show="showMandateModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" @click.self="showMandateModal = false">
+      <div class="bg-gray-800 rounded-xl p-6 w-full max-w-lg">
+        <h3 class="text-lg font-bold text-white mb-4">Criar Mandate AP2</h3>
+        <div class="space-y-4">
+          <div>
+            <label class="text-gray-400 text-sm">Tipo</label>
+            <select x-model="newMandate.type" class="w-full bg-gray-700 text-white px-3 py-2 rounded mt-1">
+              <option value="cart">Cart (Compra única - 30 min)</option>
+              <option value="intent">Intent (Recorrente - 24h)</option>
+              <option value="subscription">Subscription (30 dias)</option>
+              <option value="transfer">Transfer (Transferência)</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-gray-400 text-sm">Escopo</label>
+            <input type="text" x-model="newMandate.scope" placeholder="Ex: purchase, subscription" class="w-full bg-gray-700 text-white px-3 py-2 rounded mt-1">
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="text-gray-400 text-sm">Valor Máximo (R$)</label>
+              <input type="number" x-model="newMandate.max_amount" class="w-full bg-gray-700 text-white px-3 py-2 rounded mt-1">
+            </div>
+            <div>
+              <label class="text-gray-400 text-sm">Moeda</label>
+              <select x-model="newMandate.currency" class="w-full bg-gray-700 text-white px-3 py-2 rounded mt-1">
+                <option value="BRL">BRL</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="text-gray-400 text-sm">Máx. Transações (opcional)</label>
+            <input type="number" x-model="newMandate.max_transactions" placeholder="Ilimitado" class="w-full bg-gray-700 text-white px-3 py-2 rounded mt-1">
+          </div>
+        </div>
+        <div class="flex gap-2 justify-end mt-6">
+          <button @click="showMandateModal = false" class="bg-gray-600 text-white px-4 py-2 rounded">Cancelar</button>
+          <button @click="createMandate()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Criar Mandate</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script nonce={Astro.locals.nonce}>
+    function ap2Admin() {
+      return {
+        activeTab: new URLSearchParams(window.location.search).get('tab') || 'mandates',
+        stats: {},
+        mandates: [],
+        transactions: [],
+        showMandateModal: false,
+        newMandate: { type: 'cart', scope: 'purchase', max_amount: 100, currency: 'BRL', max_transactions: null },
+        vdcToVerify: '',
+        publicKeyForVdc: '',
+        vdcResult: null,
+
+        async init() {
+          await Promise.all([this.loadStats(), this.loadMandates(), this.loadTransactions()]);
+        },
+
+        async loadStats() { try { this.stats = await (await fetch('/api/ap2/stats')).json(); } catch {} },
+        async loadMandates() { try { this.mandates = await (await fetch('/api/ap2/mandates?limit=100')).json(); } catch {} },
+        async loadTransactions() { try { this.transactions = await (await fetch('/api/ap2/transactions?limit=100')).json(); } catch {} },
+
+        async createMandate() {
+          const constraints = { max_amount: parseFloat(this.newMandate.max_amount) || 100, currency: this.newMandate.currency };
+          if (this.newMandate.max_transactions) constraints.max_transactions = parseInt(this.newMandate.max_transactions);
+          
+          await fetch('/api/ap2/mandates', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: this.newMandate.type, scope: this.newMandate.scope, constraints }) });
+          this.showMandateModal = false;
+          this.loadMandates();
+          this.loadStats();
+        },
+
+        async revokeMandate(id) { if (confirm('Revogar mandate?')) { await fetch(`/api/ap2/mandates/${id}`, { method: 'DELETE' }); this.loadMandates(); this.loadStats(); } },
+        async capturePayment(id) { await fetch(`/api/ap2/transactions/${id}/capture`, { method: 'POST' }); this.loadTransactions(); this.loadStats(); },
+        async refundPayment(id) { if (confirm('Estornar pagamento?')) { await fetch(`/api/ap2/transactions/${id}/refund`, { method: 'POST' }); this.loadTransactions(); this.loadStats(); } },
+        async voidPayment(id) { if (confirm('Cancelar transação?')) { await fetch(`/api/ap2/transactions/${id}/void`, { method: 'POST' }); this.loadTransactions(); this.loadStats(); } },
+
+        async verifyVdc() {
+          try {
+            const res = await fetch('/api/ap2/verify-vdc', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ vdc: JSON.parse(this.vdcToVerify), public_key: this.publicKeyForVdc }) });
+            this.vdcResult = await res.json();
+          } catch (e) { this.vdcResult = { valid: false, error: 'JSON inválido' }; }
+        },
+
+        getStatusClass(s) { return { captured: 'bg-green-600', authorized: 'bg-blue-600', pending: 'bg-yellow-600', refunded: 'bg-red-600', voided: 'bg-gray-600', partially_refunded: 'bg-orange-600' }[s] || 'bg-gray-600'; }
+      };
+    }
+  </script>
+</AdminLayout>

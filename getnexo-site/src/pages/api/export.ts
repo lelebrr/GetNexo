@@ -3,11 +3,8 @@ import { verifyToken } from '../../lib/auth';
 
 // Dados simulados para exportação
 const mockData: { [key: string]: any[] } = {
-    users: [
-        { id: 1, name: 'João Silva', email: 'joao@example.com', age: 30, city: 'São Paulo', signupDate: '2024-01-15' },
-        { id: 2, name: 'Maria Santos', email: 'maria@example.com', age: 25, city: 'Rio de Janeiro', signupDate: '2024-02-20' },
-        { id: 3, name: 'Pedro Oliveira', email: 'pedro@example.com', age: 35, city: 'Belo Horizonte', signupDate: '2024-03-10' },
-    ],
+    // Return empty or fetch from real DB in future
+    users: [],
     analytics: [
         { date: '2024-01-01', pageViews: 1200, uniqueVisitors: 800, bounceRate: 0.45 },
         { date: '2024-01-02', pageViews: 1350, uniqueVisitors: 850, bounceRate: 0.42 },

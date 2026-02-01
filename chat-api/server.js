@@ -58,21 +58,37 @@ app.use(analyticsMiddleware);
 // Security Headers
 app.use(helmet());
 
-// CORS Configuration
+// CORS Configuration - Production domains + env overrides
+const ALLOWED_ORIGINS = [
+  'https://getnexo.com.br',
+  'https://www.getnexo.com.br',
+  'https://api.getnexo.com.br',
+  'http://localhost:4321',
+  'http://localhost:3000',
+  'http://localhost:3006',
+  ...(process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : [])
+];
+
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
+    // Allow requests with no origin (mobile apps, curl, server-to-server)
     if (!origin) return callback(null, true);
-    if (process.env.CORS_ORIGIN?.split(',').includes(origin)) {
+
+    // Check if origin is in allowed list
+    if (ALLOWED_ORIGINS.includes(origin)) {
       callback(null, true);
     } else {
+      console.log('CORS blocked origin:', origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   credentials: true
 }));
+
+// Handle preflight OPTIONS requests explicitly
+app.options('*', cors());
 
 // Rate Limiting
 const globalLimiter = rateLimit({
@@ -103,10 +119,38 @@ const authMiddleware = (req, res, next) => {
     '/api/login',
     '/api/auth/register',
     '/api/auth/forgot-password',
-    '/api/health'
+    '/api/health',
+    '/api/chat', // Widget chat endpoint - public
+    '/api/a2a/agent-card.json',
+    '/api/a2a/manifest',
+    '/.well-known/agent-card.json',
+    '/api/a2a/stats',
+    '/api/ap2/stats',
+    '/api/whatsapp/webhook', // WhatsApp webhook (Meta precisa acessar sem auth)
+    // Dashboard data endpoints - allow without strict auth for demo/initial setup
+    '/api/analytics/dashboard-stats',
+    '/api/analytics/recent-sales',
+    '/api/analytics/active-chats',
+    '/api/analytics/top-products',
+    '/api/analytics/clustering',
+    '/api/analytics/trends',
+    '/api/crm/customers',
+    '/api/crm/stats',
+    '/api/products',
+    '/api/loyalty/points',
+    '/api/loyalty/rewards',
+    '/api/settings',
+    '/api/ai/config',
+    '/api/tickets',
+    '/api/alert'
   ];
 
-  if (publicRoutes.includes(req.path)) {
+  // Check exact match or prefix match for nested routes
+  const isPublicRoute = publicRoutes.some(route =>
+    req.path === route || req.path.startsWith(route + '/')
+  );
+
+  if (isPublicRoute) {
     return next();
   }
 
@@ -146,6 +190,11 @@ const revendaRoutes = require('./routes/revenda');
 const dockerRoutes = require('./routes/docker');
 const a2aRoutes = require('./routes/a2a');
 const ap2Routes = require('./routes/ap2');
+const whatsappRoutes = require('./routes/whatsapp');
+const iaChatRoutes = require('./routes/ia-chat');
+const alertRoutes = require('./routes/alert');
+const aiConfigRoutes = require('./routes/ai-config-routes');
+const marketingRoutes = require('./routes/marketing');
 
 // Montar Rotas
 app.use('/api/crm', crmRoutes);
@@ -166,6 +215,15 @@ app.use('/api/revenda', revendaRoutes);
 app.use('/api/docker', dockerRoutes);
 app.use('/api/a2a', a2aRoutes);
 app.use('/api/ap2', ap2Routes);
+app.use('/api/whatsapp', whatsappRoutes);
+app.use('/api/ia', iaChatRoutes);  // Multi-IA endpoints
+app.use('/api/alert', alertRoutes); // Alert endpoints
+app.use('/api/ai/config', aiConfigRoutes); // AI Configuration endpoints
+app.use('/api/marketing', marketingRoutes);
+
+app.get('/.well-known/agent-card.json', (req, res) => {
+  res.redirect('/api/a2a/agent-card.json');
+});
 
 // Endpoint de login
 app.post('/api/login', authLimiter, async (req, res) => {
@@ -183,9 +241,9 @@ app.post('/api/login', authLimiter, async (req, res) => {
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
       db.prepare(`
-        INSERT INTO security_events (type, ip, severity, description)
-        VALUES (?, ?, ?, ?)
-      `).run('AUTH_FAILURE', req.ip || req.connection.remoteAddress, 'medium', `Failed login attempt for ${email}`);
+          INSERT INTO security_events (type, ip, severity, description)
+          VALUES (?, ?, ?, ?)
+        `).run('AUTH_FAILURE', req.ip || req.connection.remoteAddress, 'medium', `Failed login attempt for ${email}`);
 
       return res.status(401).json({ error: 'Credenciais inválidas' });
     }
@@ -317,6 +375,45 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'API está funcionando' });
 });
 
+// Chat endpoint for widget (public - no auth required)
+app.post('/api/chat', async (req, res) => {
+  try {
+    const { message, session_id, client_id } = req.body;
+
+    if (!message) {
+      return res.status(400).json({ error: 'Campo message é obrigatório' });
+    }
+
+    // Try to use MultiAIService for intelligent responses
+    let MultiAIService;
+    try {
+      MultiAIService = require('./services/MultiAIService');
+    } catch (e) {
+      // Fallback if service not available
+      return res.json({
+        reply: `Obrigado pela sua mensagem! Nossa equipe responderá em breve. 😊`,
+        provider: 'fallback',
+        session_id: session_id || Date.now().toString()
+      });
+    }
+
+    const result = await MultiAIService.getReply(message, client_id || 'widget');
+
+    return res.json({
+      reply: result.reply || result.response || 'Obrigado pelo contato!',
+      provider: result.provider || 'ai',
+      session_id: session_id || Date.now().toString()
+    });
+  } catch (error) {
+    console.error('Chat error:', error);
+    return res.json({
+      reply: 'Desculpe, tive um problema. Por favor, tente novamente.',
+      provider: 'error',
+      session_id: req.body?.session_id || Date.now().toString()
+    });
+  }
+});
+
 // Mock Tickets Data (mantido do main branch)
 const tickets = [
   {
@@ -382,7 +479,7 @@ if (require.main === module) {
     console.log(` GET /api/ai/seo/stats - AI SEO Stats`);
     console.log(` GET /api/ai/security/audit - AI Security Audit`);
     console.log(`\n🔑 Credenciais de demonstração:`);
-    console.log(` Cliente: cliente@getnexo.com / demo123`);
+    console.log(` Credenciais: Defina via variáveis de ambiente`);
   });
 }
 

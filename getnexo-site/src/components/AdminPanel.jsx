@@ -151,7 +151,7 @@ const MarketingSection = memo(({ subSection }) => {
 
     const runRetargeting = useCallback(async () => {
         try {
-            const res = await fetch('https://api.getnexo.com.br/retarget', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ campaign_id: '1' }) });
+            const res = await fetch('/api/marketing/retarget', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ campaign_id: '1' }) });
             const data = await res.json();
             alert(`Campanha de Retargeting enviada! ${data.unread} contatos impactados.`);
         } catch (e) { alert('Erro ao disparar retargeting.'); }
@@ -160,7 +160,7 @@ const MarketingSection = memo(({ subSection }) => {
     const generateAdLink = useCallback(async () => {
         if (!adPhone) return;
         try {
-            const res = await fetch(`https://api.getnexo.com.br/ad-link?phone=${adPhone}`);
+            const res = await fetch(`/api/marketing/ad-link?phone=${adPhone}`);
             const data = await res.json();
             setGeneratedLink(data.link);
         } catch (e) { alert('Erro ao gerar link.'); }
@@ -169,7 +169,7 @@ const MarketingSection = memo(({ subSection }) => {
     const fetchClicks = useCallback(async () => {
         setIsClicksLoading(true);
         try {
-            const res = await fetch('https://api.getnexo.com.br/clicks');
+            const res = await fetch('/api/marketing/clicks');
             const data = await res.json();
             setClicksData(data);
         } catch (e) { console.error(e); }
@@ -179,7 +179,7 @@ const MarketingSection = memo(({ subSection }) => {
     const fetchCsat = useCallback(async () => {
         setIsCsatLoading(true);
         try {
-            const res = await fetch('https://api.getnexo.com.br/csat-report');
+            const res = await fetch('/api/marketing/csat-report');
             const data = await res.json();
             const avg = data.reduce((s, a) => s + a.nota, 0) / (data.length || 1);
             setCsatData(data);
@@ -271,14 +271,20 @@ const MarketingSection = memo(({ subSection }) => {
 
 // --- Main Component ---
 
-const AdminPanel = () => {
-    const [activeSection, setActiveSection] = useState('home');
-    const [subSection, setSubSection] = useState('');
+const AdminPanel = ({ initialSection = 'home', initialSubSection = '', hideSidebar = false }) => {
+    const [activeSection, setActiveSection] = useState(initialSection);
+    const [subSection, setSubSection] = useState(initialSubSection);
     const [stats, setStats] = useState({ storage: '0 MB', apiCalls: 0 });
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+    // Sync state with prop changes if needed (optional but helpful for Astro routing)
     useEffect(() => {
-        fetch('https://api.getnexo.com.br/dashboard-stats')
+        if (initialSection) setActiveSection(initialSection);
+        if (initialSubSection) setSubSection(initialSubSection);
+    }, [initialSection, initialSubSection]);
+
+    useEffect(() => {
+        fetch('/api/analytics?type=dashboard')
             .then(res => res.json())
             .then(data => setStats(data))
             .catch(e => console.error("Error fetching stats:", e));
@@ -291,67 +297,72 @@ const AdminPanel = () => {
         <div className="flex flex-col lg:flex-row h-full glass-panel overflow-hidden relative min-h-[600px]">
 
             {/* Mobile Header Toggle */}
-            <div className="lg:hidden p-4 border-b border-gray-800 flex justify-between items-center bg-gray-900/50">
-                <span className="font-bold text-white">Menu</span>
-                <button onClick={toggleSidebar} className="text-white text-2xl">
-                    {isSidebarOpen ? '✕' : '☰'}
-                </button>
-            </div>
+            {!hideSidebar && (
+                <div className="lg:hidden p-4 border-b border-gray-800 flex justify-between items-center bg-gray-900/50">
+                    <span className="font-bold text-white">Menu</span>
+                    <button onClick={toggleSidebar} className="text-white text-2xl">
+                        {isSidebarOpen ? '✕' : '☰'}
+                    </button>
+                </div>
+            )}
 
             {/* Sidebar */}
-            <div className={`absolute lg:relative z-50 h-full w-64 bg-gray-900/95 lg:bg-gray-900/50 p-4 border-r border-gray-800 flex flex-col overflow-y-auto custom-scrollbar transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
-                <h3 className="text-xs font-bold text-gray-500 uppercase mb-4 tracking-wider">Central de Administração</h3>
+            {!hideSidebar && (
+                <div className={`absolute lg:relative z-50 h-full w-64 bg-gray-900/95 lg:bg-gray-900/50 p-4 border-r border-gray-800 flex flex-col overflow-y-auto custom-scrollbar transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+                    <h3 className="text-xs font-bold text-gray-500 uppercase mb-4 tracking-wider">Central de Administração</h3>
 
-                <MenuItem icon="🏠" label="Página inicial" id="home" activeSection={activeSection} setActiveSection={setActiveSection} setSubSection={setSubSection} />
-                <MenuItem icon="🏢" label="Conta" id="account" activeSection={activeSection} setActiveSection={setActiveSection} setSubSection={setSubSection} subs={[
-                    { id: 'usage', label: 'Uso e Cobrança' },
-                    { id: 'security', label: 'Segurança' },
-                    { id: 'api', label: 'API' }
-                ]} subSection={subSection} />
-                <MenuItem icon="👥" label="Pessoas" id="people" activeSection={activeSection} setActiveSection={setActiveSection} setSubSection={setSubSection} subs={[
-                    { id: 'team', label: 'Equipe' },
-                    { id: 'groups', label: 'Grupos' },
-                    { id: 'end-users', label: 'Usuários Finais' }
-                ]} subSection={subSection} />
-                <MenuItem icon="⇄" label="Canais" id="channels" activeSection={activeSection} setActiveSection={setActiveSection} setSubSection={setSubSection} subs={[
-                    { id: 'messaging', label: 'Mensagens (WhatsApp)' },
-                    { id: 'email', label: 'Email' },
-                    { id: 'web', label: 'Web Widget' }
-                ]} subSection={subSection} />
+                    <MenuItem icon="🏠" label="Página inicial" id="home" activeSection={activeSection} setActiveSection={setActiveSection} setSubSection={setSubSection} />
+                    <MenuItem icon="🏢" label="Conta" id="account" activeSection={activeSection} setActiveSection={setActiveSection} setSubSection={setSubSection} subs={[
+                        { id: 'usage', label: 'Uso e Cobrança' },
+                        { id: 'security', label: 'Segurança' },
+                        { id: 'api', label: 'API' }
+                    ]} subSection={subSection} />
+                    <MenuItem icon="👥" label="Pessoas" id="people" activeSection={activeSection} setActiveSection={setActiveSection} setSubSection={setSubSection} subs={[
+                        { id: 'team', label: 'Equipe' },
+                        { id: 'groups', label: 'Grupos' },
+                        { id: 'end-users', label: 'Usuários Finais' }
+                    ]} subSection={subSection} />
+                    <MenuItem icon="⇄" label="Canais" id="channels" activeSection={activeSection} setActiveSection={setActiveSection} setSubSection={setSubSection} subs={[
+                        { id: 'messaging', label: 'Mensagens (WhatsApp)' },
+                        { id: 'email', label: 'Email' },
+                        { id: 'web', label: 'Web Widget' }
+                    ]} subSection={subSection} />
 
-                <MenuItem icon="✨" label="IA" id="ai_admin" activeSection={activeSection} setActiveSection={setActiveSection} setSubSection={setSubSection} subs={[
-                    { id: 'ai_agents', label: 'Agentes de IA' },
-                    { id: 'ai_copilot', label: 'Copiloto do administrador' },
-                    { id: 'ai_triage', label: 'Triagem inteligente' }
-                ]} subSection={subSection} />
+                    <MenuItem icon="✨" label="IA" id="ai_admin" activeSection={activeSection} setActiveSection={setActiveSection} setSubSection={setSubSection} subs={[
+                        { id: 'ai_agents', label: 'Agentes de IA' },
+                        { id: 'ai_copilot', label: 'Copiloto do administrador' },
+                        { id: 'ai_triage', label: 'Triagem inteligente' }
+                    ]} subSection={subSection} />
 
-                <MenuItem icon="🖥️" label="Espaços de trabalho" id="workspaces" activeSection={activeSection} setActiveSection={setActiveSection} setSubSection={setSubSection} subs={[
-                    { id: 'agent_tools', label: 'Ferramentas de agente' },
-                    { id: 'macros_admin', label: 'Macros' },
-                    { id: 'views', label: 'Visualizações' },
-                    { id: 'agent_interface', label: 'Interface do agente' }
-                ]} subSection={subSection} />
+                    <MenuItem icon="🖥️" label="Espaços de trabalho" id="workspaces" activeSection={activeSection} setActiveSection={setActiveSection} setSubSection={setSubSection} subs={[
+                        { id: 'agent_tools', label: 'Ferramentas de agente' },
+                        { id: 'macros_admin', label: 'Macros' },
+                        { id: 'views', label: 'Visualizações' },
+                        { id: 'agent_interface', label: 'Interface do agente' }
+                    ]} subSection={subSection} />
 
-                <MenuItem icon="📦" label="Objetos e regras" id="objects" activeSection={activeSection} setActiveSection={setActiveSection} setSubSection={setSubSection} subs={[
-                    { id: 'tickets', label: 'Tickets' },
-                    { id: 'routing', label: 'Encaminhamento omnichannel' },
-                    { id: 'triggers', label: 'Gatilhos' },
-                    { id: 'automations', label: 'Automações' },
-                    { id: 'slas', label: 'Contratos de nível de serviço (SLA)' }
-                ]} subSection={subSection} />
+                    <MenuItem icon="📦" label="Objetos e regras" id="objects" activeSection={activeSection} setActiveSection={setActiveSection} setSubSection={setSubSection} subs={[
+                        { id: 'tickets', label: 'Tickets' },
+                        { id: 'routing', label: 'Encaminhamento omnichannel' },
+                        { id: 'triggers', label: 'Gatilhos' },
+                        { id: 'automations', label: 'Automações' },
+                        { id: 'slas', label: 'Contratos de nível de serviço (SLA)' }
+                    ]} subSection={subSection} />
 
-                <MenuItem icon="📈" label="Marketing & Analytics" id="marketing" activeSection={activeSection} setActiveSection={setActiveSection} setSubSection={setSubSection} subs={[
-                    { id: 'retargeting', label: 'Retargeting' },
-                    { id: 'ads', label: 'Click-to-WhatsApp Ads' },
-                    { id: 'clicks', label: 'Rastreamento de Cliques' },
-                    { id: 'csat', label: 'Relatório CSAT' }
-                ]} subSection={subSection} />
+                    <MenuItem icon="📈" label="Marketing & Analytics" id="marketing" activeSection={activeSection} setActiveSection={setActiveSection} setSubSection={setSubSection} subs={[
+                        { id: 'retargeting', label: 'Retargeting' },
+                        { id: 'ads', label: 'Click-to-WhatsApp Ads' },
+                        { id: 'clicks', label: 'Rastreamento de Cliques' },
+                        { id: 'csat', label: 'Relatório CSAT' }
+                    ]} subSection={subSection} />
 
-                <MenuItem icon="🔌" label="Aplicativos e integrações" id="apps" activeSection={activeSection} setActiveSection={setActiveSection} setSubSection={setSubSection} />
-            </div>
+                    <MenuItem icon="🔌" label="Aplicativos e integrações" id="apps" activeSection={activeSection} setActiveSection={setActiveSection} setSubSection={setSubSection} />
+                    <MenuItem icon="🤖" label="Protocolos A2A & AP2" id="a2a_protocol" activeSection={activeSection} setActiveSection={setActiveSection} setSubSection={setSubSection} />
+                </div>
+            )}
 
             {/* Overlay for Mobile */}
-            {isSidebarOpen && (
+            {!hideSidebar && isSidebarOpen && (
                 <div
                     className="fixed inset-0 bg-black/50 z-40 lg:hidden"
                     onClick={closeSidebar}
@@ -381,6 +392,22 @@ const AdminPanel = () => {
                 {activeSection === 'home' && <HomeDashboard stats={stats} />}
                 {activeSection === 'channels' && <ChannelsSection />}
                 {activeSection === 'marketing' && <MarketingSection subSection={subSection} />}
+                {activeSection === 'a2a_protocol' && (
+                    <div className="space-y-6">
+                        <div className="bg-gray-900 border border-gray-800 p-6 rounded-xl">
+                            <h3 className="text-xl font-bold text-white mb-2">Protocolo A2A (Agent-to-Agent)</h3>
+                            <p className="text-gray-400 mb-4">Gerencie como seu agente interage com outros agentes de IA.</p>
+                            <div className="bg-black/40 p-4 rounded border border-gray-700">
+                                <p className="text-xs text-blue-400 font-mono">Status: Ativo / .well-known configurado</p>
+                            </div>
+                        </div>
+                        <div className="bg-gray-900 border border-gray-800 p-6 rounded-xl">
+                            <h3 className="text-xl font-bold text-white mb-2">AP2 Agent Payments</h3>
+                            <p className="text-gray-400 mb-4">Configure mandatos VDC para transações autônomas.</p>
+                            <button onClick={() => window.location.href = '/admin/a2a'} className="bg-blue-600 text-white font-bold px-4 py-2 rounded">Abrir Gestão Completa</button>
+                        </div>
+                    </div>
+                )}
 
                 {activeSection === 'ai_admin' && (
                     <div className="space-y-6">
@@ -404,15 +431,87 @@ const AdminPanel = () => {
                     </div>
                 )}
 
-                {(activeSection === 'workspaces' || activeSection === 'objects') && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {[1, 2, 3, 4, 5, 6].map(i => (
-                            <div key={i} className="bg-gray-900 border border-gray-800 p-4 rounded-xl hover:border-gray-600 cursor-pointer transition-colors">
-                                <div className="w-8 h-8 bg-gray-800 rounded mb-3"></div>
-                                <div className="h-4 bg-gray-800 rounded w-3/4 mb-2"></div>
-                                <div className="h-2 bg-gray-800 rounded w-1/2"></div>
+                {(activeSection === 'workspaces') && (
+                    <div className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="bg-gray-900 border border-gray-800 p-6 rounded-xl hover:border-neon-blue transition-colors group">
+                                <div className="flex items-center gap-4 mb-4">
+                                    <div className="bg-neon-blue/20 p-3 rounded-lg"><span className="text-xl">🛠️</span></div>
+                                    <h3 className="font-bold text-white text-lg">Ferramentas de Agente</h3>
+                                </div>
+                                <p className="text-gray-400 text-sm mb-4">Gerencie as ferramentas disponíveis para os atendentes durante o chat.</p>
+                                <div className="flex flex-wrap gap-2">
+                                    <span className="bg-gray-800 px-2 py-1 rounded text-[10px] text-gray-300">Base de Conhecimento</span>
+                                    <span className="bg-gray-800 px-2 py-1 rounded text-[10px] text-gray-300">Editor de Imagens</span>
+                                    <span className="bg-gray-800 px-2 py-1 rounded text-[10px] text-gray-300">Calculadora</span>
+                                </div>
                             </div>
-                        ))}
+                            <div className="bg-gray-900 border border-gray-800 p-6 rounded-xl hover:border-purple-500 transition-colors group">
+                                <div className="flex items-center gap-4 mb-4">
+                                    <div className="bg-purple-500/20 p-3 rounded-lg"><span className="text-xl">⚡</span></div>
+                                    <h3 className="font-bold text-white text-lg">Macros de Resposta</h3>
+                                </div>
+                                <p className="text-gray-400 text-sm mb-4">Atalhos para respostas rápidas e ações frequentes.</p>
+                                <button className="text-xs text-purple-400 font-bold hover:underline">Ver todas as 24 macros →</button>
+                            </div>
+                        </div>
+                        <div className="bg-gray-900 border border-gray-800 p-6 rounded-xl">
+                            <h3 className="font-bold text-white mb-4">Visualizações de Fila</h3>
+                            <div className="space-y-3">
+                                <div className="flex items-center justify-between p-3 bg-black/40 rounded border border-gray-800">
+                                    <span className="text-sm text-gray-300">Meus tickets abertos</span>
+                                    <span className="bg-neon-blue text-black text-[10px] font-bold px-2 py-0.5 rounded-full">12</span>
+                                </div>
+                                <div className="flex items-center justify-between p-3 bg-black/40 rounded border border-gray-800">
+                                    <span className="text-sm text-gray-300">Não atribuídos</span>
+                                    <span className="bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">5</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {(activeSection === 'objects') && (
+                    <div className="space-y-6">
+                        <div className="bg-gray-900 border border-gray-800 p-6 rounded-xl">
+                            <h3 className="text-xl font-bold text-white mb-4">Configuração de Tickets</h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div className="p-4 bg-black/40 border border-gray-700 rounded-lg">
+                                    <p className="text-xs font-bold text-gray-500 uppercase mb-2">Campos Customizados</p>
+                                    <p className="text-2xl font-bold text-white">15</p>
+                                </div>
+                                <div className="p-4 bg-black/40 border border-gray-700 rounded-lg">
+                                    <p className="text-xs font-bold text-gray-500 uppercase mb-2">Tipos de Ticket</p>
+                                    <p className="text-2xl font-bold text-white">4</p>
+                                </div>
+                                <div className="p-4 bg-black/40 border border-gray-700 rounded-lg">
+                                    <p className="text-xs font-bold text-gray-500 uppercase mb-2">Status Personalizados</p>
+                                    <p className="text-2xl font-bold text-white">6</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="bg-gray-900 border border-gray-800 p-6 rounded-xl hover:border-emerald-500 transition-colors">
+                                <h3 className="font-bold text-white mb-2">Gatilhos (Triggers)</h3>
+                                <p className="text-gray-400 text-sm mb-4">Ações automáticas disparadas por eventos específicos.</p>
+                                <div className="text-xs text-emerald-400">8 Gatilhos ativos</div>
+                            </div>
+                            <div className="bg-gray-900 border border-gray-800 p-6 rounded-xl hover:border-yellow-500 transition-colors">
+                                <h3 className="font-bold text-white mb-2">Automations (Time-based)</h3>
+                                <p className="text-gray-400 text-sm mb-4">Ações baseadas em tempo (ex: fechar ticket após 24h).</p>
+                                <div className="text-xs text-yellow-500">3 Automações ativas</div>
+                            </div>
+                        </div>
+                        <div className="bg-gray-900 border border-gray-800 p-6 rounded-xl">
+                            <h3 className="font-bold text-white mb-2">SLA (Service Level Agreement)</h3>
+                            <p className="text-gray-400 text-sm mb-4">Metas de tempo para primeira resposta e resolução.</p>
+                            <div className="flex items-center gap-4">
+                                <div className="flex-1 h-2 bg-gray-800 rounded-full overflow-hidden">
+                                    <div className="h-full bg-emerald-500 w-[92%]"></div>
+                                </div>
+                                <span className="text-xs font-bold text-emerald-400">92% de adesão</span>
+                            </div>
+                        </div>
                     </div>
                 )}
 

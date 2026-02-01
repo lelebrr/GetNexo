@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin GetNexo - Docker Manager</title>
+    <!-- ApexCharts -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <style>
+        /* Reset & Base */
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Segoe UI', sans-serif;
+            background: #1e1e1e;
+            color: #ecf0f1;
+        }
+
+        /* Layout */
+        .container {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: #2c3e50;
+            overflow-y: auto;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            padding: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            background: #1a252f;
+            text-align: center;
+            border-bottom: 1px solid #34495e;
+            color: #00bfff;
+        }
+
+        /* Admin Menu Styles */
+        .admin-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .menu-item>a {
+            display: block;
+            background: #2c3e50;
+            color: #b8c7ce;
+            padding: 15px 20px;
+            text-decoration: none;
+            border-left: 3px solid transparent;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .menu-item>a:hover,
+        .menu-item.active>a {
+            background: #1a252f;
+            color: #fff;
+            border-left-color: #00bfff;
+        }
+
+        .sub-menu {
+            display: none;
+            background: #34495e;
+            padding: 0;
+            list-style: none;
+        }
+
+        .sub-item>a {
+            display: block;
+            color: #b8c7ce;
+            padding: 10px 20px 10px 40px;
+            text-decoration: none;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        .sub-item>a:hover {
+            color: #fff;
+            background: #3e5871;
+        }
+
+        .sub-sub-menu {
+            display: none;
+            background: #1f2933;
+            list-style: none;
+            padding: 0;
+        }
+
+        .sub-sub-menu li a {
+            display: block;
+            color: #7f8c8d;
+            padding: 8px 20px 8px 60px;
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        .sub-sub-menu li a:hover {
+            color: #fff;
+        }
+
+        .has-sub.open>.sub-menu {
+            display: block;
+        }
+
+        .sub-item.has-sub.open>.sub-sub-menu {
+            display: block;
+        }
+
+        .has-sub>a::after {
+            content: '▾';
+            float: right;
+            transition: transform 0.3s;
+        }
+
+        .has-sub.open>a::after {
+            transform: rotate(180deg);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            background: #f4f6f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-bar {
+            background: #fff;
+            padding: 12px 20px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .page-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+            color: #2c3e50;
+        }
+
+        .content-wrapper {
+            padding: 25px;
+            flex: 1;
+        }
+
+        /* UI Cards */
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+            overflow: hidden;
+            border: 1px solid #e9ecef;
+        }
+
+        .card-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f1f3f5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fcfcfc;
+        }
+
+        .card-header h3 {
+            margin: 0;
+            font-size: 16px;
+            color: #495057;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Dashboard Widgets */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #00bfff;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 10px 0;
+            color: #212529;
+        }
+
+        .stat-label {
+            color: #868e96;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 14px 15px;
+            text-align: left;
+            border-bottom: 1px solid #f1f3f5;
+            font-size: 14px;
+        }
+
+        th {
+            background: #f8f9fa;
+            color: #495057;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover {
+            background: #fbfbfb;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-success {
+            background: #51cf66;
+        }
+
+        .badge-warning {
+            background: #fcc419;
+        }
+
+        .badge-danger {
+            background: #ff6b6b;
+        }
+
+        .badge-info {
+            background: #339af0;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-primary {
+            background: #00bfff;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #fa5252;
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #dee2e6;
+            color: #495057;
+        }
+
+        .btn-outline:hover {
+            background: #f8f9fa;
+        }
+
+        /* Logs View */
+        #log-console {
+            background: #1e1e1e;
+            color: #dcdcdc;
+            font-family: 'Consolas', monospace;
+            padding: 15px;
+            border-radius: 4px;
+            height: 400px;
+            overflow-y: auto;
+            font-size: 12px;
+            line-height: 1.5;
+            border: 1px solid #333;
+        }
+
+        .log-line {
+            margin-bottom: 2px;
+        }
+
+        .log-time {
+            color: #888;
+            margin-right: 10px;
+        }
+
+        /* Utility */
+        .hidden {
+            display: none;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .gap-10 {
+            gap: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="logo">GetNexus Admin</div>
+
+            <ul class="admin-menu">
+                <li class="menu-item active" id="menu-dashboard"><a href="#dashboard">🏠 Dashboard</a></li>
+
+                <!-- Docker Menu -->
+                <li class="menu-item has-sub" id="menu-docker">
+                    <a href="javascript:void(0)">🔧 Docker</a>
+                    <ul class="sub-menu">
+                        <!-- Visão Geral -->
+                        <li class="sub-item has-sub">
+                            <a href="javascript:void(0)">📊 Visão Geral</a>
+                            <ul class="sub-sub-menu">
+                                <li><a href="#docker/overview">Métricas Globais</a></li>
+                                <li><a href="#docker/charts">Gráficos de Uso</a></li>
+                            </ul>
+                        </li>
+                        <!-- Clientes -->
+                        <li class="sub-item"><a href="#docker/clients">👥 Clientes & Pods</a></li>
+                        <!-- Configurações -->
+                        <li class="sub-item"><a href="#docker/auto-scale">⚙️ Auto-Escala</a></li>
+                        <!-- Monitoramento -->
+                        <li class="sub-item"><a href="#docker/usage">📈 Uso Realtime</a></li>
+                        <!-- Cobrança -->
+                        <li class="sub-item"><a href="#docker/billing">💰 Faturamento</a></li>
+                        <!-- API -->
+                        <li class="sub-item"><a href="#docker/api">⚡ API & Hooks</a></li>
+                    </ul>
+                </li>
+                <li class="menu-item"><a href="#logs">📜 System Logs</a></li>
+            </ul>
+
+            <div style="margin-top:auto; padding:20px; border-top:1px solid #34495e;">
+                <button class="btn btn-danger" style="width:100%;" onclick="logout()">Sair</button>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="top-bar">
+                <h2 class="page-title" id="pageTitle">Dashboard</h2>
+                <div class="flex items-center gap-10">
+                    <span id="adminName" style="font-size:14px; color:#666;">Admin</span>
+                    <button class="btn btn-outline" onclick="location.reload()">🔄 Refresh</button>
+                </div>
+            </div>
+
+            <div class="content-wrapper">
+
+                <!-- VIEW: DASHBOARD -->
+                <div id="view-dashboard">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Containers Ativos</div>
+                            <div class="stat-value" id="stat-containers">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Memória Heap (Avg)</div>
+                            <div class="stat-value" id="stat-memory">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Mensagens Hoje</div>
+                            <div class="stat-value" id="stat-messages">-</div>
+                        </div>
+                        <div class="stat-card" style="border-left-color: #51cf66;">
+                            <div class="stat-label">Extra MB Billing</div>
+                            <div class="stat-value" style="color: #2ecc71;">R$ <span id="stat-billing">0.00</span></div>
+                        </div>
+                    </div>
+
+                    <div class="grid" style="display:grid; grid-template-columns: 2fr 1fr; gap:25px;">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Carga do Sistema (12h)</h3>
+                            </div>
+                            <div class="card-body">
+                                <div id="main-chart"></div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Logs Recentes</h3>
+                            </div>
+                            <div class="card-body" style="padding:0;">
+                                <div id="mini-logs"
+                                    style="font-size:11px; background:#1e1e1e; color:#bbb; height:345px; padding:10px; overflow-y:auto;">
+                                    <div>[System] Ready...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: CLIENTS -->
+                <div id="view-clients" class="hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Lista de Containers</h3>
+                            <button class="btn btn-primary" onclick="refreshClients()">Atualizar</button>
+                        </div>
+                        <div class="card-body" style="padding:0;">
+                            <table id="tabela-clients">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Loja</th>
+                                        <th>RAM / CPU</th>
+                                        <th>DOCKER STATUS</th>
+                                        <th>AÇÕES</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: LOGS -->
+                <div id="view-logs" class="hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 id="logs-header">Logs do Container</h3>
+                            <div class="flex gap-10">
+                                <select id="log-client-select" style="padding:5px; border-radius:4px;"></select>
+                                <button class="btn btn-primary" onclick="loadLogs()">Ver Logs</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="log-console">Selecione um cliente para carregar logs...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: BILLING -->
+                <div id="view-billing" class="hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Histórico de Cobrança Extra</h3>
+                        </div>
+                        <div class="card-body" style="padding:0;">
+                            <table id="tabela-billing">
+                                <thead>
+                                    <tr>
+                                        <th>Mês</th>
+                                        <th>Cliente</th>
+                                        <th>Valor Extra</th>
+                                        <th>Data Gerado</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: AUTO-SCALE -->
+                <div id="view-autoscale" class="hidden">
+                    <div class="card" style="max-width: 600px;">
+                        <div class="card-header">
+                            <h3>Configuração Global de Auto-Escala</h3>
+                        </div>
+                        <div class="card-body">
+                            <div style="margin-bottom:15px;">
+                                <label style="display:block; font-size:13px; margin-bottom:5px;">Upgrade threshold (CPU
+                                    %)</label>
+                                <input type="range" min="30" max="95" value="70" style="width:100%;">
+                            </div>
+                            <div style="margin-bottom:15px;">
+                                <label style="display:block; font-size:13px; margin-bottom:5px;">Memoria Extra por Passo
+                                    (MB)</label>
+                                <select style="width:100%; padding:10px; border-radius:4px;">
+                                    <option>128 MB</option>
+                                    <option selected>512 MB</option>
+                                    <option>1024 MB</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary">Salvar Alterações</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: PLACEHOLDER -->
+                <div id="view-placeholder" class="hidden">
+                    <div style="text-align:center; padding:100px; color:#adb5bd;">
+                        <h1 style="font-size:60px; margin:0;">🚧</h1>
+                        <h3>Módulo <b><span id="placeholder-name">...</span></b> em fase de construção</h3>
+                        <p>O backend para esta funcionalidade será exposto em breve.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="admin-dashboard.js"></script>
+</body>
+
+</html>

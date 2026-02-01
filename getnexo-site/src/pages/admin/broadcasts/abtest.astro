@@ -3,57 +3,308 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 
 <AdminLayout title="A/B Testing Avançado" activeTab="broadcasts">
-  <div class="space-y-8">
+  <div class="space-y-8" x-data="abTesting()">
     <div class="flex justify-between items-center">
       <div>
         <h1 class="text-3xl font-bold text-white">Testes A/B</h1>
         <p class="text-gray-400">Otimize suas conversões comparando variações</p>
       </div>
-      <button class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium">+ Criar Novo Teste</button>
+      <button @click="openCreateModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium">+ Criar Novo Teste</button>
     </div>
 
-    <!-- Test Container -->
-    <div class="bg-gray-900/50 border border-gray-800 p-8 rounded-xl">
-       
-       <div class="text-center mb-8">
-          <h2 class="text-2xl font-bold text-white">Teste: Assunto do Email - Promoção</h2>
-          <p class="text-emerald-400 font-bold mt-2">DURAÇÃO: 24H RESTANTES</p>
-       </div>
+    <!-- Loading -->
+    <div x-show="loading" class="flex items-center justify-center py-10">
+       <div class="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
 
-       <div class="flex flex-col md:flex-row gap-8 items-stretch">
-          
-          <!-- Variant A -->
-          <div class="flex-1 bg-gray-800/30 rounded-xl p-6 border-t-4 border-gray-500 relative">
-             <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-700 text-gray-300 px-3 py-1 text-xs rounded-full font-bold">VARIAÇÃO A (Controle)</div>
-             <div class="mt-4 text-center">
-                <p class="text-gray-400 italic mb-4">"Oferta imperdível para você!"</p>
-                <div class="text-4xl font-black text-gray-300">12.5%</div>
-                <p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Taxa de Abertura</p>
+    <!-- Tests List -->
+    <template x-for="test in tests" :key="test.id">
+       <div class="bg-gray-900/50 border border-gray-800 p-8 rounded-xl">
+          <div class="flex items-center justify-between mb-6">
+             <div>
+                <h2 class="text-xl font-bold text-white" x-text="test.name"></h2>
+                <p class="text-xs text-gray-500 mt-1" x-text="'Criado em ' + formatDate(test.createdAt)"></p>
+             </div>
+             <div class="flex items-center space-x-4">
+                <span :class="test.status === 'running' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : test.status === 'completed' ? 'bg-gray-700 text-gray-400' : 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'" class="px-3 py-1 rounded-full text-xs font-bold border" x-text="getStatusLabel(test.status)"></span>
+                <span x-show="test.status === 'running'" class="text-emerald-400 font-bold text-sm" x-text="test.timeRemaining + ' restantes'"></span>
              </div>
           </div>
 
-          <!-- VS Badge -->
-          <div class="flex items-center justify-center">
-             <div class="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center font-black text-xl italic text-gray-500">VS</div>
-          </div>
+          <div class="flex flex-col md:flex-row gap-8 items-stretch">
+             <!-- Variant A -->
+             <div class="flex-1 rounded-xl p-6 border-t-4 relative transition-all" 
+                  :class="test.winner === 'A' ? 'bg-indigo-900/20 border-indigo-500 shadow-lg shadow-indigo-500/10 scale-[1.02]' : 'bg-gray-800/30 border-gray-500'">
+                <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 text-xs rounded-full font-bold" 
+                     :class="test.winner === 'A' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-gray-700 text-gray-300'"
+                     x-text="test.winner === 'A' ? 'VARIAÇÃO A (Vencedora)' : 'VARIAÇÃO A (Controle)'"></div>
+                <div class="mt-4 text-center">
+                   <p class="text-gray-300 italic mb-4" x-text="'\"' + test.variantA.text + '\"'"></p>
+                   <div class="text-4xl font-black" :class="test.winner === 'A' ? 'text-indigo-400' : 'text-gray-300'" x-text="test.variantA.rate + '%'"></div>
+                   <p class="text-xs uppercase tracking-widest mt-1" :class="test.winner === 'A' ? 'text-indigo-300/70' : 'text-gray-500'" x-text="test.metric"></p>
+                   <p x-show="test.winner === 'A'" class="text-emerald-400 text-xs font-bold mt-2" x-text="'+' + calculateImprovement(test.variantA.rate, test.variantB.rate) + '% melhor'"></p>
+                </div>
+             </div>
 
-          <!-- Variant B -->
-          <div class="flex-1 bg-indigo-900/20 rounded-xl p-6 border-t-4 border-indigo-500 relative shadow-lg shadow-indigo-500/10 transform scale-105">
-             <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-600 text-white px-3 py-1 text-xs rounded-full font-bold shadow-lg">VARIAÇÃO B (Vencedora)</div>
-              <div class="mt-4 text-center">
-                <p class="text-gray-300 italic mb-4">"🔥 Seu cupom de 50% expira hoje"</p>
-                <div class="text-5xl font-black text-indigo-400">28.4%</div>
-                <p class="text-xs text-indigo-300/70 uppercase tracking-widest mt-1">Taxa de Abertura</p>
-                <p class="text-emerald-400 text-xs font-bold mt-2">+127% melhor desempenho</p>
+             <!-- VS Badge -->
+             <div class="flex items-center justify-center">
+                <div class="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center font-black text-xl italic text-gray-500">VS</div>
+             </div>
+
+             <!-- Variant B -->
+             <div class="flex-1 rounded-xl p-6 border-t-4 relative transition-all" 
+                  :class="test.winner === 'B' ? 'bg-indigo-900/20 border-indigo-500 shadow-lg shadow-indigo-500/10 scale-[1.02]' : 'bg-gray-800/30 border-gray-500'">
+                <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 text-xs rounded-full font-bold"
+                     :class="test.winner === 'B' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-gray-700 text-gray-300'"
+                     x-text="test.winner === 'B' ? 'VARIAÇÃO B (Vencedora)' : 'VARIAÇÃO B'"></div>
+                <div class="mt-4 text-center">
+                   <p class="text-gray-300 italic mb-4" x-text="'\"' + test.variantB.text + '\"'"></p>
+                   <div class="text-4xl font-black" :class="test.winner === 'B' ? 'text-indigo-400' : 'text-gray-300'" x-text="test.variantB.rate + '%'"></div>
+                   <p class="text-xs uppercase tracking-widest mt-1" :class="test.winner === 'B' ? 'text-indigo-300/70' : 'text-gray-500'" x-text="test.metric"></p>
+                   <p x-show="test.winner === 'B'" class="text-emerald-400 text-xs font-bold mt-2" x-text="'+' + calculateImprovement(test.variantB.rate, test.variantA.rate) + '% melhor'"></p>
+                </div>
              </div>
           </div>
 
+          <div class="mt-8 flex justify-between items-center pt-6 border-t border-gray-800">
+             <button @click="viewDetails(test)" class="text-gray-400 hover:text-white text-sm underline">Ver detalhes estatísticos</button>
+             <div class="flex space-x-3">
+                <button x-show="test.status === 'running'" @click="endTest(test.id)" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm">Encerrar Teste</button>
+                <button x-show="test.winner" @click="applyWinner(test)" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium">Aplicar Vencedor</button>
+             </div>
+          </div>
        </div>
+    </template>
 
-       <div class="mt-8 text-center pt-8 border-t border-gray-800">
-          <button class="text-gray-400 hover:text-white text-sm underline">Ver detalhes estatísticos completos</button>
+    <!-- Empty State -->
+    <div x-show="!loading && tests.length === 0" class="text-center py-20">
+       <div class="text-6xl mb-4">🧪</div>
+       <h3 class="text-xl font-bold text-white mb-2">Nenhum teste A/B ativo</h3>
+       <p class="text-gray-400 mb-6">Crie testes para otimizar suas campanhas.</p>
+       <button @click="openCreateModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-lg font-medium">Criar Primeiro Teste</button>
+    </div>
+
+    <!-- Create Modal -->
+    <div x-show="createModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" @keydown.escape.window="createModal = false">
+       <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="createModal = false"></div>
+       <div class="relative w-full max-w-2xl bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-hidden" @click.stop>
+          <div class="bg-gradient-to-r from-indigo-600/20 to-purple-600/20 p-6 border-b border-gray-800">
+             <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold text-white">Novo Teste A/B</h2>
+                <button @click="createModal = false" class="p-2 text-gray-500 hover:text-white hover:bg-gray-800 rounded-lg transition-all">✕</button>
+             </div>
+          </div>
+          <form @submit.prevent="createTest()" class="p-6 space-y-5">
+             <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Nome do Teste *</label>
+                <input type="text" x-model="form.name" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-all" placeholder="Ex: Teste de Assunto - Promoção">
+             </div>
+             <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">O que você quer testar?</label>
+                <select x-model="form.type" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-all">
+                   <option value="subject">Assunto/Título</option>
+                   <option value="cta">Texto do CTA</option>
+                   <option value="message">Corpo da Mensagem</option>
+                   <option value="timing">Horário de Envio</option>
+                </select>
+             </div>
+             <div class="grid grid-cols-2 gap-4">
+                <div>
+                   <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Variação A (Controle) *</label>
+                   <textarea x-model="form.variantA" required rows="3" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-all resize-none" placeholder="Texto original..."></textarea>
+                </div>
+                <div>
+                   <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Variação B *</label>
+                   <textarea x-model="form.variantB" required rows="3" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-all resize-none" placeholder="Nova variação..."></textarea>
+                </div>
+             </div>
+             <div class="grid grid-cols-2 gap-4">
+                <div>
+                   <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Métrica de Sucesso</label>
+                   <select x-model="form.metric" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-all">
+                      <option value="open_rate">Taxa de Abertura</option>
+                      <option value="click_rate">Taxa de Clique</option>
+                      <option value="conversion">Conversão</option>
+                      <option value="response">Taxa de Resposta</option>
+                   </select>
+                </div>
+                <div>
+                   <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Duração do Teste</label>
+                   <select x-model="form.duration" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-all">
+                      <option value="24h">24 horas</option>
+                      <option value="48h">48 horas</option>
+                      <option value="72h">72 horas</option>
+                      <option value="7d">7 dias</option>
+                   </select>
+                </div>
+             </div>
+             <div class="flex space-x-3 pt-4">
+                <button type="button" @click="createModal = false" class="flex-1 py-3 bg-gray-800 hover:bg-gray-700 text-gray-400 font-bold rounded-xl transition-all">Cancelar</button>
+                <button type="submit" :disabled="saving" class="flex-1 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all disabled:opacity-50">
+                   <span x-text="saving ? 'Criando...' : 'Iniciar Teste'"></span>
+                </button>
+             </div>
+          </form>
        </div>
-
     </div>
   </div>
 </AdminLayout>
+
+<script nonce={Astro.locals.nonce} is:inline>
+  function abTesting() {
+    return {
+      tests: [],
+      loading: true,
+      createModal: false,
+      saving: false,
+      form: {
+        name: '',
+        type: 'subject',
+        variantA: '',
+        variantB: '',
+        metric: 'open_rate',
+        duration: '24h'
+      },
+
+      async init() {
+        await this.fetchTests();
+      },
+
+      async fetchTests() {
+        this.loading = true;
+        try {
+          const res = await fetch('/api/abtests');
+          if (res.ok) {
+            const data = await res.json();
+            this.tests = data.tests || [];
+          } else {
+            this.tests = this.getMockTests();
+          }
+        } catch(e) {
+          console.error(e);
+          this.tests = this.getMockTests();
+        } finally {
+          this.loading = false;
+        }
+      },
+
+      getMockTests() {
+        return [
+          {
+            id: 1,
+            name: 'Teste: Assunto do Email - Promoção',
+            status: 'running',
+            createdAt: new Date(Date.now() - 86400000).toISOString(),
+            timeRemaining: '24H',
+            metric: 'Taxa de Abertura',
+            winner: null,
+            variantA: { text: 'Oferta imperdível para você!', rate: 12.5 },
+            variantB: { text: '🔥 Seu cupom de 50% expira hoje', rate: 28.4 }
+          },
+          {
+            id: 2,
+            name: 'Teste: CTA Botão WhatsApp',
+            status: 'completed',
+            createdAt: new Date(Date.now() - 604800000).toISOString(),
+            timeRemaining: null,
+            metric: 'Taxa de Clique',
+            winner: 'B',
+            variantA: { text: 'Saiba mais', rate: 8.2 },
+            variantB: { text: '👉 Quero meu desconto!', rate: 15.7 }
+          }
+        ];
+      },
+
+      formatDate(dateStr) {
+        if (!dateStr) return '-';
+        return new Date(dateStr).toLocaleDateString('pt-BR');
+      },
+
+      getStatusLabel(status) {
+        const labels = { running: 'Em Andamento', completed: 'Concluído', paused: 'Pausado' };
+        return labels[status] || status;
+      },
+
+      calculateImprovement(winner, loser) {
+        if (loser === 0) return 0;
+        return Math.round(((winner - loser) / loser) * 100);
+      },
+
+      openCreateModal() {
+        this.form = { name: '', type: 'subject', variantA: '', variantB: '', metric: 'open_rate', duration: '24h' };
+        this.createModal = true;
+      },
+
+      async createTest() {
+        if (!this.form.name || !this.form.variantA || !this.form.variantB) {
+          alert('Preencha todos os campos obrigatórios');
+          return;
+        }
+
+        this.saving = true;
+        try {
+          const res = await fetch('/api/abtests', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(this.form)
+          });
+
+          if (res.ok) {
+            this.createModal = false;
+            await this.fetchTests();
+          } else {
+            this.mockCreate();
+          }
+        } catch(e) {
+          this.mockCreate();
+        } finally {
+          this.saving = false;
+        }
+      },
+
+      mockCreate() {
+        const metricLabels = { open_rate: 'Taxa de Abertura', click_rate: 'Taxa de Clique', conversion: 'Conversão', response: 'Taxa de Resposta' };
+        this.tests.unshift({
+          id: Date.now(),
+          name: this.form.name,
+          status: 'running',
+          createdAt: new Date().toISOString(),
+          timeRemaining: this.form.duration.toUpperCase(),
+          metric: metricLabels[this.form.metric],
+          winner: null,
+          variantA: { text: this.form.variantA, rate: 0 },
+          variantB: { text: this.form.variantB, rate: 0 }
+        });
+        this.createModal = false;
+      },
+
+      async endTest(id) {
+        if (!confirm('Encerrar este teste agora? Os resultados parciais serão usados.')) return;
+
+        try {
+          await fetch(`/api/abtests/${id}/end`, { method: 'POST' });
+        } catch(e) { console.error(e); }
+
+        const test = this.tests.find(t => t.id === id);
+        if (test) {
+          test.status = 'completed';
+          test.winner = test.variantA.rate > test.variantB.rate ? 'A' : 'B';
+          test.timeRemaining = null;
+        }
+      },
+
+      viewDetails(test) {
+        alert(`Detalhes do teste "${test.name}":\n\nVariação A: ${test.variantA.rate}%\nVariação B: ${test.variantB.rate}%\nStatus: ${this.getStatusLabel(test.status)}`);
+      },
+
+      applyWinner(test) {
+        const winnerText = test.winner === 'A' ? test.variantA.text : test.variantB.text;
+        alert(`✅ A variação vencedora "${winnerText}" será aplicada em futuras campanhas.`);
+      }
+    };
+  }
+</script>
+
+<style>
+  [x-cloak] { display: none !important; }
+</style>

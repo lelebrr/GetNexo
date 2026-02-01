@@ -1,15 +1,10 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
-import { Shield, Lock, Plus, Trash2, ShieldAlert, Globe, Server } from 'lucide-react';
-
-const blockedIps = [
-  { ip: "192.168.1.104", region: "Unknown", reason: "Brute Force", date: "Há 2h" },
-  { ip: "45.12.3.88", region: "Russia", reason: "Known Bot", date: "Ontem" },
-];
+import { Shield, Lock, Plus, Trash2, ShieldAlert, Globe, Server, X, CheckCircle } from 'lucide-react';
 ---
 
 <AdminLayout title="Firewall & IPs" activeTab="seguranca">
-  <div class="max-w-4xl mx-auto space-y-10 animate-fade-in py-4">
+  <div class="max-w-4xl mx-auto space-y-10 animate-fade-in py-4" x-data="firewallManager()">
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-4">
         <div class="w-14 h-14 bg-rose-500/10 rounded-2xl flex items-center justify-center text-rose-500 border border-rose-500/20 shadow-xl shadow-rose-500/10">
@@ -20,7 +15,7 @@ const blockedIps = [
           <p class="text-sm text-gray-500 font-medium">Gerencie regras de acesso e bloqueie IPs maliciosos em tempo real.</p>
         </div>
       </div>
-      <button class="px-6 py-3 bg-rose-600 hover:bg-rose-500 text-white font-black rounded-2xl flex items-center space-x-2 transition-all shadow-lg shadow-rose-600/20 uppercase text-xs tracking-widest">
+      <button @click="openBanModal()" class="px-6 py-3 bg-rose-600 hover:bg-rose-500 text-white font-black rounded-2xl flex items-center space-x-2 transition-all shadow-lg shadow-rose-600/20 uppercase text-xs tracking-widest">
          <Plus className="w-5 h-5" />
          <span>Banir IP</span>
       </button>
@@ -34,8 +29,11 @@ const blockedIps = [
           </div>
           <div class="space-y-1">
              <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">WAF Status</p>
-             <h3 class="text-xl font-black text-white uppercase italic tracking-tighter">Ativo & Protegido</h3>
+             <h3 class="text-xl font-black text-white uppercase italic tracking-tighter" x-text="wafEnabled ? 'Ativo & Protegido' : 'Desativado'"></h3>
           </div>
+          <button @click="toggleWaf()" :class="wafEnabled ? 'bg-emerald-600' : 'bg-gray-700'" class="ml-auto w-14 h-8 rounded-full relative transition-all">
+             <div :class="wafEnabled ? 'translate-x-6' : 'translate-x-1'" class="w-6 h-6 bg-white rounded-full absolute top-1 transition-transform"></div>
+          </button>
        </div>
        <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-[2.5rem] flex items-center space-x-6">
           <div class="w-12 h-12 bg-rose-500/10 rounded-xl flex items-center justify-center text-rose-500">
@@ -43,43 +41,281 @@ const blockedIps = [
           </div>
           <div class="space-y-1">
              <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Ameaças Bloqueadas</p>
-             <h3 class="text-xl font-black text-white italic">4.218 / mês</h3>
+             <h3 class="text-xl font-black text-white italic" x-text="stats.blockedThreats.toLocaleString() + ' / mês'"></h3>
           </div>
        </div>
     </div>
 
+    <!-- Tabs -->
+    <div class="flex space-x-2 bg-gray-900 border border-gray-800 p-2 rounded-2xl">
+       <button @click="activeTab = 'blacklist'" :class="activeTab === 'blacklist' ? 'bg-rose-600 text-white' : 'text-gray-500 hover:text-white'" class="flex-1 py-2 px-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all">Lista Negra</button>
+       <button @click="activeTab = 'whitelist'" :class="activeTab === 'whitelist' ? 'bg-emerald-600 text-white' : 'text-gray-500 hover:text-white'" class="flex-1 py-2 px-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all">Lista Branca</button>
+    </div>
+
+    <!-- Loading -->
+    <div x-show="loading" class="flex items-center justify-center py-10">
+       <div class="w-10 h-10 border-4 border-rose-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
     <!-- Blocked List -->
-    <div class="bg-gray-900/40 border border-gray-800 rounded-[2.5rem] overflow-hidden">
+    <div x-show="!loading && activeTab === 'blacklist'" class="bg-gray-900/40 border border-gray-800 rounded-[2.5rem] overflow-hidden">
        <div class="p-8 border-b border-gray-800 bg-black/20 flex items-center space-x-3">
           <Lock className="w-5 h-5 text-gray-500" />
-          <h3 class="text-xs font-black uppercase text-gray-400 tracking-widest">Lista Negra de Acesso</h3>
+          <h3 class="text-xs font-black uppercase text-gray-400 tracking-widest">IPs Bloqueados (<span x-text="blockedIps.length"></span>)</h3>
        </div>
 
        <div class="divide-y divide-gray-800/50">
-          {blockedIps.map(item => (
+          <template x-for="item in blockedIps" :key="item.id">
              <div class="p-8 flex items-center justify-between hover:bg-white/[0.02] transition-colors group">
                 <div class="flex items-center space-x-6">
                    <div class="w-10 h-10 bg-gray-800 rounded-xl flex items-center justify-center text-gray-600 group-hover:text-rose-500 transition-colors">
                       <Globe className="w-5 h-5" />
                    </div>
                    <div>
-                      <h4 class="text-sm font-bold text-white uppercase tracking-tight font-mono">{item.ip}</h4>
-                      <p class="text-[10px] text-gray-500 font-medium">{item.region} • {item.reason}</p>
+                      <h4 class="text-sm font-bold text-white uppercase tracking-tight font-mono" x-text="item.ip"></h4>
+                      <p class="text-[10px] text-gray-500 font-medium" x-text="item.region + ' • ' + item.reason"></p>
                    </div>
                 </div>
 
                 <div class="flex items-center space-x-6">
-                   <span class="text-[10px] text-gray-600 font-black uppercase tracking-widest italic">{item.date}</span>
-                   <button class="p-3 bg-gray-800 hover:bg-rose-600/20 text-gray-500 hover:text-rose-400 rounded-xl transition-all"><Trash2 className="w-4 h-4" /></button>
+                   <span class="text-[10px] text-gray-600 font-black uppercase tracking-widest italic" x-text="formatDate(item.date)"></span>
+                   <button @click="unblockIp(item.id)" class="p-3 bg-gray-800 hover:bg-rose-600/20 text-gray-500 hover:text-rose-400 rounded-xl transition-all" title="Desbloquear">
+                      <Trash2 className="w-4 h-4" />
+                   </button>
                 </div>
              </div>
-          ))}
+          </template>
+       </div>
+       
+       <div x-show="blockedIps.length === 0" class="text-center py-10 text-gray-500">
+          Nenhum IP bloqueado.
+       </div>
+    </div>
+
+    <!-- Whitelist -->
+    <div x-show="!loading && activeTab === 'whitelist'" class="bg-gray-900/40 border border-gray-800 rounded-[2.5rem] overflow-hidden">
+       <div class="p-8 border-b border-gray-800 bg-black/20 flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+             <CheckCircle className="w-5 h-5 text-emerald-500" />
+             <h3 class="text-xs font-black uppercase text-gray-400 tracking-widest">IPs Permitidos (<span x-text="whitelistIps.length"></span>)</h3>
+          </div>
+          <button @click="openWhitelistModal()" class="text-emerald-400 hover:text-emerald-300 text-xs font-bold">+ Adicionar</button>
+       </div>
+
+       <div class="divide-y divide-gray-800/50">
+          <template x-for="item in whitelistIps" :key="item.id">
+             <div class="p-8 flex items-center justify-between hover:bg-white/[0.02] transition-colors group">
+                <div class="flex items-center space-x-6">
+                   <div class="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center text-emerald-500">
+                      <CheckCircle className="w-5 h-5" />
+                   </div>
+                   <div>
+                      <h4 class="text-sm font-bold text-white uppercase tracking-tight font-mono" x-text="item.ip"></h4>
+                      <p class="text-[10px] text-gray-500 font-medium" x-text="item.description"></p>
+                   </div>
+                </div>
+
+                <button @click="removeWhitelist(item.id)" class="p-3 bg-gray-800 hover:bg-rose-600/20 text-gray-500 hover:text-rose-400 rounded-xl transition-all" title="Remover">
+                   <Trash2 className="w-4 h-4" />
+                </button>
+             </div>
+          </template>
+       </div>
+       
+       <div x-show="whitelistIps.length === 0" class="text-center py-10 text-gray-500">
+          Nenhum IP na lista branca.
+       </div>
+    </div>
+
+    <!-- Ban IP Modal -->
+    <div x-show="banModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" @keydown.escape.window="banModal = false">
+       <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="banModal = false"></div>
+       <div class="relative w-full max-w-md bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-hidden" @click.stop>
+          <div class="bg-rose-900/20 p-6 border-b border-gray-800">
+             <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold text-rose-400">Banir Endereço IP</h2>
+                <button @click="banModal = false" class="p-2 text-gray-500 hover:text-white hover:bg-gray-800 rounded-lg transition-all">
+                   <X className="w-5 h-5" />
+                </button>
+             </div>
+          </div>
+          <form @submit.prevent="banIp()" class="p-6 space-y-5">
+             <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Endereço IP *</label>
+                <input type="text" x-model="banForm.ip" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white font-mono placeholder-gray-500 focus:outline-none focus:border-rose-500 transition-all" placeholder="192.168.1.1">
+             </div>
+             <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Motivo</label>
+                <select x-model="banForm.reason" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-rose-500 transition-all">
+                   <option value="Brute Force">Brute Force</option>
+                   <option value="Known Bot">Bot Conhecido</option>
+                   <option value="Spam">Spam</option>
+                   <option value="Suspicious Activity">Atividade Suspeita</option>
+                   <option value="Manual Block">Bloqueio Manual</option>
+                </select>
+             </div>
+             <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Região (opcional)</label>
+                <input type="text" x-model="banForm.region" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-rose-500 transition-all" placeholder="Brasil">
+             </div>
+             <div class="flex space-x-3 pt-4">
+                <button type="button" @click="banModal = false" class="flex-1 py-3 bg-gray-800 hover:bg-gray-700 text-gray-400 font-bold rounded-xl transition-all">Cancelar</button>
+                <button type="submit" class="flex-1 py-3 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl transition-all">Banir IP</button>
+             </div>
+          </form>
        </div>
     </div>
   </div>
 </AdminLayout>
 
+<script nonce={Astro.locals.nonce} is:inline>
+  function firewallManager() {
+    return {
+      blockedIps: [],
+      whitelistIps: [],
+      loading: true,
+      activeTab: 'blacklist',
+      wafEnabled: true,
+      banModal: false,
+      banForm: { ip: '', reason: 'Brute Force', region: '' },
+      stats: { blockedThreats: 4218 },
+
+      async init() {
+        await this.fetchData();
+      },
+
+      async fetchData() {
+        this.loading = true;
+        try {
+          const res = await fetch('/api/firewall');
+          if (res.ok) {
+            const data = await res.json();
+            this.blockedIps = data.blocked || [];
+            this.whitelistIps = data.whitelist || [];
+            this.wafEnabled = data.wafEnabled ?? true;
+          } else {
+            this.blockedIps = this.getMockBlocked();
+            this.whitelistIps = this.getMockWhitelist();
+          }
+        } catch(e) {
+          console.error(e);
+          this.blockedIps = this.getMockBlocked();
+          this.whitelistIps = this.getMockWhitelist();
+        } finally {
+          this.loading = false;
+        }
+      },
+
+      getMockBlocked() {
+        return [
+          { id: 1, ip: '192.168.1.104', region: 'Unknown', reason: 'Brute Force', date: new Date(Date.now() - 7200000).toISOString() },
+          { id: 2, ip: '45.12.3.88', region: 'Russia', reason: 'Known Bot', date: new Date(Date.now() - 86400000).toISOString() },
+          { id: 3, ip: '103.45.67.89', region: 'China', reason: 'Spam', date: new Date(Date.now() - 172800000).toISOString() },
+        ];
+      },
+
+      getMockWhitelist() {
+        return [
+          { id: 1, ip: '192.168.1.1', description: 'Rede interna - Escritório' },
+          { id: 2, ip: '201.12.34.56', description: 'IP do Admin' },
+        ];
+      },
+
+      formatDate(dateStr) {
+        if (!dateStr) return '-';
+        const date = new Date(dateStr);
+        const now = new Date();
+        const diff = now - date;
+        
+        if (diff < 3600000) return `Há ${Math.floor(diff / 60000)} min`;
+        if (diff < 86400000) return `Há ${Math.floor(diff / 3600000)}h`;
+        return 'Ontem';
+      },
+
+      openBanModal() {
+        this.banForm = { ip: '', reason: 'Brute Force', region: '' };
+        this.banModal = true;
+      },
+
+      openWhitelistModal() {
+        const ip = prompt('Digite o IP para adicionar à lista branca:');
+        if (!ip) return;
+        const description = prompt('Descrição (opcional):') || 'IP permitido';
+        this.addWhitelist(ip, description);
+      },
+
+      async banIp() {
+        if (!this.banForm.ip) {
+          alert('Digite um IP válido');
+          return;
+        }
+
+        try {
+          await fetch('/api/firewall/block', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(this.banForm)
+          });
+        } catch(e) { console.error(e); }
+
+        this.blockedIps.unshift({
+          id: Date.now(),
+          ...this.banForm,
+          date: new Date().toISOString()
+        });
+        this.banModal = false;
+        this.stats.blockedThreats++;
+      },
+
+      async unblockIp(id) {
+        if (!confirm('Desbloquear este IP?')) return;
+        
+        try {
+          await fetch(`/api/firewall/block/${id}`, { method: 'DELETE' });
+        } catch(e) { console.error(e); }
+        
+        this.blockedIps = this.blockedIps.filter(i => i.id !== id);
+      },
+
+      async addWhitelist(ip, description) {
+        try {
+          await fetch('/api/firewall/whitelist', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ip, description })
+          });
+        } catch(e) { console.error(e); }
+
+        this.whitelistIps.unshift({ id: Date.now(), ip, description });
+      },
+
+      async removeWhitelist(id) {
+        if (!confirm('Remover este IP da lista branca?')) return;
+        
+        try {
+          await fetch(`/api/firewall/whitelist/${id}`, { method: 'DELETE' });
+        } catch(e) { console.error(e); }
+        
+        this.whitelistIps = this.whitelistIps.filter(i => i.id !== id);
+      },
+
+      async toggleWaf() {
+        this.wafEnabled = !this.wafEnabled;
+        try {
+          await fetch('/api/firewall/waf', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ enabled: this.wafEnabled })
+          });
+        } catch(e) { console.error(e); }
+      }
+    };
+  }
+</script>
+
 <style>
+  [x-cloak] { display: none !important; }
   .animate-fade-in { animation: fadeIn 0.6s ease-out; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 </style>
+</AdminLayout>

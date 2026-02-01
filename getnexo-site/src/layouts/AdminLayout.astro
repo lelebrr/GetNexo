@@ -30,7 +30,7 @@ let resolvedActive = tabToCategoryMap[inputActive] || inputActive;
 let activeCategory = resolvedActive;
 
 import '../styles/global.css';
-import { Home, MessageCircle, Megaphone, Users, ShoppingCart, Search, ShieldAlert, Brain, BarChart, Heart, DollarSign, Zap, Plug, Settings, ShieldCheck, CircleHelp, Tag, Layers, FileText, LogOut } from 'lucide-react';
+import { Home, MessageCircle, Megaphone, Users, ShoppingCart, Search, ShieldAlert, Brain, BarChart, Heart, DollarSign, Zap, Plug, Settings, ShieldCheck, CircleHelp, Tag, Layers, FileText, LogOut, Bot, Cpu, Box as Container } from 'lucide-react';
 
 const mainCategories = [
   { name: "Dashboard", id: "dashboard", icon: Home, color: "indigo" },
@@ -50,6 +50,11 @@ const mainCategories = [
   { name: "Multi-Loja", id: "multiloja", icon: Layers, color: "amber" },
   { name: "Configurações", id: "config", icon: Settings, color: "gray" },
   { name: "Segurança", id: "seguranca", icon: ShieldCheck, color: "rose" },
+  { name: "Painel Nexus", id: "nexus", icon: Bot, color: "indigo" },
+  { name: "Docker", id: "docker", icon: Container, color: "blue" },
+  { name: "Revenda", id: "reseller", icon: Users, color: "orange" },
+  { name: "A2A Protocol", id: "a2a", icon: Zap, color: "cyan" },
+  { name: "AP2 Payments", id: "ap2", icon: DollarSign, color: "green" },
   { name: "Relatórios", id: "relatorios", icon: FileText, color: "lime" },
   { name: "Ajuda", id: "ajuda", icon: CircleHelp, color: "amber" }
 ];
@@ -204,6 +209,32 @@ const submenus = {
     { title: "Templates de Relatório", href: "/admin/reports/templates" },
     { title: "Histórico de Envios", href: "/admin/reports/history" }
   ],
+  reseller: [
+    { title: "Painel Revenda", href: "/revenda/dash" },
+    { title: "Minhas Comissões", href: "/revenda/comissoes" },
+    { title: "Materiais Gráficos", href: "/revenda/material" },
+    { title: "Solicitar Saque", href: "/revenda/pagamentos" }
+  ],
+  a2a: [
+    { title: "Dashboard A2A", href: "/admin/a2a" },
+    { title: "Identidades", href: "/admin/a2a?tab=identity" },
+    { title: "Agent Card", href: "/admin/a2a?tab=agentcard" },
+    { title: "Peers Conectados", href: "/admin/a2a?tab=peers" },
+    { title: "Mensagens", href: "/admin/a2a?tab=messages" },
+    { title: "Tasks Async", href: "/admin/a2a?tab=tasks" },
+    { title: "Callbacks", href: "/admin/a2a?tab=callbacks" },
+    { title: "Documentação A2A", href: "/docs/a2a" }
+  ],
+  ap2: [
+    { title: "Dashboard AP2", href: "/admin/ap2" },
+    { title: "Mandates Ativos", href: "/admin/ap2?tab=mandates" },
+    { title: "Transações", href: "/admin/ap2?tab=transactions" },
+    { title: "VDC Verificação", href: "/admin/ap2?tab=vdc" },
+    { title: "Constraints", href: "/admin/ap2?tab=constraints" },
+    { title: "Refunds", href: "/admin/ap2?tab=refunds" },
+    { title: "Estatísticas", href: "/admin/ap2?tab=stats" },
+    { title: "Documentação AP2", href: "/docs/ap2" }
+  ],
   ajuda: [
     { title: "FAQ Completo", href: "/admin/help/faq" },
     { title: "Suporte Técnico", href: "/admin/help/support" },
@@ -211,6 +242,24 @@ const submenus = {
     { title: "Tutoriais", href: "/admin/help/tutorials" },
     { title: "Status do Sistema", href: "/admin/help/status" },
     { title: "Contato", href: "/admin/help/contact" }
+  ],
+  docker: [
+    { title: "Métricas Globais", href: "/admin/docker" },
+    { title: "Clientes & Pods", href: "/admin/docker/clients" },
+    { title: "Auto-Escala", href: "/admin/docker/auto-scale" },
+    { title: "Uso Realtime", href: "/admin/docker/usage" },
+    { title: "Faturamentos Extras", href: "/admin/docker/billing" },
+    { title: "Webhook de Falhas", href: "/admin/docker/webhooks" }
+  ],
+  nexus: [
+    { title: "Visão Geral Nexus", href: "/admin/nexus" },
+    { title: "IA & Agentes", href: "/admin/nexus?section=ai_admin" },
+    { title: "Espaços de Trabalho", href: "/admin/nexus?section=workspaces" },
+    { title: "Canais (WhatsApp)", href: "/admin/nexus?section=channels" },
+    { title: "Equipe & Pessoas", href: "/admin/nexus?section=people" },
+    { title: "Objetos & Regras", href: "/admin/nexus?section=objects" },
+    { title: "Analytics Avançado", href: "/admin/nexus?section=marketing" },
+    { title: "Apps & Webhooks", href: "/admin/nexus?section=apps" }
   ]
 };
 ---
@@ -222,9 +271,8 @@ const submenus = {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <script nonce={Astro.locals.nonce} defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.csp.min.js"></script>
+    <link rel="stylesheet" href="/fonts/fonts.css" />
+    <script nonce={nonce} defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.csp.min.js"></script>
     <meta name="generator" content={Astro.generator} />
     <title>{title} | Admin GetNexo</title>
   </head>
@@ -268,8 +316,9 @@ const submenus = {
             crm: 'crm', produtos: 'produtos', seo: 'seo', "security-ia": 'security-ia', magic: 'strategy',
             pagamentos: 'pagamentos', automations: 'automations',
             analytics: 'analytics', fidelidade: 'loyalty', tags: 'tags',
-            integracoes: 'integrations', multiloja: 'multiloja',
-            config: 'config', seguranca: 'security', relatorios: 'relatorios', ajuda: 'support'
+            integracoes: 'integrations', multiloja: 'multiloja', 
+            config: 'config', seguranca: 'security', relatorios: 'relatorios', ajuda: 'support', docker: 'docker', nexus: 'nexus',
+            reseller: 'reseller', a2a: 'a2a', ap2: 'ap2'
           },
           
           // Account Modal State
@@ -398,7 +447,7 @@ const submenus = {
                   <span class="absolute -top-1 -right-1 bg-red-600 text-white text-[9px] px-1 rounded-full pointer-events-none">{cat.count}</span>
                 )}
                 {activeCategory === cat.id && (
-                  <div class:list={["absolute left-0 w-1 h-8 rounded-r-full pointer-events-none", `bg-${cat.color}-500 shadow-[0_0_10px_rgba(var(--${cat.color}-500-rgb),_0.5)]`]}></div>
+                  <div class:list={["absolute left-0 w-1 h-8 rounded-r-full pointer-events-none top-1/2 -translate-y-1/2", `bg-${cat.color}-500 shadow-[0_0_10px_rgba(var(--${cat.color}-500-rgb),_0.5)]`]}></div>
                 )}
               </a>
             );
@@ -446,7 +495,7 @@ const submenus = {
       <!-- 3. ÁREA PRINCIPAL -->
       <div class="flex-1 flex flex-col min-w-0 bg-black">
         <!-- Header Superior -->
-        <header class="h-16 flex-shrink-0 bg-black/50 backdrop-blur-md border-b border-gray-800 px-8 flex items-center justify-between">
+        <header class="h-16 flex-shrink-0 bg-black/80 backdrop-blur-xl border-b border-gray-800 px-8 flex items-center justify-between">
           <div class="flex items-center space-x-4">
             <h1 class="text-xl font-bold text-white line-clamp-1">{title}</h1>
           </div>
@@ -507,62 +556,64 @@ const submenus = {
               </div>
             </div>
 
-            <!-- Body -->
-            <div class="p-6 space-y-5 max-h-[60vh] overflow-y-auto">
-              <!-- Name -->
-              <div>
-                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Nome</label>
-                <input type="text" x-model="profile.name" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all" placeholder="Seu nome">
-              </div>
-
-              <!-- Email -->
-              <div>
-                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Email</label>
-                <input type="email" x-model="profile.email" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all" placeholder="seu@email.com">
-              </div>
-
-              <!-- Password Change -->
-              <div class="border-t border-gray-800 pt-5">
-                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Alterar Senha</label>
-                <input type="password" x-model="profile.newPassword" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all" placeholder="Nova senha (deixe vazio para manter)">
-              </div>
-
-              <!-- Theme Toggle -->
-              <div class="flex items-center justify-between border-t border-gray-800 pt-5">
+            <!-- Body & Footer wrapped in Form -->
+            <form @submit.prevent="saveProfile()">
+              <div class="p-6 space-y-5 max-h-[60vh] overflow-y-auto">
+                <!-- Name -->
                 <div>
-                  <p class="text-sm font-semibold text-white">Tema Escuro</p>
-                  <p class="text-xs text-gray-500">Ativar modo escuro no painel</p>
+                  <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Nome</label>
+                  <input type="text" x-model="profile.name" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all" placeholder="Seu nome">
                 </div>
-                <div @click="profile.preferences.theme = (profile.preferences.theme === 'dark' ? 'light' : 'dark')"
-                     class="w-12 h-6 rounded-full relative cursor-pointer transition-colors duration-300"
-                     :class="profile.preferences.theme === 'dark' ? 'bg-purple-600' : 'bg-gray-700'">
-                  <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform duration-300"
-                       :class="profile.preferences.theme === 'dark' ? 'translate-x-6' : 'translate-x-0'"></div>
-                </div>
-              </div>
 
-              <!-- Notifications Toggle -->
-              <div class="flex items-center justify-between">
+                <!-- Email -->
                 <div>
-                  <p class="text-sm font-semibold text-white">Notificações</p>
-                  <p class="text-xs text-gray-500">Receber alertas do sistema</p>
+                  <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Email</label>
+                  <input type="email" x-model="profile.email" autocomplete="email" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all" placeholder="seu@email.com">
                 </div>
-                <div @click="profile.preferences.notifications = !profile.preferences.notifications"
-                     class="w-12 h-6 rounded-full relative cursor-pointer transition-colors duration-300"
-                     :class="profile.preferences.notifications ? 'bg-emerald-600' : 'bg-gray-700'">
-                  <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform duration-300"
-                       :class="profile.preferences.notifications ? 'translate-x-6' : 'translate-x-0'"></div>
+
+                <!-- Password Change -->
+                <div class="border-t border-gray-800 pt-5">
+                  <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Alterar Senha</label>
+                  <input type="password" x-model="profile.newPassword" autocomplete="new-password" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all" placeholder="Nova senha (deixe vazio para manter)">
+                </div>
+
+                <!-- Theme Toggle -->
+                <div class="flex items-center justify-between border-t border-gray-800 pt-5">
+                  <div>
+                    <p class="text-sm font-semibold text-white">Tema Escuro</p>
+                    <p class="text-xs text-gray-500">Ativar modo escuro no painel</p>
+                  </div>
+                  <div @click="profile.preferences.theme = (profile.preferences.theme === 'dark' ? 'light' : 'dark')"
+                       class="w-12 h-6 rounded-full relative cursor-pointer transition-colors duration-300"
+                       :class="profile.preferences.theme === 'dark' ? 'bg-purple-600' : 'bg-gray-700'">
+                    <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform duration-300"
+                         :class="profile.preferences.theme === 'dark' ? 'translate-x-6' : 'translate-x-0'"></div>
+                  </div>
+                </div>
+
+                <!-- Notifications Toggle -->
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-sm font-semibold text-white">Notificações</p>
+                    <p class="text-xs text-gray-500">Receber alertas do sistema</p>
+                  </div>
+                  <div @click="profile.preferences.notifications = !profile.preferences.notifications"
+                       class="w-12 h-6 rounded-full relative cursor-pointer transition-colors duration-300"
+                       :class="profile.preferences.notifications ? 'bg-emerald-600' : 'bg-gray-700'">
+                    <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform duration-300"
+                         :class="profile.preferences.notifications ? 'translate-x-6' : 'translate-x-0'"></div>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Footer -->
-            <div class="p-6 border-t border-gray-800 bg-gray-900/50 flex items-center justify-end space-x-3">
-              <button @click="accountModalOpen = false" class="px-5 py-2.5 text-gray-400 hover:text-white transition-colors font-medium">Cancelar</button>
-              <button @click="saveProfile()" :disabled="savingProfile" class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white font-bold rounded-xl transition-all disabled:opacity-50 flex items-center space-x-2">
-                <span x-text="savingProfile ? 'Salvando...' : 'Salvar'"></span>
-              </button>
-            </div>
+              <!-- Footer -->
+              <div class="p-6 border-t border-gray-800 bg-gray-900/50 flex items-center justify-end space-x-3">
+                <button type="button" @click="accountModalOpen = false" class="px-5 py-2.5 text-gray-400 hover:text-white transition-colors font-medium">Cancelar</button>
+                <button type="submit" :disabled="savingProfile" class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white font-bold rounded-xl transition-all disabled:opacity-50 flex items-center space-x-2">
+                  <span x-text="savingProfile ? 'Salvando...' : 'Salvar'"></span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
 
@@ -576,8 +627,6 @@ const submenus = {
 </html>
 
 <style is:global>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
-  
   [x-cloak] { display: none !important; }
 
   :root {

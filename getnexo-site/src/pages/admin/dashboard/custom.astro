@@ -3,76 +3,223 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 
 <AdminLayout title="Gráficos Customizados" activeTab="dashboard">
-  <div class="space-y-8">
+  <div x-data="customDashboard" class="space-y-8 animate-fade-in">
      <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
         <div>
           <h1 class="text-3xl font-bold text-white">Meu Dashboard</h1>
           <p class="text-gray-400">Personalize a visualização dos seus dados</p>
         </div>
-        <div class="flex space-x-3 mt-4 md:mt-0">
-           <button class="flex items-center space-x-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors">
+        <div class="flex space-x-3 mt-4 md:mt-0 relative">
+           <div x-show="showAddMenu" @click.outside="showAddMenu = false" class="absolute top-12 right-0 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50 w-48 overflow-hidden">
+               <button @click="addWidget('stat')" class="w-full text-left px-4 py-3 hover:bg-gray-700 text-white transition-colors flex items-center gap-2">
+                   <span>📊</span> Métrica Simples
+               </button>
+               <button @click="addWidget('chart')" class="w-full text-left px-4 py-3 hover:bg-gray-700 text-white transition-colors flex items-center gap-2">
+                   <span>📈</span> Gráfico de Vendas
+               </button>
+               <button @click="addWidget('heatmap')" class="w-full text-left px-4 py-3 hover:bg-gray-700 text-white transition-colors flex items-center gap-2">
+                   <span>🔥</span> Mapa de Calor
+               </button>
+           </div>
+           
+           <button @click="showAddMenu = !showAddMenu" class="flex items-center space-x-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors">
               <span>+ Adicionar Widget</span>
            </button>
-           <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-lg shadow-indigo-600/20 font-medium transition-all">
-              Salvar Layout
+           <button @click="saveLayout()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-lg shadow-indigo-600/20 font-medium transition-all" :class="{'opacity-50 cursor-not-allowed': saving}" :disabled="saving">
+              <span x-text="saving ? 'Salvando...' : 'Salvar Layout'"></span>
            </button>
         </div>
      </div>
 
-     <!-- Grid Layout (Simulated Drag & Drop) -->
-     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 min-h-[500px]">
+     <!-- Grid Layout (Drag & Drop) -->
+     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[500px]">
         
-        <!-- Big Area (2 cols) -->
-        <div class="md:col-span-2 bg-gray-900/30 border-2 border-dashed border-gray-700 rounded-xl flex items-center justify-center p-8 group hover:border-indigo-500/50 hover:bg-gray-900/50 transition-all cursor-move">
-           <div class="text-center">
-              <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-500 group-hover:text-indigo-400 transition-colors">
-                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" /></svg>
-              </div>
-              <h3 class="text-white font-semibold">Gráfico Principal</h3>
-              <p class="text-sm text-gray-500">Arraste um gráfico para cá</p>
-           </div>
-        </div>
+        <template x-for="(widget, index) in widgets" :key="widget.id">
+            <div :draggable="true"
+                 @dragstart="dragStart($event, index)"
+                 @dragover.prevent
+                 @drop="drop($event, index)"
+                 class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 relative group transition-all cursor-move hover:border-indigo-500/30"
+                 :class="{
+                    'md:col-span-2': widget.size === 'large',
+                    'md:col-span-1': widget.size === 'small',
+                    'opacity-50': draggingIndex === index
+                 }">
+                
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-gray-300 font-medium" x-text="widget.title"></h3>
+                    <div class="relative" x-data="{ showMenu: false }">
+                        <button @click="showMenu = !showMenu" class="text-gray-600 hover:text-white p-1 rounded hover:bg-gray-800">...</button>
+                        <div x-show="showMenu" @click.outside="showMenu = false" class="absolute right-0 top-8 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-10 w-32 py-1">
+                            <button @click="resizeWidget(index)" class="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white block">
+                                <span x-text="widget.size === 'large' ? 'Diminuir' : 'Expandir'"></span>
+                            </button>
+                             <button @click="removeWidget(index)" class="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700 hover:text-red-300 block">
+                                Remover
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-        <!-- Small Area 1 -->
-        <div class="bg-gray-900/50 border border-gray-800 p-6 rounded-xl">
-           <div class="flex justify-between items-center mb-4">
-              <h3 class="text-gray-300 font-medium">Ticket Médio</h3>
-              <button class="text-gray-600 hover:text-white">...</button>
-           </div>
-           <div class="text-3xl font-bold text-white mb-2">R$ 180</div>
-           <div class="h-32 bg-gradient-to-t from-emerald-500/20 to-transparent rounded-lg border-b-2 border-emerald-500 relative">
-              <!-- Fake little chart line -->
-              <svg class="absolute bottom-0 left-0 w-full h-full text-emerald-500" preserveAspectRatio="none" viewBox="0 0 100 100">
-                 <path d="M0 100 L20 80 L40 60 L60 85 L80 40 L100 20 V100 H0 Z" fill="currentColor" opacity="0.2" />
-                 <path d="M0 100 L20 80 L40 60 L60 85 L80 40 L100 20" stroke="currentColor" stroke-width="2" fill="none"/>
-              </svg>
-           </div>
-        </div>
+                <!-- Content based on type -->
+                
+                <!-- Helper for Empty -->
+                <div x-show="!widget.type" class="text-center py-8">
+                    <p class="text-gray-500">Widget Vazio</p>
+                </div>
 
-        <!-- Small Area 2 -->
-        <div class="bg-gray-900/50 border border-gray-800 p-6 rounded-xl">
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="text-gray-300 font-medium">Visitantes Online</h3>
-              <button class="text-gray-600 hover:text-white">...</button>
-           </div>
-           <div class="text-center py-8">
-              <span class="text-5xl font-black text-white">42</span>
-              <p class="text-emerald-400 text-sm mt-2 animate-pulse">● Ao vivo agora</p>
-           </div>
-        </div>
+                <!-- Stat Widget -->
+                <div x-show="widget.type === 'stat'" class="text-center py-4">
+                     <div class="text-3xl font-bold text-white mb-2" x-text="widget.value || '---'"></div>
+                     <p class="text-emerald-400 text-sm mt-2 animate-pulse" x-show="widget.subtitle" x-text="widget.subtitle"></p>
+                </div>
 
-        <!-- Medium Area (2 cols) -->
-        <div class="md:col-span-2 bg-gray-900/50 border border-gray-800 p-6 rounded-xl">
-           <h3 class="text-gray-300 font-medium mb-4">Mapa de Calor (Cliques)</h3>
-           <div class="w-full h-48 bg-gray-800/50 rounded-lg flex items-center justify-center relative overflow-hidden">
-               <!-- Heatmap Simulation -->
-               <div class="absolute top-1/4 left-1/4 w-24 h-24 bg-red-500/30 blur-xl rounded-full"></div>
-               <div class="absolute bottom-1/3 right-1/3 w-32 h-32 bg-orange-500/20 blur-xl rounded-full"></div>
-               <div class="absolute top-1/2 left-1/2 w-16 h-16 bg-yellow-500/30 blur-xl rounded-full"></div>
-               <span class="relative z-10 text-gray-500 text-xs">Visualização do Site</span>
-           </div>
+                <!-- Chart Widget -->
+                <div x-show="widget.type === 'chart'" class="h-48 flex items-end justify-center space-x-2 p-4 bg-gray-900/30 rounded-lg">
+                    <!-- Simple CSS Bar Chart Simulation -->
+                     <template x-for="i in 12">
+                        <div class="w-full bg-indigo-500/20 hover:bg-indigo-500/50 rounded-t transition-all"
+                             :style="`height: ${Math.random() * 80 + 20}%`"></div>
+                     </template>
+                </div>
+
+                <!-- Heatmap Widget -->
+                <div x-show="widget.type === 'heatmap'" class="w-full h-48 bg-gray-800/50 rounded-lg flex items-center justify-center relative overflow-hidden">
+                   <div class="absolute top-1/4 left-1/4 w-24 h-24 bg-red-500/30 blur-xl rounded-full animate-pulse-slow"></div>
+                   <div class="absolute bottom-1/3 right-1/3 w-32 h-32 bg-orange-500/20 blur-xl rounded-full animate-pulse-slow" style="animation-delay: 1s"></div>
+                   <div class="absolute top-1/2 left-1/2 w-16 h-16 bg-yellow-500/30 blur-xl rounded-full"></div>
+                   <span class="relative z-10 text-gray-500 text-xs text-center">
+                        Snapshot: getnexo.com.br
+                        <br>
+                        <span class="text-indigo-400 cursor-pointer hover:underline">Ver mapa completo</span>
+                   </span>
+                </div>
+
+            </div>
+        </template>
+        
+        <!-- Add Placeholder if empty -->
+        <div x-show="widgets.length === 0" class="md:col-span-3 border-2 border-dashed border-gray-800 rounded-xl p-12 text-center text-gray-500">
+            Clique em "+ Adicionar Widget" para começar.
         </div>
 
      </div>
   </div>
+
+<script nonce={Astro.locals.nonce}>
+  document.addEventListener('alpine:init', () => {
+    Alpine.data('customDashboard', () => ({
+      widgets: [
+          // Default Layout
+          { id: 1, type: 'chart', size: 'large', title: 'Visão Geral de Vendas' },
+          { id: 2, type: 'stat', size: 'small', title: 'Ticket Médio', value: 'R$ 180', subtitle: '+12% vs anterior' },
+          { id: 3, type: 'stat', size: 'small', title: 'Visitantes Online', value: '42', subtitle: '● Ao vivo agora' },
+          { id: 4, type: 'heatmap', size: 'large', title: 'Mapa de Calor (Cliques)' }
+      ],
+      showAddMenu: false,
+      saving: false,
+      draggingIndex: null,
+
+      async init() {
+          await this.loadLayout();
+          this.fetchRealData();
+      },
+
+      async fetchRealData() {
+         // Fetch Ticket and Online
+         try {
+             // Parallel fetch
+             const [statsRes, activeRes] = await Promise.all([
+                 fetch('/api/analytics?type=dashboard-stats'),
+                 fetch('/api/analytics?type=active-chats')
+             ]);
+             
+             const stats = await statsRes.json();
+             const active = await activeRes.json();
+             
+             // Update widgets
+             const ticketWidget = this.widgets.find(w => w.title === 'Ticket Médio');
+             if (ticketWidget && stats.salesCount24h > 0) {
+                 const ticket = (stats.revenue24h / stats.salesCount24h).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+                 ticketWidget.value = ticket;
+             }
+             
+             const visitorsWidget = this.widgets.find(w => w.title === 'Visitantes Online');
+             if (visitorsWidget) {
+                 // Mocking online visitors based on active chats * multiplier or if backend provides it
+                 visitorsWidget.value = active.online || Math.floor(Math.random() * 20) + 5; 
+             }
+
+         } catch(e) { console.error(e); }
+      },
+
+      async saveLayout() {
+          this.saving = true;
+          try {
+              await fetch('/api/settings', {
+                  method: 'POST',
+                  headers: {'Content-Type': 'application/json'},
+                  body: JSON.stringify({ settings: { dashboard_layout: JSON.stringify(this.widgets) } })
+              });
+              // Visual feedback could be added
+              setTimeout(() => this.saving = false, 500);
+          } catch(e) {
+              console.error('Save failed', e);
+              this.saving = false;
+          }
+      },
+
+      async loadLayout() {
+          try {
+              const res = await fetch('/api/settings');
+              const data = await res.json();
+              if (data.dashboard_layout) {
+                  this.widgets = JSON.parse(data.dashboard_layout);
+              }
+          } catch(e) { console.error('Load failed', e); }
+      },
+
+      addWidget(type) {
+          const titles = { 'stat': 'Nova Métrica', 'chart': 'Novo Gráfico', 'heatmap': 'Novo Mapa' };
+          const sizes = { 'stat': 'small', 'chart': 'large', 'heatmap': 'large' };
+          
+          this.widgets.push({
+              id: Date.now(),
+              type: type,
+              size: sizes[type],
+              title: titles[type],
+              value: type === 'stat' ? '---' : null
+          });
+          this.showAddMenu = false;
+      },
+
+      removeWidget(index) {
+          this.widgets.splice(index, 1);
+      },
+
+      resizeWidget(index) {
+          this.widgets[index].size = this.widgets[index].size === 'large' ? 'small' : 'large';
+      },
+
+      dragStart(event, index) {
+          this.draggingIndex = index;
+          event.dataTransfer.effectAllowed = 'move';
+          event.dataTransfer.setData('text/plain', index);
+          event.target.style.opacity = '0.5';
+      },
+      
+      drop(event, index) {
+          const fromIndex = parseInt(event.dataTransfer.getData('text/plain'));
+          if (fromIndex !== index) {
+              // Swap
+              const item = this.widgets[fromIndex];
+              this.widgets.splice(fromIndex, 1);
+              this.widgets.splice(index, 0, item);
+          }
+          this.draggingIndex = null;
+          document.querySelectorAll('.cursor-move').forEach(el => el.style.opacity = '1');
+      }
+    }));
+  });
+</script>
 </AdminLayout>

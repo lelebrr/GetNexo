@@ -11,7 +11,7 @@
     "scripts": {
         "dev": "partytown copylib public/~partytown && astro dev --host",
         "start": "node ./dist/server/entry.mjs",
-        "build": "npx partytown copylib public/~partytown && astro build",
+        "build": "astro build --verbose",
         "preview": "node ./dist/server/entry.mjs",
         "test": "jest",
         "test:watch": "jest --watch",

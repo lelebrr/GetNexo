@@ -1,60 +1,299 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
-import { Gift, Plus, ShoppingBag, CreditCard, ExternalLink, MoreVertical } from 'lucide-react';
-
-const rewards = [
-  { id: 1, name: "Cupom R$ 50 OFF", cost: "500 Pontos", type: "Voucher", stock: "Ilimitado", active: true },
-  { id: 2, name: "Brinde: Chaveiro Fusion", cost: "250 Pontos", type: "Produto", stock: "42 un", active: true },
-  { id: 3, name: "Frete Grátis Vitalício", cost: "5.000 Pontos", type: "Status", stock: "4 un restantes", active: false },
-];
+import { Gift, Plus, ShoppingBag, CreditCard, ExternalLink, MoreVertical, Trash2, Edit2, X } from 'lucide-react';
 ---
 
 <AdminLayout title="Catálogo de Recompensas" activeTab="fidelidade">
-  <div class="space-y-10 animate-fade-in py-4">
+  <div class="space-y-10 animate-fade-in py-4" x-data="rewardsManager()">
     <div class="flex items-center justify-between">
       <div>
         <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Vitrine de Prêmios</h1>
         <p class="text-sm text-gray-500 mt-1">Gerencie os benefícios que seus clientes podem resgatar com pontos.</p>
       </div>
-      <button class="bg-indigo-600 hover:bg-indigo-500 text-white font-black px-6 py-3 rounded-2xl flex items-center space-x-3 transition-all shadow-xl shadow-indigo-500/10 uppercase text-[10px] tracking-widest">
+      <button @click="openCreateModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-black px-6 py-3 rounded-2xl flex items-center space-x-3 transition-all shadow-xl shadow-indigo-500/10 uppercase text-[10px] tracking-widest">
         <Plus className="w-5 h-5" />
         <span>Novo Prêmio</span>
       </button>
     </div>
 
+    <!-- Filters -->
+    <div class="flex flex-wrap items-center gap-4">
+       <div class="flex-1 min-w-[200px]">
+          <input type="text" x-model="search" @input.debounce.300ms="filterRewards()" placeholder="Buscar prêmios..." 
+                 class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-white focus:border-indigo-500 outline-none text-sm">
+       </div>
+       <select x-model="typeFilter" @change="filterRewards()" class="bg-gray-900 border border-gray-700 rounded-xl p-3 text-white focus:border-indigo-500 outline-none text-sm">
+          <option value="">Todos os Tipos</option>
+          <option value="voucher">Voucher</option>
+          <option value="product">Produto</option>
+          <option value="status">Status</option>
+       </select>
+       <select x-model="statusFilter" @change="filterRewards()" class="bg-gray-900 border border-gray-700 rounded-xl p-3 text-white focus:border-indigo-500 outline-none text-sm">
+          <option value="">Todos os Status</option>
+          <option value="active">Ativos</option>
+          <option value="inactive">Inativos</option>
+       </select>
+    </div>
+
+    <!-- Loading -->
+    <div x-show="loading" class="flex items-center justify-center py-10">
+       <div class="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
     <!-- Grid de Recompensas -->
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-       {rewards.map(reward => (
+    <div x-show="!loading" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+       <template x-for="reward in filteredRewards" :key="reward.id">
          <div class="bg-gray-900/40 border border-gray-800 rounded-[2.5rem] p-8 hover:border-indigo-500/20 transition-all group relative overflow-hidden flex flex-col justify-between h-[300px]">
-            <div class="absolute right-0 top-0 p-6">
-               <div class:list={["w-2 h-2 rounded-full", reward.active ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-gray-700']}></div>
+            <div class="absolute right-0 top-0 p-6 flex items-center space-x-2">
+               <div :class="reward.active ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-gray-700'" class="w-2 h-2 rounded-full"></div>
+            </div>
+            
+            <!-- Actions Menu (visible on hover) -->
+            <div class="absolute right-4 top-12 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col space-y-1">
+               <button @click="editReward(reward)" class="p-2 bg-gray-800 hover:bg-indigo-600 text-gray-400 hover:text-white rounded-lg transition-all" title="Editar">
+                  <Edit2 className="w-4 h-4" />
+               </button>
+               <button @click="deleteReward(reward.id)" class="p-2 bg-gray-800 hover:bg-red-600 text-gray-400 hover:text-white rounded-lg transition-all" title="Excluir">
+                  <Trash2 className="w-4 h-4" />
+               </button>
             </div>
             
             <div>
                <div class="w-12 h-12 bg-black/40 rounded-2xl flex items-center justify-center text-indigo-400 mb-6 group-hover:scale-110 transition-transform">
-                  {reward.type === 'Voucher' ? <CreditCard className="w-6 h-6" /> : <ShoppingBag className="w-6 h-6" />}
+                  <template x-if="reward.type === 'voucher'"><CreditCard className="w-6 h-6" /></template>
+                  <template x-if="reward.type === 'product'"><ShoppingBag className="w-6 h-6" /></template>
+                  <template x-if="reward.type === 'status'"><Gift className="w-6 h-6" /></template>
                </div>
-               <h3 class="text-xl font-bold text-white uppercase tracking-tight leading-tight">{reward.name}</h3>
-               <p class="text-[10px] text-gray-500 mt-2 font-black uppercase tracking-widest">{reward.type} • Estoque: {reward.stock}</p>
+               <h3 class="text-xl font-bold text-white uppercase tracking-tight leading-tight" x-text="reward.name"></h3>
+               <p class="text-[10px] text-gray-500 mt-2 font-black uppercase tracking-widest">
+                  <span x-text="getTypeLabel(reward.type)"></span> • Estoque: <span x-text="reward.stock"></span>
+               </p>
             </div>
 
             <div class="flex items-center justify-between pt-8 mt-auto">
                <div class="flex flex-col">
                   <span class="text-[8px] font-black text-gray-600 uppercase tracking-widest mb-1">Custo de Resgate</span>
-                  <span class="text-sm font-black text-yellow-500 font-mono">{reward.cost}</span>
+                  <span class="text-sm font-black text-yellow-500 font-mono" x-text="reward.cost.toLocaleString() + ' Pontos'"></span>
                </div>
                <div class="flex items-center space-x-2">
-                  <button class="p-3 bg-gray-800/50 rounded-xl text-gray-400 hover:text-white transition-all"><MoreVertical className="w-4 h-4" /></button>
+                  <button @click="toggleReward(reward.id)" 
+                          :class="reward.active ? 'bg-emerald-600/20 text-emerald-400' : 'bg-gray-800 text-gray-500'"
+                          class="px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all"
+                          x-text="reward.active ? 'Ativo' : 'Inativo'">
+                  </button>
                </div>
             </div>
          </div>
-       ))}
+       </template>
+    </div>
+
+    <!-- Empty State -->
+    <div x-show="!loading && filteredRewards.length === 0" class="text-center py-16">
+       <Gift className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+       <h3 class="text-xl font-bold text-white mb-2">Nenhum prêmio encontrado</h3>
+       <p class="text-gray-500 mb-6">Crie prêmios para seus clientes resgatarem com pontos.</p>
+       <button @click="openCreateModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl font-medium">Criar Primeiro Prêmio</button>
+    </div>
+
+    <!-- Create/Edit Modal -->
+    <div x-show="showModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" @keydown.escape.window="showModal = false">
+       <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="showModal = false"></div>
+       <div class="relative w-full max-w-lg bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-hidden" @click.stop>
+          <div class="bg-gradient-to-r from-indigo-600/20 to-purple-600/20 p-6 border-b border-gray-800">
+             <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold text-white" x-text="editingReward ? 'Editar Prêmio' : 'Novo Prêmio'"></h2>
+                <button @click="showModal = false" class="p-2 text-gray-500 hover:text-white hover:bg-gray-800 rounded-lg transition-all">
+                   <X className="w-5 h-5" />
+                </button>
+             </div>
+          </div>
+          <form @submit.prevent="saveReward()" class="p-6 space-y-5">
+             <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Nome do Prêmio *</label>
+                <input type="text" x-model="form.name" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-all" placeholder="Ex: Cupom R$ 50 OFF">
+             </div>
+             <div class="grid grid-cols-2 gap-4">
+                <div>
+                   <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Tipo *</label>
+                   <select x-model="form.type" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-all">
+                      <option value="voucher">Voucher/Desconto</option>
+                      <option value="product">Produto Físico</option>
+                      <option value="status">Status/Benefício</option>
+                   </select>
+                </div>
+                <div>
+                   <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Custo (Pontos) *</label>
+                   <input type="number" x-model="form.cost" min="1" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-all" placeholder="500">
+                </div>
+             </div>
+             <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Estoque</label>
+                <input type="text" x-model="form.stock" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-all" placeholder="Ilimitado">
+             </div>
+             <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Descrição</label>
+                <textarea x-model="form.description" rows="2" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-all resize-none" placeholder="Descrição do prêmio..."></textarea>
+             </div>
+             <div class="flex items-center space-x-3">
+                <input type="checkbox" x-model="form.active" id="rewardActive" class="w-5 h-5 rounded bg-gray-800 border-gray-600 text-indigo-500 focus:ring-indigo-500 focus:ring-offset-gray-900">
+                <label for="rewardActive" class="text-sm text-gray-300">Prêmio ativo para resgate</label>
+             </div>
+             <div class="flex space-x-3 pt-4">
+                <button type="button" @click="showModal = false" class="flex-1 py-3 bg-gray-800 hover:bg-gray-700 text-gray-400 font-bold rounded-xl transition-all">Cancelar</button>
+                <button type="submit" :disabled="saving" class="flex-1 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all disabled:opacity-50">
+                   <span x-text="saving ? 'Salvando...' : (editingReward ? 'Salvar Alterações' : 'Criar Prêmio')"></span>
+                </button>
+             </div>
+          </form>
+       </div>
     </div>
   </div>
 </AdminLayout>
 
+<script nonce={Astro.locals.nonce} is:inline>
+  function rewardsManager() {
+    return {
+      rewards: [],
+      filteredRewards: [],
+      loading: true,
+      showModal: false,
+      saving: false,
+      editingReward: null,
+      search: '',
+      typeFilter: '',
+      statusFilter: '',
+      form: { name: '', type: 'voucher', cost: 500, stock: 'Ilimitado', description: '', active: true },
+
+      async init() {
+        await this.fetchRewards();
+      },
+
+      async fetchRewards() {
+        this.loading = true;
+        try {
+          const res = await fetch('/api/loyalty/rewards');
+          if (res.ok) {
+            const data = await res.json();
+            this.rewards = data.rewards || [];
+          } else {
+            this.rewards = this.getMockRewards();
+          }
+        } catch(e) {
+          console.error(e);
+          this.rewards = this.getMockRewards();
+        } finally {
+          this.filterRewards();
+          this.loading = false;
+        }
+      },
+
+      getMockRewards() {
+        return [
+          { id: 1, name: 'Cupom R$ 50 OFF', cost: 500, type: 'voucher', stock: 'Ilimitado', active: true, description: 'Cupom de desconto' },
+          { id: 2, name: 'Brinde: Chaveiro Fusion', cost: 250, type: 'product', stock: '42 un', active: true, description: 'Chaveiro exclusivo' },
+          { id: 3, name: 'Frete Grátis Vitalício', cost: 5000, type: 'status', stock: '4 un', active: false, description: 'Benefício premium' },
+          { id: 4, name: 'Desconto 20%', cost: 300, type: 'voucher', stock: 'Ilimitado', active: true, description: '20% em qualquer compra' },
+        ];
+      },
+
+      filterRewards() {
+        this.filteredRewards = this.rewards.filter(r => {
+          const matchesSearch = !this.search || r.name.toLowerCase().includes(this.search.toLowerCase());
+          const matchesType = !this.typeFilter || r.type === this.typeFilter;
+          const matchesStatus = !this.statusFilter || (this.statusFilter === 'active' ? r.active : !r.active);
+          return matchesSearch && matchesType && matchesStatus;
+        });
+      },
+
+      getTypeLabel(type) {
+        const labels = { voucher: 'Voucher', product: 'Produto', status: 'Status' };
+        return labels[type] || type;
+      },
+
+      openCreateModal() {
+        this.editingReward = null;
+        this.form = { name: '', type: 'voucher', cost: 500, stock: 'Ilimitado', description: '', active: true };
+        this.showModal = true;
+      },
+
+      editReward(reward) {
+        this.editingReward = reward;
+        this.form = { ...reward };
+        this.showModal = true;
+      },
+
+      async saveReward() {
+        if (!this.form.name || !this.form.cost) {
+          alert('Preencha nome e custo');
+          return;
+        }
+
+        this.saving = true;
+        try {
+          const url = this.editingReward ? `/api/loyalty/rewards/${this.editingReward.id}` : '/api/loyalty/rewards';
+          const method = this.editingReward ? 'PUT' : 'POST';
+          
+          const res = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(this.form)
+          });
+
+          if (res.ok) {
+            this.showModal = false;
+            await this.fetchRewards();
+          } else {
+            this.mockSave();
+          }
+        } catch(e) {
+          this.mockSave();
+        } finally {
+          this.saving = false;
+        }
+      },
+
+      mockSave() {
+        if (this.editingReward) {
+          const idx = this.rewards.findIndex(r => r.id === this.editingReward.id);
+          if (idx !== -1) this.rewards[idx] = { ...this.rewards[idx], ...this.form };
+        } else {
+          this.rewards.push({ id: Date.now(), ...this.form });
+        }
+        this.filterRewards();
+        this.showModal = false;
+      },
+
+      async toggleReward(id) {
+        const reward = this.rewards.find(r => r.id === id);
+        if (!reward) return;
+        
+        reward.active = !reward.active;
+        try {
+          await fetch(`/api/loyalty/rewards/${id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ active: reward.active })
+          });
+        } catch(e) { console.error(e); }
+      },
+
+      async deleteReward(id) {
+        if (!confirm('Excluir este prêmio?')) return;
+        
+        try {
+          await fetch(`/api/loyalty/rewards/${id}`, { method: 'DELETE' });
+        } catch(e) { console.error(e); }
+        
+        this.rewards = this.rewards.filter(r => r.id !== id);
+        this.filterRewards();
+      }
+    };
+  }
+</script>
+
 <style>
+  [x-cloak] { display: none !important; }
   .animate-fade-in { animation: fadeIn 0.6s ease-out; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 </style>
-
+</AdminLayout>

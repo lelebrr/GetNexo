@@ -3,7 +3,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 
 <AdminLayout title="Conversas Abertas Hoje" activeTab="dashboard">
-  <div class="space-y-6">
+  <div x-data="activeChats" class="space-y-6 animate-fade-in">
     <!-- Header e Status Geral -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
@@ -13,11 +13,11 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       <div class="flex space-x-3">
          <div class="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center space-x-2">
             <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-            <span class="text-emerald-400 text-sm font-semibold">12 Online</span>
+            <span class="text-emerald-400 text-sm font-semibold" x-text="stats.online + ' Online'"></span>
          </div>
          <div class="px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-lg flex items-center space-x-2">
             <span class="w-2 h-2 bg-amber-500 rounded-full"></span>
-            <span class="text-amber-400 text-sm font-semibold">5 Fila de Espera</span>
+            <span class="text-amber-400 text-sm font-semibold" x-text="stats.waiting + ' Fila de Espera'"></span>
          </div>
       </div>
     </div>
@@ -25,102 +25,103 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     <!-- Lista de Conversas -->
     <div class="grid grid-cols-1 gap-4">
       
-      <!-- Conversa 1 -->
-      <div class="bg-gray-900/50 border border-gray-800 p-4 rounded-xl hover:border-cyan-500/50 transition-all group flex flex-col md:flex-row items-center justify-between">
-        <div class="flex items-center w-full md:w-auto mb-4 md:mb-0">
-          <div class="relative mr-4">
-            <img src="https://ui-avatars.com/api/?name=Lucas+Moura&background=0D8ABC&color=fff" class="w-12 h-12 rounded-full border-2 border-gray-800" alt="Avatar">
-            <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-gray-900 rounded-full"></span>
+      <template x-for="chat in chats" :key="chat.id">
+        <div class="bg-gray-900/50 border border-gray-800 p-4 rounded-xl hover:border-cyan-500/50 transition-all group flex flex-col md:flex-row items-center justify-between">
+          <div class="flex items-center w-full md:w-auto mb-4 md:mb-0">
+            <div class="relative mr-4">
+              <img :src="chat.avatar" class="w-12 h-12 rounded-full border-2 border-gray-800" alt="Avatar">
+              <span class="absolute bottom-0 right-0 w-3 h-3 border-2 border-gray-900 rounded-full"
+                    :class="chat.status === 'waiting_agent' ? 'bg-amber-500 animate-bounce' : 'bg-green-500'"></span>
+            </div>
+            <div>
+              <h3 class="font-semibold text-white" x-text="chat.name"></h3>
+              <p class="text-sm text-gray-400 truncate w-48 md:w-64" x-text="chat.last_message"></p>
+              <div class="flex items-center space-x-2 mt-1">
+                 <span class="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded" x-text="'#' + (chat.tag || 'Atendimento')"></span>
+                 <span class="text-xs px-2 py-0.5 rounded" 
+                       :class="chat.source === 'WhatsApp' ? 'bg-green-900/30 text-green-400' : 'bg-pink-900/30 text-pink-400'"
+                       x-text="chat.source"></span>
+              </div>
+            </div>
           </div>
-          <div>
-            <h3 class="font-semibold text-white">Lucas Moura</h3>
-            <p class="text-sm text-gray-400 truncate w-48 md:w-64">"Gostaria de saber se tem a cor azul..."</p>
-            <div class="flex items-center space-x-2 mt-1">
-               <span class="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded">#Dúvida</span>
-               <span class="text-xs bg-cyan-900/30 text-cyan-400 px-2 py-0.5 rounded">WhatsApp</span>
+
+          <div class="flex items-center space-x-6 w-full md:w-auto justify-between md:justify-end">
+            <div class="text-right">
+              <p class="text-xs text-gray-500">Tempo de Espera</p>
+              <p class="text-sm font-mono" 
+                 :class="chat.status === 'waiting_agent' ? 'text-amber-400 font-bold' : 'text-emerald-400'"
+                 x-text="chat.wait_time"></p>
+            </div>
+            
+            <div class="flex items-center space-x-2">
+              <img :src="chat.agentAvatar || 'https://ui-avatars.com/api/?name=Bot&background=random'" 
+                   class="w-8 h-8 rounded-full border border-gray-700" 
+                   :title="chat.agent || 'Bot'"
+                   x-show="chat.agent">
+              
+              <button x-show="!chat.agent" 
+                      @click="assignChat(chat.id)"
+                      class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                Assumir
+              </button>
+
+              <button @click="viewChat(chat.id)"
+                      class="bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                Ver Conversa
+              </button>
             </div>
           </div>
         </div>
+      </template>
 
-        <div class="flex items-center space-x-6 w-full md:w-auto justify-between md:justify-end">
-          <div class="text-right">
-            <p class="text-xs text-gray-500">Tempo de Espera</p>
-            <p class="text-sm font-mono text-emerald-400">02:15</p>
-          </div>
-          
-          <div class="flex items-center space-x-2">
-            <img src="https://ui-avatars.com/api/?name=Atendente+1&background=random" class="w-8 h-8 rounded-full border border-gray-700" title="Atendente Responsável">
-            <button class="bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-              Ver Conversa
-            </button>
-          </div>
-        </div>
-      </div>
-
-       <!-- Conversa 2 -->
-      <div class="bg-gray-900/50 border border-gray-800 p-4 rounded-xl hover:border-amber-500/50 transition-all group flex flex-col md:flex-row items-center justify-between">
-        <div class="flex items-center w-full md:w-auto mb-4 md:mb-0">
-          <div class="relative mr-4">
-             <div class="w-12 h-12 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold border-2 border-gray-800">MJ</div>
-             <span class="absolute bottom-0 right-0 w-3 h-3 bg-amber-500 border-2 border-gray-900 rounded-full animate-bounce"></span>
-          </div>
-          <div>
-            <h3 class="font-semibold text-white">Maria Júlia</h3>
-            <p class="text-sm text-gray-400 truncate w-48 md:w-64">"Meu pedido ainda não chegou!"</p>
-            <div class="flex items-center space-x-2 mt-1">
-               <span class="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded">#Reclamação</span>
-               <span class="text-xs bg-pink-900/30 text-pink-400 px-2 py-0.5 rounded">Instagram</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="flex items-center space-x-6 w-full md:w-auto justify-between md:justify-end">
-          <div class="text-right">
-            <p class="text-xs text-gray-500">Tempo de Espera</p>
-            <p class="text-sm font-mono text-amber-400 font-bold">15:42</p>
-          </div>
-          
-          <div class="flex items-center space-x-2">
-             <span class="text-xs text-gray-500 italic mr-2">Não atribuído</span>
-            <button class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-              Assumir
-            </button>
-          </div>
-        </div>
-      </div>
-
-       <!-- Conversa 3 -->
-      <div class="bg-gray-900/50 border border-gray-800 p-4 rounded-xl hover:border-cyan-500/50 transition-all group flex flex-col md:flex-row items-center justify-between">
-        <div class="flex items-center w-full md:w-auto mb-4 md:mb-0">
-          <div class="relative mr-4">
-            <img src="https://ui-avatars.com/api/?name=Roberto+Dias&background=0D8ABC&color=fff" class="w-12 h-12 rounded-full border-2 border-gray-800" alt="Avatar">
-            <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-gray-900 rounded-full"></span>
-          </div>
-          <div>
-            <h3 class="font-semibold text-white">Roberto Dias</h3>
-            <p class="text-sm text-gray-400 truncate w-48 md:w-64">"Orçamento para 50 unidades aprovado."</p>
-             <div class="flex items-center space-x-2 mt-1">
-               <span class="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded">#Venda</span>
-               <span class="text-xs bg-cyan-900/30 text-cyan-400 px-2 py-0.5 rounded">WhatsApp</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="flex items-center space-x-6 w-full md:w-auto justify-between md:justify-end">
-          <div class="text-right">
-            <p class="text-xs text-gray-500">Tempo de Espera</p>
-            <p class="text-sm font-mono text-emerald-400">00:30</p>
-          </div>
-          
-          <div class="flex items-center space-x-2">
-            <img src="https://ui-avatars.com/api/?name=Leandro+Admin&background=random" class="w-8 h-8 rounded-full border border-gray-700" title="Atendente Responsável">
-            <button class="bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-              Ver Conversa
-            </button>
-          </div>
-        </div>
+      <div x-show="chats.length === 0 && !loading" class="text-center p-8 text-gray-500">
+        Nenhuma conversa ativa no momento.
       </div>
 
     </div>
   </div>
+
+<script nonce={Astro.locals.nonce}>
+  document.addEventListener('alpine:init', () => {
+    Alpine.data('activeChats', () => ({
+      chats: [],
+      loading: true,
+      stats: { online: 0, waiting: 0 },
+
+      init() {
+        this.fetchChats();
+        setInterval(() => this.fetchChats(), 15000); // 15s polling
+      },
+
+      async fetchChats() {
+        try {
+          const res = await fetch('/api/analytics/active-chats');
+          const data = await res.json();
+          this.chats = data.chats || [];
+          this.calculateStats();
+          this.loading = false;
+        } catch (e) {
+          console.error('Erro ao buscar conversas:', e);
+        }
+      },
+
+      calculateStats() {
+        this.stats.waiting = this.chats.filter(c => c.status === 'waiting_agent').length;
+        this.stats.online = this.chats.length;
+      },
+
+      viewChat(id) {
+        // Redireciona para o Live Chat filtrando pelo ID
+        // Como o live chat usa um sistema próprio, talvez precise de parametro na URL
+        window.location.href = `/admin/live/human?chat=${id}`;
+      },
+
+      async assignChat(id) {
+        // Placeholder for assignment logic
+        // TODO: Implement API Endpoint for assignment
+        alert('Funcionalidade de assumir conversa será implementada na integração com o módulo Live Chat.');
+      }
+    }));
+  });
+</script>
 </AdminLayout>

@@ -138,6 +138,8 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
           const res = await fetch(url.toString());
           const data = await res.json();
           
+          if (!data.sales) throw new Error('Dados inválidos');
+
           const newSales = data.sales.map(s => ({
             id: s.id,
             status: s.status === 'paid' ? 'Aprovado' : (s.status === 'pending' ? 'Pendente' : 'Cancelado'),

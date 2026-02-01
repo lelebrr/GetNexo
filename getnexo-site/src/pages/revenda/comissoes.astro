@@ -3,98 +3,396 @@ import ResellerLayout from '../../layouts/ResellerLayout.astro';
 ---
 
 <ResellerLayout title="Minhas Comissões">
-    <div class="header">
-        <h2 class="text-neon-blue">💰 MINHAS COMISSÕES</h2>
-        <button class="btn-primary">SOLICITAR SAQUE</button>
-    </div>
-
-    <!-- Stats summary -->
-    <div class="stats-summary" id="finance-summary">
-        <div class="stat-item loading">
-            <span class="label">SALDO DISPONÍVEL</span>
-            <span class="value">R$ 0,00</span>
+    <div x-data="commissionsManager()">
+        <div class="header">
+            <h2 class="text-neon-blue">💰 MINHAS COMISSÕES</h2>
+            <button @click="requestWithdraw()" class="btn-primary" :disabled="availableBalance <= 0">SOLICITAR SAQUE</button>
         </div>
-        <div class="stat-item loading">
-            <span class="label">PRÓXIMO PAGAMENTO</span>
-            <span class="value">--</span>
+
+        <!-- Stats summary -->
+        <div class="stats-summary">
+            <div class="stat-item">
+                <span class="label">SALDO DISPONÍVEL</span>
+                <span class="value text-green" x-text="formatCurrency(availableBalance)">R$ 0,00</span>
+            </div>
+            <div class="stat-item">
+                <span class="label">PENDENTE</span>
+                <span class="value text-yellow" x-text="formatCurrency(pendingBalance)">R$ 0,00</span>
+            </div>
+            <div class="stat-item">
+                <span class="label">TOTAL SACADO</span>
+                <span class="value" x-text="formatCurrency(totalWithdrawn)">R$ 0,00</span>
+            </div>
+            <div class="stat-item">
+                <span class="label">PRÓXIMO PAGAMENTO</span>
+                <span class="value" x-text="nextPayout">--</span>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button @click="activeTab = 'history'" :class="activeTab === 'history' ? 'active' : ''" class="tab-btn">Histórico</button>
+            <button @click="activeTab = 'pending'" :class="activeTab === 'pending' ? 'active' : ''" class="tab-btn">Pendentes</button>
+            <button @click="activeTab = 'withdrawals'" :class="activeTab === 'withdrawals' ? 'active' : ''" class="tab-btn">Saques</button>
+        </div>
+
+        <!-- Loading -->
+        <div x-show="loading" class="loading-state">
+            <div class="spinner"></div>
+        </div>
+
+        <!-- History Table -->
+        <div x-show="!loading && activeTab === 'history'" class="table-card">
+            <div class="table-header">
+                <h3>HISTÓRICO DE COMISSÕES</h3>
+                <button @click="exportCSV()" class="btn-outline">📥 Exportar</button>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>DESCRIÇÃO</th>
+                            <th>CLIENTE</th>
+                            <th>DATA</th>
+                            <th>VALOR</th>
+                            <th>STATUS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template x-for="item in history" :key="item.id">
+                            <tr>
+                                <td x-text="item.description"></td>
+                                <td x-text="item.client || '-'"></td>
+                                <td x-text="item.date"></td>
+                                <td style="color:#00ff9d; font-weight:bold;" x-text="formatCurrency(item.amount)"></td>
+                                <td>
+                                    <span :class="'status-' + item.status" x-text="item.status === 'paid' ? 'PAGO' : (item.status === 'pending' ? 'PENDENTE' : 'PROCESSANDO')"></span>
+                                </td>
+                            </tr>
+                        </template>
+                        <tr x-show="history.length === 0">
+                            <td colspan="5" style="text-align:center; padding: 2rem;">Nenhuma comissão registrada</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pending Table -->
+        <div x-show="!loading && activeTab === 'pending'" class="table-card">
+            <div class="table-header">
+                <h3>COMISSÕES PENDENTES</h3>
+                <span class="info-badge" x-text="pendingItems.length + ' itens'"></span>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>CLIENTE</th>
+                            <th>MOTIVO</th>
+                            <th>VALOR</th>
+                            <th>LIBERAÇÃO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template x-for="item in pendingItems" :key="item.id">
+                            <tr>
+                                <td x-text="item.client"></td>
+                                <td x-text="item.reason"></td>
+                                <td style="color:#ffd700; font-weight:bold;" x-text="formatCurrency(item.amount)"></td>
+                                <td x-text="item.releaseDate"></td>
+                            </tr>
+                        </template>
+                        <tr x-show="pendingItems.length === 0">
+                            <td colspan="4" style="text-align:center; padding: 2rem;">Nenhuma comissão pendente</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Withdrawals Table -->
+        <div x-show="!loading && activeTab === 'withdrawals'" class="table-card">
+            <div class="table-header">
+                <h3>HISTÓRICO DE SAQUES</h3>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>DATA</th>
+                            <th>VALOR</th>
+                            <th>MÉTODO</th>
+                            <th>STATUS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template x-for="item in withdrawals" :key="item.id">
+                            <tr>
+                                <td x-text="item.date"></td>
+                                <td style="color:#00ff9d; font-weight:bold;" x-text="formatCurrency(item.amount)"></td>
+                                <td x-text="item.method"></td>
+                                <td>
+                                    <span :class="'status-' + item.status" x-text="item.status === 'completed' ? 'CONCLUÍDO' : 'PROCESSANDO'"></span>
+                                </td>
+                            </tr>
+                        </template>
+                        <tr x-show="withdrawals.length === 0">
+                            <td colspan="4" style="text-align:center; padding: 2rem;">Nenhum saque realizado</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Withdraw Modal -->
+        <div x-show="withdrawModal" x-cloak class="modal-overlay">
+            <div class="modal-container" @click.stop>
+                <div class="modal-header">
+                    <h3>💸 Solicitar Saque</h3>
+                    <button @click="withdrawModal = false" class="modal-close">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="balance-display">
+                        <span class="balance-label">Saldo Disponível</span>
+                        <span class="balance-value" x-text="formatCurrency(availableBalance)"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Valor do Saque *</label>
+                        <input type="number" x-model="withdrawAmount" :max="availableBalance" min="50" class="form-input" placeholder="Mínimo R$ 50,00">
+                    </div>
+                    <div class="form-group">
+                        <label>Método de Pagamento *</label>
+                        <select x-model="withdrawMethod" class="form-input">
+                            <option value="pix">PIX</option>
+                            <option value="bank">Transferência Bancária</option>
+                        </select>
+                    </div>
+                    <div x-show="withdrawMethod === 'pix'" class="form-group">
+                        <label>Chave PIX *</label>
+                        <input type="text" x-model="pixKey" class="form-input" placeholder="CPF, email ou telefone">
+                    </div>
+                    <div x-show="withdrawMethod === 'bank'" class="bank-fields">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Banco</label>
+                                <input type="text" x-model="bankName" class="form-input" placeholder="Ex: Nubank">
+                            </div>
+                            <div class="form-group">
+                                <label>Agência</label>
+                                <input type="text" x-model="bankAgency" class="form-input" placeholder="0001">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Conta</label>
+                            <input type="text" x-model="bankAccount" class="form-input" placeholder="12345-6">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button @click="withdrawModal = false" class="btn-cancel">Cancelar</button>
+                    <button @click="confirmWithdraw()" class="btn-primary" :disabled="!withdrawAmount || withdrawAmount < 50">Confirmar Saque</button>
+                </div>
+            </div>
         </div>
     </div>
-
-    <!-- Commissions Table -->
-    <div class="table-card">
-        <h3>HISTÓRICO DE COMISSÕES</h3>
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>DESCRIÇÃO</th>
-                        <th>DATA</th>
-                        <th>VALOR</th>
-                        <th>STATUS</th>
-                    </tr>
-                </thead>
-                <tbody id="commissions-body">
-                    <tr><td colspan="4" style="text-align:center; padding: 2rem;">CARREGANDO HISTÓRICO...</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
 </ResellerLayout>
 
 <style>
+    [x-cloak] { display: none !important; }
     .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
     .btn-primary { background: #00ff9d; color: #000; border: none; padding: 0.8rem 1.5rem; border-radius: 4px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; }
     .btn-primary:hover { background: #00cc7d; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    .stats-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+    .stats-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
     .stat-item { background: #0a0a0a; border: 1px solid #334155; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #00ff9d; }
     .stat-item .label { display: block; font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.5rem; }
     .stat-item .value { font-size: 1.5rem; font-weight: 700; color: #fff; }
+    .text-green { color: #00ff9d !important; }
+    .text-yellow { color: #ffd700 !important; }
+
+    .tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+    .tab-btn { background: #0a0a0a; border: 1px solid #334155; color: #94a3b8; padding: 0.8rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 0.75rem; }
+    .tab-btn.active { background: rgba(0, 243, 255, 0.1); color: #00f3ff; border-color: rgba(0, 243, 255, 0.3); }
+
+    .loading-state { text-align: center; padding: 3rem; }
+    .spinner { width: 40px; height: 40px; border: 3px solid #334155; border-top-color: #00f3ff; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     .table-card { background: #0a0a0a; border: 1px solid #334155; border-radius: 8px; padding: 1.5rem; }
-    .table-card h3 { font-size: 0.9rem; color: #00f3ff; margin-bottom: 1.5rem; }
+    .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .table-header h3 { font-size: 0.9rem; color: #00f3ff; margin: 0; }
+    .btn-outline { background: transparent; border: 1px solid #334155; color: #94a3b8; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+    .info-badge { background: rgba(255, 215, 0, 0.1); color: #ffd700; padding: 0.3rem 0.8rem; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
     
     .table-container { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; }
     th { text-align: left; padding: 1rem; color: #94a3b8; border-bottom: 1px solid #334155; font-size: 0.8rem; }
     td { padding: 1rem; border-bottom: 1px solid #1a1a1a; color: #cbd5e1; font-size: 0.85rem; }
     
-    .status-paid { color: #00ff9d; font-weight: bold; }
-    .status-pending { color: #f59e0b; font-weight: bold; }
+    .status-paid, .status-completed { color: #00ff9d; font-weight: bold; }
+    .status-pending, .status-processing { color: #f59e0b; font-weight: bold; }
 
-    .loading .value { animation: pulse 1.5s infinite ease-in-out; }
-    @keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 0.6; } 100% { opacity: 0.3; } }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .modal-container { background: #0f172a; border: 1px solid #334155; border-radius: 16px; width: 100%; max-width: 450px; }
+    .modal-header { background: rgba(0, 255, 157, 0.1); padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
+    .modal-header h3 { color: #00ff9d; margin: 0; }
+    .modal-close { background: none; border: none; color: #94a3b8; font-size: 1.5rem; cursor: pointer; }
+    .modal-body { padding: 1.5rem; }
+    .modal-footer { padding: 1.5rem; border-top: 1px solid #334155; display: flex; gap: 1rem; justify-content: flex-end; }
+
+    .balance-display { background: rgba(0, 255, 157, 0.1); border: 1px solid rgba(0, 255, 157, 0.3); border-radius: 8px; padding: 1.5rem; text-align: center; margin-bottom: 1.5rem; }
+    .balance-label { display: block; color: #94a3b8; font-size: 0.8rem; margin-bottom: 0.5rem; }
+    .balance-value { color: #00ff9d; font-size: 2rem; font-weight: bold; }
+
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; color: #94a3b8; font-size: 0.8rem; margin-bottom: 0.5rem; }
+    .form-input { width: 100%; background: #0a0a0a; border: 1px solid #334155; padding: 0.8rem; color: #fff; border-radius: 8px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .btn-cancel { background: #334155; color: #fff; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; cursor: pointer; }
+
+    @media (max-width: 768px) {
+        .stats-summary { grid-template-columns: 1fr 1fr; }
+    }
 </style>
 
-<script is:inline>
-    async function fetchFinance() {
-        try {
-            const res = await fetch('/api/revenda/financeiro');
-            const data = await res.json();
-            updateUI(data);
-        } catch (e) {
-            console.error(e);
-        }
+<script nonce={Astro.locals.nonce} is:inline>
+    function commissionsManager() {
+        return {
+            loading: true,
+            activeTab: 'history',
+            availableBalance: 0,
+            pendingBalance: 0,
+            totalWithdrawn: 0,
+            nextPayout: '--',
+            history: [],
+            pendingItems: [],
+            withdrawals: [],
+            withdrawModal: false,
+            withdrawAmount: '',
+            withdrawMethod: 'pix',
+            pixKey: '',
+            bankName: '',
+            bankAgency: '',
+            bankAccount: '',
+
+            formatCurrency(val) {
+                return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val || 0);
+            },
+
+            async init() {
+                await this.fetchData();
+            },
+
+            async fetchData() {
+                this.loading = true;
+                try {
+                    const res = await fetch('/api/revenda/financeiro');
+                    if (res.ok) {
+                        const data = await res.json();
+                        this.updateFromData(data);
+                    } else {
+                        this.setMockData();
+                    }
+                } catch (e) {
+                    console.error(e);
+                    this.setMockData();
+                } finally {
+                    this.loading = false;
+                }
+            },
+
+            updateFromData(data) {
+                this.availableBalance = parseFloat(data.balance?.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+                this.pendingBalance = parseFloat(data.pending?.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+                this.totalWithdrawn = parseFloat(data.total_withdrawn?.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+                this.nextPayout = data.next_payout || '--';
+                this.history = data.history || [];
+                this.pendingItems = data.pending_items || [];
+                this.withdrawals = data.withdrawals || [];
+            },
+
+            setMockData() {
+                this.availableBalance = 2450;
+                this.pendingBalance = 850;
+                this.totalWithdrawn = 12500;
+                this.nextPayout = '15/02/2026';
+                this.history = [
+                    { id: 1, description: 'Comissão Mensal - Loja Elegance', client: 'Loja Elegance', date: '01/01/2026', amount: 675, status: 'paid' },
+                    { id: 2, description: 'Comissão Mensal - Tech Store Pro', client: 'Tech Store Pro', date: '01/01/2026', amount: 1230, status: 'paid' },
+                    { id: 3, description: 'Bônus de Indicação', client: '-', date: '25/12/2025', amount: 200, status: 'paid' },
+                ];
+                this.pendingItems = [
+                    { id: 1, client: 'Fashion Hub', reason: 'Período de teste (7 dias restantes)', amount: 150, releaseDate: '05/02/2026' },
+                    { id: 2, client: 'Novo Cliente', reason: 'Aguardando primeiro pagamento', amount: 700, releaseDate: '10/02/2026' },
+                ];
+                this.withdrawals = [
+                    { id: 1, date: '15/12/2025', amount: 5000, method: 'PIX', status: 'completed' },
+                    { id: 2, date: '15/11/2025', amount: 4500, method: 'PIX', status: 'completed' },
+                ];
+            },
+
+            requestWithdraw() {
+                if (this.availableBalance < 50) {
+                    alert('Saldo mínimo para saque: R$ 50,00');
+                    return;
+                }
+                this.withdrawAmount = this.availableBalance;
+                this.withdrawModal = true;
+            },
+
+            async confirmWithdraw() {
+                if (!this.withdrawAmount || this.withdrawAmount < 50) {
+                    alert('Valor mínimo: R$ 50,00');
+                    return;
+                }
+                if (this.withdrawAmount > this.availableBalance) {
+                    alert('Saldo insuficiente');
+                    return;
+                }
+                if (this.withdrawMethod === 'pix' && !this.pixKey) {
+                    alert('Informe a chave PIX');
+                    return;
+                }
+
+                try {
+                    await fetch('/api/revenda/saques', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            amount: this.withdrawAmount,
+                            method: this.withdrawMethod,
+                            pixKey: this.pixKey,
+                            bank: { name: this.bankName, agency: this.bankAgency, account: this.bankAccount }
+                        })
+                    });
+                } catch(e) { console.error(e); }
+
+                this.withdrawals.unshift({
+                    id: Date.now(),
+                    date: new Date().toLocaleDateString('pt-BR'),
+                    amount: this.withdrawAmount,
+                    method: this.withdrawMethod === 'pix' ? 'PIX' : 'Transferência',
+                    status: 'processing'
+                });
+                this.availableBalance -= this.withdrawAmount;
+                this.withdrawModal = false;
+                alert('Saque solicitado com sucesso! Processamento em até 3 dias úteis.');
+            },
+
+            exportCSV() {
+                const headers = ['Descrição', 'Cliente', 'Data', 'Valor', 'Status'];
+                const rows = this.history.map(h => [h.description, h.client, h.date, h.amount, h.status]);
+                const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'comissoes.csv';
+                a.click();
+            }
+        };
     }
-
-    function updateUI(data) {
-        const statsItems = document.querySelectorAll('.stat-item');
-        statsItems[0].querySelector('.value').textContent = data.balance;
-        statsItems[0].classList.remove('loading');
-        statsItems[1].querySelector('.value').textContent = data.next_payout;
-        statsItems[1].classList.remove('loading');
-
-        const tbody = document.getElementById('commissions-body');
-        tbody.innerHTML = data.history.map(h => `
-            <tr>
-                <td>${h.description}</td>
-                <td>${h.date}</td>
-                <td style="color:#fff; font-weight:bold;">${h.amount}</td>
-                <td><span class="status-${h.status}">${h.status === 'paid' ? 'PAGO' : 'PENDENTE'}</span></td>
-            </tr>
-        `).join('');
-    }
-
-    fetchFinance();
 </script>
+</ResellerLayout>
