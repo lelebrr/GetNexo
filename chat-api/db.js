@@ -339,6 +339,15 @@ const initSchema = () => {
 
   tables.forEach(sql => db.prepare(sql).run());
 
+  // Optimize Indexes
+  const indexes = [
+    'CREATE INDEX IF NOT EXISTS idx_transactions_status_created_at ON transactions(status, created_at)',
+    'CREATE INDEX IF NOT EXISTS idx_messages_timestamp ON messages(timestamp)',
+    'CREATE INDEX IF NOT EXISTS idx_messages_contact_id_timestamp ON messages(contact_id, timestamp)',
+    'CREATE INDEX IF NOT EXISTS idx_contacts_updated_at ON contacts(updated_at)'
+  ];
+  indexes.forEach(sql => db.prepare(sql).run());
+
   // Inicializar configurações padrão
   const defaults = [
     ['store_name', 'Minha Loja Nexus'],

@@ -17,3 +17,7 @@
 ## 2025-02-27 - Optimizing Drag and Drop
 **Learning:** Monolithic components like `KanbanBoard` re-render entirely on drag events if not split. Extracting columns and cards into memoized components is essential for smooth dnd interactions in React.
 **Action:** Always memoize drag handlers (`onDragStart`, `onDrop`) and list item components when implementing drag-and-drop.
+
+## 2025-02-27 - Missing Database Indexes
+**Learning:** `chat-api` analytics queries (especially "Active Chats") were performing full table scans (O(N)) due to missing indexes on `messages(contact_id, timestamp)` and `transactions(created_at, status)`.
+**Action:** Always verify `CREATE INDEX` statements exist for columns used in `WHERE`, `JOIN`, and `ORDER BY` clauses, especially for time-series data like messages.
