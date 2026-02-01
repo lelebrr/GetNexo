@@ -68,6 +68,22 @@ Foram corrigidos os problemas de acessibilidade identificados nos arquivos do pr
 - **Status:** Nenhum problema de acessibilidade encontrado
 - **Observação:** O layout já estava bem estruturado com foco visível e estilos globais adequados
 
+### 4. [`getnexo-site/src/components/ChatInterface.jsx`](getnexo-site/src/components/ChatInterface.jsx)
+
+#### Correções Aplicadas:
+
+**a) Lista de Contatos (`ContactItem`)**
+- **Problema:** Itens da lista eram `div` com `onClick`, inacessíveis via teclado e leitores de tela.
+- **Solução:** Convertido para `<button type="button">`.
+- **Solução:** Adicionado `aria-current="true"` ao item ativo (substituindo o uso incorreto de `aria-selected` em botões).
+- **Impacto:** Usuários podem navegar pela lista de contatos usando Tab e selecionar com Enter/Space. O item selecionado é anunciado corretamente.
+
+**b) Filtros de Inbox (Meus/Todos/Resolvidos)**
+- **Problema:** Botões de filtro não indicavam semanticamente que eram abas ou filtros selecionáveis.
+- **Solução:** Adicionado `role="tablist"` ao container e `role="tab"` aos botões.
+- **Solução:** Adicionado `aria-selected` ao botão ativo.
+- **Impacto:** Melhor semântica para leitores de tela entenderem a função de alternância de visualização.
+
 ## Checklist de Acessibilidade
 
 ### ✅ Botões sem nome acessível
