@@ -333,7 +333,13 @@ const initSchema = () => {
       last_message_at DATETIME,
       message_count INTEGER DEFAULT 0,
       metadata TEXT
-    )`
+    )`,
+
+    // Performance Indexes
+    `CREATE INDEX IF NOT EXISTS idx_messages_timestamp ON messages(timestamp)`,
+    `CREATE INDEX IF NOT EXISTS idx_messages_contact_timestamp ON messages(contact_id, timestamp)`,
+    `CREATE INDEX IF NOT EXISTS idx_transactions_created_at ON transactions(created_at)`,
+    `CREATE INDEX IF NOT EXISTS idx_transactions_status ON transactions(status)`
 
   ];
 
