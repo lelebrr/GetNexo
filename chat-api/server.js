@@ -134,14 +134,13 @@ const authMiddleware = (req, res, next) => {
     '/api/analytics/top-products',
     '/api/analytics/clustering',
     '/api/analytics/trends',
-    '/api/crm/customers',
+    // Sensitive endpoints (CRM, Tickets) removed from public list to enforce auth
     '/api/crm/stats',
     '/api/products',
     '/api/loyalty/points',
     '/api/loyalty/rewards',
     '/api/settings',
     '/api/ai/config',
-    '/api/tickets',
     '/api/alert'
   ];
 
