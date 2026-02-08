@@ -17,3 +17,6 @@
 ## 2025-02-27 - Optimizing Drag and Drop
 **Learning:** Monolithic components like `KanbanBoard` re-render entirely on drag events if not split. Extracting columns and cards into memoized components is essential for smooth dnd interactions in React.
 **Action:** Always memoize drag handlers (`onDragStart`, `onDrop`) and list item components when implementing drag-and-drop.
+## 2025-05-23 - [Test Environment Database Isolation]
+**Learning:** Integration tests in `chat-api` create separate in-memory SQLite instances in `tests/setup.js` and `server.js`, causing seeded data to be invisible to the running server.
+**Action:** When debugging test failures involving missing data or auth, check if the test is relying on server-side state that it seeded in a different memory space.

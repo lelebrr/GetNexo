@@ -562,6 +562,28 @@ const initSchema = () => {
   } catch (err) {
     console.error('Migration error:', err);
   }
+
+  // Performance Indexes
+  const indexes = [
+    // Optimizes message history retrieval by contact (CRM & Chat Interface)
+    'CREATE INDEX IF NOT EXISTS idx_messages_contact_id_timestamp ON messages(contact_id, timestamp)',
+    // Optimizes contact listing sorted by update time (CRM List)
+    'CREATE INDEX IF NOT EXISTS idx_contacts_updated_at ON contacts(updated_at)',
+    // Optimizes reseller statistics queries (Monthly Revenue, Growth)
+    'CREATE INDEX IF NOT EXISTS idx_commissions_reseller_created ON commissions(reseller_id, created_at)',
+    // Optimizes the join between users and commissions for client lists
+    'CREATE INDEX IF NOT EXISTS idx_commissions_source_user_id ON commissions(source_user_id)',
+    // Optimizes user counting for resellers (Stats)
+    'CREATE INDEX IF NOT EXISTS idx_users_reseller_created ON users(reseller_id, created_at)'
+  ];
+
+  indexes.forEach(sql => {
+    try {
+      db.prepare(sql).run();
+    } catch (err) {
+      console.error('Index creation error:', err);
+    }
+  });
 };
 
 initSchema();
