@@ -3,10 +3,7 @@ const Database = require('better-sqlite3');
 const fs = require('fs');
 const path = require('path');
 
-// Set NODE_ENV to test
-process.env.NODE_ENV = 'test';
-// Use in-memory DB for tests to avoid I/O conflicts and ensure isolation
-process.env.DB_PATH = ':memory:';
+// Environment variables are now set in tests/env.js via setupFiles
 
 const db = new Database(':memory:');
 global.testDb = db;

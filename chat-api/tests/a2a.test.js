@@ -15,6 +15,26 @@ try {
 }
 
 describe('A2A Protocol', () => {
+    let token = '';
+
+    beforeAll(async () => {
+        // Try to login to get token if auth is enabled
+        try {
+            const res = await request(app)
+                .post('/api/login')
+                .send({
+                    email: 'admin@getnexo.com.br',
+                    password: 'admin123'
+                });
+
+            if (res.status === 200) {
+                token = res.body.token;
+            }
+        } catch (e) {
+            // Ignore login errors, might be running without auth
+        }
+    });
+
     describe('Agent Card Discovery', () => {
         test('GET /api/a2a/agent-card.json returns valid agent card', async () => {
             const res = await request(app).get('/api/a2a/agent-card.json');
@@ -31,9 +51,10 @@ describe('A2A Protocol', () => {
         let identityId;
 
         test('POST /api/a2a/identities creates identity', async () => {
-            const res = await request(app)
-                .post('/api/a2a/identities')
-                .send({ name: 'Test Identity', setDefault: true });
+            const req = request(app).post('/api/a2a/identities');
+            if (token) req.set('Authorization', `Bearer ${token}`);
+
+            const res = await req.send({ name: 'Test Identity', setDefault: true });
             expect(res.status).toBe(200);
             expect(res.body.success).toBe(true);
             expect(res.body.id).toBeDefined();
@@ -41,24 +62,29 @@ describe('A2A Protocol', () => {
         });
 
         test('GET /api/a2a/identities lists identities', async () => {
-            const res = await request(app).get('/api/a2a/identities');
-            expect(res.status).toBe(200);
+            const req = request(app).get('/api/a2a/identities');
+            if (token) req.set('Authorization', `Bearer ${token}`);
+
+            const res = await req.expect(200);
             expect(Array.isArray(res.body)).toBe(true);
         });
 
         test('GET /api/a2a/identities/:id/export exports public key', async () => {
             if (!identityId) return;
-            const res = await request(app).get(`/api/a2a/identities/${identityId}/export`);
-            expect(res.status).toBe(200);
+            const req = request(app).get(`/api/a2a/identities/${identityId}/export`);
+            if (token) req.set('Authorization', `Bearer ${token}`);
+
+            const res = await req.expect(200);
             expect(res.body.publicKey).toBeDefined();
         });
     });
 
     describe('Message Operations', () => {
         test('POST /api/a2a/message:send processes message', async () => {
-            const res = await request(app)
-                .post('/api/a2a/message:send')
-                .send({
+            const req = request(app).post('/api/a2a/message:send');
+            if (token) req.set('Authorization', `Bearer ${token}`);
+
+            const res = await req.send({
                     message: { text: 'Hello, this is a test message' },
                     senderId: 'test-agent-123'
                 });
@@ -69,26 +95,30 @@ describe('A2A Protocol', () => {
         });
 
         test('POST /api/a2a/message:send requires message.text', async () => {
-            const res = await request(app)
-                .post('/api/a2a/message:send')
-                .send({ senderId: 'test' });
+            const req = request(app).post('/api/a2a/message:send');
+            if (token) req.set('Authorization', `Bearer ${token}`);
+
+            const res = await req.send({ senderId: 'test' });
             expect(res.status).toBe(400);
         });
     });
 
     describe('Task Management', () => {
         test('POST /api/a2a/tasks creates task', async () => {
-            const res = await request(app)
-                .post('/api/a2a/tasks')
-                .send({ type: 'message', input: { text: 'Test task' } });
+            const req = request(app).post('/api/a2a/tasks');
+            if (token) req.set('Authorization', `Bearer ${token}`);
+
+            const res = await req.send({ type: 'message', input: { text: 'Test task' } });
             expect(res.status).toBe(202);
             expect(res.body).toHaveProperty('id');
             expect(res.body.status).toBe('pending');
         });
 
         test('GET /api/a2a/tasks lists tasks', async () => {
-            const res = await request(app).get('/api/a2a/tasks');
-            expect(res.status).toBe(200);
+            const req = request(app).get('/api/a2a/tasks');
+            if (token) req.set('Authorization', `Bearer ${token}`);
+
+            const res = await req.expect(200);
             expect(Array.isArray(res.body)).toBe(true);
         });
     });
@@ -97,24 +127,29 @@ describe('A2A Protocol', () => {
         let peerId;
 
         test('POST /api/a2a/peers adds peer', async () => {
-            const res = await request(app)
-                .post('/api/a2a/peers')
-                .send({ name: 'Test Peer', endpoint: 'https://example.com/api/a2a/message:send' });
+            const req = request(app).post('/api/a2a/peers');
+            if (token) req.set('Authorization', `Bearer ${token}`);
+
+            const res = await req.send({ name: 'Test Peer', endpoint: 'https://example.com/api/a2a/message:send' });
             expect(res.status).toBe(200);
             expect(res.body.success).toBe(true);
             peerId = res.body.id;
         });
 
         test('GET /api/a2a/peers lists peers', async () => {
-            const res = await request(app).get('/api/a2a/peers');
-            expect(res.status).toBe(200);
+            const req = request(app).get('/api/a2a/peers');
+            if (token) req.set('Authorization', `Bearer ${token}`);
+
+            const res = await req.expect(200);
             expect(Array.isArray(res.body)).toBe(true);
         });
 
         test('DELETE /api/a2a/peers/:id removes peer', async () => {
             if (!peerId) return;
-            const res = await request(app).delete(`/api/a2a/peers/${peerId}`);
-            expect(res.status).toBe(200);
+            const req = request(app).delete(`/api/a2a/peers/${peerId}`);
+            if (token) req.set('Authorization', `Bearer ${token}`);
+
+            const res = await req.expect(200);
         });
     });
 

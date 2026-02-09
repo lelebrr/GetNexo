@@ -11,8 +11,8 @@ describe('Ticket API Tests', () => {
         const loginResponse = await request(app)
             .post('/api/login')
             .send({
-                email: 'admin@test.com',
-                password: 'test123'
+                email: 'admin@getnexo.com.br',
+                password: 'admin123'
             });
 
         expect(loginResponse.status).toBe(200);
