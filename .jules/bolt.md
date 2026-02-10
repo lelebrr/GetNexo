@@ -1,3 +1,7 @@
+## 2025-02-27 - Backend Tests & Native Modules
+**Learning:** `chat-api` tests fail because `better-sqlite3` native bindings are missing and cannot be rebuilt in the current environment due to restricted permissions or missing build tools, despite `pnpm install` success.
+**Action:** Rely on static analysis for backend DB changes or mock the DB layer if possible.
+
 ## 2025-02-27 - Frontend Testing & CSP
 **Learning:** The application enforces strict CSP which breaks the local dev server (Astro) frontend verification script, making headless browser verification difficult without disabling CSP or modifying the dev environment.
 **Action:** Rely on unit tests (jest) for component verification, but be aware that dependencies might be missing.
