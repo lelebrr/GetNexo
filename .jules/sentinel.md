@@ -23,3 +23,8 @@
 **Vulnerability:** The application was using an in-memory array for user authentication in `server.js` while the database had a `users` table. This led to state inconsistencies and potential security bypasses if the server restarted or if data wasn't persisted.
 **Learning:** Hardcoded user credentials in source code are a major security risk and technical debt.
 **Fix Detail:** Refactored `server.js` to query the SQLite database for user credentials using parameterized queries, merging the logic with the new database schema.
+
+## 2024-05-22 - Publicly Exposed Sensitive Routes & Frontend Fetch Without Auth
+**Vulnerability:** Critical business endpoints (`/api/crm/customers`, `/api/tickets`, etc.) were explicitly whitelisted as public routes in the backend. The frontend relied on this insecurity, making `fetch` calls without authentication tokens.
+**Learning:** Security by obscurity or "demo mode" shortcuts often persist into production code. Frontend architectures (like Alpine.js) that lack a centralized HTTP client make it easy for developers to accidentally omit authentication headers.
+**Prevention:** Remove sensitive routes from public whitelists immediately. Implement a global `fetch` interceptor on the frontend to automatically attach authentication tokens to all requests, ensuring consistent security posture across the application.
