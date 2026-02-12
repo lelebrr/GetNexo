@@ -291,9 +291,24 @@ const FileUpload = () => {
                                             </div>
                                         )}
                                         {/* Overlay Actions */}
-                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                                            <a href={file.url} target="_blank" className="p-2 bg-neon-blue text-black rounded-full hover:scale-110 transition-transform">👁️</a>
-                                            <button onClick={() => handleDelete(file.name)} className="p-2 bg-red-500 text-white rounded-full hover:scale-110 transition-transform">🗑️</button>
+                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                            <a
+                                                href={file.url}
+                                                target="_blank"
+                                                className="p-2 bg-neon-blue text-black rounded-full hover:scale-110 transition-transform"
+                                                aria-label={`Visualizar arquivo ${file.name}`}
+                                                title={`Visualizar arquivo ${file.name}`}
+                                            >
+                                                👁️
+                                            </a>
+                                            <button
+                                                onClick={() => handleDelete(file.name)}
+                                                className="p-2 bg-red-500 text-white rounded-full hover:scale-110 transition-transform"
+                                                aria-label={`Deletar arquivo ${file.name}`}
+                                                title={`Deletar arquivo ${file.name}`}
+                                            >
+                                                🗑️
+                                            </button>
                                         </div>
                                     </div>
                                     <div className="p-3">
