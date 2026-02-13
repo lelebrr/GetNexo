@@ -5,6 +5,7 @@ const path = require('path');
 
 // Set NODE_ENV to test
 process.env.NODE_ENV = 'test';
+process.env.JWT_SECRET = 'test-secret-123';
 // Use in-memory DB for tests to avoid I/O conflicts and ensure isolation
 process.env.DB_PATH = ':memory:';
 
