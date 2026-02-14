@@ -17,3 +17,7 @@
 ## 2025-02-27 - Optimizing Drag and Drop
 **Learning:** Monolithic components like `KanbanBoard` re-render entirely on drag events if not split. Extracting columns and cards into memoized components is essential for smooth dnd interactions in React.
 **Action:** Always memoize drag handlers (`onDragStart`, `onDrop`) and list item components when implementing drag-and-drop.
+
+## 2025-03-24 - Node.js Native Bindings in Test Environment
+**Learning:** `better-sqlite3` native bindings fail to load in the current `pnpm` test environment, causing all database-dependent tests to fail.
+**Action:** Rely on static analysis for SQL changes or fix the test environment by mocking `better-sqlite3` properly if verification is critical.
