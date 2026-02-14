@@ -562,6 +562,41 @@ const initSchema = () => {
   } catch (err) {
     console.error('Migration error:', err);
   }
+
+  // BOLT: Performance Indexes
+  // Adding indexes for frequently queried columns to improve performance
+  const indexes = [
+    // Messages (history & status updates)
+    'CREATE INDEX IF NOT EXISTS idx_messages_contact_timestamp ON messages(contact_id, timestamp DESC)',
+    'CREATE INDEX IF NOT EXISTS idx_messages_wa_message_id ON messages(wa_message_id)',
+
+    // Contacts (CRM filtering)
+    'CREATE INDEX IF NOT EXISTS idx_contacts_funnel_stage ON contacts(funnel_stage)',
+
+    // Support Tickets (Client & Status filtering)
+    'CREATE INDEX IF NOT EXISTS idx_support_tickets_client_created ON support_tickets(client_id, created_at DESC)',
+    'CREATE INDEX IF NOT EXISTS idx_support_tickets_status ON support_tickets(status)',
+
+    // Ticket Messages (Conversation history)
+    'CREATE INDEX IF NOT EXISTS idx_ticket_messages_ticket_created ON ticket_messages(ticket_id, created_at ASC)',
+
+    // CRM Tickets (Contacts & Agents)
+    'CREATE INDEX IF NOT EXISTS idx_tickets_contact_id ON tickets(contact_id)',
+    'CREATE INDEX IF NOT EXISTS idx_tickets_assigned_agent_id ON tickets(assigned_agent_id)',
+    'CREATE INDEX IF NOT EXISTS idx_tickets_status ON tickets(status)',
+
+    // Ticket Notes
+    'CREATE INDEX IF NOT EXISTS idx_ticket_notes_ticket_id ON ticket_notes(ticket_id)'
+  ];
+
+  indexes.forEach(sql => {
+    try {
+      db.prepare(sql).run();
+    } catch (e) {
+      // Log error but don't crash (e.g., if table/column missing)
+      console.error(`[DB-INDEX] Failed to create index: ${sql} - Error: ${e.message}`);
+    }
+  });
 };
 
 initSchema();
