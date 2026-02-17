@@ -333,8 +333,8 @@ const initSchema = () => {
       last_message_at DATETIME,
       message_count INTEGER DEFAULT 0,
       metadata TEXT
-    )`
-
+    )`,
+    `CREATE INDEX IF NOT EXISTS idx_messages_contact_timestamp ON messages(contact_id, timestamp DESC)`
   ];
 
   tables.forEach(sql => db.prepare(sql).run());
