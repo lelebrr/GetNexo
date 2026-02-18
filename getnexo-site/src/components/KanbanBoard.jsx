@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import axios from 'axios';
 
 const API_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
@@ -144,7 +144,7 @@ const KanbanColumn = React.memo(({ stageId, stage, contacts, aiInsights, insight
 
 const KanbanBoard = ({ onSelectContact }) => {
     const [contacts, setContacts] = useState([]);
-    const [draggedId, setDraggedId] = useState(null);
+    const draggedIdRef = useRef(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(false);
     const [aiInsights, setAiInsights] = useState({});
@@ -178,22 +178,20 @@ const KanbanBoard = ({ onSelectContact }) => {
     };
 
     const handleDragStart = useCallback((e, id) => {
-        setDraggedId(id);
+        draggedIdRef.current = id;
     }, []);
 
     const onDrop = useCallback(async (e, stage) => {
         e.preventDefault();
-        // Since draggedId is in closure, we need it in dependency.
-        // This will update the handler when draggedId changes (drag start).
-        // This is acceptable behavior.
+        const draggedId = draggedIdRef.current;
         if (!draggedId) return;
 
         // Optimistic Update
         setContacts(prev => prev.map(c => c.id === draggedId ? { ...c, funnel_stage: stage } : c));
 
         await axios.post(`${API_URL}/update-stage`, { phone: draggedId, stage });
-        setDraggedId(null);
-    }, [draggedId]);
+        draggedIdRef.current = null;
+    }, []);
 
     const onToggleInsight = useCallback(async (contactId, phone, name) => {
         // Optimistically check local state via functional update is tricky for side effects.

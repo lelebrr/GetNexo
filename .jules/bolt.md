@@ -17,3 +17,7 @@
 ## 2025-02-27 - Optimizing Drag and Drop
 **Learning:** Monolithic components like `KanbanBoard` re-render entirely on drag events if not split. Extracting columns and cards into memoized components is essential for smooth dnd interactions in React.
 **Action:** Always memoize drag handlers (`onDragStart`, `onDrop`) and list item components when implementing drag-and-drop.
+
+## 2025-02-27 - React DnD Performance
+**Learning:** Storing `draggedId` in component state (`useState`) causes the entire parent and all children to re-render on drag start, which can cause visual lag.
+**Action:** Use `useRef` for tracking drag state that doesn't affect the visual rendering of the container itself, ensuring `onDrop` and other handlers remain stable without re-creating functions.
