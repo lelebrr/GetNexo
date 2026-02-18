@@ -5,6 +5,10 @@ const path = require('path');
 
 // Set NODE_ENV to test
 process.env.NODE_ENV = 'test';
+// Set JWT_SECRET for tests
+process.env.JWT_SECRET = 'test-secret-123';
+// Set Reseller Password for tests
+process.env.RESELLER_DEFAULT_PASSWORD = 'demo123';
 // Use in-memory DB for tests to avoid I/O conflicts and ensure isolation
 process.env.DB_PATH = ':memory:';
 

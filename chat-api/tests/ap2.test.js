@@ -3,15 +3,11 @@
  */
 const request = require('supertest');
 
-let app;
-try {
-    app = require('../server');
-} catch (e) {
-    const express = require('express');
-    app = express();
-    app.use(express.json());
-    app.use('/api/ap2', require('../routes/ap2'));
-}
+// Use standalone app to bypass auth middleware for logic testing
+const express = require('express');
+const app = express();
+app.use(express.json());
+app.use('/api/ap2', require('../routes/ap2'));
 
 describe('AP2 Protocol', () => {
     let mandateId;
