@@ -24,14 +24,15 @@ const MessageItem = React.memo(({ message: m }) => (
     </div>
 ));
 
-const ContactItem = React.memo(({ contact: c, isActive, onClick, onDragStart }) => (
-    <div
+export const ContactItem = React.memo(({ contact: c, isActive, onClick, onDragStart }) => (
+    <button
+        type="button"
         onClick={() => onClick(c)}
         draggable
         onDragStart={(e) => onDragStart(e, c)}
-        className={`p-3 rounded-xl cursor-pointer transition-all border ${isActive ? 'bg-neon-blue/10 border-neon-blue' : 'bg-transparent border-transparent hover:bg-gray-800'} flex items-center gap-3 group`}
+        className={`w-full text-left p-3 rounded-xl cursor-pointer transition-all border ${isActive ? 'bg-neon-blue/10 border-neon-blue' : 'bg-transparent border-transparent hover:bg-gray-800'} flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-neon-blue`}
     >
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center text-white font-bold border border-gray-600">
+        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center text-white font-bold border border-gray-600 shrink-0">
             {c.name ? c.name[0].toUpperCase() : '#'}
         </div>
         <div className="flex-1 min-w-0">
@@ -41,7 +42,7 @@ const ContactItem = React.memo(({ contact: c, isActive, onClick, onDragStart }) 
             </div>
             <p className="text-xs text-gray-500 truncate">{c.last_message?.body || 'Inicie a conversa...'}</p>
         </div>
-    </div>
+    </button>
 ));
 
 const ChatInterface = () => {
