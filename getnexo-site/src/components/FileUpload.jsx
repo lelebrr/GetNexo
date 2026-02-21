@@ -217,14 +217,25 @@ const FileUpload = () => {
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <h4 className="text-lg font-bold text-gray-200">Galeria de Mídia</h4>
                     <div className="flex flex-wrap gap-2 w-full md:w-auto">
-                        <input
-                            type="text"
-                            placeholder="Buscar arquivos..."
-                            aria-label="Buscar arquivos"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="bg-black/30 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:border-neon-blue outline-none flex-1 md:flex-none"
-                        />
+                        <div className="relative flex-1 md:flex-none">
+                            <input
+                                type="text"
+                                placeholder="Buscar arquivos..."
+                                aria-label="Buscar arquivos"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full bg-black/30 border border-gray-700 rounded-lg pl-3 pr-8 py-2 text-sm text-white focus:border-neon-blue outline-none transition-colors"
+                            />
+                            {searchTerm && (
+                                <button
+                                    onClick={() => setSearchTerm('')}
+                                    aria-label="Limpar busca"
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white text-xs p-1 rounded-full hover:bg-white/10 transition-colors"
+                                >
+                                    ✕
+                                </button>
+                            )}
+                        </div>
                         <select
                             value={filter}
                             aria-label="Filtrar por tipo"
@@ -291,9 +302,23 @@ const FileUpload = () => {
                                             </div>
                                         )}
                                         {/* Overlay Actions */}
-                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                                            <a href={file.url} target="_blank" className="p-2 bg-neon-blue text-black rounded-full hover:scale-110 transition-transform">👁️</a>
-                                            <button onClick={() => handleDelete(file.name)} className="p-2 bg-red-500 text-white rounded-full hover:scale-110 transition-transform">🗑️</button>
+                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                            <a
+                                                href={file.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                aria-label="Visualizar arquivo"
+                                                className="p-2 bg-neon-blue text-black rounded-full hover:scale-110 focus:scale-110 focus:outline-none focus:ring-2 focus:ring-white transition-transform"
+                                            >
+                                                👁️
+                                            </a>
+                                            <button
+                                                onClick={() => handleDelete(file.name)}
+                                                aria-label="Deletar arquivo"
+                                                className="p-2 bg-red-500 text-white rounded-full hover:scale-110 focus:scale-110 focus:outline-none focus:ring-2 focus:ring-white transition-transform"
+                                            >
+                                                🗑️
+                                            </button>
                                         </div>
                                     </div>
                                     <div className="p-3">
