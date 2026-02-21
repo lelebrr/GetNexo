@@ -196,5 +196,19 @@ describe('WhatsApp Business API Integration', () => {
             const hasWaMessageId = info.some(col => col.name === 'wa_message_id');
             expect(hasWaMessageId).toBe(true);
         });
+
+        it('should have index on messages(contact_id, timestamp)', () => {
+            const indexes = db.pragma('index_list(messages)');
+            const hasIndex = indexes.some(idx => idx.name === 'idx_messages_contact_timestamp');
+            expect(hasIndex).toBe(true);
+
+            if (hasIndex) {
+                const indexInfo = db.pragma('index_info(idx_messages_contact_timestamp)');
+                // Verify columns
+                // index_info returns array of { seqno, cid, name }
+                expect(indexInfo[0].name).toBe('contact_id');
+                expect(indexInfo[1].name).toBe('timestamp');
+            }
+        });
     });
 });
