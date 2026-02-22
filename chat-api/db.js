@@ -559,6 +559,14 @@ const initSchema = () => {
       } catch (e) { console.log('Columns likely exist'); }
     }
 
+    // Performance Indexes
+    try {
+      console.log('Migrating messages table: Adding index on contact_id and timestamp...');
+      db.prepare('CREATE INDEX IF NOT EXISTS idx_messages_contact_timestamp ON messages(contact_id, timestamp DESC)').run();
+    } catch (e) {
+      console.log('Index idx_messages_contact_timestamp likely exists or error creating it:', e.message);
+    }
+
   } catch (err) {
     console.error('Migration error:', err);
   }
