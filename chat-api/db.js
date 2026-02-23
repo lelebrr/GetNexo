@@ -359,7 +359,11 @@ const initSchema = () => {
     const insertUser = db.prepare('INSERT OR IGNORE INTO users (id, email, password, name, role, role_id, reseller_id) VALUES (?, ?, ?, ?, ?, ?, ?)');
 
     // Admin
-    insertUser.run(1, 'admin@getnexo.com.br', bcrypt.hashSync('admin123', 10), 'Administrador', 'superadmin', 1, null);
+    const adminPass = process.env.ADMIN_PASSWORD || require('crypto').randomBytes(16).toString('hex');
+    if (!process.env.ADMIN_PASSWORD) {
+      console.log('⚠️  ADMIN_PASSWORD not set. Generated:', adminPass);
+    }
+    insertUser.run(1, 'admin@getnexo.com.br', bcrypt.hashSync(adminPass, 10), 'Administrador', 'superadmin', 1, null);
 
     // Reseller
     const resellerPass = process.env.RESELLER_DEFAULT_PASSWORD || require('crypto').randomBytes(16).toString('hex');
@@ -368,9 +372,6 @@ const initSchema = () => {
     // Client (Linked to Reseller 2)
     const clientPass = process.env.CLIENT_DEFAULT_PASSWORD || require('crypto').randomBytes(16).toString('hex');
     insertUser.run(3, 'cliente@getnexo.com', bcrypt.hashSync(clientPass, 10), 'Cliente', 'client', 3, 2);
-
-    // Extra Admin (teu login)
-    insertUser.run(4, 'lelebrr@gmail.com', bcrypt.hashSync('master2026', 10), 'Lele', 'superadmin', 1, null);
 
     // Seed Reseller Profile
     const insertProfile = db.prepare('INSERT OR IGNORE INTO reseller_profiles (user_id, balance, commission_rate, referral_code) VALUES (?, ?, ?, ?)');
