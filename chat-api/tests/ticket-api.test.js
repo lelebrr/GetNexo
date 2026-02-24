@@ -1,5 +1,6 @@
 const request = require('supertest');
-const { app, server } = require('../server'); // We'll need to export app from server.js
+const app = require('../server');
+const db = require('../db');
 
 describe('Ticket API Tests', () => {
     let authToken;
@@ -11,21 +12,14 @@ describe('Ticket API Tests', () => {
         const loginResponse = await request(app)
             .post('/api/login')
             .send({
-                email: 'admin@test.com',
-                password: 'test123'
+                email: 'admin@getnexo.com.br',
+                password: process.env.ADMIN_PASSWORD || 'admin123'
             });
 
         expect(loginResponse.status).toBe(200);
         authToken = loginResponse.body.token;
     });
 
-    afterAll((done) => {
-        if (server) {
-            server.close(done);
-        } else {
-            done();
-        }
-    });
 
     describe('POST /api/support/tickets - Create Ticket', () => {
         test('should create a new ticket successfully', async () => {
@@ -268,7 +262,7 @@ describe('Ticket API Tests', () => {
         test('should transfer ticket to another agent', async () => {
             // Create another user first
             const newUserPass = require('bcrypt').hashSync('test456', 10);
-            const userResult = global.db.prepare('INSERT INTO users (email, password, role_id) VALUES (?, ?, ?)').run('agent@test.com', newUserPass, 3);
+            const userResult = db.prepare('INSERT INTO users (email, password, role_id) VALUES (?, ?, ?)').run('agent@test.com', newUserPass, 3);
             const agentId = userResult.lastInsertRowid;
 
             const response = await request(app)

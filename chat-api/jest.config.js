@@ -10,6 +10,7 @@ module.exports = {
     ],
     coverageDirectory: 'coverage',
     coverageReporters: ['text', 'lcov', 'html'],
+    setupFiles: ['<rootDir>/tests/env-setup.js'],
     setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
     testTimeout: 10000,
     verbose: true,

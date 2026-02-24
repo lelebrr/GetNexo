@@ -1,5 +1,5 @@
 const request = require('supertest');
-const { app, server } = require('../server'); // We'll need to export app from server.js
+const app = require('../server');
 
 describe('White-Label API Tests', () => {
     let authToken;
@@ -12,21 +12,14 @@ describe('White-Label API Tests', () => {
             .post('/api/login')
             .set('Content-Type', 'application/json')
             .send({
-                email: 'admin@test.com',
-                password: 'test123'
+                email: 'admin@getnexo.com.br',
+                password: process.env.ADMIN_PASSWORD || 'admin123'
             });
 
         expect(loginResponse.status).toBe(200);
         authToken = loginResponse.body.token;
     });
 
-    afterAll((done) => {
-        if (server) {
-            server.close(done);
-        } else {
-            done();
-        }
-    });
 
     describe('White-Label Configuration Setup', () => {
         test('should create complete white-label configuration directly via model', async () => {
