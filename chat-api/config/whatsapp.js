@@ -10,6 +10,7 @@ module.exports = {
     // Identificadores da conta
     PHONE_NUMBER_ID: process.env.WA_PHONE_NUMBER_ID,
     ACCESS_TOKEN: process.env.WA_ACCESS_TOKEN,
+    APP_SECRET: process.env.WA_APP_SECRET,
     BUSINESS_ACCOUNT_ID: process.env.WA_BUSINESS_ACCOUNT_ID,
 
     // Webhook

@@ -15,6 +15,9 @@ jest.mock('axios', () => ({
     get: jest.fn(() => Promise.resolve({ data: {} }))
 }));
 
+// Mock verifyWebhook middleware to skip signature verification in these tests
+jest.mock('../middleware/verifyWebhook', () => (req, res, next) => next());
+
 const app = require('../server');
 const db = require('../db');
 

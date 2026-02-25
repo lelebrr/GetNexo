@@ -7,6 +7,7 @@ const express = require('express');
 const router = express.Router();
 const config = require('../config/whatsapp');
 const whatsappController = require('../controllers/whatsappController');
+const verifyWebhook = require('../middleware/verifyWebhook');
 
 /**
  * GET /api/whatsapp/webhook
@@ -32,7 +33,7 @@ router.get('/webhook', (req, res) => {
  * POST /api/whatsapp/webhook
  * Recebimento de mensagens e eventos
  */
-router.post('/webhook', whatsappController.handleIncomingMessage);
+router.post('/webhook', verifyWebhook, whatsappController.handleIncomingMessage);
 
 /**
  * POST /api/whatsapp/send
