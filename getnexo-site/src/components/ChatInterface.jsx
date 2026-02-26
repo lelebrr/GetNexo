@@ -25,11 +25,12 @@ const MessageItem = React.memo(({ message: m }) => (
 ));
 
 const ContactItem = React.memo(({ contact: c, isActive, onClick, onDragStart }) => (
-    <div
+    <button
+        type="button"
         onClick={() => onClick(c)}
         draggable
         onDragStart={(e) => onDragStart(e, c)}
-        className={`p-3 rounded-xl cursor-pointer transition-all border ${isActive ? 'bg-neon-blue/10 border-neon-blue' : 'bg-transparent border-transparent hover:bg-gray-800'} flex items-center gap-3 group`}
+        className={`w-full text-left p-3 rounded-xl cursor-pointer transition-all border outline-none focus-visible:ring-2 focus-visible:ring-neon-blue ${isActive ? 'bg-neon-blue/10 border-neon-blue' : 'bg-transparent border-transparent hover:bg-gray-800'} flex items-center gap-3 group`}
     >
         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center text-white font-bold border border-gray-600">
             {c.name ? c.name[0].toUpperCase() : '#'}
@@ -41,7 +42,7 @@ const ContactItem = React.memo(({ contact: c, isActive, onClick, onDragStart }) 
             </div>
             <p className="text-xs text-gray-500 truncate">{c.last_message?.body || 'Inicie a conversa...'}</p>
         </div>
-    </div>
+    </button>
 ));
 
 const ChatInterface = () => {
@@ -256,6 +257,7 @@ const ChatInterface = () => {
                                 <button
                                     onClick={() => setActiveContact(null)}
                                     className="lg:hidden text-gray-400 hover:text-white mr-2"
+                                    aria-label="Voltar para lista de contatos"
                                 >
                                     ←
                                 </button>
@@ -407,7 +409,7 @@ const ChatInterface = () => {
                             <div className="flex flex-wrap gap-2">
                                 <span className="bg-neon-blue/10 text-neon-blue text-[10px] px-2 py-1 rounded border border-neon-blue/20">🔥 Lead Quente</span>
                                 <span className="bg-purple-900/20 text-purple-400 text-[10px] px-2 py-1 rounded border border-purple-800">🤖 IA Ativa</span>
-                                <button className="text-[10px] text-gray-500 border border-dashed border-gray-700 px-2 py-1 rounded hover:border-gray-500">+ Add</button>
+                                <button className="text-[10px] text-gray-500 border border-dashed border-gray-700 px-2 py-1 rounded hover:border-gray-500" aria-label="Adicionar tag">+ Add</button>
                             </div>
                         </div>
                         <div>
