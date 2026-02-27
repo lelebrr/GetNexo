@@ -23,3 +23,7 @@
 **Vulnerability:** The application was using an in-memory array for user authentication in `server.js` while the database had a `users` table. This led to state inconsistencies and potential security bypasses if the server restarted or if data wasn't persisted.
 **Learning:** Hardcoded user credentials in source code are a major security risk and technical debt.
 **Fix Detail:** Refactored `server.js` to query the SQLite database for user credentials using parameterized queries, merging the logic with the new database schema.
+## 2024-05-24 - Removed Hardcoded JWT_SECRET Fallbacks
+**Vulnerability:** Multiple services (`chat-api/server.js`, `chat-api/middleware/jwtAuth.js`, `chat-api/middleware/optionalAuth.js`, and `getnexo-site/src/lib/auth.js`) used a hardcoded string as a fallback for `JWT_SECRET` (e.g., `supersecret_jwt_key_2026`).
+**Learning:** This allowed anyone with access to the codebase to forge valid authentication tokens if the environment variable was not explicitly set. The fallback created a false sense of security where the application would start successfully but run insecurely.
+**Prevention:** Removed all hardcoded fallbacks for `JWT_SECRET`. Implemented "Fail Fast" checks to throw errors or exit the process if the secret is missing. In optional auth scenarios, a missing secret is treated as an unauthenticated request.

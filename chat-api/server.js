@@ -9,7 +9,7 @@ const db = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 3006;
-const JWT_SECRET = process.env.JWT_SECRET || 'supersecret_jwt_key_2026'; // em produção use env real
+const JWT_SECRET = process.env.JWT_SECRET; // em produção use env real
 
 if (!JWT_SECRET) {
   console.error('FATAL: JWT_SECRET environment variable is not set.');

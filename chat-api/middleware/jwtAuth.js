@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const db = require('../db');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'supersecret_jwt_key_2026';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 module.exports = (req, res, next) => {
     const authHeader = req.headers['authorization'];
@@ -19,6 +19,11 @@ module.exports = (req, res, next) => {
     }
 
     try {
+        if (!JWT_SECRET) {
+            console.error('FATAL: JWT_SECRET not defined in middleware');
+            return res.status(500).json({ error: 'Erro interno de configuração de segurança.' });
+        }
+
         const decoded = jwt.verify(token, JWT_SECRET);
 
         // Find user in DB
