@@ -90,6 +90,7 @@ const PaymentHistory = ({ phone, compact = false }) => {
                 </h4>
                 {compact && (
                     <button
+                        type="button"
                         onClick={() => setExpanded(!expanded)}
                         className="text-xs text-blue-600 hover:text-blue-800"
                     >
