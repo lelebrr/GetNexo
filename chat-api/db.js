@@ -562,6 +562,29 @@ const initSchema = () => {
   } catch (err) {
     console.error('Migration error:', err);
   }
+
+  // Performance Indexes
+  console.log('Creating performance indexes...');
+  try {
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_messages_contact_timestamp ON messages(contact_id, timestamp DESC)').run();
+  } catch (e) { console.error('Error creating idx_messages_contact_timestamp:', e); }
+
+  try {
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_ticket_messages_ticket_created ON ticket_messages(ticket_id, created_at ASC)').run();
+  } catch (e) { console.error('Error creating idx_ticket_messages_ticket_created:', e); }
+
+  try {
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_tickets_contact ON tickets(contact_id)').run();
+  } catch (e) { console.error('Error creating idx_tickets_contact:', e); }
+
+  try {
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_support_tickets_client_created ON support_tickets(client_id, created_at DESC)').run();
+  } catch (e) { console.error('Error creating idx_support_tickets_client_created:', e); }
+
+  try {
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_tickets_last_message ON tickets(last_message_at DESC, created_at DESC)').run();
+  } catch (e) { console.error('Error creating idx_tickets_last_message:', e); }
+
 };
 
 initSchema();

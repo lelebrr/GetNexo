@@ -17,3 +17,7 @@
 ## 2025-02-27 - Optimizing Drag and Drop
 **Learning:** Monolithic components like `KanbanBoard` re-render entirely on drag events if not split. Extracting columns and cards into memoized components is essential for smooth dnd interactions in React.
 **Action:** Always memoize drag handlers (`onDragStart`, `onDrop`) and list item components when implementing drag-and-drop.
+
+## 2025-02-28 - Database Indexing Performance
+**Learning:** `better-sqlite3` native bindings may be missing when attempting to run local scripts in restricted environments without a proper `npm install`. To avoid test script failures when writing performance node scripts, you might need to run `npm rebuild better-sqlite3 --build-from-source` in the target directory (`chat-api`).
+**Action:** Be prepared to rebuild native dependencies from source if executing custom test node scripts in the sandbox. Also, always place database index creations *after* table migrations but *inside* a `try/catch` block to ensure robust startup logic in `db.js`.
