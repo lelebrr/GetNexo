@@ -17,3 +17,7 @@
 ## 2025-02-27 - Optimizing Drag and Drop
 **Learning:** Monolithic components like `KanbanBoard` re-render entirely on drag events if not split. Extracting columns and cards into memoized components is essential for smooth dnd interactions in React.
 **Action:** Always memoize drag handlers (`onDragStart`, `onDrop`) and list item components when implementing drag-and-drop.
+
+## 2025-02-27 - Optimizing BroadcastManager Filtering
+**Learning:** `BroadcastManager` recalculated `filteredContacts` on every render, which includes typing in the template field, toggling a selection, and changing tabs.
+**Action:** Always wrap derived collections in `useMemo` when they depend on specific states (`contacts`, `filters`) rather than calculating inline on every render.
