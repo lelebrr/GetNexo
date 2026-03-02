@@ -119,7 +119,7 @@ const FlowBuilder = () => {
                                     >
                                         <div className="flex justify-between mb-2">
                                             <span className={`text-xs font-bold uppercase ${node.type === 'condition' ? 'text-orange-400' : 'text-neon-blue'}`}>{node.type}</span>
-                                            {node.type !== 'trigger' && <button onClick={() => deleteNode(node.id)} className="text-red-500 hover:text-red-400">×</button>}
+                                            {node.type !== 'trigger' && <button onClick={() => deleteNode(node.id)} className="text-red-500 hover:text-red-400" aria-label="Remover">✕</button>}
                                         </div>
 
                                         {node.type === 'message' && (
