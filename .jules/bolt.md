@@ -17,3 +17,7 @@
 ## 2025-02-27 - Optimizing Drag and Drop
 **Learning:** Monolithic components like `KanbanBoard` re-render entirely on drag events if not split. Extracting columns and cards into memoized components is essential for smooth dnd interactions in React.
 **Action:** Always memoize drag handlers (`onDragStart`, `onDrop`) and list item components when implementing drag-and-drop.
+
+## 2025-03-04 - SQLite Performance Indexes
+**Learning:** The database initialization script (`chat-api/db.js`) lacked essential `CREATE INDEX` statements for frequently queried fields (like `messages.contact_id`, `tickets.contact_id`), which would lead to full table scans as the dataset grew.
+**Action:** Always verify if heavily queried fields in SQLite, especially foreign keys or filtering criteria used in `WHERE` clauses (like `timestamp DESC`, `created_at DESC`), have appropriate indexes created in the schema definition. Wrap index creations in `try/catch` with `IF NOT EXISTS` for robust migration.
