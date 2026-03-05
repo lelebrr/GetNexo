@@ -23,3 +23,8 @@
 **Vulnerability:** The application was using an in-memory array for user authentication in `server.js` while the database had a `users` table. This led to state inconsistencies and potential security bypasses if the server restarted or if data wasn't persisted.
 **Learning:** Hardcoded user credentials in source code are a major security risk and technical debt.
 **Fix Detail:** Refactored `server.js` to query the SQLite database for user credentials using parameterized queries, merging the logic with the new database schema.
+
+## 2025-03-05 - SQL Injection in Dynamic Ticket Updates
+**Vulnerability:** The `PUT /api/tickets/:id` endpoint iterated through all keys in `req.body` and directly concatenated them into an `UPDATE` SQL string (`fields.push(key + ' = ?')`) without checking if the keys were actually valid columns. This allows attackers to craft payloads where keys are SQL snippets (e.g., `role_id = 1; --`), leading to SQL Injection and Mass Assignment.
+**Learning:** When building SQL queries dynamically based on an incoming JSON request body, standard parameterized query bindings only protect values, not the column names themselves. Unvalidated column names bypass prepared statements entirely.
+**Prevention:** Always validate object keys against an explicit allowlist (e.g. `const allowedFields = ['status', 'priority', ...]`) before using them to construct the column identifiers in `UPDATE` or `INSERT` clauses.
