@@ -1,0 +1,4 @@
+
+## 2025-02-23 - Accessibility Issues with Modal Close Buttons
+**Learning:** Found a recurring pattern in the app's components (`DemoModal.astro`, `ProductCard.astro`, `InteractiveModal.astro`, `ChatModal.astro`) where modal close buttons use the `&times;` HTML entity (or the `×` character) without any `aria-label` for screen readers, and lack visible keyboard focus styles. This creates a significant barrier for users navigating with assistive technologies or keyboards.
+**Action:** When implementing or reviewing modal dialogs, always ensure that icon-only or symbol-only close buttons include an explicit `aria-label` (e.g., `aria-label="Fechar"`), use the standard `✕` character (U+2715) for consistent visual representation, and provide clear `:focus-visible` styling (like `focus:outline-none focus-visible:ring-2`).
