@@ -23,3 +23,8 @@
 **Vulnerability:** The application was using an in-memory array for user authentication in `server.js` while the database had a `users` table. This led to state inconsistencies and potential security bypasses if the server restarted or if data wasn't persisted.
 **Learning:** Hardcoded user credentials in source code are a major security risk and technical debt.
 **Fix Detail:** Refactored `server.js` to query the SQLite database for user credentials using parameterized queries, merging the logic with the new database schema.
+
+## 2024-05-22 - Argument Injection in execFile
+**Vulnerability:** The `/api/docker/logs/:name` endpoint passed an unvalidated `tail` parameter directly to `execFile` as an argument (`['logs', '--tail', tail.toString(), name]`).
+**Learning:** Even when avoiding shell execution via `execFile`, passing user-controlled input as command arguments can lead to argument injection. In this case, passing `--help` or other flags could alter the command's behavior.
+**Prevention:** Always validate user input against a strict allowlist or expected format (e.g., verifying `tail` is numeric or the specific string `all`) before passing it as an argument to an external binary.
