@@ -279,7 +279,7 @@ const DockerManagement = ({ initialView }) => {
                     <div className="bg-gray-900 border border-gray-700 rounded-2xl p-6 w-[90%] max-w-4xl h-[80vh] flex flex-col">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-xl font-bold">Terminal: {selectedContainer.name}</h3>
-                            <button onClick={() => setSelectedContainer(null)} className="text-2xl hover:text-white text-gray-500">✕</button>
+                            <button aria-label="Fechar terminal" onClick={() => setSelectedContainer(null)} className="text-2xl hover:text-white text-gray-500 focus-visible:ring-2 focus-visible:outline-none rounded">✕</button>
                         </div>
                         <div className="flex-1 bg-black border border-gray-800 p-4 rounded-xl font-mono text-xs text-blue-400 overflow-y-auto">
                             {/* Fetch logs component or logic should go here. For now we use a small internal component/effect to fetch */}
