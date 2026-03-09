@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 
 const API_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
@@ -88,7 +88,14 @@ const BroadcastManager = () => {
         }
     };
 
-    const selectAll = () => setSelectedPhones(contacts.map(c => c.phone));
+    const filteredContacts = useMemo(() => {
+        return contacts.filter(c => {
+            if (filters.stage !== 'all' && c.stage !== filters.stage) return false;
+            return true;
+        });
+    }, [contacts, filters.stage]);
+
+    const selectAll = () => setSelectedPhones(filteredContacts.map(c => c.phone));
     const selectNone = () => setSelectedPhones([]);
 
     const handleSend = async () => {
@@ -118,11 +125,6 @@ const BroadcastManager = () => {
             alert('Erro de conexão');
         }
     };
-
-    const filteredContacts = contacts.filter(c => {
-        if (filters.stage !== 'all' && c.stage !== filters.stage) return false;
-        return true;
-    });
 
     return (
         <div className="h-full flex flex-col">
