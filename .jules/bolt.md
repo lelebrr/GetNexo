@@ -17,3 +17,7 @@
 ## 2025-02-27 - Optimizing Drag and Drop
 **Learning:** Monolithic components like `KanbanBoard` re-render entirely on drag events if not split. Extracting columns and cards into memoized components is essential for smooth dnd interactions in React.
 **Action:** Always memoize drag handlers (`onDragStart`, `onDrop`) and list item components when implementing drag-and-drop.
+
+## 2025-02-27 - Sequential Queries vs Conditional Aggregation
+**Learning:** Endpoints that execute multiple `SELECT COUNT(*)` queries sequentially on the same table (e.g., in `/analytics/dashboard` and `/admin/stats` in `chat-api/routes/support.js`) cause unnecessary overhead and full table scans.
+**Action:** Always combine such queries into a single query using conditional aggregation (`SUM(CASE WHEN condition THEN 1 ELSE 0 END)`). This evaluates all conditions in a single scan of the table.
