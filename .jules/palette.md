@@ -1,0 +1,3 @@
+## 2024-03-15 - Interactive Modal Button Accessibility
+**Learning:** In Astro applications with multiple interactive modal layers, "X" close buttons and action buttons often lack critical focus indicators and screen reader labels. Using simple text like `&times;` or `x` is insufficient and not announced correctly.
+**Action:** Always use the Unicode `✕` (U+2715) for close buttons. Ensure all interactive buttons within modals, including close, send, and voice actions, include explicit `aria-label` attributes (especially when containing emojis/icons) and clear `focus-visible:ring-2 focus-visible:outline-none` classes for keyboard navigation.

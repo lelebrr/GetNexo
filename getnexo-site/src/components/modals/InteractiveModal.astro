@@ -9,7 +9,7 @@
         <h3 class="text-2xl text-cyber-gold font-jetbrains">Demo IA Interativa GetNexo</h3>
         <p class="text-gray-300">Busca inteligente + multimídia</p>
       </div>
-      <button id="close-ia-modal-btn" class="text-neon-blue text-3xl hover:text-white">×</button>
+      <button id="close-ia-modal-btn" aria-label="Fechar modal de IA" class="text-neon-blue text-3xl hover:text-white focus-visible:ring-2 focus-visible:outline-none rounded">✕</button>
     </div>
 
     <div class="flex-1 overflow-hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -46,8 +46,8 @@
         <div class="border-t border-neon-blue/30 pt-4">
           <div class="flex space-x-2">
             <input id="ia-chat-input" type="text" placeholder="Digite sua pergunta sobre produtos..." class="flex-1 bg-matrix-black border border-neon-blue/50 rounded-xl px-4 py-3 text-white placeholder-gray-400" />
-            <button id="send-ia-msg-btn" class="bg-cyber-gold hover:bg-yellow-400 text-black px-6 py-3 rounded-xl font-medium">📤 Enviar</button>
-            <button id="start-ia-voice-btn" class="bg-green-600 hover:bg-green-500 text-white px-6 py-3 rounded-xl font-medium">🎤 Voz</button>
+            <button id="send-ia-msg-btn" class="bg-cyber-gold hover:bg-yellow-400 text-black px-6 py-3 rounded-xl font-medium focus-visible:ring-2 focus-visible:ring-cyber-gold focus-visible:outline-none">📤 Enviar</button>
+            <button id="start-ia-voice-btn" aria-label="Iniciar mensagem de voz na IA" class="bg-green-600 hover:bg-green-500 text-white px-6 py-3 rounded-xl font-medium focus-visible:ring-2 focus-visible:ring-green-400 focus-visible:outline-none">🎤 Voz</button>
           </div>
         </div>
       </div>
@@ -97,7 +97,7 @@
   <div class="bg-void-black border border-neon-blue rounded-2xl p-6 max-w-md w-full mx-4">
     <div class="flex justify-between items-center mb-4">
       <h4 class="text-xl text-cyber-gold font-jetbrains">Produto Encontrado</h4>
-      <button id="close-product-modal-ia-btn" class="text-neon-blue text-2xl hover:text-white">×</button>
+      <button id="close-product-modal-ia-btn" aria-label="Fechar modal de produto" class="text-neon-blue text-2xl hover:text-white focus-visible:ring-2 focus-visible:outline-none rounded">✕</button>
     </div>
     <div id="product-content-ia"></div>
   </div>

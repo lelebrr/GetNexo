@@ -9,7 +9,7 @@
         <h3 class="text-2xl text-cyber-gold font-jetbrains">Demo GetNexo – IA Multimídia</h3>
         <p class="text-gray-300">IA responde e fala sozinha</p>
       </div>
-      <button id="close-chat-modal-btn" class="text-neon-blue text-3xl hover:text-white">×</button>
+      <button id="close-chat-modal-btn" aria-label="Fechar modal de chat" class="text-neon-blue text-3xl hover:text-white focus-visible:ring-2 focus-visible:outline-none rounded">✕</button>
     </div>
 
     <div class="chat-container flex-1 overflow-hidden flex flex-col">
@@ -38,8 +38,8 @@
 
       <div class="input-bar flex gap-2">
         <input id="chat-input-modal" type="text" placeholder="Pergunte qualquer coisa..." class="flex-1 bg-void-black border border-neon-blue text-white rounded p-2" />
-        <button id="send-msg-modal-btn" class="bg-cyber-gold text-black px-4 py-2 rounded">Enviar</button>
-        <button id="start-voice-modal-btn" class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded">🎤 Voz</button>
+        <button id="send-msg-modal-btn" class="bg-cyber-gold text-black px-4 py-2 rounded focus-visible:ring-2 focus-visible:ring-cyber-gold focus-visible:outline-none">Enviar</button>
+        <button id="start-voice-modal-btn" aria-label="Iniciar mensagem de voz" class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded focus-visible:ring-2 focus-visible:ring-green-400 focus-visible:outline-none">🎤 Voz</button>
       </div>
     </div>
   </div>
