@@ -255,7 +255,8 @@ const ChatInterface = () => {
                                 {/* Back Button Mobile */}
                                 <button
                                     onClick={() => setActiveContact(null)}
-                                    className="lg:hidden text-gray-400 hover:text-white mr-2"
+                                    className="lg:hidden text-gray-400 hover:text-white mr-2 focus-visible:ring-2 focus-visible:outline-none rounded"
+                                    aria-label="Voltar para a lista de contatos"
                                 >
                                     ←
                                 </button>
@@ -295,7 +296,7 @@ const ChatInterface = () => {
                                             <p className="text-gray-300 mb-3 text-sm font-bold text-center">Nota de 1 a 5:</p>
                                             <div className="flex gap-2 justify-center">
                                                 {[1, 2, 3, 4, 5].map(n => (
-                                                    <button key={n} onClick={() => handleRate(n)} className="w-8 h-8 rounded-full bg-gray-800 hover:bg-neon-blue hover:text-black text-white font-bold transition-colors border border-gray-600 hover:border-neon-blue">{n}</button>
+                                                    <button key={n} onClick={() => handleRate(n)} aria-label={`Avaliar com nota ${n}`} className="w-8 h-8 rounded-full bg-gray-800 hover:bg-neon-blue hover:text-black text-white font-bold transition-colors border border-gray-600 hover:border-neon-blue focus-visible:ring-2 focus-visible:outline-none">{n}</button>
                                                 ))}
                                             </div>
                                         </div>
@@ -407,7 +408,7 @@ const ChatInterface = () => {
                             <div className="flex flex-wrap gap-2">
                                 <span className="bg-neon-blue/10 text-neon-blue text-[10px] px-2 py-1 rounded border border-neon-blue/20">🔥 Lead Quente</span>
                                 <span className="bg-purple-900/20 text-purple-400 text-[10px] px-2 py-1 rounded border border-purple-800">🤖 IA Ativa</span>
-                                <button className="text-[10px] text-gray-500 border border-dashed border-gray-700 px-2 py-1 rounded hover:border-gray-500">+ Add</button>
+                                <button aria-label="Adicionar nova tag" className="text-[10px] text-gray-500 border border-dashed border-gray-700 px-2 py-1 rounded hover:border-gray-500 focus-visible:ring-2 focus-visible:outline-none">+ Add</button>
                             </div>
                         </div>
                         <div>
