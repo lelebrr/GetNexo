@@ -120,15 +120,17 @@ const UserManagement = () => {
                                         <div className="flex justify-end gap-2">
                                             <button
                                                 onClick={() => handleAction('Edição', user.name)}
-                                                className="p-1 hover:text-[#00f7ff] transition-colors text-gray-600"
+                                                className="p-1 hover:text-[#00f7ff] transition-colors text-gray-600 focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-[#00f7ff] rounded"
                                                 title="Editar"
+                                                aria-label={`Editar usuário ${user.name}`}
                                             >
                                                 ✏️
                                             </button>
                                             <button
                                                 onClick={() => handleAction('Logs do Usuário', user.name)}
-                                                className="p-1 hover:text-[#ffc400] transition-colors text-gray-600"
+                                                className="p-1 hover:text-[#ffc400] transition-colors text-gray-600 focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-[#00f7ff] rounded"
                                                 title="Logs"
+                                                aria-label={`Ver logs de ${user.name}`}
                                             >
                                                 📜
                                             </button>
