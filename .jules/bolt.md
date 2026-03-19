@@ -17,3 +17,7 @@
 ## 2025-02-27 - Optimizing Drag and Drop
 **Learning:** Monolithic components like `KanbanBoard` re-render entirely on drag events if not split. Extracting columns and cards into memoized components is essential for smooth dnd interactions in React.
 **Action:** Always memoize drag handlers (`onDragStart`, `onDrop`) and list item components when implementing drag-and-drop.
+
+## 2025-02-28 - Missing Compound Indexes for Sorted Queries
+**Learning:** In SQLite, frequent complex `ORDER BY` clauses (like `ORDER BY last_message_at DESC, created_at DESC` on the `/tickets` endpoint) without a matching compound index lead to expensive full table scans and in-memory sorting.
+**Action:** When creating tables or API endpoints with sorting, always ensure the columns used in `ORDER BY` are covered by a specific index matching their sort order to drastically reduce query latency.

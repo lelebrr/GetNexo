@@ -543,6 +543,15 @@ const initSchema = () => {
       db.prepare("ALTER TABLE tickets ADD COLUMN assigned_agent_id INTEGER").run();
     }
 
+    // Ticket Sorting Optimization Index
+    try {
+      db.prepare('CREATE INDEX IF NOT EXISTS idx_tickets_last_message ON tickets(last_message_at DESC, created_at DESC)').run();
+      db.prepare('CREATE INDEX IF NOT EXISTS idx_tickets_contact ON tickets(contact_id)').run();
+      db.prepare('CREATE INDEX IF NOT EXISTS idx_support_tickets_client_created ON support_tickets(client_id, created_at DESC)').run();
+    } catch (e) {
+      console.log('Indexes for tickets might already exist or support_tickets might be missing', e.message);
+    }
+
     // Campaigns Migrations
     const campaignInfo = db.pragma('table_info(campaigns)');
     const hasTotalLeads = campaignInfo.some(col => col.name === 'total_leads');
