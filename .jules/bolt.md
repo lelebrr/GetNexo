@@ -17,3 +17,6 @@
 ## 2025-02-27 - Optimizing Drag and Drop
 **Learning:** Monolithic components like `KanbanBoard` re-render entirely on drag events if not split. Extracting columns and cards into memoized components is essential for smooth dnd interactions in React.
 **Action:** Always memoize drag handlers (`onDragStart`, `onDrop`) and list item components when implementing drag-and-drop.
+## 2025-02-27 - SQLite Better SQLite3 Conditional Aggregation
+**Learning:** In the `chat-api` backend, SQLite database operations via `better-sqlite3` are synchronous. Doing multiple `db.prepare(...).get()` requests sequentially in endpoints like stats/overview can be a bottleneck. Conditional aggregation (`SUM(CASE WHEN...)`) effectively resolves this by combining multiple queries into one. However, the result can be `null` if no rows match the criteria, requiring a fallback like `|| 0` in JavaScript mapping.
+**Action:** Always favor conditional aggregation over multiple query calls for statistical endpoints when using synchronous DB connectors.

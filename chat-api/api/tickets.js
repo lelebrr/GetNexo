@@ -483,15 +483,30 @@ router.get('/:id/export', (req, res) => {
 // GET /api/tickets/stats/overview - Estatísticas gerais
 router.get('/stats/overview', (req, res) => {
     try {
+        // ⚡ Bolt: Usando conditional aggregation para calcular todas as estatísticas em uma única query
+        // Impacto: Reduz o número de queries sequenciais de 8 para 1, evitando N+1 queries.
+        const row = db.prepare(`
+            SELECT
+                COUNT(*) as total,
+                SUM(CASE WHEN status = 'open' THEN 1 ELSE 0 END) as open,
+                SUM(CASE WHEN status = 'waiting' THEN 1 ELSE 0 END) as waiting,
+                SUM(CASE WHEN status = 'closed' THEN 1 ELSE 0 END) as closed,
+                SUM(CASE WHEN priority > 0 THEN 1 ELSE 0 END) as priority,
+                SUM(CASE WHEN human_agent = 1 THEN 1 ELSE 0 END) as human,
+                SUM(CASE WHEN DATE(created_at) = DATE('now') THEN 1 ELSE 0 END) as today,
+                SUM(CASE WHEN status = 'closed' AND DATE(closed_at) = DATE('now') THEN 1 ELSE 0 END) as closed_today
+            FROM tickets
+        `).get();
+
         const stats = {
-            total: db.prepare('SELECT COUNT(*) as count FROM tickets').get().count,
-            open: db.prepare('SELECT COUNT(*) as count FROM tickets WHERE status = "open"').get().count,
-            waiting: db.prepare('SELECT COUNT(*) as count FROM tickets WHERE status = "waiting"').get().count,
-            closed: db.prepare('SELECT COUNT(*) as count FROM tickets WHERE status = "closed"').get().count,
-            priority: db.prepare('SELECT COUNT(*) as count FROM tickets WHERE priority > 0').get().count,
-            human: db.prepare('SELECT COUNT(*) as count FROM tickets WHERE human_agent = 1').get().count,
-            today: db.prepare('SELECT COUNT(*) as count FROM tickets WHERE DATE(created_at) = DATE("now")').get().count,
-            closed_today: db.prepare('SELECT COUNT(*) as count FROM tickets WHERE status = "closed" AND DATE(closed_at) = DATE("now")').get().count
+            total: row.total || 0,
+            open: row.open || 0,
+            waiting: row.waiting || 0,
+            closed: row.closed || 0,
+            priority: row.priority || 0,
+            human: row.human || 0,
+            today: row.today || 0,
+            closed_today: row.closed_today || 0
         };
 
         res.json(stats);
@@ -507,14 +522,29 @@ router.get('/stats/agent/:agent_id', (req, res) => {
     try {
         const { agent_id } = req.params;
 
+        // ⚡ Bolt: Usando conditional aggregation para calcular todas as estatísticas em uma única query
+        // Impacto: Reduz o número de queries sequenciais de 7 para 1, evitando N+1 queries.
+        const row = db.prepare(`
+            SELECT
+                COUNT(*) as total,
+                SUM(CASE WHEN status = 'open' THEN 1 ELSE 0 END) as open,
+                SUM(CASE WHEN status = 'waiting' THEN 1 ELSE 0 END) as waiting,
+                SUM(CASE WHEN status = 'closed' THEN 1 ELSE 0 END) as closed,
+                SUM(CASE WHEN priority > 0 THEN 1 ELSE 0 END) as priority,
+                SUM(CASE WHEN human_agent = 1 THEN 1 ELSE 0 END) as human,
+                SUM(CASE WHEN DATE(created_at) = DATE('now') THEN 1 ELSE 0 END) as today
+            FROM tickets
+            WHERE assigned_agent_id = ?
+        `).get(agent_id);
+
         const stats = {
-            total: db.prepare('SELECT COUNT(*) as count FROM tickets WHERE assigned_agent_id = ?').get(agent_id).count,
-            open: db.prepare('SELECT COUNT(*) as count FROM tickets WHERE assigned_agent_id = ? AND status = "open"').get(agent_id).count,
-            waiting: db.prepare('SELECT COUNT(*) as count FROM tickets WHERE assigned_agent_id = ? AND status = "waiting"').get(agent_id).count,
-            closed: db.prepare('SELECT COUNT(*) as count FROM tickets WHERE assigned_agent_id = ? AND status = "closed"').get(agent_id).count,
-            priority: db.prepare('SELECT COUNT(*) as count FROM tickets WHERE assigned_agent_id = ? AND priority > 0').get(agent_id).count,
-            human: db.prepare('SELECT COUNT(*) as count FROM tickets WHERE assigned_agent_id = ? AND human_agent = 1').get(agent_id).count,
-            today: db.prepare('SELECT COUNT(*) as count FROM tickets WHERE assigned_agent_id = ? AND DATE(created_at) = DATE("now")').get(agent_id).count
+            total: row.total || 0,
+            open: row.open || 0,
+            waiting: row.waiting || 0,
+            closed: row.closed || 0,
+            priority: row.priority || 0,
+            human: row.human || 0,
+            today: row.today || 0
         };
 
         res.json(stats);
