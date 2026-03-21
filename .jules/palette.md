@@ -1,0 +1,3 @@
+## 2024-05-20 - Accessible Close Buttons Pattern
+**Learning:** Found a recurring pattern in floating UI panels and modals where icon-only close buttons lacked ARIA labels for screen readers and visible focus indicators for keyboard navigation. Additionally, inconsistent characters (e.g., '×' or 'x') were used instead of the standard '✕'.
+**Action:** Always ensure icon-only close buttons use the '✕' (U+2715) character, include an \`aria-label="Fechar"\`, and apply \`focus-visible:ring-2 focus-visible:outline-none rounded\` CSS classes to guarantee both screen reader and keyboard accessibility without affecting the default visual design.
