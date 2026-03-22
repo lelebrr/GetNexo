@@ -243,9 +243,6 @@
         const styleSheet = document.createElement("style");
         styleSheet.innerText = dynamicStyles;
         document.head.appendChild(styleSheet);
-        const styleSheet = document.createElement("style");
-        styleSheet.innerText = styles;
-        document.head.appendChild(styleSheet);
 
         const root = document.createElement('div');
         root.id = 'getnexo-root';
@@ -253,6 +250,7 @@
 
         const btn = document.createElement('button');
         btn.id = 'getnexo-btn';
+        btn.setAttribute('aria-label', 'Abrir chat');
         btn.innerHTML = `
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:#0f172a"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
             <div id="getnexo-notification">1</div>
@@ -277,7 +275,7 @@
                         <div id="getnexo-status">Online</div>
                     </div>
                 </div>
-                <button id="getnexo-close">&times;</button>
+                <button id="getnexo-close" aria-label="Fechar chat">&times;</button>
             </div>
             <div id="getnexo-body">
                 <div class="gn-msg bot">
@@ -308,13 +306,13 @@
             </div>
             <div id="getnexo-footer">
                 <input id="getnexo-input" type="text" placeholder="${whiteLabelConfig.behavior.terminology.inputPlaceholder || 'Digite sua dúvida...'}" />
-                <button id="getnexo-games-toggle" class="gn-icon-btn" title="Jogos">
+                <button id="getnexo-games-toggle" class="gn-icon-btn" title="Jogos" aria-label="Abrir jogos">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path></svg>
                 </button>
-                <button id="getnexo-mic" class="gn-icon-btn">
+                <button id="getnexo-mic" class="gn-icon-btn" aria-label="Gravar áudio">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
                 </button>
-                <button id="getnexo-send" class="gn-icon-btn">
+                <button id="getnexo-send" class="gn-icon-btn" aria-label="Enviar mensagem">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                 </button>
             </div>
