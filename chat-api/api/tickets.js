@@ -202,19 +202,28 @@ router.put('/:id', (req, res) => {
             return res.status(404).json({ error: 'Ticket não encontrado' });
         }
 
+        // 🛡️ Sentinel: Prevent SQL Injection by using an explicit allowlist
+        // Only allow specific fields to be updated dynamically to prevent malicious payload keys
+        const allowedFields = [
+            'customer_phone', 'customer_name', 'customer_email', 'channel',
+            'status', 'priority', 'assigned_agent_id', 'assigned_agent_name',
+            'human_agent', 'tags', 'metadata', 'sentiment', 'sentiment_score',
+            'last_message', 'last_message_at', 'closed_at'
+        ];
+
         // Construir query dinâmica
         const fields = [];
         const values = [];
 
         Object.keys(updates).forEach(key => {
-            if (key !== 'id' && key !== 'created_at') {
+            if (allowedFields.includes(key)) {
                 fields.push(`${key} = ?`);
                 values.push(updates[key]);
             }
         });
 
         if (fields.length === 0) {
-            return res.status(400).json({ error: 'Nenhum campo para atualizar' });
+            return res.status(400).json({ error: 'Nenhum campo válido para atualizar' });
         }
 
         values.push(id);
