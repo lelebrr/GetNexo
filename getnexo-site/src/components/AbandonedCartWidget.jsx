@@ -41,7 +41,13 @@ const AbandonedCartWidget = () => {
                     🛒 Carrinhos Abandonados
                     <span className="bg-red-500 text-white text-xs px-2 rounded-full">{carts.length}</span>
                 </h4>
-                <button onClick={() => setCarts([])} className="text-gray-500 hover:text-white">x</button>
+                <button
+                    onClick={() => setCarts([])}
+                    aria-label="Fechar"
+                    className="text-gray-500 hover:text-white focus-visible:ring-2 focus-visible:outline-none rounded transition-colors"
+                >
+                    ✕
+                </button>
             </div>
 
             <div className="max-h-40 overflow-y-auto space-y-2">
