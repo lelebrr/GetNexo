@@ -370,7 +370,11 @@ const initSchema = () => {
     insertUser.run(3, 'cliente@getnexo.com', bcrypt.hashSync(clientPass, 10), 'Cliente', 'client', 3, 2);
 
     // Extra Admin (teu login)
-    insertUser.run(4, 'lelebrr@gmail.com', bcrypt.hashSync('master2026', 10), 'Lele', 'superadmin', 1, null);
+    const lelePass = process.env.ADMIN_DEFAULT_PASSWORD || require('crypto').randomBytes(16).toString('hex');
+    if (!process.env.ADMIN_DEFAULT_PASSWORD) {
+        console.log(`[SECURITY] Gerada senha padrão para o admin lelebrr@gmail.com: ${lelePass}`);
+    }
+    insertUser.run(4, 'lelebrr@gmail.com', bcrypt.hashSync(lelePass, 10), 'Lele', 'superadmin', 1, null);
 
     // Seed Reseller Profile
     const insertProfile = db.prepare('INSERT OR IGNORE INTO reseller_profiles (user_id, balance, commission_rate, referral_code) VALUES (?, ?, ?, ?)');
