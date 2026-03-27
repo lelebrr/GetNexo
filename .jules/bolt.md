@@ -17,3 +17,7 @@
 ## 2025-02-27 - Optimizing Drag and Drop
 **Learning:** Monolithic components like `KanbanBoard` re-render entirely on drag events if not split. Extracting columns and cards into memoized components is essential for smooth dnd interactions in React.
 **Action:** Always memoize drag handlers (`onDragStart`, `onDrop`) and list item components when implementing drag-and-drop.
+
+## $(date +%Y-%m-%d) - Optimize SQLite Stats Endpoints
+**Learning:** In the `chat-api` backend, which uses `better-sqlite3`, all database operations are synchronous. This means that executing multiple sequential `SELECT COUNT(*)` queries (e.g., in statistics or dashboard endpoints) causes blocking and high overhead, as each query executes sequentially in the main thread without the possibility of `Promise.all` parallelization.
+**Action:** Always replace multiple sequential `COUNT(*)` queries against the same table with a single query utilizing conditional aggregation (`SUM(CASE WHEN...)`). This significantly reduces database roundtrips and execution time. When mapping the result to JSON, ensure a fallback `|| 0` is provided because `SUM(...)` over empty subsets in SQLite can return `null`.
