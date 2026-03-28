@@ -51,7 +51,7 @@ const MeetingScheduler = ({ contact, onClose, onScheduled }) => {
                     <h3 className="text-xl font-bold text-white flex items-center gap-2">
                         <span>📅</span> Agendar Reunião
                     </h3>
-                    <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors text-2xl">✕</button>
+                    <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors text-2xl focus-visible:ring-2 focus-visible:outline-none rounded" aria-label="Fechar">✕</button>
                 </div>
 
                 <form onSubmit={handleSchedule} className="p-6 space-y-4">
