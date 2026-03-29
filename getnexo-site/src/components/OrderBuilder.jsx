@@ -34,7 +34,7 @@ const OrderBuilder = ({ onSendOrder, onClose }) => {
                     <h3 className="text-xl font-bold text-white flex items-center gap-2">
                         🛍️ Venda Assistida <span className="text-xs bg-neon-blue text-black px-2 rounded">Beta</span>
                     </h3>
-                    <button onClick={onClose} className="text-gray-500 hover:text-white">✕</button>
+                    <button aria-label="Fechar modal de venda assistida" onClick={onClose} className="text-gray-500 hover:text-white focus-visible:ring-2 focus-visible:outline-none rounded">✕</button>
                 </div>
 
                 <div className="flex-1 flex overflow-hidden">
