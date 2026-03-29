@@ -39,8 +39,8 @@ const {
 
     <!-- Custom Play Button Overlay -->
     <div class="video-overlay" id="video-overlay">
-      <div class="play-button" id="play-button-overlay">
-        <div class="play-icon">▶</div>
+      <div class="play-button" id="play-button-overlay" role="button" tabindex="0" aria-label="Reproduzir vídeo de demonstração">
+        <div class="play-icon" aria-hidden="true">▶</div>
         <div class="play-text">Ver Demo IA</div>
       </div>
       <div class="video-info">
@@ -58,19 +58,19 @@ const {
     <!-- Video Controls (if custom controls enabled) -->
     {!controls && (
       <div class="custom-controls" id="custom-controls">
-        <button class="control-btn play-pause" id="play-pause-btn">
-          <span class="play-icon">▶</span>
-          <span class="pause-icon" style="display: none;">⏸</span>
+        <button class="control-btn play-pause" id="play-pause-btn" aria-label="Reproduzir ou pausar vídeo">
+          <span class="play-icon" aria-hidden="true">▶</span>
+          <span class="pause-icon" style="display: none;" aria-hidden="true">⏸</span>
         </button>
         <div class="progress-bar">
           <div class="progress-fill" id="progress-fill"></div>
         </div>
-        <button class="control-btn volume" id="volume-btn">
-          <span class="volume-on">🔊</span>
-          <span class="volume-off" style="display: none;">🔇</span>
+        <button class="control-btn volume" id="volume-btn" aria-label="Ativar ou desativar som">
+          <span class="volume-on" aria-hidden="true">🔊</span>
+          <span class="volume-off" style="display: none;" aria-hidden="true">🔇</span>
         </button>
-        <button class="control-btn fullscreen" id="fullscreen-btn">
-          <span>⛶</span>
+        <button class="control-btn fullscreen" id="fullscreen-btn" aria-label="Alternar tela cheia">
+          <span aria-hidden="true">⛶</span>
         </button>
       </div>
     )}
@@ -146,6 +146,12 @@ const {
 
   .play-button:hover {
     transform: scale(1.1);
+  }
+
+  .play-button:focus-visible {
+    outline: 2px solid #00d4ff;
+    outline-offset: 4px;
+    border-radius: 8px;
   }
 
   .play-icon {
@@ -252,6 +258,11 @@ const {
     background: rgba(0, 212, 255, 0.2);
     border-color: #00d4ff;
     transform: scale(1.1);
+  }
+
+  .control-btn:focus-visible {
+    outline: 2px solid #00d4ff;
+    outline-offset: 2px;
   }
 
   .progress-bar {
@@ -418,7 +429,15 @@ const {
 
     // Event Listeners for buttons (replacing inline onclick)
     const playOverlay = document.getElementById('play-button-overlay');
-    if (playOverlay) playOverlay.addEventListener('click', playVideo);
+    if (playOverlay) {
+      playOverlay.addEventListener('click', playVideo);
+      playOverlay.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          playVideo();
+        }
+      });
+    }
 
     if (playPauseBtn) playPauseBtn.addEventListener('click', togglePlayPause);
     if (volumeBtn) volumeBtn.addEventListener('click', toggleMute);
