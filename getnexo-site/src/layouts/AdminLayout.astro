@@ -306,6 +306,62 @@ const submenus = {
       })();
     </script>
 
+    <script nonce={nonce}>
+      (function() {
+        const originalFetch = window.fetch;
+        window.fetch = function(input, init) {
+          let urlStr;
+          if (typeof input === 'string') {
+            urlStr = input;
+          } else if (input instanceof URL) {
+            urlStr = input.toString();
+          } else if (input instanceof Request) {
+            urlStr = input.url;
+          }
+
+          // Sentinel: Strictly validate URL to prevent token leakage to external domains
+          let shouldInject = false;
+          if (urlStr) {
+             if (urlStr.startsWith('/api/')) {
+                // Relative internal API
+                shouldInject = true;
+             } else if (urlStr.startsWith(window.location.origin + '/api/')) {
+                // Absolute internal API
+                shouldInject = true;
+             }
+          }
+
+          if (shouldInject) {
+             const token = localStorage.getItem('token');
+             if (token) {
+                if (input instanceof Request) {
+                   if (!input.headers.has('Authorization')) {
+                      try {
+                        const newHeaders = new Headers(input.headers);
+                        newHeaders.set('Authorization', `Bearer ${token}`);
+                        const newRequest = new Request(input, {
+                          headers: newHeaders
+                        });
+                        return originalFetch(newRequest, init);
+                      } catch (e) {
+                        console.warn('Sentinel: Failed to inject token into Request object', e);
+                      }
+                   }
+                } else {
+                   const newInit = { ...init } || {};
+                   newInit.headers = new Headers(newInit.headers || {});
+                   if (!newInit.headers.has('Authorization')) {
+                      newInit.headers.set('Authorization', `Bearer ${token}`);
+                   }
+                   return originalFetch(input, newInit);
+                }
+             }
+          }
+          return originalFetch(input, init);
+        };
+      })();
+    </script>
+
     <script nonce={nonce} define:vars={{ submenus, activeCategory }}>
       document.addEventListener("alpine:init", () => {
         Alpine.data("sidebar", () => ({

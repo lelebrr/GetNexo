@@ -23,3 +23,13 @@
 **Vulnerability:** The application was using an in-memory array for user authentication in `server.js` while the database had a `users` table. This led to state inconsistencies and potential security bypasses if the server restarted or if data wasn't persisted.
 **Learning:** Hardcoded user credentials in source code are a major security risk and technical debt.
 **Fix Detail:** Refactored `server.js` to query the SQLite database for user credentials using parameterized queries, merging the logic with the new database schema.
+
+## 2025-02-20 - Unauthenticated Sensitive Admin Routes
+**Vulnerability:** Critical admin endpoints (CRM, Tickets, Products, Settings) were explicitly whitelisted in `publicRoutes`, allowing unauthenticated access to PII and business data.
+**Learning:** Whitelisting routes for "demo" or "initial setup" purposes without strict environmental checks creates permanent backdoors in production.
+**Prevention:** Default to "secure by default". Never whitelist entire feature sets (like CRM or Analytics) for convenience. If a demo mode is needed, implement it as a separate mock service or strict feature flag, not by bypassing auth.
+
+## 2025-02-20 - Global Fetch Interceptors & Token Leakage
+**Vulnerability:** A proposed fix for unauthenticated API calls involved a global fetch interceptor that checked `url.includes('/api/')`. This was rejected because it would leak tokens to any external URL containing "/api/" (e.g. `google.com/api/`).
+**Learning:** Global interceptors are powerful but dangerous. When injecting credentials, always validate the **Origin** strictly. Never use loose substring matches for security decisions.
+**Prevention:** Use `startsWith('/')` for relative URLs or strict `origin` checks for absolute URLs.
