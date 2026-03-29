@@ -25,11 +25,13 @@ const MessageItem = React.memo(({ message: m }) => (
 ));
 
 const ContactItem = React.memo(({ contact: c, isActive, onClick, onDragStart }) => (
-    <div
+    <button
+        type="button"
         onClick={() => onClick(c)}
         draggable
         onDragStart={(e) => onDragStart(e, c)}
-        className={`p-3 rounded-xl cursor-pointer transition-all border ${isActive ? 'bg-neon-blue/10 border-neon-blue' : 'bg-transparent border-transparent hover:bg-gray-800'} flex items-center gap-3 group`}
+        aria-selected={isActive}
+        className={`w-full text-left p-3 rounded-xl cursor-pointer transition-all border ${isActive ? 'bg-neon-blue/10 border-neon-blue' : 'bg-transparent border-transparent hover:bg-gray-800'} flex items-center gap-3 group focus-visible:ring-2 focus-visible:ring-neon-blue focus:outline-none`}
     >
         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center text-white font-bold border border-gray-600">
             {c.name ? c.name[0].toUpperCase() : '#'}
@@ -41,7 +43,7 @@ const ContactItem = React.memo(({ contact: c, isActive, onClick, onDragStart }) 
             </div>
             <p className="text-xs text-gray-500 truncate">{c.last_message?.body || 'Inicie a conversa...'}</p>
         </div>
-    </div>
+    </button>
 ));
 
 const ChatInterface = () => {

@@ -1,0 +1,3 @@
+## 2025-05-18 - Semantic Buttons for Interactive Lists
+**Learning:** Interactive list items (like contacts) must be semantic `<button>` elements, not `<div>`s. Using `w-full text-left` utility classes allows buttons to visually mimic block-level divs while gaining native keyboard accessibility (Tab, Enter/Space) and screen reader support. Adding `focus-visible` styles ensures keyboard users see where they are without cluttering the UI for mouse users.
+**Action:** When auditing lists of clickable items, check for `role="button"` or `<button>` tag. Refactor `div`s to `<button>` with layout utilities.
