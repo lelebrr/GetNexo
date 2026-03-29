@@ -22,6 +22,7 @@ const isValidName = (name) => /^[a-zA-Z0-9][a-zA-Z0-9_.-]*$/.test(name);
 const isValidImage = (image) => /^[a-zA-Z0-9][a-zA-Z0-9_.-/:]*$/.test(image);
 const isValidPort = (port) => /^\d+(:\d+)?$/.test(port);
 const isValidEnv = (env) => /^[a-zA-Z_][a-zA-Z0-9_]*=.*$/.test(env);
+const isValidTail = (tail) => tail === 'all' || /^\d+$/.test(String(tail));
 
 // Função para executar comandos Docker de forma segura
 function executeDockerCommand(args, callback) {
@@ -291,6 +292,10 @@ router.get('/logs/:name', (req, res) => {
 
     if (!isValidName(name)) {
         return res.status(400).json({ error: 'Nome do container inválido' });
+    }
+
+    if (!isValidTail(tail)) {
+        return res.status(400).json({ error: 'Parâmetro tail inválido' });
     }
 
     const args = ['logs', '--tail', tail.toString(), name];
