@@ -422,12 +422,22 @@ router.get('/tickets/:id/export', (req, res) => {
 // Analytics do suporte
 router.get('/analytics/dashboard', (req, res) => {
     try {
+        const row = db.prepare(`
+            SELECT
+                COUNT(*) as total,
+                SUM(CASE WHEN status = 'open' THEN 1 ELSE 0 END) as open,
+                SUM(CASE WHEN status = 'in-progress' THEN 1 ELSE 0 END) as inProgress,
+                SUM(CASE WHEN status = 'closed' THEN 1 ELSE 0 END) as closed,
+                SUM(CASE WHEN priority = 2 THEN 1 ELSE 0 END) as highPriority
+            FROM support_tickets
+        `).get() || {};
+
         const stats = {
-            total: db.prepare('SELECT COUNT(*) as count FROM support_tickets').get().count,
-            open: db.prepare("SELECT COUNT(*) as count FROM support_tickets WHERE status = 'open'").get().count,
-            inProgress: db.prepare("SELECT COUNT(*) as count FROM support_tickets WHERE status = 'in-progress'").get().count,
-            closed: db.prepare("SELECT COUNT(*) as count FROM support_tickets WHERE status = 'closed'").get().count,
-            highPriority: db.prepare('SELECT COUNT(*) as count FROM support_tickets WHERE priority = 2').get().count
+            total: row.total || 0,
+            open: row.open || 0,
+            inProgress: row.inProgress || 0,
+            closed: row.closed || 0,
+            highPriority: row.highPriority || 0
         };
 
         res.json(stats);
@@ -478,13 +488,24 @@ router.get('/admin/stats', (req, res) => {
             return res.status(403).json({ error: 'Acesso negado' });
         }
 
+        const row = db.prepare(`
+            SELECT
+                COUNT(*) as total,
+                SUM(CASE WHEN status = 'open' THEN 1 ELSE 0 END) as open,
+                SUM(CASE WHEN status = 'in-progress' THEN 1 ELSE 0 END) as inProgress,
+                SUM(CASE WHEN status = 'closed' THEN 1 ELSE 0 END) as closed,
+                SUM(CASE WHEN priority = 2 THEN 1 ELSE 0 END) as highPriority,
+                SUM(CASE WHEN date(created_at) = date('now') THEN 1 ELSE 0 END) as todayNew
+            FROM support_tickets
+        `).get() || {};
+
         const stats = {
-            total: db.prepare('SELECT COUNT(*) as c FROM support_tickets').get().c,
-            open: db.prepare("SELECT COUNT(*) as c FROM support_tickets WHERE status = 'open'").get().c,
-            inProgress: db.prepare("SELECT COUNT(*) as c FROM support_tickets WHERE status = 'in-progress'").get().c,
-            closed: db.prepare("SELECT COUNT(*) as c FROM support_tickets WHERE status = 'closed'").get().c,
-            highPriority: db.prepare('SELECT COUNT(*) as c FROM support_tickets WHERE priority = 2').get().c,
-            todayNew: db.prepare("SELECT COUNT(*) as c FROM support_tickets WHERE date(created_at) = date('now')").get().c,
+            total: row.total || 0,
+            open: row.open || 0,
+            inProgress: row.inProgress || 0,
+            closed: row.closed || 0,
+            highPriority: row.highPriority || 0,
+            todayNew: row.todayNew || 0,
             avgResponseTime: '< 2h' // Placeholder - calcular real se quiser
         };
 
