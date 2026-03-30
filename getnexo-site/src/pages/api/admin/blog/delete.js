@@ -13,6 +13,22 @@ export async function POST({ request }) {
             );
         }
 
+        const validSlugPattern = /^[a-zA-Z0-9_-]+$/;
+        if (!validSlugPattern.test(slug)) {
+            return new Response(
+                JSON.stringify({ error: 'Slug inválido' }),
+                { status: 400, headers: { 'Content-Type': 'application/json' } }
+            );
+        }
+
+        const validLangPattern = /^[a-zA-Z0-9_-]+$/;
+        if (!validLangPattern.test(lang)) {
+            return new Response(
+                JSON.stringify({ error: 'Idioma inválido' }),
+                { status: 400, headers: { 'Content-Type': 'application/json' } }
+            );
+        }
+
         // Determinar o caminho do arquivo baseado no idioma
         let filePath;
         if (lang === 'pt') {
