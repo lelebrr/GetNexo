@@ -5,6 +5,16 @@ const path = require('path');
 const fs = require('fs');
 const db = require('../db');
 
+function escapeHtml(unsafe) {
+    if (!unsafe) return '';
+    return String(unsafe)
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+}
+
 // Configuração de email (Nodemailer)
 let transporter = null;
 try {
@@ -342,7 +352,7 @@ router.get('/tickets/:id/export', (req, res) => {
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Ticket #${ticket_id} - ${ticket.title}</title>
+  <title>Ticket #${escapeHtml(ticket_id)} - ${escapeHtml(ticket.title)}</title>
   <style>
     body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; }
     h1 { color: #0891b2; border-bottom: 2px solid #0891b2; padding-bottom: 10px; }
@@ -358,18 +368,18 @@ router.get('/tickets/:id/export', (req, res) => {
   </style>
 </head>
 <body>
-  <h1>🎫 Ticket #${ticket_id}</h1>
-  <h2>${ticket.title}</h2>
+  <h1>🎫 Ticket #${escapeHtml(ticket_id)}</h1>
+  <h2>${escapeHtml(ticket.title)}</h2>
   
   <div class="meta">
-    <span><strong>Status:</strong> ${statusLabels[ticket.status] || ticket.status}</span>
-    <span><strong>Prioridade:</strong> ${priorityLabels[ticket.priority] || 'Normal'}</span>
-    <span><strong>Criado:</strong> ${ticket.created_at}</span>
-    <span><strong>Cliente:</strong> ${ticket.client_id}</span>
+    <span><strong>Status:</strong> ${escapeHtml(statusLabels[ticket.status] || ticket.status)}</span>
+    <span><strong>Prioridade:</strong> ${escapeHtml(priorityLabels[ticket.priority] || 'Normal')}</span>
+    <span><strong>Criado:</strong> ${escapeHtml(ticket.created_at)}</span>
+    <span><strong>Cliente:</strong> ${escapeHtml(ticket.client_id)}</span>
   </div>
 
   <h3>Descrição</h3>
-  <p>${ticket.description}</p>
+  <p>${escapeHtml(ticket.description).replace(/\n/g, '<br>')}</p>
 `;
 
         // Anexos iniciais
@@ -388,9 +398,9 @@ router.get('/tickets/:id/export', (req, res) => {
             const msgAttachments = m.attachment ? JSON.parse(m.attachment) : [];
             html += `
   <div class="message ${isAdminMsg ? 'admin' : ''}">
-    <div class="message-header">${isAdminMsg ? '👤 Suporte' : '👤 Cliente'}</div>
-    <div class="message-time">${m.created_at}</div>
-    <p>${m.message || ''}</p>`;
+    <div class="message-header">${isAdminMsg ? '👤 Suporte' : '👤 Cliente'} (${escapeHtml(m.sender)})</div>
+    <div class="message-time">${escapeHtml(m.created_at)}</div>
+    <p>${escapeHtml(m.message || '').replace(/\n/g, '<br>')}</p>`;
 
             msgAttachments.forEach(att => {
                 if (att.match(/\.(mp3|wav|ogg|webm)$/i)) {
