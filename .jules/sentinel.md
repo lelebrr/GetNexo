@@ -23,3 +23,7 @@
 **Vulnerability:** The application was using an in-memory array for user authentication in `server.js` while the database had a `users` table. This led to state inconsistencies and potential security bypasses if the server restarted or if data wasn't persisted.
 **Learning:** Hardcoded user credentials in source code are a major security risk and technical debt.
 **Fix Detail:** Refactored `server.js` to query the SQLite database for user credentials using parameterized queries, merging the logic with the new database schema.
+## 2024-05-24 - Path Traversal Vulnerability in Blog Save API
+**Vulnerability:** In `getnexo-site/src/pages/api/admin/blog/save.js`, user-controlled inputs (`lang` and `slug`) were used in file system operations (`fs.writeFileSync`, `path.join()`) without sanitization, allowing path traversal.
+**Learning:** An attacker could potentially pass `../` sequences in `lang` or `slug` to write files outside of the intended directory, potentially overwriting critical system files.
+**Prevention:** Strictly sanitize user inputs passed to file system operations using an allowlist regex (e.g., `/^[a-zA-Z0-9_-]+$/`).
