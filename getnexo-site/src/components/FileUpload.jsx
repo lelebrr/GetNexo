@@ -291,9 +291,22 @@ const FileUpload = () => {
                                             </div>
                                         )}
                                         {/* Overlay Actions */}
-                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                                            <a href={file.url} target="_blank" className="p-2 bg-neon-blue text-black rounded-full hover:scale-110 transition-transform">👁️</a>
-                                            <button onClick={() => handleDelete(file.name)} className="p-2 bg-red-500 text-white rounded-full hover:scale-110 transition-transform">🗑️</button>
+                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                            <a
+                                                href={file.url}
+                                                target="_blank"
+                                                aria-label={`Ver ${file.name}`}
+                                                className="p-2 bg-neon-blue text-black rounded-full hover:scale-110 transition-transform"
+                                            >
+                                                👁️
+                                            </a>
+                                            <button
+                                                onClick={() => handleDelete(file.name)}
+                                                aria-label={`Deletar ${file.name}`}
+                                                className="p-2 bg-red-500 text-white rounded-full hover:scale-110 transition-transform"
+                                            >
+                                                🗑️
+                                            </button>
                                         </div>
                                     </div>
                                     <div className="p-3">
@@ -319,12 +332,14 @@ const FileUpload = () => {
                                             href={file.url}
                                             target="_blank"
                                             rel="noopener noreferrer"
+                                            aria-label={`Ver ${file.name}`}
                                             className="text-xs text-neon-blue hover:underline px-2 py-1"
                                         >
                                             Ver
                                         </a>
                                         <button
                                             onClick={() => handleDelete(file.name)}
+                                            aria-label={`Deletar ${file.name}`}
                                             className="text-xs text-red-500 hover:text-red-400 px-2 py-1"
                                         >
                                             Deletar

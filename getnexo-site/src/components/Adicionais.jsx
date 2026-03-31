@@ -32,10 +32,6 @@ export default function Adicionais() {
             console.error('Erro ao carregar adicionais:', error);
             setItens([]);
         }
-    }
-} catch (error) {
-    console.error('Erro ao carregar adicionais:', error);
-}
     };
 
 const carregarHistorico = async () => {
