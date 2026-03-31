@@ -28,7 +28,12 @@ const leads = [
              if (this.search) url.searchParams.append('search', this.search);
              if (this.statusFilter !== 'all') url.searchParams.append('status', this.statusFilter);
              
-             const data = await fetch(url).then(res => res.json());
+             const token = localStorage.getItem('token');
+             const data = await fetch(url, {
+               headers: {
+                 'Authorization': token ? `Bearer ${token}` : ''
+               }
+             }).then(res => res.json());
              this.leads = data.customers;
            } catch (e) {
              console.error('Erro ao carregar leads:', e);
@@ -44,9 +49,13 @@ const leads = [
          
          async saveLead() {
            try {
+             const token = localStorage.getItem('token');
              const res = await fetch(`/api/crm/customers/${this.editingLead.id}`, {
                method: 'PATCH',
-               headers: { 'Content-Type': 'application/json' },
+               headers: {
+                 'Content-Type': 'application/json',
+                 'Authorization': token ? `Bearer ${token}` : ''
+               },
                body: JSON.stringify({ name: this.editingLead.name, status: this.editingLead.status })
              });
              if (res.ok) {
@@ -61,7 +70,13 @@ const leads = [
          async deleteLead(id) {
            if (!confirm('Tem certeza que deseja remover este lead?')) return;
            try {
-             await fetch(`/api/crm/customers/${id}`, { method: 'DELETE' });
+             const token = localStorage.getItem('token');
+             await fetch(`/api/crm/customers/${id}`, {
+               method: 'DELETE',
+               headers: {
+                 'Authorization': token ? `Bearer ${token}` : ''
+               }
+             });
              await this.fetchLeads();
            } catch (e) {
              alert('Erro ao remover lead');

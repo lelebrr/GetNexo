@@ -20,7 +20,22 @@ import { Download, FileSpreadsheet, RefreshCw, CheckCircle } from 'lucide-react'
            async downloadCSV() {
              this.exporting = true;
              try {
-               window.location.href = '/api/crm/export';
+               const token = localStorage.getItem('token');
+               const response = await fetch('/api/crm/export', {
+                   headers: { 'Authorization': token ? `Bearer ${token}` : '' }
+               });
+               if (!response.ok) throw new Error('Falha no download');
+
+               const blob = await response.blob();
+               const url = window.URL.createObjectURL(blob);
+               const a = document.createElement('a');
+               a.href = url;
+               a.download = 'crm_export.csv';
+               document.body.appendChild(a);
+               a.click();
+               a.remove();
+               window.URL.revokeObjectURL(url);
+
                this.done = true;
                setTimeout(() => { this.done = false }, 5000);
              } catch (e) {
