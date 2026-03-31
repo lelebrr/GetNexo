@@ -272,6 +272,42 @@ const submenus = {
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="stylesheet" href="/fonts/fonts.css" />
+    <script nonce={nonce} is:inline>
+      // Global Fetch Interceptor for Authentication
+      const originalFetch = window.fetch;
+      window.fetch = async function(url, options = {}) {
+        const token = localStorage.getItem('token');
+        // Only attach token if the request is to our own origin (relative or absolute same-origin)
+        const isRelative = typeof url === 'string' && url.startsWith('/');
+        const isSameOrigin = typeof url === 'string' && url.startsWith(window.location.origin);
+
+        if (token && (isRelative || isSameOrigin)) {
+          // Ensure options.headers is initialized
+          if (!options.headers) {
+            options.headers = {};
+          }
+
+          // Handle both Headers object and plain object
+          if (options.headers instanceof Headers) {
+             if (!options.headers.has('Authorization')) {
+               options.headers.append('Authorization', `Bearer ${token}`);
+             }
+          } else if (Array.isArray(options.headers)) {
+             // Array of arrays format
+             const hasAuth = options.headers.some(h => h[0] === 'Authorization');
+             if (!hasAuth) {
+               options.headers.push(['Authorization', `Bearer ${token}`]);
+             }
+          } else {
+             // Plain object
+             if (!options.headers['Authorization']) {
+               options.headers['Authorization'] = `Bearer ${token}`;
+             }
+          }
+        }
+        return originalFetch(url, options);
+      };
+    </script>
     <script nonce={nonce} defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.csp.min.js"></script>
     <meta name="generator" content={Astro.generator} />
     <title>{title} | Admin GetNexo</title>
