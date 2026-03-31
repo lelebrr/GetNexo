@@ -14,6 +14,15 @@ export async function POST({ request }) {
       );
     }
 
+    // Prevenir Path Traversal sanitizando os inputs usados no path
+    const safeInputRegex = /^[a-zA-Z0-9_-]+$/;
+    if (!safeInputRegex.test(lang) || !safeInputRegex.test(slug)) {
+      return new Response(
+        JSON.stringify({ error: 'Idioma ou slug contém caracteres inválidos' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Determinar o diretório baseado no idioma
     let dirPath;
     if (lang === 'pt') {
