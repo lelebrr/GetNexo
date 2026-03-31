@@ -1,17 +1,24 @@
 // Setup file for Jest tests
-const Database = require('better-sqlite3');
 const fs = require('fs');
 const path = require('path');
 
 // Set NODE_ENV to test
 process.env.NODE_ENV = 'test';
+process.env.JWT_SECRET = 'test-secret-key';
+process.env.RESELLER_DEFAULT_PASSWORD = 'demo123';
+process.env.CLIENT_DEFAULT_PASSWORD = 'demo123';
 // Use in-memory DB for tests to avoid I/O conflicts and ensure isolation
 process.env.DB_PATH = ':memory:';
 
-const db = new Database(':memory:');
+// Require the real DB module (which runs migrations/schema init)
+const db = require('../db');
+
+// Make db available globally for tests
+global.db = db;
 global.testDb = db;
 
-// Initialize schema with basic tables
+// Initialize schema with extra tables needed for tests that might be missing in db.js
+// We use IF NOT EXISTS so we don't error on tables that db.js already created.
 const tables = [
     `CREATE TABLE IF NOT EXISTS roles (id INTEGER PRIMARY KEY, name TEXT UNIQUE, permissions TEXT)`,
     `CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, email TEXT UNIQUE, password TEXT, role_id INTEGER, two_fa_secret TEXT, two_fa_enabled BOOLEAN DEFAULT 0, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (role_id) REFERENCES roles (id))`,
@@ -50,8 +57,6 @@ const adminPass = bcrypt.hashSync('test123', 10);
 db.prepare('DELETE FROM users WHERE email = ?').run('admin@test.com');
 db.prepare('INSERT INTO users (email, password, role_id) VALUES (?, ?, ?)').run('admin@test.com', adminPass, 1);
 
-// Make db available globally for tests
-global.db = db;
 
 // Cleanup after each test
 afterEach(() => {
