@@ -127,22 +127,6 @@ const authMiddleware = (req, res, next) => {
     '/api/a2a/stats',
     '/api/ap2/stats',
     '/api/whatsapp/webhook', // WhatsApp webhook (Meta precisa acessar sem auth)
-    // Dashboard data endpoints - allow without strict auth for demo/initial setup
-    '/api/analytics/dashboard-stats',
-    '/api/analytics/recent-sales',
-    '/api/analytics/active-chats',
-    '/api/analytics/top-products',
-    '/api/analytics/clustering',
-    '/api/analytics/trends',
-    '/api/crm/customers',
-    '/api/crm/stats',
-    '/api/products',
-    '/api/loyalty/points',
-    '/api/loyalty/rewards',
-    '/api/settings',
-    '/api/ai/config',
-    '/api/tickets',
-    '/api/alert'
   ];
 
   // Check exact match or prefix match for nested routes

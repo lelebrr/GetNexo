@@ -18,6 +18,8 @@ module.exports = {
     ],
     moduleNameMapper: {
         '^google-spreadsheet$': '<rootDir>/tests/mocks/google-spreadsheet.js',
-        '^googleapis$': '<rootDir>/tests/mocks/googleapis.js'
+        '^googleapis$': '<rootDir>/tests/mocks/googleapis.js',
+        '^better-sqlite3$': '<rootDir>/tests/mocks/better-sqlite3.js',
+        '^bcryptjs$': '<rootDir>/tests/mocks/bcryptjs.js'
     }
 };
