@@ -23,3 +23,7 @@
 **Vulnerability:** The application was using an in-memory array for user authentication in `server.js` while the database had a `users` table. This led to state inconsistencies and potential security bypasses if the server restarted or if data wasn't persisted.
 **Learning:** Hardcoded user credentials in source code are a major security risk and technical debt.
 **Fix Detail:** Refactored `server.js` to query the SQLite database for user credentials using parameterized queries, merging the logic with the new database schema.
+## 2024-05-22 - Stored XSS in HTML Exports & Email Templates
+**Vulnerability:** User-controlled input in `chat-api/routes/support.js` (e.g., ticket title, description, client ID, and messages) was dynamically interpolated into HTML strings without sanitization. This allowed for Stored Cross-Site Scripting (XSS) when an admin or user exports a ticket as HTML or views the auto-generated HTML emails.
+**Learning:** Using ES6 template literals to manually construct HTML representations of user input is a dangerous anti-pattern that easily results in XSS vulnerabilities. Even when input seems safe or comes from a "trusted" client, it should never be directly evaluated as HTML.
+**Prevention:** Always use dedicated templating engines (like Pug, EJS) that auto-escape input by default, or implement strict and comprehensive sanitization utilities (like `escapeHtml`) specifically designed for HTML contexts when string interpolation is unavoidable. Ensure all paths reflecting input back to browsers or email clients are protected.

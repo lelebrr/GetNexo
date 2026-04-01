@@ -5,6 +5,18 @@ const path = require('path');
 const fs = require('fs');
 const db = require('../db');
 
+// Função utilitária para prevenir XSS
+function escapeHtml(unsafe) {
+    if (!unsafe) return '';
+    return unsafe
+         .toString()
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+}
+
 // Configuração de email (Nodemailer)
 let transporter = null;
 try {
@@ -100,11 +112,11 @@ router.post('/tickets', upload.array('attachments', 5), (req, res) => {
             `Novo ticket aberto por ${client_id}\n\nTítulo: ${title}\nPrioridade: ${priorityLabels[priority] || 'Normal'}\n\nDescrição:\n${description}\n\nAnexos: ${attachments.length} arquivo(s)`,
             `
         <h2>🎫 Novo Ticket #${ticketId}</h2>
-        <p><strong>De:</strong> ${client_id}</p>
-        <p><strong>Título:</strong> ${title}</p>
+        <p><strong>De:</strong> ${escapeHtml(client_id)}</p>
+        <p><strong>Título:</strong> ${escapeHtml(title)}</p>
         <p><strong>Prioridade:</strong> ${priorityLabels[priority] || 'Normal'}</p>
         <h3>Descrição:</h3>
-        <p>${description}</p>
+        <p>${escapeHtml(description)}</p>
         <p><strong>Anexos:</strong> ${attachments.length} arquivo(s)</p>
         <hr>
         <p><a href="https://getnexo.com.br/admin/tickets">Ver no painel</a></p>
@@ -265,8 +277,8 @@ router.post('/tickets/:id/reply', upload.array('attachments', 5), (req, res) => 
                 `${client_id} respondeu:\n\n${message || '(anexo)'}\n\nAnexos: ${attachments.length} arquivo(s)`,
                 `
           <h2>💬 Nova resposta no Ticket #${ticket_id}</h2>
-          <p><strong>De:</strong> ${client_id}</p>
-          <p>${message || '<em>(apenas anexo)</em>'}</p>
+          <p><strong>De:</strong> ${escapeHtml(client_id)}</p>
+          <p>${message ? escapeHtml(message) : '<em>(apenas anexo)</em>'}</p>
           <p><strong>Anexos:</strong> ${attachments.length} arquivo(s)</p>
           <hr>
           <p><a href="https://getnexo.com.br/admin/tickets">Ver no painel</a></p>
@@ -342,7 +354,7 @@ router.get('/tickets/:id/export', (req, res) => {
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Ticket #${ticket_id} - ${ticket.title}</title>
+  <title>Ticket #${ticket_id} - ${escapeHtml(ticket.title)}</title>
   <style>
     body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; }
     h1 { color: #0891b2; border-bottom: 2px solid #0891b2; padding-bottom: 10px; }
@@ -359,17 +371,17 @@ router.get('/tickets/:id/export', (req, res) => {
 </head>
 <body>
   <h1>🎫 Ticket #${ticket_id}</h1>
-  <h2>${ticket.title}</h2>
+  <h2>${escapeHtml(ticket.title)}</h2>
   
   <div class="meta">
     <span><strong>Status:</strong> ${statusLabels[ticket.status] || ticket.status}</span>
     <span><strong>Prioridade:</strong> ${priorityLabels[ticket.priority] || 'Normal'}</span>
     <span><strong>Criado:</strong> ${ticket.created_at}</span>
-    <span><strong>Cliente:</strong> ${ticket.client_id}</span>
+    <span><strong>Cliente:</strong> ${escapeHtml(ticket.client_id)}</span>
   </div>
 
   <h3>Descrição</h3>
-  <p>${ticket.description}</p>
+  <p>${escapeHtml(ticket.description)}</p>
 `;
 
         // Anexos iniciais
@@ -390,7 +402,7 @@ router.get('/tickets/:id/export', (req, res) => {
   <div class="message ${isAdminMsg ? 'admin' : ''}">
     <div class="message-header">${isAdminMsg ? '👤 Suporte' : '👤 Cliente'}</div>
     <div class="message-time">${m.created_at}</div>
-    <p>${m.message || ''}</p>`;
+    <p>${escapeHtml(m.message || '')}</p>`;
 
             msgAttachments.forEach(att => {
                 if (att.match(/\.(mp3|wav|ogg|webm)$/i)) {
