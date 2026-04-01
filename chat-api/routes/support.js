@@ -422,12 +422,24 @@ router.get('/tickets/:id/export', (req, res) => {
 // Analytics do suporte
 router.get('/analytics/dashboard', (req, res) => {
     try {
+        // Bolt: Optimized 5 separate COUNT queries into a single query using conditional aggregation
+        // This avoids multiple table scans and significantly reduces latency for analytics data
+        const rawStats = db.prepare(`
+            SELECT
+                COUNT(*) as total,
+                SUM(CASE WHEN status = 'open' THEN 1 ELSE 0 END) as open_count,
+                SUM(CASE WHEN status = 'in-progress' THEN 1 ELSE 0 END) as in_progress_count,
+                SUM(CASE WHEN status = 'closed' THEN 1 ELSE 0 END) as closed_count,
+                SUM(CASE WHEN priority = 2 THEN 1 ELSE 0 END) as high_priority_count
+            FROM support_tickets
+        `).get();
+
         const stats = {
-            total: db.prepare('SELECT COUNT(*) as count FROM support_tickets').get().count,
-            open: db.prepare("SELECT COUNT(*) as count FROM support_tickets WHERE status = 'open'").get().count,
-            inProgress: db.prepare("SELECT COUNT(*) as count FROM support_tickets WHERE status = 'in-progress'").get().count,
-            closed: db.prepare("SELECT COUNT(*) as count FROM support_tickets WHERE status = 'closed'").get().count,
-            highPriority: db.prepare('SELECT COUNT(*) as count FROM support_tickets WHERE priority = 2').get().count
+            total: rawStats?.total || 0,
+            open: rawStats?.open_count || 0,
+            inProgress: rawStats?.in_progress_count || 0,
+            closed: rawStats?.closed_count || 0,
+            highPriority: rawStats?.high_priority_count || 0
         };
 
         res.json(stats);
@@ -478,13 +490,26 @@ router.get('/admin/stats', (req, res) => {
             return res.status(403).json({ error: 'Acesso negado' });
         }
 
+        // Bolt: Optimized 6 separate COUNT queries into a single query using conditional aggregation
+        // This avoids multiple table scans and significantly reduces latency for analytics data
+        const rawStats = db.prepare(`
+            SELECT
+                COUNT(*) as total,
+                SUM(CASE WHEN status = 'open' THEN 1 ELSE 0 END) as open_count,
+                SUM(CASE WHEN status = 'in-progress' THEN 1 ELSE 0 END) as in_progress_count,
+                SUM(CASE WHEN status = 'closed' THEN 1 ELSE 0 END) as closed_count,
+                SUM(CASE WHEN priority = 2 THEN 1 ELSE 0 END) as high_priority_count,
+                SUM(CASE WHEN date(created_at) = date('now') THEN 1 ELSE 0 END) as today_new_count
+            FROM support_tickets
+        `).get();
+
         const stats = {
-            total: db.prepare('SELECT COUNT(*) as c FROM support_tickets').get().c,
-            open: db.prepare("SELECT COUNT(*) as c FROM support_tickets WHERE status = 'open'").get().c,
-            inProgress: db.prepare("SELECT COUNT(*) as c FROM support_tickets WHERE status = 'in-progress'").get().c,
-            closed: db.prepare("SELECT COUNT(*) as c FROM support_tickets WHERE status = 'closed'").get().c,
-            highPriority: db.prepare('SELECT COUNT(*) as c FROM support_tickets WHERE priority = 2').get().c,
-            todayNew: db.prepare("SELECT COUNT(*) as c FROM support_tickets WHERE date(created_at) = date('now')").get().c,
+            total: rawStats?.total || 0,
+            open: rawStats?.open_count || 0,
+            inProgress: rawStats?.in_progress_count || 0,
+            closed: rawStats?.closed_count || 0,
+            highPriority: rawStats?.high_priority_count || 0,
+            todayNew: rawStats?.today_new_count || 0,
             avgResponseTime: '< 2h' // Placeholder - calcular real se quiser
         };
 
