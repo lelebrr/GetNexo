@@ -93,7 +93,7 @@ function abrirVideo(url) {
   modal.className = 'fixed inset-0 bg-black/80 flex items-center justify-center z-50';
   
   const modalHtml = `
-    <button class="modal-close absolute top-4 right-4 text-4xl text-white">&times;</button>
+    <button class="modal-close absolute top-4 right-4 text-4xl text-white" aria-label="Fechar">✕</button>
     <div class="relative">${iframe.outerHTML}</div>
   `;
   modal.innerHTML = createTrustedHTML(modalHtml);
@@ -114,7 +114,7 @@ function abrir360(path) {
   modal.className = 'fixed inset-0 bg-black/90 flex items-center justify-center z-50';
   
   const modalHtml = `
-    <button class="modal-close absolute top-4 right-4 text-white text-4xl">&times;</button>
+    <button class="modal-close absolute top-4 right-4 text-white text-4xl" aria-label="Fechar">✕</button>
     <div id="viewer-360" class="w-11/12 h-80vh bg-gray-900"></div>
   `;
   modal.innerHTML = createTrustedHTML(modalHtml);
