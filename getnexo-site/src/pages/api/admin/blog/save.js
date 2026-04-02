@@ -14,6 +14,15 @@ export async function POST({ request }) {
       );
     }
 
+    // Prevenir Path Traversal
+    const safeInputRegex = /^[a-zA-Z0-9_-]+$/;
+    if (!safeInputRegex.test(slug) || !safeInputRegex.test(lang)) {
+      return new Response(
+        JSON.stringify({ error: 'Slug ou idioma inválidos. Apenas caracteres alfanuméricos, hífens e sublinhados são permitidos.' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Determinar o diretório baseado no idioma
     let dirPath;
     if (lang === 'pt') {

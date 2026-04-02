@@ -23,3 +23,8 @@
 **Vulnerability:** The application was using an in-memory array for user authentication in `server.js` while the database had a `users` table. This led to state inconsistencies and potential security bypasses if the server restarted or if data wasn't persisted.
 **Learning:** Hardcoded user credentials in source code are a major security risk and technical debt.
 **Fix Detail:** Refactored `server.js` to query the SQLite database for user credentials using parameterized queries, merging the logic with the new database schema.
+
+## 2024-05-22 - Path Traversal in File Operations
+**Vulnerability:** User-controlled inputs (`slug` and `lang`) were passed directly to `path.join()` and used in `fs.unlinkSync()` and `fs.writeFileSync()` in the blog API endpoints (`save.js` and `delete.js`), enabling Path Traversal attacks.
+**Learning:** Never trust user input when constructing file paths on the server. Without sanitization, attackers can use directory traversal sequences (like `../`) to access or modify files outside the intended scope.
+**Prevention:** Always validate and sanitize user input used in file system operations. Using a strict allowlist regex (e.g., `/^[a-zA-Z0-9_-]+$/`) ensures that only expected, safe characters are processed.
