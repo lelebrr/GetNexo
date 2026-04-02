@@ -224,24 +224,33 @@ const ChatInterface = () => {
                         <button className="flex-1 text-gray-500 hover:text-white text-xs py-1 text-center">Messenger</button>
                     </div>
                     {/* Inbox Filters */}
-                    <div className="flex justify-between text-xs text-gray-400 border-b border-gray-800 pb-2">
-                        <button onClick={() => setInboxTab('mine')} className={`${inboxTab === 'mine' ? 'text-neon-blue font-bold border-b-2 border-neon-blue' : 'hover:text-white'}`}>Meus</button>
-                        <button onClick={() => setInboxTab('all')} className={`${inboxTab === 'all' ? 'text-white font-bold border-b-2 border-white' : 'hover:text-white'}`}>Todos</button>
-                        <button onClick={() => setInboxTab('resolved')} className={`${inboxTab === 'resolved' ? 'text-green-500 font-bold border-b-2 border-green-500' : 'hover:text-white'}`}>Resolvidos</button>
+                    <div role="tablist" aria-label="Filtros da caixa de entrada" className="flex justify-between text-xs text-gray-400 border-b border-gray-800 pb-2">
+                        <button role="tab" aria-selected={inboxTab === 'mine'} aria-controls="contact-list" onClick={() => setInboxTab('mine')} className={`${inboxTab === 'mine' ? 'text-neon-blue font-bold border-b-2 border-neon-blue' : 'hover:text-white'}`}>Meus</button>
+                        <button role="tab" aria-selected={inboxTab === 'all'} aria-controls="contact-list" onClick={() => setInboxTab('all')} className={`${inboxTab === 'all' ? 'text-white font-bold border-b-2 border-white' : 'hover:text-white'}`}>Todos</button>
+                        <button role="tab" aria-selected={inboxTab === 'resolved'} aria-controls="contact-list" onClick={() => setInboxTab('resolved')} className={`${inboxTab === 'resolved' ? 'text-green-500 font-bold border-b-2 border-green-500' : 'hover:text-white'}`}>Resolvidos</button>
                     </div>
 
                     <input placeholder="Buscar..." aria-label="Buscar contatos" className="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-white outline-none focus:border-neon-blue" />
                 </div>
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2">
-                    {loading ? <div className="text-center text-gray-500 mt-10">Carregando...</div> : contacts.map(c => (
-                        <ContactItem
-                            key={c.id}
-                            contact={c}
-                            isActive={activeContact?.id === c.id}
-                            onClick={selectContact}
-                            onDragStart={handleDragStart}
-                        />
-                    ))}
+                <div id="contact-list" role="tabpanel" className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2">
+                    {loading ? (
+                        <div aria-live="polite" className="text-center text-gray-500 mt-10">Carregando...</div>
+                    ) : contacts.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center text-gray-500 mt-10 p-4 text-center">
+                            <span className="text-2xl mb-2">📭</span>
+                            <p className="text-sm">Nenhum contato encontrado.</p>
+                        </div>
+                    ) : (
+                        contacts.map(c => (
+                            <ContactItem
+                                key={c.id}
+                                contact={c}
+                                isActive={activeContact?.id === c.id}
+                                onClick={selectContact}
+                                onDragStart={handleDragStart}
+                            />
+                        ))
+                    )}
                 </div>
             </div>
 
