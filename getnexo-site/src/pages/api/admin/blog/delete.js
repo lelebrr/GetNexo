@@ -13,6 +13,15 @@ export async function POST({ request }) {
             );
         }
 
+        // Validate slug and lang to prevent Path Traversal
+        const safeInputRegex = /^[a-zA-Z0-9_-]+$/;
+        if (!safeInputRegex.test(slug) || !safeInputRegex.test(lang)) {
+            return new Response(
+                JSON.stringify({ error: 'Slug ou idioma inválido' }),
+                { status: 400, headers: { 'Content-Type': 'application/json' } }
+            );
+        }
+
         // Determinar o caminho do arquivo baseado no idioma
         let filePath;
         if (lang === 'pt') {
