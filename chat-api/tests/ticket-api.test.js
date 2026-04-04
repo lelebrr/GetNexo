@@ -1,5 +1,6 @@
 const request = require('supertest');
-const { app, server } = require('../server'); // We'll need to export app from server.js
+const app = require('../server');
+const server = null;
 
 describe('Ticket API Tests', () => {
     let authToken;
