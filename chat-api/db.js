@@ -559,6 +559,20 @@ const initSchema = () => {
       } catch (e) { console.log('Columns likely exist'); }
     }
 
+    // ⚡ Bolt: Add performance indexes for created_at
+    // Many endpoints (like /api/tickets, /api/client, /api/support) query by created_at.
+    // Adding indexes on this field significantly improves analytical query performance and avoids full table scans.
+    console.log('Migrating: Adding performance indexes for created_at...');
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_users_created_at ON users(created_at)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_commissions_created_at ON commissions(created_at)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_campaigns_created_at ON campaigns(created_at)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_tickets_created_at ON tickets(created_at)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_transactions_created_at ON transactions(created_at)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_automations_created_at ON automations(created_at)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_support_tickets_created_at ON support_tickets(created_at)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_ticket_messages_created_at ON ticket_messages(created_at)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_a2a_messages_created_at ON a2a_messages(created_at)').run();
+
   } catch (err) {
     console.error('Migration error:', err);
   }
