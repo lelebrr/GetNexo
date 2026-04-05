@@ -23,3 +23,8 @@
 **Vulnerability:** The application was using an in-memory array for user authentication in `server.js` while the database had a `users` table. This led to state inconsistencies and potential security bypasses if the server restarted or if data wasn't persisted.
 **Learning:** Hardcoded user credentials in source code are a major security risk and technical debt.
 **Fix Detail:** Refactored `server.js` to query the SQLite database for user credentials using parameterized queries, merging the logic with the new database schema.
+
+## 2024-06-25 - Command Injection via `child_process.exec` and `npx`
+**Vulnerability:** A Command Injection vulnerability was present in `chat-api/scripts/model-converter.js` where user-controlled arguments (`glbPath` and `usdzPath`) were unsafely interpolated into a shell string executed by `child_process.exec`.
+**Learning:** `child_process.exec` executes commands in a shell environment, which interprets special characters like semicolons (`;`) or pipes (`|`). This makes string interpolation of arbitrary inputs a classic entry point for command injection. Executing package binaries via `npx` should also be handled using an argument array rather than a single string.
+**Prevention:** Always use `child_process.execFile` (or `spawn`) with an array of arguments, which avoids executing through a shell. For cross-platform support with Node.js binaries like `npx`, correctly resolve the executable (e.g., `npx.cmd` on Windows vs `npx` on Unix).
