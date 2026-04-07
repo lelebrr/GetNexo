@@ -21,3 +21,6 @@
 ## 2025-02-28 - Optimizing Multiple COUNT(*) Queries
 **Learning:** In analytical endpoints (like `/stats/overview`), executing sequential `COUNT(*)` database queries causes unnecessary latency through multiple table scans and context switching.
 **Action:** Always combine them into a single query using conditional aggregation `SUM(CASE WHEN [condition] THEN 1 ELSE 0 END)`. Use fallback logic `|| 0` in JavaScript because `SUM()` returns `NULL` (unlike `COUNT()` returning `0`) on empty tables.
+## 2025-02-23 - Handle SQLite SUM() null values
+**Learning:** In SQLite via `better-sqlite3`, utilizing `SUM(CASE WHEN...)` for conditional aggregation correctly optimizes sequential `COUNT(*)` queries but can return `null` instead of `0` if the result set is completely empty (no rows in the table at all). This behavior differs from `COUNT(*)`, which predictably returns `0`.
+**Action:** When swapping `COUNT(*)` for conditional `SUM()` aggregations in analytical endpoints, always append a JavaScript OR fallback (`row.column || 0`) when mapping the database row result to the final JSON response to prevent exposing `null` values to the client API and breaking expected contracts.
