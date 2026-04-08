@@ -222,7 +222,14 @@ class BehaviorRule {
     // Buscar regras com filtros
     static findWithFilters(filters = {}, options = {}) {
         try {
-            const { limit = 50, offset = 0, orderBy = 'priority', orderDir = 'DESC' } = options;
+            let { limit = 50, offset = 0, orderBy = 'priority', orderDir = 'DESC' } = options;
+
+            // Prevenção de SQL Injection (Allowlist)
+            const allowedOrderCols = ['priority', 'created_at', 'applications_count', 'name', 'tag_category'];
+            const allowedOrderDirs = ['ASC', 'DESC'];
+
+            orderBy = allowedOrderCols.includes(orderBy) ? orderBy : 'priority';
+            orderDir = allowedOrderDirs.includes(orderDir?.toUpperCase()) ? orderDir.toUpperCase() : 'DESC';
 
             let query = 'SELECT * FROM behavior_rules WHERE 1=1';
             const params = [];

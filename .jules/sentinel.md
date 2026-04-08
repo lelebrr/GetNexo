@@ -23,3 +23,7 @@
 **Vulnerability:** The application was using an in-memory array for user authentication in `server.js` while the database had a `users` table. This led to state inconsistencies and potential security bypasses if the server restarted or if data wasn't persisted.
 **Learning:** Hardcoded user credentials in source code are a major security risk and technical debt.
 **Fix Detail:** Refactored `server.js` to query the SQLite database for user credentials using parameterized queries, merging the logic with the new database schema.
+## 2025-02-18 - Prevent SQL Injection in Dynamic ORDER BY Clauses
+**Vulnerability:** SQL Injection via untrusted user input directly interpolated into `ORDER BY` and `orderDir` clauses in database query construction (e.g., in `chat-api/models`).
+**Learning:** SQLite drivers like `better-sqlite3` cannot parameterize column names or `ASC`/`DESC` directions in `ORDER BY` clauses. Direct string interpolation without validation allows attackers to inject arbitrary SQL statements, potentially exposing sensitive data.
+**Prevention:** Always validate user-provided sort columns and directions against a strict, hardcoded allowlist before constructing dynamic SQL queries.

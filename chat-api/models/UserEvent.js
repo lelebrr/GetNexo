@@ -142,7 +142,14 @@ class UserEvent {
         try {
             let query = 'SELECT * FROM user_events WHERE 1=1';
             const params = [];
-            const { limit = 1000, offset = 0, orderBy = 'timestamp', orderDir = 'DESC' } = options;
+            let { limit = 1000, offset = 0, orderBy = 'timestamp', orderDir = 'DESC' } = options;
+
+            // Prevenção de SQL Injection (Allowlist)
+            const allowedOrderCols = ['timestamp', 'created_at', 'duration', 'event_type', 'page_url'];
+            const allowedOrderDirs = ['ASC', 'DESC'];
+
+            orderBy = allowedOrderCols.includes(orderBy) ? orderBy : 'timestamp';
+            orderDir = allowedOrderDirs.includes(orderDir?.toUpperCase()) ? orderDir.toUpperCase() : 'DESC';
 
             // Filtros
             if (filters.session_id) {

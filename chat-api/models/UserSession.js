@@ -202,7 +202,14 @@ class UserSession {
         try {
             let query = 'SELECT * FROM user_sessions WHERE 1=1';
             const params = [];
-            const { limit = 100, offset = 0, orderBy = 'start_time', orderDir = 'DESC' } = options;
+            let { limit = 100, offset = 0, orderBy = 'start_time', orderDir = 'DESC' } = options;
+
+            // Prevenção de SQL Injection (Allowlist)
+            const allowedOrderCols = ['start_time', 'end_time', 'duration', 'page_views', 'events_count', 'created_at', 'updated_at'];
+            const allowedOrderDirs = ['ASC', 'DESC'];
+
+            orderBy = allowedOrderCols.includes(orderBy) ? orderBy : 'start_time';
+            orderDir = allowedOrderDirs.includes(orderDir?.toUpperCase()) ? orderDir.toUpperCase() : 'DESC';
 
             // Filtros
             if (filters.user_id) {
