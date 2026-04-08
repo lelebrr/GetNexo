@@ -170,7 +170,14 @@ class BehavioralTag {
     // Buscar tags com filtros avançados
     static findWithFilters(filters = {}, options = {}) {
         try {
-            const { limit = 100, offset = 0, orderBy = 'created_at', orderDir = 'DESC' } = options;
+            let { limit = 100, offset = 0, orderBy = 'created_at', orderDir = 'DESC' } = options;
+
+            // Prevenção de SQL Injection (Allowlist)
+            const allowedOrderCols = ['created_at', 'confidence_score', 'tag_name', 'tag_category', 'expires_at'];
+            const allowedOrderDirs = ['ASC', 'DESC'];
+
+            orderBy = allowedOrderCols.includes(orderBy) ? orderBy : 'created_at';
+            orderDir = allowedOrderDirs.includes(orderDir?.toUpperCase()) ? orderDir.toUpperCase() : 'DESC';
 
             let query = 'SELECT * FROM behavioral_tags WHERE 1=1';
             const params = [];
