@@ -23,3 +23,8 @@
 **Vulnerability:** The application was using an in-memory array for user authentication in `server.js` while the database had a `users` table. This led to state inconsistencies and potential security bypasses if the server restarted or if data wasn't persisted.
 **Learning:** Hardcoded user credentials in source code are a major security risk and technical debt.
 **Fix Detail:** Refactored `server.js` to query the SQLite database for user credentials using parameterized queries, merging the logic with the new database schema.
+
+## 2024-05-22 - Stored XSS in HTML Exports
+**Vulnerability:** The `/tickets/:id/export` route manually generated an HTML file from ticket data. User-controlled inputs (title, description, client_id, and messages) were directly interpolated into the HTML string without any sanitization or escaping, leading to a Stored XSS vulnerability.
+**Learning:** Manually constructing HTML strings using template literals is highly error-prone and dangerous. Even in "export" or "download" features, the resulting file is rendered by the browser and will execute embedded scripts.
+**Prevention:** Always use proper output encoding (HTML entity encoding) for any user-controlled data interpolated into an HTML context. A simple `escapeHtml` helper should be standard practice when raw HTML string construction is unavoidable.
