@@ -1,0 +1,3 @@
+## 2024-03-28 - Missing Accessibility on Icon-Only Close Buttons
+**Learning:** This application has a widespread pattern of using icon-only close buttons ("✕") in custom modals and sidebar components (like MeetingScheduler, KanbanBoard, TeamManager) without `aria-label` attributes or visible keyboard focus states, making them inaccessible to screen reader users and difficult for keyboard navigators.
+**Action:** When implementing new UI components, always ensure icon-only buttons have an explicit `aria-label` (e.g., `aria-label="Fechar"`) and use Tailwind classes like `focus-visible:ring-2 focus-visible:outline-none rounded` for clear keyboard focus indicators.
