@@ -1,0 +1,3 @@
+## 2024-05-20 - Missing Accessible Close Buttons in Overlays
+**Learning:** Many overlay/modal components (e.g., `MeetingScheduler`, `OrderBuilder`, `TeamManager`) use raw text symbols like "✕" for close buttons but lack `aria-label` attributes for screen readers and `focus-visible` styles for keyboard navigation. This is a common pattern across the app's older components.
+**Action:** When creating or modifying modals and overlays, always ensure icon-only close buttons include `aria-label="Fechar"` (matching the app's Portuguese localization) and visible focus states (e.g., `focus-visible:ring-2 focus-visible:outline-none rounded`).
