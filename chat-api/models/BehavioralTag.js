@@ -215,7 +215,12 @@ class BehavioralTag {
                 params.push(filters.created_before);
             }
 
-            query += ` ORDER BY ${orderBy} ${orderDir} LIMIT ? OFFSET ?`;
+            // Validate orderBy and orderDir to prevent SQL injection
+            const safeOrderDir = ['ASC', 'DESC'].includes(String(orderDir).toUpperCase()) ? String(orderDir).toUpperCase() : 'DESC';
+            const safeOrderBy = /^[a-zA-Z0-9_]+$/.test(orderBy) ? orderBy : 'created_at';
+
+
+            query += ` ORDER BY ${safeOrderBy} ${safeOrderDir} LIMIT ? OFFSET ?`;
             params.push(limit, offset);
 
             const stmt = db.prepare(query);
