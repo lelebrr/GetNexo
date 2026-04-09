@@ -202,20 +202,24 @@ router.put('/:id', (req, res) => {
             return res.status(404).json({ error: 'Ticket não encontrado' });
         }
 
-        // Construir query dinâmica
+        // Construir query dinâmica de forma segura (explicit allowlist)
         const fields = [];
         const values = [];
+        const allowedFields = ['contact_id', 'subject', 'status', 'priority'];
 
         Object.keys(updates).forEach(key => {
-            if (key !== 'id' && key !== 'created_at') {
+            if (allowedFields.includes(key)) {
                 fields.push(`${key} = ?`);
                 values.push(updates[key]);
             }
         });
 
         if (fields.length === 0) {
-            return res.status(400).json({ error: 'Nenhum campo para atualizar' });
+            return res.status(400).json({ error: 'Nenhum campo válido para atualizar' });
         }
+
+        // Adiciona atualizado em
+        fields.push('updated_at = CURRENT_TIMESTAMP');
 
         values.push(id);
 
