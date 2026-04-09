@@ -1,0 +1,3 @@
+## 2024-05-28 - Mobile Back Button Accessibility
+**Learning:** Mobile-only navigation elements (like the 'Back' arrow in responsive chat interfaces) are often completely overlooked for accessibility because they use simple characters (like `←`) without an `aria-label`, and lack focus indicators since they are "hidden" on desktop views.
+**Action:** Always verify that elements rendered conditionally on smaller screens (e.g. using `lg:hidden`) have explicitly defined accessible names and visible keyboard focus states (`focus-visible:ring-2` etc.) for assistive technologies and keyboard navigation.
