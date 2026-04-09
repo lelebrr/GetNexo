@@ -3,7 +3,7 @@ import crypto from 'node:crypto';
 import bcrypt from 'bcryptjs';
 import CryptoJS from 'crypto-js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
+const JWT_SECRET = process.env.JWT_SECRET;
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || 'encryption-key-123';
 
 // Mock user database (replace with real DB later)
@@ -89,6 +89,9 @@ export const authenticateUser = async (email, password) => {
 };
 
 export const generateToken = (user) => {
+    if (!JWT_SECRET) {
+        throw new Error('FATAL: JWT_SECRET environment variable is not set.');
+    }
     return jwt.sign(
         { id: user.id, email: user.email, role: user.role, permissions: user.permissions },
         JWT_SECRET,
@@ -98,6 +101,10 @@ export const generateToken = (user) => {
 
 export const verifyToken = (token) => {
     try {
+        if (!JWT_SECRET) {
+            console.error('FATAL: JWT_SECRET environment variable is not set.');
+            return null;
+        }
         return jwt.verify(token, JWT_SECRET);
     } catch (error) {
         return null;

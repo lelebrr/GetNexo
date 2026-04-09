@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const db = require('../db');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'supersecret_jwt_key_2026';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 /**
  * Optional JWT Auth Middleware
@@ -28,6 +28,13 @@ module.exports = (req, res, next) => {
     }
 
     try {
+        if (!JWT_SECRET) {
+            console.error('FATAL: JWT_SECRET not defined in optional middleware');
+            req.user = null;
+            req.userId = null;
+            return next();
+        }
+
         const decoded = jwt.verify(token, JWT_SECRET);
 
         // Find user in DB
