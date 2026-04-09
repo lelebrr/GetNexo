@@ -23,3 +23,8 @@
 **Vulnerability:** The application was using an in-memory array for user authentication in `server.js` while the database had a `users` table. This led to state inconsistencies and potential security bypasses if the server restarted or if data wasn't persisted.
 **Learning:** Hardcoded user credentials in source code are a major security risk and technical debt.
 **Fix Detail:** Refactored `server.js` to query the SQLite database for user credentials using parameterized queries, merging the logic with the new database schema.
+
+## 2024-05-22 - Command Injection in 3D Model Converter
+**Vulnerability:** OS Command injection in `chat-api/scripts/model-converter.js` via `child_process.exec`.
+**Learning:** Using `exec()` to invoke binaries like `npx` with interpolated strings derived from variables (e.g. `glbPath` and `usdzPath`) allows malicious users to append shell commands if they control the filename inputs. This is a critical risk, even for background scripts.
+**Prevention:** Always use `child_process.execFile` or `spawn` instead of `exec` to bypass the shell. Pass executable arguments as an array rather than a single concatenated string. Handle cross-platform paths correctly, like mapping `npx` to `npx.cmd` on Windows.
