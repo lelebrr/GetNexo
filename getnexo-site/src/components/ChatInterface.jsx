@@ -42,7 +42,18 @@ const ContactItem = React.memo(({ contact: c, isActive, onClick, onDragStart }) 
             <p className="text-xs text-gray-500 truncate">{c.last_message?.body || 'Inicie a conversa...'}</p>
         </div>
     </div>
-));
+), (prevProps, nextProps) => {
+    const isContactSame = prevProps.contact.id === nextProps.contact.id &&
+                          prevProps.contact.name === nextProps.contact.name &&
+                          prevProps.contact.phone === nextProps.contact.phone &&
+                          prevProps.contact.stage === nextProps.contact.stage &&
+                          prevProps.contact.last_message?.body === nextProps.contact.last_message?.body;
+
+    return isContactSame &&
+           prevProps.isActive === nextProps.isActive &&
+           prevProps.onClick === nextProps.onClick &&
+           prevProps.onDragStart === nextProps.onDragStart;
+});
 
 const ChatInterface = () => {
     const [contacts, setContacts] = useState([]);
