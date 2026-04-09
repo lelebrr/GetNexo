@@ -12,8 +12,8 @@ describe('White-Label API Tests', () => {
             .post('/api/login')
             .set('Content-Type', 'application/json')
             .send({
-                email: 'admin@test.com',
-                password: 'test123'
+                email: 'admin@getnexo.com.br',
+                password: 'admin123'
             });
 
         expect(loginResponse.status).toBe(200);

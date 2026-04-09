@@ -282,7 +282,7 @@ function validateMandateConstraints(mandate, transaction) {
     }
 
     // Check max transactions
-    if (constraints.max_transactions !== undefined) {
+    if (constraints.max_transactions !== undefined && constraints.max_transactions !== null) {
         if (mandate.transaction_count >= constraints.max_transactions) {
             violations.push({
                 type: 'max_transactions_reached',

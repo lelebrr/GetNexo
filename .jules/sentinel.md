@@ -23,3 +23,14 @@
 **Vulnerability:** The application was using an in-memory array for user authentication in `server.js` while the database had a `users` table. This led to state inconsistencies and potential security bypasses if the server restarted or if data wasn't persisted.
 **Learning:** Hardcoded user credentials in source code are a major security risk and technical debt.
 **Fix Detail:** Refactored `server.js` to query the SQLite database for user credentials using parameterized queries, merging the logic with the new database schema.
+
+## 2026-02-09 - Hardcoded JWT Secret & Test Fragility
+**Vulnerability:** The application used a hardcoded fallback for `JWT_SECRET` ('supersecret_jwt_key_2026') in `server.js` and `jwtAuth.js`, allowing the server to start insecurely if the environment variable was missing.
+**Learning:** Removing the insecure default broke multiple integration tests (`a2a.test.js`, `ap2.test.js`, `verify-reseller-final.test.js`). This revealed that:
+1.  Tests were relying on unauthenticated access or the default secret.
+2.  Tests suffered from a "split-brain" database issue where `setup.js` seeded one in-memory DB, but `server.js` (imported by tests) initialized a separate one.
+3.  Enabling authentication in tests exposed a logic bug in `a2a-crypto.js` where `max_transactions: null` was incorrectly treated as a limit of 0.
+**Prevention:**
+1.  **Fail Fast:** Always enforce required security env vars at startup.
+2.  **Test Environment:** Use a dedicated `tests/env.js` loaded via Jest's `setupFiles` to ensure a consistent, secure test environment (e.g., setting `JWT_SECRET`).
+3.  **Auth in Tests:** Integration tests should explicitly login to obtain tokens rather than relying on bypassed auth or defaults.
