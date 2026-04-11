@@ -21,3 +21,6 @@
 ## 2025-02-28 - Optimizing Multiple COUNT(*) Queries
 **Learning:** In analytical endpoints (like `/stats/overview`), executing sequential `COUNT(*)` database queries causes unnecessary latency through multiple table scans and context switching.
 **Action:** Always combine them into a single query using conditional aggregation `SUM(CASE WHEN [condition] THEN 1 ELSE 0 END)`. Use fallback logic `|| 0` in JavaScript because `SUM()` returns `NULL` (unlike `COUNT()` returning `0`) on empty tables.
+## 2024-04-11 - Database Roundtrip Refactoring & Conditional Aggregation for Analytics
+**Learning:** Sequential `SELECT COUNT(*)` queries on large unindexed SQLite tables present a huge N+1-style performance bottleneck, taking ~2.7s for 100 requests. Using Conditional Aggregation (`SUM(CASE WHEN...)`) allows fetching all stats in a single database roundtrip.
+**Action:** Combine multiple analytical subqueries targeting the same table into a single query using conditional aggregation, and ensure key filtering columns (like `status`, `priority`, `created_at`) have explicit performance indexes in `db.js`.

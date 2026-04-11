@@ -559,6 +559,12 @@ const initSchema = () => {
       } catch (e) { console.log('Columns likely exist'); }
     }
 
+    // Support Tickets Indexes
+    console.log('Migrating support_tickets: Adding performance indexes...');
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_support_tickets_status ON support_tickets(status)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_support_tickets_priority ON support_tickets(priority)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_support_tickets_created_at ON support_tickets(created_at)').run();
+
   } catch (err) {
     console.error('Migration error:', err);
   }
