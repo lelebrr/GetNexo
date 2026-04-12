@@ -202,8 +202,9 @@ export default function Financeiro() {
 
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium mb-2">CPF ou CNPJ</label>
+                                <label htmlFor="cpf-cnpj" className="block text-sm font-medium mb-2">CPF ou CNPJ</label>
                                 <input
+                                    id="cpf-cnpj"
                                     type="text"
                                     value={notaFiscal}
                                     onChange={(e) => setNotaFiscal(e.target.value)}
