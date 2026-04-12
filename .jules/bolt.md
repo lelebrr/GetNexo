@@ -21,3 +21,6 @@
 ## 2025-02-28 - Optimizing Multiple COUNT(*) Queries
 **Learning:** In analytical endpoints (like `/stats/overview`), executing sequential `COUNT(*)` database queries causes unnecessary latency through multiple table scans and context switching.
 **Action:** Always combine them into a single query using conditional aggregation `SUM(CASE WHEN [condition] THEN 1 ELSE 0 END)`. Use fallback logic `|| 0` in JavaScript because `SUM()` returns `NULL` (unlike `COUNT()` returning `0`) on empty tables.
+## 2025-04-12 - SQLite Analytical Query Performance
+**Learning:** Found multiple backend queries utilizing `SUM(CASE WHEN...)` or grouping over large temporal ranges filtering by foreign keys (`assigned_agent_id` or `client_id` + `timestamp`). The SQLite engine processes these without proper composite indexes, resulting in full table scans and performance degradation as analytical logging grows.
+**Action:** When adding analytical tables capturing time-series or assigned data, strictly establish `CREATE INDEX IF NOT EXISTS` containing the target grouped identifier coupled with the timestamp field (e.g. `(client_id, timestamp)`) directly in the migration block to prevent unindexed table scans.
