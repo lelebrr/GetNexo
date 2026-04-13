@@ -1,0 +1,4 @@
+## 2026-04-13 - SQL Injection in Database Models
+**Vulnerability:** SQL injection vulnerabilities in `UserSession.js`, `BehavioralTag.js`, `BehaviorRule.js`, and `UserEvent.js` where user input could control the `orderBy` and `orderDir` values directly in `findWithFilters` methods, executing arbitrary SQL commands.
+**Learning:** `better-sqlite3` does not support parameterization of `ORDER BY` clauses (field names and directions). Passing raw input from request parameters directly into string concatenation is a critical vector for SQL interpolation vulnerabilities.
+**Prevention:** Strictly validate `orderBy` with an alphanumeric regex allowlist (e.g., `/^[a-zA-Z0-9_]+$/`) and `orderDir` against an exact array match (e.g., `['ASC', 'DESC']`). Ensure `orderDir` validation uses `String(orderDir).toUpperCase()` to prevent runtime crashes from undefined or null inputs.

@@ -142,7 +142,11 @@ class UserEvent {
         try {
             let query = 'SELECT * FROM user_events WHERE 1=1';
             const params = [];
-            const { limit = 1000, offset = 0, orderBy = 'timestamp', orderDir = 'DESC' } = options;
+            let { limit = 1000, offset = 0, orderBy = 'timestamp', orderDir = 'DESC' } = options;
+
+            // Validate orderBy and orderDir to prevent SQL injection
+            orderBy = /^[a-zA-Z0-9_]+$/.test(orderBy) ? orderBy : 'timestamp';
+            orderDir = ['ASC', 'DESC'].includes(String(orderDir).toUpperCase()) ? String(orderDir).toUpperCase() : 'DESC';
 
             // Filtros
             if (filters.session_id) {
