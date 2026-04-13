@@ -255,9 +255,10 @@ const ChatInterface = () => {
                                 {/* Back Button Mobile */}
                                 <button
                                     onClick={() => setActiveContact(null)}
-                                    className="lg:hidden text-gray-400 hover:text-white mr-2"
+                                    className="lg:hidden text-gray-400 hover:text-white mr-2 focus-visible:ring-2 focus-visible:outline-none rounded"
+                                    aria-label="Voltar"
                                 >
-                                    ←
+                                    <span aria-hidden="true">←</span>
                                 </button>
                                 <div>
                                     <h3 className="font-bold text-xl text-white flex items-center gap-2">

@@ -1,0 +1,3 @@
+## 2024-05-18 - [Consistent Accessible Navigation Patterns]
+**Learning:** This application heavily relies on raw character symbols (`✕`, `☰`, `←`) for mobile navigation toggles without explicitly hiding them from screen readers or providing semantic labels. The existing pattern completely ignored keyboard focus visibility, making it difficult for power users to navigate the admin dashboard via tab indexing.
+**Action:** Always wrap visual symbols in `<span aria-hidden="true">` to bypass screen reader literality, provide an explicit, localized `aria-label` (e.g. `aria-label="Voltar"` in Portuguese), and enforce visible focus rings using `focus-visible:ring-2 focus-visible:outline-none rounded`.
