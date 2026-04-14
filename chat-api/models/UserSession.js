@@ -202,7 +202,11 @@ class UserSession {
         try {
             let query = 'SELECT * FROM user_sessions WHERE 1=1';
             const params = [];
-            const { limit = 100, offset = 0, orderBy = 'start_time', orderDir = 'DESC' } = options;
+            let { limit = 100, offset = 0, orderBy = 'start_time', orderDir = 'DESC' } = options;
+
+            // Prevent SQL injection in ORDER BY clause
+            if (!/^[a-zA-Z0-9_]+$/.test(orderBy)) orderBy = 'start_time';
+            orderDir = String(orderDir).toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
 
             // Filtros
             if (filters.user_id) {
