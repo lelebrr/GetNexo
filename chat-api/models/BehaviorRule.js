@@ -224,6 +224,10 @@ class BehaviorRule {
         try {
             const { limit = 50, offset = 0, orderBy = 'priority', orderDir = 'DESC' } = options;
 
+            // Security: Prevent SQL injection in ORDER BY
+            const safeOrderBy = /^[a-zA-Z0-9_]+$/.test(orderBy) ? orderBy : 'priority';
+            const safeOrderDir = String(orderDir).toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
+
             let query = 'SELECT * FROM behavior_rules WHERE 1=1';
             const params = [];
 
@@ -252,7 +256,7 @@ class BehaviorRule {
                 params.push(filters.priority_max);
             }
 
-            query += ` ORDER BY ${orderBy} ${orderDir} LIMIT ? OFFSET ?`;
+            query += ` ORDER BY ${safeOrderBy} ${safeOrderDir} LIMIT ? OFFSET ?`;
             params.push(limit, offset);
 
             const stmt = db.prepare(query);

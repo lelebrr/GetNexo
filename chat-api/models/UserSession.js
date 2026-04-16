@@ -204,6 +204,10 @@ class UserSession {
             const params = [];
             const { limit = 100, offset = 0, orderBy = 'start_time', orderDir = 'DESC' } = options;
 
+            // Security: Prevent SQL injection in ORDER BY
+            const safeOrderBy = /^[a-zA-Z0-9_]+$/.test(orderBy) ? orderBy : 'start_time';
+            const safeOrderDir = String(orderDir).toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
+
             // Filtros
             if (filters.user_id) {
                 query += ' AND user_id = ?';
@@ -246,7 +250,7 @@ class UserSession {
             }
 
             // Ordenação e limite
-            query += ` ORDER BY ${orderBy} ${orderDir} LIMIT ? OFFSET ?`;
+            query += ` ORDER BY ${safeOrderBy} ${safeOrderDir} LIMIT ? OFFSET ?`;
             params.push(limit, offset);
 
             const stmt = db.prepare(query);
