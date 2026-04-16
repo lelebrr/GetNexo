@@ -257,9 +257,10 @@ const ChatInterface = () => {
                                 {/* Back Button Mobile */}
                                 <button
                                     onClick={() => setActiveContact(null)}
-                                    className="lg:hidden text-gray-400 hover:text-white mr-2"
+                                    aria-label="Voltar"
+                                    className="lg:hidden text-gray-400 hover:text-white mr-2 focus-visible:ring-2 focus-visible:outline-none rounded"
                                 >
-                                    ←
+                                    <span aria-hidden="true">←</span>
                                 </button>
                                 <div>
                                     <h3 className="font-bold text-xl text-white flex items-center gap-2">
@@ -394,7 +395,7 @@ const ChatInterface = () => {
                 <div className="w-1/4 flex flex-col glass-panel rounded-2xl border border-gray-800 animate-slide-in-right">
                     <div className="p-4 border-b border-gray-800 flex justify-between items-center">
                         <h4 className="font-bold text-gray-300">Detalhes do Lead</h4>
-                        <button onClick={() => setShowRightSidebar(false)} aria-label="Fechar detalhes do contato" className="text-gray-500 hover:text-white">✕</button>
+                        <button onClick={() => setShowRightSidebar(false)} aria-label="Fechar detalhes do contato" className="text-gray-500 hover:text-white focus-visible:ring-2 focus-visible:outline-none rounded">✖</button>
                     </div>
                     <div className="p-6 flex flex-col items-center border-b border-gray-800">
                         <div className="w-20 h-20 rounded-full bg-gradient-to-br from-neon-blue to-purple-600 flex items-center justify-center text-white text-3xl font-black mb-4 shadow-[0_0_20px_rgba(0,212,255,0.4)]">
