@@ -7,6 +7,7 @@ const CatalogManager = () => {
     const [products, setProducts] = useState([]);
     const [cart, setCart] = useState([]);
     const [targetPhone, setTargetPhone] = useState('');
+    const [isOrdering, setIsOrdering] = useState(false);
 
     useEffect(() => {
         fetchCatalog();
@@ -22,21 +23,33 @@ const CatalogManager = () => {
         setCart([...cart, product]);
     };
 
+    const removeFromCart = (index) => {
+        setCart(cart.filter((_, i) => i !== index));
+    };
+
     const createOrder = async () => {
         if (!targetPhone || cart.length === 0) return alert('Selecione produtos e informe o telefone do cliente');
 
-        await fetch(`${API_URL}/create-order`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                phone: targetPhone,
-                product_ids: cart.map(p => p.id),
-                pix_key: 'loja@getnexo.com.br'
-            })
-        });
+        setIsOrdering(true);
+        try {
+            await fetch(`${API_URL}/create-order`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    phone: targetPhone,
+                    product_ids: cart.map(p => p.id),
+                    pix_key: 'loja@getnexo.com.br'
+                })
+            });
 
-        alert('Pedido Criado! Link de PIX enviado para o cliente.');
-        setCart([]);
+            alert('Pedido Criado! Link de PIX enviado para o cliente.');
+            setCart([]);
+        } catch (error) {
+            console.error('Error creating order:', error);
+            alert('Erro ao criar pedido. Tente novamente.');
+        } finally {
+            setIsOrdering(false);
+        }
     };
 
     return (
@@ -49,7 +62,7 @@ const CatalogManager = () => {
                         <div className="col-span-3 text-gray-500">Nenhum produto cadastrado. (Use o terminal para inserir: `INSERT INTO products...`)</div>
                     ) : products.map(p => (
                         <div key={p.id} className="glass-panel p-4 rounded-xl border border-gray-800 flex flex-col items-center text-center hover:border-gray-600 transition-colors">
-                            <img src={p.image_url || 'https://placehold.co/150x150/1e293b/64748b?text=Produto'} className="w-24 h-24 object-cover rounded mb-3 bg-gray-900" />
+                            <img src={p.image_url || 'https://placehold.co/150x150/1e293b/64748b?text=Produto'} alt={p.name} className="w-24 h-24 object-cover rounded mb-3 bg-gray-900" />
                             <h4 className="font-bold text-white">{p.name}</h4>
                             <p className="text-neon-green font-bold text-lg">R$ {p.price.toFixed(2)}</p>
                             <button onClick={() => addToCart(p)} className="mt-3 bg-gray-800 hover:bg-neon-blue hover:text-black text-gray-300 px-4 py-2 rounded text-sm font-bold w-full transition-colors">
@@ -65,8 +78,9 @@ const CatalogManager = () => {
                 <h3 className="text-xl font-bold text-white mb-6">🛒 Novo Pedido</h3>
 
                 <div className="mb-4">
-                    <label className="text-gray-400 text-sm">Cliente (WhatsApp)</label>
+                    <label htmlFor="client-phone" className="text-gray-400 text-sm">Cliente (WhatsApp)</label>
                     <input
+                        id="client-phone"
                         className="w-full bg-black/40 border border-gray-700 p-3 rounded text-white focus:border-neon-green outline-none"
                         placeholder="5511999999999"
                         value={targetPhone}
@@ -76,9 +90,18 @@ const CatalogManager = () => {
 
                 <div className="flex-1 overflow-y-auto mb-4 space-y-2 border-t border-b border-gray-800 py-2">
                     {cart.map((item, i) => (
-                        <div key={i} className="flex justify-between items-center text-sm">
+                        <div key={i} className="flex justify-between items-center text-sm group">
                             <span className="text-gray-300">{item.name}</span>
-                            <span className="text-white">R$ {item.price.toFixed(2)}</span>
+                            <div className="flex items-center gap-2">
+                                <span className="text-white">R$ {item.price.toFixed(2)}</span>
+                                <button
+                                    onClick={() => removeFromCart(i)}
+                                    className="text-gray-600 hover:text-red-500 transition-colors p-1 opacity-0 group-hover:opacity-100 focus:opacity-100"
+                                    aria-label={`Remover ${item.name}`}
+                                >
+                                    ✕
+                                </button>
+                            </div>
                         </div>
                     ))}
                     {cart.length === 0 && <span className="text-gray-600 italic">Carrinho vazio</span>}
@@ -89,8 +112,19 @@ const CatalogManager = () => {
                     <span className="text-neon-green">R$ {cart.reduce((acc, item) => acc + item.price, 0).toFixed(2)}</span>
                 </div>
 
-                <button onClick={createOrder} className="bg-neon-green text-black font-bold p-4 rounded text-lg hover:scale-105 transition-transform shadow-[0_0_20px_rgba(0,255,157,0.3)]">
-                    GERAR PIX 💸
+                <button
+                    onClick={createOrder}
+                    disabled={isOrdering}
+                    className={`bg-neon-green text-black font-bold p-4 rounded text-lg transition-all shadow-[0_0_20px_rgba(0,255,157,0.3)]
+                        ${isOrdering ? 'opacity-50 cursor-not-allowed grayscale' : 'hover:scale-105'}
+                    `}
+                >
+                    {isOrdering ? (
+                        <span className="flex items-center justify-center gap-2">
+                            <span className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
+                            Gerando...
+                        </span>
+                    ) : 'GERAR PIX 💸'}
                 </button>
             </div>
         </div>
