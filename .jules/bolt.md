@@ -21,3 +21,6 @@
 ## 2025-02-28 - Optimizing Multiple COUNT(*) Queries
 **Learning:** In analytical endpoints (like `/stats/overview`), executing sequential `COUNT(*)` database queries causes unnecessary latency through multiple table scans and context switching.
 **Action:** Always combine them into a single query using conditional aggregation `SUM(CASE WHEN [condition] THEN 1 ELSE 0 END)`. Use fallback logic `|| 0` in JavaScript because `SUM()` returns `NULL` (unlike `COUNT()` returning `0`) on empty tables.
+## 2025-03-04 - SQLite Binding Errors in Tests
+**Learning:** Running Jest tests via `pnpm test` in the `chat-api` directory fails with `better-sqlite3` binding errors (`Could not locate the bindings file`), even after rebuilding. Modifying lockfiles or reinstalling dependencies is restricted and creates unintended side effects.
+**Action:** Rely on `node -c` syntax validation for verifying routing endpoints instead of full test suite runs when isolated testing is hindered by environment dependency errors, and ensure side-effect files (`package.json`, lockfiles) are restored.
