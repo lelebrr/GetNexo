@@ -28,3 +28,8 @@
 **Vulnerability:** Several models used unparameterized string concatenation for `orderBy` and `orderDir` parameters.
 **Learning:** SQLite cannot parameterize column names or sort orders. This is a common pattern to miss since standard parameterized values work for `WHERE` clauses but fail for `ORDER BY`.
 **Prevention:** Strictly validate dynamically provided columns against a regex allowlist (e.g. `/^[a-zA-Z0-9_]+$/`) and limit sort order variables explicitly to `'ASC'` or `'DESC'`.
+
+## 2024-05-22 - Path Traversal Vulnerability in File Operations
+**Vulnerability:** API endpoints handling file saving and deletion (`/api/admin/blog/save` and `/api/admin/blog/delete`) were directly using user-controlled `lang` and `slug` inputs in `path.join()`. This allowed path traversal using `../` to access files outside the intended directories.
+**Learning:** Never trust user input to interact with the file system. In Node.js, `path.join()` inherently resolves relative paths, meaning an attacker can escape the base directory without explicit validation.
+**Prevention:** Strictly sanitize all user input destined for the file system against a restrictive allowlist using a regex. E.g., validating inputs with `/^[a-zA-Z0-9_-]+$/` completely eliminates path traversal injections.
