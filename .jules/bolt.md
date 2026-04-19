@@ -21,3 +21,6 @@
 ## 2025-02-28 - Optimizing Multiple COUNT(*) Queries
 **Learning:** In analytical endpoints (like `/stats/overview`), executing sequential `COUNT(*)` database queries causes unnecessary latency through multiple table scans and context switching.
 **Action:** Always combine them into a single query using conditional aggregation `SUM(CASE WHEN [condition] THEN 1 ELSE 0 END)`. Use fallback logic `|| 0` in JavaScript because `SUM()` returns `NULL` (unlike `COUNT()` returning `0`) on empty tables.
+## 2025-02-23 - Combined Redundant SQLite COUNT Queries
+**Learning:** In the `chat-api`, multiple sequential `SELECT COUNT(*)` queries on the same table (e.g., in `/stats` endpoints) cause unnecessary sequential full-table scans. Combining them into a single query using conditional aggregation (`SUM(CASE WHEN ... THEN 1 ELSE 0 END)`) significantly reduces database execution time. However, SQLite's `SUM()` function uniquely returns `NULL` instead of `0` when evaluated against an empty table, unlike `COUNT()` which correctly returns `0`.
+**Action:** When refactoring multiple `COUNT(*)` queries into a single conditional `SUM()` query in SQLite, always apply a JavaScript fallback (e.g., `|| 0`) or SQL `COALESCE` to handle the empty table `NULL` return value gracefully and prevent unexpected `null` propagation in the API responses.
