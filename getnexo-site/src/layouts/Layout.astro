@@ -1530,7 +1530,7 @@ const clientId = Astro.locals.clientId || 'default';
            <a href={getLangUrl('es')} class={lang === 'es' ? 'active' : ''} title="Español"><img src="/flags/es.svg" alt="ES" width="28" height="18" loading="eager" fetchpriority="high" decoding="async" /></a>
            <a href={getLangUrl('fr')} class={lang === 'fr' ? 'active' : ''} title="Français"><img src="/flags/fr.svg" alt="FR" width="28" height="18" loading="eager" fetchpriority="high" decoding="async" /></a>
          </div>
-         <button id="mobile-close" class="mobile-close">×</button>
+         <button id="mobile-close" class="mobile-close focus-visible:ring-2 focus-visible:outline-none rounded" aria-label="Fechar">✖</button>
       </div>
       
       <div class="mobile-scroll-area">
@@ -2096,7 +2096,7 @@ const clientId = Astro.locals.clientId || 'default';
             <h4>${feriado.idiomas.pt}</h4>
             <p>${feriado.bot_frase.pt}</p>
           </div>
-          <button class="feriado-close">×</button>
+          <button class="feriado-close focus-visible:ring-2 focus-visible:outline-none rounded" aria-label="Fechar">✖</button>
         </div>
       `;
 
@@ -2704,7 +2704,7 @@ const clientId = Astro.locals.clientId || 'default';
     <div class="hub-container glass-panel reveal">
       <div class="hub-header">
         <h3 class="text-gradient">Nexbot Discovery Hub</h3>
-        <button id="hub-close" class="hub-close">×</button>
+        <button id="hub-close" class="hub-close focus-visible:ring-2 focus-visible:outline-none rounded" aria-label="Fechar">✖</button>
       </div>
       <div class="hub-body">
         <p class="hub-intro">Explore as ferramentas que estão transformando o WhatsApp em máquinas de lucro.</p>
