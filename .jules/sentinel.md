@@ -28,3 +28,7 @@
 **Vulnerability:** Several models used unparameterized string concatenation for `orderBy` and `orderDir` parameters.
 **Learning:** SQLite cannot parameterize column names or sort orders. This is a common pattern to miss since standard parameterized values work for `WHERE` clauses but fail for `ORDER BY`.
 **Prevention:** Strictly validate dynamically provided columns against a regex allowlist (e.g. `/^[a-zA-Z0-9_]+$/`) and limit sort order variables explicitly to `'ASC'` or `'DESC'`.
+## 2024-05-24 - Hardcoded Administrative Passwords During Database Seeding
+**Vulnerability:** Default administrative accounts ('admin123' and 'master2026') were seeded with hardcoded plaintext passwords in `chat-api/db.js`.
+**Learning:** Seeding default users should never rely on hardcoded static passwords in source code, as this exposes the system to trivial credential stuffing and initial access attacks.
+**Prevention:** Always use environment variables backed by cryptographically secure random fallbacks (e.g., `require('crypto').randomBytes(16).toString('hex')`) when establishing default credentials during application setup.
