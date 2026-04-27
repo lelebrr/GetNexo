@@ -28,3 +28,8 @@
 **Vulnerability:** Several models used unparameterized string concatenation for `orderBy` and `orderDir` parameters.
 **Learning:** SQLite cannot parameterize column names or sort orders. This is a common pattern to miss since standard parameterized values work for `WHERE` clauses but fail for `ORDER BY`.
 **Prevention:** Strictly validate dynamically provided columns against a regex allowlist (e.g. `/^[a-zA-Z0-9_]+$/`) and limit sort order variables explicitly to `'ASC'` or `'DESC'`.
+
+## 2024-04-27 - Path Traversal Vulnerability in Blog Admin API
+**Vulnerability:** Unsanitized user inputs (`slug` and `lang`) were passed directly to `path.join()` and `fs.writeFileSync()` / `fs.unlinkSync()`, allowing arbitrary file writes and deletions outside the intended blog directories.
+**Learning:** File system operations must never trust user input. Even with hardcoded file extensions or base paths, relative path components like `../` can bypass intended directory restrictions.
+**Prevention:** Always sanitize user-controlled inputs used in file paths against a strict allowlist regex (e.g., `/^[a-zA-Z0-9_-]+$/`) before passing them to `fs` operations or `path.join()`.
