@@ -5,34 +5,22 @@ const db = require('../db');
 // Métricas do Dashboard
 router.get('/dashboard-stats', (req, res) => {
     try {
-        // Receita Total (24h)
-        const revenue24h = db.prepare(`
-            SELECT SUM(amount) as total 
-            FROM transactions 
-            WHERE created_at >= datetime('now', '-1 day') AND status = 'paid'
-        `).get();
-
-        // Total de Vendas (24h)
-        const salesCount24h = db.prepare(`
-            SELECT COUNT(*) as count 
-            FROM transactions 
-            WHERE created_at >= datetime('now', '-1 day') AND status = 'paid'
-        `).get();
-
-        // Clientes Ativos
-        const activeCustomers = db.prepare(`
-            SELECT COUNT(*) as count FROM contacts WHERE updated_at >= datetime('now', '-7 days')
-        `).get();
-
-        // Conversas Ativas (Últimas 24h)
-        // Usando timestamp (se for unix seconds) ou created_at se houver
-        // Assumindo timestamp em seconds como padrão do WA. Se for ms, ajustar.
+        // ⚡ Bolt: Performance optimization
+        // Combine 4 sequential queries into a single database execution using sub-selects
+        // Impact: Reduces database latency and overhead from multiple calls.
         const oneDayAgo = Math.floor(Date.now() / 1000) - 86400;
-        const activeChats = db.prepare(`
-            SELECT COUNT(DISTINCT contact_id) as count 
-            FROM messages 
-            WHERE timestamp >= ?
+        const stats = db.prepare(`
+            SELECT
+                (SELECT SUM(amount) FROM transactions WHERE created_at >= datetime('now', '-1 day') AND status = 'paid') as revenue24h,
+                (SELECT COUNT(*) FROM transactions WHERE created_at >= datetime('now', '-1 day') AND status = 'paid') as salesCount24h,
+                (SELECT COUNT(*) FROM contacts WHERE updated_at >= datetime('now', '-7 days')) as activeCustomers,
+                (SELECT COUNT(DISTINCT contact_id) FROM messages WHERE timestamp >= ?) as activeChats
         `).get(oneDayAgo);
+
+        const revenue24h = { total: stats.revenue24h };
+        const salesCount24h = { count: stats.salesCount24h };
+        const activeCustomers = { count: stats.activeCustomers };
+        const activeChats = { count: stats.activeChats };
 
         // Taxa de Conversão
         const conversionRate = activeCustomers.count > 0
