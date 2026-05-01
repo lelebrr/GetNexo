@@ -92,6 +92,8 @@ const PaymentHistory = ({ phone, compact = false }) => {
                     <button
                         onClick={() => setExpanded(!expanded)}
                         className="text-xs text-blue-600 hover:text-blue-800"
+                        aria-expanded={expanded}
+                        aria-controls="payment-history-list"
                     >
                         {expanded ? 'Ocultar' : 'Mostrar'} ({transactions.length})
                     </button>
@@ -107,7 +109,7 @@ const PaymentHistory = ({ phone, compact = false }) => {
             )}
 
             {expanded && (
-                <div className="space-y-2 max-h-48 overflow-y-auto">
+                <div id="payment-history-list" className="space-y-2 max-h-48 overflow-y-auto">
                     {transactions.map((transaction) => (
                         <div
                             key={transaction.id}
