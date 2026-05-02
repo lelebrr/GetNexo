@@ -28,3 +28,7 @@
 **Vulnerability:** Several models used unparameterized string concatenation for `orderBy` and `orderDir` parameters.
 **Learning:** SQLite cannot parameterize column names or sort orders. This is a common pattern to miss since standard parameterized values work for `WHERE` clauses but fail for `ORDER BY`.
 **Prevention:** Strictly validate dynamically provided columns against a regex allowlist (e.g. `/^[a-zA-Z0-9_]+$/`) and limit sort order variables explicitly to `'ASC'` or `'DESC'`.
+## 2026-05-02 - Path Traversal in Admin Blog Endpoints
+**Vulnerability:** User-controlled inputs (`slug` and `lang`) in `getnexo-site/src/pages/api/admin/blog/save.js` and `delete.js` were passed directly into `path.join()` without sanitization.
+**Learning:** Even internal admin endpoints require strict input validation to prevent attackers from manipulating the file system paths (Path Traversal).
+**Prevention:** Always use strict regex allowlists (e.g., `/^[a-zA-Z0-9_-]+$/`) to sanitize user-provided file identifiers or directory names before passing them to file system operations.
