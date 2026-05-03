@@ -559,6 +559,14 @@ const initSchema = () => {
       } catch (e) { console.log('Columns likely exist'); }
     }
 
+    // ⚡ Bolt: Add performance indexes for frequent temporal filtering in analytical queries
+    db.exec(`
+      CREATE INDEX IF NOT EXISTS idx_transactions_created_status ON transactions(created_at, status);
+      CREATE INDEX IF NOT EXISTS idx_contacts_updated_at ON contacts(updated_at);
+      CREATE INDEX IF NOT EXISTS idx_messages_timestamp ON messages(timestamp);
+      CREATE INDEX IF NOT EXISTS idx_analytics_logs_created_at ON analytics_logs(created_at);
+    `);
+
   } catch (err) {
     console.error('Migration error:', err);
   }
