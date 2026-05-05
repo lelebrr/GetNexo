@@ -666,11 +666,20 @@ router.post('/verify-vdc', (req, res) => {
  */
 router.get('/stats', (req, res) => {
     try {
-        const mandateCount = db.prepare('SELECT COUNT(*) as cnt FROM ap2_mandates').get()?.cnt || 0;
         const transactionCount = db.prepare('SELECT COUNT(*) as cnt FROM ap2_transactions').get()?.cnt || 0;
 
-        const activeMandates = db.prepare("SELECT COUNT(*) as cnt FROM ap2_mandates WHERE status = 'active'").get()?.cnt || 0;
-        const usedMandates = db.prepare("SELECT COUNT(*) as cnt FROM ap2_mandates WHERE status = 'used'").get()?.cnt || 0;
+        // ⚡ Bolt: Single table scan for ap2_mandates aggregates
+        const mandateStats = db.prepare(`
+            SELECT
+                COUNT(*) as cnt,
+                SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active,
+                SUM(CASE WHEN status = 'used' THEN 1 ELSE 0 END) as used
+            FROM ap2_mandates
+        `).get() || { cnt: 0, active: 0, used: 0 };
+
+        const mandateCount = mandateStats.cnt || 0;
+        const activeMandates = mandateStats.active || 0;
+        const usedMandates = mandateStats.used || 0;
 
         const totalVolume = db.prepare(`
             SELECT COALESCE(SUM(amount), 0) as total 
