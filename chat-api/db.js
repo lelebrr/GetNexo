@@ -559,6 +559,12 @@ const initSchema = () => {
       } catch (e) { console.log('Columns likely exist'); }
     }
 
+    // Performance optimization: Turns O(N) full table scans into O(log N) index lookups for dashboard queries
+    // Verified via EXPLAIN QUERY PLAN: transition from `SCAN` to `SEARCH USING INDEX`
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_transactions_created_at_status ON transactions(status, created_at)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_contacts_updated_at ON contacts(updated_at)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_messages_timestamp ON messages(timestamp)').run();
+
   } catch (err) {
     console.error('Migration error:', err);
   }
