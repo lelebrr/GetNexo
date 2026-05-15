@@ -21,3 +21,7 @@
 ## 2025-02-28 - Optimizing Multiple COUNT(*) Queries
 **Learning:** In analytical endpoints (like `/stats/overview`), executing sequential `COUNT(*)` database queries causes unnecessary latency through multiple table scans and context switching.
 **Action:** Always combine them into a single query using conditional aggregation `SUM(CASE WHEN [condition] THEN 1 ELSE 0 END)`. Use fallback logic `|| 0` in JavaScript because `SUM()` returns `NULL` (unlike `COUNT()` returning `0`) on empty tables.
+
+## 2025-02-04 - SQLite Analytical Queries Optimization
+**Learning:** In analytical endpoints (e.g., `/stats`), developers often execute sequential `SELECT COUNT(*)` queries on the same table with varying `WHERE` clauses (e.g., `WHERE status = 'pending'`, `WHERE status = 'completed'`). SQLite performs a full table or index scan for each of these independent queries, leading to O(N) operations multiplying. SQLite's `SUM()` function returns `NULL` on empty tables, unlike `COUNT()` which returns `0`, necessitating defensive fallback property checks. Sub-select aggregations do not mitigate this table scanning issue.
+**Action:** Combine multiple sequential count queries into a single SQL query using conditional aggregation: `SUM(CASE WHEN [condition] THEN 1 ELSE 0 END)`. This consolidates the operation to a single O(N) table scan. Always provide a JavaScript fallback object for `.get()` (e.g., `.get() || { total: 0 }`) and explicitly coalesce the properties (e.g., `stats.active || 0`) to handle empty tables safely.
