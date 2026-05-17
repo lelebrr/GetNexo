@@ -21,3 +21,7 @@
 ## 2025-02-28 - Optimizing Multiple COUNT(*) Queries
 **Learning:** In analytical endpoints (like `/stats/overview`), executing sequential `COUNT(*)` database queries causes unnecessary latency through multiple table scans and context switching.
 **Action:** Always combine them into a single query using conditional aggregation `SUM(CASE WHEN [condition] THEN 1 ELSE 0 END)`. Use fallback logic `|| 0` in JavaScript because `SUM()` returns `NULL` (unlike `COUNT()` returning `0`) on empty tables.
+
+## 2025-02-28 - Missing DB Indexes causing sequential scans
+**Learning:** In analytical endpoints, missing database indexes on temporal and status columns lead to O(N) full table scans instead of efficient O(log N) index lookups.
+**Action:** Add targeted composite indices (e.g., `created_at`, `status`) and use `EXPLAIN QUERY PLAN` to verify the database employs index covering over table scans for analytical queries.
