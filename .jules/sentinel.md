@@ -28,3 +28,7 @@
 **Vulnerability:** Several models used unparameterized string concatenation for `orderBy` and `orderDir` parameters.
 **Learning:** SQLite cannot parameterize column names or sort orders. This is a common pattern to miss since standard parameterized values work for `WHERE` clauses but fail for `ORDER BY`.
 **Prevention:** Strictly validate dynamically provided columns against a regex allowlist (e.g. `/^[a-zA-Z0-9_]+$/`) and limit sort order variables explicitly to `'ASC'` or `'DESC'`.
+## 2024-05-19 - Hardcoded JWT Secret Vulnerability
+**Vulnerability:** A fallback hardcoded JWT secret (`'supersecret_jwt_key_2026'`) was embedded directly into the application server configuration (`server.js`).
+**Learning:** Hardcoded fallbacks defeat intended fail-secure checks. The application contained an `if (!JWT_SECRET) { process.exit(1); }` safety net, but this was permanently bypassed because the logical `OR` (`||`) guaranteed the value was never falsy unless explicitly set to an empty string. The environment variable check was effectively dead code.
+**Prevention:** Never use hardcoded strings as fallbacks for cryptographic secrets or authentication keys in source code. If an environment variable is strictly required for security, allow the application to "fail loud and fail early" (crash) if it is missing, rather than silently degrading to a known, insecure state.
