@@ -28,3 +28,8 @@
 **Vulnerability:** Several models used unparameterized string concatenation for `orderBy` and `orderDir` parameters.
 **Learning:** SQLite cannot parameterize column names or sort orders. This is a common pattern to miss since standard parameterized values work for `WHERE` clauses but fail for `ORDER BY`.
 **Prevention:** Strictly validate dynamically provided columns against a regex allowlist (e.g. `/^[a-zA-Z0-9_]+$/`) and limit sort order variables explicitly to `'ASC'` or `'DESC'`.
+
+## 2026-04-16 - RCE in shell commands using exec
+**Vulnerability:** The `model-converter.js` script used `child_process.exec()` with unescaped input for a shell command, causing OS command injection.
+**Learning:** Using `exec()` instead of `execFile()` without validation allows execution of arbitrary shell commands.
+**Prevention:** Use `child_process.execFile` or `child_process.spawn` instead of `exec` when processing user inputs.
