@@ -559,6 +559,15 @@ const initSchema = () => {
       } catch (e) { console.log('Columns likely exist'); }
     }
 
+    // Performance Indices for Analytical Queries
+    // These indices switch frequent analytical queries (e.g. /dashboard-stats)
+    // from O(N) full table scans to O(log N) index lookups.
+    console.log('Creating performance indices...');
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_transactions_created_status ON transactions (created_at, status)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_contacts_updated ON contacts (updated_at)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_messages_timestamp_contact ON messages (timestamp, contact_id)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_analytics_created ON analytics_logs (created_at)').run();
+
   } catch (err) {
     console.error('Migration error:', err);
   }
