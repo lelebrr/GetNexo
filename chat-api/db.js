@@ -420,6 +420,9 @@ const initSchema = () => {
     const hasDomain = usersInfo.some(col => col.name === 'domain');
     const hasStatus = usersInfo.some(col => col.name === 'status');
 
+    // Covering index for dashboard aggregations to avoid full table scans
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_users_reseller_created_status ON users(reseller_id, created_at, status)').run();
+
     if (!hasPlan) {
       console.log('Migrating users table: Adding plan column...');
       db.prepare("ALTER TABLE users ADD COLUMN plan TEXT DEFAULT 'Standard'").run();
