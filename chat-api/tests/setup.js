@@ -8,6 +8,10 @@ process.env.NODE_ENV = 'test';
 // Use in-memory DB for tests to avoid I/O conflicts and ensure isolation
 process.env.DB_PATH = ':memory:';
 
+// Set mock environment variables for tests to prevent middleware/generator errors
+process.env.JWT_SECRET = 'test_jwt_secret_123';
+process.env.ENCRYPTION_KEY = 'test_encryption_key_32bytes_long!';
+
 const db = new Database(':memory:');
 global.testDb = db;
 
