@@ -405,6 +405,11 @@ const initSchema = () => {
     insertCoupon.run('REV50', 'fixed', 50, '2026-06-01', 1);
   }
 
+  // ⚡ Bolt: Added performance indexes for analytics endpoints.
+  // Impact: Upgrades O(N) full table SCAN to O(log N) SEARCH for status/temporal aggregations.
+  db.prepare('CREATE INDEX IF NOT EXISTS idx_transactions_status_created ON transactions(status, created_at)').run();
+  db.prepare('CREATE INDEX IF NOT EXISTS idx_contacts_updated ON contacts(updated_at)').run();
+
   // Migrations
   try {
     const productsInfo = db.pragma('table_info(products)');
