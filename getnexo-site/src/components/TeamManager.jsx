@@ -230,7 +230,7 @@ const TeamManager = () => {
                 <div className="fixed inset-0 z-[1001] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/90 backdrop-blur-xl" onClick={() => setModalOpen(false)}></div>
                     <div className="glass-panel w-full max-w-xl p-10 relative bg-[#0a0e17] border-[#00d4ff]/20 shadow-[0_0_100px_rgba(0,212,255,0.1)]">
-                        <button onClick={() => setModalOpen(false)} className="absolute top-6 right-6 text-gray-500 hover:text-white text-2xl">✕</button>
+                        <button onClick={() => setModalOpen(false)} aria-label="Fechar" className="absolute top-6 right-6 text-gray-500 hover:text-white text-2xl">✕</button>
 
                         <div className="mb-10">
                             <h3 className="text-3xl font-black text-white">{editingUser ? 'Ajustar Credenciais' : 'Nova Identidade Digital'}</h3>
