@@ -21,3 +21,7 @@
 ## 2025-02-28 - Optimizing Multiple COUNT(*) Queries
 **Learning:** In analytical endpoints (like `/stats/overview`), executing sequential `COUNT(*)` database queries causes unnecessary latency through multiple table scans and context switching.
 **Action:** Always combine them into a single query using conditional aggregation `SUM(CASE WHEN [condition] THEN 1 ELSE 0 END)`. Use fallback logic `|| 0` in JavaScript because `SUM()` returns `NULL` (unlike `COUNT()` returning `0`) on empty tables.
+
+## 2024-05-24 - N+1 Query Fix in SeriesScheduler
+**Learning:** Found and fixed an N+1 query in `checkActiveExecutions` where messages were fetched sequentially inside a loop using `Message.findById(nextMessageId)`.
+**Action:** Always batch database lookups in loops. Extract unique target IDs into a Set, fetch them all at once using `$in` query, map the results by ID, and lookup from the map during iteration.
