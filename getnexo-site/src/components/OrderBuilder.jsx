@@ -34,22 +34,24 @@ const OrderBuilder = ({ onSendOrder, onClose }) => {
                     <h3 className="text-xl font-bold text-white flex items-center gap-2">
                         🛍️ Venda Assistida <span className="text-xs bg-neon-blue text-black px-2 rounded">Beta</span>
                     </h3>
-                    <button onClick={onClose} className="text-gray-500 hover:text-white">✕</button>
+                    <button onClick={onClose} className="text-gray-500 hover:text-white" aria-label="Fechar" title="Fechar">✕</button>
                 </div>
 
                 <div className="flex-1 flex overflow-hidden">
                     {/* Product List */}
                     <div className="w-1/2 border-r border-gray-800 p-4 overflow-y-auto custom-scrollbar">
-                        <input placeholder="Buscar produtos..." className="w-full bg-black/50 border border-gray-700 rounded p-2 text-sm text-white mb-4" />
+                        <input aria-label="Buscar produtos" placeholder="Buscar produtos..." className="w-full bg-black/50 border border-gray-700 rounded p-2 text-sm text-white mb-4" />
                         <div className="space-y-3">
                             {products.map(p => (
                                 <div key={p.id} className="flex gap-3 bg-gray-800/50 p-2 rounded hover:bg-gray-800 transition-colors">
-                                    <div className="w-12 h-12 bg-gray-700 rounded flex items-center justify-center text-xl">📦</div>
+                                    <div className="w-12 h-12 bg-gray-700 rounded flex items-center justify-center text-xl" aria-hidden="true">📦</div>
                                     <div className="flex-1">
                                         <div className="font-bold text-gray-200 text-sm">{p.name}</div>
                                         <div className="text-neon-green text-xs font-mono">R$ {p.price.toFixed(2)}</div>
                                     </div>
-                                    <button onClick={() => addToCart(p)} className="bg-neon-blue text-black w-8 h-8 rounded-full font-bold hover:scale-110 transition-transform">+</button>
+                                    <button onClick={() => addToCart(p)} className="bg-neon-blue text-black w-8 h-8 rounded-full font-bold hover:scale-110 transition-transform focus-visible:ring-2 focus-visible:ring-neon-blue" aria-label={`Adicionar ${p.name} ao carrinho`} title="Adicionar">
+                                        <span aria-hidden="true">+</span>
+                                    </button>
                                 </div>
                             ))}
                         </div>
@@ -57,7 +59,7 @@ const OrderBuilder = ({ onSendOrder, onClose }) => {
 
                     {/* Cart Summary */}
                     <div className="w-1/2 p-4 flex flex-col bg-black/20">
-                        <h4 className="text-gray-400 text-xs font-bold uppercase mb-4">Carrinho Atual ({cart.length})</h4>
+                        <h4 className="text-gray-400 text-xs font-bold uppercase mb-4" aria-live="polite">Carrinho Atual ({cart.length})</h4>
                         <div className="flex-1 overflow-y-auto space-y-2 mb-4">
                             {cart.length === 0 && <div className="text-center text-gray-600 mt-10 italic">Carrinho vazio</div>}
                             {cart.map((item, idx) => (
@@ -65,7 +67,9 @@ const OrderBuilder = ({ onSendOrder, onClose }) => {
                                     <span className="text-gray-300">{item.name}</span>
                                     <div className="flex items-center gap-3">
                                         <span className="text-white">R${item.price}</span>
-                                        <button onClick={() => removeFromCart(idx)} className="text-red-500 hover:text-red-400">×</button>
+                                        <button onClick={() => removeFromCart(idx)} className="text-red-500 hover:text-red-400 focus-visible:ring-2 focus-visible:ring-red-500 rounded" aria-label={`Remover ${item.name} do carrinho`} title="Remover">
+                                            <span aria-hidden="true">×</span>
+                                        </button>
                                     </div>
                                 </div>
                             ))}
