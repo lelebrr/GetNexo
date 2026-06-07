@@ -258,6 +258,7 @@ const ChatInterface = () => {
                                 <button
                                     onClick={() => setActiveContact(null)}
                                     className="lg:hidden text-gray-400 hover:text-white mr-2"
+                                    aria-label="Voltar para a lista de contatos"
                                 >
                                     ←
                                 </button>
