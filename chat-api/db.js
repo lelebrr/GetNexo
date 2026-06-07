@@ -562,6 +562,17 @@ const initSchema = () => {
   } catch (err) {
     console.error('Migration error:', err);
   }
+
+  // ⚡ Bolt: Added performance indexes to shift from O(N) full table scans to O(log N) index lookups, reducing query time significantly
+  try {
+    db.exec(`
+      CREATE INDEX IF NOT EXISTS idx_transactions_created_status ON transactions(created_at, status);
+      CREATE INDEX IF NOT EXISTS idx_contacts_updated ON contacts(updated_at);
+      CREATE INDEX IF NOT EXISTS idx_messages_timestamp ON messages(timestamp);
+    `);
+  } catch(err) {
+    console.error('Performance indexing error:', err);
+  }
 };
 
 initSchema();
