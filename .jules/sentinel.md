@@ -28,3 +28,8 @@
 **Vulnerability:** Several models used unparameterized string concatenation for `orderBy` and `orderDir` parameters.
 **Learning:** SQLite cannot parameterize column names or sort orders. This is a common pattern to miss since standard parameterized values work for `WHERE` clauses but fail for `ORDER BY`.
 **Prevention:** Strictly validate dynamically provided columns against a regex allowlist (e.g. `/^[a-zA-Z0-9_]+$/`) and limit sort order variables explicitly to `'ASC'` or `'DESC'`.
+
+## 2024-06-08 - Authentication Bypass in Loyalty API
+**Vulnerability:** The loyalty API endpoints were using placeholder authentication middleware that blindly trusted client-provided `user-id` and `admin` headers, allowing unauthenticated attackers to spoof any user or gain admin privileges.
+**Learning:** "TODO" comments for authentication should never make it to production. Using request headers for user identity without cryptographic verification (like JWTs) is a critical authentication bypass vector.
+**Prevention:** Always use standard, centralized authentication middleware (e.g., `jwtAuth`, `adminAuth`) instead of writing custom "placeholder" logic for new route files.
