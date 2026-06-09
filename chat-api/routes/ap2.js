@@ -666,11 +666,16 @@ router.post('/verify-vdc', (req, res) => {
  */
 router.get('/stats', (req, res) => {
     try {
-        const mandateCount = db.prepare('SELECT COUNT(*) as cnt FROM ap2_mandates').get()?.cnt || 0;
         const transactionCount = db.prepare('SELECT COUNT(*) as cnt FROM ap2_transactions').get()?.cnt || 0;
 
-        const activeMandates = db.prepare("SELECT COUNT(*) as cnt FROM ap2_mandates WHERE status = 'active'").get()?.cnt || 0;
-        const usedMandates = db.prepare("SELECT COUNT(*) as cnt FROM ap2_mandates WHERE status = 'used'").get()?.cnt || 0;
+        // ⚡ Bolt: reducing queries from 3 to 1
+        const mandateStats = db.prepare(`
+            SELECT
+                COUNT(*) as total,
+                SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active,
+                SUM(CASE WHEN status = 'used' THEN 1 ELSE 0 END) as used
+            FROM ap2_mandates
+        `).get() || { total: 0, active: 0, used: 0 };
 
         const totalVolume = db.prepare(`
             SELECT COALESCE(SUM(amount), 0) as total 
@@ -699,9 +704,9 @@ router.get('/stats', (req, res) => {
 
         res.json({
             mandates: {
-                total: mandateCount,
-                active: activeMandates,
-                used: usedMandates,
+                total: mandateStats.total || 0,
+                active: mandateStats.active || 0,
+                used: mandateStats.used || 0,
                 by_type: mandatesByType
             },
             transactions: {
