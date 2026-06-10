@@ -302,7 +302,7 @@ app.get('/api/users', (req, res) => {
 });
 
 // Endpoint de redefinição de senha
-app.post('/api/auth/forgot-password', async (req, res) => {
+app.post('/api/auth/forgot-password', authLimiter, async (req, res) => {
   try {
     const { email } = req.body;
     if (!email) {
@@ -322,7 +322,7 @@ app.post('/api/auth/forgot-password', async (req, res) => {
 });
 
 // Endpoint para criar conta
-app.post('/api/auth/register', async (req, res) => {
+app.post('/api/auth/register', authLimiter, async (req, res) => {
   try {
     const { email, password, name } = req.body;
     if (!email || !password || !name) {
