@@ -562,6 +562,14 @@ const initSchema = () => {
   } catch (err) {
     console.error('Migration error:', err);
   }
+
+  try {
+    // ⚡ Bolt: Adding indexes on transactions status and created_at fields, reducing table scans from O(N) to O(log N) for analytics queries.
+    db.prepare("CREATE INDEX IF NOT EXISTS idx_transactions_status ON transactions(status)").run();
+    db.prepare("CREATE INDEX IF NOT EXISTS idx_transactions_created_at ON transactions(created_at)").run();
+  } catch (idxErr) {
+    console.error("Index creation error:", idxErr);
+  }
 };
 
 initSchema();
