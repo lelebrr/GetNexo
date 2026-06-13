@@ -779,12 +779,20 @@ router.post('/callback', (req, res) => {
 router.get('/stats', (req, res) => {
     try {
         const messageCount = db.prepare('SELECT COUNT(*) as cnt FROM a2a_messages').get()?.cnt || 0;
-        const taskCount = db.prepare('SELECT COUNT(*) as cnt FROM a2a_tasks').get()?.cnt || 0;
+        // ⚡ Bolt: optimized multiple COUNT(*) queries into a single query with conditional aggregation, reducing queries from 3 to 1
+        const taskStatsRow = db.prepare(`
+            SELECT
+                COUNT(*) as total,
+                SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed,
+                SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending
+            FROM a2a_tasks
+        `).get() || { total: 0, completed: 0, pending: 0 };
+        const taskCount = taskStatsRow.total || 0;
+        const tasksCompleted = taskStatsRow.completed || 0;
+        const tasksPending = taskStatsRow.pending || 0;
+
         const peerCount = db.prepare('SELECT COUNT(*) as cnt FROM a2a_peers').get()?.cnt || 0;
         const identityCount = db.prepare('SELECT COUNT(*) as cnt FROM a2a_identities').get()?.cnt || 0;
-
-        const tasksCompleted = db.prepare("SELECT COUNT(*) as cnt FROM a2a_tasks WHERE status = 'completed'").get()?.cnt || 0;
-        const tasksPending = db.prepare("SELECT COUNT(*) as cnt FROM a2a_tasks WHERE status = 'pending'").get()?.cnt || 0;
 
         const aiStatus = a2aAI ? a2aAI.getStatus() : { active: false };
 
