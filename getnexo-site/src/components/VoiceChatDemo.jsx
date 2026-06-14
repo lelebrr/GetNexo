@@ -33,6 +33,8 @@ export default function VoiceChatDemo() {
                         <div className={`max-w-[85%] px-4 py-3 rounded-2xl ${m.user ? 'bg-green-600/80' : 'bg-gray-800/60'} text-white`}>
                             <span className="text-sm">{m.texto}</span>
                             <button
+                                aria-label="Ouvir mensagem"
+                                title="Ouvir mensagem"
                                 onClick={() => isAvailable ? speak(m.texto) : alert("Seu navegador não suporta voz. Use Chrome/Edge.")}
                                 className="ml-2 inline-flex items-center text-xs bg-black/40 px-2 py-1 rounded-full hover:bg-black/60 transition"
                             >
