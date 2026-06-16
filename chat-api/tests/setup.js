@@ -64,3 +64,4 @@ afterAll(() => {
         db.close();
     }
 });
+process.env.JWT_SECRET = 'test-secret';
