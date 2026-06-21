@@ -783,8 +783,17 @@ router.get('/stats', (req, res) => {
         const peerCount = db.prepare('SELECT COUNT(*) as cnt FROM a2a_peers').get()?.cnt || 0;
         const identityCount = db.prepare('SELECT COUNT(*) as cnt FROM a2a_identities').get()?.cnt || 0;
 
-        const tasksCompleted = db.prepare("SELECT COUNT(*) as cnt FROM a2a_tasks WHERE status = 'completed'").get()?.cnt || 0;
-        const tasksPending = db.prepare("SELECT COUNT(*) as cnt FROM a2a_tasks WHERE status = 'pending'").get()?.cnt || 0;
+        // Combined sequential aggregate queries into single queries using conditional aggregation
+        // Impact: Reduces database queries from 2 to 1.
+        const taskCounts = db.prepare(`
+            SELECT
+                SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed,
+                SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending
+            FROM a2a_tasks
+        `).get() || { completed: 0, pending: 0 };
+
+        const tasksCompleted = taskCounts.completed || 0;
+        const tasksPending = taskCounts.pending || 0;
 
         const aiStatus = a2aAI ? a2aAI.getStatus() : { active: false };
 

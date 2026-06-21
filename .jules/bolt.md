@@ -21,3 +21,7 @@
 ## 2025-02-28 - Optimizing Multiple COUNT(*) Queries
 **Learning:** In analytical endpoints (like `/stats/overview`), executing sequential `COUNT(*)` database queries causes unnecessary latency through multiple table scans and context switching.
 **Action:** Always combine them into a single query using conditional aggregation `SUM(CASE WHEN [condition] THEN 1 ELSE 0 END)`. Use fallback logic `|| 0` in JavaScript because `SUM()` returns `NULL` (unlike `COUNT()` returning `0`) on empty tables.
+
+## 2025-03-05 - Missing Performance Indexes on Key Tables
+**Learning:** Analytical queries and endpoints like `/api/a2a/stats` or `SecurityMonitor` are performing sequential counts and lookups without explicitly defined performance indexes on frequently queried temporal/status columns (`created_at`, `timestamp`, `status`, `type`), leading to potential O(N) full table scans as tables grow.
+**Action:** Always verify and define indexes in `db.js` (`CREATE INDEX IF NOT EXISTS`) before assuming the database is optimized for read-heavy operations.
