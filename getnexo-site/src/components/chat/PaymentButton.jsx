@@ -144,8 +144,9 @@ const PaymentButton = ({
                             </code>
                             <button
                                 onClick={() => copyToClipboard(paymentData.payment.pix_key)}
-                                className="text-blue-600 hover:text-blue-800 text-xs"
+                                className="text-blue-600 hover:text-blue-800 text-xs focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-1"
                                 title="Copiar chave Pix"
+                                aria-label="Copiar chave Pix"
                             >
                                 📋
                             </button>

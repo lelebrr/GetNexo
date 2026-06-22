@@ -91,7 +91,10 @@ const PaymentHistory = ({ phone, compact = false }) => {
                 {compact && (
                     <button
                         onClick={() => setExpanded(!expanded)}
-                        className="text-xs text-blue-600 hover:text-blue-800"
+                        className="text-xs text-blue-600 hover:text-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-1"
+                        aria-expanded={expanded}
+                        aria-controls="payment-history-list"
+                        aria-label={expanded ? "Ocultar histórico de pagamentos" : "Mostrar histórico de pagamentos"}
                     >
                         {expanded ? 'Ocultar' : 'Mostrar'} ({transactions.length})
                     </button>
@@ -107,7 +110,7 @@ const PaymentHistory = ({ phone, compact = false }) => {
             )}
 
             {expanded && (
-                <div className="space-y-2 max-h-48 overflow-y-auto">
+                <div id="payment-history-list" className="space-y-2 max-h-48 overflow-y-auto">
                     {transactions.map((transaction) => (
                         <div
                             key={transaction.id}
