@@ -5,19 +5,17 @@ const db = require('../db');
 // Métricas do Dashboard
 router.get('/dashboard-stats', (req, res) => {
     try {
-        // Receita Total (24h)
-        const revenue24h = db.prepare(`
-            SELECT SUM(amount) as total 
+        // ⚡ Bolt: Performance optimization
+        // Combine sequential SUM and COUNT queries into a single query
+        // Impact: Reduces database queries from 2 to 1 in /dashboard-stats.
+        const stats24h = db.prepare(`
+            SELECT SUM(amount) as total, COUNT(*) as count
             FROM transactions 
             WHERE created_at >= datetime('now', '-1 day') AND status = 'paid'
-        `).get();
+        `).get() || { total: 0, count: 0 };
 
-        // Total de Vendas (24h)
-        const salesCount24h = db.prepare(`
-            SELECT COUNT(*) as count 
-            FROM transactions 
-            WHERE created_at >= datetime('now', '-1 day') AND status = 'paid'
-        `).get();
+        const revenue24h = { total: stats24h.total || 0 };
+        const salesCount24h = { count: stats24h.count || 0 };
 
         // Clientes Ativos
         const activeCustomers = db.prepare(`
@@ -266,13 +264,18 @@ router.get('/prediction', (req, res) => {
         const { income } = req.query; // Input do usuario (ex: meta de venda)
 
         // Regressão simples baseada em histórico de todos os users
-        const avgTicket = db.prepare('SELECT AVG(amount) as val FROM transactions WHERE status="paid"').get().val || 0;
+        // ⚡ Bolt: Performance optimization
+        // Combine 3 separate queries (AVG, SUM on transactions, COUNT on contacts) into fewer queries if possible.
+        // Or at least combine the 2 transaction queries.
+
+        const txStats = db.prepare('SELECT AVG(amount) as avgVal, SUM(amount) as sumVal FROM transactions WHERE status="paid"').get() || { avgVal: 0, sumVal: 0 };
+        const avgTicket = txStats.avgVal || 0;
+        const totalRevenue = txStats.sumVal || 0;
 
         // Se investirmos X (income no parametro do front é tratado como variavel independente), quanto retorna?
         // Lógica real: Retorno = Investimento * (Receita Total / Gasto Total)
         // Se não houver dados, assumimos retorno igual ao investimento (ROI 0%)
 
-        const totalRevenue = db.prepare('SELECT SUM(amount) as val FROM transactions WHERE status="paid"').get().val || 0;
         // Precisamos saber quanto foi "gasto" para gerar essa receita. Como não temos tabela de custos de ads,
         // vamos usar o número de campanhas (campaigns table) ou apenas uma heurística baseada no tempo se não tivermos dados de custo.
         // Para ser "real" com os dados que temos: vamos assumir que o "investimento" é proporcional ao número de contatos adquiridos.
