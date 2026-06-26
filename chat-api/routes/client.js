@@ -25,21 +25,18 @@ router.get('/dashboard', (req, res) => {
         // If this is a Tenant Dashboard (User is a generic Client of GetNexo):
         // We link data to them. Assuming global for now based on 'analytics.js' patterns.
 
-        // Sales Today
-        const salesToday = db.prepare(`
-            SELECT SUM(amount) as total 
+        // Impact: Combined sales today and yesterday into a single query using conditional aggregation, reducing transactions table queries from 2 to 1 for the client dashboard.
+        // Sales Today & Yesterday (for trend)
+        const salesStats = db.prepare(`
+            SELECT
+                COALESCE(SUM(CASE WHEN created_at >= datetime('now', 'start of day') THEN amount ELSE 0 END), 0) as today,
+                COALESCE(SUM(CASE WHEN created_at >= datetime('now', 'start of day', '-1 day') AND created_at < datetime('now', 'start of day') THEN amount ELSE 0 END), 0) as yesterday
             FROM transactions 
-            WHERE created_at >= datetime('now', 'start of day') AND status = 'paid'
-        `).get().total || 0;
+            WHERE created_at >= datetime('now', 'start of day', '-1 day') AND status = 'paid'
+        `).get() || { today: 0, yesterday: 0 };
 
-        // Sales Yesterday (for trend)
-        const salesYesterday = db.prepare(`
-            SELECT SUM(amount) as total 
-            FROM transactions 
-            WHERE created_at >= datetime('now', 'start of day', '-1 day') 
-            AND created_at < datetime('now', 'start of day') 
-            AND status = 'paid'
-        `).get().total || 0;
+        const salesToday = salesStats.today;
+        const salesYesterday = salesStats.yesterday;
 
         const salesTrend = salesYesterday > 0
             ? Math.round(((salesToday - salesYesterday) / salesYesterday) * 100)

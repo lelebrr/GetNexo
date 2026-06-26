@@ -21,3 +21,6 @@
 ## 2025-02-28 - Optimizing Multiple COUNT(*) Queries
 **Learning:** In analytical endpoints (like `/stats/overview`), executing sequential `COUNT(*)` database queries causes unnecessary latency through multiple table scans and context switching.
 **Action:** Always combine them into a single query using conditional aggregation `SUM(CASE WHEN [condition] THEN 1 ELSE 0 END)`. Use fallback logic `|| 0` in JavaScript because `SUM()` returns `NULL` (unlike `COUNT()` returning `0`) on empty tables.
+## 2025-02-20 - [Performance Optimization]
+**Learning:** Sequential aggregate queries (like SUM and COUNT) on the same table can be combined into a single query to reduce database roundtrips. In `chat-api/routes/analytics.js` and `chat-api/routes/client.js`, multiple queries to the `transactions` table were merged. For conditional cases (e.g., today vs yesterday), conditional aggregation (`SUM(CASE WHEN...)`) effectively consolidates queries. SQLite `SUM()` returns `NULL` on empty tables, so a Javascript fallback (`|| { total: 0, count: 0 }` etc.) and `COALESCE` are necessary to avoid errors.
+**Action:** Always look for sequential aggregate queries on the same table that can be combined. Use conditional aggregation for varying conditions. Remember to use `COALESCE` or handle `NULL` sums in Javascript when using SQLite.
