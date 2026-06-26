@@ -4,7 +4,12 @@ const archiver = require('archiver');
 const crypto = require('crypto');
 
 const TEMPLATE_DIR = path.join(__dirname, 'templates');
-const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || 'nexo_forge_super_secret_key_2026_32bytes'; // Must be 32 chars for AES-256
+const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
+
+if (!ENCRYPTION_KEY) {
+  console.error('FATAL: ENCRYPTION_KEY environment variable is not set.');
+  process.exit(1);
+}
 
 function getHash(text) {
     return crypto.createHash('sha256').update(text).digest('hex').substr(0, 16);
