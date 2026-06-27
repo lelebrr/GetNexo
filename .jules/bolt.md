@@ -21,3 +21,9 @@
 ## 2025-02-28 - Optimizing Multiple COUNT(*) Queries
 **Learning:** In analytical endpoints (like `/stats/overview`), executing sequential `COUNT(*)` database queries causes unnecessary latency through multiple table scans and context switching.
 **Action:** Always combine them into a single query using conditional aggregation `SUM(CASE WHEN [condition] THEN 1 ELSE 0 END)`. Use fallback logic `|| 0` in JavaScript because `SUM()` returns `NULL` (unlike `COUNT()` returning `0`) on empty tables.
+
+## 2025-02-24 - Database queries combination
+
+**Learning:** Combining multiple aggregate SQL queries on the same table can noticeably reduce the number of database roundtrips. Specifically, in `chat-api/routes/analytics.js`, there were two consecutive queries counting and summarizing `amount` of the `transactions` table.
+
+**Action:** Combined `SUM()` and `COUNT()` operations in single SQL query using `SELECT SUM(amount) as total, COUNT(*) as count`. When performing performance optimizations, always look for multiple similar queries going to the same table.
