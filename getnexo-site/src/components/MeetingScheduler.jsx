@@ -51,46 +51,53 @@ const MeetingScheduler = ({ contact, onClose, onScheduled }) => {
                     <h3 className="text-xl font-bold text-white flex items-center gap-2">
                         <span>📅</span> Agendar Reunião
                     </h3>
-                    <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors text-2xl">✕</button>
+                    <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors text-2xl focus-visible:ring-2 focus-visible:outline-none rounded" aria-label="Fechar modal de agendamento">✕</button>
                 </div>
 
                 <form onSubmit={handleSchedule} className="p-6 space-y-4">
                     <div>
-                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Assunto</label>
+                        <label htmlFor="meeting-summary" className="block text-xs font-bold text-gray-500 uppercase mb-1">Assunto</label>
                         <input
+                            id="meeting-summary"
                             value={summary}
                             onChange={e => setSummary(e.target.value)}
-                            className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white outline-none focus:border-neon-blue"
+                            className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white outline-none focus:border-neon-blue focus-visible:ring-2 focus-visible:outline-none"
+                            required
                         />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Data</label>
+                            <label htmlFor="meeting-date" className="block text-xs font-bold text-gray-500 uppercase mb-1">Data</label>
                             <input
+                                id="meeting-date"
                                 type="date"
                                 value={date}
                                 onChange={e => setDate(e.target.value)}
-                                className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white outline-none focus:border-neon-blue color-scheme-dark"
+                                className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white outline-none focus:border-neon-blue focus-visible:ring-2 focus-visible:outline-none color-scheme-dark"
+                                required
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Hora</label>
+                            <label htmlFor="meeting-time" className="block text-xs font-bold text-gray-500 uppercase mb-1">Hora</label>
                             <input
+                                id="meeting-time"
                                 type="time"
                                 value={time}
                                 onChange={e => setTime(e.target.value)}
-                                className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white outline-none focus:border-neon-blue color-scheme-dark"
+                                className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white outline-none focus:border-neon-blue focus-visible:ring-2 focus-visible:outline-none color-scheme-dark"
+                                required
                             />
                         </div>
                     </div>
 
                     <div>
-                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Duração (minutos)</label>
+                        <label htmlFor="meeting-duration" className="block text-xs font-bold text-gray-500 uppercase mb-1">Duração (minutos)</label>
                         <select
+                            id="meeting-duration"
                             value={duration}
                             onChange={e => setDuration(Number(e.target.value))}
-                            className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white outline-none focus:border-neon-blue"
+                            className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white outline-none focus:border-neon-blue focus-visible:ring-2 focus-visible:outline-none"
                         >
                             <option value={15}>15 minutos</option>
                             <option value={30}>30 minutos</option>
