@@ -258,6 +258,7 @@ const ChatInterface = () => {
                                 <button
                                     onClick={() => setActiveContact(null)}
                                     className="lg:hidden text-gray-400 hover:text-white mr-2"
+                                    aria-label="Voltar para a lista de contatos"
                                 >
                                     ←
                                 </button>
@@ -322,12 +323,14 @@ const ChatInterface = () => {
                                 <button
                                     onClick={() => setIsNote(!isNote)}
                                     className={`text-[10px] font-bold px-3 py-1 rounded-full border transition-all ${isNote ? 'bg-yellow-500 text-black border-yellow-500' : 'text-gray-400 border-gray-700 hover:border-gray-500'}`}
+                                    aria-pressed={isNote}
                                 >
                                     🔒 NOTA INTERNA
                                 </button>
                                 <button
                                     onClick={() => setShowMacros(!showMacros)}
                                     className="text-[10px] font-bold px-3 py-1 rounded-full text-neon-blue border border-gray-700 hover:border-neon-blue transition-all"
+                                    aria-pressed={showMacros}
                                 >
                                     ⚡ RESPOSTA RÁPIDA
                                 </button>
