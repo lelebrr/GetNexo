@@ -5,19 +5,15 @@ const db = require('../db');
 // Métricas do Dashboard
 router.get('/dashboard-stats', (req, res) => {
     try {
-        // Receita Total (24h)
-        const revenue24h = db.prepare(`
-            SELECT SUM(amount) as total 
+        // ⚡ Bolt: Combined revenue and sales count queries to reduce database roundtrips
+        // Impact: Reduces DB queries from 2 to 1 for transaction stats
+        const transactionsStats = db.prepare(`
+            SELECT SUM(amount) as total, COUNT(*) as count
             FROM transactions 
             WHERE created_at >= datetime('now', '-1 day') AND status = 'paid'
-        `).get();
-
-        // Total de Vendas (24h)
-        const salesCount24h = db.prepare(`
-            SELECT COUNT(*) as count 
-            FROM transactions 
-            WHERE created_at >= datetime('now', '-1 day') AND status = 'paid'
-        `).get();
+        `).get() || { total: 0, count: 0 };
+        const revenue24h = { total: transactionsStats.total || 0 };
+        const salesCount24h = { count: transactionsStats.count || 0 };
 
         // Clientes Ativos
         const activeCustomers = db.prepare(`
@@ -265,14 +261,16 @@ router.get('/prediction', (req, res) => {
     try {
         const { income } = req.query; // Input do usuario (ex: meta de venda)
 
-        // Regressão simples baseada em histórico de todos os users
-        const avgTicket = db.prepare('SELECT AVG(amount) as val FROM transactions WHERE status="paid"').get().val || 0;
+        // ⚡ Bolt: Combined avg and sum queries to reduce database roundtrips
+        // Impact: Reduces DB queries from 2 to 1 for prediction stats
+        const predictionStats = db.prepare('SELECT AVG(amount) as avgTicket, SUM(amount) as totalRevenue FROM transactions WHERE status="paid"').get() || { avgTicket: 0, totalRevenue: 0 };
+        const avgTicket = predictionStats.avgTicket || 0;
 
         // Se investirmos X (income no parametro do front é tratado como variavel independente), quanto retorna?
         // Lógica real: Retorno = Investimento * (Receita Total / Gasto Total)
         // Se não houver dados, assumimos retorno igual ao investimento (ROI 0%)
 
-        const totalRevenue = db.prepare('SELECT SUM(amount) as val FROM transactions WHERE status="paid"').get().val || 0;
+        const totalRevenue = predictionStats.totalRevenue || 0;
         // Precisamos saber quanto foi "gasto" para gerar essa receita. Como não temos tabela de custos de ads,
         // vamos usar o número de campanhas (campaigns table) ou apenas uma heurística baseada no tempo se não tivermos dados de custo.
         // Para ser "real" com os dados que temos: vamos assumir que o "investimento" é proporcional ao número de contatos adquiridos.
