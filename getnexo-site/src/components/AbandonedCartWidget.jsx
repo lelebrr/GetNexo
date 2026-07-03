@@ -41,7 +41,7 @@ const AbandonedCartWidget = () => {
                     🛒 Carrinhos Abandonados
                     <span className="bg-red-500 text-white text-xs px-2 rounded-full">{carts.length}</span>
                 </h4>
-                <button onClick={() => setCarts([])} className="text-gray-500 hover:text-white">x</button>
+                <button onClick={() => setCarts([])} className="text-gray-500 hover:text-white p-1 rounded hover:bg-gray-800" aria-label="Fechar carrinhos abandonados" title="Fechar">✕</button>
             </div>
 
             <div className="max-h-40 overflow-y-auto space-y-2">
