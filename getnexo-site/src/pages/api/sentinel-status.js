@@ -5,7 +5,8 @@ import os from 'os';
 
 export async function GET({ request }) {
     // Rota protegida (opcional – JWT ou chave .env)
-    const API_KEY = process.env.SENTINEL_API_KEY || 'getnexo-secret-2026';
+    // 🛡️ Sentinel: Removed predictable hardcoded API key
+    const API_KEY = process.env.SENTINEL_API_KEY;
     const auth = request.headers.get('x-api-key');
 
     if (auth !== API_KEY) {
