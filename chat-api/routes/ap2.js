@@ -666,24 +666,30 @@ router.post('/verify-vdc', (req, res) => {
  */
 router.get('/stats', (req, res) => {
     try {
-        const mandateCount = db.prepare('SELECT COUNT(*) as cnt FROM ap2_mandates').get()?.cnt || 0;
-        const transactionCount = db.prepare('SELECT COUNT(*) as cnt FROM ap2_transactions').get()?.cnt || 0;
+        // Optimized: combined sequential queries using conditional aggregation
+        const mandatesStats = db.prepare(`
+            SELECT
+                COUNT(*) as cnt,
+                SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active,
+                SUM(CASE WHEN status = 'used' THEN 1 ELSE 0 END) as used
+            FROM ap2_mandates
+        `).get() || { cnt: 0, active: 0, used: 0 };
 
-        const activeMandates = db.prepare("SELECT COUNT(*) as cnt FROM ap2_mandates WHERE status = 'active'").get()?.cnt || 0;
-        const usedMandates = db.prepare("SELECT COUNT(*) as cnt FROM ap2_mandates WHERE status = 'used'").get()?.cnt || 0;
+        const mandateCount = mandatesStats.cnt || 0;
+        const activeMandates = mandatesStats.active || 0;
+        const usedMandates = mandatesStats.used || 0;
 
-        const totalVolume = db.prepare(`
-            SELECT COALESCE(SUM(amount), 0) as total 
-            FROM ap2_transactions 
-            WHERE status IN ('captured', 'authorized')
-        `).get()?.total || 0;
+        const txStats = db.prepare(`
+            SELECT
+                COUNT(*) as cnt,
+                SUM(CASE WHEN status IN ('captured', 'authorized') THEN amount ELSE 0 END) as total,
+                SUM(CASE WHEN status IN ('captured', 'authorized') AND DATE(created_at) = DATE('now') THEN amount ELSE 0 END) as todayTotal
+            FROM ap2_transactions
+        `).get() || { cnt: 0, total: 0, todayTotal: 0 };
 
-        const todayVolume = db.prepare(`
-            SELECT COALESCE(SUM(amount), 0) as total 
-            FROM ap2_transactions 
-            WHERE status IN ('captured', 'authorized') 
-            AND DATE(created_at) = DATE('now')
-        `).get()?.total || 0;
+        const transactionCount = txStats.cnt || 0;
+        const totalVolume = txStats.total || 0;
+        const todayVolume = txStats.todayTotal || 0;
 
         const txByStatus = db.prepare(`
             SELECT status, COUNT(*) as count, SUM(amount) as volume
