@@ -206,8 +206,11 @@ router.put('/:id', (req, res) => {
         const fields = [];
         const values = [];
 
+        // Security: Prevent SQL injection by whitelisting allowed fields
+        const allowedFields = ['customer_phone', 'customer_name', 'customer_email', 'channel', 'status', 'priority', 'assigned_agent_id', 'assigned_agent_name', 'human_agent', 'tags', 'metadata', 'sentiment', 'sentiment_score', 'last_message', 'last_message_at'];
+
         Object.keys(updates).forEach(key => {
-            if (key !== 'id' && key !== 'created_at') {
+            if (allowedFields.includes(key)) {
                 fields.push(`${key} = ?`);
                 values.push(updates[key]);
             }
