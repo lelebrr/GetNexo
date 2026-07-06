@@ -5,19 +5,18 @@ const db = require('../db');
 // Métricas do Dashboard
 router.get('/dashboard-stats', (req, res) => {
     try {
-        // Receita Total (24h)
-        const revenue24h = db.prepare(`
-            SELECT SUM(amount) as total 
+        // Bolt: Combinando SUM e COUNT para transações das últimas 24h em uma única query
+        // Impacto: Reduz o número de requisições ao banco de 2 para 1.
+        const txStats24h = db.prepare(`
+            SELECT
+                SUM(amount) as total,
+                COUNT(*) as count
             FROM transactions 
             WHERE created_at >= datetime('now', '-1 day') AND status = 'paid'
-        `).get();
+        `).get() || { total: 0, count: 0 };
 
-        // Total de Vendas (24h)
-        const salesCount24h = db.prepare(`
-            SELECT COUNT(*) as count 
-            FROM transactions 
-            WHERE created_at >= datetime('now', '-1 day') AND status = 'paid'
-        `).get();
+        const revenue24h = { total: txStats24h.total || 0 };
+        const salesCount24h = { count: txStats24h.count || 0 };
 
         // Clientes Ativos
         const activeCustomers = db.prepare(`
