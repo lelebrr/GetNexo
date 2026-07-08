@@ -5,6 +5,7 @@
 <div class="p-6">
   <h2 class="text-2xl font-black mb-4">Upload 3D</h2>
 
+  <label for="file-input" class="sr-only">Selecione um arquivo 3D</label>
   <input
     type="file"
     accept=".glb,.gltf"
@@ -14,8 +15,11 @@
 
   <button
     id="preview-btn"
+    aria-label="Ver 3D do modelo enviado"
+    title="Ver 3D do modelo enviado"
     class="px-6 py-3 bg-gradient-to-r from-cyan-500 to-green-500 text-black font-bold rounded hover:from-cyan-400 hover:to-green-400 transition opacity-50 cursor-not-allowed"
     disabled
+    aria-disabled="true"
   >
     Ver 3D
   </button>
@@ -80,9 +84,15 @@
       previewBtn.disabled = false;
       previewBtn.classList.remove('opacity-50', 'cursor-not-allowed');
       previewBtn.classList.add('cursor-pointer');
+      previewBtn.removeAttribute('aria-disabled');
       
       // Carregar Three.js apenas quando necessário
       await initUpload3D();
+    } else {
+      previewBtn.disabled = true;
+      previewBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      previewBtn.classList.remove('cursor-pointer');
+      previewBtn.setAttribute('aria-disabled', 'true');
     }
   });
 
