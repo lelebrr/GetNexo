@@ -339,6 +339,12 @@ const initSchema = () => {
 
   tables.forEach(sql => db.prepare(sql).run());
 
+  // ⚡ Bolt: Adding performance indexes on key analytical tables (transactions, messages, contacts) for temporal and status columns
+  // Impact: Reduces O(N) full table scans to O(log N) index lookups for analytics queries (measured via EXPLAIN QUERY PLAN).
+  db.prepare("CREATE INDEX IF NOT EXISTS idx_transactions_created_status ON transactions(created_at, status)").run();
+  db.prepare("CREATE INDEX IF NOT EXISTS idx_messages_timestamp ON messages(timestamp)").run();
+  db.prepare("CREATE INDEX IF NOT EXISTS idx_contacts_updated ON contacts(updated_at)").run();
+
   // Inicializar configurações padrão
   const defaults = [
     ['store_name', 'Minha Loja Nexus'],
