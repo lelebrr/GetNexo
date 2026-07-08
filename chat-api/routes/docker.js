@@ -293,7 +293,12 @@ router.get('/logs/:name', (req, res) => {
         return res.status(400).json({ error: 'Nome do container inválido' });
     }
 
-    const args = ['logs', '--tail', tail.toString(), name];
+    // Validate tail to prevent argument injection
+    const tailValue = Array.isArray(tail) ? tail[0] : tail;
+    const parsedTail = parseInt(tailValue, 10);
+    const validTail = (!isNaN(parsedTail) && parsedTail > 0) ? parsedTail.toString() : '100';
+
+    const args = ['logs', '--tail', validTail, name];
 
     executeDockerCommand(args, (error, output) => {
         if (error) {
