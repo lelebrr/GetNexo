@@ -666,24 +666,23 @@ router.post('/verify-vdc', (req, res) => {
  */
 router.get('/stats', (req, res) => {
     try {
-        const mandateCount = db.prepare('SELECT COUNT(*) as cnt FROM ap2_mandates').get()?.cnt || 0;
-        const transactionCount = db.prepare('SELECT COUNT(*) as cnt FROM ap2_transactions').get()?.cnt || 0;
+        // ⚡ Bolt: [performance improvement] Combined multiple sequential COUNT queries into a single table scan using conditional aggregation.
+        // Impact: Reduces database queries from 3 to 1 for mandates, and 3 to 1 for transactions.
+        const { total: mandateCount, active: activeMandates, used: usedMandates } = db.prepare(`
+            SELECT
+                COUNT(*) as total,
+                COALESCE(SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END), 0) as active,
+                COALESCE(SUM(CASE WHEN status = 'used' THEN 1 ELSE 0 END), 0) as used
+            FROM ap2_mandates
+        `).get() || { total: 0, active: 0, used: 0 };
 
-        const activeMandates = db.prepare("SELECT COUNT(*) as cnt FROM ap2_mandates WHERE status = 'active'").get()?.cnt || 0;
-        const usedMandates = db.prepare("SELECT COUNT(*) as cnt FROM ap2_mandates WHERE status = 'used'").get()?.cnt || 0;
-
-        const totalVolume = db.prepare(`
-            SELECT COALESCE(SUM(amount), 0) as total 
-            FROM ap2_transactions 
-            WHERE status IN ('captured', 'authorized')
-        `).get()?.total || 0;
-
-        const todayVolume = db.prepare(`
-            SELECT COALESCE(SUM(amount), 0) as total 
-            FROM ap2_transactions 
-            WHERE status IN ('captured', 'authorized') 
-            AND DATE(created_at) = DATE('now')
-        `).get()?.total || 0;
+        const { total: transactionCount, totalVolume, todayVolume } = db.prepare(`
+            SELECT
+                COUNT(*) as total,
+                COALESCE(SUM(CASE WHEN status IN ('captured', 'authorized') THEN amount ELSE 0 END), 0) as totalVolume,
+                COALESCE(SUM(CASE WHEN status IN ('captured', 'authorized') AND DATE(created_at) = DATE('now') THEN amount ELSE 0 END), 0) as todayVolume
+            FROM ap2_transactions
+        `).get() || { total: 0, totalVolume: 0, todayVolume: 0 };
 
         const txByStatus = db.prepare(`
             SELECT status, COUNT(*) as count, SUM(amount) as volume
