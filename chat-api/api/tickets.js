@@ -202,12 +202,13 @@ router.put('/:id', (req, res) => {
             return res.status(404).json({ error: 'Ticket não encontrado' });
         }
 
-        // Construir query dinâmica
+        // Construir query dinâmica com validação de campos (whitelist)
+        const allowedFields = ['contact_id', 'subject', 'status', 'priority', 'updated_at'];
         const fields = [];
         const values = [];
 
         Object.keys(updates).forEach(key => {
-            if (key !== 'id' && key !== 'created_at') {
+            if (allowedFields.includes(key)) {
                 fields.push(`${key} = ?`);
                 values.push(updates[key]);
             }
