@@ -34,7 +34,7 @@ const OrderBuilder = ({ onSendOrder, onClose }) => {
                     <h3 className="text-xl font-bold text-white flex items-center gap-2">
                         🛍️ Venda Assistida <span className="text-xs bg-neon-blue text-black px-2 rounded">Beta</span>
                     </h3>
-                    <button onClick={onClose} className="text-gray-500 hover:text-white">✕</button>
+                    <button onClick={onClose} aria-label="Fechar" className="text-gray-500 hover:text-white">✕</button>
                 </div>
 
                 <div className="flex-1 flex overflow-hidden">
@@ -49,7 +49,7 @@ const OrderBuilder = ({ onSendOrder, onClose }) => {
                                         <div className="font-bold text-gray-200 text-sm">{p.name}</div>
                                         <div className="text-neon-green text-xs font-mono">R$ {p.price.toFixed(2)}</div>
                                     </div>
-                                    <button onClick={() => addToCart(p)} className="bg-neon-blue text-black w-8 h-8 rounded-full font-bold hover:scale-110 transition-transform">+</button>
+                                    <button onClick={() => addToCart(p)} aria-label={`Adicionar ${p.name} ao carrinho`} className="bg-neon-blue text-black w-8 h-8 rounded-full font-bold hover:scale-110 transition-transform">+</button>
                                 </div>
                             ))}
                         </div>
@@ -65,7 +65,7 @@ const OrderBuilder = ({ onSendOrder, onClose }) => {
                                     <span className="text-gray-300">{item.name}</span>
                                     <div className="flex items-center gap-3">
                                         <span className="text-white">R${item.price}</span>
-                                        <button onClick={() => removeFromCart(idx)} className="text-red-500 hover:text-red-400">×</button>
+                                        <button onClick={() => removeFromCart(idx)} aria-label={`Remover ${item.name} do carrinho`} className="text-red-500 hover:text-red-400">×</button>
                                     </div>
                                 </div>
                             ))}
