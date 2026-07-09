@@ -28,3 +28,7 @@
 **Vulnerability:** Several models used unparameterized string concatenation for `orderBy` and `orderDir` parameters.
 **Learning:** SQLite cannot parameterize column names or sort orders. This is a common pattern to miss since standard parameterized values work for `WHERE` clauses but fail for `ORDER BY`.
 **Prevention:** Strictly validate dynamically provided columns against a regex allowlist (e.g. `/^[a-zA-Z0-9_]+$/`) and limit sort order variables explicitly to `'ASC'` or `'DESC'`.
+## 2024-07-09 - [SQL Injection via Dynamic Object Keys]
+**Vulnerability:** Unsanitized keys from req.body were directly injected into UPDATE queries in chat-api/api/tickets.js.
+**Learning:** The pattern Object.keys(req.body).forEach(...) directly building SQL queries without a whitelist allows arbitrary column or SQL injection.
+**Prevention:** Always use an explicit whitelist of allowed columns before dynamically constructing UPDATE queries.
