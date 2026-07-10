@@ -25,21 +25,18 @@ router.get('/dashboard', (req, res) => {
         // If this is a Tenant Dashboard (User is a generic Client of GetNexo):
         // We link data to them. Assuming global for now based on 'analytics.js' patterns.
 
-        // Sales Today
-        const salesToday = db.prepare(`
-            SELECT SUM(amount) as total 
+        // 1. Sales Today & Yesterday (Combined for performance)
+        // Impact: Reduces queries from 2 to 1 for sales stats by combining temporal aggregations
+        const salesStats = db.prepare(`
+            SELECT
+                SUM(CASE WHEN created_at >= datetime('now', 'start of day') THEN amount ELSE 0 END) as totalToday,
+                SUM(CASE WHEN created_at >= datetime('now', 'start of day', '-1 day') AND created_at < datetime('now', 'start of day') THEN amount ELSE 0 END) as totalYesterday
             FROM transactions 
-            WHERE created_at >= datetime('now', 'start of day') AND status = 'paid'
-        `).get().total || 0;
+            WHERE created_at >= datetime('now', 'start of day', '-1 day') AND status = 'paid'
+        `).get() || {};
 
-        // Sales Yesterday (for trend)
-        const salesYesterday = db.prepare(`
-            SELECT SUM(amount) as total 
-            FROM transactions 
-            WHERE created_at >= datetime('now', 'start of day', '-1 day') 
-            AND created_at < datetime('now', 'start of day') 
-            AND status = 'paid'
-        `).get().total || 0;
+        const salesToday = salesStats.totalToday || 0;
+        const salesYesterday = salesStats.totalYesterday || 0;
 
         const salesTrend = salesYesterday > 0
             ? Math.round(((salesToday - salesYesterday) / salesYesterday) * 100)
@@ -52,18 +49,18 @@ router.get('/dashboard', (req, res) => {
             WHERE timestamp >= ?
         `).get(Math.floor(Date.now() / 1000) - 86400).count || 0;
 
-        // 3. New Leads (Last 7 days vs Previous 7 days)
-        const newLeads = db.prepare(`
-            SELECT COUNT(*) as count 
+        // 3. New Leads (Last 7 days vs Previous 7 days) (Combined for performance)
+        // Impact: Reduces queries from 2 to 1 for leads stats by combining temporal aggregations
+        const leadsStats = db.prepare(`
+            SELECT
+                SUM(CASE WHEN created_at >= datetime('now', '-7 days') THEN 1 ELSE 0 END) as newCount,
+                SUM(CASE WHEN created_at >= datetime('now', '-14 days') AND created_at < datetime('now', '-7 days') THEN 1 ELSE 0 END) as prevCount
             FROM contacts 
-            WHERE created_at >= datetime('now', '-7 days')
-        `).get().count || 0;
+            WHERE created_at >= datetime('now', '-14 days')
+        `).get() || {};
 
-        const prevLeads = db.prepare(`
-            SELECT COUNT(*) as count 
-            FROM contacts 
-            WHERE created_at >= datetime('now', '-14 days') AND created_at < datetime('now', '-7 days')
-        `).get().count || 0;
+        const newLeads = leadsStats.newCount || 0;
+        const prevLeads = leadsStats.prevCount || 0;
 
         const leadsTrend = prevLeads > 0
             ? Math.round(((newLeads - prevLeads) / prevLeads) * 100)

@@ -21,3 +21,6 @@
 ## 2025-02-28 - Optimizing Multiple COUNT(*) Queries
 **Learning:** In analytical endpoints (like `/stats/overview`), executing sequential `COUNT(*)` database queries causes unnecessary latency through multiple table scans and context switching.
 **Action:** Always combine them into a single query using conditional aggregation `SUM(CASE WHEN [condition] THEN 1 ELSE 0 END)`. Use fallback logic `|| 0` in JavaScript because `SUM()` returns `NULL` (unlike `COUNT()` returning `0`) on empty tables.
+## 2025-02-28 - Optimizing Client Dashboard Temporal Stats
+**Learning:** In the client dashboard (`routes/client.js`), multiple sequential `SUM()` and `COUNT()` database queries with different temporal conditions (e.g. today vs yesterday) cause unnecessary overhead.
+**Action:** Always combine them into a single query using conditional aggregation `SUM(CASE WHEN [condition] THEN amount ELSE 0 END)` or `SUM(CASE WHEN [condition] THEN 1 ELSE 0 END)`. Use fallback logic `|| {}` for the entire object and `|| 0` for properties.
