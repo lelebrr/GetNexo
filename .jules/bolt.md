@@ -21,3 +21,7 @@
 ## 2025-02-28 - Optimizing Multiple COUNT(*) Queries
 **Learning:** In analytical endpoints (like `/stats/overview`), executing sequential `COUNT(*)` database queries causes unnecessary latency through multiple table scans and context switching.
 **Action:** Always combine them into a single query using conditional aggregation `SUM(CASE WHEN [condition] THEN 1 ELSE 0 END)`. Use fallback logic `|| 0` in JavaScript because `SUM()` returns `NULL` (unlike `COUNT()` returning `0`) on empty tables.
+
+## 2025-07-11 - [Optimize Analytics Queries]
+**Learning:** Found an opportunity to improve query execution time in analytics endpoints by adding specific missing indexes in `chat-api/db.js`. Indexes are essential for `created_at`, `timestamp` and filtering on relations.
+**Action:** Always verify proper indexing strategy to avoid table scans on date and relation columns when writing analytics or frequently run aggregations queries.

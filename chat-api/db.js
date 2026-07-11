@@ -559,6 +559,18 @@ const initSchema = () => {
       } catch (e) { console.log('Columns likely exist'); }
     }
 
+    // ⚡ Bolt: Performance indexes to optimize analytics queries (reducing full table scans)
+    try {
+      console.log('Migrating indexes: Adding performance indexes...');
+      db.prepare('CREATE INDEX IF NOT EXISTS idx_transactions_status_created ON transactions(status, created_at)').run();
+      db.prepare('CREATE INDEX IF NOT EXISTS idx_contacts_updated_at ON contacts(updated_at)').run();
+      db.prepare('CREATE INDEX IF NOT EXISTS idx_messages_timestamp ON messages(timestamp)').run();
+      db.prepare('CREATE INDEX IF NOT EXISTS idx_messages_contact_id ON messages(contact_id)').run();
+      db.prepare('CREATE INDEX IF NOT EXISTS idx_transactions_contact_id_status ON transactions(contact_id, status)').run();
+    } catch (e) {
+      console.error('Index migration error:', e);
+    }
+
   } catch (err) {
     console.error('Migration error:', err);
   }
