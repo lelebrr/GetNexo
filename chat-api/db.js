@@ -562,6 +562,16 @@ const initSchema = () => {
   } catch (err) {
     console.error('Migration error:', err);
   }
+
+  // Bolt: Add performance indexes to prevent O(N) full table scans on analytic endpoints
+  // Impact: reduces queries on dashboard from SCAN to SEARCH TABLE
+  try {
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_transactions_created_status ON transactions (created_at, status)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_contacts_updated_at ON contacts (updated_at)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_messages_timestamp ON messages (timestamp)').run();
+  } catch(e) {
+    console.error('Index creation error:', e);
+  }
 };
 
 initSchema();
