@@ -21,3 +21,6 @@
 ## 2025-02-28 - Optimizing Multiple COUNT(*) Queries
 **Learning:** In analytical endpoints (like `/stats/overview`), executing sequential `COUNT(*)` database queries causes unnecessary latency through multiple table scans and context switching.
 **Action:** Always combine them into a single query using conditional aggregation `SUM(CASE WHEN [condition] THEN 1 ELSE 0 END)`. Use fallback logic `|| 0` in JavaScript because `SUM()` returns `NULL` (unlike `COUNT()` returning `0`) on empty tables.
+## 2025-07-14 - Dashboard Analytics Indexes
+**Learning:** In SQLite, the lack of indexes on analytical queries grouped or filtered by temporal and status columns causes O(N) full table scans, which can severely block read performance in WAL mode when dealing with high-throughput API endpoints.
+**Action:** Added targeted covering/range indexes to `transactions`, `contacts`, `messages`, and `analytics_logs` to optimize analytical queries for the dashboard.

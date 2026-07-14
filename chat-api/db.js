@@ -339,6 +339,13 @@ const initSchema = () => {
 
   tables.forEach(sql => db.prepare(sql).run());
 
+  // Performance Indexes (Bolt)
+  // Impact: Reduces queries from full table scans to index seeks for analytical queries on dashboard
+  db.prepare('CREATE INDEX IF NOT EXISTS idx_transactions_created_status ON transactions(created_at, status)').run();
+  db.prepare('CREATE INDEX IF NOT EXISTS idx_contacts_updated_at ON contacts(updated_at)').run();
+  db.prepare('CREATE INDEX IF NOT EXISTS idx_messages_timestamp ON messages(timestamp)').run();
+  db.prepare('CREATE INDEX IF NOT EXISTS idx_analytics_logs_created_at ON analytics_logs(created_at)').run();
+
   // Inicializar configurações padrão
   const defaults = [
     ['store_name', 'Minha Loja Nexus'],
