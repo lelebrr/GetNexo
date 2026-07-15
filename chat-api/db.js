@@ -559,6 +559,20 @@ const initSchema = () => {
       } catch (e) { console.log('Columns likely exist'); }
     }
 
+    // Performance Indexes
+    // Impact: Reduces queries on analytical endpoints (e.g., active chats, dashboard stats)
+    // from O(N) full table scans to O(log N) index lookups.
+    try {
+      console.log('Creating performance indexes...');
+      db.prepare('CREATE INDEX IF NOT EXISTS idx_transactions_status_created ON transactions(status, created_at)').run();
+      db.prepare('CREATE INDEX IF NOT EXISTS idx_transactions_contact ON transactions(contact_id)').run();
+      db.prepare('CREATE INDEX IF NOT EXISTS idx_messages_timestamp ON messages(timestamp)').run();
+      db.prepare('CREATE INDEX IF NOT EXISTS idx_messages_contact ON messages(contact_id)').run();
+      db.prepare('CREATE INDEX IF NOT EXISTS idx_contacts_updated ON contacts(updated_at)').run();
+    } catch (e) {
+      console.log('Error creating indexes:', e);
+    }
+
   } catch (err) {
     console.error('Migration error:', err);
   }
