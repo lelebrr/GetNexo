@@ -288,12 +288,17 @@ router.post('/deploy', (req, res) => {
 router.get('/logs/:name', (req, res) => {
     const { name } = req.params;
     const { tail = 100 } = req.query;
+    const parsedTail = parseInt(tail, 10);
 
     if (!isValidName(name)) {
         return res.status(400).json({ error: 'Nome do container inválido' });
     }
 
-    const args = ['logs', '--tail', tail.toString(), name];
+    if (isNaN(parsedTail)) {
+        return res.status(400).json({ error: 'Parâmetro tail inválido' });
+    }
+
+    const args = ['logs', '--tail', parsedTail.toString(), name];
 
     executeDockerCommand(args, (error, output) => {
         if (error) {

@@ -28,3 +28,8 @@
 **Vulnerability:** Several models used unparameterized string concatenation for `orderBy` and `orderDir` parameters.
 **Learning:** SQLite cannot parameterize column names or sort orders. This is a common pattern to miss since standard parameterized values work for `WHERE` clauses but fail for `ORDER BY`.
 **Prevention:** Strictly validate dynamically provided columns against a regex allowlist (e.g. `/^[a-zA-Z0-9_]+$/`) and limit sort order variables explicitly to `'ASC'` or `'DESC'`.
+
+## 2024-07-16 - Argument Injection in Docker Logs Endpoint
+**Vulnerability:** The `tail` parameter from `req.query` was passed directly to `execFile` without validation or type casting, allowing attackers to inject arguments like `--follow`.
+**Learning:** Even when using safe wrappers like `execFile`, user-controlled query parameters must be explicitly cast to expected types (e.g., using `parseInt`) or strictly validated to prevent argument injection vulnerabilities.
+**Prevention:** Always validate and sanitize all user inputs passed to sensitive functions. Use explicit type casting for numeric parameters.
