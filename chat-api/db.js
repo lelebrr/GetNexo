@@ -559,6 +559,10 @@ const initSchema = () => {
       } catch (e) { console.log('Columns likely exist'); }
     }
 
+    // Performance indexes (Bolt)
+    // Impact: Avoids O(N) full table scans for dashboard queries filtering by status and date
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_transactions_status_created_at ON transactions(status, created_at)').run();
+
   } catch (err) {
     console.error('Migration error:', err);
   }
