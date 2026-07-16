@@ -21,3 +21,6 @@
 ## 2025-02-28 - Optimizing Multiple COUNT(*) Queries
 **Learning:** In analytical endpoints (like `/stats/overview`), executing sequential `COUNT(*)` database queries causes unnecessary latency through multiple table scans and context switching.
 **Action:** Always combine them into a single query using conditional aggregation `SUM(CASE WHEN [condition] THEN 1 ELSE 0 END)`. Use fallback logic `|| 0` in JavaScript because `SUM()` returns `NULL` (unlike `COUNT()` returning `0`) on empty tables.
+## 2025-02-28 - Missing DB Indexes
+**Learning:** Performance queries on `transactions` using `created_at` and `status` cause full table scans due to missing indices in `db.js`.
+**Action:** Added compound index `idx_transactions_status_created_at` on `transactions(status, created_at)` within `initSchema()` migrations to avoid O(N) lookup.
