@@ -70,7 +70,7 @@ const KanbanCard = React.memo(({ contact, aiInsight, insightLoading, onDragStart
                 <div className="mb-3 p-3 bg-purple-900/20 border border-purple-500/30 rounded-lg animate-fade-in">
                     <div className="flex justify-between items-start mb-1">
                         <span className="text-[10px] font-bold text-purple-400">🧠 NEXO AI INSIGHT</span>
-                        <button onClick={() => onToggleInsight(contact.id)} className="text-[10px] text-gray-500 hover:text-white">✕</button>
+                        <button onClick={() => onToggleInsight(contact.id)} aria-label="Fechar insight" className="text-[10px] text-gray-500 hover:text-white">✕</button>
                     </div>
                     <p className="text-xs text-gray-300 leading-relaxed italic">
                         "{hasInsight}"
