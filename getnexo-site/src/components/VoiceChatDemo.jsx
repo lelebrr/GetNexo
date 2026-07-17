@@ -35,6 +35,8 @@ export default function VoiceChatDemo() {
                             <button
                                 onClick={() => isAvailable ? speak(m.texto) : alert("Seu navegador não suporta voz. Use Chrome/Edge.")}
                                 className="ml-2 inline-flex items-center text-xs bg-black/40 px-2 py-1 rounded-full hover:bg-black/60 transition"
+                                aria-label="Ouvir mensagem"
+                                title="Ouvir mensagem"
                             >
                                 ▶️
                             </button>
@@ -45,7 +47,8 @@ export default function VoiceChatDemo() {
 
             <button
                 onClick={limpar}
-                className="w-full mt-5 py-3 bg-red-600 rounded-xl font-semibold text-white hover:bg-red-700 transition shadow-md"
+                className="w-full mt-5 py-3 bg-red-600 rounded-xl font-semibold text-white hover:bg-red-700 transition shadow-md focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+                aria-label="Limpar e parar voz"
             >
                 Limpar e Parar Voz
             </button>
