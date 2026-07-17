@@ -543,8 +543,21 @@ const initSchema = () => {
       db.prepare("ALTER TABLE tickets ADD COLUMN assigned_agent_id INTEGER").run();
     }
 
-    // Campaigns Migrations
-    const campaignInfo = db.pragma('table_info(campaigns)');
+    // Bolt: Performance optimization
+  // Add performance indexes for frequently queried columns to avoid full table scans.
+  // Expected impact: Speeds up temporal and status-based analytical queries significantly (turning O(N) scans into O(log N) index lookups).
+  try {
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_transactions_status_date ON transactions(status, created_at)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_messages_status_date ON messages(status, timestamp)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_contacts_status_date ON contacts(funnel_stage, created_at)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_tickets_status_date ON tickets(status, created_at)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_campaigns_status_date ON campaigns(status, created_at)').run();
+  } catch (err) {
+    console.error('Index creation error:', err);
+  }
+
+  // Campaigns Migrations
+  const campaignInfo = db.pragma('table_info(campaigns)');
     const hasTotalLeads = campaignInfo.some(col => col.name === 'total_leads');
     if (!hasTotalLeads) {
       console.log('Migrating campaigns: Adding new columns...');
