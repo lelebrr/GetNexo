@@ -28,3 +28,8 @@
 **Vulnerability:** Several models used unparameterized string concatenation for `orderBy` and `orderDir` parameters.
 **Learning:** SQLite cannot parameterize column names or sort orders. This is a common pattern to miss since standard parameterized values work for `WHERE` clauses but fail for `ORDER BY`.
 **Prevention:** Strictly validate dynamically provided columns against a regex allowlist (e.g. `/^[a-zA-Z0-9_]+$/`) and limit sort order variables explicitly to `'ASC'` or `'DESC'`.
+
+## 2024-05-24 - Route Shadowing and Authentication Bypass in Docker Routes
+**Vulnerability:** The `/api/docker/deploy` route was shadowed by `/api/docker/:action` in `chat-api/routes/docker.js`, and the `/api/docker` endpoints in `chat-api/server.js` lacked authentication middleware.
+**Learning:** Route shadowing occurs when generic routes (like `/:action`) precede specific routes (like `/deploy`). Additionally, unauthenticated administrative endpoints (like Docker control) expose the application to severe risks.
+**Prevention:** Always place specific routes before generic parameterized routes. Apply proper authentication middleware (`authenticateToken`) globally or specifically to sensitive route groups.
