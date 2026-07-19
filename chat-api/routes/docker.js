@@ -127,6 +127,66 @@ router.get('/containers', (req, res) => {
     });
 });
 
+// POST /api/docker/deploy - Deploy de nova aplicação
+router.post('/deploy', (req, res) => {
+    const { image, name, ports, env } = req.body;
+
+    if (!image || !name) {
+        return res.status(400).json({
+            error: 'Imagem e nome são obrigatórios'
+        });
+    }
+
+    if (!isValidName(name)) {
+        return res.status(400).json({ error: 'Nome do container inválido' });
+    }
+    if (!isValidImage(image)) {
+        return res.status(400).json({ error: 'Nome da imagem inválido' });
+    }
+
+    // Construir argumentos de deploy
+    let args = ['run', '-d', '--name', name];
+
+    if (ports && ports.length > 0) {
+        for (const port of ports) {
+            if (isValidPort(port)) {
+                args.push('-p', port);
+            } else {
+                return res.status(400).json({ error: `Porta inválida: ${port}` });
+            }
+        }
+    }
+
+    if (env && env.length > 0) {
+        for (const envVar of env) {
+            if (isValidEnv(envVar)) {
+                args.push('-e', envVar);
+            } else {
+                return res.status(400).json({ error: `Variável de ambiente inválida: ${envVar}` });
+            }
+        }
+    }
+
+    args.push(image);
+
+    executeDockerCommand(args, (error, output) => {
+        if (error) {
+            console.error('Erro ao fazer deploy:', error);
+            return res.status(500).json({
+                error: 'Erro ao fazer deploy da aplicação'
+            });
+        }
+
+        // Invalidar cache
+        containersCache.timestamp = 0;
+
+        res.json({
+            message: 'Aplicação implantada com sucesso',
+            containerId: output.trim()
+        });
+    });
+});
+
 // POST /api/docker/:action - Executar ações em containers
 router.post('/:action', (req, res) => {
     const { action } = req.params;
@@ -224,65 +284,7 @@ router.get('/stats/:name', (req, res) => {
     });
 });
 
-// POST /api/docker/deploy - Deploy de nova aplicação
-router.post('/deploy', (req, res) => {
-    const { image, name, ports, env } = req.body;
 
-    if (!image || !name) {
-        return res.status(400).json({
-            error: 'Imagem e nome são obrigatórios'
-        });
-    }
-
-    if (!isValidName(name)) {
-        return res.status(400).json({ error: 'Nome do container inválido' });
-    }
-    if (!isValidImage(image)) {
-        return res.status(400).json({ error: 'Nome da imagem inválido' });
-    }
-
-    // Construir argumentos de deploy
-    let args = ['run', '-d', '--name', name];
-
-    if (ports && ports.length > 0) {
-        for (const port of ports) {
-            if (isValidPort(port)) {
-                args.push('-p', port);
-            } else {
-                return res.status(400).json({ error: `Porta inválida: ${port}` });
-            }
-        }
-    }
-
-    if (env && env.length > 0) {
-        for (const envVar of env) {
-            if (isValidEnv(envVar)) {
-                args.push('-e', envVar);
-            } else {
-                return res.status(400).json({ error: `Variável de ambiente inválida: ${envVar}` });
-            }
-        }
-    }
-
-    args.push(image);
-
-    executeDockerCommand(args, (error, output) => {
-        if (error) {
-            console.error('Erro ao fazer deploy:', error);
-            return res.status(500).json({
-                error: 'Erro ao fazer deploy da aplicação'
-            });
-        }
-
-        // Invalidar cache
-        containersCache.timestamp = 0;
-
-        res.json({
-            message: 'Aplicação implantada com sucesso',
-            containerId: output.trim()
-        });
-    });
-});
 
 // GET /api/docker/logs/:name - Obter logs de um container
 router.get('/logs/:name', (req, res) => {

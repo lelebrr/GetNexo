@@ -212,7 +212,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/support', supportRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/revenda', revendaRoutes);
-app.use('/api/docker', dockerRoutes);
+app.use('/api/docker', require('./middleware/auth'), dockerRoutes);
 app.use('/api/a2a', a2aRoutes);
 app.use('/api/ap2', ap2Routes);
 app.use('/api/whatsapp', whatsappRoutes);
