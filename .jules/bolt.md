@@ -21,3 +21,6 @@
 ## 2025-02-28 - Optimizing Multiple COUNT(*) Queries
 **Learning:** In analytical endpoints (like `/stats/overview`), executing sequential `COUNT(*)` database queries causes unnecessary latency through multiple table scans and context switching.
 **Action:** Always combine them into a single query using conditional aggregation `SUM(CASE WHEN [condition] THEN 1 ELSE 0 END)`. Use fallback logic `|| 0` in JavaScript because `SUM()` returns `NULL` (unlike `COUNT()` returning `0`) on empty tables.
+## 2024-07-20 - [SQLite Performance Indexes]
+**Learning:** The SQLite database (`data/omnichat.db`) used by `chat-api` requires explicitly defined performance indexes (`CREATE INDEX IF NOT EXISTS` in `db.js`) on key analytical tables (e.g., `transactions`, `contacts`, `messages`) for temporal (`created_at`, `updated_at`, `timestamp`) and `status` columns to avoid O(N) full table scans.
+**Action:** When working on backend features in `chat-api`, always verify if new temporal or status columns are queried frequently and ensure appropriate SQLite indexes are added in `initSchema()` within `db.js` after the table is created.
