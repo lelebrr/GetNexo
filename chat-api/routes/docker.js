@@ -287,13 +287,26 @@ router.post('/deploy', (req, res) => {
 // GET /api/docker/logs/:name - Obter logs de um container
 router.get('/logs/:name', (req, res) => {
     const { name } = req.params;
-    const { tail = 100 } = req.query;
+    let { tail = 100 } = req.query;
 
     if (!isValidName(name)) {
         return res.status(400).json({ error: 'Nome do container inválido' });
     }
 
-    const args = ['logs', '--tail', tail.toString(), name];
+    // Converte para escalar, rejeita espaços e aplica parseInt para prevenir argument injection
+    if (Array.isArray(tail)) {
+        tail = tail[0];
+    }
+    if (typeof tail === 'string' && tail.includes(' ')) {
+        return res.status(400).json({ error: 'Parâmetro tail inválido: espaços não permitidos' });
+    }
+
+    let parsedTail = parseInt(tail, 10);
+    if (isNaN(parsedTail) || parsedTail < 0) {
+        parsedTail = 100;
+    }
+
+    const args = ['logs', '--tail', parsedTail.toString(), name];
 
     executeDockerCommand(args, (error, output) => {
         if (error) {
