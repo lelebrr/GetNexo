@@ -28,3 +28,8 @@
 **Vulnerability:** Several models used unparameterized string concatenation for `orderBy` and `orderDir` parameters.
 **Learning:** SQLite cannot parameterize column names or sort orders. This is a common pattern to miss since standard parameterized values work for `WHERE` clauses but fail for `ORDER BY`.
 **Prevention:** Strictly validate dynamically provided columns against a regex allowlist (e.g. `/^[a-zA-Z0-9_]+$/`) and limit sort order variables explicitly to `'ASC'` or `'DESC'`.
+
+## 2025-02-14 - Fix SQL Injection in Tickets API
+**Vulnerability:** The PUT endpoint in `/api/tickets.js` constructs an UPDATE query dynamically by iterating over `req.body` and concatenating the field names into the query string without validation.
+**Learning:** This allows an attacker to manipulate the schema (e.g. updating internal fields or modifying the update target to include injected SQL components) because any key supplied in `req.body` is appended directly to the query.
+**Prevention:** Implement an explicit allowlist of safe fields (such as 'customer_id', 'status', etc.) before injecting input into the SQL command.
