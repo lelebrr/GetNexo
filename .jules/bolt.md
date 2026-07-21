@@ -21,3 +21,6 @@
 ## 2025-02-28 - Optimizing Multiple COUNT(*) Queries
 **Learning:** In analytical endpoints (like `/stats/overview`), executing sequential `COUNT(*)` database queries causes unnecessary latency through multiple table scans and context switching.
 **Action:** Always combine them into a single query using conditional aggregation `SUM(CASE WHEN [condition] THEN 1 ELSE 0 END)`. Use fallback logic `|| 0` in JavaScript because `SUM()` returns `NULL` (unlike `COUNT()` returning `0`) on empty tables.
+## 2024-05-18 - Missing Indexes on Frequently Queried Temporal Columns
+**Learning:** The `omnichat.db` database relies on temporal columns like `created_at` in `transactions` and `timestamp` in `messages` for analytics but lacks indexes. This causes O(N) full table scans which can become a severe performance bottleneck.
+**Action:** Always verify indexes exist for temporal columns used in filtering or analytical queries by using `EXPLAIN QUERY PLAN`.
