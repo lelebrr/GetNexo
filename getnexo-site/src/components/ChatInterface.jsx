@@ -289,7 +289,7 @@ const ChatInterface = () => {
                                     <button onClick={() => setShowMeetingScheduler(true)} className="text-xs bg-purple-900/20 text-purple-400 hover:bg-purple-800 hover:text-white px-3 py-1 rounded border border-purple-800 transition-colors font-bold">
                                         📅 Agendar Reunião
                                     </button>
-                                    <button onClick={() => setShowCsat(!showCsat)} className="text-xs bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-1 rounded border border-gray-600 transition-colors">
+                                    <button onClick={() => setShowCsat(!showCsat)} className="text-xs bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-1 rounded border border-gray-600 transition-colors" aria-expanded={showCsat}>
                                         ⭐ CSAT
                                     </button>
                                     {showCsat && (
@@ -322,12 +322,14 @@ const ChatInterface = () => {
                                 <button
                                     onClick={() => setIsNote(!isNote)}
                                     className={`text-[10px] font-bold px-3 py-1 rounded-full border transition-all ${isNote ? 'bg-yellow-500 text-black border-yellow-500' : 'text-gray-400 border-gray-700 hover:border-gray-500'}`}
+                                    aria-pressed={isNote}
                                 >
                                     🔒 NOTA INTERNA
                                 </button>
                                 <button
                                     onClick={() => setShowMacros(!showMacros)}
                                     className="text-[10px] font-bold px-3 py-1 rounded-full text-neon-blue border border-gray-700 hover:border-neon-blue transition-all"
+                                    aria-expanded={showMacros}
                                 >
                                     ⚡ RESPOSTA RÁPIDA
                                 </button>
