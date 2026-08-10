@@ -53,17 +53,18 @@ router.get('/dashboard', (req, res) => {
         `).get(Math.floor(Date.now() / 1000) - 86400).count || 0;
 
         // 3. New Leads (Last 7 days vs Previous 7 days)
-        const newLeads = db.prepare(`
-            SELECT COUNT(*) as count 
-            FROM contacts 
-            WHERE created_at >= datetime('now', '-7 days')
-        `).get().count || 0;
+        // Combined sequential queries into a single query using conditional aggregation
+        // Impact: Reduces database queries from 2 to 1.
+        const leadsStats = db.prepare(`
+            SELECT
+                SUM(CASE WHEN created_at >= datetime('now', '-7 days') THEN 1 ELSE 0 END) as newLeads,
+                SUM(CASE WHEN created_at >= datetime('now', '-14 days') AND created_at < datetime('now', '-7 days') THEN 1 ELSE 0 END) as prevLeads
+            FROM contacts
+            WHERE created_at >= datetime('now', '-14 days')
+        `).get() || { newLeads: 0, prevLeads: 0 };
 
-        const prevLeads = db.prepare(`
-            SELECT COUNT(*) as count 
-            FROM contacts 
-            WHERE created_at >= datetime('now', '-14 days') AND created_at < datetime('now', '-7 days')
-        `).get().count || 0;
+        const newLeads = leadsStats.newLeads || 0;
+        const prevLeads = leadsStats.prevLeads || 0;
 
         const leadsTrend = prevLeads > 0
             ? Math.round(((newLeads - prevLeads) / prevLeads) * 100)
