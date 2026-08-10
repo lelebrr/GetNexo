@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 
 const API_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
@@ -119,10 +119,15 @@ const BroadcastManager = () => {
         }
     };
 
-    const filteredContacts = contacts.filter(c => {
-        if (filters.stage !== 'all' && c.stage !== filters.stage) return false;
-        return true;
-    });
+    // ⚡ Bolt Optimization: Memoize filteredContacts to prevent expensive array
+    // recalculations on every render unless contacts or filters change.
+    // Impact: Prevents O(N) array filtering on unrelated state updates.
+    const filteredContacts = useMemo(() => {
+        return contacts.filter(c => {
+            if (filters.stage !== 'all' && c.stage !== filters.stage) return false;
+            return true;
+        });
+    }, [contacts, filters]);
 
     return (
         <div className="h-full flex flex-col">
