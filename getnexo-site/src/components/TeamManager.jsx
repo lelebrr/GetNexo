@@ -197,6 +197,7 @@ const TeamManager = () => {
                                                     onClick={() => openEdit(user)}
                                                     className="p-2 hover:bg-[#00d4ff]/20 rounded-lg text-gray-400 hover:text-[#00d4ff] transition-all"
                                                     title="Editar"
+                                                    aria-label="Editar"
                                                 >
                                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                                                 </button>
@@ -205,6 +206,7 @@ const TeamManager = () => {
                                                         onClick={() => handleDelete(user.id)}
                                                         className="p-2 hover:bg-red-500/20 rounded-lg text-gray-400 hover:text-red-400 transition-all"
                                                         title="Excluir"
+                                                        aria-label="Excluir"
                                                     >
                                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
                                                     </button>
@@ -230,7 +232,7 @@ const TeamManager = () => {
                 <div className="fixed inset-0 z-[1001] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/90 backdrop-blur-xl" onClick={() => setModalOpen(false)}></div>
                     <div className="glass-panel w-full max-w-xl p-10 relative bg-[#0a0e17] border-[#00d4ff]/20 shadow-[0_0_100px_rgba(0,212,255,0.1)]">
-                        <button onClick={() => setModalOpen(false)} className="absolute top-6 right-6 text-gray-500 hover:text-white text-2xl">✕</button>
+                        <button onClick={() => setModalOpen(false)} className="absolute top-6 right-6 text-gray-500 hover:text-white text-2xl" aria-label="Fechar">✕</button>
 
                         <div className="mb-10">
                             <h3 className="text-3xl font-black text-white">{editingUser ? 'Ajustar Credenciais' : 'Nova Identidade Digital'}</h3>
