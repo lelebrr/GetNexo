@@ -32,13 +32,9 @@ export default function Adicionais() {
             console.error('Erro ao carregar adicionais:', error);
             setItens([]);
         }
-    }
-} catch (error) {
-    console.error('Erro ao carregar adicionais:', error);
-}
     };
 
-const carregarHistorico = async () => {
+    const carregarHistorico = async () => {
     try {
         const token = localStorage.getItem('token');
         const response = await fetch('/api/admin/adicionais/historico', {
