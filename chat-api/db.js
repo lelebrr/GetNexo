@@ -562,6 +562,11 @@ const initSchema = () => {
   } catch (err) {
     console.error('Migration error:', err);
   }
+
+  // ⚡ Bolt: Added performance indexes to transactions, contacts, and messages to prevent O(N) full table scans, reducing queries from scanning the entire table to using index lookups.
+  db.prepare('CREATE INDEX IF NOT EXISTS idx_transactions_created_status ON transactions(created_at, status)').run();
+  db.prepare('CREATE INDEX IF NOT EXISTS idx_contacts_updated ON contacts(updated_at)').run();
+  db.prepare('CREATE INDEX IF NOT EXISTS idx_messages_timestamp ON messages(timestamp)').run();
 };
 
 initSchema();
