@@ -562,6 +562,24 @@ const initSchema = () => {
   } catch (err) {
     console.error('Migration error:', err);
   }
+
+  // Performance Indexes
+  try {
+    const indexes = [
+      'CREATE INDEX IF NOT EXISTS idx_messages_contact_timestamp ON messages(contact_id, timestamp)',
+      'CREATE INDEX IF NOT EXISTS idx_commissions_reseller_status ON commissions(reseller_id, status)',
+      'CREATE INDEX IF NOT EXISTS idx_commissions_reseller_created ON commissions(reseller_id, created_at)',
+      'CREATE INDEX IF NOT EXISTS idx_users_reseller_created ON users(reseller_id, created_at)',
+      'CREATE INDEX IF NOT EXISTS idx_contacts_created ON contacts(created_at)',
+      'CREATE INDEX IF NOT EXISTS idx_contacts_funnel ON contacts(funnel_stage)',
+      'CREATE INDEX IF NOT EXISTS idx_contacts_updated ON contacts(updated_at)',
+      'CREATE INDEX IF NOT EXISTS idx_transactions_created_status ON transactions(created_at, status)',
+      'CREATE INDEX IF NOT EXISTS idx_analytics_logs_created ON analytics_logs(created_at)'
+    ];
+    indexes.forEach(sql => db.prepare(sql).run());
+  } catch (err) {
+    console.error('Index creation error:', err);
+  }
 };
 
 initSchema();
