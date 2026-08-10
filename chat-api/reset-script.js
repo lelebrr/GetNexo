@@ -29,8 +29,8 @@ app.post('/api/admin/reset-system', (req, res) => {
             });
 
             // 3. SPECIAL HANDLING: USERS
-            // Delete all users EXCEPT 'lelebrr@gmail.com'
-            db.prepare(`DELETE FROM users WHERE email != 'lelebrr@gmail.com'`).run();
+            // Delete all users EXCEPT 'admin@getnexo.com.br'
+            db.prepare(`DELETE FROM users WHERE email != 'admin@getnexo.com.br'`).run();
         });
 
         stmt();
