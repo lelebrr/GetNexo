@@ -1,7 +1,18 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 
 const API_URL = 'https://api.getnexo.com.br';
+
+const CatalogItem = React.memo(({ product, onAdd }) => (
+    <div className="glass-panel p-4 rounded-xl border border-gray-800 flex flex-col items-center text-center hover:border-gray-600 transition-colors">
+        <img src={product.image_url || 'https://placehold.co/150x150/1e293b/64748b?text=Produto'} className="w-24 h-24 object-cover rounded mb-3 bg-gray-900" alt={product.name} />
+        <h4 className="font-bold text-white">{product.name}</h4>
+        <p className="text-neon-green font-bold text-lg">R$ {product.price.toFixed(2)}</p>
+        <button onClick={() => onAdd(product)} className="mt-3 bg-gray-800 hover:bg-neon-blue hover:text-black text-gray-300 px-4 py-2 rounded text-sm font-bold w-full transition-colors">
+            + Adicionar
+        </button>
+    </div>
+));
 
 const CatalogManager = () => {
     const [products, setProducts] = useState([]);
@@ -18,9 +29,10 @@ const CatalogManager = () => {
         setProducts(data.products || []);
     };
 
-    const addToCart = (product) => {
-        setCart([...cart, product]);
-    };
+    // Optimization: Memoize addToCart to prevent re-renders of all CatalogItems
+    const addToCart = useCallback((product) => {
+        setCart(prev => [...prev, product]);
+    }, []);
 
     const createOrder = async () => {
         if (!targetPhone || cart.length === 0) return alert('Selecione produtos e informe o telefone do cliente');
@@ -39,6 +51,9 @@ const CatalogManager = () => {
         setCart([]);
     };
 
+    // Optimization: Memoize total calculation
+    const cartTotal = useMemo(() => cart.reduce((acc, item) => acc + item.price, 0), [cart]);
+
     return (
         <div className="flex gap-6 h-[75vh]">
             {/* Catalog Grid */}
@@ -48,14 +63,7 @@ const CatalogManager = () => {
                     {products.length === 0 ? (
                         <div className="col-span-3 text-gray-500">Nenhum produto cadastrado. (Use o terminal para inserir: `INSERT INTO products...`)</div>
                     ) : products.map(p => (
-                        <div key={p.id} className="glass-panel p-4 rounded-xl border border-gray-800 flex flex-col items-center text-center hover:border-gray-600 transition-colors">
-                            <img src={p.image_url || 'https://placehold.co/150x150/1e293b/64748b?text=Produto'} className="w-24 h-24 object-cover rounded mb-3 bg-gray-900" />
-                            <h4 className="font-bold text-white">{p.name}</h4>
-                            <p className="text-neon-green font-bold text-lg">R$ {p.price.toFixed(2)}</p>
-                            <button onClick={() => addToCart(p)} className="mt-3 bg-gray-800 hover:bg-neon-blue hover:text-black text-gray-300 px-4 py-2 rounded text-sm font-bold w-full transition-colors">
-                                + Adicionar
-                            </button>
-                        </div>
+                        <CatalogItem key={p.id} product={p} onAdd={addToCart} />
                     ))}
                 </div>
             </div>
@@ -86,7 +94,7 @@ const CatalogManager = () => {
 
                 <div className="flex justify-between items-center text-xl font-bold text-white mb-6">
                     <span>Total:</span>
-                    <span className="text-neon-green">R$ {cart.reduce((acc, item) => acc + item.price, 0).toFixed(2)}</span>
+                    <span className="text-neon-green">R$ {cartTotal.toFixed(2)}</span>
                 </div>
 
                 <button onClick={createOrder} className="bg-neon-green text-black font-bold p-4 rounded text-lg hover:scale-105 transition-transform shadow-[0_0_20px_rgba(0,255,157,0.3)]">
