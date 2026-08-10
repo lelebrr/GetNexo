@@ -2,16 +2,17 @@
 export async function login(username, password) {
     // In production, use environment variables and a real database
     // For now, using simple check
-    const validUsers = [
-        { email: 'admin@getnexo.com.br', password: 'password123' },
-        { email: 'admin@getnexo.local', password: 'password123' },
-        { email: 'lelebrr@gmail.com', password: 'master2026' }
-    ];
+    // Fetch from environment or fallback safely (No hardcoded credentials)
+    const adminEmail = import.meta.env?.VITE_ADMIN_EMAIL || process.env.VITE_ADMIN_EMAIL || 'admin@getnexo.local';
+    const adminPass = import.meta.env?.VITE_ADMIN_PASSWORD || process.env.VITE_ADMIN_PASSWORD;
 
-    const user = validUsers.find(u =>
-        u.email === username.trim() &&
-        u.password === password.trim()
-    );
+    if (!adminPass) {
+        console.error('FATAL: VITE_ADMIN_PASSWORD is not set.');
+        return { success: false, error: 'Erro interno de configuração de segurança.' };
+    }
+
+    const isValidUser = (username.trim() === adminEmail || username.trim() === 'lelebrr@gmail.com') && password.trim() === adminPass;
+    const user = isValidUser ? { email: username.trim() } : null;
 
     if (user) {
         const token = btoa(username + ':' + Date.now());
