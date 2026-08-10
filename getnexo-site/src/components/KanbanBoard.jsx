@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import axios from 'axios';
 
 const API_URL = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
@@ -150,6 +150,15 @@ const KanbanBoard = ({ onSelectContact }) => {
     const [aiInsights, setAiInsights] = useState({});
     const [insightLoading, setInsightLoading] = useState(null);
 
+    // Refs for stable callbacks
+    const aiInsightsRef = useRef(aiInsights);
+    const insightLoadingRef = useRef(insightLoading);
+
+    useEffect(() => {
+        aiInsightsRef.current = aiInsights;
+        insightLoadingRef.current = insightLoading;
+    }, [aiInsights, insightLoading]);
+
     useEffect(() => {
         fetchContacts();
     }, []);
@@ -196,9 +205,8 @@ const KanbanBoard = ({ onSelectContact }) => {
     }, [draggedId]);
 
     const onToggleInsight = useCallback(async (contactId, phone, name) => {
-        // Optimistically check local state via functional update is tricky for side effects.
-        // We rely on the dependency [aiInsights] which is acceptable as insights don't change often.
-        if (aiInsights[contactId]) {
+        // Use refs to check current state without adding dependencies
+        if (aiInsightsRef.current[contactId]) {
             setAiInsights(prev => {
                 const n = { ...prev };
                 delete n[contactId];
@@ -207,7 +215,7 @@ const KanbanBoard = ({ onSelectContact }) => {
             return;
         }
 
-        if (insightLoading === contactId) return;
+        if (insightLoadingRef.current === contactId) return;
 
         setInsightLoading(contactId);
         try {
@@ -218,7 +226,7 @@ const KanbanBoard = ({ onSelectContact }) => {
         } finally {
             setInsightLoading(null);
         }
-    }, [aiInsights, insightLoading]);
+    }, []);
 
     // Group contacts by stage
     const columns = useMemo(() => {
