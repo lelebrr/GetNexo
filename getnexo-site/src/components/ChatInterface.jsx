@@ -31,6 +31,7 @@ const ContactItem = React.memo(({ contact: c, isActive, onClick, onDragStart }) 
         draggable
         onDragStart={(e) => onDragStart(e, c)}
         aria-current={isActive ? 'true' : undefined}
+        aria-label={`Abrir conversa com ${c.name || c.phone}`}
         className={`w-full text-left p-3 rounded-xl cursor-pointer transition-all border ${isActive ? 'bg-neon-blue/10 border-neon-blue' : 'bg-transparent border-transparent hover:bg-gray-800'} flex items-center gap-3 group`}
     >
         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center text-white font-bold border border-gray-600">
