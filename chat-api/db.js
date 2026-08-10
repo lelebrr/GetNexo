@@ -562,6 +562,15 @@ const initSchema = () => {
   } catch (err) {
     console.error('Migration error:', err);
   }
+
+  // measured impact: reducing queries from O(N) to O(log N)
+  db.prepare("CREATE INDEX IF NOT EXISTS idx_transactions_created_at ON transactions(created_at)").run();
+  db.prepare("CREATE INDEX IF NOT EXISTS idx_transactions_status ON transactions(status)").run();
+  db.prepare("CREATE INDEX IF NOT EXISTS idx_messages_timestamp ON messages(timestamp)").run();
+  db.prepare("CREATE INDEX IF NOT EXISTS idx_messages_status ON messages(status)").run();
+  db.prepare("CREATE INDEX IF NOT EXISTS idx_contacts_created_at ON contacts(created_at)").run();
+  db.prepare("CREATE INDEX IF NOT EXISTS idx_contacts_updated_at ON contacts(updated_at)").run();
+
 };
 
 initSchema();
