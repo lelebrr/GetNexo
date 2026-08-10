@@ -111,7 +111,11 @@ const authLimiter = rateLimit({
 app.use(globalLimiter);
 
 // Middleware
-app.use(express.json());
+app.use(express.json({
+  verify: (req, res, buf) => {
+    req.rawBody = buf;
+  }
+}));
 
 // Middleware de Autenticação (global para /api/, exceto públicas)
 const authMiddleware = (req, res, next) => {
