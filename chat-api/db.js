@@ -358,19 +358,29 @@ const initSchema = () => {
     console.log('Seeding initial users...');
     const insertUser = db.prepare('INSERT OR IGNORE INTO users (id, email, password, name, role, role_id, reseller_id) VALUES (?, ?, ?, ?, ?, ?, ?)');
 
+    const isTest = process.env.NODE_ENV === 'test';
+
     // Admin
-    insertUser.run(1, 'admin@getnexo.com.br', bcrypt.hashSync('admin123', 10), 'Administrador', 'superadmin', 1, null);
+    const adminPass = process.env.ADMIN_PASSWORD || (isTest ? 'admin123' : require('crypto').randomBytes(16).toString('hex'));
+    if (!process.env.ADMIN_PASSWORD && !isTest) {
+        console.log(`[SECURITY] Admin user created with generated password: ${adminPass}`);
+        console.log(`[SECURITY] Please set ADMIN_PASSWORD environment variable for future deployments.`);
+    }
+    insertUser.run(1, 'admin@getnexo.com.br', bcrypt.hashSync(adminPass, 10), 'Administrador', 'superadmin', 1, null);
 
     // Reseller
-    const resellerPass = process.env.RESELLER_DEFAULT_PASSWORD || require('crypto').randomBytes(16).toString('hex');
+    const resellerPass = process.env.RESELLER_DEFAULT_PASSWORD || (isTest ? 'demo123' : require('crypto').randomBytes(16).toString('hex'));
+    if (!process.env.RESELLER_DEFAULT_PASSWORD && !isTest) {
+        console.log(`[SECURITY] Reseller user created with generated password: ${resellerPass}`);
+    }
     insertUser.run(2, 'revendedor@getnexo.com', bcrypt.hashSync(resellerPass, 10), 'Revendedor', 'reseller', 2, null);
 
     // Client (Linked to Reseller 2)
-    const clientPass = process.env.CLIENT_DEFAULT_PASSWORD || require('crypto').randomBytes(16).toString('hex');
+    const clientPass = process.env.CLIENT_DEFAULT_PASSWORD || (isTest ? 'client123' : require('crypto').randomBytes(16).toString('hex'));
+    if (!process.env.CLIENT_DEFAULT_PASSWORD && !isTest) {
+        console.log(`[SECURITY] Client user created with generated password: ${clientPass}`);
+    }
     insertUser.run(3, 'cliente@getnexo.com', bcrypt.hashSync(clientPass, 10), 'Cliente', 'client', 3, 2);
-
-    // Extra Admin (teu login)
-    insertUser.run(4, 'lelebrr@gmail.com', bcrypt.hashSync('master2026', 10), 'Lele', 'superadmin', 1, null);
 
     // Seed Reseller Profile
     const insertProfile = db.prepare('INSERT OR IGNORE INTO reseller_profiles (user_id, balance, commission_rate, referral_code) VALUES (?, ?, ?, ?)');
