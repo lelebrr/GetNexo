@@ -7,6 +7,9 @@ const path = require('path');
 process.env.NODE_ENV = 'test';
 // Use in-memory DB for tests to avoid I/O conflicts and ensure isolation
 process.env.DB_PATH = ':memory:';
+process.env.JWT_SECRET = 'test_jwt_secret_for_tests_only';
+process.env.ENCRYPTION_KEY = 'test_encryption_key_32_bytes_long_'; // Ensure 32 chars
+process.env.ENCRYPTION_KEY = process.env.ENCRYPTION_KEY.substring(0, 32);
 
 const db = new Database(':memory:');
 global.testDb = db;
