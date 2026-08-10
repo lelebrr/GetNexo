@@ -206,8 +206,15 @@ router.put('/:id', (req, res) => {
         const fields = [];
         const values = [];
 
+        // Sentinel: Prevent SQL Injection by whitelisting fields
+        const allowedFields = [
+            'status', 'priority', 'assigned_agent_id', 'assigned_agent_name',
+            'human_agent', 'tags', 'metadata', 'customer_phone', 'customer_name',
+            'customer_email', 'channel', 'contact_id', 'subject', 'updated_at'
+        ];
+
         Object.keys(updates).forEach(key => {
-            if (key !== 'id' && key !== 'created_at') {
+            if (allowedFields.includes(key)) {
                 fields.push(`${key} = ?`);
                 values.push(updates[key]);
             }
