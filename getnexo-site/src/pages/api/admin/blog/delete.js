@@ -13,6 +13,15 @@ export async function POST({ request }) {
             );
         }
 
+        // Validar contra path traversal e injecoes
+        const safeRegex = /^[a-zA-Z0-9_-]+$/;
+        if (!safeRegex.test(slug) || !safeRegex.test(lang)) {
+            return new Response(
+                JSON.stringify({ error: 'Slug e idioma devem conter apenas letras, números, hífens e sublinhados' }),
+                { status: 400, headers: { 'Content-Type': 'application/json' } }
+            );
+        }
+
         // Determinar o caminho do arquivo baseado no idioma
         let filePath;
         if (lang === 'pt') {
