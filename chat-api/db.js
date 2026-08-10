@@ -562,6 +562,22 @@ const initSchema = () => {
   } catch (err) {
     console.error('Migration error:', err);
   }
+
+  // Indexes Optimization (Bolt ⚡)
+  try {
+    // Optimize message retrieval by contact (O(N) -> O(log N))
+    // Covers: SELECT * FROM messages WHERE contact_id = ? ORDER BY timestamp DESC
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_messages_contact_timestamp ON messages(contact_id, timestamp DESC)').run();
+
+    // Optimize status updates by WhatsApp Message ID
+    // Covers: UPDATE messages SET status = ? WHERE wa_message_id = ?
+    const msgInfo = db.pragma('table_info(messages)');
+    if (msgInfo.some(col => col.name === 'wa_message_id')) {
+      db.prepare('CREATE INDEX IF NOT EXISTS idx_messages_wa_id ON messages(wa_message_id)').run();
+    }
+  } catch (err) {
+    console.error('Index creation error:', err);
+  }
 };
 
 initSchema();
