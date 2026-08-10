@@ -1,4 +1,4 @@
-const { exec } = require('child_process');
+const { execFile } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
@@ -12,7 +12,9 @@ async function convertGlbToUsdz(glbPath, usdzPath) {
         console.log(`[CONVERTER] Invocando conversão GLB -> USDZ for ${glbPath}`);
 
         // Example using gltf-to-usdz (npm package)
-        exec(`npx gltf-to-usdz ${glbPath} ${usdzPath}`, (error, stdout, stderr) => {
+        // SECURITY FIX: Using execFile instead of exec to prevent OS Command Injection
+        const npxCommand = process.platform === 'win32' ? 'npx.cmd' : 'npx';
+        execFile(npxCommand, ['gltf-to-usdz', glbPath, usdzPath], (error, stdout, stderr) => {
             if (error) {
                 console.error(`[CONVERTER] Erro na conversão para USDZ: ${error.message}`);
                 // Simple file copy as dummy if tool fails/not installed for demo purposes
