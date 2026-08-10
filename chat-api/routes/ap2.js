@@ -666,11 +666,17 @@ router.post('/verify-vdc', (req, res) => {
  */
 router.get('/stats', (req, res) => {
     try {
-        const mandateCount = db.prepare('SELECT COUNT(*) as cnt FROM ap2_mandates').get()?.cnt || 0;
-        const transactionCount = db.prepare('SELECT COUNT(*) as cnt FROM ap2_transactions').get()?.cnt || 0;
+        // ⚡ Bolt Optimization: Combine 3 sequential COUNT(*) queries into a single query using conditional aggregation
+        // This reduces table scans and context switching, improving response latency.
+        const mandatesStats = db.prepare(`
+            SELECT
+                COUNT(*) as cnt,
+                SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active_cnt,
+                SUM(CASE WHEN status = 'used' THEN 1 ELSE 0 END) as used_cnt
+            FROM ap2_mandates
+        `).get() || { cnt: 0, active_cnt: 0, used_cnt: 0 };
 
-        const activeMandates = db.prepare("SELECT COUNT(*) as cnt FROM ap2_mandates WHERE status = 'active'").get()?.cnt || 0;
-        const usedMandates = db.prepare("SELECT COUNT(*) as cnt FROM ap2_mandates WHERE status = 'used'").get()?.cnt || 0;
+        const transactionCount = db.prepare('SELECT COUNT(*) as cnt FROM ap2_transactions').get()?.cnt || 0;
 
         const totalVolume = db.prepare(`
             SELECT COALESCE(SUM(amount), 0) as total 
@@ -699,9 +705,9 @@ router.get('/stats', (req, res) => {
 
         res.json({
             mandates: {
-                total: mandateCount,
-                active: activeMandates,
-                used: usedMandates,
+                total: mandatesStats.cnt || 0,
+                active: mandatesStats.active_cnt || 0,
+                used: mandatesStats.used_cnt || 0,
                 by_type: mandatesByType
             },
             transactions: {
