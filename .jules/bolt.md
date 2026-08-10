@@ -21,3 +21,7 @@
 ## 2025-02-28 - Optimizing Multiple COUNT(*) Queries
 **Learning:** In analytical endpoints (like `/stats/overview`), executing sequential `COUNT(*)` database queries causes unnecessary latency through multiple table scans and context switching.
 **Action:** Always combine them into a single query using conditional aggregation `SUM(CASE WHEN [condition] THEN 1 ELSE 0 END)`. Use fallback logic `|| 0` in JavaScript because `SUM()` returns `NULL` (unlike `COUNT()` returning `0`) on empty tables.
+
+## 2024-05-24 - [Database Query Optimization]
+**Learning:** Analytics endpoints heavily query `transactions` by `status`/`created_at` and `contacts` by `updated_at`. Without specific composite and temporal indexes, SQLite performs O(N) full table scans (e.g., `SCAN transactions`) for aggregations like `SUM()` and `COUNT(*)`.
+**Action:** Explicitly define `CREATE INDEX IF NOT EXISTS` for `transactions(status, created_at)` and `contacts(updated_at)` inside `db.js` `initSchema` to upgrade queries to `SEARCH ... USING INDEX`, drastically reducing database time from O(N) table scans to O(log N) index lookups.
