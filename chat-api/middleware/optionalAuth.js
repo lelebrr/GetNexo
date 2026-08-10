@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const db = require('../db');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'supersecret_jwt_key_2026';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 /**
  * Optional JWT Auth Middleware
@@ -9,6 +9,13 @@ const JWT_SECRET = process.env.JWT_SECRET || 'supersecret_jwt_key_2026';
  * Use for routes that can work with or without authentication.
  */
 module.exports = (req, res, next) => {
+    if (!JWT_SECRET) {
+        console.error('FATAL: JWT_SECRET not defined in middleware');
+        req.user = null;
+        req.userId = null;
+        return next();
+    }
+
     const authHeader = req.headers['authorization'];
 
     // If no auth header, proceed without user context

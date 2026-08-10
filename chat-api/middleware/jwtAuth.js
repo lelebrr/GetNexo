@@ -1,9 +1,14 @@
 const jwt = require('jsonwebtoken');
 const db = require('../db');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'supersecret_jwt_key_2026';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 module.exports = (req, res, next) => {
+    if (!JWT_SECRET) {
+        console.error('FATAL: JWT_SECRET not defined in middleware');
+        return res.status(500).json({ error: 'Internal server error: configuration missing' });
+    }
+
     const authHeader = req.headers['authorization'];
 
     // Check if Authorization header exists
