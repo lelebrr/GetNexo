@@ -559,6 +559,18 @@ const initSchema = () => {
       } catch (e) { console.log('Columns likely exist'); }
     }
 
+    // Performance Indexes Migration
+    console.log('Migrating indexes: Adding performance indexes for analytical and filtering queries...');
+    try {
+      // Optimizes queries in MultiAIService.js that filter by client_id and timestamp
+      db.prepare('CREATE INDEX IF NOT EXISTS idx_ia_responses_client_timestamp ON ia_responses(client_id, timestamp)').run();
+
+      // Optimizes filtering and statistics grouping by assigned agent in api/tickets.js
+      db.prepare('CREATE INDEX IF NOT EXISTS idx_tickets_assigned_agent ON tickets(assigned_agent_id)').run();
+    } catch (e) {
+      console.log('Failed to create indexes, likely they already exist or tables are missing:', e.message);
+    }
+
   } catch (err) {
     console.error('Migration error:', err);
   }
