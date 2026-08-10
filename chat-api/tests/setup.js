@@ -7,6 +7,8 @@ const path = require('path');
 process.env.NODE_ENV = 'test';
 // Use in-memory DB for tests to avoid I/O conflicts and ensure isolation
 process.env.DB_PATH = ':memory:';
+// Set JWT_SECRET for tests since we removed the hardcoded fallback
+process.env.JWT_SECRET = 'test_secret_for_jest';
 
 const db = new Database(':memory:');
 global.testDb = db;
