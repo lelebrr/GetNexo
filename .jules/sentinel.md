@@ -1,3 +1,8 @@
+## 2024-05-22 - OS Command Injection in Model Converter Script
+**Vulnerability:** The `chat-api/scripts/model-converter.js` script utilized `child_process.exec()` with unsanitized file path inputs (`glbPath`, `usdzPath`) to convert models, allowing an attacker who can control these paths to execute arbitrary shell commands.
+**Learning:** Even internal or utility scripts can pose significant security risks if they accept input from untrusted sources or if they are eventually exposed via an API or webhook. Using `exec` directly exposes the arguments to shell interpretation.
+**Prevention:** Always use `execFile` or `spawn` instead of `exec` when executing commands with dynamic inputs. These alternatives pass arguments as an array, bypassing shell interpretation completely and eliminating command injection risks.
+
 ## 2024-05-22 - Hardcoded Secrets in Express Server
 **Vulnerability:** Hardcoded JWT secret fallback found in `chat-api/server.js`.
 **Learning:** Providing insecure default values for security-critical configuration (like JWT secrets) is a common pattern that can lead to production vulnerabilities if environment variables are misconfigured.
