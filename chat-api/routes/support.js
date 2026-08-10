@@ -337,12 +337,22 @@ router.get('/tickets/:id/export', (req, res) => {
         const priorityLabels = ['Baixa', 'Média', 'Alta'];
         const statusLabels = { 'open': 'Aberto', 'in-progress': 'Em andamento', 'closed': 'Fechado' };
 
+        const escapeHtml = (text) => {
+            if (!text) return '';
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        };
+
         let html = `
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Ticket #${ticket_id} - ${ticket.title}</title>
+  <title>Ticket #${escapeHtml(String(ticket_id))} - ${escapeHtml(ticket.title)}</title>
   <style>
     body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; }
     h1 { color: #0891b2; border-bottom: 2px solid #0891b2; padding-bottom: 10px; }
@@ -358,26 +368,27 @@ router.get('/tickets/:id/export', (req, res) => {
   </style>
 </head>
 <body>
-  <h1>🎫 Ticket #${ticket_id}</h1>
-  <h2>${ticket.title}</h2>
+  <h1>🎫 Ticket #${escapeHtml(String(ticket_id))}</h1>
+  <h2>${escapeHtml(ticket.title)}</h2>
   
   <div class="meta">
-    <span><strong>Status:</strong> ${statusLabels[ticket.status] || ticket.status}</span>
-    <span><strong>Prioridade:</strong> ${priorityLabels[ticket.priority] || 'Normal'}</span>
-    <span><strong>Criado:</strong> ${ticket.created_at}</span>
-    <span><strong>Cliente:</strong> ${ticket.client_id}</span>
+    <span><strong>Status:</strong> ${escapeHtml(statusLabels[ticket.status] || ticket.status)}</span>
+    <span><strong>Prioridade:</strong> ${escapeHtml(priorityLabels[ticket.priority] || 'Normal')}</span>
+    <span><strong>Criado:</strong> ${escapeHtml(ticket.created_at)}</span>
+    <span><strong>Cliente:</strong> ${escapeHtml(ticket.client_id)}</span>
   </div>
 
   <h3>Descrição</h3>
-  <p>${ticket.description}</p>
+  <p>${escapeHtml(ticket.description)}</p>
 `;
 
         // Anexos iniciais
         ticketAttachments.forEach(att => {
+            const safeAtt = escapeHtml(att);
             if (att.match(/\.(mp3|wav|ogg|webm)$/i)) {
-                html += `<audio controls src="${att}"></audio><br>`;
+                html += `<audio controls src="${safeAtt}"></audio><br>`;
             } else {
-                html += `<img src="${att}" alt="Anexo inicial"><br>`;
+                html += `<img src="${safeAtt}" alt="Anexo inicial"><br>`;
             }
         });
 
@@ -389,14 +400,15 @@ router.get('/tickets/:id/export', (req, res) => {
             html += `
   <div class="message ${isAdminMsg ? 'admin' : ''}">
     <div class="message-header">${isAdminMsg ? '👤 Suporte' : '👤 Cliente'}</div>
-    <div class="message-time">${m.created_at}</div>
-    <p>${m.message || ''}</p>`;
+    <div class="message-time">${escapeHtml(m.created_at)}</div>
+    <p>${escapeHtml(m.message || '')}</p>`;
 
             msgAttachments.forEach(att => {
+                const safeAtt = escapeHtml(att);
                 if (att.match(/\.(mp3|wav|ogg|webm)$/i)) {
-                    html += `<audio controls src="${att}"></audio><br>`;
+                    html += `<audio controls src="${safeAtt}"></audio><br>`;
                 } else {
-                    html += `<img src="${att}" alt="Anexo"><br>`;
+                    html += `<img src="${safeAtt}" alt="Anexo"><br>`;
                 }
             });
 
