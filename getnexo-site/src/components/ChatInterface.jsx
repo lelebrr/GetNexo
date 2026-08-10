@@ -257,7 +257,8 @@ const ChatInterface = () => {
                                 {/* Back Button Mobile */}
                                 <button
                                     onClick={() => setActiveContact(null)}
-                                    className="lg:hidden text-gray-400 hover:text-white mr-2"
+                                    className="lg:hidden text-gray-400 hover:text-white mr-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-neon-blue rounded"
+                                    aria-label="Voltar para contatos"
                                 >
                                     ←
                                 </button>
