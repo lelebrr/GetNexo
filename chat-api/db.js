@@ -543,6 +543,13 @@ const initSchema = () => {
       db.prepare("ALTER TABLE tickets ADD COLUMN assigned_agent_id INTEGER").run();
     }
 
+    // Optimization: Add explicit indexes for temporal and status columns on analytical tables
+    // Impact: changes queries from O(N) full table scans to O(log N) index lookups
+    db.exec(`CREATE INDEX IF NOT EXISTS idx_transactions_created_at_status ON transactions(created_at, status);`);
+    db.exec(`CREATE INDEX IF NOT EXISTS idx_transactions_status ON transactions(status);`);
+    db.exec(`CREATE INDEX IF NOT EXISTS idx_messages_timestamp ON messages(timestamp);`);
+    db.exec(`CREATE INDEX IF NOT EXISTS idx_contacts_updated_at ON contacts(updated_at);`);
+
     // Campaigns Migrations
     const campaignInfo = db.pragma('table_info(campaigns)');
     const hasTotalLeads = campaignInfo.some(col => col.name === 'total_leads');
