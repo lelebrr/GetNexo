@@ -133,16 +133,7 @@ const authMiddleware = (req, res, next) => {
     '/api/analytics/active-chats',
     '/api/analytics/top-products',
     '/api/analytics/clustering',
-    '/api/analytics/trends',
-    '/api/crm/customers',
-    '/api/crm/stats',
-    '/api/products',
-    '/api/loyalty/points',
-    '/api/loyalty/rewards',
-    '/api/settings',
-    '/api/ai/config',
-    '/api/tickets',
-    '/api/alert'
+    '/api/analytics/trends'
   ];
 
   // Check exact match or prefix match for nested routes
