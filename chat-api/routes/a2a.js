@@ -779,12 +779,18 @@ router.post('/callback', (req, res) => {
 router.get('/stats', (req, res) => {
     try {
         const messageCount = db.prepare('SELECT COUNT(*) as cnt FROM a2a_messages').get()?.cnt || 0;
-        const taskCount = db.prepare('SELECT COUNT(*) as cnt FROM a2a_tasks').get()?.cnt || 0;
         const peerCount = db.prepare('SELECT COUNT(*) as cnt FROM a2a_peers').get()?.cnt || 0;
         const identityCount = db.prepare('SELECT COUNT(*) as cnt FROM a2a_identities').get()?.cnt || 0;
 
-        const tasksCompleted = db.prepare("SELECT COUNT(*) as cnt FROM a2a_tasks WHERE status = 'completed'").get()?.cnt || 0;
-        const tasksPending = db.prepare("SELECT COUNT(*) as cnt FROM a2a_tasks WHERE status = 'pending'").get()?.cnt || 0;
+        // ⚡ Bolt: Combined 3 sequential COUNT(*) queries into a single query using conditional aggregation
+        // Impact: Reduces database latency and table scans from 3 to 1.
+        const taskStats = db.prepare(`
+            SELECT
+                COUNT(*) as total,
+                SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed,
+                SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending
+            FROM a2a_tasks
+        `).get() || {};
 
         const aiStatus = a2aAI ? a2aAI.getStatus() : { active: false };
 
@@ -794,9 +800,9 @@ router.get('/stats', (req, res) => {
                 today: db.prepare("SELECT COUNT(*) as cnt FROM a2a_messages WHERE DATE(created_at) = DATE('now')").get()?.cnt || 0
             },
             tasks: {
-                total: taskCount,
-                completed: tasksCompleted,
-                pending: tasksPending
+                total: taskStats.total || 0,
+                completed: taskStats.completed || 0,
+                pending: taskStats.pending || 0
             },
             peers: {
                 total: peerCount,

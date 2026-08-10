@@ -21,3 +21,7 @@
 ## 2025-02-28 - Optimizing Multiple COUNT(*) Queries
 **Learning:** In analytical endpoints (like `/stats/overview`), executing sequential `COUNT(*)` database queries causes unnecessary latency through multiple table scans and context switching.
 **Action:** Always combine them into a single query using conditional aggregation `SUM(CASE WHEN [condition] THEN 1 ELSE 0 END)`. Use fallback logic `|| 0` in JavaScript because `SUM()` returns `NULL` (unlike `COUNT()` returning `0`) on empty tables.
+
+## 2025-02-28 - Conditional Aggregation vs Sub-Selects
+**Learning:** When optimizing analytical SQLite endpoints, using conditional aggregation (`SUM(CASE WHEN...)`) effectively reduces multiple table scans only if the aggregation applies to the *same* table. Combining multiple `COUNT` sub-selects across *different* tables into a single query does not optimize table scans and can defeat the query planner's index usage.
+**Action:** When combining `COUNT` queries, group them by table and use conditional aggregation. Do not use generic sub-selects to bundle independent table queries.
