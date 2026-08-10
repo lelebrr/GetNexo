@@ -290,6 +290,25 @@ class SeriesScheduler {
                 'schedule.nextMessageAt': { $lte: new Date() }
             }).populate('seriesId');
 
+            // Otimização de performance: Reduzindo queries de N para 1 usando busca em lote (batch fetch com $in)
+            const uniqueMessageIds = new Set();
+            for (const execution of activeExecutions) {
+                if (execution.progress.currentStep < execution.progress.totalSteps) {
+                    const nextMessageId = execution.seriesId?.messages?.[execution.progress.currentStep];
+                    if (nextMessageId) {
+                        uniqueMessageIds.add(nextMessageId.toString());
+                    }
+                }
+            }
+
+            const messagesMap = new Map();
+            if (uniqueMessageIds.size > 0) {
+                const messages = await Message.find({ _id: { $in: Array.from(uniqueMessageIds) } });
+                for (const msg of messages) {
+                    messagesMap.set(msg._id.toString(), msg);
+                }
+            }
+
             for (const execution of activeExecutions) {
                 if (execution.progress.currentStep >= execution.progress.totalSteps) {
                     // Série completa
@@ -304,7 +323,7 @@ class SeriesScheduler {
                 const nextMessageId = series.messages[execution.progress.currentStep];
 
                 if (nextMessageId) {
-                    const nextMessage = await Message.findById(nextMessageId);
+                    const nextMessage = messagesMap.get(nextMessageId.toString());
                     if (nextMessage) {
                         await this.sendScheduledMessage(execution, nextMessage);
                         await this.scheduleNextMessage(execution);
