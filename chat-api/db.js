@@ -562,6 +562,23 @@ const initSchema = () => {
   } catch (err) {
     console.error('Migration error:', err);
   }
+
+  // Performance Indexes
+  const indexes = [
+    'CREATE INDEX IF NOT EXISTS idx_messages_contact_timestamp ON messages(contact_id, timestamp DESC)',
+    'CREATE INDEX IF NOT EXISTS idx_ticket_messages_ticket_created ON ticket_messages(ticket_id, created_at ASC)',
+    'CREATE INDEX IF NOT EXISTS idx_tickets_contact ON tickets(contact_id)',
+    'CREATE INDEX IF NOT EXISTS idx_tickets_last_message ON tickets(last_message_at DESC, created_at DESC)',
+    'CREATE INDEX IF NOT EXISTS idx_support_tickets_client_created ON support_tickets(client_id, created_at DESC)'
+  ];
+
+  indexes.forEach(sql => {
+    try {
+      db.prepare(sql).run();
+    } catch (e) {
+      console.error('Error creating index:', e.message);
+    }
+  });
 };
 
 initSchema();
