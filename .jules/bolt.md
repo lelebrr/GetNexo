@@ -21,3 +21,7 @@
 ## 2025-02-28 - Optimizing Multiple COUNT(*) Queries
 **Learning:** In analytical endpoints (like `/stats/overview`), executing sequential `COUNT(*)` database queries causes unnecessary latency through multiple table scans and context switching.
 **Action:** Always combine them into a single query using conditional aggregation `SUM(CASE WHEN [condition] THEN 1 ELSE 0 END)`. Use fallback logic `|| 0` in JavaScript because `SUM()` returns `NULL` (unlike `COUNT()` returning `0`) on empty tables.
+
+## 2024-05-24 - Missing explicitly declared indexing on temporal fields
+**Learning:** In the chat-api backend, many analytical and statistical queries use conditional aggregation querying the database with `WHERE created_at ...` parameters. Explicitly creating SQLite indexes on this field for analytical tables (such as `users`, `tickets`, `commissions`, `campaigns`) is necessary for performance optimization and avoiding full table scans.
+**Action:** When working on performance optimizations in SQLite databases inside this architecture, actively verify if the `.indices` on key tables cover frequently queried temporal columns like `created_at` or `updated_at`.
