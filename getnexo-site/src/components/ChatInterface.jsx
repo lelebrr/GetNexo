@@ -227,9 +227,9 @@ const ChatInterface = () => {
                     </div>
                     {/* Inbox Filters */}
                     <div className="flex justify-between text-xs text-gray-400 border-b border-gray-800 pb-2">
-                        <button onClick={() => setInboxTab('mine')} className={`${inboxTab === 'mine' ? 'text-neon-blue font-bold border-b-2 border-neon-blue' : 'hover:text-white'}`}>Meus</button>
-                        <button onClick={() => setInboxTab('all')} className={`${inboxTab === 'all' ? 'text-white font-bold border-b-2 border-white' : 'hover:text-white'}`}>Todos</button>
-                        <button onClick={() => setInboxTab('resolved')} className={`${inboxTab === 'resolved' ? 'text-green-500 font-bold border-b-2 border-green-500' : 'hover:text-white'}`}>Resolvidos</button>
+                        <button aria-pressed={inboxTab === 'mine'} onClick={() => setInboxTab('mine')} className={`${inboxTab === 'mine' ? 'text-neon-blue font-bold border-b-2 border-neon-blue' : 'hover:text-white'}`}>Meus</button>
+                        <button aria-pressed={inboxTab === 'all'} onClick={() => setInboxTab('all')} className={`${inboxTab === 'all' ? 'text-white font-bold border-b-2 border-white' : 'hover:text-white'}`}>Todos</button>
+                        <button aria-pressed={inboxTab === 'resolved'} onClick={() => setInboxTab('resolved')} className={`${inboxTab === 'resolved' ? 'text-green-500 font-bold border-b-2 border-green-500' : 'hover:text-white'}`}>Resolvidos</button>
                     </div>
 
                     <input placeholder="Buscar..." aria-label="Buscar contatos" className="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-white outline-none focus:border-neon-blue" />
@@ -289,11 +289,11 @@ const ChatInterface = () => {
                                     <button onClick={() => setShowMeetingScheduler(true)} className="text-xs bg-purple-900/20 text-purple-400 hover:bg-purple-800 hover:text-white px-3 py-1 rounded border border-purple-800 transition-colors font-bold">
                                         📅 Agendar Reunião
                                     </button>
-                                    <button onClick={() => setShowCsat(!showCsat)} className="text-xs bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-1 rounded border border-gray-600 transition-colors">
+                                    <button aria-expanded={showCsat} aria-controls="csat-menu" onClick={() => setShowCsat(!showCsat)} className="text-xs bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-1 rounded border border-gray-600 transition-colors">
                                         ⭐ CSAT
                                     </button>
                                     {showCsat && (
-                                        <div className="absolute top-10 right-0 w-64 bg-gray-900 border border-gray-700 p-4 rounded-xl shadow-2xl z-50">
+                                        <div id="csat-menu" className="absolute top-10 right-0 w-64 bg-gray-900 border border-gray-700 p-4 rounded-xl shadow-2xl z-50">
                                             <p className="text-gray-300 mb-3 text-sm font-bold text-center">Nota de 1 a 5:</p>
                                             <div className="flex gap-2 justify-center">
                                                 {[1, 2, 3, 4, 5].map(n => (
@@ -320,6 +320,7 @@ const ChatInterface = () => {
                             {/* Quick Actions Bar */}
                             <div className="flex items-center gap-3 mb-2 px-1">
                                 <button
+                                    aria-pressed={isNote}
                                     onClick={() => setIsNote(!isNote)}
                                     className={`text-[10px] font-bold px-3 py-1 rounded-full border transition-all ${isNote ? 'bg-yellow-500 text-black border-yellow-500' : 'text-gray-400 border-gray-700 hover:border-gray-500'}`}
                                 >
