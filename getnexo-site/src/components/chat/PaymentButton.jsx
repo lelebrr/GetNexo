@@ -146,6 +146,7 @@ const PaymentButton = ({
                                 onClick={() => copyToClipboard(paymentData.payment.pix_key)}
                                 className="text-blue-600 hover:text-blue-800 text-xs"
                                 title="Copiar chave Pix"
+                                aria-label="Copiar chave Pix"
                             >
                                 📋
                             </button>
@@ -168,6 +169,7 @@ const PaymentButton = ({
                         <button
                             onClick={() => setShowQR(false)}
                             className="text-xs px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+                            aria-label="Fechar QR Code"
                         >
                             Fechar
                         </button>
