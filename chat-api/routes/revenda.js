@@ -30,29 +30,35 @@ router.get('/stats', (req, res) => {
         });
     }
 
-    // Get Clients Count
-    const clientsCount = db.prepare('SELECT count(*) as count FROM users WHERE reseller_id = ?').get(userId).count;
+    const now = new Date();
+    const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const monthStartStr = currentMonthStart.toISOString();
+    const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString();
 
-    // Get Active Subscriptions
-    const activeSubscriptions = db.prepare("SELECT count(*) as count FROM users WHERE reseller_id = ? AND status = 'active'").get(userId).count;
+    // ⚡ Bolt: Combines 4 sequential table scans into a single query using conditional aggregation, reducing DB queries from 4 to 1 and eliminating full table scans.
+    const userStats = db.prepare(`
+        SELECT
+            COUNT(*) as clientsCount,
+            SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as activeSubscriptions,
+            SUM(CASE WHEN created_at >= ? THEN 1 ELSE 0 END) as newClientsThisMonth,
+            SUM(CASE WHEN created_at >= ? AND created_at < ? THEN 1 ELSE 0 END) as newClientsLastMonth
+        FROM users
+        WHERE reseller_id = ?
+    `).get(monthStartStr, lastMonthStart, monthStartStr, userId) || {};
+
+    const clientsCount = userStats.clientsCount || 0;
+    const activeSubscriptions = userStats.activeSubscriptions || 0;
+    const newClientsThisMonth = userStats.newClientsThisMonth || 0;
+    const newClientsLastMonth = userStats.newClientsLastMonth || 0;
 
     // Get Commissions
     const pendingCommissions = db.prepare("SELECT sum(amount) as total FROM commissions WHERE reseller_id = ? AND status = 'pending'").get(userId).total || 0;
 
     // Monthly Revenue (Sales Volume)
-    const now = new Date();
-    const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-    const monthStartStr = currentMonthStart.toISOString();
-
     const monthlyCommissions = db.prepare("SELECT sum(amount) as total FROM commissions WHERE reseller_id = ? AND created_at >= ?").get(userId, monthStartStr).total || 0;
     const revenue = profile.commission_rate > 0 ? (monthlyCommissions / profile.commission_rate) : 0;
 
     // Growth Rate (New Clients this month vs last month)
-    const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString();
-
-    const newClientsThisMonth = db.prepare("SELECT count(*) as count FROM users WHERE reseller_id = ? AND created_at >= ?").get(userId, monthStartStr).count;
-    const newClientsLastMonth = db.prepare("SELECT count(*) as count FROM users WHERE reseller_id = ? AND created_at >= ? AND created_at < ?").get(userId, lastMonthStart, monthStartStr).count;
-
     let growth = 0;
     if (newClientsLastMonth > 0) {
         growth = ((newClientsThisMonth - newClientsLastMonth) / newClientsLastMonth) * 100;
