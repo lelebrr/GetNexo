@@ -1,4 +1,5 @@
 const axios = require('axios');
+const SalesTemplate = require('../models/SalesTemplate');
 
 class ERPIntegrationService {
 
@@ -634,7 +635,8 @@ class ERPIntegrationService {
             'triggers.event': 'order-completed'
         });
 
-        for (const template of upsellTemplates) {
+        // Otimização de performance: Execução concorrente de templates
+        await Promise.all(upsellTemplates.map(async (template) => {
             try {
                 await SalesTemplateService.executeTemplate(
                     template._id,
@@ -645,7 +647,7 @@ class ERPIntegrationService {
             } catch (error) {
                 console.error(`Erro ao executar template upsell ${template._id}:`, error);
             }
-        }
+        }));
     }
 
     static async handleCartAbandoned(erpConfig, cartData) {
@@ -658,7 +660,8 @@ class ERPIntegrationService {
             'triggers.event': 'cart-abandoned'
         });
 
-        for (const template of cartTemplates) {
+        // Otimização de performance: Execução concorrente de templates
+        await Promise.all(cartTemplates.map(async (template) => {
             try {
                 await SalesTemplateService.executeTemplate(
                     template._id,
@@ -669,7 +672,7 @@ class ERPIntegrationService {
             } catch (error) {
                 console.error(`Erro ao executar template carrinho ${template._id}:`, error);
             }
-        }
+        }));
     }
 
     static async handleProductViewed(erpConfig, viewData) {
@@ -682,7 +685,8 @@ class ERPIntegrationService {
             'triggers.event': 'product-viewed'
         });
 
-        for (const template of crossSellTemplates) {
+        // Otimização de performance: Execução concorrente de templates
+        await Promise.all(crossSellTemplates.map(async (template) => {
             try {
                 // Verificar condições do template
                 const trigger = template.triggers.find(t => t.event === 'product-viewed');
@@ -697,7 +701,7 @@ class ERPIntegrationService {
             } catch (error) {
                 console.error(`Erro ao executar template cross-sell ${template._id}:`, error);
             }
-        }
+        }));
     }
 
     static async getVtexProductData(config, productId, fields) {
