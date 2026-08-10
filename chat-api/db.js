@@ -339,6 +339,13 @@ const initSchema = () => {
 
   tables.forEach(sql => db.prepare(sql).run());
 
+  // ⚡ Bolt: Performance optimization
+  // Adding composite indexes on frequently queried tables for the analytics dashboard
+  // This reduces O(N) full table scans to O(log N) index lookups.
+  db.prepare("CREATE INDEX IF NOT EXISTS idx_transactions_created_status ON transactions(created_at, status)").run();
+  db.prepare("CREATE INDEX IF NOT EXISTS idx_contacts_updated_at ON contacts(updated_at)").run();
+  db.prepare("CREATE INDEX IF NOT EXISTS idx_messages_timestamp_contact ON messages(timestamp, contact_id)").run();
+
   // Inicializar configurações padrão
   const defaults = [
     ['store_name', 'Minha Loja Nexus'],
