@@ -64,3 +64,5 @@ afterAll(() => {
         db.close();
     }
 });
+
+process.env.JWT_SECRET = 'test_secret_for_jest_tests';
