@@ -6,6 +6,15 @@ const bcrypt = require('bcryptjs');
 
 router.use(jwtAuth);
 
+// Middleware de segurança para restringir acesso apenas a revendedores
+router.use((req, res, next) => {
+    const allowedRoles = ['reseller', 'superadmin'];
+    if (!req.user || !allowedRoles.includes(req.user.role)) {
+        return res.status(403).json({ error: 'Acesso negado. Apenas revendedores autorizados.' });
+    }
+    next();
+});
+
 const formatCurrency = (value) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value || 0);
 };
