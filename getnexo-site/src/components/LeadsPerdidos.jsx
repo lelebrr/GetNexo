@@ -312,7 +312,7 @@ export default function LeadsPerdidos() {
                         <div className="p-6">
                             <div className="flex justify-between items-center mb-4">
                                 <h3 className="text-xl font-bold">Reenviar Oferta</h3>
-                                <button onClick={fecharModal} className="text-gray-400 hover:text-white text-2xl">×</button>
+                                <button onClick={fecharModal} aria-label="Fechar" className="text-gray-400 hover:text-white text-2xl">×</button>
                             </div>
 
                             <div className="mb-4">
