@@ -559,6 +559,10 @@ const initSchema = () => {
       } catch (e) { console.log('Columns likely exist'); }
     }
 
+    // ⚡ Bolt: Adding performance indexes to speed up temporal and status analytics queries, reducing queries from full table scans to O(log N) index lookups.
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_transactions_created_status ON transactions(created_at, status)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_contacts_updated_at ON contacts(updated_at)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_messages_timestamp ON messages(timestamp)').run();
   } catch (err) {
     console.error('Migration error:', err);
   }

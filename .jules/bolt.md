@@ -21,3 +21,6 @@
 ## 2025-02-28 - Optimizing Multiple COUNT(*) Queries
 **Learning:** In analytical endpoints (like `/stats/overview`), executing sequential `COUNT(*)` database queries causes unnecessary latency through multiple table scans and context switching.
 **Action:** Always combine them into a single query using conditional aggregation `SUM(CASE WHEN [condition] THEN 1 ELSE 0 END)`. Use fallback logic `|| 0` in JavaScript because `SUM()` returns `NULL` (unlike `COUNT()` returning `0`) on empty tables.
+## 2024-06-24 - SQLite Missing Indexes for Temporal Dashboard Analytics
+**Learning:** Found that the critical dashboard endpoints in `chat-api/routes/analytics.js` (`/dashboard-stats`) querying `transactions`, `contacts`, and `messages` for rolling time windows (e.g. `created_at >= datetime('now', '-1 day')` and `status = 'paid'`) were causing full table scans (`SCAN`).
+**Action:** Always add explicit performance indexes on timestamp/status columns used in WHERE clauses via `CREATE INDEX IF NOT EXISTS` directly in `chat-api/db.js` under the `initSchema()` migrations block to achieve O(log N) index lookups.
