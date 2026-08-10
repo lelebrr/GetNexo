@@ -226,10 +226,10 @@ const ChatInterface = () => {
                         <button className="flex-1 text-gray-500 hover:text-white text-xs py-1 text-center">Messenger</button>
                     </div>
                     {/* Inbox Filters */}
-                    <div className="flex justify-between text-xs text-gray-400 border-b border-gray-800 pb-2">
-                        <button onClick={() => setInboxTab('mine')} className={`${inboxTab === 'mine' ? 'text-neon-blue font-bold border-b-2 border-neon-blue' : 'hover:text-white'}`}>Meus</button>
-                        <button onClick={() => setInboxTab('all')} className={`${inboxTab === 'all' ? 'text-white font-bold border-b-2 border-white' : 'hover:text-white'}`}>Todos</button>
-                        <button onClick={() => setInboxTab('resolved')} className={`${inboxTab === 'resolved' ? 'text-green-500 font-bold border-b-2 border-green-500' : 'hover:text-white'}`}>Resolvidos</button>
+                    <div className="flex justify-between text-xs text-gray-400 border-b border-gray-800 pb-2" role="tablist" aria-label="Filtros de caixa de entrada">
+                        <button role="tab" aria-selected={inboxTab === 'mine'} onClick={() => setInboxTab('mine')} className={`${inboxTab === 'mine' ? 'text-neon-blue font-bold border-b-2 border-neon-blue' : 'hover:text-white'}`}>Meus</button>
+                        <button role="tab" aria-selected={inboxTab === 'all'} onClick={() => setInboxTab('all')} className={`${inboxTab === 'all' ? 'text-white font-bold border-b-2 border-white' : 'hover:text-white'}`}>Todos</button>
+                        <button role="tab" aria-selected={inboxTab === 'resolved'} onClick={() => setInboxTab('resolved')} className={`${inboxTab === 'resolved' ? 'text-green-500 font-bold border-b-2 border-green-500' : 'hover:text-white'}`}>Resolvidos</button>
                     </div>
 
                     <input placeholder="Buscar..." aria-label="Buscar contatos" className="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-white outline-none focus:border-neon-blue" />
@@ -321,6 +321,7 @@ const ChatInterface = () => {
                             <div className="flex items-center gap-3 mb-2 px-1">
                                 <button
                                     onClick={() => setIsNote(!isNote)}
+                                    aria-pressed={isNote}
                                     className={`text-[10px] font-bold px-3 py-1 rounded-full border transition-all ${isNote ? 'bg-yellow-500 text-black border-yellow-500' : 'text-gray-400 border-gray-700 hover:border-gray-500'}`}
                                 >
                                     🔒 NOTA INTERNA
