@@ -257,6 +257,7 @@ const ChatInterface = () => {
                                 {/* Back Button Mobile */}
                                 <button
                                     onClick={() => setActiveContact(null)}
+                                    aria-label="Voltar para a lista de contatos"
                                     className="lg:hidden text-gray-400 hover:text-white mr-2"
                                 >
                                     ←
@@ -321,12 +322,14 @@ const ChatInterface = () => {
                             <div className="flex items-center gap-3 mb-2 px-1">
                                 <button
                                     onClick={() => setIsNote(!isNote)}
+                                    aria-pressed={isNote}
                                     className={`text-[10px] font-bold px-3 py-1 rounded-full border transition-all ${isNote ? 'bg-yellow-500 text-black border-yellow-500' : 'text-gray-400 border-gray-700 hover:border-gray-500'}`}
                                 >
                                     🔒 NOTA INTERNA
                                 </button>
                                 <button
                                     onClick={() => setShowMacros(!showMacros)}
+                                    aria-pressed={showMacros}
                                     className="text-[10px] font-bold px-3 py-1 rounded-full text-neon-blue border border-gray-700 hover:border-neon-blue transition-all"
                                 >
                                     ⚡ RESPOSTA RÁPIDA
