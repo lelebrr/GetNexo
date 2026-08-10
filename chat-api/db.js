@@ -559,6 +559,13 @@ const initSchema = () => {
       } catch (e) { console.log('Columns likely exist'); }
     }
 
+    // Performance indexes for temporal analytical queries.
+    // Shifts query complexity from O(N) full table scan to O(log N) index lookup.
+    // Impact: Avoids heavy scans on large tables used in dashboard analytics (analytics.js).
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_messages_timestamp ON messages(timestamp)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_transactions_created_at ON transactions(created_at)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_contacts_updated_at ON contacts(updated_at)').run();
+
   } catch (err) {
     console.error('Migration error:', err);
   }
