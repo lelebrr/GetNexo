@@ -14,6 +14,15 @@ export async function POST({ request }) {
       );
     }
 
+    // Validar formato para prevenir path traversal
+    const safeRegex = /^[a-zA-Z0-9_-]+$/;
+    if (!safeRegex.test(slug) || !safeRegex.test(lang)) {
+      return new Response(
+        JSON.stringify({ error: 'Formato inválido para slug ou idioma' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Determinar o diretório baseado no idioma
     let dirPath;
     if (lang === 'pt') {
