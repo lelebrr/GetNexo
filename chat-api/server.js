@@ -137,8 +137,8 @@ const authMiddleware = (req, res, next) => {
     '/api/crm/customers',
     '/api/crm/stats',
     '/api/products',
-    '/api/loyalty/points',
-    '/api/loyalty/rewards',
+    // '/api/loyalty/points', // REMOVED: Must be authenticated
+    // '/api/loyalty/rewards', // REMOVED: Must be authenticated
     '/api/settings',
     '/api/ai/config',
     '/api/tickets',
