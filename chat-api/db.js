@@ -543,6 +543,7 @@ const initSchema = () => {
       db.prepare("ALTER TABLE tickets ADD COLUMN assigned_agent_id INTEGER").run();
     }
 
+
     // Campaigns Migrations
     const campaignInfo = db.pragma('table_info(campaigns)');
     const hasTotalLeads = campaignInfo.some(col => col.name === 'total_leads');
@@ -558,6 +559,19 @@ const initSchema = () => {
         db.prepare('ALTER TABLE campaigns ADD COLUMN paused BOOLEAN DEFAULT 0').run();
       } catch (e) { console.log('Columns likely exist'); }
     }
+
+    // ⚡ Bolt: Adding explicitly defined performance indexes to avoid O(N) full table scans.
+    // Measured impact: Algorithmic shift from O(N) SCAN to O(log N) SEARCH for analytical queries on status/created_at and relational queries.
+    const indexes = [
+      'CREATE INDEX IF NOT EXISTS idx_transactions_status_created ON transactions(status, created_at)',
+      'CREATE INDEX IF NOT EXISTS idx_transactions_contact_id ON transactions(contact_id)',
+      'CREATE INDEX IF NOT EXISTS idx_messages_contact_id ON messages(contact_id)',
+      'CREATE INDEX IF NOT EXISTS idx_messages_timestamp ON messages(timestamp)',
+      'CREATE INDEX IF NOT EXISTS idx_contacts_phone ON contacts(phone)'
+    ];
+    indexes.forEach(sql => db.prepare(sql).run());
+
+
 
   } catch (err) {
     console.error('Migration error:', err);
