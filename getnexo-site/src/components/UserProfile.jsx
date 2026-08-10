@@ -82,8 +82,9 @@ export default function UserProfile() {
                         className="w-16 h-16 rounded-full"
                     />
                     <div>
-                        <label className="block text-sm font-medium mb-1">URL do Avatar</label>
+                        <label htmlFor="avatarUrl" className="block text-sm font-medium mb-1">URL do Avatar</label>
                         <input
+                            id="avatarUrl"
                             type="url"
                             value={profile.avatar || ''}
                             onChange={(e) => handleChange('avatar', e.target.value)}
@@ -96,8 +97,9 @@ export default function UserProfile() {
                 {/* Basic Info */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-sm font-medium mb-1">Nome</label>
+                        <label htmlFor="name" className="block text-sm font-medium mb-1">Nome</label>
                         <input
+                            id="name"
                             type="text"
                             value={profile.name || ''}
                             onChange={(e) => handleChange('name', e.target.value)}
@@ -105,8 +107,9 @@ export default function UserProfile() {
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-1">Email</label>
+                        <label htmlFor="email" className="block text-sm font-medium mb-1">Email</label>
                         <input
+                            id="email"
                             type="email"
                             value={profile.email || ''}
                             disabled
@@ -117,8 +120,9 @@ export default function UserProfile() {
 
                 {/* Bio */}
                 <div>
-                    <label className="block text-sm font-medium mb-1">Biografia</label>
+                    <label htmlFor="bio" className="block text-sm font-medium mb-1">Biografia</label>
                     <textarea
+                        id="bio"
                         value={profile.bio || ''}
                         onChange={(e) => handleChange('bio', e.target.value)}
                         rows={4}
@@ -132,8 +136,9 @@ export default function UserProfile() {
                     <h3 className="text-lg font-semibold">Preferências</h3>
 
                     <div>
-                        <label className="block text-sm font-medium mb-1">Tema</label>
+                        <label htmlFor="theme" className="block text-sm font-medium mb-1">Tema</label>
                         <select
+                            id="theme"
                             value={profile.preferences?.theme || 'light'}
                             onChange={(e) => handlePreferenceChange('theme', e.target.value)}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md"
@@ -145,8 +150,9 @@ export default function UserProfile() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium mb-1">Idioma</label>
+                        <label htmlFor="language" className="block text-sm font-medium mb-1">Idioma</label>
                         <select
+                            id="language"
                             value={profile.preferences?.language || 'pt-BR'}
                             onChange={(e) => handlePreferenceChange('language', e.target.value)}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md"
