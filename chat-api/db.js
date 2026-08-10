@@ -559,6 +559,14 @@ const initSchema = () => {
       } catch (e) { console.log('Columns likely exist'); }
     }
 
+    // ⚡ Bolt: Adding indexes to avoid O(N) full table scans on analytical endpoints, reducing query times from O(N) full scans to O(log N) index lookups.
+    console.log('Creating performance indexes...');
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_transactions_created_at_status ON transactions(created_at, status)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_contacts_updated_at ON contacts(updated_at)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_messages_timestamp ON messages(timestamp)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_messages_contact_id ON messages(contact_id)').run();
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_analytics_logs_created_at ON analytics_logs(created_at)').run();
+
   } catch (err) {
     console.error('Migration error:', err);
   }
