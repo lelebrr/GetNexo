@@ -5,26 +5,8 @@ const ReferralService = require('../services/ReferralService');
 const LoyaltyConfig = require('../models/LoyaltyConfig');
 const LoyaltyTier = require('../models/LoyaltyTier');
 
-// Middleware para verificar autenticação (placeholder)
-const requireAuth = (req, res, next) => {
-    // TODO: Implementar verificação real de autenticação
-    const userId = req.headers['user-id'] || req.body.userId;
-    if (!userId) {
-        return res.status(401).json({ error: 'Usuário não autenticado' });
-    }
-    req.userId = userId;
-    next();
-};
-
-// Middleware para verificar permissões admin
-const requireAdmin = (req, res, next) => {
-    // TODO: Implementar verificação de permissões admin
-    const isAdmin = req.headers['admin'] === 'true';
-    if (!isAdmin) {
-        return res.status(403).json({ error: 'Acesso negado' });
-    }
-    next();
-};
+const requireAuth = require('../middleware/jwtAuth');
+const requireAdmin = require('../middleware/adminAuth');
 
 // === ROTAS PÚBLICAS ===
 
