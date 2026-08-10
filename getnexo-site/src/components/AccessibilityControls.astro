@@ -45,37 +45,37 @@ const { showPanel = true } = Astro.props;
         </button>
 
         <!-- Legible Font -->
-        <button class="acc-toggle-btn" id="toggle-font">
+        <button class="acc-toggle-btn" id="toggle-font" aria-pressed="false">
           <span class="icon">Aa</span>
           <span>Fonte Legível</span>
         </button>
 
         <!-- Highlight Links -->
-        <button class="acc-toggle-btn" id="toggle-highlight">
+        <button class="acc-toggle-btn" id="toggle-highlight" aria-pressed="false">
           <span class="icon">🔗</span>
           <span>Links</span>
         </button>
 
         <!-- Big Cursor -->
-        <button class="acc-toggle-btn" id="toggle-cursor">
+        <button class="acc-toggle-btn" id="toggle-cursor" aria-pressed="false">
           <span class="icon">👆</span>
           <span>Cursor</span>
         </button>
 
         <!-- Monochrome -->
-        <button class="acc-toggle-btn" id="toggle-mono">
+        <button class="acc-toggle-btn" id="toggle-mono" aria-pressed="false">
           <span class="icon">🌗</span>
           <span>P&B</span>
         </button>
 
         <!-- Contrast -->
-        <button class="acc-toggle-btn" id="toggle-contrast">
+        <button class="acc-toggle-btn" id="toggle-contrast" aria-pressed="false">
           <span class="icon">👁️</span>
           <span>Contraste</span>
         </button>
 
          <!-- Stop Animations -->
-         <button class="acc-toggle-btn" id="toggle-motion">
+         <button class="acc-toggle-btn" id="toggle-motion" aria-pressed="false">
           <span class="icon">⏹️</span>
           <span>Parar Anim.</span>
         </button>
@@ -497,7 +497,10 @@ const { showPanel = true } = Astro.props;
 
     const updateBtn = (id, active) => {
       const btn = document.getElementById(id);
-      if(btn) active ? btn.classList.add('active') : btn.classList.remove('active');
+      if(btn) {
+        active ? btn.classList.add('active') : btn.classList.remove('active');
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      }
     };
 
     const setZoom = (val) => {
