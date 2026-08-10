@@ -666,11 +666,22 @@ router.post('/verify-vdc', (req, res) => {
  */
 router.get('/stats', (req, res) => {
     try {
-        const mandateCount = db.prepare('SELECT COUNT(*) as cnt FROM ap2_mandates').get()?.cnt || 0;
-        const transactionCount = db.prepare('SELECT COUNT(*) as cnt FROM ap2_transactions').get()?.cnt || 0;
+        // ⚡ Bolt: Performance optimization
+        // Combine 3 sequential COUNT(*) queries into a single query using conditional aggregation
+        // Impact: Reduces database latency and table scans from 3 to 1.
+        const mandatesStats = db.prepare(`
+            SELECT
+                COUNT(*) as total,
+                SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active,
+                SUM(CASE WHEN status = 'used' THEN 1 ELSE 0 END) as used
+            FROM ap2_mandates
+        `).get() || { total: 0, active: 0, used: 0 };
 
-        const activeMandates = db.prepare("SELECT COUNT(*) as cnt FROM ap2_mandates WHERE status = 'active'").get()?.cnt || 0;
-        const usedMandates = db.prepare("SELECT COUNT(*) as cnt FROM ap2_mandates WHERE status = 'used'").get()?.cnt || 0;
+        const mandateCount = mandatesStats.total || 0;
+        const activeMandates = mandatesStats.active || 0;
+        const usedMandates = mandatesStats.used || 0;
+
+        const transactionCount = db.prepare('SELECT COUNT(*) as cnt FROM ap2_transactions').get()?.cnt || 0;
 
         const totalVolume = db.prepare(`
             SELECT COALESCE(SUM(amount), 0) as total 
