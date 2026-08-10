@@ -188,11 +188,11 @@ const ResellerPanel = () => {
                             <div className="space-y-2">
                                 <div className="bg-gray-800/50 p-3 rounded text-xs text-gray-300 relative group">
                                     <p className="line-clamp-2">"Oi! Você vende pelo WhatsApp? Descobri uma ferramenta que..."</p>
-                                    <button className="absolute right-2 top-2 text-neon-blue opacity-0 group-hover:opacity-100 transition-opacity">📋</button>
+                                    <button className="absolute right-2 top-2 text-neon-blue opacity-0 group-hover:opacity-100 transition-opacity" aria-label="Copiar template">📋</button>
                                 </div>
                                 <div className="bg-gray-800/50 p-3 rounded text-xs text-gray-300 relative group">
                                     <p className="line-clamp-2">"Cara, tô usando essa IA no WhatsApp da loja e as vendas..."</p>
-                                    <button className="absolute right-2 top-2 text-neon-blue opacity-0 group-hover:opacity-100 transition-opacity">📋</button>
+                                    <button className="absolute right-2 top-2 text-neon-blue opacity-0 group-hover:opacity-100 transition-opacity" aria-label="Copiar template">📋</button>
                                 </div>
                             </div>
 

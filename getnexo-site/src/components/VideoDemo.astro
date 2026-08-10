@@ -58,18 +58,18 @@ const {
     <!-- Video Controls (if custom controls enabled) -->
     {!controls && (
       <div class="custom-controls" id="custom-controls">
-        <button class="control-btn play-pause" id="play-pause-btn">
+        <button class="control-btn play-pause" id="play-pause-btn" aria-label="Reproduzir ou Pausar vídeo">
           <span class="play-icon">▶</span>
           <span class="pause-icon" style="display: none;">⏸</span>
         </button>
         <div class="progress-bar">
           <div class="progress-fill" id="progress-fill"></div>
         </div>
-        <button class="control-btn volume" id="volume-btn">
+        <button class="control-btn volume" id="volume-btn" aria-label="Alternar som do vídeo">
           <span class="volume-on">🔊</span>
           <span class="volume-off" style="display: none;">🔇</span>
         </button>
-        <button class="control-btn fullscreen" id="fullscreen-btn">
+        <button class="control-btn fullscreen" id="fullscreen-btn" aria-label="Alternar tela cheia">
           <span>⛶</span>
         </button>
       </div>
