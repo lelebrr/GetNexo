@@ -51,13 +51,14 @@ const MeetingScheduler = ({ contact, onClose, onScheduled }) => {
                     <h3 className="text-xl font-bold text-white flex items-center gap-2">
                         <span>📅</span> Agendar Reunião
                     </h3>
-                    <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors text-2xl">✕</button>
+                    <button onClick={onClose} aria-label="Fechar" className="text-gray-500 hover:text-white transition-colors text-2xl">✕</button>
                 </div>
 
                 <form onSubmit={handleSchedule} className="p-6 space-y-4">
                     <div>
-                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Assunto</label>
+                        <label htmlFor="assunto" className="block text-xs font-bold text-gray-500 uppercase mb-1">Assunto</label>
                         <input
+                            id="assunto"
                             value={summary}
                             onChange={e => setSummary(e.target.value)}
                             className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white outline-none focus:border-neon-blue"
@@ -66,8 +67,9 @@ const MeetingScheduler = ({ contact, onClose, onScheduled }) => {
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Data</label>
+                            <label htmlFor="data" className="block text-xs font-bold text-gray-500 uppercase mb-1">Data</label>
                             <input
+                                id="data"
                                 type="date"
                                 value={date}
                                 onChange={e => setDate(e.target.value)}
@@ -75,8 +77,9 @@ const MeetingScheduler = ({ contact, onClose, onScheduled }) => {
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Hora</label>
+                            <label htmlFor="hora" className="block text-xs font-bold text-gray-500 uppercase mb-1">Hora</label>
                             <input
+                                id="hora"
                                 type="time"
                                 value={time}
                                 onChange={e => setTime(e.target.value)}
@@ -86,8 +89,9 @@ const MeetingScheduler = ({ contact, onClose, onScheduled }) => {
                     </div>
 
                     <div>
-                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Duração (minutos)</label>
+                        <label htmlFor="duracao" className="block text-xs font-bold text-gray-500 uppercase mb-1">Duração (minutos)</label>
                         <select
+                            id="duracao"
                             value={duration}
                             onChange={e => setDuration(Number(e.target.value))}
                             className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white outline-none focus:border-neon-blue"
