@@ -16,11 +16,23 @@ try {
 describe('AP2 Protocol', () => {
     let mandateId;
     let transactionId;
+    let token;
+
+    beforeAll(async () => {
+        const res = await request(app)
+            .post('/api/login')
+            .send({
+                email: 'admin@getnexo.com.br',
+                password: process.env.ADMIN_PASSWORD || 'admin123'
+            });
+        token = res.body.token;
+    });
 
     describe('Mandate Management', () => {
         test('POST /api/ap2/mandates creates cart mandate', async () => {
             const res = await request(app)
                 .post('/api/ap2/mandates')
+                .set('Authorization', `Bearer ${token}`)
                 .send({
                     type: 'cart',
                     scope: 'purchase',
@@ -35,19 +47,24 @@ describe('AP2 Protocol', () => {
         test('POST /api/ap2/mandates creates intent mandate', async () => {
             const res = await request(app)
                 .post('/api/ap2/mandates')
+                .set('Authorization', `Bearer ${token}`)
                 .send({ type: 'intent', scope: 'subscription', constraints: { max_amount: 50 } });
             expect(res.status).toBe(201);
         });
 
         test('GET /api/ap2/mandates lists mandates', async () => {
-            const res = await request(app).get('/api/ap2/mandates');
+            const res = await request(app)
+                .get('/api/ap2/mandates')
+                .set('Authorization', `Bearer ${token}`);
             expect(res.status).toBe(200);
             expect(Array.isArray(res.body)).toBe(true);
         });
 
         test('GET /api/ap2/mandates/:id gets mandate', async () => {
             if (!mandateId) return;
-            const res = await request(app).get(`/api/ap2/mandates/${mandateId}`);
+            const res = await request(app)
+                .get(`/api/ap2/mandates/${mandateId}`)
+                .set('Authorization', `Bearer ${token}`);
             expect(res.status).toBe(200);
             expect(res.body.mandate_id).toBe(mandateId);
         });
@@ -57,6 +74,7 @@ describe('AP2 Protocol', () => {
         test('POST /api/ap2/pay requires mandate', async () => {
             const res = await request(app)
                 .post('/api/ap2/pay')
+                .set('Authorization', `Bearer ${token}`)
                 .send({ amount: 50, currency: 'BRL' });
             expect(res.status).toBe(400);
         });
@@ -65,6 +83,7 @@ describe('AP2 Protocol', () => {
             if (!mandateId) return;
             const res = await request(app)
                 .post('/api/ap2/pay')
+                .set('Authorization', `Bearer ${token}`)
                 .send({
                     amount: 50,
                     currency: 'BRL',
@@ -81,10 +100,12 @@ describe('AP2 Protocol', () => {
             // Create a new mandate with low limit
             const createRes = await request(app)
                 .post('/api/ap2/mandates')
+                .set('Authorization', `Bearer ${token}`)
                 .send({ type: 'cart', scope: 'test', constraints: { max_amount: 10 } });
 
             const res = await request(app)
                 .post('/api/ap2/pay')
+                .set('Authorization', `Bearer ${token}`)
                 .send({
                     amount: 50,
                     currency: 'BRL',
@@ -97,7 +118,9 @@ describe('AP2 Protocol', () => {
 
     describe('Transaction Management', () => {
         test('GET /api/ap2/transactions lists transactions', async () => {
-            const res = await request(app).get('/api/ap2/transactions');
+            const res = await request(app)
+                .get('/api/ap2/transactions')
+                .set('Authorization', `Bearer ${token}`);
             expect(res.status).toBe(200);
             expect(Array.isArray(res.body)).toBe(true);
         });
@@ -106,15 +129,18 @@ describe('AP2 Protocol', () => {
             // Create new mandate for capture test
             const mandate = await request(app)
                 .post('/api/ap2/mandates')
+                .set('Authorization', `Bearer ${token}`)
                 .send({ type: 'cart', scope: 'capture-test', constraints: { max_amount: 100 } });
 
             const payment = await request(app)
                 .post('/api/ap2/pay')
+                .set('Authorization', `Bearer ${token}`)
                 .send({ amount: 30, currency: 'BRL', mandate: { id: mandate.body.mandate_id } });
 
             if (payment.body.status === 'pending') {
                 const res = await request(app)
-                    .post(`/api/ap2/transactions/${payment.body.transaction_id}/capture`);
+                    .post(`/api/ap2/transactions/${payment.body.transaction_id}/capture`)
+                    .set('Authorization', `Bearer ${token}`);
                 expect(res.status).toBe(200);
                 expect(res.body.status).toBe('captured');
             }
@@ -125,10 +151,12 @@ describe('AP2 Protocol', () => {
         test('DELETE /api/ap2/mandates/:id revokes mandate', async () => {
             const create = await request(app)
                 .post('/api/ap2/mandates')
+                .set('Authorization', `Bearer ${token}`)
                 .send({ type: 'intent', scope: 'revoke-test', constraints: {} });
 
             const res = await request(app)
-                .delete(`/api/ap2/mandates/${create.body.mandate_id}`);
+                .delete(`/api/ap2/mandates/${create.body.mandate_id}`)
+                .set('Authorization', `Bearer ${token}`);
             expect(res.status).toBe(200);
             expect(res.body.status).toBe('revoked');
         });

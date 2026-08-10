@@ -15,6 +15,18 @@ try {
 }
 
 describe('A2A Protocol', () => {
+    let token;
+
+    beforeAll(async () => {
+        const res = await request(app)
+            .post('/api/login')
+            .send({
+                email: 'admin@getnexo.com.br',
+                password: process.env.ADMIN_PASSWORD || 'admin123'
+            });
+        token = res.body.token;
+    });
+
     describe('Agent Card Discovery', () => {
         test('GET /api/a2a/agent-card.json returns valid agent card', async () => {
             const res = await request(app).get('/api/a2a/agent-card.json');
@@ -33,6 +45,7 @@ describe('A2A Protocol', () => {
         test('POST /api/a2a/identities creates identity', async () => {
             const res = await request(app)
                 .post('/api/a2a/identities')
+                .set('Authorization', `Bearer ${token}`)
                 .send({ name: 'Test Identity', setDefault: true });
             expect(res.status).toBe(200);
             expect(res.body.success).toBe(true);
@@ -41,14 +54,18 @@ describe('A2A Protocol', () => {
         });
 
         test('GET /api/a2a/identities lists identities', async () => {
-            const res = await request(app).get('/api/a2a/identities');
+            const res = await request(app)
+                .get('/api/a2a/identities')
+                .set('Authorization', `Bearer ${token}`);
             expect(res.status).toBe(200);
             expect(Array.isArray(res.body)).toBe(true);
         });
 
         test('GET /api/a2a/identities/:id/export exports public key', async () => {
             if (!identityId) return;
-            const res = await request(app).get(`/api/a2a/identities/${identityId}/export`);
+            const res = await request(app)
+                .get(`/api/a2a/identities/${identityId}/export`)
+                .set('Authorization', `Bearer ${token}`);
             expect(res.status).toBe(200);
             expect(res.body.publicKey).toBeDefined();
         });
@@ -58,6 +75,7 @@ describe('A2A Protocol', () => {
         test('POST /api/a2a/message:send processes message', async () => {
             const res = await request(app)
                 .post('/api/a2a/message:send')
+                .set('Authorization', `Bearer ${token}`)
                 .send({
                     message: { text: 'Hello, this is a test message' },
                     senderId: 'test-agent-123'
@@ -71,6 +89,7 @@ describe('A2A Protocol', () => {
         test('POST /api/a2a/message:send requires message.text', async () => {
             const res = await request(app)
                 .post('/api/a2a/message:send')
+                .set('Authorization', `Bearer ${token}`)
                 .send({ senderId: 'test' });
             expect(res.status).toBe(400);
         });
@@ -80,6 +99,7 @@ describe('A2A Protocol', () => {
         test('POST /api/a2a/tasks creates task', async () => {
             const res = await request(app)
                 .post('/api/a2a/tasks')
+                .set('Authorization', `Bearer ${token}`)
                 .send({ type: 'message', input: { text: 'Test task' } });
             expect(res.status).toBe(202);
             expect(res.body).toHaveProperty('id');
@@ -87,7 +107,9 @@ describe('A2A Protocol', () => {
         });
 
         test('GET /api/a2a/tasks lists tasks', async () => {
-            const res = await request(app).get('/api/a2a/tasks');
+            const res = await request(app)
+                .get('/api/a2a/tasks')
+                .set('Authorization', `Bearer ${token}`);
             expect(res.status).toBe(200);
             expect(Array.isArray(res.body)).toBe(true);
         });
@@ -99,6 +121,7 @@ describe('A2A Protocol', () => {
         test('POST /api/a2a/peers adds peer', async () => {
             const res = await request(app)
                 .post('/api/a2a/peers')
+                .set('Authorization', `Bearer ${token}`)
                 .send({ name: 'Test Peer', endpoint: 'https://example.com/api/a2a/message:send' });
             expect(res.status).toBe(200);
             expect(res.body.success).toBe(true);
@@ -106,20 +129,25 @@ describe('A2A Protocol', () => {
         });
 
         test('GET /api/a2a/peers lists peers', async () => {
-            const res = await request(app).get('/api/a2a/peers');
+            const res = await request(app)
+                .get('/api/a2a/peers')
+                .set('Authorization', `Bearer ${token}`);
             expect(res.status).toBe(200);
             expect(Array.isArray(res.body)).toBe(true);
         });
 
         test('DELETE /api/a2a/peers/:id removes peer', async () => {
             if (!peerId) return;
-            const res = await request(app).delete(`/api/a2a/peers/${peerId}`);
+            const res = await request(app)
+                .delete(`/api/a2a/peers/${peerId}`)
+                .set('Authorization', `Bearer ${token}`);
             expect(res.status).toBe(200);
         });
     });
 
     describe('Statistics', () => {
         test('GET /api/a2a/stats returns stats', async () => {
+            // stats endpoint is public as per server.js: '/api/a2a/stats'
             const res = await request(app).get('/api/a2a/stats');
             expect(res.status).toBe(200);
             expect(res.body).toHaveProperty('messages');
