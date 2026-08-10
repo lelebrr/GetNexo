@@ -559,6 +559,21 @@ const initSchema = () => {
       } catch (e) { console.log('Columns likely exist'); }
     }
 
+    // Performance indexes for Dashboard Analytics
+    console.log('Migrating indexes: Adding performance indexes...');
+
+    // Impact: Avoids O(N) full table scan for queries filtering by 'status' and 'created_at' in /dashboard-stats
+    // Shifts query from SCAN transactions to SEARCH transactions USING INDEX (O(log N))
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_transactions_created_status ON transactions(status, created_at)').run();
+
+    // Impact: Avoids O(N) full table scan for distinct count of active chats filtering by 'timestamp'
+    // Shifts query from SCAN messages to SEARCH messages USING INDEX (O(log N))
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_messages_timestamp ON messages(timestamp)').run();
+
+    // Impact: Avoids O(N) full table scan for active customers filtering by 'updated_at'
+    // Shifts query from SCAN contacts to SEARCH contacts USING COVERING INDEX (O(log N))
+    db.prepare('CREATE INDEX IF NOT EXISTS idx_contacts_updated_at ON contacts(updated_at)').run();
+
   } catch (err) {
     console.error('Migration error:', err);
   }
