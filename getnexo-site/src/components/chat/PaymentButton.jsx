@@ -143,9 +143,11 @@ const PaymentButton = ({
                                 {paymentData.payment.pix_key}
                             </code>
                             <button
+                                type="button"
                                 onClick={() => copyToClipboard(paymentData.payment.pix_key)}
                                 className="text-blue-600 hover:text-blue-800 text-xs"
                                 title="Copiar chave Pix"
+                                aria-label="Copiar chave Pix"
                             >
                                 📋
                             </button>
@@ -166,12 +168,14 @@ const PaymentButton = ({
                     {/* Botões */}
                     <div className="flex gap-2 mt-3">
                         <button
+                            type="button"
                             onClick={() => setShowQR(false)}
                             className="text-xs px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
                         >
                             Fechar
                         </button>
                         <button
+                            type="button"
                             onClick={() => window.open(paymentData.payment.ticket_url, '_blank')}
                             className="text-xs px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
                         >
@@ -206,6 +210,7 @@ const PaymentButton = ({
 
             {paymentData && !showQR && (
                 <button
+                    type="button"
                     onClick={() => setShowQR(true)}
                     className="text-xs text-blue-600 hover:text-blue-800 mt-1 block mx-auto"
                 >
