@@ -3,8 +3,10 @@ import crypto from 'node:crypto';
 import bcrypt from 'bcryptjs';
 import CryptoJS from 'crypto-js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
-const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || 'encryption-key-123';
+// 🛡️ Sentinel: Removed predictable hardcoded fallback secret
+const JWT_SECRET = process.env.JWT_SECRET || crypto.randomBytes(32).toString('hex');
+// 🛡️ Sentinel: Removed predictable hardcoded encryption key
+const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || crypto.randomBytes(32).toString('hex');
 
 // Mock user database (replace with real DB later)
 const users = [

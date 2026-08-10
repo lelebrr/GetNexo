@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 
-const API_KEY = '174b884a9d204196b27fc8927563b232';
+// 🛡️ Sentinel: Removed hardcoded API key
+const API_KEY = process.env.BING_API_KEY;
 const SUBMISSION_URL = 'https://www.bing.com/indexnow/v1/submit';
 
 async function enviaProBing(url) {
