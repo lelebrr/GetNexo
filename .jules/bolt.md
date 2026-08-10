@@ -21,3 +21,7 @@
 ## 2025-02-28 - Optimizing Multiple COUNT(*) Queries
 **Learning:** In analytical endpoints (like `/stats/overview`), executing sequential `COUNT(*)` database queries causes unnecessary latency through multiple table scans and context switching.
 **Action:** Always combine them into a single query using conditional aggregation `SUM(CASE WHEN [condition] THEN 1 ELSE 0 END)`. Use fallback logic `|| 0` in JavaScript because `SUM()` returns `NULL` (unlike `COUNT()` returning `0`) on empty tables.
+
+## 2025-02-28 - Optimizing Multiple COUNT(*) Queries Across Tables
+**Learning:** When aggregating statistics across multiple tables (like in `/stats` endpoints), executing separate `SELECT COUNT(*)` queries sequentially causes unnecessary database round-trips and context switching.
+**Action:** Always combine them into a single query using sub-selects (e.g., `SELECT (SELECT COUNT(*) FROM table1) as t1, (SELECT COUNT(*) FROM table2) as t2`) to fetch all counts in a single database execution.

@@ -778,31 +778,38 @@ router.post('/callback', (req, res) => {
  */
 router.get('/stats', (req, res) => {
     try {
-        const messageCount = db.prepare('SELECT COUNT(*) as cnt FROM a2a_messages').get()?.cnt || 0;
-        const taskCount = db.prepare('SELECT COUNT(*) as cnt FROM a2a_tasks').get()?.cnt || 0;
-        const peerCount = db.prepare('SELECT COUNT(*) as cnt FROM a2a_peers').get()?.cnt || 0;
-        const identityCount = db.prepare('SELECT COUNT(*) as cnt FROM a2a_identities').get()?.cnt || 0;
-
-        const tasksCompleted = db.prepare("SELECT COUNT(*) as cnt FROM a2a_tasks WHERE status = 'completed'").get()?.cnt || 0;
-        const tasksPending = db.prepare("SELECT COUNT(*) as cnt FROM a2a_tasks WHERE status = 'pending'").get()?.cnt || 0;
-
+        // ⚡ Bolt: Performance optimization
+        // Combine 8 sequential COUNT(*) queries into a single query using sub-selects
+        // Impact: Reduces database latency and context switches by consolidating queries.
+        const statsQuery = `
+            SELECT
+                (SELECT COUNT(*) FROM a2a_messages) as messages_total,
+                (SELECT COUNT(*) FROM a2a_messages WHERE DATE(created_at) = DATE('now')) as messages_today,
+                (SELECT COUNT(*) FROM a2a_tasks) as tasks_total,
+                (SELECT COUNT(*) FROM a2a_tasks WHERE status = 'completed') as tasks_completed,
+                (SELECT COUNT(*) FROM a2a_tasks WHERE status = 'pending') as tasks_pending,
+                (SELECT COUNT(*) FROM a2a_peers) as peers_total,
+                (SELECT COUNT(*) FROM a2a_peers WHERE trusted = 1) as peers_trusted,
+                (SELECT COUNT(*) FROM a2a_identities) as identities_total
+        `;
+        const stats = db.prepare(statsQuery).get();
         const aiStatus = a2aAI ? a2aAI.getStatus() : { active: false };
 
         res.json({
             messages: {
-                total: messageCount,
-                today: db.prepare("SELECT COUNT(*) as cnt FROM a2a_messages WHERE DATE(created_at) = DATE('now')").get()?.cnt || 0
+                total: stats.messages_total || 0,
+                today: stats.messages_today || 0
             },
             tasks: {
-                total: taskCount,
-                completed: tasksCompleted,
-                pending: tasksPending
+                total: stats.tasks_total || 0,
+                completed: stats.tasks_completed || 0,
+                pending: stats.tasks_pending || 0
             },
             peers: {
-                total: peerCount,
-                trusted: db.prepare("SELECT COUNT(*) as cnt FROM a2a_peers WHERE trusted = 1").get()?.cnt || 0
+                total: stats.peers_total || 0,
+                trusted: stats.peers_trusted || 0
             },
-            identities: identityCount,
+            identities: stats.identities_total || 0,
             ai: aiStatus,
             uptime: process.uptime()
         });
