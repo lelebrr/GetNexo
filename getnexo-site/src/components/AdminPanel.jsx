@@ -300,7 +300,12 @@ const AdminPanel = ({ initialSection = 'home', initialSubSection = '', hideSideb
             {!hideSidebar && (
                 <div className="lg:hidden p-4 border-b border-gray-800 flex justify-between items-center bg-gray-900/50">
                     <span className="font-bold text-white">Menu</span>
-                    <button onClick={toggleSidebar} className="text-white text-2xl">
+                    <button
+                        onClick={toggleSidebar}
+                        aria-expanded={isSidebarOpen}
+                        aria-label="Alternar menu"
+                        className="text-white text-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded p-1"
+                    >
                         {isSidebarOpen ? '✕' : '☰'}
                     </button>
                 </div>
